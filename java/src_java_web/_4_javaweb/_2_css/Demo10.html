@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Demo10</title>
+    </head>
+    <style>
+        .father {
+            background-color: #da1d9b;
+        }
+        .son:nth-of-type(1) {
+            height: 100px;
+            background-color: blue;
+            width: 50px;
+            float: left;
+        }
+        .son:nth-of-type(2) {
+            height: 200px;
+            width: 100px;
+            background-color: beige;
+            float: left;
+        }
+        .clearfloat {
+            clear: both;
+        }
+    </style>
+    <body>
+        <div class="father">
+            <div class="son"></div>
+            <div class="son"></div>
+            <div class="clearfloat"></div>
+        </div>
+    </body>
+</html>

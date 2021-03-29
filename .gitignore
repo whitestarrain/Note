@@ -1,0 +1,9 @@
+﻿*.class
+*/lib/*
+*.swp
+.pytest_cache
+*/__pycache__
+*/data
+*.mp4
+*/temp
+python/资料/

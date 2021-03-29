@@ -1,0 +1,9 @@
+#map {
+    height: 600px;
+    width: 800px;
+    background-color: lightgray;
+    position: relative;
+}
+#map div{
+    border: 1px solid rgb(161, 161, 161);
+}

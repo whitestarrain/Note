@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Demo12</title>
+        <style>
+            * {
+                margin: 0px;
+                padding: 0px;
+            }
+            .back {
+                width: 400px;
+                height: 200px;
+                background-color: aqua;
+                padding: 5px;
+                position: relative;
+                box-sizing: border-box;
+            }
+            .sliderimage {
+                background-color: yellowgreen;
+                width: 390px;
+                height: 190px;
+            }
+            .arrow-l,
+            .arrow-r {
+                width: 30px;
+                height: 50px;
+                background-color: blue;
+                position: absolute;
+                top: 100px;
+                margin-top: -25px;
+            }
+            .arrow-l {
+                left: 5px;
+            }
+            .arrow-r {
+                right: 5px;
+            }
+            .circle {
+                list-style: none;
+            }
+            .circle li {
+                height: 3px;
+                width: 3px;
+                border-radius: 2px;
+                background-color: cadetblue;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="back">
+            <div class="sliderimage"></div>
+            <div class="arrow-l"></div>
+            <div class="arrow-r"></div>
+            <ul class="circle">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </body>
+</html>

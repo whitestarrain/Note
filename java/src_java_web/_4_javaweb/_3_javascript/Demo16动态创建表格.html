@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo15 动态创建表格</title>
+        <style>
+            table {
+                height: 200px;
+                width: 400px;
+                border: 1px solid black;
+                border-collapse: collapse;
+                text-align: center;
+            }
+            td {
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="button" value="表格" id="btn" />
+        <br />
+        <div id="div"></div>
+        <script src="./common.js"></script>
+        <script>
+            var btn = document.getElementById("btn");
+            btn.onclick = function() {
+                var datas = [
+                    { name: "zs", subject: "语文", score: 90 },
+                    { name: "ls", subject: "数学", score: 80 },
+                    { name: "ww", subject: "英语", score: 99 },
+                    { name: "zl", subject: "英语", score: 100 },
+                    { name: "xs", subject: "英语", score: 60 },
+                    { name: "dc", subject: "英语", score: 70 }
+                ];
+                var headDatas = ["姓名", "学科", "分数"];
+                var div = document.createElement("div");
+                var table = document.createElement("table");
+                var thead = document.createElement("thead");
+                var tbody = document.createElement("tbody");
+                var temptr, temptd;
+
+                /* thead */
+                temptr = document.createElement("tr");
+                for (var i = 0; i < headDatas.length; i++) {
+                    temptd = document.createElement("td");
+                    temptd.innerText = headDatas[i];
+                    // setInnerText(temptd, headDatas[i]);
+                    temptr.appendChild(temptd);
+                }
+                thead.appendChild(temptr);
+
+                /* tbody */
+                for (var n = 0; n < datas.length; n++) {
+                    temptr = document.createElement("tr");
+                    for (var temp in datas[n]) {
+                        temptd = document.createElement("td");
+                        setInnerText(temptd, datas[n][temp]);
+                        temptr.appendChild(temptd);
+                    }
+                    tbody.appendChild(temptr);
+                }
+                table.append(thead, tbody);
+                div.appendChild(table);
+                document.getElementById("div").appendChild(div);
+            };
+        </script>
+    </body>
+</html>

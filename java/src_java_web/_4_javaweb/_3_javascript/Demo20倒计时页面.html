@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo20</title>
+        <style>
+            * {
+                margin: 0px;
+                padding: 0px;
+            }
+            #count-down {
+                height: 300px;
+				width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+				transform: translate(-50%,-50%);
+                text-align: center;
+                overflow: auto;
+				padding: 10px 0px;
+				transition: all 0.3s ease-in 0s;
+				
+            }
+            .text {
+                text-align: center;
+                font-size: 60px;
+                font-weight: bold;
+                line-height: 150px;
+            }
+            #time{
+                color: #575656;
+            }
+            #time span {
+                font-size: 40px;
+                font-weight: 700;
+				background-color: #fbcb81;
+				border-radius: 15%;
+            }
+            #time span:first-child {
+                background-color: #fbcb81;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="count-down">
+            <span class="text">距离开学还有:</span><br />
+            <span id="time">
+                <span><span id="day"></span>天</span>
+                <span><span id="hour"></span>时</span>
+                <span><span id="minute"></span>分</span>
+                <span> <span id="second"></span>秒</span>
+            </span>
+        </div>
+        <script src="./common.js"></script>
+        <script>
+            var timeSpan = document.getElementById("time");
+            var timeObject;
+            var endTime = new Date("2020-02-24 0:0:0");
+            var daySpan = document.getElementById("day");
+            var hourSpan = document.getElementById("hour");
+            var minuteSpan = document.getElementById("minute");
+            var secondSpan = document.getElementById("second");
+
+            var setTime = function() {
+                timeObject = getInterval(new Date(), endTime);
+                setInnerText(daySpan, timeObject.day);
+                setInnerText(hourSpan, timeObject.hour);
+                setInnerText(minuteSpan, timeObject.minute);
+                setInnerText(secondSpan, timeObject.second);
+            };
+            setTime();
+            setInterval(setTime, 1000);
+        </script>
+    </body>
+</html>

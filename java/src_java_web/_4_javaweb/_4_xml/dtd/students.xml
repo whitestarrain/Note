@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE students SYSTEM "./student.dtd">
+<students>
+    <student number="a001">
+        <name>
+            李义
+        </name>
+        <age>
+            18
+        </age>
+        <sex>
+            男
+        </sex>
+    </student>
+    
+</students>

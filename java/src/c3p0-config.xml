@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<c3p0-config>
+  <default-config>
+    <!--连接参数 -->
+    <property name="driverClass">com.mysql.jdbc.Driver</property>
+    <property name="jdbcUrl">jdbc:mysql://localhost:3306/student</property>
+    <property name="user">root</property>
+    <property name="password">root</property>
+    <!-- 连接池参数-->
+    <property name="initialPoolSize">5</property> <!--初始化时申请的连接数量，调用更多时内部会创建新连接-->
+    <property name="maxPoolSize">10</property> <!--最大的连接数量 -->
+    <property name="checkoutTimeout">3000</property> <!--超时时间，出现错误时，等待多长时间后报错-->
+  </default-config>
+
+  <named-config name="accountc3p0">
+    <!--连接参数 -->
+    <property name="driverClass">com.mysql.jdbc.Driver</property>
+    <property name="jdbcUrl">jdbc:mysql://localhost:3306/account</property>
+    <property name="user">root</property>
+    <property name="password">root</property>
+    <!-- 连接池参数-->
+    <property name="initialPoolSize">5</property> <!--初始化时申请的连接数量，不够用时可以增加个数-->
+    <property name="maxPoolSize">10</property> <!--最大的连接数量 -->
+    <property name="checkoutTimeout">3000</property> <!--超时时间，出现错误时，等待多长时间后报错-->
+
+  </named-config>
+</c3p0-config>

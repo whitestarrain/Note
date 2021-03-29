@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo12</title>
+    </head>
+    <style>
+    </style>
+    <body>
+        <input type="button" value="设置" id="btn" />
+        <select name="" id="select1">
+            <option value="1">11</option>
+            <option value="2">22</option>
+            <option value="3">33</option>
+            <option value="4">44</option>
+            <option value="5">55</option>
+        </select>
+        <script>
+            var select1 = document.getElementById("select1");
+            var options = select1.getElementsByTagName("option");
+            var option;
+            var btn = document.getElementById("btn");
+            btn.onclick = function() {
+                option = options[Math.floor(Math.random() * options.length)];
+                option.selected = true;
+            };
+        </script>
+    </body>
+</html>

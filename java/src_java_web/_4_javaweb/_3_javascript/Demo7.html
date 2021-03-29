@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo7 事件</title>
+    </head>
+    <body>
+        <input id="button1" type="button" value="点击" />
+        <br />
+        <img src="../../../source/MAIN_NOTE/image/MySQL-1.jpg" alt="" />
+    </body>
+    <script>
+        //获取按钮(事件源)
+        var btn = document.getElementById("button1");
+        var img = document.getElementsByTagName("img");
+        var turn = true;
+        console.dir(btn);
+        console.dir(img);
+        //注册事件（所有事件以on开头）
+        btn.onclick = function() {
+            //将匿名函数（事件处理函数）注册给onclick事件。
+            if (turn)
+                img[0].src = "../../../source/MAIN_NOTE/image/annotation-1.jpg";
+            else
+                img[0].src="../../../source/MAIN_NOTE/image/MySQL-1.jpg";
+            turn=!turn;
+        };
+    </script>
+</html>

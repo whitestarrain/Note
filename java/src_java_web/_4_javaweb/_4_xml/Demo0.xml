@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<users>
+    <user>
+        <name>1111</name>
+    </user>
+    
+    <user>
+    </user>
+    <bean id="fa"></bean>
+    
+</users>

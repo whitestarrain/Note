@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Dmoe1</title>
+    </head>
+    <body>
+        <header>页头</header>
+        <nav>导航栏</nav>
+        <article>定义文章</article>
+        <section>定义小区块</section>
+        <aside>定义侧边</aside>
+        <footer>页面底部</footer>
+
+        <input type="text" value="输入数字" list="number" />
+        <datalist id="number">
+            <!-- datalist通过id与list建立连接 -->
+            <option>1</option>
+            <option>12</option>
+            <option>13</option>
+            <option>21</option>
+        </datalist>
+
+        <br /><br />
+
+        <fieldset>
+            <!-- 对表单中的内容进行打包 -->
+
+            <legend>用户登陆</legend>
+            <!-- 镶在fieldset的上面那条边上 -->
+            用户名：<input type="text" name="" id="" /><br />
+            密&nbsp;&nbsp;&nbsp;码：<input type="text" name="" id="" />
+        </fieldset>
+
+        用户名：
+        <input
+            type="text"
+            placeholder="请输入用户名"
+            autofocus="autofocus"
+        /><!--  * 占位符| 页面加载时进行自动聚焦 -->
+        <!-- 也能只写个autofocus -->
+
+        <input type="file" name="" id="" multiple /><!-- 允许多文件上传 -->
+
+        <form action="">
+            <input type="text" name="autotest" id="" /><br />
+            <input type="submit" value="提交" />
+            <input type="text" required />
+            <input type="text" name="" id="" accesskey="s" />
+            <!-- alt+accesskey快速聚焦光标 -->
+        </form>
+        <audio src="" autoplay controls loop="-1"></audio><!-- 默认不自动播放 -->
+
+        
+    </body>
+</html>

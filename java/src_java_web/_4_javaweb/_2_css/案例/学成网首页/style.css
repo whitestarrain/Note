@@ -1,0 +1,206 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+ul {
+    list-style: none;
+}
+.clearfix:befor,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+.clearfix:after {
+    clear: both;
+}
+.clearfix {
+    *zoom: 1;
+}
+.container {
+    /* 版心宽度为1200且居中对其 */
+    width: 1200px;
+    margin: 0 auto;
+}
+/* css一开始基本都要写上面的东西，css初始化 */
+/* css初始化结束 */
+
+header {
+    height: 100px;
+    overflow: hidden; /* 解决外边距合并 */
+}
+body {
+    background-color: #f3f5f7; /* 整个页面背景色 */
+}
+nav {
+    width: 1366px;
+    height: 42px;
+    margin: 26px auto;
+}
+a {
+    color: #050505;
+    text-decoration: none;
+}
+.logo {
+    float: left;
+}
+.navbar {
+    float: left;
+    height: 42px;
+    line-height: 42px; /* 行高可以继承，设定行高使其中元素上下居中 */
+    margin-left: 50px;
+}
+.navbar li {
+    float: left;
+}
+.navbar li a {
+    padding: 0 8px; /* 上下0 左右8px */
+    display: block;
+    height: 42px;
+}
+.navbar li:hover {
+    border-bottom: 2px solid #00a4ff;
+}
+
+.search {
+    height: 38px;
+    width: 410px; /* 360 50 */
+    border: 1px solid #00a4ff;
+    float: right;
+}
+.search input[type="text"] {
+    /* 属性选择器 选取type为text的 */
+    border: none;
+    width: 340px;
+    height: 38px;
+    padding-left: 20px;
+    float: left;
+}
+.search input[type="submit"] {
+    width: 50px;
+    height: 38px;
+    border: none;
+    background-color: #00a4ff;
+    float: left;
+    background: #00a4ff url(./images/search_06.png) center center no-repeat;
+}
+
+/* banner start */
+.banner {
+    background-color: #1b036b;
+    height: 420px;
+}
+/* banner end */
+
+.banner-in {
+    height: 420px;
+    background: url(./images/banner_03.png) 0 0 no-repeat;
+}
+.sliderbar {
+    height: 420px;
+    width: 190px;
+    background-color: rgba(0, 0, 0, 0.4);
+    float: left;
+}
+.sliderbar li a {
+    color: #fff;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 0 20px;
+    display: block;
+    height: 45px; /* 因为下面有行高，可以撑开盒子，所以在单行情况下，这句话写不写都行 */
+    line-height: 45px;
+}
+.sliderbar a span {
+    float: right;
+    font-family: Arial, Helvetica, sans-serif;
+    /* 一般情况下符号都用arial */
+}
+.sliderbar li a:hover {
+    color: #00a4ff;
+}
+.timetable {
+    width: 230px;
+    height: 300px;
+    float: right;
+    background-color: #f3f5f7;
+    margin-top: 60px;
+}
+.timetable dt {
+    height: 50px;
+    background-color: purple;
+    text-align: center;
+    line-height: 50px;
+    color: #f3f5f7;
+    font-weight: 700;
+    letter-spacing: 3px /* 字间距 */;
+    margin-bottom: 10px;
+}
+.timetable dd {
+    width: 193px;
+    height: 58px;
+    margin: 0 auto;
+    border-bottom: 2px #bcd1e6 solid;
+}
+.timetable dd h4 {
+    color: #898989;
+}
+.timetable dd p {
+    color: #bbb;
+    font-size: 14px;
+}
+.timetable dd:last-child {
+    margin: 0px auto;
+    border-bottom: none;
+}
+.timetable dd:last-child div {
+    color: #00a4ff;
+    line-height: 40px;
+    margin-top: 10px;
+    text-align: center;
+    border: 2px solid #00a4ff;
+    font-weight: 700;
+    transition: all 0.5s ease-out 0s;
+}
+.timetable dd:last-child div:hover {
+    color: #fff;
+    background-color: #00a4ff;
+}
+.recommend {
+    background-color: #fefefe;
+    height: 60px;
+    margin-top: 10px;
+    box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.2);
+    padding: 0px 10px;
+    box-sizing: border-box;
+}
+.recommend li {
+    float: left;
+}
+/* 笔记：
+行内元素不会给高加边框
+但行内块元素会
+因此使li做 */
+.recommend li:last-child {
+    float: right;
+}
+
+.recommend li a {
+    font-size: 20px;
+    padding: 0px 30px;
+    line-height: 60px;
+    color: #504e4e;
+    text-decoration: none;
+    border-right: 1px solid #898989;
+}
+.recommend li a:hover {
+    color: #00a4ff;
+}
+.recommend li:nth-of-type(1) a {
+    color: #00a4ff;
+}
+.recommend li:last-of-type a {
+    border: none;
+    color: #00a4ff;
+    margin-right: 0px;
+    font-size: 16px;
+}

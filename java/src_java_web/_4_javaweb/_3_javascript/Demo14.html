@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Document</title>
+    </head>
+    <body>
+        <div id="box">hello</div>
+        <p id="p">world</p>
+        <!-- 这是注释 -->
+        <script>
+            var box = document.getElementById("box");
+            console.dir(box);
+            // 创建一些列具有相同属性的对象，构造函数
+
+            // 获取对象没有的属性，属性的值是undefined
+            function Node(options) {
+                // 设置属性的默认值
+                this.className = options.className || "";
+                this.id = options.id || "";
+                // 跟节点相关的属性
+                // 节点的名称，如果是元素的节点的话，是标签的名称
+                this.nodeName = options.nodeName || "";
+                // 节点的类型  如果是元素节点 1 属性节点 2  文本节点 3  数值类型
+                this.nodeType = options.nodeType || 1;
+                // 记录节点的值，如果是元素节点，始终是null
+                this.nodeValue = options.nodeValue || null;
+                // 记录子节点
+                this.children = options.children || [];
+            }
+
+            // 创建html节点
+            var html = new Node({
+                nodeName: "html"
+            });
+
+            // 创建head节点
+            var head = new Node({
+                nodeName: "head"
+            });
+            // 设置html中的子节点 head
+            html.children.push(head);
+            // console.dir(html)
+
+            // body
+            var body = new Node({
+                nodeName: "body"
+            });
+            // 设置html中的子节点 body
+            html.children.push(body);
+
+            // div
+            var div = new Node({
+                nodeName: "div"
+            });
+            // p
+            var p = new Node({
+                nodeName: "p"
+            });
+
+            // 设置body的子节点
+            body.children.push(div);
+            body.children.push(p);
+
+            console.dir(html);
+
+            // 在运行的时候，浏览器内部维护了一颗DOM树
+            // 1 深刻理解DOM
+            // 2 了解节点相关的属性  nodeName  nodeType  nodeValue
+            // 3 了解节点的层次结构
+        </script>
+    </body>
+</html>

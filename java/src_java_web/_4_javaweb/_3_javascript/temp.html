@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            div {
+                height: 600px;
+                width: 600px;
+                background-color: aqua;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="div1"></div>
+        <script>
+            /*   var div1 = document.getElementById("div1");
+            function Obj(number) {
+                this.number = number;
+                this.div1 = div1;
+                this.show();
+                this.event();
+            }
+            Obj.prototype.show = function() {
+                var timerId = setInterval(() => {
+                    console.log(this.number);
+                }, 1000);
+            };
+            Obj.prototype.event = function() {
+                this.div1.addEventListener(
+                    "mouseover",
+                    function(e) {
+                        console.log(1);
+                    },
+                    false
+                );
+            }; */
+
+            document.addEventListener(
+                "keydown",
+                function(e) {
+                    console.log(e.keyCode);
+                },
+                false
+            );
+            
+        </script>
+    </body>
+</html>

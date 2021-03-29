@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo6 DOM</title>
+    </head>
+    <body>
+        <div>1</div>
+        <div>
+            <div></div>
+            <div></div>
+        </div>
+        <div id="aaaa">
+            <div></div>
+            <div></div>
+        </div>
+        <div>4</div>
+        <div>555</div>
+    </body>
+    <script>
+        var divs = document.getElementsByTagName("div");
+        console.dir(divs);
+        /*  for (var i = 0; i < divs.length; i++) {
+            console.dir(divs[i]);
+        } */
+        var aaaa = document.getElementById("aaaa");
+        console.dir(aaaa);
+        console.dir(aaaa.getElementsByTagName('div'));
+    </script>
+</html>

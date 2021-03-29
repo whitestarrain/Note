@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo15</title>
+    </head>
+    <style></style>
+    <body>
+        <div id="div1">
+            divtext
+            <span id="span1">spantext</span>
+        </div>
+        <script>
+            var div = document.querySelector("div:first-of-type");
+            if (div.hasChildNodes())
+                console.dir(div.childNodes); /* 此处有3个节点 */
+        </script>
+    </body>
+</html>

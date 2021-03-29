@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo8</title>
+        <style>
+            div.show {
+                height: 200px;
+                width: 200px;
+                background-color: pink;
+            }
+            div.hidden {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="button" value="隐藏" id="btn1" />
+        <div class="show" id="div1"></div>
+
+        <script>
+            var btn = document.getElementById("btn1");
+            var div1 = document.getElementById("div1");
+            var trun = true;
+            btn.onclick = function() {
+                if (trun) {
+                    div1.className = "hidden";
+                    this.value = "显示";
+                } else {
+                    div1.className = "show";
+                    this.value = "隐藏";
+                }
+                trun = !trun;
+            };
+        </script>
+    </body>
+</html>

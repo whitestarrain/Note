@@ -1,0 +1,349 @@
+/*
+* @Author: apple
+* @Date:   2017-07-20 16:24:21
+* @Last Modified by:   apple
+* @Last Modified time: 2017-07-20 18:39:23
+*/
+	/* 样式 */
+			/* css初始化 */
+			
+			* {
+				margin: 0;
+				padding: 0;  /* 清除内外边距 */
+			}
+			ul {
+				list-style: none; /* 去掉列表样式小点 */
+			}
+			.clearfix:before, .clearfix:after {   /* 清除浮动 */
+				display: table;
+				content: "";
+			}
+			.clearfix:after {
+				clear: both;
+			}
+			.clearfix {
+				*zoom: 1;
+			}
+			a {
+				color: #050505;
+				text-decoration: none;  /* 取消下划线 */
+			}
+			input {
+				border: 0;  /* 所有的表单边框为0 */
+				box-sizing: border-box; /* CSS3盒子模型 border 和 padding 都包含到 width 里面去 */
+			}
+
+			.container {  /* 因为我们的版心宽度都是1200 都要居中对齐 我们就声明一个公共类 */
+				width: 1200px;
+				margin: 0 auto;
+			}
+			/* css初始化结束 */
+			/* 页面头部分 */
+			body {
+				background-color: #f3f5f7;  /* 整个页面的背景色 */
+			}
+			header {
+				height: 100px; 
+				/* background-color: pink; */
+				overflow: hidden;
+			}
+			nav {
+				width: 1366px; /* 宽度暂且定为1366 */
+				height: 42px;
+				margin: 26px auto ; /*  盒子水平居中对齐 */
+			}
+			.logo {
+				float: left;
+			}
+			.navbar {
+				float: left;
+				height: 42px;
+				line-height: 42px;  /* 这个行高给父亲， 行高会继承 */
+				margin-left: 50px;
+			}
+			.navbar li {
+				float: left;  /* 让 首页 课程 这个一行显示 */
+			}
+			.navbar li a {  
+				padding: 0 10px; /*  上下 0  左右 8像素 */
+				display: block; /*  a是行内元素，给高需要转换块级 */
+				height: 42px;
+			}
+			.navbar li a:hover {
+				border-bottom: 2px solid #00a4ff;  /* 鼠标放入底边框 */
+			}
+			
+			/* 搜索框部分开始 */
+			.search {
+				width: 410px;  /* 360 + 50 */
+				height: 38px;
+				border: 1px solid #00a4ff;
+				float: right;
+			}
+			.search input[type=text] {  /* 属性选择器  type 为 text 的文本框 */
+				/* background-color: pink; */
+				width: 360px;
+				height: 38px;
+				padding-left: 20px;
+				float: left;
+			}
+			.search input[type=submit]{/* 属性选择器  type 为 submit 的文本框 */
+				width: 50px;
+				height: 38px;
+				float: left;
+				background: #00a4ff url(images/search_06.png) center center no-repeat;
+			} 
+			/* 搜索框部分结束 */
+			/* 个人中心开始 */
+			.personal {
+				float: right;
+				height: 42px;
+				line-height: 42px;  /* 这个行高给父亲， 行高会继承 */
+				margin: 0 15px 0 35px;  /* 上0 右 15  下0 左  35 */
+			}
+			.personal img {
+				margin: 0 8px;
+			}
+			/* 个人中心结束 */
+			/* banner start */
+			.banner {
+				height: 420px;
+				background-color: #1c036c;
+			}
+			.banner-in {
+				height: 420px;
+				background:  url(images/banner_03.png) 0 0 no-repeat;
+				position: relative;  /* 子绝父相 */
+			}
+			.slidebar {
+				height: 420px;
+				width: 190px;
+				background: rgba(0, 0, 0, 0.3);/*  盒子背景半透明 */
+				float: left;
+			}
+			.slidebar li a {
+				color: #fff;
+				font-size: 14px;
+				padding: 0 20px;
+				/* a是行内元素，没有大小需要转换 */
+				display: block;
+				line-height: 45px; /* 单行垂直居中 个人经验，很多情况下， 有了行高可以不用给高度 */
+
+			}
+			.slidebar li a:hover {
+				color: #00a4ff ;
+			}
+			.slidebar a span {
+				float: right;
+				font-family: arial; /* 一般情况我们的符号都用这个字体 */
+			}
+			.timetable {
+				float: right;
+				width: 230px;
+				height: 300px;
+				background-color: #fff;
+				margin-top: 50px;
+			}
+			.timetable dt {
+				height: 50px;
+				line-height: 50px;
+				background-color: #9bceea;
+				text-align: center; /* 文字水平居中 */
+				color: #fff;
+				font-weight: 700;  /* 文字加粗 */
+				letter-spacing: 2px; /* 设置字间距 */
+				margin-bottom: 5px;
+			}
+			.timetable dd {
+				width: 193px;
+				height: 60px;
+				margin: 0 auto;
+				border-bottom: 1px solid #ccc;
+				padding-top: 12px;
+				box-sizing: border-box;
+			}
+			.timetable dd:last-child { /* 结构伪类选择器 选最后一个孩子 但是要求这个孩子是dd */
+				border: 0;
+			}
+			.timetable dd h4 {
+				font-size: 16px;
+				font-weight: normal;  /*  让粗体不变粗 */
+				color: #4e4e4e;
+			}
+			.timetable dd p {
+				color: #a5a5a5;
+				font-size: 14px;
+			}
+			.timetable dd a {
+				height: 38px;
+				border: 1px solid #00a4ff;
+				display: block;
+				text-align: center;
+				line-height: 38px;
+				color: #00a4ff;
+				font-weight: 700; /* 文字加粗 700 不要加单位 */ 
+
+				/* ctrl+g 快速到某一行  */
+			}
+			.timetable dd a:hover { /* 自己添加 */
+				background-color: #00a4ff;
+				color: #fff;
+			}
+
+			/* 小圆点模块 */
+			.circle {
+				width: 180px;
+				height: 22px;
+				/* background-color: pink; */
+				position: absolute;
+				bottom: 10px;
+				left: 50%; /* 父盒子宽度的一半 */
+				margin-left: -90px;  /* 水平居中算法 */
+			}
+			.circle li { /*  0011 权重 */
+				float: left; 
+				width: 12px;
+				height: 12px;
+				background: rgba(255, 255, 255, 0.4);
+				margin: 6px 8px;  /* 上下6 左右 8 */
+				border-radius: 50%;
+
+			}
+			.circle .current {
+				width: 19px;
+				border-radius: 5px;
+				background-color: #fff;
+			}
+			/* banner end */
+
+			/* 精品推荐模块 start*/
+			.recommend {
+				height: 60px;
+				line-height: 60px;
+				background-color: #fff;
+				margin-top: 8px;
+				box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+				/* 盒子阴影 水平位置  垂直位置  模糊距离  影子颜色 */
+			}
+
+			.recommend a {
+				padding: 0 30px;
+				border-right: 1px solid #ccc;
+			}
+			.recommend a:hover {
+				color: #00a4ff;
+			}
+			.recommend a:first-child {
+				color: #00a4ff;
+			}
+			.recommend a:last-child {
+				color: #00a4ff;
+				border: 0;
+				float: right;
+				font-size: 14px;
+			}
+			.recom-products {
+				margin-top: 35px;
+			}
+			.recom-hd {
+				height: 40px;
+			}
+			.recom-hd h4 {
+				float: left;
+				color: #494949;
+			}
+			.recom-hd a {
+				float: right;
+				margin-top: 10px;
+				margin-right: 30px;
+				font-size: 14px;
+				color: #a5a5a5;
+			}
+			.recom-hd a:hover {
+				color: #00a4ff;
+			}
+			/* 精品推荐主体部分 */
+			.recom-bd ul li {
+				width: 228px;
+				height: 270px;
+				background-color: #fff;
+				overflow: hidden;  /* 溢出隐藏 */
+				/* box-shadow:水平阴影 垂直阴影 模糊距离 阴影尺寸 阴影颜色  内/外阴影； */
+				box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2);
+				float: left;
+				margin-right: 15px;
+				margin-top: 15px;
+			}
+			.recom-bd ul li:nth-child(5n) { /*  5n     n从0开始的， 0 1 2 3  5n 就是5 的倍数 */
+				margin-right: 0;
+			}
+
+			.recom-bd li h5, 
+			.recom-bd li p {
+				padding: 0 20px 0 24px;
+				margin-top: 12px;
+			}
+			.recom-bd li h5 {
+				font-size: 14px;
+				line-height: 22px;
+				font-weight: normal;
+			}
+			.recom-bd li p {
+				font-size: 12px;
+				color: #999;
+			}
+			.recom-bd  p span {
+				color: #ff7c2d;
+			}
+
+			/* 页面底部分 */
+			footer {
+				height: 270px;
+				background-color: #fff;
+				margin-top: 100px;
+			}
+			.footer-in {
+				padding-top: 30px;
+
+			}
+			.footer-l {
+				float: left;
+			}
+			.footer-l p {
+				font-size: 12px;
+				line-height: 18px;
+				color: #999;
+				margin-top: 20px;
+			}
+			.footer-l a {
+				display: block;
+				width: 118px;
+				height: 33px;
+				border: 1px solid #00a4ff;
+				font-size: 16px;
+				color: #00a4ff;
+				text-align: center;
+				line-height: 33px;
+				margin-top: 15px;
+			}
+			.footer-r {
+				float: right;
+				color: #333;
+			}
+			.footer-r dl {
+				float: left;
+				width: 225px;
+			}
+			.footer-r dt {
+				font-size: 16px;
+				height: 30px;
+			}
+			.footer-r dd {
+				font-size: 12px;
+				height: 20px;
+			}
+			.footer-r dd a:hover {
+				color: #00a4ff;
+				text-decoration: underline; /*  添加下划线 */
+			}
+			

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Demo13</title>
+        <style>
+            * {
+                padding: 0px;
+                margin: 0px;
+            }
+            ul {
+                list-style: none;
+            }
+            .clearfix:before,
+            .clearfix:after {
+                display: table;
+                content: "";
+            }
+            .clearfix:after {
+                clear: both;
+            }
+            body {
+                background: url(media/3S9sFMD.jpg) repeat-x;
+            }
+            .nav {
+                height: 75px;
+                margin-top: 20px;
+            }
+            .nav li {
+                float: left; /* 加了浮动后，里面的a和span就无法继承宽度了，所以要靠自己撑开 */
+                margin-right: 10px;
+            }
+            .nav li a {
+                display: block; /* 因为无法从浮动的li上继承宽度，所以需要自己撑开 */
+                background: url(media/lTcb_ve.png) no-repeat;
+                line-height: 33px; /* 有了行高就不用给高了 */
+                font-size: 14px;
+                color: aliceblue;
+                text-decoration: none;
+                padding-left: 15px;
+            }
+            .nav li a span {
+                display: block; /* 因为无法从浮动的li上继承宽度，所以需要自己撑开*/
+                line-height: 33px;
+                background: url(media/lTcb_ve.png) no-repeat right center;
+                padding-right: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="nav">
+            <ul>
+                <li>
+                    <a href="">
+                        <span>首页</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="">
+                        <span>帮助与反馈</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="">
+                        <span>帮助与反馈</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="">
+                        <span>帮助与反馈</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>

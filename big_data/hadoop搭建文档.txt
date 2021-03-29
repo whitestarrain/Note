@@ -1,0 +1,405 @@
+伪分布式 （single node setup）
+---------------------------
+
+
+安装jdk、配置环境变量，测试
+
+
+免秘钥
+ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+
+
+hadoop包安装并配置环变：hadoop-2.6.5.tar.gz
+
+
+Hadoop的第二次JAVA_HOME 环境变量配置
+
+vi hadoop-env.sh
+vi mapred-env.sh
+vi yarn-env.sh
+
+配置core-site.xml
+vi core-site.xml
+
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://node06:9000</value>
+    </property>
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>/var/sxt/hadoop/local</value>
+    </property>
+
+
+配置hdfs-site.xml
+              
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>dfs.namenode.secondary.http-address</name>
+        <value>node06:50090</value>
+    </property>
+配置slaves文件
+                 vi slaves node06
+格式化hdfs
+          hdfs namenode -format  (只能格式化一次，再次启动集群不要执行）
+启动集群
+         start-dfs.sh
+
+角色进程查看：jps
+帮助： hdfs 
+       hdfs dfs 	
+
+查看web UI: IP:50070
+     创建目录：hdfs dfs  -mkdir -p  /user/root
+		
+     查看目录:  hdfs dfs -ls   /
+	
+     上传文件： hdfs dfs -put  hadoop-2.6.5.tar.gz   /user/root				
+    
+      停止集群：stop-dfs.sh
+
+
+
+全分布安装
+---------------------------------------------
+前期准备：
+
+jdk
+hostname
+hosts
+date
+安全机制
+firewall
+windows 域名映射
+
+节点： node06/07/08/09
+全分布分配方案：
+
+		NN		SNN		DN
+NODE06		*
+NODE07				*		*	
+NODE08						*
+NODE09						*
+
+
+节点状态：
+	node06： 伪分布
+	node07/08/09 :  ip配置完成
+建立各节点通讯（hosts）
+
+设置时间同步：date -s “xxxx-x-xx xx:xx:xx”
+
+
+秘钥分发： 
+在每个节点上登录一下自己：产生.ssh目录
+从node06向node07/node08/node09分发公钥 (公钥的名称要变化)
+scp  id_dsa.pub   node03:`pwd`/node06.pub
+
+各节点把node01的公钥追加到认证文件里：
+cat ~/node06.pub  >> ~/.ssh/authorized_keys
+
+
+07/node08/node09安装jdk环境，node06分发profile给其他节点，并重读配置文件
+
+分发hadoop部署程序2.6.5 到其他节点
+
+
+copy node06 下的 hadoop 为 hadoop-local （管理脚本只会读取hadoop目录）
+
+[root@node06 etc]# cp -r hadoop   hadoop-local
+
+配置core-site.xml
+配置hdfs-site.xml
+配置slaves
+
+分发sxt到其他07,08，09节点
+
+格式化集群：hdfs namenode -format
+
+启动集群：start-dfs.sh
+Jps  查看各节点进程启动情况
+
+
+HA 
+------------------------------------------
+
+		NN1		NN2		DN		ZK		ZKFC		JNN
+NODE06		*								*		*
+NODE07				*		*		*		*		*
+NODE08						*		*				*
+NODE09						*		*
+
+
+两个nn节点免秘钥
+ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+
+-------------------------
+进入hadoop-2.6.5/etc目录 (可以通过变量：cd $HADOOP_HOME)
+拷贝hadoop 为 hadoop-full
+
+
+
+hdfs.xml
+---------------------------------------
+
+去掉snn的配置
+
+ <property>
+                  <name>dfs.namenode.secondary.http-address</name>
+          	  <value>node07:50090</value>
+ </property>
+
+
+增加：
+
+<property>
+  <name>dfs.nameservices</name>
+  <value>mycluster</value>
+</property>
+<property>
+  <name>dfs.ha.namenodes.mycluster</name>
+  <value>nn1,nn2</value>
+</property>
+<property>
+  <name>dfs.namenode.rpc-address.mycluster.nn1</name>
+  <value>node06:8020</value>
+</property>
+<property>
+  <name>dfs.namenode.rpc-address.mycluster.nn2</name>
+  <value>node07:8020</value>
+</property>
+<property>
+  <name>dfs.namenode.http-address.mycluster.nn1</name>
+  <value>node06:50070</value>
+</property>
+<property>
+  <name>dfs.namenode.http-address.mycluster.nn2</name>
+  <value>node07:50070</value>
+</property>
+
+<property>
+  <name>dfs.namenode.shared.edits.dir</name>
+  <value>qjournal://node06:8485;node07:8485;node08:8485/mycluster</value>
+</property>
+
+<property>
+  <name>dfs.journalnode.edits.dir</name>
+  <value>/var/sxt/hadoop/ha/jn</value>
+</property>
+
+
+<property>
+  <name>dfs.client.failover.proxy.provider.mycluster</name>
+  <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+</property>
+<property>
+  <name>dfs.ha.fencing.methods</name>
+  <value>sshfence</value>
+</property>
+<property>
+  <name>dfs.ha.fencing.ssh.private-key-files</name>
+  <value>/root/.ssh/id_dsa</value>
+</property>
+
+<property>
+   <name>dfs.ha.automatic-failover.enabled</name>
+   <value>true</value>
+ </property>
+
+core-site.xml
+-----------------------------------------
+
+hadoop.tmp.dir的配置要变更：/var/sxt/hadoop-2.6/ha
+
+<property>
+  <name>fs.defaultFS</name>
+  <value>hdfs://mycluster</value>
+</property>
+
+<property>
+   <name>ha.zookeeper.quorum</name>
+   <value>node07:2181,node08:2181,node09:2181</value>
+</property>
+
+
+分发 hdfs.xml 和core.xml　给其他节点
+
+
+安装zookeeper集群：
+----------------------------
+1.3节点 java 安装 
+
+2.所有集群节点创建目录: mkdir opt/sxt  
+
+3.zk压缩包解压在其他路径下:：
+	#	tar xf zookeeper-3.4.6.tar.gz -C /opt/sxt/
+
+4.进入conf目录，拷贝zoo_sample.cfg zoo.cfg 并配置
+   dataDir，集群节点。
+
+5.单节点配置环境变量、并分发 ZOOKEEPER_PREFIX，共享模式读取profile 
+
+6. 共享创建 /var/sxt/zk目录，进入各自目录 分别输出1,2，3 至文件 myid
+	echo 1 > /var/sxt/zk/myid
+	...
+
+7. 共享启动zkServer.sh start 集群
+
+
+8.启动客户端 help命令查看
+
+
+6,7,8节点启动jn 集群
+-------------------------
+hadoop-daemon.sh start journalnode
+
+随意找一个nn节点格式化：
+[root@node06 hadoop]# hdfs namenode -format
+
+启动该节点：
+[root@node06 hadoop]# hadoop-daemon.sh start namenode
+
+另一nn节点同步：
+[root@node07 sxt]# hdfs namenode -bootstrapStandby
+
+（同步成功，会发现同步另一个nn节点的clusterID 不是秘钥分发，而是同步过来的）
+
+cat /var/sxt/hadoop/ha/dfs/name/current/VERSION
+
+
+格式化zkfc，在zookeeper中可见目录创建：
+
+[root@node06 hadoop]# hdfs zkfc -formatZK
+
+（ha.ActiveStandbyElector: Successfully created /hadoop-ha/mycluster in ZK.）
+
+在zookeeper 客户端可见：
+
+[zk: localhost:2181(CONNECTED) 1] ls /
+[hadoop-ha, zookeeper]
+[zk: localhost:2181(CONNECTED) 2] ls /hadoop-ha
+[mycluster]
+
+
+启动hdfs集群;
+
+start-dfs.sh
+
+
+再次查看zk客户端，可见：
+[zk: localhost:2181(CONNECTED) 9] ls /hadoop-ha/mycluster
+[ActiveBreadCrumb, ActiveStandbyElectorLock]
+
+或者两个目录的数据，谁是主谁被创建：
+[zk: localhost:2181(CONNECTED) 11] get /hadoop-ha/mycluster/ActiveBreadCrumb
+
+
+mr-hd2.x yarn
+------------------------------------------------
+
+		NN1		NN2		DN		ZK		ZKFC		JNN		RS		NM
+NODE06		*								*		*				
+NODE07				*		*		*		*		*				*
+NODE08						*		*				*		*		*
+NODE09								*						*		*
+
+
+
+node06: 
+
+
+
+两个rm节点互免秘钥：
+
+
+08节点 .ssh 目录下： ssh-keygen -t dsa -P '' -f ./id_dsa
+		    cat ~id_dsa.pub >> authorized_keys
+
+		    scp id_dsa.pub root@node09:`pwd`/node08.pub
+
+09节点 .ssh 目录下 ：
+		cat node08.pub >> authorized_keys
+		ssh-keygen -t dsa -P '' -f ./id_dsa
+		cat ~id_dsa.pub >> authorized_keys
+	        scp id_dsa.pub root@node08:`pwd`/node09.pub
+		
+08节点 .ssh 目录下：
+		cat node09.pub >> authorized_keys
+
+
+
+（别忘了退出）
+
+重命名:  mv mapred-site.xml.template mapred-site.xml  
+
+mapred-site.xml
+==============================
+
+<property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+</property>
+
+
+=================================
+yarn-site.xml:
+=================================
+
+<property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+<property>
+   <name>yarn.resourcemanager.ha.enabled</name>
+   <value>true</value>
+ </property>
+ <property>
+   <name>yarn.resourcemanager.cluster-id</name>
+   <value>cluster1</value>
+ </property>
+ <property>
+   <name>yarn.resourcemanager.ha.rm-ids</name>
+   <value>rm1,rm2</value>
+ </property>
+ <property>
+   <name>yarn.resourcemanager.hostname.rm1</name>
+   <value>node08</value>
+ </property>
+ <property>
+   <name>yarn.resourcemanager.hostname.rm2</name>
+   <value>node09</value>
+ </property>
+ <property>
+   <name>yarn.resourcemanager.zk-address</name>
+   <value>node07:2181,node08:2181,node09:2181</value>
+ </property>
+
+
+分发两个文件到：07，08,09节点
+scp maprexxxx   yarn-xxx node07:`pwd`
+scp maprexxxx   yarn-xxx node08:`pwd`
+scp maprexxxx   yarn-xxx node09:`pwd`
+
+
+启动：node06:
+
+1 zookeeper
+2 hdfs （注意，有一个脚本不要用，start-all）start-dfs.sh
+  如果nn 和 nn2没有启动，需要在node06，node07分别手动启动：
+  hadoop-daemon.sh start namenode	
+3 start-yarn.sh (启动nodemanager)
+4 在08,09节点分别执行脚本： yarn-daemon.sh start resourcemanager
+
+UI访问： ip：8088
+
+
+停止：
+node06: stop-dfs.sh 
+node06: stop-yarn.sh (停止nodemanager)
+node07,node08: yarn-daemon.sh stop resourcemanager （停止resourcemanager）
+

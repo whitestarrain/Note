@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo4</title>
+    <script>
+        var people={
+            name,
+            age:18
+        }
+        function dog(name,age,color) {
+            this.name=name;
+            this.age=age;
+            this.color=color;
+            this.toString=function(){//添加并覆盖toString
+                return name+age+color;
+            }
+        }
+        var dog1=new dog('1','2','white');
+        console.log(dog1);
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

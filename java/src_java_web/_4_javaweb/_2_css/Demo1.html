@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+
+        <style>
+            /* style中声明顺序代表优先权 */
+            body {
+                font-size: 14px;
+            }
+            p {
+                color: pink;
+                font-size: 40px;
+                font-family: "Times New Roman", Times, serif;
+                text-align: center;
+                font-style: normal;
+                text-indent: 2em;
+            }
+            em {
+                /* 归根到底，大多数的特殊标签，只是有默认样式，而我们可以去改变。 */
+                font-weight: normal;
+                font-style: italic;
+            }
+            div {
+                font: italic 900 18px "微软雅黑";
+                width: 200px;
+                height: 400px;
+                color: blueviolet;
+            }
+            .test {
+                color: #1619bb;
+            }
+            p:hover {
+                color: red;
+            }
+            .test:hover {
+                color: black;
+            }
+            #emtest:hover {
+                color: rgb(207, 26, 26);
+            }
+
+            li:nth-child(1) {
+                color: rgb(170, 59, 59);
+            }
+            #testul > li:nth-child(2n) {
+                /* 通过 [选择器]>li来确定哪个来匹配结构伪类选择器   没有选择器的话则是所有 */
+                color: #1619bb;
+            }
+        </style>
+    </head>
+    <body>
+        <p>11111111111111111111</p>
+        <em id="emtest">222222222222222</em>
+        <div class="test">12313</div>
+        <ul id="testul">
+            <li>11111</li>
+            <li>11111</li>
+            <li>11111</li>
+            <li>11111</li>
+        </ul>
+        <ul id="aaaaa">
+            <li>1234</li>
+            <li>1234</li>
+            <li>1234</li>
+        </ul>
+    </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>过渡</title>
+        <style>
+            body {
+                perspective: 1000px;
+            }
+            div:first-child {
+                width: 200px;
+                height: 100px;
+                background-color: pink;
+                transition: width 0.4s ease-in 0s, height 0.3s ease-out 0.4s;
+            }
+            div:first-child:hover {
+                width: 400px;
+                height: 200px;
+            }
+            div:last-child {
+                position: absolute;
+                top: 400px;
+                left: 600px;
+                height: 200px;
+                width: 400px;
+                width: 400px;
+                height: 200px;
+                background-color: #000;
+                transition: 0.6s;
+                transform-origin: left;
+            }
+            div:last-child:hover {
+                transform: rotateY(80deg);
+            }
+        </style>
+    </head>
+    <body>
+        <div></div>
+        <div></div>
+    </body>
+</html>

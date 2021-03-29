@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo18</title>
+    </head>
+    <body>
+        <input id="txt" type="text" />
+        <script>
+            // 键盘事件
+            // keydown 键盘按下的时候
+            // keyup   键盘弹起的时候
+            // keydown 和 keyup的区别  keydown的时候我们所按的键还没有落入文本框
+            // keyup键盘弹起的时候按的键已经落入文本框
+            var txt = document.getElementById("txt");
+            txt.onkeydown = function(e) {
+                // 判断当前用户按下的键是否是数字
+                e = e || window.event;
+
+                // 如果e.keyCode 的值在 48-57 是数字
+                // e.keyCode  键盘码
+                // console.log(e.keyCode);
+                // 按下后退键  8，删除一个字符
+                if ((e.keyCode < 48 || e.keyCode > 57) && e.keyCode !== 8) {
+                    // 非数字
+                    // 取消默认行为
+                    e.preventDefault();
+                    // return false;
+                }
+            };
+        </script>
+    </body>
+</html>

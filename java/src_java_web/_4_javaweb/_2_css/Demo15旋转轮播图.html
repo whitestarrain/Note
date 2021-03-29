@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>旋转轮播图</title>
+        <style>
+            body {
+                perspective: 1000px;
+            }
+            section {
+                height: 200px;
+                width: 300px;
+                margin: 200px auto 0px;
+                background-color: aqua;
+                position: relative;
+                transform-style: preserve-3d; /* 让父盒子里的子盒子拥有3d效果  可以尝试删了看看*/
+                transition: 5s linear; /* 默认是all */
+            }
+            section:hover {
+                transform: rotateY(360deg);
+            }
+            section div {
+                height: 200px;
+                width: 300px;
+                background-color: pink;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+            }
+            section div:nth-child(1) {
+                transform: rotateY(0deg) translateZ(400px);
+            }
+            section div:nth-child(2) {
+                transform: rotateY(60deg) translateZ(400px);
+            }
+            section div:nth-child(3) {
+                transform: rotateY(120deg) translateZ(400px);
+            }
+            section div:nth-child(4) {
+                transform: rotateY(180deg) translateZ(400px);
+            }
+            section div:nth-child(5) {
+                transform: rotateY(240deg) translateZ(400px);
+            }
+            section div:nth-child(6) {
+                transform: rotateY(300deg) translateZ(400px);
+            }
+        </style>
+    </head>
+    <body>
+        <section>
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+        </section>
+    </body>
+</html>

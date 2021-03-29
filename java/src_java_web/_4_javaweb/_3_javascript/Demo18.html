@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo18</title>
+        <style>
+            #deleteReminder {
+                display: none;
+                position: fixed;
+                height: 50px;
+                width: 100px;
+                top: 50%;
+                left: 50%;
+                margin-top: -25px;
+                margin-left: -50px;
+                background-color: red;
+                text-align: center;
+                line-height: 50px;
+            }
+        </style>
+        <script>
+            onload = function() {
+                var btn = document.getElementById("btn");
+                btn.onclick = function() {
+                    var deleteReminder = document.getElementById(
+                        "deleteReminder"
+                    );
+                    deleteReminder.style.display = "block";
+                    setTimeout(function() {
+                        deleteReminder.style.display = "none";
+                    }, 3000);
+                };
+            };
+        </script>
+    </head>
+    <body>
+        <input type="button" value="删除" id="btn" />
+        <div id="deleteReminder">删除成功</div>
+        <script>
+            /* 当所有元素创建完成后执行，不需要等待外部文件下载完毕 */
+        </script>
+    </body>
+</html>

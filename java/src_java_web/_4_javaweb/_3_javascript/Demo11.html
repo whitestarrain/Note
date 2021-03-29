@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo11</title>
+        <style>
+            input {
+                outline: none;
+            }
+            .warn {
+                border: 1px solid red;
+            }
+            .ok {
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="text" name="" id="txtPassword" placeholder="请输入密码" />
+        <br />
+        <input
+            type="button"
+            value="提交"
+            disabled="disabled"
+            id="summitbutton"
+        />
+        <script>
+            var txtPassword = document.getElementById("txtPassword");
+            var summitbutton = document.getElementById("summitbutton");
+            console.dir(summitbutton);
+            txtPassword.oninput = function() {
+                if (this.value.length > 6) {
+                    summitbutton.disabled = false;
+                    this.className='ok';
+                } else {
+                    summitbutton.disabled = true;
+                    this.className = "warn";
+                }
+            };
+        </script>
+    </body>
+</html>

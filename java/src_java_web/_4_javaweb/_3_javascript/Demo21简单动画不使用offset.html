@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Document</title>
+        <style>
+            body {
+                margin: 0;
+            }
+            #box {
+                position: relative;
+                background-color: red;
+                width: 100px;
+                height: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="button" value="开始" id="btn" />
+        <div id="box"></div>
+        <script>
+            // 1 点击按钮，让盒子能够向右移动
+            var btn = document.getElementById("btn");
+            var box = document.getElementById("box");
+            btn.onclick = function() {
+                // // style.left 获取的是标签中的style属性设置的样式属性的值
+                // // 如果标签中的style没有设置该样式属性，我们获取到的是空字符串
+                // console.log(box.style.left);
+                // // 10px10px  当我们给样式属性设置非法的值，浏览器会帮我们过滤掉
+                // console.log(box.style.left + 10 + 'px');
+                // box.style.left = box.style.left + 10 + 'px';
+                //
+                //
+                // 获取盒子当前的位置  offsetLeft  offsetTop
+                // box.style.left = box.offsetLeft + 10 + 'px';
+                //
+                // box.offsetLeft 只读属性
+                //
+                // 2 让盒子不停的向右移动
+                // 循环的速度非常非常非常快，瞬间循环100次
+                // for (var i = 0; i < 100; i++) {
+                //   box.style.left = box.offsetLeft + 5 + 'px';
+                // }
+
+                var timerId = setInterval(function() {
+                    // 让盒子停在500px的位置
+                    // 判断盒子当前的位置是否到达500
+                    //
+                    // 最终盒子停止的位置
+                    var target = 600;
+                    // 步进
+                    var step = 6;
+
+                    /* 一开始空字符串加0空字符串串不变味NaN。 不使用offsetleft可能效率较差*/
+                    if (parseInt(box.style.left + 0) >= target) {
+                        // 停止定时器
+                        clearInterval(timerId);
+                        // 设置横坐标为500
+                        box.style.left = target + "px";
+                        console.log(box.style.left);
+                        // 退出函数
+                        return;
+                    }
+                    box.style.left = parseInt(box.style.left + 0) + step + "px";
+                    console.log(box.style.left);
+                }, 30);
+            };
+        </script>
+    </body>
+</html>

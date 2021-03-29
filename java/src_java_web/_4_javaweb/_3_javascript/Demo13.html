@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8" />
+        <title>Demo13</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            ul {
+                list-style-type: none;
+            }
+            .box {
+                width: 400px;
+                height: 300px;
+                border: 1px solid #ccc;
+                margin: 100px auto;
+                overflow: hidden;
+            }
+            .hd {
+                height: 45px;
+            }
+            .hd span {
+                display: inline-block;
+                width: 90px;
+                background-color: pink;
+                line-height: 45px;
+                text-align: center;
+                cursor: pointer;
+            }
+            .hd span.current {
+                background-color: purple;
+            }
+            .bd div {
+                height: 255px;
+                background-color: purple;
+                display: none;
+            }
+            .bd div.current {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="box">
+            <div class="hd" id="hd">
+                <span class="current">体育</span>
+                <span>娱乐</span>
+                <span>新闻</span>
+                <span>综合</span>
+            </div>
+            <div class="bd" id="bd">
+                <div class="current">我是体育模块</div>
+                <div>我是娱乐模块</div>
+                <div>我是新闻模块</div>
+                <div>我是综合模块</div>
+            </div>
+        </div>
+        <script src="common.js"></script>
+        <script>
+            // 1 鼠标放到tab栏高亮显示，其它tab栏取消高亮
+            var hd = my$("hd");
+            var spans = hd.getElementsByTagName("span");
+            for (var i = 0; i < spans.length; i++) {
+                var span = spans[i];
+                // 通过自定义属性，记录当前span的索引
+                span.setAttribute("index", i);
+                // 注册事件
+                span.onmouseover = fn;
+                /* 非匿名函数注册，可以在上面调用是因为预解析，
+                并且事件处理函数调用时，整个文档已经读取完毕。
+                同时也避免了重复声明函数，占用内存 */
+            }
+
+            // 鼠标经过的事件处理函数
+            function fn() {
+                // 让所有的span取消高亮显示
+                for (var i = 0; i < spans.length; i++) {
+                    var span = spans[i];
+                    span.className = "";
+                }
+                // 当前的span高亮显示
+                this.className = "current";
+
+                // 2 tab栏对应的div 显示，其它div隐藏
+                // 所有的div 隐藏
+                var bd = my$("bd");
+                var divs = bd.getElementsByTagName("div");
+                for (var i = 0; i < divs.length; i++) {
+                    var div = divs[i];
+                    div.className = "";
+                }
+                // 当前span对应的div显示
+                // 获取自定义属性的值
+                var index = parseInt(this.getAttribute("index"));
+                divs[index].className = "current";
+            }
+            // var fn = function () {
+
+            // }
+        </script>
+    </body>
+</html>

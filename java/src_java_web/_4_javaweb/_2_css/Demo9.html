@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Demo9</title>
+        <style>
+            * {
+                /* 清楚内外边距，css第一句话 */
+                margin: 0px;
+                padding: 0px;
+            }
+            .top,
+            .banner,
+            .main,
+            .footer {
+                width: 960px;
+                margin: 0px auto;
+                margin-bottom: 10px;
+            }
+            .top {
+                background-color: pink;
+                height: 150px;
+            }
+            .banner {
+                background-color: deeppink;
+                height: 200px;
+            }
+            .main {
+                background-color: skyblue;
+                height: 400px;
+            }
+            .left {
+                background-color: #8abbe6;
+                width: 350px;
+                height: 400px;
+                float: left;
+            }
+            .right {
+                width:600px;
+                height: 400px;
+                background-color: #8ae6b0;
+                float:right;
+            }
+            .footer {
+                background-color: blue;
+                height: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="top">top</div>
+        <div class="banner">banner</div>
+        <div class="main">
+            <div class="left"></div>
+            <div class="right"></div>
+        </div>
+        <div class="footer">footer</div>
+    </body>
+</html>

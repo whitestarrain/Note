@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo9</title>
+        <style>
+            div:first-of-type {
+                height: 200px;
+                width: 800px;
+                border: 1px solid #363636;
+                overflow: hidden;
+            }
+            .smallimg {
+                height: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="gallery">
+            <a href="" id="link1">
+                <img
+                    src="../../../source/JS_NOTE/02/media/1497154623955.png"
+                    alt=""
+                    class="smallimg"
+            /></a>
+            <a href="">
+                <img
+                    src="../../../source/JS_NOTE/02/media/1497165666684.png"
+                    alt=""
+                    class="smallimg"
+            /></a>
+            <a href="">
+                <img
+                    src="../../../source/JS_NOTE/02/media/1497497865969.png"
+                    alt=""
+                    class="smallimg"
+            /></a>
+            <a href="">
+                <img
+                    src="../../../source/JS_NOTE/02/media/1498743288621.png"
+                    alt=""
+                    class="smallimg"
+            /></a>
+        </div>
+        <img id="show" src=" " alt="" />
+        <script>
+            /**
+             * 获取a标签(a标签用来添加点击事件，img标签没有)
+             * 给所有标签注册事件
+             * 取消a默认行为 （ a标签在onclick函数最后后写一个return false;可以防止网页跳转调整）
+             * 切换图片
+             */
+            var div = document.getElementById("gallery");
+            var links = div.getElementsByTagName("a");
+            var show = document.getElementById("show");
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i];
+                links[i].onclick = function() {
+                    // show.src=link.querySelector('img:first-of-type').src;
+                    /**
+                     * 当循环结束后，link指向最后一个标签，这会导致点那一个都指向最后一个
+                     * 因此要使用this
+                     */
+                    show.src = this.querySelector("img:first-of-type").src;
+                    return false;
+                };
+            }
+        </script>
+    </body>
+</html>

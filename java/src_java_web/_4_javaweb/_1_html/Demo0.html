@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<!-- 有这段话就说明为html5 -->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <!-- 字符集 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <base target="_blank" />
+        <title>Demo0</title>
+    </head>
+
+    <body>
+        <img src="temp.jpg" alt="无法显示" title="图片" width="300" />
+        <br />
+        <a href="http://www.baidu.com">百度</a>
+        <p>&nbsp;&nbsp;&it;&it;&copy;</p>
+        <a href="#test">锚点测试</a>
+        <img src="./9784865546026_LL.jpg" alt="图片加载失败" />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <p id="test">test处</p>
+    </body>
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <ol>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ol>
+
+    <!-- dl>dt{定义标题}+dd{定义描述，解释}*3 -->
+    <dl>
+        <dt>定义标题</dt>
+        <dd>定义描述，解释</dd>
+        <dd>定义描述，解释</dd>
+        <dd>定义描述，解释</dd>
+    </dl>
+
+    <!-- table>(thead>tr>th*3)+(tbody>(tr>td*3)*3) -->
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table
+        border="1"
+        width="500"
+        height="300"
+        style="border-spacing:
+        4;background-color: #518d21; border-collapse: 5px;"
+    >
+        <tr>
+            <th>0</th>
+            <th>0</th>
+            <th>0</th>
+            <!-- 表头 -->
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>2</td>
+            <td>3</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+
+    <!-- table>caption{表格标题}+((thead>tr>th*3)+(tbody>tr>td*3)) -->
+    <table width="500" height="300" border="1">
+        <caption>
+            表格标题
+        </caption>
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- table>(thead>tr>th*3)+(tbody>(tr>td*3)*2+(tr>td*2)) -->
+    <table width="500" height="300" border="1" align="center">
+        <thead>
+            <tr>
+                <th>1</th>
+                <th>1</th>
+                <th>1</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td rowspan="2">跨行合并</td>
+                <!-- 是向下跨 -->
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="2">跨列合并</td>
+                <!-- 向右合并 -->
+            </tr>
+        </tbody>
+    </table>
+
+    <p>用户名：<input type="text" value="请输入" /></p>
+    <p><input type="password" value="" maxlength="6" /></p>
+    <p>
+        <input type="radio" name="sex" id="" checked="checked" /> 男
+        <br /><!-- 单选框 -->
+        <!-- checked="checked" 表示默认选中 -->
+        <input type="radio" name="sex" id="" /> 女
+        <!-- 通过name来分组 -->
+    </p>
+    <!-- input:checkbox[name=aihao]*4 -->
+    <input type="checkbox" name="aihao" id="" />1
+    <!-- name用来分组 -->
+    <input type="checkbox" name="aihao" id="" />2
+    <!-- id用来区别组件 -->
+    <input type="checkbox" name="aihao" id="" />3
+    <input type="checkbox" name="aihao" id="" />4
+
+    <input type="button" value="搜索" />
+    <input type="submit" value="submit" />
+    <input type="submit" value="reset" />
+    <input
+        type="image"
+        src="../../../../../../../ACGN/图片/1.ico"
+        alt=""
+        title="test"
+    />
+    <input type="file" value="文件" name="file_test" id="" />
+    <p>
+        <label>密码<input type="text" name="" id="" value="请输如密码"/></label>
+        <!-- 点击文字 没有for默认选中第一个，有for必须找得到，否则哪个也不选，包括空 "" -->
+    </p>
+
+    <label for="twotext"
+        >test<input type="text" name="" id="onetext"/><input
+            type="text"
+            name=""
+            id="twotext"
+    /></label>
+    <br />
+    <textarea name="" id="" cols="30" rows="10"></textarea>
+
+    <select name="" id="" style="width: 100px;">
+        <option value="">1</option>
+        <option value="">1</option>
+        <option value="">1</option>
+        <option value="" selected="select">2</option>
+    </select>
+    <br /><br />
+    <form action="demo.php" method="get">
+        <label>用户名:<input type="text" name="" id=""/></label><br />
+        <label>密&nbsp;码:<input type="text" name="" id=""/></label><br />
+        <input type="reset" value="重置" />&nbsp;
+        <input type="submit" value="提交" />
+    </form>
+</html>

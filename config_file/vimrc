@@ -1,0 +1,221 @@
+" Specify a directory for plugins
+" - For Neovim: stdpath('data') . '/plugged'
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('D:\learn\vim\vim82\autoload')
+
+" 下方提示栏
+Plug 'vim-airline/vim-airline'
+" 下方提示栏主题
+Plug 'vim-airline/vim-airline-themes'
+" 增加缩进线
+Plug 'yggdroot/indentline'
+" 开始菜单
+Plug 'mhinz/vim-startify'
+
+" 文件树
+Plug 'scrooloose/nerdtree'
+
+" 单文件模糊搜索跳转
+Plug 'ctrlpvim/ctrlp.vim'
+
+" 位置跳转
+Plug 'easymotion/vim-easymotion'
+
+" 成对编辑
+Plug 'tpope/vim-surround'
+
+" 多文件模糊搜索
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+"多文件搜索替换
+Plug 'brooth/far.vim'
+
+" python插件
+ Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
+
+call plug#end()
+
+" vim-airline config
+
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_theme='bubblegum'
+set laststatus=2  "永远显示状态栏
+
+
+
+" NERDTree config
+
+" auto turn on
+" autocmd vimenter * NERDTree
+" ctrl+n to toggle file tree
+noremap <C-n> :NERDTreeToggle<CR>
+" ignore file
+let NERDTreeIgnore=[
+    \ '\.pyc$','\~$','\.swp','\.git$','\.pyo$','\.svn$','\.swp$','__pycache__'
+    \ ]
+nnoremap ,v :NERDTreeFind<cr>
+" and ctrl w p  to back
+
+
+
+" ctrlp config
+
+let g:ctrlp_map = '<C-p>'
+" 不能搜索下层文件
+" 选择文件后 ,v 来定位
+
+
+" easymotion config
+
+nmap ss <Plug>(easymotion-s2)
+" 使用ss时会调用s2查询
+
+
+
+
+
+
+
+set nocompatible
+
+set number              " 设置行号
+
+filetype plugin indent on  " Load plugins according to detected filetype.
+filetype on                " 开启文档类型检查
+syntax on                  " 设置代码高亮 
+
+set autoindent             " 设置自动缩进
+set expandtab              " Use spaces instead of tabs.
+set softtabstop =4         " 设置tap键长度为几个空格
+set shiftwidth  =4         " >> indents by 4 spaces.
+set shiftround             " >> indents to next multiple of 'shiftwidth'.
+
+set backspace   =indent,eol,start  " Make backspace work as you would expect.
+set hidden                 " Switch between buffers without having to save first.
+set laststatus  =2         " Always show statusline.
+set display     =lastline  " Show as much as possible of the last line.
+
+set showmode               " Show current mode in command-line.
+set showcmd                " Show already typed keys when more are expected.
+
+set incsearch              " 设置增量搜索
+set hlsearch               " 设置搜索高亮
+
+set ttyfast                " Faster redrawing.
+set lazyredraw             " Only redraw when necessary.
+
+set splitbelow             " Open new windows below the current window.
+set splitright             " Open new windows right of the current window.
+
+set cursorline             " Find the current line quickly.
+set wrapscan               " Searches wrap around end-of-file.
+set report      =0         " Always report changed lines.
+set synmaxcol   =200       " Only highlight the first 200 columns.
+
+
+
+" 不知道干啥的
+"set list                   " Show non-printable characters.
+"if has('multi_byte') && &encoding ==# 'utf-8'
+"  let &listchars = 'tab:? ,extends:?,precedes:?,nbsp:锟斤拷'
+"else
+"  let &listchars = 'tab:> ,extends:>,precedes:<,nbsp:.'
+"endif
+"
+"" The fish shell is not very compatible to other shells and unexpectedly
+"" breaks things that use 'shell'.
+"if &shell =~# 'fish$'
+"  set shell=/bin/bash
+"endif
+
+" 设置插入模式下括号等自动补全。
+"inoremap ' ''<ESC>
+"inoremap " ""<ESC>i
+"inoremap ( ()<ESC>i
+"inoremap [ []<ESC>i
+"inoremap { {<CR>}<ESC>O
+
+colorscheme hybird
+
+" 设置插入模式下光标左右移动方式
+inoremap <C-l> <Right>
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+
+"[输入法智能切换设置]
+"一些必要的设置,比如是什么按键切换中英文状态.如果加入"imcmdline"选项则命令模式下输入法默认为被开启.
+set imak=S imi=2 ims=2
+"VIM启动/切换窗口焦点/离开编辑模式时,禁用输入法
+autocmd VimEnter,FocusLost * set imdisable
+"获得焦点/进入编辑模式时,启用输入法
+autocmd FocusGained,InsertEnter * set noimdisable
+
+
+" 设置jj返回normal模式
+inoremap jj <Esc>
+
+
+" 分屏移动映射
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
+
+" json格式画命令设置，调用python3中的
+com! FormatJSON %!python3 -m json.tool
+
+" 设置启动位置
+winpos 300 80
+" 设置窗口大小
+set lines=40 columns=100
+
+" 设置字体大小
+set guifont=Courier:h14
+
+" F2进入粘贴模式
+set pastetoggle=<F2>
+
+" 设置折叠方式
+set foldmethod=indent
+
+
+
+
+"----------------------------------------------------------------
+"编码设置 linux上不用写
+"----------------------------------------------------------------
+"Vim 在与屏幕/键盘交互时使用的编码(取决于实际的终端的设定)        
+set encoding=utf-8
+set langmenu=zh_CN.UTF-8
+" 设置打开文件的编码格式  
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1 
+set fileencoding=utf-8
+"解决菜单乱码
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+"解决consle输出乱码
+"set termencoding = cp936  
+"设置中文提示
+language messages zh_CN.utf-8 
+"设置中文帮助
+set helplang=cn
+"设置为双字宽显示，否则无法完整显示如:☆
+set ambiwidth=double
+
+
+
+
+
+
+
+
+" 设置缓冲区跳转
+noremap <M-h> :bf<cr>
+noremap <M-l> :bn<cr>
+
+
+
+
+set foldlevelstart=99       " 打开文件是默认不折叠代码

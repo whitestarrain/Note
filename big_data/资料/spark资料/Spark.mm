@@ -1,0 +1,739 @@
+<map version="1.0.1">
+<!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
+<node CREATED="1555482114655" ID="ID_1591432296" MODIFIED="1555482118101" TEXT="Spark">
+<node CREATED="1556090555626" FOLDED="true" ID="ID_1609536203" MODIFIED="1557300065616" POSITION="right" TEXT="SparkCore">
+<node CREATED="1555550250043" FOLDED="true" ID="ID_1069536005" MODIFIED="1555665957542" TEXT="Spark ">
+<node CREATED="1555550252454" ID="ID_465556266" MODIFIED="1555550289976" TEXT="Spark&#x662f;&#x4e00;&#x4e2a;&#x8ba1;&#x7b97;&#x6846;&#x67b6;&#xff0c;&#x53ef;&#x4ee5;&#x57fa;&#x4e8e;&#x5185;&#x5b58;&#x5904;&#x7406;&#x6570;&#x636e;&#xff0c;&#x5e95;&#x5c42;&#x64cd;&#x4f5c;&#x7684;&#x662f;RDD"/>
+<node CREATED="1555550274500" ID="ID_585731756" MODIFIED="1555550279894" TEXT="Spark&#x4e0e;MR&#x7684;&#x533a;&#x522b;">
+<node CREATED="1555550298540" ID="ID_178298534" MODIFIED="1555550330070" TEXT="1.&#x5f53;&#x57fa;&#x4e8e;&#x4e0a;&#x4e00;&#x4e2a;job&#x8ba1;&#x7b97;&#x7ed3;&#x679c;&#x5904;&#x7406;&#x6570;&#x636e;&#x65f6;&#xff0c;Spark&#x53ef;&#x4ee5;&#x57fa;&#x4e8e;&#x5185;&#x5b58;&#x5904;&#x7406;&#x6570;&#x636e;&#xff0c;MR&#x57fa;&#x4e8e;&#x78c1;&#x76d8;&#x5904;&#x7406;&#x6570;&#x636e;"/>
+<node CREATED="1555550364099" ID="ID_950126047" MODIFIED="1555550382192" TEXT="2.Spark&#x4e2d;&#x6709;DAG&#x6267;&#x884c;&#x5f15;&#x64ce;&#xff0c;&#x53ef;&#x4ee5;&#x4f18;&#x5316;job"/>
+<node CREATED="1555550366334" ID="ID_1734568295" MODIFIED="1555645558045" TEXT="3.Spark &#x4e2d;&#x6709;&#x5f88;&#x591a;&#x7b97;&#x5b50;&#x5904;&#x7406;&#x4e1a;&#x52a1;&#xff0c;mapreduce&#x4e2d;&#x53ea;&#x6709;map&#x548c;reduce"/>
+<node CREATED="1555550404586" ID="ID_674732770" MODIFIED="1555665950159" TEXT="4.Spark &#x662f;&#x7c97;&#x7c92;&#x5ea6;&#x8d44;&#x6e90;&#x7533;&#x8bf7;&#xff0c;MR&#x662f;&#x7ec6;&#x7c92;&#x5ea6;&#x8d44;&#x6e90;&#x7533;&#x8bf7;"/>
+<node CREATED="1555665954318" ID="ID_1272007916" MODIFIED="1555665955872" TEXT="5."/>
+</node>
+</node>
+<node CREATED="1555550413155" FOLDED="true" ID="ID_977198475" MODIFIED="1555551010610" TEXT="Spark&#x6280;&#x672f;&#x6808;">
+<node CREATED="1555550416894" ID="ID_580617403" MODIFIED="1555550434985" TEXT="Hadoop,HDFS,Yarn,MR,Hive,Storm"/>
+<node CREATED="1555550438245" ID="ID_534171535" MODIFIED="1555550451156" TEXT="SparkCore&#xff0c;SparkSQL,SparkStreaming"/>
+</node>
+<node CREATED="1555550463775" FOLDED="true" ID="ID_1789561193" MODIFIED="1555551011483" TEXT="RDD&#x4e94;&#x5927;&#x7279;&#x6027;">
+<node CREATED="1555550704656" ID="ID_1230294365" MODIFIED="1555550712383" TEXT="RDD:&#x5f39;&#x6027;&#x5206;&#x5e03;&#x5f0f;&#x6570;&#x636e;&#x96c6;"/>
+<node CREATED="1555550713385" FOLDED="true" ID="ID_1803212352" MODIFIED="1555550991067" TEXT="&#x4e94;&#x5927;&#x7279;&#x70b9;">
+<node CREATED="1555550715852" ID="ID_1933025432" MODIFIED="1555550726862" TEXT="1.RDD&#x7531;&#x4e00;&#x7cfb;&#x5217;partition&#x7ec4;&#x6210;"/>
+<node CREATED="1555550727041" ID="ID_988260869" MODIFIED="1555550740377" TEXT="2.&#x7b97;&#x5b50;&#xff08;&#x51fd;&#x6570;&#xff09;&#x4f5c;&#x7528;&#x5728;partition&#x4e0a;&#x7684;"/>
+<node CREATED="1555550741725" ID="ID_370958315" MODIFIED="1555550749882" TEXT="3.RDD&#x4e4b;&#x95f4;&#x6709;&#x4f9d;&#x8d56;&#x5173;&#x7cfb;"/>
+<node CREATED="1555550750172" ID="ID_1912064252" MODIFIED="1555550761809" TEXT="4.&#x5206;&#x533a;&#x5668;&#x662f;&#x4f5c;&#x7528;&#x5728;K,V&#x683c;&#x5f0f;&#x7684;RDD&#x4e0a;"/>
+<node CREATED="1555550783011" ID="ID_1198123002" MODIFIED="1555550801979" TEXT="5.partition&#x5bf9;&#x5916;&#x63d0;&#x4f9b;&#x6700;&#x4f73;&#x7684;&#x8ba1;&#x7b97;&#x4f4d;&#x7f6e;&#xff0c;&#x5229;&#x4e8e;&#x6570;&#x636e;&#x5904;&#x7406;&#x672c;&#x5730;&#x5316;"/>
+</node>
+<node CREATED="1555550808170" FOLDED="true" ID="ID_1400455932" MODIFIED="1555550992108" TEXT="&#x6ce8;&#x610f;">
+<node CREATED="1555550810108" ID="ID_1079292423" MODIFIED="1555550872114" TEXT="1.sc.textFIile&#x8bfb;&#x53d6;HDFS&#x6587;&#x4ef6;&#x7684;&#x65b9;&#x6cd5;&#xff0c;&#x5e95;&#x5c42;&#x662f;&#x8c03;&#x7528;MR&#x8bfb;&#x53d6;HDFS&#x6587;&#x4ef6;&#x65b9;&#x6cd5;&#xff0c;&#x9996;&#x5148;split&#xff0c;&#x6bcf;&#x4e2a;split&#x5bf9;&#x5e94;&#x4e00;&#x4e2a;block,&#x8fd9;&#x91cc;partition&#x4e5f;&#x5bf9;&#x5e94;&#x4e00;&#x4e2a;RDD&#x4e2d;&#x7684;partition&#x3002;"/>
+<node CREATED="1555550881330" ID="ID_1298182384" MODIFIED="1555550893495" TEXT="2.&#x4ec0;&#x4e48;&#x662f;K,V&#x683c;&#x5f0f;&#x7684;RDD?">
+<node CREATED="1555550893498" ID="ID_1522165016" MODIFIED="1555550903968" TEXT="RDD&#x4e2d;&#x7684;&#x6570;&#x636e;&#x662f;&#x4e00;&#x4e2a;&#x4e2a;&#x7684;Tuple2"/>
+</node>
+<node CREATED="1555550906352" ID="ID_405700922" MODIFIED="1555550911368" TEXT="3.RDD&#x7684;&#x5f39;&#x6027;&#xff1f;">
+<node CREATED="1555550911369" ID="ID_842126846" MODIFIED="1555550917355" TEXT="RDD&#x4e4b;&#x95f4;&#x6709;&#x4f9d;&#x8d56;&#x5173;&#x7cfb;"/>
+<node CREATED="1555550917538" ID="ID_1374589" MODIFIED="1555550924308" TEXT="partition&#x53ef;&#x591a;&#x53ef;&#x5c11;"/>
+</node>
+<node CREATED="1555550973083" ID="ID_31546182" MODIFIED="1555550978841" TEXT="4.RDD&#x7684;&#x5206;&#x5e03;&#x5f0f;&#xff1f;">
+<node CREATED="1555550978842" ID="ID_929336241" MODIFIED="1555550987754" TEXT="partition&#x662f;&#x5206;&#x5e03;&#x5728;&#x591a;&#x4e2a;&#x8282;&#x70b9;&#x4e0a;&#x7684;"/>
+</node>
+</node>
+</node>
+<node CREATED="1555551595552" FOLDED="true" ID="ID_476520532" MODIFIED="1555551677884" TEXT="Spark&#x7684;&#x8fd0;&#x884c;&#x6a21;&#x5f0f;">
+<node CREATED="1555551600633" ID="ID_78833769" MODIFIED="1555551605552" TEXT="Local">
+<node CREATED="1555551617357" ID="ID_480280510" MODIFIED="1555551636978" TEXT="&#x591a;&#x7528;&#x4e8e;&#x672c;&#x5730;&#x6d4b;&#x8bd5;&#xff0c;&#x5728;IDEA,eclipse&#x4e2d;&#x5f00;&#x53d1;&#x4ee3;&#x7801;&#x4f7f;&#x7528;"/>
+</node>
+<node CREATED="1555551605749" ID="ID_691797140" MODIFIED="1555551611167" TEXT="Standalone">
+<node CREATED="1555551638830" ID="ID_22309698" MODIFIED="1555551651480" TEXT="Spark&#x81ea;&#x5e26;&#x7684;&#x8d44;&#x6e90;&#x8c03;&#x5ea6;&#x6846;&#x67b6;&#xff0c;&#x652f;&#x6301;&#x5206;&#x5e03;&#x5f0f;&#x642d;&#x5efa;"/>
+</node>
+<node CREATED="1555551611365" ID="ID_70567653" MODIFIED="1555551612571" TEXT="Yarn">
+<node CREATED="1555551653391" ID="ID_1040380959" MODIFIED="1555551668541" TEXT="Hadoop&#x751f;&#x6001;&#x5708;&#x4e2d;&#x8d44;&#x6e90;&#x8c03;&#x5ea6;&#x6846;&#x67b6;&#xff0c;Spark&#x53ef;&#x4ee5;&#x57fa;&#x4e8e;Yarn&#x8fd0;&#x884c;"/>
+</node>
+<node CREATED="1555551612743" ID="ID_865488835" MODIFIED="1555551615131" TEXT="Mesos">
+<node CREATED="1555551671404" ID="ID_291724126" MODIFIED="1555551676231" TEXT="&#x8d44;&#x6e90;&#x8c03;&#x5ea6;&#x6846;&#x67b6;"/>
+</node>
+</node>
+<node CREATED="1555482134177" FOLDED="true" ID="ID_1171702211" MODIFIED="1557300062920" TEXT="Spark &#x7b97;&#x5b50;">
+<node CREATED="1555482142738" FOLDED="true" ID="ID_41713826" MODIFIED="1557300061623" TEXT="Transformation&#x7c7b;&#x7b97;&#x5b50;">
+<node CREATED="1555482176637" ID="ID_303814129" MODIFIED="1555482191171" TEXT="&#x4e5f;&#x53eb;&#x8f6c;&#x5316;&#x7b97;&#x5b50;&#xff0c;&#x61d2;&#x6267;&#x884c;"/>
+<node CREATED="1555485124497" ID="ID_131968806" MODIFIED="1555485127735" TEXT="map "/>
+<node CREATED="1555485127907" ID="ID_1998425547" MODIFIED="1555485130108" TEXT="flatMap"/>
+<node CREATED="1555485132141" ID="ID_1147262321" MODIFIED="1555485134512" TEXT="sortBy"/>
+<node CREATED="1555485134700" ID="ID_549228106" MODIFIED="1555485140355" TEXT="sortByKey"/>
+<node CREATED="1555485140573" ID="ID_1222486106" MODIFIED="1555485148042" TEXT="reduceByKey"/>
+<node CREATED="1555485165284" ID="ID_1154381189" MODIFIED="1555485177419" TEXT="filter"/>
+<node CREATED="1555486250196" ID="ID_322484148" MODIFIED="1555486253780" TEXT="sample"/>
+<node CREATED="1555637901669" ID="ID_1124623292" MODIFIED="1555637904825" TEXT="join"/>
+<node CREATED="1555637905008" ID="ID_1769286645" MODIFIED="1555637908441" TEXT="leftOuterJoin"/>
+<node CREATED="1555637908614" ID="ID_113399888" MODIFIED="1555637912556" TEXT="rigthOuterJoin"/>
+<node CREATED="1555637912730" ID="ID_1137630155" MODIFIED="1555637915851" TEXT="fullOuterJoin"/>
+<node CREATED="1555637916048" ID="ID_476926782" MODIFIED="1555637921390" TEXT="intersection"/>
+<node CREATED="1555637921567" ID="ID_1303852291" MODIFIED="1555637924508" TEXT="subtract"/>
+<node CREATED="1555637924730" ID="ID_583291291" MODIFIED="1555637928190" TEXT="union"/>
+<node CREATED="1555637930944" ID="ID_580315478" MODIFIED="1557277733812" TEXT="distinct">
+<node CREATED="1555637941315" ID="ID_1524378643" MODIFIED="1555637947364" TEXT="map + reduceByKey + map"/>
+</node>
+<node CREATED="1555637937887" ID="ID_376013107" MODIFIED="1555637953033" TEXT="mapPartitions"/>
+<node CREATED="1555637953245" ID="ID_736214244" MODIFIED="1555637955704" TEXT="cogroup"/>
+<node CREATED="1555896202018" ID="ID_1896154145" MODIFIED="1555896211679" TEXT="mapPartitionWithIndex"/>
+<node CREATED="1555896214820" ID="ID_1073213076" MODIFIED="1555896221339" TEXT="repartition">
+<node CREATED="1555896226327" ID="ID_1061911923" MODIFIED="1555896241200" TEXT="repartition = coalesce(xx,shuffle = true)"/>
+<node CREATED="1555896243355" ID="ID_509060279" MODIFIED="1555896252441" TEXT="&#x9ed8;&#x8ba4;&#x662f;&#x6709;shuffle"/>
+</node>
+<node CREATED="1555896221528" ID="ID_1074188990" MODIFIED="1555896224979" TEXT="coalesce">
+<node CREATED="1555896255306" ID="ID_610849024" MODIFIED="1555896259557" TEXT="&#x9ed8;&#x8ba4;&#x6ca1;&#x6709;shuffle"/>
+<node CREATED="1555896262311" ID="ID_1006779337" MODIFIED="1555896271503" TEXT="&#x53ef;&#x4ee5;&#x901a;&#x8fc7;&#x53c2;&#x6570;&#x6307;&#x5b9a;&#x662f;&#x5426;&#x6709;shuffle"/>
+</node>
+<node CREATED="1555896310140" ID="ID_959421902" MODIFIED="1555896314252" TEXT="groupByKey"/>
+<node CREATED="1555896273373" ID="ID_1483457110" MODIFIED="1555896291539" TEXT="zip"/>
+<node CREATED="1555896291713" ID="ID_864258754" MODIFIED="1555896294754" TEXT="zipWithIndex"/>
+<node CREATED="1557277875753" ID="ID_972793366" MODIFIED="1557277883731" TEXT="flatMapToPair"/>
+<node CREATED="1557277884168" ID="ID_1530614514" MODIFIED="1557277902572" TEXT="mapPartitionsToPair"/>
+<node CREATED="1557277918754" ID="ID_1531299110" MODIFIED="1557277923709" TEXT="aggregateByKey"/>
+<node CREATED="1557277923951" ID="ID_146030445" MODIFIED="1557277929574" TEXT="combineByKey"/>
+</node>
+<node CREATED="1555482154377" FOLDED="true" ID="ID_1796979567" MODIFIED="1557300060144" TEXT="Action&#x7b97;&#x5b50;">
+<node CREATED="1555482612441" ID="ID_720863661" MODIFIED="1555482654138" TEXT="&#x4e5f;&#x53eb;&#x884c;&#x52a8;&#x7b97;&#x5b50;&#xff0c;&#x89e6;&#x53d1;Transformation&#x7b97;&#x5b50;&#x6267;&#x884c;&#xff0c;&#x4e00;&#x4e2a;spark application&#x4e2d;&#x6709;&#x4e00;&#x4e2a;action&#x7b97;&#x5b50;&#x5c31;&#x6709;&#x4e00;&#x4e2a;job"/>
+<node CREATED="1555485153865" ID="ID_1056993682" MODIFIED="1555485156712" TEXT="foreach"/>
+<node CREATED="1555486247674" ID="ID_854793856" MODIFIED="1555486257938" TEXT="count"/>
+<node CREATED="1555486258135" ID="ID_191376056" MODIFIED="1555486259963" TEXT="collect"/>
+<node CREATED="1555486260161" ID="ID_1247149317" MODIFIED="1555486261768" TEXT="take">
+<node CREATED="1555486267778" ID="ID_325591673" MODIFIED="1555486271420" TEXT="take(1) = first"/>
+</node>
+<node CREATED="1555486261966" ID="ID_1045887502" MODIFIED="1555486263775" TEXT="first"/>
+<node CREATED="1555551147949" ID="ID_145229353" MODIFIED="1555551149508" TEXT="reduce"/>
+<node CREATED="1555637965687" ID="ID_1998650349" MODIFIED="1555637969876" TEXT="foreachPartition"/>
+<node CREATED="1555896320005" ID="ID_400757267" MODIFIED="1557277940453" TEXT="countByKey">
+<node CREATED="1555896333722" ID="ID_848853987" MODIFIED="1555896349533" TEXT="&#x5fc5;&#x987b;&#x4f5c;&#x7528;&#x5728;K,V&#x683c;&#x5f0f;&#x7684;RDD&#x4e0a;"/>
+</node>
+<node CREATED="1555896326464" ID="ID_197426362" MODIFIED="1555896330424" TEXT="countByValue"/>
+</node>
+<node CREATED="1555482157092" FOLDED="true" ID="ID_392056059" MODIFIED="1557277990548" TEXT="&#x6301;&#x4e45;&#x5316;&#x7b97;&#x5b50;">
+<node CREATED="1555489543721" FOLDED="true" ID="ID_565161388" MODIFIED="1555551294540" TEXT="cache() ">
+<node CREATED="1555489547088" ID="ID_1870108627" MODIFIED="1555489553124" TEXT=" &#x9ed8;&#x8ba4;&#x5c06;&#x6570;&#x636e;&#x5b58;&#x5728;&#x5185;&#x5b58;&#x4e2d;"/>
+<node CREATED="1555490154316" ID="ID_1960053172" MODIFIED="1555490182730" TEXT="cache() = persist() = persist(StorageLevel.MEMORY_ONLY)"/>
+</node>
+<node CREATED="1555490091600" FOLDED="true" ID="ID_156721252" MODIFIED="1555551293484" TEXT="persist()">
+<node CREATED="1555490096543" ID="ID_707616470" MODIFIED="1555490105512" TEXT="&#x53ef;&#x4ee5;&#x624b;&#x52a8;&#x6307;&#x5b9a;&#x6301;&#x4e45;&#x5316;&#x7684;&#x7ea7;&#x522b;"/>
+<node CREATED="1555490926609" ID="ID_796407056" MODIFIED="1555490934421" TEXT="MEMORY_ONLY"/>
+<node CREATED="1555490934599" ID="ID_254248512" MODIFIED="1555490942799" TEXT="MEMORY_ONLY_SER"/>
+<node CREATED="1555490946000" ID="ID_859991420" MODIFIED="1555490957113" TEXT="MEMORY_AND_DISK_SER"/>
+<node CREATED="1555490957337" ID="ID_765002438" MODIFIED="1555490965346" TEXT="MEMORY_AND_DISK"/>
+<node CREATED="1555490979422" ID="ID_1607386902" MODIFIED="1555491013944" TEXT="&#x5c3d;&#x91cf;&#x907f;&#x514d;&#x4f7f;&#x7528;&#x201c;_2&#x201d; &#x548c; &#x201c;DISK_ONLY&#x201d; &#x7ea7;&#x522b;"/>
+</node>
+<node CREATED="1555491697914" FOLDED="true" ID="ID_1436141729" MODIFIED="1557277989868" TEXT="checkpoint">
+<node CREATED="1555493559367" ID="ID_1053257869" MODIFIED="1555493596922" TEXT="checkpoint &#x5c06;&#x6570;&#x636e;&#x76f4;&#x63a5;&#x6301;&#x4e45;&#x5316;&#x5230;&#x5916;&#x90e8;&#x7684;&#x5b58;&#x50a8;&#x7cfb;&#x7edf;&#x3002;&#x5f53;application&#x6267;&#x884c;&#x5b8c;&#x6210;&#x4e4b;&#x540e;&#xff0c;&#x6570;&#x636e;&#x76ee;&#x5f55;&#x4e0d;&#x4f1a;&#x88ab;&#x6e05;&#x9664;"/>
+<node CREATED="1555493598687" ID="ID_834234250" MODIFIED="1555493680805" TEXT="&#x5f53;RDD&#x7684;&#x8ba1;&#x7b97;&#x903b;&#x8f91;&#x975e;&#x5e38;&#x590d;&#x6742;&#x65f6;&#xff0c;&#x53ef;&#x4ee5;&#x5bf9;RDD&#x8fdb;&#x884c;&#x6301;&#x4e45;&#x5316;&#x3002;&#x4e0d;&#x8981;&#x5bf9;&#x5927;&#x91cf;&#x7684;RDD&#x8fdb;&#x884c;&#x6301;&#x4e45;&#x5316;&#x3002;&#x591a;&#x6570;&#x60c5;&#x51b5;&#x4e0b;&#xff0c;&#x6211;&#x4eec;&#x4f7f;&#x7528;checkpoint&#x4fdd;&#x5b58;&#x539f;&#x6570;&#x636e;&#x3002;"/>
+<node CREATED="1555493693177" ID="ID_1337792212" MODIFIED="1555493718312" TEXT="&#x4f18;&#x5316;&#xff1a;&#x5bf9;&#x54ea;&#x4e2a;RDD&#x8fdb;&#x884c;&#x6301;&#x4e45;&#x5316;&#xff0c;&#x53ef;&#x4ee5;&#x5148;&#x5bf9;&#x8fd9;&#x4e2a;RDD&#x8fdb;&#x884c;cache(),&#x8fd9;&#x6837;&#x53ef;&#x4ee5;&#x8282;&#x7701;&#x4e00;&#x6b21;&#x8ba1;&#x7b97;&#x8fc7;&#x7a0b;"/>
+<node CREATED="1555493725825" ID="ID_1886925032" MODIFIED="1555493742063" TEXT="checkpoint&#x7684;&#x6301;&#x4e45;&#x5316;&#x5355;&#x4f4d;&#x4e5f;&#x662f;partition&#xff0c;checkpoint&#x7b97;&#x5b50;&#x4e5f;&#x662f;&#x61d2;&#x6267;&#x884c;&#x7684;"/>
+</node>
+<node CREATED="1555491134720" ID="ID_843918380" MODIFIED="1555551300266" TEXT="&#x603b;&#x7ed3;">
+<node CREATED="1555491140641" ID="ID_753139441" MODIFIED="1555551364031" TEXT="cache() &#x548c;persist() &#x6ce8;&#x610f;">
+<node CREATED="1555491163216" ID="ID_168863887" MODIFIED="1555491190067" TEXT="1.cache() &#x548c;persist() &#x90fd;&#x662f;&#x61d2;&#x6267;&#x884c;&#xff0c;&#x9700;&#x8981;action&#x7b97;&#x5b50;&#x89e6;&#x53d1;&#x6267;&#x884c;&#x3002;&#x6301;&#x4e45;&#x5316;&#x7684;&#x6700;&#x5c0f;&#x5355;&#x4f4d;&#x662f;partition"/>
+<node CREATED="1555491290403" ID="ID_1023850272" MODIFIED="1555491362740" TEXT="2.&#x5bf9;RDD&#x4f7f;&#x7528;cache() &#x6216;&#x8005;persist() &#x65f6;&#xff0c;&#x53ef;&#x4ee5;&#x5c06;cache()&#x548c;persist&#x4e4b;&#x540e;&#x7684;&#x7ed3;&#x679c;&#x8d4b;&#x503c;&#x7ed9;&#x4e00;&#x4e2a;&#x53d8;&#x91cf;&#xff0c;&#x4e0b;&#x4e2a;job&#x4f7f;&#x7528;&#x8fd9;&#x4e2a;&#x53d8;&#x91cf;&#x5c31;&#x662f;&#x4f7f;&#x7528;&#x6301;&#x4e45;&#x5316;&#x7684;&#x6570;&#x636e;"/>
+<node CREATED="1555491420082" ID="ID_1607217978" MODIFIED="1555491449040" TEXT="3.&#x5982;&#x679c;&#x4f7f;&#x7528;&#x2461;&#x8fd9;&#x79cd;&#x65b9;&#x5f0f;&#x590d;&#x5236;&#x53d8;&#x91cf;&#xff0c;&#x8d4b;&#x503c;&#x4e4b;&#x540e;&#x4e0d;&#x80fd;&#x7d27;&#x8ddf;action&#x7b97;&#x5b50;"/>
+<node CREATED="1555491553186" ID="ID_1163147084" MODIFIED="1555491593486" TEXT="4.cache() &#x548c;persist() &#x6301;&#x4e45;&#x5316;&#x7684;&#x6570;&#x636e;&#x5f53;application&#x8fd0;&#x884c;&#x5b8c;&#x6210;&#x4e4b;&#x540e;&#x4f1a;&#x81ea;&#x52a8;&#x6e05;&#x9664;"/>
+</node>
+<node CREATED="1555493686097" ID="ID_1629729677" MODIFIED="1555551491404" TEXT="checkpoint&#x6d41;&#x7a0b;">
+<node CREATED="1555493691240" ID="ID_733876680" MODIFIED="1555493770675" TEXT="1.&#x5f53;RDD job&#x5b8c;&#x6210;&#x4e4b;&#x540e;&#xff0c;Spark&#x4f1a;&#x4ece;&#x540e;&#x5f80;&#x524d;&#x56de;&#x6eaf;&#xff0c;&#x627e;&#x5230;checkpoint&#x7684;RDD&#x8fdb;&#x884c;&#x6807;&#x8bb0;"/>
+<node CREATED="1555493770853" ID="ID_1618954903" MODIFIED="1555493803585" TEXT="2.&#x56de;&#x6eaf;&#x5b8c;&#x6210;&#x4e4b;&#x540e;&#xff0c;Spark&#x4f1a;&#x542f;&#x52a8;&#x4e00;&#x4e2a;job&#xff0c;&#x5bf9;&#x6301;&#x4e45;&#x5316;&#x7684;RDD&#x8fdb;&#x884c;&#x7ed3;&#x679c;&#x8ba1;&#x7b97;&#xff0c;&#x5c06;&#x8ba1;&#x7b97;&#x7684;&#x7ed3;&#x679c;&#x6301;&#x4e45;&#x5316;&#x5230;&#x6307;&#x5b9a;&#x7684;&#x76ee;&#x5f55;&#x4e2d;"/>
+</node>
+</node>
+</node>
+</node>
+<node CREATED="1555482740120" FOLDED="true" ID="ID_393174741" MODIFIED="1555636082143" TEXT="Spark &#x4ee3;&#x7801;&#x6d41;&#x7a0b;">
+<node CREATED="1555482793455" FOLDED="true" ID="ID_846113947" MODIFIED="1555551792236" TEXT="1. val  conf = new SparkConf() ">
+<node CREATED="1555551727632" FOLDED="true" ID="ID_1068348050" MODIFIED="1555551791469" TEXT="conf&#x53ef;&#x4ee5;&#x8bbe;&#x7f6e;">
+<node CREATED="1555551754570" ID="ID_642014013" MODIFIED="1555551785980" TEXT="1.conf&#x8bbe;&#x7f6e;&#x8fd0;&#x884c;&#x6a21;&#x5f0f;"/>
+<node CREATED="1555551764365" ID="ID_458689064" MODIFIED="1555551772906" TEXT="2.conf&#x8bbe;&#x7f6e;AppName"/>
+<node CREATED="1555551773094" ID="ID_97357848" MODIFIED="1555551782151" TEXT="3.conf&#x8bbe;&#x7f6e;Spark&#x8d44;&#x6e90;&#x4fe1;&#x606f;"/>
+</node>
+</node>
+<node CREATED="1555482801899" ID="ID_1881465025" MODIFIED="1555482813830" TEXT="2.val sc = new SparkContext(conf)">
+<node CREATED="1555551733646" ID="ID_416462946" MODIFIED="1555551749739" TEXT="SparkContext&#x662f;Spark&#x901a;&#x5f80;&#x96c6;&#x7fa4;&#x7684;&#x552f;&#x4e00;&#x5165;&#x53e3;"/>
+</node>
+<node CREATED="1555482814555" ID="ID_933558213" MODIFIED="1555482835409" TEXT="3.SparkContext &#x521b;&#x5efa;RDD val rdd = sc.textFile.."/>
+<node CREATED="1555482835998" ID="ID_1803218898" MODIFIED="1555482860470" TEXT="4.&#x5bf9;rdd&#x4f7f;&#x7528;transformations&#x7c7b;&#x7b97;&#x5b50;&#x8fdb;&#x884c;&#x6570;&#x636e;&#x8f6c;&#x6362;"/>
+<node CREATED="1555482890687" ID="ID_1720499917" MODIFIED="1555482902859" TEXT="5.&#x5bf9;rdd&#x4f7f;&#x7528;Action&#x89e6;&#x53d1;&#x6267;&#x884c;"/>
+<node CREATED="1555482910296" ID="ID_1336023480" MODIFIED="1555482914144" TEXT="6.sc.stop()"/>
+</node>
+<node CREATED="1555551934399" FOLDED="true" ID="ID_645213769" MODIFIED="1555637894951" TEXT="Spark &#x96c6;&#x7fa4;&#x642d;&#x5efa;">
+<node CREATED="1555636085092" ID="ID_1527764416" MODIFIED="1555636089996" TEXT="Standalone">
+<node CREATED="1555636116159" ID="ID_852985397" MODIFIED="1555636124817" TEXT="&#x73af;&#x5883;&#x51c6;&#x5907;">
+<node CREATED="1555636125453" ID="ID_120698262" MODIFIED="1555636130145" TEXT="jdk8"/>
+<node CREATED="1555636320650" ID="ID_1756983586" MODIFIED="1555636343779" TEXT="&#x51c6;&#x5907;3&#x53f0;&#x8282;&#x70b9;&#xff0c;1&#x53f0;&#x662f;Master 2&#x53f0;worker"/>
+<node CREATED="1555636213557" ID="ID_1671772952" MODIFIED="1555636223836" TEXT="spark2.3.1-hadoop2.6&#x5b89;&#x88c5;&#x5305;"/>
+</node>
+<node CREATED="1555636317193" ID="ID_412927157" MODIFIED="1555636354118" TEXT="&#x642d;&#x5efa;&#x8fc7;&#x7a0b;">
+<node CREATED="1555636354799" ID="ID_1917370487" MODIFIED="1555636363356" TEXT="1.&#x4e0a;&#x4f20;&#x5b89;&#x88c5;&#x5305;&#xff0c;&#x89e3;&#x538b;"/>
+<node CREATED="1555636363533" ID="ID_1211915182" MODIFIED="1555636387249" TEXT="2.&#x914d;&#x7f6e; spark/conf/slaves &#xff0c;&#x914d;&#x7f6e;worker&#x8282;&#x70b9;"/>
+<node CREATED="1555636387450" ID="ID_1631202668" MODIFIED="1555636403205" TEXT="3.&#x5728;spark/conf/&#x4e0b;&#x914d;&#x7f6e;Spark-env.sh">
+<node CREATED="1555636403206" ID="ID_1565895979" MODIFIED="1555636412925" TEXT="SPARK_MASTER_HOST=mynode1"/>
+<node CREATED="1555636413117" ID="ID_386416600" MODIFIED="1555636420224" TEXT="SPARK_MASTER_PORT=7077"/>
+<node CREATED="1555636422060" ID="ID_177257236" MODIFIED="1555636429632" TEXT="SPARK_WORKER_CORES=2"/>
+<node CREATED="1555636547520" ID="ID_1521486531" MODIFIED="1555636555531" TEXT="SPARK_WORKER_MEMORY=3g"/>
+</node>
+<node CREATED="1555636794184" ID="ID_956786274" MODIFIED="1555636823440" TEXT="4.&#x5206;&#x53d1;&#x5230;worker&#x8282;&#x70b9; :scp -r ./spark2.3 worker:`pwd`"/>
+<node CREATED="1555636823854" ID="ID_1962895731" MODIFIED="1555636841704" TEXT="5.&#x5728;Master&#x8282;&#x70b9;&#x4e2d;spark/sbin/start-all.sh"/>
+</node>
+<node CREATED="1555636851892" ID="ID_1190427906" MODIFIED="1555636860680" TEXT="&#x8bbf;&#x95ee;&#xff1a;https://mynode1:8080"/>
+<node CREATED="1555636864358" ID="ID_1133143806" MODIFIED="1555636896109" TEXT="&#x4fee;&#x6539;&#x7aef;&#x53e3;:Master&#x8282;&#x70b9; spark/conf/spark-env.sh &#x914d;&#x7f6e; SPARK_MASTER_WEBUI_PORT= 9999"/>
+</node>
+<node CREATED="1555636090140" ID="ID_153653951" MODIFIED="1555636093917" TEXT="&#x5ba2;&#x6237;&#x7aef;&#x642d;&#x5efa;">
+<node CREATED="1555636847971" ID="ID_1175158472" MODIFIED="1555636918796" TEXT="&#x539f;&#x5c01;&#x4e0d;&#x52a8;&#x5c06;Spark&#x7684;&#x5b89;&#x88c5;&#x5305;&#x53d1;&#x9001;&#x5230;&#x4e00;&#x53f0;&#x65b0;&#x7684;&#x8282;&#x70b9;"/>
+</node>
+<node CREATED="1555636094090" ID="ID_1383016041" MODIFIED="1555636099677" TEXT="&#x57fa;&#x4e8e;Yarn&#x63d0;&#x4ea4;&#x4efb;&#x52a1;&#x914d;&#x7f6e;">
+<node CREATED="1555636930941" ID="ID_1018742932" MODIFIED="1555636973279" TEXT="&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x4e2d;spark/conf/spark-env.sh&#x4e2d;&#x914d;&#x7f6e; HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop"/>
+</node>
+</node>
+<node CREATED="1555636101706" FOLDED="true" ID="ID_621316095" MODIFIED="1555637893527" TEXT="SparkPi&#x6848;&#x4f8b;">
+<node CREATED="1555636107605" ID="ID_1820836788" MODIFIED="1555636112017" TEXT="&#x63d0;&#x4ea4;&#x547d;&#x4ee4;&#xff1a;">
+<node CREATED="1555636986309" ID="ID_1719483562" MODIFIED="1555637022194" TEXT="./spark-submit --master saprk://mynode1:7077 --class org.apache.spark.examples.SparkPi ../examples/jars/spark-2.3.1-ha.... &#x53c2;&#x6570;"/>
+</node>
+</node>
+<node CREATED="1555637031457" FOLDED="true" ID="ID_1840890006" MODIFIED="1555637893991" TEXT="Spark&#x4efb;&#x52a1;&#x63d0;&#x4ea4;">
+<node CREATED="1555637040117" FOLDED="true" ID="ID_975398308" MODIFIED="1555637892240" TEXT="Standalone">
+<node CREATED="1555637051896" FOLDED="true" ID="ID_1938064096" MODIFIED="1555637888711" TEXT="client">
+<node CREATED="1555637062612" ID="ID_1819563369" MODIFIED="1555637065749" TEXT="&#x547d;&#x4ee4;">
+<node CREATED="1555637066163" ID="ID_836024179" MODIFIED="1555637079860" TEXT="./spark-sumit --master mynode1:7077 --class ... jar ..."/>
+<node CREATED="1555637080443" ID="ID_953071383" MODIFIED="1555637098930" TEXT="./spark-submit --master mynode1:7077 --deploy-mode client --class ..jar ..."/>
+</node>
+<node CREATED="1555637103667" ID="ID_564127964" MODIFIED="1555637106706" TEXT="&#x8fc7;&#x7a0b;">
+<node CREATED="1555637109923" ID="ID_1136299957" MODIFIED="1555637133411" TEXT="1.&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x63d0;&#x4ea4;Spark &#x5e94;&#x7528;&#x7a0b;&#x5e8f;&#xff0c;Driver&#x9996;&#x5148;&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x542f;&#x52a8;"/>
+<node CREATED="1555637133579" ID="ID_1689503310" MODIFIED="1555637161538" TEXT="2.&#x5ba2;&#x6237;&#x7aef;&#x5411;Master&#x7533;&#x8bf7;&#x8d44;&#x6e90;&#xff0c;Master &#x627e;&#x5230;&#x6ee1;&#x8db3;&#x8d44;&#x6e90;&#x7684;Worker&#x8282;&#x70b9;&#x542f;&#x52a8;Executor"/>
+<node CREATED="1555637161711" ID="ID_1785821709" MODIFIED="1555637172478" TEXT="3.Executor&#x542f;&#x52a8;&#x4e4b;&#x540e;&#xff0c;&#x53cd;&#x5411;&#x6ce8;&#x518c;&#x7ed9;Driver"/>
+<node CREATED="1555637172660" ID="ID_1483659651" MODIFIED="1555637186428" TEXT="4.Driver&#x53d1;&#x9001;task&#xff0c;&#x76d1;&#x63a7;task&#x6267;&#x884c;&#xff0c;&#x56de;&#x6536;&#x7ed3;&#x679c;"/>
+</node>
+<node CREATED="1555637107053" ID="ID_1178786350" MODIFIED="1555637108415" TEXT="&#x6ce8;&#x610f;">
+<node CREATED="1555637188999" ID="ID_1338337000" MODIFIED="1555637259164" TEXT="client&#x6a21;&#x5f0f;&#x9002;&#x7528;&#x4e8e;&#x7a0b;&#x5e8f;&#x6d4b;&#x8bd5;&#xff0c;&#x5f53;&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x63d0;&#x4ea4;&#x591a;&#x4e2a;spark &#x7684;&#x5e94;&#x7528;&#x7a0b;&#x5e8f;&#x65f6;&#xff0c;&#x6bcf;&#x4e2a;application&#x90fd;&#x6709;&#x72ec;&#x7acb;&#x7684;Driver,Driver&#x4e0e;&#x96c6;&#x7fa4;&#x6709;&#x5927;&#x91cf;&#x901a;&#x4fe1;&#xff0c;&#x4f1a;&#x6709;&#x5355;&#x8282;&#x70b9;&#x7f51;&#x5361;&#x6d41;&#x91cf;&#x6fc0;&#x589e;&#x95ee;&#x9898;&#x3002;&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x53ef;&#x4ee5;&#x770b;&#x5230;task&#x7684;&#x6267;&#x884c;&#x548c;&#x7ed3;&#x679c;"/>
+</node>
+</node>
+<node CREATED="1555637056952" FOLDED="true" ID="ID_16931365" MODIFIED="1555637889472" TEXT="cluster">
+<node CREATED="1555637265220" ID="ID_1856228840" MODIFIED="1555637268117" TEXT="&#x547d;&#x4ee4;">
+<node CREATED="1555637268751" ID="ID_819209909" MODIFIED="1555637294027" TEXT="./spark-submit --master spark://mynode1:7077 --deploy-mode cluster --class ..jar .. "/>
+</node>
+<node CREATED="1555637295939" ID="ID_1195738316" MODIFIED="1555637298120" TEXT="&#x8fc7;&#x7a0b;">
+<node CREATED="1555637298623" ID="ID_1309781198" MODIFIED="1555637325482" TEXT="1.&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x63d0;&#x4ea4;Spark &#x5e94;&#x7528;&#x7a0b;&#x5e8f;&#xff0c;&#x9996;&#x5148;&#x5411;Master&#x7533;&#x8bf7;&#x542f;&#x52a8;Driver"/>
+<node CREATED="1555637325859" ID="ID_927641314" MODIFIED="1555637345773" TEXT="2.Master&#x968f;&#x673a;&#x627e;&#x5230;&#x4e00;&#x53f0;&#x6ee1;&#x8db3;&#x8d44;&#x6e90;&#x7684;Worker&#x8282;&#x70b9;&#x542f;&#x52a8;Driver"/>
+<node CREATED="1555637345945" ID="ID_119870453" MODIFIED="1555637380613" TEXT="3.Driver&#x542f;&#x52a8;&#x4e4b;&#x540e;&#x5411;Master&#x7533;&#x8bf7;&#x8d44;&#x6e90;&#xff0c;Master&#x627e;&#x5230;&#x6ee1;&#x8db3;&#x8d44;&#x6e90;&#x7684;Worker&#x8282;&#x70b9;&#x542f;&#x52a8;Executor"/>
+<node CREATED="1555637380801" ID="ID_1762837820" MODIFIED="1555637406512" TEXT="4.Executor&#x6ce8;&#x518c;&#x7ed9;Driver,Driver&#x53d1;&#x9001;task,&#x76d1;&#x63a7;task,&#x56de;&#x6536;&#x7ed3;&#x679c;"/>
+</node>
+<node CREATED="1555637504933" ID="ID_1760727430" MODIFIED="1555637507872" TEXT="&#x6ce8;&#x610f;">
+<node CREATED="1555637508501" ID="ID_1485295575" MODIFIED="1555637570447" TEXT="cluster&#x6a21;&#x5f0f;&#x9002;&#x7528;&#x4e8e;&#x751f;&#x4ea7;&#x73af;&#x5883;&#xff0c;&#x5f53;&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x63d0;&#x4ea4;&#x591a;&#x4e2a;Spark application&#x65f6;&#xff0c;&#x5c06;&#x5355;&#x8282;&#x70b9;&#x7f51;&#x5361;&#x6d41;&#x91cf;&#x6fc0;&#x589e;&#x95ee;&#x9898;&#x5206;&#x6563;&#x5230;&#x96c6;&#x7fa4;&#x4e2d;&#xff0c;&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x770b;&#x4e0d;&#x5230;task&#x7684;&#x6267;&#x884c;&#x548c;&#x7ed3;&#x679c;&#xff0c;&#x8981;&#x53bb;webui&#x4e2d;&#x67e5;&#x770b;"/>
+</node>
+</node>
+</node>
+<node CREATED="1555637048165" FOLDED="true" ID="ID_742113611" MODIFIED="1555637891647" TEXT="Yarn">
+<node CREATED="1555637051896" FOLDED="true" ID="ID_579773825" MODIFIED="1555637890144" TEXT="client">
+<node CREATED="1555637575089" ID="ID_861271441" MODIFIED="1555637577191" TEXT="&#x547d;&#x4ee4;">
+<node CREATED="1555637577985" ID="ID_585659577" MODIFIED="1555637590491" TEXT="./spark-submit --master yarn --class .jar ..."/>
+<node CREATED="1555637590659" ID="ID_1731742151" MODIFIED="1555637601733" TEXT=",/spark-submit --master yarn-client --class ..jar .."/>
+<node CREATED="1555637601901" ID="ID_941442479" MODIFIED="1555637623351" TEXT="./spark-submit --master yarn --deploy-mode client --class ..jar .."/>
+</node>
+<node CREATED="1555637626233" ID="ID_1646874048" MODIFIED="1555637629092" TEXT="&#x8fc7;&#x7a0b;">
+<node CREATED="1555637629496" ID="ID_1422721756" MODIFIED="1555637650920" TEXT="1.&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x63d0;&#x4ea4;Spark &#x5e94;&#x7528;&#x7a0b;&#x5e8f;&#xff0c;&#x9996;&#x5148;&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x542f;&#x52a8;Driver"/>
+<node CREATED="1555637651096" ID="ID_33789300" MODIFIED="1555637684051" TEXT="2.&#x5ba2;&#x6237;&#x7aef;&#x5411;RM&#x7533;&#x8bf7;&#x542f;&#x52a8;AM,RM&#x6536;&#x5230;&#x8bf7;&#x6c42;&#x968f;&#x673a;&#x627e;&#x5230;&#x4e00;&#x53f0;NM&#x8282;&#x70b9;&#x542f;&#x52a8;AM"/>
+<node CREATED="1555637685060" ID="ID_1184276370" MODIFIED="1555637698768" TEXT="3.AM&#x542f;&#x52a8;&#x4e4b;&#x540e;&#xff0c;&#x5411;RM&#x7533;&#x8bf7;&#x8d44;&#x6e90;&#x7528;&#x4e8e;&#x542f;&#x52a8;Executor"/>
+<node CREATED="1555637699151" ID="ID_577251348" MODIFIED="1555637739324" TEXT="4.RM&#x8fd4;&#x56de;&#x4e00;&#x6279;NM&#x7ed9;AM&#xff0c;AM&#x8fde;&#x63a5;&#x8282;&#x70b9;&#x542f;&#x52a8;Executor,Executor&#x542f;&#x52a8;&#x4e4b;&#x540e;&#x6ce8;&#x518c;&#x7ed9;Driver"/>
+<node CREATED="1555637739491" ID="ID_188298608" MODIFIED="1555637750735" TEXT="5.Driver&#x53d1;&#x9001;task,&#x76d1;&#x63a7;task&#x7684;&#x6267;&#x884c;&#xff0c;&#x56de;&#x6536;&#x7ed3;&#x679c;"/>
+</node>
+<node CREATED="1555637107053" ID="ID_1314856446" MODIFIED="1555637108415" TEXT="&#x6ce8;&#x610f;">
+<node CREATED="1555637188999" ID="ID_1258193221" MODIFIED="1555637259164" TEXT="client&#x6a21;&#x5f0f;&#x9002;&#x7528;&#x4e8e;&#x7a0b;&#x5e8f;&#x6d4b;&#x8bd5;&#xff0c;&#x5f53;&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x63d0;&#x4ea4;&#x591a;&#x4e2a;spark &#x7684;&#x5e94;&#x7528;&#x7a0b;&#x5e8f;&#x65f6;&#xff0c;&#x6bcf;&#x4e2a;application&#x90fd;&#x6709;&#x72ec;&#x7acb;&#x7684;Driver,Driver&#x4e0e;&#x96c6;&#x7fa4;&#x6709;&#x5927;&#x91cf;&#x901a;&#x4fe1;&#xff0c;&#x4f1a;&#x6709;&#x5355;&#x8282;&#x70b9;&#x7f51;&#x5361;&#x6d41;&#x91cf;&#x6fc0;&#x589e;&#x95ee;&#x9898;&#x3002;&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x53ef;&#x4ee5;&#x770b;&#x5230;task&#x7684;&#x6267;&#x884c;&#x548c;&#x7ed3;&#x679c;"/>
+</node>
+</node>
+<node CREATED="1555637056952" FOLDED="true" ID="ID_1859674961" MODIFIED="1555637891112" TEXT="cluster">
+<node CREATED="1555637765044" ID="ID_1959553258" MODIFIED="1555637772748" TEXT="&#x547d;&#x4ee4;">
+<node CREATED="1555637774015" ID="ID_533647877" MODIFIED="1555637786573" TEXT="./spark-submit --master yarn-cluster --class ..jar .."/>
+<node CREATED="1555637786736" ID="ID_1277456995" MODIFIED="1555637807348" TEXT="./spark-submit --master yarn --deploy-mode cluster --class jar ...."/>
+</node>
+<node CREATED="1555637626233" ID="ID_847659121" MODIFIED="1555637629092" TEXT="&#x8fc7;&#x7a0b;">
+<node CREATED="1555637629496" ID="ID_810627689" MODIFIED="1555637833547" TEXT="1.&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x63d0;&#x4ea4;Spark &#x5e94;&#x7528;&#x7a0b;&#x5e8f;&#xff0c;&#x5ba2;&#x6237;&#x7aef;&#x5411;RM&#x7533;&#x8bf7;&#x542f;&#x52a8;AM"/>
+<node CREATED="1555637651096" ID="ID_1208503947" MODIFIED="1555637847286" TEXT="2.RM&#x6536;&#x5230;&#x8bf7;&#x6c42;&#x968f;&#x673a;&#x627e;&#x5230;&#x4e00;&#x53f0;NM&#x8282;&#x70b9;&#x542f;&#x52a8;AM&#xff0c;&#x8fd9;&#x91cc;AM&#x5c31;&#x76f8;&#x5f53;&#x4e8e;&#x662f;Driver"/>
+<node CREATED="1555637685060" ID="ID_144310663" MODIFIED="1555637698768" TEXT="3.AM&#x542f;&#x52a8;&#x4e4b;&#x540e;&#xff0c;&#x5411;RM&#x7533;&#x8bf7;&#x8d44;&#x6e90;&#x7528;&#x4e8e;&#x542f;&#x52a8;Executor"/>
+<node CREATED="1555637699151" ID="ID_501631839" MODIFIED="1555637860456" TEXT="4.RM&#x8fd4;&#x56de;&#x4e00;&#x6279;NM&#x7ed9;AM&#xff0c;AM&#x8fde;&#x63a5;&#x8282;&#x70b9;&#x542f;&#x52a8;Executor,Executor&#x542f;&#x52a8;&#x4e4b;&#x540e;&#x6ce8;&#x518c;&#x7ed9;AM"/>
+<node CREATED="1555637739491" ID="ID_867699283" MODIFIED="1555637866459" TEXT="5.AM&#x53d1;&#x9001;task,&#x76d1;&#x63a7;task&#x7684;&#x6267;&#x884c;&#xff0c;&#x56de;&#x6536;&#x7ed3;&#x679c;"/>
+</node>
+<node CREATED="1555637504933" ID="ID_1578485144" MODIFIED="1555637507872" TEXT="&#x6ce8;&#x610f;">
+<node CREATED="1555637508501" ID="ID_1662978123" MODIFIED="1555637570447" TEXT="cluster&#x6a21;&#x5f0f;&#x9002;&#x7528;&#x4e8e;&#x751f;&#x4ea7;&#x73af;&#x5883;&#xff0c;&#x5f53;&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x63d0;&#x4ea4;&#x591a;&#x4e2a;Spark application&#x65f6;&#xff0c;&#x5c06;&#x5355;&#x8282;&#x70b9;&#x7f51;&#x5361;&#x6d41;&#x91cf;&#x6fc0;&#x589e;&#x95ee;&#x9898;&#x5206;&#x6563;&#x5230;&#x96c6;&#x7fa4;&#x4e2d;&#xff0c;&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x770b;&#x4e0d;&#x5230;task&#x7684;&#x6267;&#x884c;&#x548c;&#x7ed3;&#x679c;&#xff0c;&#x8981;&#x53bb;webui&#x4e2d;&#x67e5;&#x770b;"/>
+</node>
+</node>
+</node>
+</node>
+<node CREATED="1555895101967" FOLDED="true" ID="ID_542445852" MODIFIED="1555896477790" TEXT="Spark &#x672f;&#x8bed;">
+<node CREATED="1555895107820" ID="ID_824183899" MODIFIED="1555895148720" TEXT="&#x8d44;&#x6e90;&#x5c42;&#xff1a;Master -&gt; Worker -&gt; Executor -&gt; ThreadPool"/>
+<node CREATED="1555895149136" ID="ID_1181096132" MODIFIED="1555895167481" TEXT="&#x4efb;&#x52a1;&#x5c42;&#xff1a;Application -&gt;job -&gt; stage -&gt; tasks"/>
+<node CREATED="1555895175380" ID="ID_409674362" MODIFIED="1555895188395" TEXT="&#x6bcf;&#x4e2a;Application&#x90fd;&#x6709;&#x72ec;&#x7acb;&#x7684;Driver &#x548c;Executor"/>
+</node>
+<node CREATED="1555895191757" FOLDED="true" ID="ID_340993835" MODIFIED="1555896478447" TEXT="RDD&#x5bbd;&#x7a84;&#x4f9d;&#x8d56;">
+<node CREATED="1555895202984" ID="ID_652123444" MODIFIED="1555895206380" TEXT="&#x7a84;&#x4f9d;&#x8d56;">
+<node CREATED="1555895207077" ID="ID_962064381" MODIFIED="1555895226088" TEXT="&#x7236;RDD&#x4e0e;&#x5b50;RDD&#x7684;partition&#x4e4b;&#x95f4;&#x7684;&#x5173;&#x7cfb;&#x662f;&#x4e00;&#x5bf9;&#x4e00;"/>
+<node CREATED="1555895226285" ID="ID_1574281829" MODIFIED="1555895238137" TEXT="&#x7236;RDD&#x4e0e;&#x5b50;RDD&#x7684;partition&#x4e4b;&#x95f4;&#x7684;&#x5173;&#x7cfb;&#x662f;&#x591a;&#x5bf9;&#x4e00;"/>
+</node>
+<node CREATED="1555895241780" ID="ID_413456288" MODIFIED="1555895352593" TEXT="&#x5bbd;&#x4f9d;&#x8d56;&#xff08;Shuffle&#xff09;">
+<node CREATED="1555895244941" ID="ID_1827839985" MODIFIED="1555895263010" TEXT="&#x7236;RDD&#x4e0e;&#x5b50;RDD&#x7684;partition&#x4e4b;&#x95f4;&#x7684;&#x5173;&#x7cfb;&#x662f;&#x4e00;&#x5bf9;&#x591a;"/>
+</node>
+</node>
+<node CREATED="1555895268127" FOLDED="true" ID="ID_883154707" MODIFIED="1555896476751" TEXT="Spark Stage">
+<node CREATED="1555895273032" ID="ID_680357830" MODIFIED="1555895284219" TEXT="Stage&#x662f;&#x7531;&#x4e00;&#x7ec4;&#x5e76;&#x884c;&#x7684;task&#x7ec4;&#x6210;"/>
+<node CREATED="1555895284446" ID="ID_95069808" MODIFIED="1555895298565" TEXT="Spark&#x8ba1;&#x7b97;&#x6a21;&#x5f0f; pipeline&#x7ba1;&#x9053;&#x8ba1;&#x7b97;&#x6a21;&#x5f0f;"/>
+<node CREATED="1555895355890" ID="ID_1788936333" MODIFIED="1555895368656" TEXT="&#x6309;&#x7167;RDD&#x7684;&#x5bbd;&#x4f9d;&#x8d56;&#x5212;&#x5206;stage"/>
+<node CREATED="1555895302084" ID="ID_534988847" MODIFIED="1555895328816" TEXT="&#x7ba1;&#x9053;&#x4e2d;&#x7684;&#x6570;&#x636e;&#x4f55;&#x65f6;&#x843d;&#x5730;">
+<node CREATED="1555895329294" ID="ID_75034499" MODIFIED="1555895334960" TEXT="shuffle write&#x65f6;"/>
+<node CREATED="1555895335842" ID="ID_1990752776" MODIFIED="1555895340454" TEXT="&#x6301;&#x4e45;&#x5316;&#x65f6;"/>
+</node>
+<node CREATED="1555895403201" ID="ID_1816909784" MODIFIED="1555895426407" TEXT="stage&#x4e2d;&#x7684;&#x5e76;&#x884c;&#x5ea6;&#x7531;stage&#x4e2d;finalRDD&#x7684;partition&#x4e2a;&#x6570;&#x51b3;&#x5b9a;"/>
+<node CREATED="1555895426862" ID="ID_1881789573" MODIFIED="1555895437304" TEXT="&#x5982;&#x4f55;&#x63d0;&#x9ad8;stage&#x7684;&#x5e76;&#x884c;&#x5ea6;&#xff1f;">
+<node CREATED="1555895437696" ID="ID_1264625924" MODIFIED="1555895443961" TEXT="reduceByKey..."/>
+<node CREATED="1555895444138" ID="ID_1474124694" MODIFIED="1555895448762" TEXT="groupByKey..."/>
+<node CREATED="1555895449555" ID="ID_461483691" MODIFIED="1555895451137" TEXT="join..."/>
+<node CREATED="1555895451559" ID="ID_37475901" MODIFIED="1555895459911" TEXT="repartition..."/>
+<node CREATED="1555895460228" ID="ID_1983676073" MODIFIED="1555895464783" TEXT="coalesce...."/>
+<node CREATED="1555895479992" ID="ID_1814132241" MODIFIED="1555895482599" TEXT="distinct"/>
+</node>
+</node>
+<node CREATED="1555895506269" FOLDED="true" ID="ID_11735252" MODIFIED="1555896474911" TEXT="Spark&#x8d44;&#x6e90;&#x8c03;&#x5ea6;&#x548c;&#x4efb;&#x52a1;&#x8c03;&#x5ea6;">
+<node CREATED="1555895521494" ID="ID_70209800" MODIFIED="1555895526284" TEXT="&#x8d44;&#x6e90;&#x8c03;&#x5ea6;">
+<node CREATED="1555895529730" ID="ID_1853025195" MODIFIED="1555895539247" TEXT="1.&#x542f;&#x52a8;&#x96c6;&#x7fa4;&#xff0c;Worker&#x5411;Master&#x6c47;&#x62a5;&#x8d44;&#x6e90;"/>
+<node CREATED="1555895539419" ID="ID_604326709" MODIFIED="1555895582396" TEXT="2.&#x5f53;new SparkContext(conf) &#x4f1a;&#x521b;&#x5efa;&#x4e24;&#x4e2a;&#x5bf9;&#x8c61; &#xff1a; DAGScheduler &#x3001;TaskScheduler &#xff0c;&#x7531;TaskScheduler&#x5411;Master&#x7533;&#x8bf7;&#x8d44;&#x6e90;"/>
+<node CREATED="1555895582632" ID="ID_291623819" MODIFIED="1555895598455" TEXT="3.Master&#x627e;&#x5230;&#x6ee1;&#x8db3;&#x8d44;&#x6e90;&#x7684;&#x8282;&#x70b9;&#xff0c;&#x542f;&#x52a8;Executor"/>
+<node CREATED="1555895600057" ID="ID_1913856648" MODIFIED="1555895632132" TEXT="4.Executor&#x5148;&#x5411;Driver&#x6ce8;&#x518c;&#xff0c;&#x7136;&#x540e;&#x542f;&#x52a8;&#xff0c;Driver&#x638c;&#x63e1;&#x4e86;&#x4e00;&#x6279;&#x8ba1;&#x7b97;&#x8d44;&#x6e90;"/>
+</node>
+<node CREATED="1555895526476" ID="ID_404241683" MODIFIED="1555895528099" TEXT="&#x4efb;&#x52a1;&#x8c03;&#x5ea6;">
+<node CREATED="1555895645546" ID="ID_1970704504" MODIFIED="1555895732048" TEXT="5.&#x5f53;RDDanction&#x7b97;&#x5b50;&#x89e6;&#x53d1;job&#x65f6;&#xff0c;job&#x4e2d;RDD&#x4e4b;&#x95f4;&#x5f62;&#x6210;&#x7684;DAG&#x6709;&#x5411;&#x65e0;&#x73af;&#x56fe;&#x63d0;&#x4ea4;&#x7ed9;DAGScheduler,&#x6309;&#x7167;RDD&#x4e4b;&#x95f4;&#x7684;&#x5bbd;&#x7a84;&#x4f9d;&#x8d56;&#x5173;&#x7cfb;&#x5207;&#x5272;job&#x5212;&#x5206;stage,&#x7136;&#x540e;&#x5c06;stage&#x4ee5;TaskSet&#x7684;&#x5f62;&#x5f0f;&#x63d0;&#x4ea4;&#x7ed9;TaskScheduler"/>
+<node CREATED="1555895736726" ID="ID_954285921" MODIFIED="1555895767842" TEXT="6.TaskScheduler&#x904d;&#x5386;TaskSet&#x83b7;&#x53d6;task&#xff0c;&#x5c06;Task&#x53d1;&#x9001;&#x5230;Worker&#x4e2d;Executor&#x4e2d;ThreadPool&#x6267;&#x884c;"/>
+<node CREATED="1555895769385" ID="ID_1963245894" MODIFIED="1555895784316" TEXT="7.Driver&#x7aef;&#x76d1;&#x63a7;task&#xff0c;&#x56de;&#x6536;task&#x7ed3;&#x679c;"/>
+</node>
+<node CREATED="1555896055216" ID="ID_517836704" MODIFIED="1555896136106" TEXT="&#x6ce8;&#x610f;&#xff1a;">
+<node CREATED="1555896137361" ID="ID_963913345" MODIFIED="1555896138024" TEXT="TaskScheduler&#x53d1;&#x9001;task&#x65f6;&#xff0c;&#x5982;&#x679c;task&#x5931;&#x8d25;&#xff0c;&#x4f1a;&#x81ea;&#x52a8;&#x91cd;&#x8bd5;&#xff0c;&#x91cd;&#x8bd5;3&#x6b21;&#x4e4b;&#x540e;&#xff0c;&#x7531;DAGScheduler&#x91cd;&#x8bd5;&#xff0c;&#x91cd;&#x8bd5;4&#x6b21;&#x4e4b;&#x540e;&#x5982;&#x679c;task&#x4f9d;&#x7136;&#x6ca1;&#x6709;&#x6267;&#x884c;&#x6210;&#x529f;&#xff0c;task&#x6240;&#x5728;&#x7684;stage&#x5c31;&#x5931;&#x8d25;&#x4e86;&#xff0c;stage&#x5931;&#x8d25;&#xff0c;stage&#x6240;&#x5728;&#x7684;job&#x5c31;&#x5931;&#x8d25;&#x4e86;&#xff0c;job&#x5931;&#x8d25;&#xff0c;application&#x5c31;&#x5931;&#x8d25;"/>
+<node CREATED="1555896138756" ID="ID_34112096" MODIFIED="1555896178596" TEXT="TaskScheduler&#x8fd8;&#x53ef;&#x4ee5;&#x91cd;&#x8bd5;&#x6267;&#x884c;&#x7f13;&#x6162;&#x7684;task&#xff0c;Spark&#x4e2d;&#x7684;&#x63a8;&#x6d4b;&#x6267;&#x884c;&#x673a;&#x5236;&#xff0c;&#x9ed8;&#x8ba4;&#x662f;&#x5173;&#x95ed;&#x7684;&#xff0c;&#x5bf9;&#x4e8e;ETL&#x6570;&#x636e;&#x4e1a;&#x52a1;&#x573a;&#x666f;&#xff0c;&#x4e00;&#x5b9a;&#x8981;&#x5173;&#x95ed;&#x3002;"/>
+</node>
+</node>
+<node CREATED="1555895808228" FOLDED="true" ID="ID_1129991712" MODIFIED="1555896474151" TEXT="&#x8d44;&#x6e90;&#x7533;&#x8bf7;&#x65b9;&#x5f0f;">
+<node CREATED="1555895821867" ID="ID_1543717587" MODIFIED="1555895825762" TEXT="&#x7c97;&#x7c92;&#x5ea6;&#x8d44;&#x6e90;&#x7533;&#x8bf7;">
+<node CREATED="1555895832437" ID="ID_999987813" MODIFIED="1555895889061" TEXT="Application&#x6267;&#x884c;&#x4e4b;&#x524d;&#xff0c;&#x5148;&#x5c06;&#x6240;&#x6709;&#x8d44;&#x6e90;&#x7533;&#x8bf7;&#x5b8c;&#x6bd5;&#xff0c;application&#x4e2d;&#x6bcf;&#x4e2a;job&#x6267;&#x884c;&#x65f6;&#x5c31;&#x4e0d;&#x9700;&#x8981;&#x81ea;&#x5df1;&#x7533;&#x8bf7;&#x8d44;&#x6e90;&#xff0c;&#x5f53;application&#x4e2d;&#x6700;&#x540e;&#x4e00;&#x4e2a;&#x4efb;&#x52a1;&#x6267;&#x884c;&#x5b8c;&#x6210;&#x4e4b;&#x540e;&#xff0c;&#x8fd9;&#x6279;&#x8d44;&#x6e90;&#x624d;&#x4f1a;&#x88ab;&#x91ca;&#x653e;"/>
+<node CREATED="1555895889445" ID="ID_1524544214" MODIFIED="1555895901890" TEXT="&#x4f18;&#x70b9;&#xff1a;application&#x6267;&#x884c;&#x5feb;"/>
+<node CREATED="1555895902098" ID="ID_544356901" MODIFIED="1555895924554" TEXT="&#x7f3a;&#x70b9;&#xff1a;&#x8d44;&#x6e90;&#x4e0d;&#x80fd;&#x5145;&#x5206;&#x5229;&#x7528;"/>
+</node>
+<node CREATED="1555895825937" ID="ID_398184048" MODIFIED="1555895830363" TEXT="&#x7ec6;&#x7c92;&#x5ea6;&#x8d44;&#x6e90;&#x7533;&#x8bf7;">
+<node CREATED="1555895926638" ID="ID_818054853" MODIFIED="1555895953777" TEXT="Application&#x6267;&#x884c;&#x65f6;&#xff0c;&#x7531;application&#x4e2d;&#x7684;job&#x81ea;&#x5df1;&#x7533;&#x8bf7;&#x8d44;&#x6e90;&#xff0c;&#x91ca;&#x653e;&#x8d44;&#x6e90;"/>
+<node CREATED="1555895960512" ID="ID_1277022887" MODIFIED="1555895985756" TEXT="&#x4f18;&#x70b9;&#xff1a;&#x8d44;&#x6e90;&#x53ef;&#x4ee5;&#x5145;&#x5206;&#x5229;&#x7528;"/>
+<node CREATED="1555895962584" ID="ID_535305772" MODIFIED="1555895979335" TEXT="&#x7f3a;&#x70b9;&#xff1a;application&#x6267;&#x884c;&#x76f8;&#x5bf9;&#x6162;"/>
+</node>
+</node>
+<node CREATED="1555896189322" FOLDED="true" ID="ID_163860176" MODIFIED="1555896479135" TEXT="PV &amp; UV">
+<node CREATED="1555896401734" ID="ID_120073034" MODIFIED="1555896408222" TEXT="PV:page view"/>
+<node CREATED="1555896408665" ID="ID_618093030" MODIFIED="1555896414978" TEXT="UV:unique vistor"/>
+</node>
+<node CREATED="1555896483640" FOLDED="true" ID="ID_1437112955" MODIFIED="1555986696748" TEXT="Spark &#x4efb;&#x52a1;&#x63d0;&#x4ea4;&#x7684;&#x53c2;&#x6570;">
+<node CREATED="1555899914138" ID="ID_1929958471" MODIFIED="1555899949055" TEXT="--driver-cores"/>
+<node CREATED="1555899949493" ID="ID_1005393865" MODIFIED="1555899952760" TEXT="--driver-memory"/>
+<node CREATED="1555899955371" ID="ID_385239631" MODIFIED="1555899958999" TEXT="--executor-cores"/>
+<node CREATED="1555899960564" ID="ID_1638250819" MODIFIED="1555899965769" TEXT="--executor-memory"/>
+<node CREATED="1555899969460" ID="ID_128787593" MODIFIED="1555899974531" TEXT="--total-executor-cores">
+<node CREATED="1555899982572" ID="ID_122302606" MODIFIED="1555900001282" TEXT="Standalone&#x96c6;&#x7fa4;&#x4e2d;&#x6240;&#x6709;Exeuctor&#x6700;&#x591a;&#x4f7f;&#x7528;&#x7684;core"/>
+</node>
+</node>
+<node CREATED="1555896511762" FOLDED="true" ID="ID_669426509" MODIFIED="1555986684253" TEXT="Spark&#x6e90;&#x7801;">
+<node CREATED="1555896544244" ID="ID_1014995405" MODIFIED="1555896558808" TEXT="1../start-all Master&#x542f;&#x52a8;"/>
+<node CREATED="1555896520165" ID="ID_863038263" MODIFIED="1555896568655" TEXT="2../spark-submit --master spark://node1&#xff1a;port --class ...jar .. &#x63d0;&#x4ea4;&#x4efb;&#x52a1;&#x6e90;&#x7801;"/>
+<node CREATED="1555896568844" ID="ID_1675717597" MODIFIED="1555896596877" TEXT="3.&#x7533;&#x8bf7;&#x542f;&#x52a8;Driver"/>
+<node CREATED="1555896597114" ID="ID_1366159576" MODIFIED="1555896647220" TEXT="4.&#x7ed9;Application&#x7533;&#x8bf7;&#x8d44;&#x6e90; -- &#x8d44;&#x6e90;&#x8c03;&#x5ea6; *"/>
+<node CREATED="1555896613133" ID="ID_1317946601" MODIFIED="1555896623286" TEXT="5.&#x53bb;Worker&#x542f;&#x52a8;Executor"/>
+<node CREATED="1555896626151" ID="ID_808072717" MODIFIED="1555896653671" TEXT="6.Spark&#x4efb;&#x52a1;&#x8c03;&#x5ea6; "/>
+</node>
+<node CREATED="1555896676359" FOLDED="true" ID="ID_940113650" MODIFIED="1555986685901" TEXT="Spark &#x8d44;&#x6e90;&#x8c03;&#x5ea6;&#x6e90;&#x7801;&#x7ed3;&#x8bba;&#x9a8c;&#x8bc1;">
+<node CREATED="1555896693799" ID="ID_1629544640" MODIFIED="1555981820257" TEXT="1.Executor&#x662f;&#x5728;&#x96c6;&#x7fa4;&#x4e2d;&#x5206;&#x6563;&#x542f;&#x52a8;&#xff0c;&#x5229;&#x4e8e;&#x6570;&#x636e;&#x5904;&#x7406;&#x7684;&#x672c;&#x5730;&#x5316;"/>
+<node CREATED="1555896694945" ID="ID_1313498240" MODIFIED="1555981864494" TEXT="2.&#x9ed8;&#x8ba4;&#x4e0d;&#x6307;&#x5b9a;&#x4efb;&#x4f55;&#x53c2;&#x6570;&#x63d0;&#x4ea4;&#x4efb;&#x52a1;&#xff0c;&#x96c6;&#x7fa4;&#x4e2d;&#x6bcf;&#x4e2a;Worker&#x4e3a;&#x5f53;&#x524d;&#x7684;application&#x542f;&#x52a8;1&#x4e2a;Executor,&#x8fd9;&#x4e2a;Executor&#x4f7f;&#x7528;&#x5f53;&#x524d;&#x8282;&#x70b9;&#x6240;&#x6709;&#x7684;core&#x548c;1G&#x5185;&#x5b58;"/>
+<node CREATED="1555896695756" ID="ID_1786852064" MODIFIED="1555981896793" TEXT="3.&#x5982;&#x679c;&#x60f3;&#x8981;&#x5728;&#x4e00;&#x53f0;Worker&#x8282;&#x70b9;&#x4e0a;&#x542f;&#x52a8;&#x591a;&#x4e2a;Executor,&#x9700;&#x8981;&#x8bbe;&#x7f6e;--executor-cores"/>
+<node CREATED="1555896699333" ID="ID_132673499" MODIFIED="1555981939214" TEXT="4.&#x53ef;&#x4ee5;&#x63d0;&#x4ea4;&#x4efb;&#x52a1;&#x65f6;&#x6307;&#x5b9a;--total-executor-cores &#x6307;&#x5b9a;&#x5f53;&#x524d;application &#x4e00;&#x5171;&#x4f7f;&#x7528;&#x591a;&#x5c11;core"/>
+<node CREATED="1555896700655" ID="ID_1755202176" MODIFIED="1555981956597" TEXT="5.&#x542f;&#x52a8;Executor&#x4e0d;&#x4ec5;&#x548c;core&#x6709;&#x5173;&#x8fd8;&#x548c;&#x5185;&#x5b58;&#x6709;&#x5173;"/>
+</node>
+<node CREATED="1555896714244" FOLDED="true" ID="ID_291826583" MODIFIED="1556067930090" TEXT="&#x4e8c;&#x6b21;&#x6392;&#x5e8f; ">
+<node CREATED="1555987440945" ID="ID_1668240897" MODIFIED="1555987472364" TEXT="&#x5927;&#x4e8e;&#x4e24;&#x5217;&#x7684;&#x6392;&#x5e8f;&#x90fd;&#x662f;&#x4e8c;&#x6b21;&#x6392;&#x5e8f;"/>
+<node CREATED="1555987431783" ID="ID_350222742" MODIFIED="1555987438810" TEXT="&#x5c01;&#x88c5;&#x5bf9;&#x8c61;&#x601d;&#x60f3;"/>
+</node>
+<node CREATED="1555896716749" FOLDED="true" ID="ID_1376339322" MODIFIED="1556067946523" TEXT="&#x5206;&#x7ec4;&#x53d6;topN">
+<node CREATED="1555990666794" ID="ID_942589225" MODIFIED="1555990676993" TEXT="1.&#x539f;&#x751f;&#x96c6;&#x5408;&#x6392;&#x5e8f;"/>
+<node CREATED="1555990677247" ID="ID_1274298462" MODIFIED="1555990692650" TEXT="2.&#x5b9a;&#x4e49;&#x5b9a;&#x957f;&#x6570;&#x7ec4;"/>
+</node>
+<node CREATED="1555990703889" FOLDED="true" ID="ID_1982693699" MODIFIED="1556068267186" TEXT="&#x7d2f;&#x52a0;&#x5668;">
+<node CREATED="1556067948372" ID="ID_1168293359" MODIFIED="1556067974859" TEXT="&#x76f8;&#x5f53;&#x4e8e;&#x96c6;&#x7fa4;&#x4e2d;&#x7edf;&#x7b79;&#x7684;&#x5927;&#x53d8;&#x91cf;"/>
+<node CREATED="1556067975532" ID="ID_1136780766" MODIFIED="1556067996076" TEXT="&#x7d2f;&#x52a0;&#x5668;&#x5fc5;&#x987b;&#x5728;Driver&#x7aef;&#x5b9a;&#x4e49;&#x521d;&#x59cb;&#x5316;&#xff0c;&#x5728;Executor&#x7aef;&#x66f4;&#x65b0;"/>
+</node>
+<node CREATED="1555990710007" FOLDED="true" ID="ID_65471338" MODIFIED="1556068266690" TEXT="&#x5e7f;&#x64ad;&#x53d8;&#x91cf;">
+<node CREATED="1556068008185" ID="ID_1855384324" MODIFIED="1556068067733" TEXT="&#x5982;&#x679c;&#x5728;Executor&#x7aef;&#x7528;&#x5230;Driver&#x7aef;&#x53d8;&#x91cf;,&#x5982;&#x679c;&#x4f7f;&#x7528;&#x5e7f;&#x64ad;&#x53d8;&#x91cf;&#x5728;&#x6bcf;&#x4e2a;Exeuctor&#x4e2d;&#x6709;&#x4e00;&#x4efd;Driver&#x7aef;&#x7684;&#x53d8;&#x91cf;&#x526f;&#x672c;"/>
+<node CREATED="1556068072065" ID="ID_1670765860" MODIFIED="1556068101964" TEXT="&#x5982;&#x679c;&#x5728;Executor&#x7aef;&#x7528;&#x5230;Driver&#x7aef;&#x53d8;&#x91cf;,&#x5982;&#x679c;&#x4e0d;&#x4f7f;&#x7528;&#x5e7f;&#x64ad;&#x53d8;&#x91cf;&#x5728;&#x6bcf;&#x4e2a;Exeuctor&#x6709;&#x591a;&#x5c11;task&#x5c31;&#x6709;&#x591a;&#x5c11;&#x4efd;Driver&#x7aef;&#x7684;&#x53d8;&#x91cf;&#x526f;&#x672c;"/>
+<node CREATED="1556068106635" FOLDED="true" ID="ID_1492784717" MODIFIED="1556068265954" TEXT="&#x6ce8;&#x610f;">
+<node CREATED="1556068108769" ID="ID_1115062980" MODIFIED="1556068127391" TEXT="1.&#x5e7f;&#x64ad;&#x53d8;&#x91cf;&#x8981;&#x5728;Driver&#x5b9a;&#x4e49;&#xff0c;&#x5728;Executor&#x4e0d;&#x80fd;&#x6539;&#x53d8;&#x5e7f;&#x64ad;&#x53d8;&#x91cf;&#x7684;&#x503c;"/>
+<node CREATED="1556068127583" ID="ID_133774191" MODIFIED="1556068145086" TEXT="2.&#x5e7f;&#x64ad;&#x53d8;&#x91cf;&#x4e0d;&#x80fd;&#x5c06;RDD&#x5e7f;&#x64ad;&#x51fa;&#x53bb;&#xff0c;&#x53ef;&#x4ee5;&#x5c06;RDD&#x7684;&#x7ed3;&#x679c;&#x5e7f;&#x64ad;&#x51fa;&#x53bb;"/>
+</node>
+</node>
+<node CREATED="1555990705896" FOLDED="true" ID="ID_1643236675" MODIFIED="1556068602186" TEXT="SparkWEBUI">
+<node CREATED="1556068152512" FOLDED="true" ID="ID_1081719711" MODIFIED="1556068268162" TEXT="&#x7aef;&#x53e3;">
+<node CREATED="1556068164515" ID="ID_131143806" MODIFIED="1556068169042" TEXT="50070"/>
+<node CREATED="1556068169454" ID="ID_695621857" MODIFIED="1556068172254" TEXT="8020"/>
+<node CREATED="1556068172481" ID="ID_273633732" MODIFIED="1556068176199" TEXT="9000"/>
+<node CREATED="1556068177211" ID="ID_1818091324" MODIFIED="1556068182108" TEXT="2181"/>
+<node CREATED="1556068184234" ID="ID_1835382314" MODIFIED="1556068193032" TEXT="8088"/>
+<node CREATED="1556068193580" ID="ID_1775592886" MODIFIED="1556068197672" TEXT="8080"/>
+<node CREATED="1556068198659" ID="ID_1439373064" MODIFIED="1556068200631" TEXT="8081"/>
+<node CREATED="1556068200837" ID="ID_1766880783" MODIFIED="1556068203717" TEXT="4040"/>
+<node CREATED="1556068204025" ID="ID_1498838361" MODIFIED="1556068208058" TEXT="18080"/>
+<node CREATED="1556068208451" ID="ID_1569190468" MODIFIED="1556068211061" TEXT="9092"/>
+<node CREATED="1556068212377" ID="ID_1712573297" MODIFIED="1556068214532" TEXT="7077"/>
+</node>
+<node CREATED="1556068224679" ID="ID_1052933871" MODIFIED="1556068241853" TEXT="SparkApplication: job -&gt; stage-&gt;task"/>
+<node CREATED="1556068242111" ID="ID_144546697" MODIFIED="1556068258375" TEXT="&#x5728;WEBUI&#x4e2d;&#x67e5;&#x770b;&#x6570;&#x636e;&#x503e;&#x659c;"/>
+</node>
+<node CREATED="1555990797814" FOLDED="true" ID="ID_665633465" MODIFIED="1556068600202" TEXT="Spark &#x65e5;&#x5fd7;&#x7ba1;&#x7406;">
+<node CREATED="1556068284171" ID="ID_1613126094" MODIFIED="1556068290701" TEXT="&#x914d;&#x7f6e;Spark&#x5386;&#x53f2;&#x65e5;&#x5fd7;&#x670d;&#x52a1;">
+<node CREATED="1556068319333" ID="ID_222640276" MODIFIED="1556068336061" TEXT="&#x5728;&#x5ba2;&#x6237;&#x7aef;&#x7684;spark/conf/spark-defaults.conf&#x4e2d;&#x914d;&#x7f6e;">
+<node CREATED="1556068337325" ID="ID_399770629" MODIFIED="1556068337325" TEXT="//&#x5f00;&#x542f;&#x8bb0;&#x5f55;&#x4e8b;&#x4ef6;&#x65e5;&#x5fd7;&#x7684;&#x529f;&#x80fd;"/>
+<node CREATED="1556068337326" ID="ID_498811180" MODIFIED="1556068337326" TEXT="spark.eventLog.enabled           true"/>
+<node CREATED="1556068337327" ID="ID_363466967" MODIFIED="1556068337327" TEXT="//&#x8bbe;&#x7f6e;&#x4e8b;&#x4ef6;&#x65e5;&#x5fd7;&#x5b58;&#x50a8;&#x7684;&#x76ee;&#x5f55;"/>
+<node CREATED="1556068337328" ID="ID_83643794" MODIFIED="1556068337328" TEXT="spark.eventLog.dir                    hdfs://node1:9000/spark/test"/>
+<node CREATED="1556068337329" ID="ID_1213612259" MODIFIED="1556068337329" TEXT="//&#x8bbe;&#x7f6e;HistoryServer&#x52a0;&#x8f7d;&#x4e8b;&#x4ef6;&#x65e5;&#x5fd7;&#x7684;&#x4f4d;&#x7f6e;"/>
+<node CREATED="1556068337331" ID="ID_1810780720" MODIFIED="1556068337331" TEXT="spark.history.fs.logDirectory   hdfs://node1:9000/spark/test"/>
+<node CREATED="1556068337332" ID="ID_1857749390" MODIFIED="1556068337332" TEXT="//&#x65e5;&#x5fd7;&#x4f18;&#x5316;&#x9009;&#x9879;,&#x538b;&#x7f29;&#x65e5;&#x5fd7;"/>
+<node CREATED="1556068337332" ID="ID_1359911311" MODIFIED="1556068337332" TEXT="spark.eventLog.compress         true"/>
+</node>
+<node CREATED="1556068346952" ID="ID_941366473" MODIFIED="1556068352725" TEXT="&#x542f;&#x52a8;&#x5386;&#x53f2;&#x65e5;&#x5fd7;&#x670d;&#x52a1;&#xff1a;">
+<node CREATED="1556068353737" ID="ID_380215606" MODIFIED="1556068365723" TEXT="spark/sbin/start-historyserver.sh "/>
+</node>
+<node CREATED="1556068367908" ID="ID_1536067102" MODIFIED="1556068376190" TEXT="&#x8bbf;&#x95ee;&#xff1a;mynode4:18080"/>
+</node>
+</node>
+<node CREATED="1555990772729" FOLDED="true" ID="ID_197870798" MODIFIED="1556068604858" TEXT="Spark   MasterHA">
+<node CREATED="1556068409027" ID="ID_46895474" MODIFIED="1556068431396" TEXT="&#x4f7f;&#x7528;zookeeper&#x642d;&#x5efa;MasterHA(standalone &#x96c6;&#x7fa4;)"/>
+<node CREATED="1556068442290" ID="ID_776208251" MODIFIED="1556068445972" TEXT="&#x6b65;&#x9aa4;">
+<node CREATED="1556068446445" ID="ID_526707535" MODIFIED="1556068468030" TEXT="1.&#x5728;Master-Alive&#x8282;&#x70b9;&#x4e2d;&#x914d;&#x7f6e;spark/conf/spark-env.sh ">
+<node CREATED="1556068474656" MODIFIED="1556068474656" TEXT="export SPARK_DAEMON_JAVA_OPTS=&quot;"/>
+<node CREATED="1556068474660" ID="ID_1226807116" MODIFIED="1556068474660" TEXT="-Dspark.deploy.recoveryMode=ZOOKEEPER"/>
+<node CREATED="1556068474661" ID="ID_887623919" MODIFIED="1556068474661" TEXT="-Dspark.deploy.zookeeper.url=node3:2181,node4:2181,node5:2181"/>
+<node CREATED="1556068474662" ID="ID_1675128220" MODIFIED="1556068474662" TEXT="-Dspark.deploy.zookeeper.dir=/sparkmaster0821&quot;"/>
+</node>
+<node CREATED="1556068485857" ID="ID_1164907957" MODIFIED="1556068522529" TEXT="2.&#x627e;&#x4e00;&#x53f0;Master-standBy&#x8282;&#x70b9;&#x4fee;&#x6539; spark/conf/spark-env.sh &#x4e2d; SPARK_MASTER_PORT = XXX"/>
+<node CREATED="1556068524261" ID="ID_32360204" MODIFIED="1556068532432" TEXT="3.&#x542f;&#x52a8;zookeeper"/>
+<node CREATED="1556068539679" ID="ID_1820735153" MODIFIED="1556068563508" TEXT="4.&#x5728;Alive - Master&#x4e2d; &#x542f;&#x52a8;&#x96c6;&#x7fa4; spark/sbin/start-all.sh"/>
+<node CREATED="1556068563934" ID="ID_1185841813" MODIFIED="1556068585764" TEXT="5.&#x5728;standBy-Master &#x4e2d;&#x542f;&#x52a8;Master spark/sbin/start-master.sh"/>
+</node>
+<node CREATED="1556068591102" ID="ID_947986189" MODIFIED="1556068596068" TEXT="&#x9a8c;&#x8bc1;"/>
+</node>
+<node CREATED="1556068605942" FOLDED="true" ID="ID_1757418032" MODIFIED="1556154392203" TEXT="SparkShuffle">
+<node CREATED="1556068670162" ID="ID_1266507172" MODIFIED="1556068707685" TEXT="Spark 1.3 &#x4e4b;&#x524d;&#x4f7f;&#x7528;HashShuffleManager ,Spark1.3&#x4e4b;&#x540e;&#x5f15;&#x5165;SortShuffleManager"/>
+<node CREATED="1556068609226" ID="ID_1386649891" MODIFIED="1556068714299" TEXT="HashShuffleManager">
+<node CREATED="1556068633002" ID="ID_1946016571" MODIFIED="1556068639243" TEXT="&#x666e;&#x901a;&#x673a;&#x5236;">
+<node CREATED="1556068715966" ID="ID_1536158584" MODIFIED="1556068744604" TEXT="&#x6587;&#x4ef6;&#x4e2a;&#x6570;&#xff1a;M*R"/>
+<node CREATED="1556068746093" ID="ID_2596647" MODIFIED="1556068753173" TEXT="&#x6d41;&#x7a0b;">
+<node CREATED="1556068753921" ID="ID_945383250" MODIFIED="1556068797955" TEXT="&#x6bcf;&#x4e2a;map task&#x751f;&#x6210;&#x4e0e;reduce task&#x4e2a;&#x6570;&#x4e00;&#x81f4;&#x7684;&#x78c1;&#x76d8;&#x6587;&#x4ef6;&#x4e2a;&#x6570;&#xff0c;&#x6bcf;&#x4e2a;map task&#x6709;&#x7f13;&#x5b58;&#x533a; &#xff0c;&#x9ed8;&#x8ba4;&#x662f;32k"/>
+</node>
+<node CREATED="1556068801480" ID="ID_962350338" MODIFIED="1556068809156" TEXT="&#x95ee;&#x9898;&#xff1a;&#x78c1;&#x76d8;&#x5c0f;&#x6587;&#x4ef6;&#x591a;"/>
+</node>
+<node CREATED="1556068639424" ID="ID_531686042" MODIFIED="1556068642400" TEXT="&#x4f18;&#x5316;&#x673a;&#x5236;">
+<node CREATED="1556068811654" ID="ID_950612740" MODIFIED="1556068862359" TEXT="&#x6587;&#x4ef6;&#x4e2a;&#x6570;&#xff1a;E*R"/>
+<node CREATED="1556068872161" ID="ID_11211317" MODIFIED="1556068901020" TEXT="&#x6d41;&#x7a0b;&#xff1a;&#x6bcf;&#x4e2a;Executor&#x4e2d;&#x6240;&#x6709;task&#x516c;&#x7528;&#x4e00;&#x4efd;buffer&#x7f13;&#x5b58;&#x533a;&#xff0c;buffer &#x662f;32k"/>
+<node CREATED="1556068902894" ID="ID_1727859089" MODIFIED="1556068919751" TEXT="&#x95ee;&#x9898;&#xff1a;&#x5f53;reduce task&#x591a;&#x65f6;&#xff0c;&#x78c1;&#x76d8;&#x5c0f;&#x6587;&#x4ef6;&#x4e5f;&#x662f;&#x6bd4;&#x8f83;&#x591a;"/>
+</node>
+</node>
+<node CREATED="1556068622116" ID="ID_1744611900" MODIFIED="1556069089145" TEXT="SortShuffleManager">
+<node CREATED="1556068644198" ID="ID_789716195" MODIFIED="1556068647021" TEXT="&#x666e;&#x901a;">
+<node CREATED="1556068925686" ID="ID_1496592497" MODIFIED="1556068936677" TEXT="&#x4ea7;&#x751f;&#x78c1;&#x76d8;&#x5c0f;&#x6587;&#x4ef6;&#x4e2a;&#x6570;&#xff1a;2*M"/>
+<node CREATED="1556068940893" ID="ID_185914804" MODIFIED="1556069034691" TEXT="&#x6d41;&#x7a0b;&#xff1a;">
+<node CREATED="1556068950177" ID="ID_1621578282" MODIFIED="1556068995758" TEXT="&#x9996;&#x5148;map&#x5904;&#x7406;&#x7684;&#x6570;&#x636e;&#x5199;&#x5f80;&#x4e00;&#x4e2a;5M&#x7684;&#x6570;&#x636e;&#x7ed3;&#x6784;&#xff0c;&#x5f53;&#x4f30;&#x7b97;&#x7684;&#x5185;&#x5b58;&#x4e0d;&#x8db3;&#x65f6;&#xff0c;&#x4f1a;&#x7533;&#x8bf7;&#x5185;&#x5b58;&#xff0c;&#x5982;&#x679c;&#x5185;&#x5b58;&#x4e0d;&#x8db3;&#xff0c;&#x6ea2;&#x5199;&#x78c1;&#x76d8;&#xff0c;&#x6ea2;&#x5199;&#x8fc7;&#x7a0b;&#x6709;&#x6392;&#x5e8f;"/>
+</node>
+</node>
+<node CREATED="1556068647214" ID="ID_499351636" MODIFIED="1556068651008" TEXT="bypass">
+<node CREATED="1556069052967" ID="ID_568192407" MODIFIED="1556069065429" TEXT="&#x4ea7;&#x751f;&#x78c1;&#x76d8;&#x5c0f;&#x6587;&#x4ef6;&#x4e2a;&#x6570; &#xff1a; 2*M"/>
+<node CREATED="1556069066072" ID="ID_726086398" MODIFIED="1556069080692" TEXT="&#x6d41;&#x7a0b;&#xff1a;&#x4e0e;&#x666e;&#x901a;&#x673a;&#x5236;&#x4e00;&#x6837;&#xff0c;&#x6ca1;&#x6709;&#x6392;&#x5e8f;"/>
+</node>
+</node>
+</node>
+<node CREATED="1556069108776" FOLDED="true" ID="ID_1732440611" MODIFIED="1556154670242" TEXT="Shuffle&#x6587;&#x4ef6;&#x5bfb;&#x5740;">
+<node CREATED="1556154419065" ID="ID_1733767440" MODIFIED="1556154429337" TEXT="&#x5bf9;&#x8c61;">
+<node CREATED="1556154429946" ID="ID_561278301" MODIFIED="1556154440409" TEXT="mapOutputTracker ">
+<node CREATED="1556154446264" ID="ID_1822430677" MODIFIED="1556154463080" TEXT="&#x4e3b;:MapOutputTrackerMaster (Driver)"/>
+<node CREATED="1556154464986" ID="ID_1353385245" MODIFIED="1556154481117" TEXT="&#x4ece;:MapOutputTrackerWorker (Executor) "/>
+</node>
+<node CREATED="1556154440597" ID="ID_1807719131" MODIFIED="1556154444434" TEXT="BlockManager">
+<node CREATED="1556154483186" ID="ID_1790036425" MODIFIED="1556154494821" TEXT="&#x4e3b;&#xff1a;BlockManagerMaster(Driver)">
+<node CREATED="1556154510838" ID="ID_1196560375" MODIFIED="1556154519110" TEXT="DiskStore "/>
+<node CREATED="1556154519280" ID="ID_1017080563" MODIFIED="1556154523852" TEXT="MemoryStore"/>
+<node CREATED="1556154524084" ID="ID_1612152645" MODIFIED="1556154531372" TEXT="BlockTranferService"/>
+</node>
+<node CREATED="1556154495053" ID="ID_1981433041" MODIFIED="1556154508978" TEXT="&#x4ece;&#xff1a;BlockManagerSlave(Executor)">
+<node CREATED="1556154510838" ID="ID_1990965200" MODIFIED="1556154519110" TEXT="DiskStore "/>
+<node CREATED="1556154519280" ID="ID_1002296982" MODIFIED="1556154523852" TEXT="MemoryStore"/>
+<node CREATED="1556154524084" ID="ID_950836173" MODIFIED="1556154531372" TEXT="BlockTranferService"/>
+</node>
+</node>
+</node>
+<node CREATED="1556154539618" ID="ID_1717436131" MODIFIED="1556154543243" TEXT="&#x8fc7;&#x7a0b;">
+<node CREATED="1556154545131" ID="ID_1546503233" MODIFIED="1556154589012" TEXT="1.map task &#x5904;&#x7406;&#x5b8c;&#x6570;&#x636e;&#x4e4b;&#x540e;&#xff0c;&#x5c06;&#x6570;&#x636e;&#x4f4d;&#x7f6e;&#x548c;&#x7ed3;&#x679c;&#x5c01;&#x88c5;&#x5230;&#x4e00;&#x4e2a;MapStatus&#x5bf9;&#x8c61;&#x6c47;&#x62a5;&#x7ed9;Driver&#x7aef;&#x7684;MapOutputTrackerMaster,Driver&#x638c;&#x63e1;&#x4e86;&#x78c1;&#x76d8;&#x6570;&#x636e;&#x4f4d;&#x7f6e;&#x4fe1;&#x606f;"/>
+<node CREATED="1556154578541" ID="ID_1824189170" MODIFIED="1556154664221" TEXT="2.reduce task&#x62c9;&#x53d6;&#x6570;&#x636e;&#x4e4b;&#x524d;&#xff0c;&#x9996;&#x5148;&#x5411;Driver&#x83b7;&#x53d6;&#x78c1;&#x76d8;&#x6570;&#x636e;&#x4f4d;&#x7f6e;&#xff0c;&#x901a;&#x8fc7;BlockManager&#x8fde;&#x63a5;&#x6570;&#x636e;&#x8282;&#x70b9;&#xff0c;BlockTransferService&#x62c9;&#x53d6;&#x6570;&#x636e;&#xff0c;&#x9ed8;&#x8ba4;&#x542f;&#x52a8;5&#x4e2a;&#x7ebf;&#x7a0b;&#x62c9;&#x53d6;&#xff0c;&#x4e00;&#x6b21;&#x6700;&#x591a;&#x62c9;&#x53d6;&#x4e0d;&#x8d85;&#x8fc7;48M&#xff0c;&#x83b7;&#x53d6;&#x7684;&#x6570;&#x636e;&#x653e;&#x5728;Shuffle&#x5185;&#x5b58;&#x4e2d;"/>
+</node>
+</node>
+<node CREATED="1556069116493" FOLDED="true" ID="ID_707200778" MODIFIED="1556154857786" TEXT="&#x5185;&#x5b58;&#x7ba1;&#x7406;">
+<node CREATED="1556154671924" FOLDED="true" ID="ID_1029952266" MODIFIED="1556154854017" TEXT="&#x7edf;&#x4e00;&#x5185;&#x5b58;&#x7ba1;&#x7406;">
+<node CREATED="1556154690076" ID="ID_1275569347" MODIFIED="1556154691982" TEXT="300M"/>
+<node CREATED="1556154692171" ID="ID_1040251602" MODIFIED="1556154788489" TEXT="&#xff08;&#x603b;-300M&#xff09;*0.75&#xff08;Spark 2.0+ 0.6&#xff09;-- spark.memory.fraction&#x9;0.6&#x9;">
+<node CREATED="1556154741028" ID="ID_1227359265" MODIFIED="1556154750015" TEXT="0.5 shuffle&#x805a;&#x5408;&#x5185;&#x5b58;"/>
+<node CREATED="1556154742509" ID="ID_1026451633" MODIFIED="1556154796039" TEXT="0.5 rdd&#x7f13;&#x5b58;+&#x5e7f;&#x64ad;&#x53d8;&#x91cf; -- spark.memory.storageFraction&#x9;0.5"/>
+</node>
+<node CREATED="1556154708013" ID="ID_228157481" MODIFIED="1556154738871" TEXT="&#xff08;&#x603b;-300M&#xff09;*0.25 (Spark 2.0+ 0.4)"/>
+</node>
+</node>
+<node CREATED="1556069121156" FOLDED="true" ID="ID_1697369031" MODIFIED="1556154854978" TEXT="shuffle&#x53c2;&#x6570;">
+<node CREATED="1556154806153" ID="ID_1550882283" MODIFIED="1556154810411" TEXT="spark.reducer.maxSizeInFlight  48M"/>
+<node CREATED="1556154813247" ID="ID_1009501474" MODIFIED="1556154820460" TEXT="spark.shuffle.io.maxRetries 3s"/>
+<node CREATED="1556154834704" ID="ID_1922086635" MODIFIED="1556154836841" TEXT="spark.shuffle.io.retryWait 5s"/>
+<node CREATED="1556154841749" ID="ID_78753456" MODIFIED="1556154843602" TEXT="spark.shuffle.sort.bypassMergeThreshold 200"/>
+</node>
+</node>
+<node CREATED="1556090546382" FOLDED="true" ID="ID_734014934" MODIFIED="1556240972842" POSITION="right" TEXT="SparkSQL">
+<node CREATED="1556154862962" ID="ID_604968933" MODIFIED="1556154887657" TEXT="SparkSQL  &#x662f;Spark&#x4e2d;&#x5904;&#x7406;&#x7ed3;&#x6784;&#x5316;&#x6570;&#x636e;&#x6a21;&#x5757;&#xff0c;&#x53ef;&#x4ee5;&#x5199;SQL&#x5904;&#x7406;&#x5206;&#x5e03;&#x5f0f;&#x6570;&#x636e;"/>
+<node CREATED="1556154888474" ID="ID_87282432" MODIFIED="1556154902706" TEXT="Hive - &gt; Shark -&gt; SparkSQL"/>
+<node CREATED="1556154921915" FOLDED="true" ID="ID_1152520566" MODIFIED="1556156445639" TEXT="Hive on Spark  -- shark">
+<node CREATED="1556154933503" ID="ID_1748523985" MODIFIED="1556154947538" TEXT="Hive : &#x89e3;&#x6790;&#x4f18;&#x5316;&#xff0c;&#x5b58;&#x50a8;"/>
+<node CREATED="1556154948694" ID="ID_1270236883" MODIFIED="1556154957056" TEXT="Spark &#xff1a;&#x6267;&#x884c;&#x5f15;&#x64ce;"/>
+</node>
+<node CREATED="1556154925979" FOLDED="true" ID="ID_1101180882" MODIFIED="1556156446134" TEXT="Spark on Hive  --sparkSQL">
+<node CREATED="1556154970386" ID="ID_1536744702" MODIFIED="1556154974552" TEXT="Hive &#xff1a; &#x5b58;&#x50a8;"/>
+<node CREATED="1556154975075" ID="ID_841896523" MODIFIED="1556154984451" TEXT="Spark : &#x89e3;&#x6790;&#x4f18;&#x5316;&#xff0c;&#x6267;&#x884c;&#x5f15;&#x64ce;"/>
+</node>
+<node CREATED="1556154986913" FOLDED="true" ID="ID_642973631" MODIFIED="1556156444319" TEXT="Shark &amp; SparkSQL">
+<node CREATED="1556154997330" ID="ID_1377936257" MODIFIED="1556155024570" TEXT="1.SparkSQL&#x7684;&#x51fa;&#x73b0;&#x5c31;&#x662f;&#x8131;&#x79bb;&#x4e86;Hive&#x7684;&#x8026;&#x5408;&#x9ad8;&#x95ee;&#x9898;&#xff0c;&#x5b8c;&#x5168;&#x8131;&#x79bb;Hive"/>
+<node CREATED="1556155024767" ID="ID_1406017417" MODIFIED="1556155040363" TEXT="2.SparkSQL&#x4e2d;&#x652f;&#x6301;&#x6240;&#x6709;Hive&#x8bed;&#x6cd5;&#x548c;Shark &#x8bed;&#x6cd5;"/>
+<node CREATED="1556155040554" ID="ID_1265483704" MODIFIED="1556155064861" TEXT="3.SparkSQL &#x8fd8;&#x652f;&#x6301;&#x67e5;&#x8be2;&#x539f;&#x751f;&#x7684;RDD&#xff0c;&#x53ef;&#x4ee5;&#x7ed3;&#x679c;&#x518d;&#x8f6c;&#x6362;&#x6210;RDD&#x4f7f;&#x7528;"/>
+</node>
+<node CREATED="1556155088959" FOLDED="true" ID="ID_1958222679" MODIFIED="1556156442647" TEXT="SparkSQL&#x6570;&#x636e;&#x7c7b;&#x578b;">
+<node CREATED="1556155096195" ID="ID_851836496" MODIFIED="1556155104346" TEXT="SparkCore &#x5e95;&#x5c42;&#x64cd;&#x4f5c;&#x7684;&#x662f;RDD"/>
+<node CREATED="1556155104532" ID="ID_1930679089" MODIFIED="1556155137096" TEXT="SparkSQL&#x5e95;&#x5c42;&#x64cd;&#x4f5c;&#x7684;&#x662f;Dataset"/>
+<node CREATED="1556155116353" ID="ID_1804372288" MODIFIED="1556155159999" TEXT="&#x5982;&#x679c;&#x60f3;&#x8981;&#x5728;SparkSQL&#x4e2d;&#x6ce8;&#x518c;&#x4e34;&#x65f6;&#x89c6;&#x56fe;&#xff0c;Dataset&#x6570;&#x636e;&#x7c7b;&#x578b;&#x5fc5;&#x987b;&#x662f;Dataset[Row] ,&#x5c31;&#x662f;DataFrame"/>
+<node CREATED="1556155179421" ID="ID_1808143207" MODIFIED="1556155194825" TEXT="Dataset &amp; RDD :&#x76f8;&#x5bf9;&#x4e8e;RDD&#x6548;&#x7387;&#x9ad8;"/>
+</node>
+<node CREATED="1556155237165" FOLDED="true" ID="ID_568270531" MODIFIED="1556156444959" TEXT="SparkSQL&#x4ee3;&#x7801;&#x6d41;&#x7a0b;">
+<node CREATED="1556155252669" ID="ID_1810545098" MODIFIED="1556155256832" TEXT="Spark1.6">
+<node CREATED="1556155279340" ID="ID_1307623462" MODIFIED="1556155288333" TEXT="val conf= new SparkConf()"/>
+<node CREATED="1556155288511" ID="ID_1443286135" MODIFIED="1556155294418" TEXT="val sc = new SparkContext(conf)"/>
+<node CREATED="1556155294601" ID="ID_1038125116" MODIFIED="1556155332682" TEXT="val sqlContext = new SQLContext(sc)   | val hiveContext = new HiveContext(sc)"/>
+<node CREATED="1556155307720" ID="ID_391779627" MODIFIED="1556155314293" TEXT="sqlContext.sql(xxxxx)"/>
+</node>
+<node CREATED="1556155257094" ID="ID_448645030" MODIFIED="1556155348142" TEXT="Spark2.0+ ">
+<node CREATED="1556155349155" ID="ID_229264228" MODIFIED="1556155383458" TEXT="val sparkSession = SparkSession.build().master...appName...getOrCreate()  "/>
+<node CREATED="1556155383926" ID="ID_957624143" MODIFIED="1556155395760" TEXT="&#x652f;&#x6301;Hive:val sparkSession = SparkSession.build().master...appName.enableHiveSupport..getOrCreate() "/>
+<node CREATED="1556155406569" ID="ID_669951264" MODIFIED="1556155410901" TEXT="sparkSession.sql(xxxx)"/>
+</node>
+</node>
+<node CREATED="1556090568885" FOLDED="true" ID="ID_891269231" MODIFIED="1556156441647" TEXT="&#x521b;&#x5efa; DataFrame &#x65b9;&#x5f0f;">
+<node CREATED="1556090618673" ID="ID_1838290953" MODIFIED="1556155783567" TEXT="1.&#x8bfb;&#x53d6;Json&#x683c;&#x5f0f;&#x7684;&#x6587;&#x4ef6;">
+<node CREATED="1556155228684" ID="ID_336551973" MODIFIED="1556155429509" TEXT="sparksession.read.json()..."/>
+<node CREATED="1556155429676" ID="ID_393248345" MODIFIED="1556155444638" TEXT="sparksession.read.format(&quot;json&quot;).load(...)"/>
+<node CREATED="1556155480960" ID="ID_236817095" MODIFIED="1556155485647" TEXT="&#x6ce8;&#x610f;">
+<node CREATED="1556155486205" ID="ID_353557305" MODIFIED="1556155499281" TEXT="dataFrame.show()"/>
+<node CREATED="1556155499459" ID="ID_935082318" MODIFIED="1556155506790" TEXT="dataFrame.printSchema.."/>
+<node CREATED="1556155507273" ID="ID_1240917715" MODIFIED="1556155541937" TEXT="&#x8bfb;&#x53d6;Json&#x683c;&#x5f0f;&#x6570;&#x636e;&#x81ea;&#x52a8;&#x5c06;Json&#x4e2d;&#x5c5e;&#x6027;&#x5f53;&#x505a;DataFrame&#x4e2d;&#x7684;&#x5217;&#xff0c;&#x7c7b;&#x578b;&#x4f1a;&#x81ea;&#x52a8;&#x63a8;&#x65ad;"/>
+<node CREATED="1556155542745" ID="ID_1919943645" MODIFIED="1556155562801" TEXT="&#x751f;&#x6210;&#x7684;&#x5217; &#x4f1a;&#x81ea;&#x52a8;&#x6309;&#x7167;ASCII&#x7801;&#x6392;&#x5e8f;"/>
+<node CREATED="1556155562992" ID="ID_719285251" MODIFIED="1556155629746" TEXT="&#x5c06;DataFrame&#x6620;&#x5c04;&#x89c6;&#x56fe;&#xff1a;">
+<node CREATED="1556155576760" ID="ID_1114976168" MODIFIED="1556155576760" TEXT="">
+<node CREATED="1556155576887" ID="ID_1603793553" MODIFIED="1556155643401" TEXT="createOrReplaceTempView(&quot;&#x8868;&#x540d;&#x201c;)"/>
+<node CREATED="1556155596047" ID="ID_1071351237" MODIFIED="1556155647441" TEXT="createOrReplaceGlobalTempView(&quot;&#x8868;&#x540d;&#x201c;  &#x8de8;session"/>
+</node>
+</node>
+<node CREATED="1556155652323" ID="ID_1418032766" MODIFIED="1556155677735" TEXT="&#x624b;&#x52a8;&#x67e5;&#x8be2;&#x89c6;&#x56fe;&#x65f6;&#x751f;&#x6210;DataFrame&#xff0c;&#x8fd9;&#x4e2a;&#x5217;&#x4f1a;&#x6309;&#x7167;&#x67e5;&#x8be2;&#x5217;&#x987a;&#x5e8f;&#x663e;&#x793a;"/>
+<node CREATED="1556155685730" ID="ID_191265639" MODIFIED="1556155705788" TEXT="val rdd:RDD[Row]  = dataFrame.rdd"/>
+<node CREATED="1556155715295" ID="ID_1674094152" MODIFIED="1556155743693" TEXT="RDD[Row]  &#x4e2d;&#x83b7;&#x53d6;Row&#x4e2d;&#x7684;&#x503c; &#xff1a; row.getAs[&#x7c7b;&#x578b;](&#x4e0b;&#x6807;|&#x5217;&#x540d;)"/>
+</node>
+</node>
+<node CREATED="1556090635547" ID="ID_1628110003" MODIFIED="1556090688528" TEXT="2.&#x8bfb;&#x53d6;RDD&#x7684;&#x6570;&#x636e;&#x52a0;&#x8f7d;DataFrame">
+<node CREATED="1556090662029" ID="ID_1339975556" MODIFIED="1556090666832" TEXT="1.&#x53cd;&#x5c04;&#x7684;&#x65b9;&#x5f0f;">
+<node CREATED="1556091326254" ID="ID_1599481079" MODIFIED="1556091328266" TEXT="java ">
+<node CREATED="1556091333473" ID="ID_232921377" MODIFIED="1556091340616" TEXT="1.&#x521b;&#x5efa;&#x666e;&#x901a;JavaRDD"/>
+<node CREATED="1556091340774" ID="ID_517092753" MODIFIED="1556091358277" TEXT="2.&#x5c06;&#x666e;&#x901a;JavaRDD&#x8f6c;&#x6362;&#x6210; &#x81ea;&#x5b9a;&#x4e49;&#x7c7b;&#x578b; JavaRDD"/>
+<node CREATED="1556091366681" ID="ID_1830235703" MODIFIED="1556091396722" TEXT="3.sparkSession.createDataFrame(JavaRDD[&#x81ea;&#x5b9a;&#x4e49;&#x7c7b;&#x578b;]&#xff0c;&#x81ea;&#x5b9a;&#x4e49;&#x7c7b;&#x578b;.class)"/>
+</node>
+<node CREATED="1556091328446" ID="ID_1194946602" MODIFIED="1556091329853" TEXT="scala">
+<node CREATED="1556091398842" ID="ID_1232962691" MODIFIED="1556091560021" TEXT="1.&#x521b;&#x5efa;&#x666e;&#x901a;DataSet|RDD"/>
+<node CREATED="1556091413985" ID="ID_1738824313" MODIFIED="1556091579323" TEXT="2.&#x5c06;&#x666e;&#x901a;&#x7c7b;&#x578b;&#x7684;DataSet|RDD&#x8f6c;&#x6362;&#x6210;DataSet[&#x81ea;&#x5b9a;&#x4e49;&#x7c7b;&#x578b;] | RDD[&#x81ea;&#x5b9a;&#x4e49;&#x7c7b;&#x578b;]"/>
+<node CREATED="1556091430891" ID="ID_1452616984" MODIFIED="1556091588913" TEXT="3.&#x5bfc;&#x5165;&#x9690;&#x5f0f;&#x8f6c;&#x6362;&#x51fd;&#x6570; &#xff1a; DataSet[&#x81ea;&#x5b9a;&#x4e49;&#x7c7b;&#x578b;].toDF()  | RDD[&#x81ea;&#x5b9a;&#x4e49;&#x7c7b;&#x578b;].toDF()"/>
+</node>
+</node>
+<node CREATED="1556090667005" ID="ID_342865902" MODIFIED="1556090680537" TEXT="2.&#x52a8;&#x6001;&#x521b;&#x5efa;Schema&#x7684;&#x65b9;&#x5f0f;">
+<node CREATED="1556092205535" ID="ID_414394477" MODIFIED="1556092208479" TEXT="java">
+<node CREATED="1556092341724" ID="ID_910877665" MODIFIED="1556092353761" TEXT="1.&#x521b;&#x5efa;RDD[String]"/>
+<node CREATED="1556092354387" ID="ID_1885931152" MODIFIED="1556092376404" TEXT="2.&#x5c06;RDD[String]&#x8f6c;&#x6362;&#x6210;RDD[Row]"/>
+<node CREATED="1556092376793" ID="ID_1374623314" MODIFIED="1556092388875" TEXT="3.&#x52a8;&#x6001;&#x521b;&#x5efa;&#x5217;"/>
+<node CREATED="1556092389043" ID="ID_52721451" MODIFIED="1556092426498" TEXT="4.Dataset&lt;Row&gt; df = spark.createDataFrame(RDD[Row],StructType)"/>
+<node CREATED="1556092430145" ID="ID_942868796" MODIFIED="1556092430975" TEXT="&#x6ce8;&#x610f;&#xff1a;&#x6784;&#x5efa;&#x5217;&#x65f6;&#xff0c;&#x987a;&#x5e8f;&#x8981;&#x548c;&#x521b;&#x5efa;&#x7684;Row&#x4e2d;&#x6570;&#x636e;&#x987a;&#x5e8f;&#x4e00;&#x81f4; "/>
+</node>
+<node CREATED="1556092070515" ID="ID_1883748756" MODIFIED="1556092073871" TEXT="scala">
+<node CREATED="1556092076426" ID="ID_1259148747" MODIFIED="1556092094218" TEXT="1.&#x521b;&#x5efa;RDD[String]"/>
+<node CREATED="1556092094416" ID="ID_452575251" MODIFIED="1556092117320" TEXT="2.&#x5c06;RDD[String] &#x8f6c;&#x6362;&#x6210;RDD[Row]"/>
+<node CREATED="1556092117924" ID="ID_583474528" MODIFIED="1556092134035" TEXT="3.&#x521b;&#x5efa;StructType&#x6570;&#x636e;&#xff0c;&#x6784;&#x5efa;&#x5217;"/>
+<node CREATED="1556092134232" ID="ID_1522380731" MODIFIED="1556092173086" TEXT="4.val dataFrame = spark.createDataFrame(RDD[Row],StructType)"/>
+<node CREATED="1556092174831" ID="ID_254509828" MODIFIED="1556092203696" TEXT="&#x6ce8;&#x610f;&#xff1a;&#x6784;&#x5efa;&#x5217;&#x65f6;&#xff0c;&#x987a;&#x5e8f;&#x8981;&#x548c;&#x521b;&#x5efa;&#x7684;Row&#x4e2d;&#x6570;&#x636e;&#x987a;&#x5e8f;&#x4e00;&#x81f4;"/>
+</node>
+</node>
+</node>
+<node CREATED="1556092462225" ID="ID_1150960469" MODIFIED="1556092480430" TEXT="3.&#x8bfb;&#x53d6;Parquet&#x6587;&#x4ef6;&#x52a0;&#x8f7d;DataFrame">
+<node CREATED="1556155900759" ID="ID_210099910" MODIFIED="1556155917493" TEXT="sparksession.read.parquet(..)"/>
+<node CREATED="1556155917670" ID="ID_1330126396" MODIFIED="1556155938486" TEXT="sparksessiion.read.format(&quot;parquet&quot;).load()"/>
+<node CREATED="1556156105256" ID="ID_1408874982" MODIFIED="1556156168958" TEXT="dataFrame.write.mode(SaveMode.xxx).format(&quot;parquet&quot;).save(&#x8def;&#x5f84;)"/>
+</node>
+<node CREATED="1556092480602" ID="ID_135664743" MODIFIED="1556092493153" TEXT="4.&#x8bfb;&#x53d6;MySQL&#x6570;&#x636e;&#x52a0;&#x8f7d;DataFrame">
+<node CREATED="1556155941083" ID="ID_952130697" MODIFIED="1556155959601" TEXT="sparksession.read.jdbc(xxx,xxxx,xxx)"/>
+<node CREATED="1556155965906" ID="ID_1508535903" MODIFIED="1556155984987" TEXT="sparksession.read.format(&quot;jdbc&quot;).options(&#x914d;&#x7f6e;map) .load()"/>
+<node CREATED="1556155985196" ID="ID_81596576" MODIFIED="1556156011475" TEXT="sparksessiion.read.format(&quot;jdbc&quot;).option(..).option(..).load()"/>
+<node CREATED="1556156016259" ID="ID_518206983" MODIFIED="1556156138477" TEXT="dataFrame.write.mode(SaveMode.xxx).jdbc(&#x8fde;&#x63a5;&#xff0c;&#x7ed3;&#x679c;&#x8868;&#x540d;&#xff0c;&#x914d;&#x7f6e;)"/>
+</node>
+<node CREATED="1556096846250" ID="ID_1690077079" MODIFIED="1556096857461" TEXT="5.&#x8bfb;&#x53d6;Hive&#x4e2d;&#x6570;&#x636e;&#x52a0;&#x8f7d;DataFrame">
+<node CREATED="1556156200491" ID="ID_1009851388" MODIFIED="1556156227385" TEXT="&#x8bfb;&#x53d6;Hive&#x4e2d;&#x7684;&#x6570;&#x636e;&#x8981;&#x5f00;hive&#x652f;&#x6301; &#xff1a;sparksession.enableHiveSupport()"/>
+<node CREATED="1556156172442" ID="ID_656338879" MODIFIED="1556156191804" TEXT="dataFrame.write.mode....saveAsTable(...)"/>
+</node>
+</node>
+<node CREATED="1556096836915" FOLDED="true" ID="ID_1544640883" MODIFIED="1556240899146" TEXT="Spark On Hive">
+<node CREATED="1556156236750" ID="ID_1428745266" MODIFIED="1556156260861" TEXT="1.&#x5728;spark&#x5ba2;&#x6237;&#x7aef; spark/conf/hive-site.xml">
+<node CREATED="1556156270004" ID="ID_1456330649" MODIFIED="1556156270004" TEXT="&lt;configuration&gt;"/>
+<node CREATED="1556156270006" ID="ID_1408856654" MODIFIED="1556156285696" TEXT="&lt;property&gt;"/>
+<node CREATED="1556156270006" ID="ID_1037226362" MODIFIED="1556156270006" TEXT="&lt;name&gt;hive.metastore.uris&lt;/name&gt;"/>
+<node CREATED="1556156270008" ID="ID_1317530584" MODIFIED="1556156270008" TEXT="&lt;value&gt;thrift://node1:9083&lt;/value&gt;"/>
+<node CREATED="1556156270009" ID="ID_1433748612" MODIFIED="1556156270009" TEXT="&lt;/property&gt;"/>
+<node CREATED="1556156270010" ID="ID_1795342508" MODIFIED="1556156270010" TEXT="&lt;/configuration&gt;"/>
+</node>
+<node CREATED="1556156294028" ID="ID_1511345096" MODIFIED="1556156318464" TEXT="2.Hive&#x670d;&#x52a1;&#x7aef;&#x5f00;&#x542f;MetaServer :hive -- service metastore &amp; "/>
+<node CREATED="1556156319056" ID="ID_1827818110" MODIFIED="1556156330248" TEXT="3.&#x5728;Spark &#x5ba2;&#x6237;&#x7aef;&#x6d4b;&#x8bd5; "/>
+</node>
+<node CREATED="1556156346862" FOLDED="true" ID="ID_858724480" MODIFIED="1556240903529" TEXT="UDF">
+<node CREATED="1556156368767" ID="ID_1134438411" MODIFIED="1556156384976" TEXT="User Defined Function :&#x7528;&#x6237;&#x81ea;&#x5b9a;&#x4e49;&#x51fd;&#x6570;"/>
+<node CREATED="1556156376098" ID="ID_932962949" MODIFIED="1556156376098" TEXT=""/>
+</node>
+<node CREATED="1556156350909" FOLDED="true" ID="ID_1976961102" MODIFIED="1556240919489" TEXT="UDAF">
+<node CREATED="1556156387208" ID="ID_1236544424" MODIFIED="1556156406210" TEXT="User Defined Aggregate Function : &#x7528;&#x6237;&#x81ea;&#x5b9a;&#x4e49;&#x805a;&#x5408;&#x51fd;&#x6570;"/>
+</node>
+<node CREATED="1556156354662" ID="ID_1575798600" MODIFIED="1556156362998" TEXT="&#x5f00;&#x7a97;&#x51fd;&#x6570;">
+<node CREATED="1556240922345" ID="ID_247394810" MODIFIED="1556240939077" TEXT="row_number() over(partition by xx order by xx ) as rank"/>
+<node CREATED="1556240939258" ID="ID_914385201" MODIFIED="1556240950813" TEXT="rank &#x6bcf;&#x7ec4;&#x5185;&#x4ece;1&#x5f00;&#x59cb;"/>
+</node>
+</node>
+<node CREATED="1556240973940" FOLDED="true" ID="ID_779510756" MODIFIED="1557277674861" POSITION="right" TEXT="SparkStreaming">
+<node CREATED="1556240977200" ID="ID_770488799" MODIFIED="1556241006699" TEXT="SparkStreaming&#x662f;Spark&#x4e2d;&#x6d41;&#x5f0f;&#x5904;&#x7406;&#x6a21;&#x5757;&#xff0c;7*24&#x5c0f;&#x65f6;&#x4e0d;&#x95f4;&#x65ad;&#x8fd0;&#x884c;&#xff0c;&#x5e95;&#x5c42;&#x64cd;&#x4f5c;&#x6570;&#x636e;&#x662f;DStream"/>
+<node CREATED="1556241011514" FOLDED="true" ID="ID_888716422" MODIFIED="1556258937436" TEXT="SparkStreaming &amp; Storm ">
+<node CREATED="1556241019956" ID="ID_1691147146" MODIFIED="1556241046749" TEXT="1.Storm&#x662f;&#x7eaf;&#x5b9e;&#x65f6;&#x5904;&#x7406;&#x6570;&#x636e; &#xff0c;SparkStreaming &#x5fae;&#x6279;&#x5904;&#x7406;&#x6570;&#x636e;&#xff0c;SparkStreaming&#x541e;&#x5410;&#x91cf;&#x5927;"/>
+<node CREATED="1556241047055" ID="ID_400949268" MODIFIED="1556241092979" TEXT="2.Storm&#x64c5;&#x957f;&#x5904;&#x7406;&#x6c47;&#x603b;&#x578b;&#x4e1a;&#x52a1;&#xff0c;SparkStreaming&#x64c5;&#x957f;&#x590d;&#x6742;&#x7684;&#x4e1a;&#x52a1;&#xff0c;SparkStreaming&#x4e2d;&#x53ef;&#x4ee5;&#x4f7f;&#x7528;SparkCore,SparkSQL&#x5904;&#x7406;&#x6570;&#x636e;"/>
+<node CREATED="1556241093266" ID="ID_1700301536" MODIFIED="1556241114394" TEXT="3.Storm&#x4e8b;&#x52a1;&#x76f8;&#x5bf9;&#x5b8c;&#x5584;&#xff0c;SparkStreaming&#x901a;&#x8fc7;&#x6211;&#x4eec;&#x81ea;&#x5df1;&#x7ba1;&#x7406;&#x4e5f;&#x6bd4;&#x8f83;&#x5b8c;&#x5584;"/>
+<node CREATED="1556241114581" ID="ID_1771356606" MODIFIED="1556241132198" TEXT="4.Storm&#x652f;&#x6301;&#x52a8;&#x6001;&#x8d44;&#x6e90;&#x8c03;&#x5ea6;&#xff0c;SparkStreaming1.2 &#x4e4b;&#x540e;&#x4e5f;&#x662f;&#x652f;&#x6301;"/>
+</node>
+<node CREATED="1556241140028" FOLDED="true" ID="ID_8122753" MODIFIED="1556258936452" TEXT="SparkStreaming &#x8bfb;&#x53d6;Socket&#x6570;&#x636e;&#x4e3a;&#x4f8b;">
+<node CREATED="1556241151298" ID="ID_1755532855" MODIFIED="1556241169655" TEXT="local[2] &#x91c7;&#x7528;receiver&#x63a5;&#x6536;&#x5668;&#x6a21;&#x5f0f;&#xff0c;&#x9700;&#x8981;&#x4e00;&#x4e2a;task&#x63a5;&#x6536;&#x6570;&#x636e;"/>
+<node CREATED="1556241169822" ID="ID_330097856" MODIFIED="1556241183705" TEXT="&#x521b;&#x5efa;StreamingContext&#x7684;&#x65b9;&#x5f0f;">
+<node CREATED="1556241184293" ID="ID_1600572333" MODIFIED="1556241210194" TEXT="val ssc = new StreamingContext(SparkConf,BatchInterval)"/>
+<node CREATED="1556241184293" ID="ID_1820033214" MODIFIED="1556241218065" TEXT="val ssc = new StreamingContext(SparkContext,BatchInterval)"/>
+</node>
+<node CREATED="1556241225645" ID="ID_745352757" MODIFIED="1556241245386" TEXT="batchInterval &#x4ee3;&#x8868;&#x6211;&#x4eec;&#x53ef;&#x4ee5;&#x63a5;&#x6536;&#x6570;&#x636e;&#x7684;&#x5ef6;&#x8fdf;&#x5ea6;&#xff0c;&#x53ef;&#x4ee5;&#x901a;&#x8fc7;webui&#x8c03;&#x8282;"/>
+<node CREATED="1556241287193" ID="ID_600556729" MODIFIED="1556241335632" TEXT="SparkStreaming&#x5e95;&#x5c42;&#x64cd;&#x4f5c;&#x7684;&#x662f;DStream,DStream&#x53ef;&#x4ee5;&#x4f7f;&#x7528;Transformation&#x7c7b;&#x7b97;&#x5b50;&#x8fdb;&#x884c;&#x8f6c;&#x6362;&#xff0c;&#x53ef;&#x4ee5;&#x4f7f;&#x7528;outputOperator&#x7c7b;&#x7b97;&#x5b50;&#x89e6;&#x53d1;&#x6267;&#x884c;"/>
+<node CREATED="1556241264693" ID="ID_1387563439" MODIFIED="1556241283225" TEXT="SparkStreaming.start() &#x4e4b;&#x540e;&#x4e0d;&#x80fd;&#x6dfb;&#x52a0;&#x65b0;&#x7684;&#x4e1a;&#x52a1;&#x903b;&#x8f91;"/>
+<node CREATED="1556241283369" ID="ID_857522789" MODIFIED="1556241352295" TEXT="SparkSteaming.stop()&#x4e4b;&#x540e;&#x4e0d;&#x80fd;&#x518d;&#x8c03;&#x7528;SparkStreaming.start() "/>
+<node CREATED="1556241352507" ID="ID_1680679603" MODIFIED="1556241386605" TEXT="SparkStreaming.stop(false),&#x9ed8;&#x8ba4;&#x662f;true&#xff0c;&#x8bbe;&#x7f6e;&#x4e3a;false&#x540e;&#xff0c;&#x5f53;&#x56de;&#x6536;SparkStreamingContext&#x7684;&#x65f6;&#x5019;&#x4e0d;&#x5c06;SparkContext&#x56de;&#x6536;&#x6389;"/>
+</node>
+<node CREATED="1556241392540" FOLDED="true" ID="ID_537316540" MODIFIED="1556258934876" TEXT="SparkStreaming&#x7b97;&#x5b50;">
+<node CREATED="1556241399013" ID="ID_509949480" MODIFIED="1556241403550" TEXT="Transformation">
+<node CREATED="1556241411661" ID="ID_521404855" MODIFIED="1556241416028" TEXT="filter.."/>
+<node CREATED="1556241416621" ID="ID_1997267005" MODIFIED="1556241417848" TEXT="map.."/>
+<node CREATED="1556241418236" ID="ID_1746799794" MODIFIED="1556241422394" TEXT="flatMap..."/>
+<node CREATED="1556241422581" ID="ID_606284891" MODIFIED="1556241433725" TEXT="updateStateByKey">
+<node CREATED="1556241434314" ID="ID_1703851862" MODIFIED="1556241464883" TEXT="&#x66f4;&#x65b0;&#x81ea;&#x4ece;SparkStreaming &#x542f;&#x52a8;&#x4ee5;&#x6765;&#x6240;&#x6709;key&#x7684;&#x72b6;&#x6001;&#xff0c;&#x9700;&#x8981;&#x8bbe;&#x7f6e;checkpoint"/>
+<node CREATED="1556241465241" ID="ID_1253952059" MODIFIED="1556241489651" TEXT="&#x9ed8;&#x8ba4;key&#x7684;&#x72b6;&#x6001;&#x662f;&#x4fdd;&#x5b58;&#x5728;&#x5185;&#x5b58;&#x4e2d;&#x7684;&#xff0c;&#x591a;&#x4e45;&#x5c06;&#x5185;&#x5b58;&#x7684;&#x72b6;&#x6001;&#x5b58;&#x50a8;&#x5230;checkpoint&#x4e2d;&#x4e00;&#x6b21;&#xff1f;">
+<node CREATED="1556241489652" ID="ID_398744041" MODIFIED="1556241510523" TEXT="&#x5f53;batchInterval &lt;=10 &#x65f6; &#xff0c;10&#x66f4;&#x65b0;&#x4e00;&#x6b21;"/>
+<node CREATED="1556241510699" ID="ID_1835608270" MODIFIED="1556241527804" TEXT="&#x5f53;batchInterval&gt;10 s&#x65f6;&#xff0c;batchInterval &#x66f4;&#x65b0;&#x4e00;&#x6b21;"/>
+</node>
+</node>
+<node CREATED="1556241535510" ID="ID_731783799" MODIFIED="1556241548781" TEXT="reduceByKeyAndWindow">
+<node CREATED="1556241549854" ID="ID_419653477" MODIFIED="1556241554994" TEXT="&#x7a97;&#x53e3;&#x51fd;&#x6570;">
+<node CREATED="1556241558792" ID="ID_341586471" MODIFIED="1556241585094" TEXT="&#x7a97;&#x53e3;&#x957f;&#x5ea6;  &#xff1a; wl ,&#x5fc5;&#x987b;&#x662f;batchInterval &#x7684;&#x6574;&#x6570;&#x500d;"/>
+<node CREATED="1556241562619" ID="ID_780489568" MODIFIED="1556241594127" TEXT="&#x7a97;&#x53e3;&#x6ed1;&#x52a8;&#x95f4;&#x9694; &#xff1a; si ,&#x5fc5;&#x987b;&#x662f;batchInterval &#x7684;&#x6574;&#x6570;&#x500d;"/>
+</node>
+<node CREATED="1556241555166" ID="ID_255856914" MODIFIED="1556241666913" TEXT="reduceByKeyAndWindow(fun,&#x7a97;&#x53e3;&#x957f;&#x5ea6;&#xff0c;&#x6ed1;&#x52a8;&#x95f4;&#x9694;)">
+<node CREATED="1556241614731" ID="ID_1525875259" MODIFIED="1556241637938" TEXT="&#x6bcf;&#x9694; &#x6ed1;&#x52a8;&#x95f4;&#x9694; &#x5c06;&#x6700;&#x8fd1; &#x7a97;&#x53e3;&#x957f;&#x5ea6;&#x5185;&#x7684;&#x6570;&#x636e;&#x6309;&#x7167;fun&#x505a;&#x4e00;&#x6b21;&#x5904;&#x7406;"/>
+</node>
+<node CREATED="1556241643112" ID="ID_1648364686" MODIFIED="1556241651109" TEXT="&#x666e;&#x901a;&#x673a;&#x5236;"/>
+<node CREATED="1556241651292" ID="ID_176486663" MODIFIED="1556241653391" TEXT="&#x4f18;&#x5316;&#x673a;&#x5236;">
+<node CREATED="1556241653994" ID="ID_1559120994" MODIFIED="1556241660001" TEXT="&#x9700;&#x8981;&#x8bbe;&#x7f6e;checkpoint&#x4fdd;&#x5b58;&#x72b6;&#x6001;"/>
+</node>
+</node>
+<node CREATED="1556241684261" ID="ID_1242871498" MODIFIED="1556241687370" TEXT="window">
+<node CREATED="1556241687803" ID="ID_850842873" MODIFIED="1556241722984" TEXT="val ds = window(Durations.seconds(15),Durations.seconds(5))"/>
+</node>
+<node CREATED="1556241728883" ID="ID_1998216118" MODIFIED="1556241732448" TEXT="transform">
+<node CREATED="1556241733007" ID="ID_588855650" MODIFIED="1556241751662" TEXT="&#x53ef;&#x4ee5;&#x83b7;&#x53d6;DStream&#x4e2d;&#x7684;RDD&#xff0c;&#x5bf9;RDD&#x8fdb;&#x884c;&#x8f6c;&#x6362;&#xff0c;&#x6700;&#x540e;&#x9700;&#x8981;&#x8fd4;&#x56de;RDD"/>
+<node CREATED="1556241751835" ID="ID_212554393" MODIFIED="1556241794200" TEXT="transform&#x7b97;&#x5b50;&#x5185;&#xff0c;&#x83b7;&#x53d6;&#x7684;RDD&#x7684;&#x7b97;&#x5b50;&#x5916;&#x7684;&#x4ee3;&#x7801;&#x662f;&#x5728;Driver&#x7aef;&#x6267;&#x884c;&#x7684;&#xff0c;&#x53ef;&#x4ee5;&#x5229;&#x7528;&#x8fd9;&#x4e2a;&#x7279;&#x70b9;&#xff0c;&#x505a;&#x5230;&#x4e0d;&#x505c;&#x6b62;SparkStreaming&#x7a0b;&#x5e8f;&#x7684;&#x524d;&#x63d0;&#x4e0b;&#x52a8;&#x6001;&#x6539;&#x53d8;&#x5e7f;&#x64ad;&#x53d8;&#x91cf;"/>
+</node>
+</node>
+<node CREATED="1556241403738" ID="ID_1965032081" MODIFIED="1556241409899" TEXT="outputOperator">
+<node CREATED="1556241798315" ID="ID_182924031" MODIFIED="1556241800509" TEXT="print"/>
+<node CREATED="1556241800686" ID="ID_1534810786" MODIFIED="1556241803887" TEXT="foreachRDD">
+<node CREATED="1556241733007" ID="ID_1120260597" MODIFIED="1556241822256" TEXT="&#x53ef;&#x4ee5;&#x83b7;&#x53d6;DStream&#x4e2d;&#x7684;RDD&#xff0c;&#x5bf9;RDD&#x8fdb;&#x884c;&#x8f6c;&#x6362;&#xff0c;&#x6700;&#x540e;&#x9700;&#x8981;&#x5bf9;RDD&#x4f7f;&#x7528;Action&#x7b97;&#x5b50;&#x89e6;&#x53d1;&#x64cd;&#x4f5c;"/>
+<node CREATED="1556241751835" ID="ID_1643055976" MODIFIED="1556241829411" TEXT="foreachRDD&#x7b97;&#x5b50;&#x5185;&#xff0c;&#x83b7;&#x53d6;&#x7684;RDD&#x7684;&#x7b97;&#x5b50;&#x5916;&#x7684;&#x4ee3;&#x7801;&#x662f;&#x5728;Driver&#x7aef;&#x6267;&#x884c;&#x7684;&#xff0c;&#x53ef;&#x4ee5;&#x5229;&#x7528;&#x8fd9;&#x4e2a;&#x7279;&#x70b9;&#xff0c;&#x505a;&#x5230;&#x4e0d;&#x505c;&#x6b62;SparkStreaming&#x7a0b;&#x5e8f;&#x7684;&#x524d;&#x63d0;&#x4e0b;&#x52a8;&#x6001;&#x6539;&#x53d8;&#x5e7f;&#x64ad;&#x53d8;&#x91cf;"/>
+</node>
+<node CREATED="1556241838384" ID="ID_1997999779" MODIFIED="1556241843928" TEXT="saveAsTextFile.."/>
+<node CREATED="1556241859295" ID="ID_987145731" MODIFIED="1556241860413" TEXT="...."/>
+</node>
+<node CREATED="1556241862047" ID="ID_802980073" MODIFIED="1556241872539" TEXT="SparkStreaming&#x76d1;&#x63a7;&#x76ee;&#x5f55;&#x6570;&#x636e;">
+<node CREATED="1556241873115" ID="ID_936312042" MODIFIED="1556241881148" TEXT="&#x76ee;&#x5f55;&#x4e2d;&#x7684;&#x6570;&#x636e;&#x5fc5;&#x987b;&#x662f;&#x539f;&#x5b50;&#x6027;&#x4ea7;&#x751f;"/>
+</node>
+</node>
+<node CREATED="1556241891532" FOLDED="true" ID="ID_1766194576" MODIFIED="1556268179389" TEXT="SparkStreaming Driver HA">
+<node CREATED="1556241948193" ID="ID_678876850" MODIFIED="1556242017724" TEXT="&#x7ed3;&#x5408;&#x547d;&#x4ee4;&#xff0c;&#x5f53;Driver&#x6302;&#x6389;&#x65f6;&#x91cd;&#x542f;Driver"/>
+<node CREATED="1556241965360" ID="ID_599899434" MODIFIED="1556267205824" TEXT="&#x4ee3;&#x7801;&#x5c42;&#x9762;&#x8bbe;&#x7f6e; &#x6062;&#x590d;Driver&#x539f;&#x6570;&#x636e;">
+<node CREATED="1556264742936" ID="ID_747078922" MODIFIED="1556267115875" TEXT="1.&#x914d;&#x7f6e;&#x4fe1;&#x606f;"/>
+<node CREATED="1556267116054" ID="ID_209184587" MODIFIED="1556267179859" TEXT="2.DStream &#x903b;&#x8f91;"/>
+<node CREATED="1556267180026" ID="ID_1434841746" MODIFIED="1556267191419" TEXT="3.batch &#x6570;&#x636e; |offset"/>
+</node>
+<node CREATED="1556267207057" ID="ID_1193619360" MODIFIED="1556267217708" TEXT="&#x4ee3;&#x7801;&#x5b9e;&#x73b0;&#xff1a;val ssc: StreamingContext = StreamingContext.getOrCreate(ckDir,CreateStreamingContext)"/>
+</node>
+<node CREATED="1556258931239" FOLDED="true" ID="ID_1806114027" MODIFIED="1556267352190" TEXT="Kafka">
+<node CREATED="1556267253157" ID="ID_235729719" MODIFIED="1556267261552" TEXT="&#x672f;&#x8bed;">
+<node CREATED="1556267267979" ID="ID_811228178" MODIFIED="1556267280783" TEXT="producer "/>
+<node CREATED="1556267280970" ID="ID_1073459842" MODIFIED="1556267285289" TEXT="broker"/>
+<node CREATED="1556267285471" ID="ID_1893344682" MODIFIED="1556267288140" TEXT="topic"/>
+<node CREATED="1556267288319" ID="ID_1717732106" MODIFIED="1556267289963" TEXT="partition"/>
+<node CREATED="1556267290154" ID="ID_1043766116" MODIFIED="1556267292696" TEXT="consumer"/>
+<node CREATED="1556267292885" ID="ID_893784528" MODIFIED="1556267295098" TEXT="zookeeper"/>
+</node>
+<node CREATED="1556267297747" ID="ID_1088095990" MODIFIED="1556267300595" TEXT="&#x642d;&#x5efa;"/>
+<node CREATED="1556267300994" ID="ID_163893216" MODIFIED="1556267304915" TEXT="&#x547d;&#x4ee4;&#xff1a;">
+<node CREATED="1556267305502" ID="ID_1526481116" MODIFIED="1556267309712" TEXT="&#x521b;&#x5efa;&#x4e00;&#x4e2a;topic"/>
+<node CREATED="1556267309895" ID="ID_608116698" MODIFIED="1556267312501" TEXT="&#x67e5;&#x770b;&#x96c6;&#x7fa4;topic"/>
+<node CREATED="1556267312685" ID="ID_1318938611" MODIFIED="1556267322803" TEXT="&#x67e5;&#x770b;topic&#x7684;&#x63cf;&#x8ff0;&#x4fe1;&#x606f;"/>
+<node CREATED="1556267322996" ID="ID_1822773697" MODIFIED="1556267329786" TEXT="console&#x5f53;&#x505a;&#x751f;&#x4ea7;&#x8005;"/>
+<node CREATED="1556267329955" ID="ID_1317441500" MODIFIED="1556267337286" TEXT="console&#x5f53;&#x505a;&#x6d88;&#x8d39;&#x8005;"/>
+<node CREATED="1556267337470" ID="ID_522718802" MODIFIED="1556267340486" TEXT="&#x5220;&#x9664;topic"/>
+</node>
+</node>
+<node CREATED="1556258901794" FOLDED="true" ID="ID_1695337085" MODIFIED="1557277672069" TEXT="SparkStreaming+kafka ">
+<node CREATED="1556258907532" FOLDED="true" ID="ID_2123177" MODIFIED="1557277670345" TEXT="SparkStreaming1.6 + Kafka0.8.2">
+<node CREATED="1556258952078" ID="ID_1585407816" MODIFIED="1556258955787" TEXT="Receiver&#x6a21;&#x5f0f;">
+<node CREATED="1556267364664" ID="ID_1093246914" MODIFIED="1556267627417" TEXT="1.receiver&#x6a21;&#x5f0f;&#x91c7;&#x7528;&#x4e86;Receiver&#x63a5;&#x6536;&#x5668;&#x6a21;&#x5f0f;&#xff0c;&#x9700;&#x8981;&#x4e00;&#x4e2a;&#x7ebf;&#x7a0b;&#x4e00;&#x76f4;&#x63a5;&#x6536;&#x6570;&#x636e;&#xff0c;&#x5c06;&#x6570;&#x636e;&#x63a5;&#x6536;&#x5230;Executor&#x4e2d;&#xff0c;&#x9ed8;&#x8ba4;&#x5b58;&#x50a8;&#x7ea7;&#x522b;&#x662f;MEMORY_AND_DISK_SER_2"/>
+<node CREATED="1556267403671" ID="ID_810955561" MODIFIED="1556267418267" TEXT="2.receiver&#x6a21;&#x5f0f;&#x81ea;&#x52a8;&#x4f7f;&#x7528;zookeeper&#x7ba1;&#x7406;&#x6d88;&#x8d39;&#x8005;offset"/>
+<node CREATED="1556267419520" ID="ID_1369334628" MODIFIED="1556267484213" TEXT="3.receiver&#x6a21;&#x5f0f;&#x5e95;&#x5c42;&#x8bfb;&#x53d6;Kafka &#x91c7;&#x7528;  High Level Consumer API &#x5b9e;&#x73b0;&#xff0c;&#x8fd9;&#x79cd;&#x6a21;&#x5f0f;&#x4e0d;&#x5173;&#x5fc3;offset&#xff0c;&#x53ea;&#x8981;&#x6570;&#x636e;"/>
+<node CREATED="1556267489614" ID="ID_1260581578" MODIFIED="1556267539899" TEXT="4.receiver&#x6a21;&#x5f0f;&#x5f53;Driver&#x6302;&#x6389;&#x65f6;&#xff0c;&#x6709;&#x4e22;&#x5931;&#x6570;&#x636e;&#x95ee;&#x9898;&#xff0c;&#x53ef;&#x4ee5;&#x5f00;&#x542f;WAL&#x673a;&#x5236; &#x907f;&#x514d;&#x4e22;&#x5931;&#x6570;&#x636e;&#xff0c;&#x4f46;&#x662f;&#x5f00;&#x542f;&#x4e4b;&#x540e; &#x52a0;&#x5927;&#x4e86;&#x6570;&#x636e;&#x5904;&#x7406;&#x5ef6;&#x8fdf;"/>
+<node CREATED="1556267741542" ID="ID_104944622" MODIFIED="1556267780634" TEXT="5.receiver&#x6a21;&#x5f0f;&#x5e76;&#x884c;&#x5ea6;&#x7531;spark.streaming.blockInterval = 200ms &#xff0c;&#x53ef;&#x4ee5;&#x51cf;&#x5c11;&#x8fd9;&#x4e2a;&#x53c2;&#x6570;&#x589e;&#x5927;&#x5e76;&#x884c;&#x5ea6;&#xff0c;&#x6700;&#x5c0f;&#x4e0d;&#x80fd;&#x4f4e;&#x4e8e;50ms"/>
+<node CREATED="1556267540328" ID="ID_1607379934" MODIFIED="1556267653326" TEXT="Receiver&#x6a21;&#x5f0f;&#x4e0d;&#x88ab;&#x4f7f;&#x7528;">
+<node CREATED="1556267556277" ID="ID_1804607745" MODIFIED="1556267679377" TEXT="1.&#x88ab;&#x52a8;&#x5c06;&#x6570;&#x636e;&#x63a5;&#x6536;&#x5230;Executor,&#x5f53;&#x6709;&#x4efb;&#x52a1;&#x5806;&#x79ef;&#x65f6;&#xff0c;&#x6570;&#x636e;&#x5b58;&#x50a8;&#x95ee;&#x9898;"/>
+<node CREATED="1556267685451" ID="ID_950928127" MODIFIED="1556267715197" TEXT="2.&#x8fd9;&#x79cd;&#x6a21;&#x5f0f;&#x4e0d;&#x80fd;&#x624b;&#x52a8;&#x7ef4;&#x62a4;&#x6d88;&#x8d39;&#x8005;offset"/>
+</node>
+</node>
+<node CREATED="1556258955964" ID="ID_1377331388" MODIFIED="1556258960592" TEXT="Direct&#x6a21;&#x5f0f;">
+<node CREATED="1556267788434" ID="ID_653872465" MODIFIED="1556267816025" TEXT="1.direct&#x6a21;&#x5f0f;&#x6ca1;&#x6709;&#x4f7f;&#x7528;receiver&#x63a5;&#x6536;&#x5668;&#x6a21;&#x5f0f;&#xff0c;&#x6bcf;&#x6279;&#x6b21;&#x5904;&#x7406;&#x6570;&#x636e;&#x76f4;&#x63a5;&#x83b7;&#x53d6;&#x5f53;&#x524d;&#x6279;&#x6b21;&#x6570;&#x636e;&#x5904;&#x7406;"/>
+<node CREATED="1556267818280" ID="ID_1292686121" MODIFIED="1556267859920" TEXT="2.direct&#x6a21;&#x5f0f;&#x6ca1;&#x6709;&#x4f7f;&#x7528;zookeeper&#x7ba1;&#x7406;&#x6d88;&#x8d39;&#x8005;offset,&#x4f7f;&#x7528;&#x7684;&#x662f;Spark&#x81ea;&#x5df1;&#x7ba1;&#x7406;&#xff0c;&#x9ed8;&#x8ba4;&#x5b58;&#x5728;&#x5185;&#x5b58;&#x4e2d;&#xff0c;&#x53ef;&#x4ee5;&#x8bbe;&#x7f6e;checkpoint&#xff0c;&#x4e5f;&#x4f1a;&#x4fdd;&#x5b58;&#x5230;checkpoint&#x4e2d;&#x4e00;&#x4efd;"/>
+<node CREATED="1556267861878" ID="ID_477808972" MODIFIED="1556267898020" TEXT="3.direct&#x6a21;&#x5f0f;&#x5e95;&#x5c42;&#x8bfb;&#x53d6;Kafka&#x4f7f;&#x7528;  Simple Consumer API  &#xff0c;&#x53ef;&#x4ee5;&#x624b;&#x52a8;&#x7ef4;&#x62a4;&#x6d88;&#x8d39;&#x8005;offset"/>
+<node CREATED="1556267913869" ID="ID_375598492" MODIFIED="1556267933685" TEXT="4.direct&#x6a21;&#x5f0f;&#x5e76;&#x884c;&#x5ea6; &#x4e0e;&#x8bfb;&#x53d6;&#x7684;topic&#x7684;partition &#x4e00;&#x4e00;&#x5bf9;&#x5e94;"/>
+<node CREATED="1556267948998" ID="ID_1143708331" MODIFIED="1556268052669" TEXT="5.&#x53ef;&#x4ee5;&#x4f7f;&#x7528;&#x8bbe;&#x7f6e;checkpoint&#x7684;&#x65b9;&#x5f0f;&#x7ba1;&#x7406;&#x6d88;&#x8d39;&#x8005;offset, &#x4f7f;&#x7528; val ssc: StreamingContext = StreamingContext.getOrCreate(ckDir,CreateStreamingContext) &#x6062;&#x590d; &#xff0c;&#x5f53;&#x4ee3;&#x7801;&#x903b;&#x8f91;&#x4e0d;&#x53d8;&#x5316;&#x65f6;&#xff0c;&#x8fd9;&#x79cd;&#x6a21;&#x5f0f;&#x7ba1;&#x7406;offset&#xff0c;&#x4f46;&#x662f;&#x4f1a;&#x9020;&#x6210;&#x91cd;&#x590d;&#x5904;&#x7406;&#x6570;&#x636e;&#x95ee;&#x9898;&#x3002;"/>
+<node CREATED="1556268065794" ID="ID_225710780" MODIFIED="1556268109121" TEXT="6.&#x5982;&#x679c;&#x4ee3;&#x7801;&#x903b;&#x8f91;&#x6539;&#x53d8;&#xff0c;&#x5c31;&#x4e0d;&#x80fd;&#x4f7f;&#x7528;checkpoint&#x6a21;&#x5f0f;&#x7ba1;&#x7406;offset,&#x8981;&#x505a;&#x5230;&#x7cbe;&#x51c6;&#x6d88;&#x8d39;&#x4e00;&#x6761;&#x6570;&#x636e;&#xff0c;&#x53ef;&#x4ee5;&#x624b;&#x52a8;&#x7ef4;&#x62a4;&#x6d88;&#x8d39;&#x8005;offset,&#x53ef;&#x4ee5;&#x5c06;offset&#x5b58;&#x50a8;&#x5230;&#x5916;&#x90e8;&#x7cfb;&#x7edf;"/>
+</node>
+</node>
+<node CREATED="1556258917098" FOLDED="true" ID="ID_496045048" MODIFIED="1557277671363" TEXT="SparkStreaming2.3 + Kafka 0.11">
+<node CREATED="1556258986827" ID="ID_1735280835" MODIFIED="1556258993649" TEXT="Direct&#x6a21;&#x5f0f;"/>
+</node>
+</node>
+</node>
+</node>
+</map>
