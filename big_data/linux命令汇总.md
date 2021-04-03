@@ -2,31 +2,42 @@
 
 ## 1.1. 常用命令
 
-|          |           |         |               |           |
-| :------: | :-------: | :-----: | :-----------: | :-------: |
-|   man    |   help    |         |               |           |
-|    ls    |    cd     |  touch  |      rm       |   mkdir   |
-|    cp    |    mv     |   cat   |     more      |   less    |
-|   tree   |   stat    |  grep   |               |           |
-|   head   |   tail    |         |               |           |
-| poweroff | shutdown  |  exit   |               |           |
-|   ping   | ifconfig  |  wget   | netstat -natp | route -n  |
-|  arp -a  |           |         |               |           |
-|  sleep   |           |         |               |           |
-|   ssh    |    scp    |         |               |           |
-|   type   |   which   | whereis |    locate     |   type    |
-|   file   |           |         |               |           |
-|  passwd  |  usermod  |  chown  |     chgrp     |   chmod   |
-| groupadd |    su     |  sudo   |               |           |
-|   who    |   users   |         |               |           |
-|   date   |    cal    |         |               |           |
-|    df    |    du     |   ps    |      top      |   kill    |
-|    ln    |  pstree   |  free   |     mount     | chkconfig |
-| ss -nal  | ulimit -a |         |               |           |
-|   rpm    |    yum    |   tar   |      apt      |   make    |
-|   cut    |   sort    |   wc    |      sed      |    awk    |
-|   read   |   test    |  exec   |    source     |   bash    |
-|   echo   |   hash    |         |               |           |
+|                |           |         |               |           |
+| :------------: | :-------: | :-----: | :-----------: | :-------: |
+|      man       |   help    |         |               |           |
+|  目录文件相关  |  ------   | ------  |    ------     |  ------   | ------ |
+|       ls       |    cd     |  touch  |      rm       |   mkdir   |
+|       cp       |    mv     |   cat   |     more      |   less    |
+|      tree      |   stat    |
+|     关机等     |  ------   | ------  |    ------     |  ------   | ------ |
+|    poweroff    | shutdown  |  exit   |               |           |
+|  常用网络相关  |  ------   | ------  |    ------     |  ------   | ------ |
+|      ping      | ifconfig  |  wget   | netstat -natp | route -n  |
+|     arp -a     |           |         |               |           |
+|      睡眠      |  ------   | ------  |    ------     |  ------   | ------ |
+|     sleep      |           |         |               |           |
+|    ssh 相关    |  ------   | ------  |    ------     |  ------   | ------ |
+|      ssh       |    scp    |         |               |           |
+| 文件，指令查找 |  ------   | ------  |    ------     |  ------   | ------ |
+|      type      |   which   | whereis |    locate     |   type    |
+|      file      |           |         |               |           |
+|    用户相关    |  ------   | ------  |    ------     |  ------   | ------ |
+|     passwd     |  usermod  |  chown  |     chgrp     |   chmod   |
+|    groupadd    |    su     |  sudo   |               |           |
+|      who       |   users   |         |               |           |
+|    日期相关    |  ------   | ------  |    ------     |  ------   | ------ |
+|      date      |    cal    |         |               |           |
+|    系统相关    |  ------   | ------  |    ------     |  ------   | ------ |
+|       df       |    du     |   ps    |      top      |   kill    |
+|       ln       |  pstree   |  free   |     mount     | chkconfig |
+|    ss -nal     | ulimit -a |         |               |           |
+|    iostate     |  vmstate  |         |               |           |
+|    软件相关    |  ------   | ------  |    ------     |  ------   | ------ |
+|      rpm       |    yum    |   tar   |      apt      |   make    |
+|      常用      |  ------   | ------  |    ------     |  ------   | ------ |
+|      cut       |   sort    |   wc    |      sed      |    awk    |
+|      read      |   test    |  exec   |    source     |   bash    |
+|      echo      |   hash    |  grep   |     head      |   tail    |
 
 - ss -nal：查看所欲 socket 监听接口
 
@@ -37,6 +48,9 @@
 - read 输入
 
 ## 1.2. 网络命令
+
+<details>
+<summary style="color:red;">网络相关命令</summary>
 
 ```
 首先,先了解传统的网络配置命令:
@@ -268,6 +282,7 @@
 　　示例1: # rtmon file /var/log/rtmon.log
 　　示例2: # ip monitor file /var/log/rtmon.log r
 ```
+</details>
 
 # 2. 开始
 
