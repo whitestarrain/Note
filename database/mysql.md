@@ -1184,31 +1184,116 @@ in
 
 # 4. Mysql索引优化
 
-## 4.1. 存储引擎和索引
+> 使用的外部截图。
+> 图片来源：[来源](https://blog.csdn.net/oneby1314/category_10278969.html)
 
-### 4.1.1. 概述
+## 4.1. 慢SQL的原因
 
-- 索引是什么
-  - MySQL官方对索引的定义为：索引(Index)是帮助MySQL高效获取数据的数据结构。可以得到索引的本质：索引是数据结构
-  - 你可以简单理解为"排好序的快速查找数据结构"，即索引 = 排序 + 查找
-  - 一般来说索引本身占用内存空间也很大，不可能全部存储在内存中，因此索引往往以文件形式存储在硬盘上
-  - 我们平时所说的索引，如果没有特别指明，都是指B树(多路搜索树，并不一定是二叉树)结构组织的索引。
-  - 聚集索引，次要索引，覆盖索引，复合索引，前缀索引，唯一索引默认都是使用B+树索引，统称索引。当然，除了B+树这种类型的索引之外，还有哈希索引(hash index)等。
+- 查询语句写的烂
+- 索引失效：
+  - 单值索引：在user表中给name属性建个索引，`create index idx_user_name on user(name)`
+  - 复合索引：在user表中给name、email属性建个索引，`create index idx_user_nameEmail on user(name,email)`
+- 关联查询太多join(设计缺陷或不得已的需求)
+- 服务器调优及各个参数设置(缓冲、线程数等)
 
-- 索引分类：
-  - 普通索引：是最基本的索引，它没有任何限制，即一个索引只包含单个列，一个表可以有多个单列索引；建议一张表索引不要超过5个，优先考虑复合索引
-  - 唯一索引：与前面的普通索引类似，不同的就是：索引列的值必须唯一，但允许有空值。如果是组合索引，则列值的组合必须唯一
-  - 主键索引：是一种特殊的唯一索引，一个表只能有一个主键，不允许有空值。一般是在建表的时候同时创建主键索引：
-  - 复合索引：指多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用。使用组合索引时遵循最左前缀集合
-  - 全文索引：主要用来查找文本中的关键字，而不是直接与索引中的值相比较。fulltext索引跟其它索引大不相同，它更像是一个搜索引擎，而不是简单的where语句的参数匹配
+## 4.2. SQL执行顺序
+
+- 手写顺序  
+  ![Mysql-4-20](./image/Mysql-4-20.png)
+- 执行顺序  
+  - mysql 执行的顺序：随着 Mysql 版本的更新换代， 其优化器也在不断的升级， 优化器会分析不同执行顺序产生的性能消耗不同而动态调整执行顺序。
+  - 下面是经常出现的查询顺序：
+
+  ![Mysql-4-21](./image/Mysql-4-21.png)
+
+- 总结  
+  ![Mysql-4-22](./image/Mysql-4-22.png)-
+
+
+
+## 4.3. 索引概述
+
+### 4.3.1. 索引是什么
+
+- MySQL官方对索引的定义为：索引(Index)是帮助MySQL高效获取数据的数据结构。可以得到索引的本质：索引是数据结构
+- 你可以简单理解为"排好序的快速查找数据结构"，即索引 = 排序 + 查找
+- 一般来说索引本身占用内存空间也很大，不可能全部存储在内存中，因此索引往往以文件形式存储在硬盘上
+- 我们平时所说的索引，如果没有特别指明，都是指B树(多路搜索树，并不一定是二叉树)结构组织的索引。
+- 聚集索引，次要索引，覆盖索引，复合索引，前缀索引，唯一索引默认都是使用B+树索引，统称索引。当然，除了B+树这种类型的索引之外，还有哈希索引(hash index)等。
+
+### 4.3.2. 索引分类
+
+- 普通索引：是最基本的索引，它没有任何限制，即一个索引只包含单个列，一个表可以有多个单列索引；建议一张表索引不要超过5个，优先考虑复合索引
+- 唯一索引：与前面的普通索引类似，不同的就是：索引列的值必须唯一，但允许有空值。如果是组合索引，则列值的组合必须唯一
+- 主键索引：是一种特殊的唯一索引，一个表只能有一个主键，不允许有空值。一般是在建表的时候同时创建主键索引：
+- 复合索引：指多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用。使用组合索引时遵循最左前缀集合
+- 全文索引：主要用来查找文本中的关键字，而不是直接与索引中的值相比较。fulltext索引跟其它索引大不相同，它更像是一个搜索引擎，而不是简单的where语句的参数匹配
+
+---
 
 - 索引类型
-  - BTree索引
-  - Hash索引
-  - full-text索引
-  - R-Tree索引
+- BTree索引
+- Hash索引
+- full-text索引
+- R-Tree索引
 
-### 4.1.2. B+树
+### 4.3.3. 什么时候需要建索引
+
+- 索引的优势
+  - 类似大学图书馆的书目索引，提高数据检索效率，降低数据库的IO成本
+  - 通过索引列对数据进行排序，降低数据排序成本，降低了CPU的消耗
+- 索引的劣势
+  - 实际上索引也是一张表，该表保存了主键和索引字段，并指向实体表的记录，所以索引列也是要占用空间的
+  - 虽然索引大大提高了查询速度，同时却会降低更新表的速度，如果对表INSERT，UPDATE和DELETE。因为更新表时，MySQL不仅要不存数据，还要保存一下索引文件每次更新添加了索引列的字段，都会调整因为更新所带来的键值变化后的索引信息
+  - 索引只是提高效率的一个因素，如果你的MySQL有大数据量的表，就需要花时间研究建立优秀的索引，或优化查询语句
+
+---
+
+- 哪些情况下适合建立索引
+  - **主键自动建立唯一索引**
+  - **频繁作为查询的条件的字段应该创建索引**
+  - **查询中与其他表关联的字段，外键关系建立索引**
+  - 频繁更新的字段不适合创建索引
+  - Where 条件里用不到的字段不创建索引
+  - 单间/组合索引的选择问题，Who？（在高并发下倾向创建组合索引）
+  - **查询中排序的字段，排序字段若通过索引去访问将大大提高排序的速度**
+  - **查询中统计或者分组字段**
+- 哪些情况不要创建索引
+  - 表记录太少
+  - **经常增删改的表**
+  - **数据重复且分布平均的表字段**，因此应该只为经常查询和经常排序的数据列建立索引。注意，如果某个数据列包含许多重复的内容，为它建立索引就没有太大的实际效果。
+
+## 4.4. 索引语法
+
+- 创建索引：
+  ```sql
+  CREATE [UNIQUE] INDEX  indexName ON mytable(columnname(length));
+  ' or '
+  ALTER mytable ADD [UNIQUE]  INDEX [indexName] ON(columnname(length));
+  ```
+  - 如果是CHAR和VARCHAR类型，length可以小于字段实际长度；
+  - 如果是BLOB和TEXT类型，必须指定length。
+- 删除索引
+  ```sql
+  DROP INDEX [indexName] ON mytable;
+  ```
+- 查看索引（\G表示将查询到的横向表格纵向输出，方便阅读）
+  ```sql
+  SHOW INDEX FROM table_name\G
+  ```
+
+- Alter
+  - `ALTER TABLE tbl_name ADD PRIMARY KEY(column_list)`：该语句添加一个主键，这意味着索引值必须是唯一的，且不能为NULL。
+  - `ALTER TABLE tbl_name ADD UNIQUE index_name(column_list)`：这条语句创建索引的值必须是唯一的（除了NULL外，NULL可能会出现多次）。
+  - `ALTER TABLE tbl_name ADD INDEX index_name(column_list)`：.添加普通索引，索引值可出现多次。
+  - `ALTER TABLE tbl_name ADD FULLTEXT index_name(column_list)`：该语句指定了索引为FULLTEXT，用于全文索引。
+
+## 4.5. 存储引擎和索引
+
+### 4.5.1. 概述
+
+
+### 4.5.2. B+树
 
 ![Mysql2-1](./image/Mysql2-1.png) 
 
@@ -1254,7 +1339,7 @@ in
     - 也可能存储 **索引指向的一行数据的每个字段的数据**(也就是存储数据,Innodb存储引擎)
   - 那么三层的B+数能够存储的数据元素数量为 1170*1170*16
 
-### 4.1.3. myisam存储引擎
+### 4.5.3. myisam存储引擎
 
 > 存储引擎是表级别的。不同的表在定义的时候都可以设置存储引擎
 
@@ -1267,7 +1352,7 @@ in
   > ![Mysql2-2](./image/Mysql2-2.png) 
   - 叶子节点的data中存放指向数据的指针
 
-### 4.1.4. Innodb存储引擎
+### 4.5.4. Innodb存储引擎
 
 - 一张Innodb表对应两个文件
   - .frm:表结构文件
@@ -1277,13 +1362,13 @@ in
   > ![Mysql2-3](./image/Mysql2-3.png)
   - 叶子节点的data中存放具体数据
 
-### 4.1.5. 两个存储引擎的区别
+### 4.5.5. 两个存储引擎的区别
 
 ![Mysql2-5](./image/Mysql2-5.png)
 
 MyISAM比较适合读操作。
 
-### 4.1.6. Mysql分支
+### 4.5.6. Mysql分支
 
 Percona和MariaDB是Mysql的分支。[说明](https://www.biaodianfu.com/mysql-percona-or-mariadb.html)
 
@@ -1294,14 +1379,14 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
 
 阿里巴巴大部分mysql数据库其实使用的percona的原型加以修改。有退出AliSql和AliRedis。
 
-### 4.1.7. 思考题
+### 4.5.7. 思考题(重要)
 
 - 索引种类：
   - 非聚集索引/非聚簇索引:指索引文件和数据文件是分离的，如myisam
   - 聚集索引/聚簇索引:索引和数据聚集在一个文件中，如Innodb
     - 因为只需要查找一次，因此性能要比非聚集索引性能要高
 
-- **为什么Innodb必须要有主键，并且推荐使用整型的自增主键(阿里)***
+- **为什么Innodb必须要有主键，并且推荐使用整型的自增主键(阿里)**
   - Innodb的数据是通过主键进行组织的。(见上面的图)
   - 如果没有设置主键，会自动选择unique的列作为主键，如果还是没有，就会自动创建一个不可见的列作为主键
   - 整型比较大小更快，查B+树的时候更快。
@@ -1313,7 +1398,371 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
 - 叶子节点间的链指针用途
   - 支持范围查找
 
-### 4.1.8. 索引最左前缀原理
+---
+
+使用`explain`进行调优时，Extra列的Using filesort也与之有关。
+
+## 4.6. 索引性能分析
+
+### 4.6.1. Explain概述
+
+- 说明：
+  - 使用EXPLAIN关键字可以模拟优化器执行SQL语句，从而知道MySQL是如何处理你的SQL语句的。分析你的查询语句或是结构的性能瓶颈
+  - [官网地址](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html)
+
+- **显示字段**
+  - 表的读取顺序（id 字段）
+  - 数据读取操作的操作类型（select_type 字段）
+  - 哪些索引可以使用（possible_keys 字段）
+  - 哪些索引被实际使用（keys 字段）
+  - 表之间的引用（ref 字段）
+  - 每张表有多少行被优化器查询（rows 字段）
+
+- 使用：`explain`+`sql语句`
+  ```
+  mysql> explain select * from tbl_emp;
+  +----+-------------+---------+------+---------------+------+---------+------+------+-------+
+  | id | select_type | table   | type | possible_keys | key  | key_len | ref  | rows | Extra |
+  +----+-------------+---------+------+---------------+------+---------+------+------+-------+
+  |  1 | SIMPLE      | tbl_emp | ALL  | NULL          | NULL | NULL    | NULL |    8 | NULL  |
+  +----+-------------+---------+------+---------------+------+---------+------+------+-------+
+  1 row in set (0.00 sec)
+  ```
+
+### 4.6.2. Explain详解
+
+#### 4.6.2.1. id
+
+- 说明： **select查询的序列号，包含一组数字，表示查询中执行select子句或操作表的顺序**
+
+
+- id 取值的三种情况：
+  - id相同，执行顺序由上至下
+    > ![Mysql-4-1](./image/Mysql-4-1.png) 
+  - id不同，如果是子查询，id的序号会递增，id值越大优先级越高，越先被执行
+    > ![Mysql-4-2](./image/Mysql-4-2.png) 
+  - id相同不同，同时存在：id如果相同，可以认为是一组，从上往下顺序执行；在所有组中，id值越大，优先级越高，越先执行；衍生=DERIVED
+    > ![Mysql-4-3](./image/Mysql-4-3.png) 
+
+
+#### 4.6.2.2. select_type
+
+- 说明： **查询的类型，主要用于区别普通查询、联合查询、子查询等复杂查询**
+
+- 取值：
+  - SIMPLE：简单的select查询，查询中不包含子查询或者UNION
+  - PRIMARY：查询中若 **包含任何复杂的子部分** ， **最外层** 查询则被标记为PRIMARY
+  - SUBQUERY：在 **SELECT或者WHERE** 列表中包含了 **子查询**
+  - DERIVED：在 **FROM** 列表中包含的 **子查询** 被标记为DERIVED（衍生）MySQL会递归执行这些子查询，把结果放在临时表里
+  - UNION：若第二个 **SELECT** 出现在 **UNION之后** ，则被标记为UNION；若UNION包含在FROM子句的子查询中，外层SELECT将被标记为：DERIVED
+  - UNION RESULT： **从UNION表获取结果** 的SELECT
+    <details>
+    <summary style="color:red;">union和union result</summary>
+
+    ```
+    explain
+        -> select * from tbl_emp e left join tbl_dept d on e.deptId = d.id
+        -> union
+        -> select * from tbl_emp e right join tbl_dept d on e.deptId = d.id;
+    +----+--------------+------------+------+---------------+------------+---------+-----------+------+----------------------------------------------------+
+    | id | select_type  | table      | type | possible_keys | key        | key_len | ref       | rows | Extra                                              |
+    +----+--------------+------------+------+---------------+------------+---------+-----------+------+----------------------------------------------------+
+    |  1 | PRIMARY      | e          | ALL  | NULL          | NULL       | NULL    | NULL      |    8 | NULL                                               |
+    |  1 | PRIMARY      | d          | ALL  | PRIMARY       | NULL       | NULL    | NULL      |    5 | Using where; Using join buffer (Block Nested Loop) |
+    |  2 | UNION        | d          | ALL  | NULL          | NULL       | NULL    | NULL      |    5 | NULL                                               |
+    |  2 | UNION        | e          | ref  | fk_dept_Id    | fk_dept_Id | 5       | db01.d.id |    1 | NULL                                               |
+    | NULL | UNION RESULT | <union1,2> | ALL  | NULL          | NULL       | NULL    | NULL      | NULL | Using temporary                                    |
+    +----+--------------+------------+------+---------------+------------+---------+-----------+------+----------------------------------------------------+
+    5 rows in set (0.00 sec)
+    ```
+    </details>
+
+#### 4.6.2.3. table
+
+- 说明： **显示这一行的数据是关于哪张表的**
+
+#### 4.6.2.4. type
+
+- 说明： **访问类型排列，显示查询使用了何种类型**
+  - 是较为重要的一个指标，结果值从最好到最坏依次是
+  - `system>const>eq_ref>ref>fultext>ref_or_null>index_merge>unique_subquery>index_subquery>range>index>ALL`
+  - 比较重要的几个是：`system>const>eq_ref>ref>range>index>ALL`
+
+- 取值说明
+  > 结合B+树结构进行理解
+  - system： **表只有一行记录**（等于系统表），这是const类型的特例，平时不会出现，这个也可以忽略不计
+    ![Mysql-4-4](./image/Mysql-4-4.png) 
+  - const： **表示通过索引一次就找到了** ，const用于比较primary key或者unique索引。因为只匹配一行数据，所以很快。如将主键置于where列表中，MySQL就能将该查询转换为一个常量
+    ![Mysql-4-5](./image/Mysql-4-5.png)
+  - eq_ref：唯一性索引， **对于每个索引键，表中只有一条记录与之匹配** ，常见于主键或唯一索引扫描
+    ![Mysql-4-6](./image/Mysql-4-6.png)
+  - ref：非唯一索引扫描，返回匹配某个单独值的所有行。本质上也是一种索引访问， **它返回所有匹配某个单独值的行，然而，它可能会找到多个符合条件的行** ，所以他应该属于查找和扫描的混合体
+    ![Mysql-4-7](./image/Mysql-4-7.png)
+  - range： **只检索给定范围的行** ，使用一个索引来选择行。key列显示使用了哪个索引一般就是在你的where语句中出现了between、<、>、in等的查询这种范围扫描索引扫描比全表扫描要好，因为他只需要开始索引的某一点，而结束于另一点，不用扫描全部索引
+    ![Mysql-4-8](./image/Mysql-4-8.png)
+  - index：Full Index Scan，index与ALL区别为 **index类型只遍历索引树** 。这通常比ALL快，因为索引文件通常比数据文件小。（也就是说虽然 **all和index都是读全表** ，但index是从索引中读取的，而all是从硬盘数据库文件中读的）
+    ![Mysql-4-9](./image/Mysql-4-9.png)
+  - all：FullTable Scan，将 **遍历全表** 以找到匹配的行（全表扫描）
+    ![Mysql-4-10](./image/Mysql-4-10.png)
+  - 备注：一般来说， **得保证查询只是达到range级别，最好达到ref** 
+
+#### 4.6.2.5. possible_keys
+
+- 说明：
+  - 显示 **可能** 应用在这张表中的索引，一个或多个
+  - 若查询涉及的字段上存在索引，则该索引将被列出，但不一定被查询实际使用
+
+#### 4.6.2.6. key
+
+- 说明
+  - **实际使用** 的索引，如果为null，则没有使用索引
+  - **若查询中使用了覆盖索引，则该索引仅出现在key列表中，possible_keys中不会出现**
+    ![Mysql-4-11](./image/Mysql-4-11.png)
+
+
+<details>
+<summary style="color:red;">覆盖索引（后面也会提到）</summary>
+
+- 覆盖索引（Covering Index），也说为索引覆盖
+  - 理解方式一： **就是select的数据列只用从索引中就能够取得，不必读取数据行，MySQL可以利用索引返回select列表中的字段，而不必根据索引再次读取数据文件，换句话说查询列要被所建的索引覆盖。**
+  - 理解方式二：索引是高效找到行的一个方法，但是一般数据库也能使用索引找到一个列的数据，因此它不必读取整个行。毕竟索引叶子节点存储了它们索引的数据；当能通过读取索引就可以得到想要的数据，那就不需要读取行了。一个索引包含了（或覆盖了）满足查询结果的数据就叫做覆盖索引。
+  - 注意：如果要使用覆盖索引，一定要注意select列表中只取出需要的列，不可select * ，因为如果将所有字段一起做索引会导致索引文件过大，查询性能下降。
+</details>
+
+#### 4.6.2.7. key_len
+
+- 说明
+  - 表示索引中 **使用的字节数** ，可通过该列计算查询中使用的索引的长度。在不损失精确性的情况下，长度越短越好
+  - key_len显示的值为 **索引最大可能长度** ， **并非实际使用长度** ，即key_len是 **根据表定义计算而得** ，不是通过表内检索出的
+
+![Mysql-4-12](./image/Mysql-4-12.png)
+
+#### 4.6.2.8. ref
+
+- 说明
+  - 表示 **哪些列或常量被用于查找索引列上的值**
+
+- 示例：由key_len可知t1表的索引idx_col1_col2被充分使用，t1表的col1匹配t2表的col1，t1表的col2匹配了一个常量，即’ac’
+  ![Mysql-4-13](./image/Mysql-4-13.png)
+
+#### 4.6.2.9. rows
+
+- 说明：根据表统计信息及索引选用情况，大致估算出找到所需的记录所需要读取的行数
+
+![Mysql-4-14](./image/Mysql-4-14.png)
+
+#### 4.6.2.10. Extra
+
+**说明：包含不适合在其他列中显示但十分重要的额外信息**
+
+- **Using filesort（文件排序）** ：
+  - MySQL中无法利用索引完成排序操作成为“文件排序”
+  - 说明mysql会对数据使用一个外部的索引排序，而不是按照表内的索引顺序进行读取
+  - **出现 Using filesort 不好（九死一生），需要尽快优化 SQL**
+  - 示例中第一个查询只使用了 col1 和 col3，原有索引派不上用场，所以进行了外部文件排序
+  - 示例中第二个查询使用了 col1、col2 和 col3，原有索引派上用场，无需进行文件排序
+
+  ![Mysql-4-15](./image/Mysql-4-15.png)
+
+- **Using temporary（创建临时表）** ：
+  - 使用了临时表保存中间结果，MySQL在对查询结果排序时使用临时表。常见于排序 order by 和分组查询 group by
+  - 出现 Using temporary 超级不好（十死无生），需要立即优化 SQL
+  - 示例中第一个查询只使用了 col1，原有索引派不上用场，所以创建了临时表进行分组
+  - 示例中第二个查询使用了 col1、col2，原有索引派上用场，无需创建临时表
+
+  ![Mysql-4-16](./image/Mysql-4-16.png)
+
+- **Using index（覆盖索引）**：
+  - **理解方式一**：
+    - 就是select的数据列只用从索引中就能够取得，不必读取数据行，
+    - MySQL可以利用索引返回select列表中的字段，而不必根据索引再次读取数据文件，换句话说查询列要被所建的索引覆盖。
+  - 理解方式二：
+    - 索引是高效找到行的一个方法，但是一般数据库也能使用索引找到一个列的数据，
+    - 因此它不必读取整个行。毕竟索引叶子节点存储了它们索引的数据；
+    - 当能通过读取索引就可以得到想要的数据，那就不需要读取行了。一个索引包含了（或覆盖了）满足查询结果的数据就叫做覆盖索引。
+  - 注意：如果要使用覆盖索引，一定要注意select列表中只取出需要的列，不可select * ，因为如果将所有字段一起做索引会导致索引文件过大，查询性能下降。
+  - 表示相应的select操作中使用了覆盖索引（Coveing Index），避免访问了表的数据行，效率不错！
+  - 如果同时出现using where，表明索引被用来执行索引键值的查找
+  - 如果没有同时出现using where，表明索引用来读取数据而非执行查找动作
+
+  ![Mysql-4-17](./image/Mysql-4-17.png)
+
+- **Using where：表明使用了where过滤**
+- **Using join buffer：表明使用了连接缓存**
+- **impossible where** ：where子句的值总是false，不能用来获取任何元组
+  ![Mysql-4-18](./image/Mysql-4-18.png)
+
+### 4.6.3. 综合示例(重要)
+
+![Mysql-4-19](./image/Mysql-4-19.png)
+
+写出每一行语句的执行顺序并进行分析。
+
+<details>
+<summary style="color:red;">答案</summary>
+
+1. 第一行（执行顺序4）：id列为1，表示是union里的第一个select，select_type列的primary表示该查询为外层查询，table列被标记为`<derived3>`，表示查询结果来自一个衍生表，其中derived3中3代表该查询衍生自第三个select查询，即id为3的select。【`select d1.name ...`】
+2. 第二行（执行顺序2）：id为3，是整个查询中第三个select的一部分。因查询包含在from中，所以为derived。【`select id, name from t1 where other_column= ' '`】
+3. 第三行（执行顺序3）：select列表中的子查询select_type为subquery，为整个查询中的第二个select。【`select id from t3`】
+4. 第四行（执行顺序1）：select_type为union，说明第四个select是union里的第二个select，最先执行【`select name, id from t2`】
+5. 第五行（执行顺序5）：代表从union的临时表中读取行的阶段，table列的<union1, 4>表示用第一个和第四个select的结果进行union操作。【两个结果进行uinion操作】
+
+</details>
+
+## 4.7. 索引优化
+
+### 4.7.1. 单表索引优化
+
+#### 4.7.1.1. 数据准备
+
+- 建表sql
+  <details>
+  <summary style="color:red;">sql</summary>
+
+  ```sql
+  CREATE TABLE IF NOT EXISTS article(
+      id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+      author_id INT(10) UNSIGNED NOT NULL,
+      category_id INT(10) UNSIGNED NOT NULL,
+      views INT(10) UNSIGNED NOT NULL,
+      comments INT(10) UNSIGNED NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      content TEXT NOT NULL
+  );
+
+  INSERT INTO article(author_id,category_id,views,comments,title,content)
+  VALUES
+  (1,1,1,1,'1','1'),
+  (2,2,2,2,'2','2'),
+  (1,1,3,3,'3','3');
+  ```
+  </details>
+
+- 数据
+  ```
+  mysql> SELECT * FROM article;
+  +----+-----------+-------------+-------+----------+-------+---------+
+  | id | author_id | category_id | views | comments | title | content |
+  +----+-----------+-------------+-------+----------+-------+---------+
+  |  1 |         1 |           1 |     1 |        1 | 1     | 1       |
+  |  2 |         2 |           2 |     2 |        2 | 2     | 2       |
+  |  3 |         1 |           1 |     3 |        3 | 3     | 3       |
+  +----+-----------+-------------+-------+----------+-------+---------+
+  3 rows in set (0.00 sec)
+  ```
+
+#### 4.7.1.2. 需求与查询
+
+- 需求： **查询category_id为1且comments 大于1的情况下，views最多的article_id。**
+
+- sql语句
+  ```sql
+  SELECT id, author_id FROM article WHERE category_id = 1 AND comments > 1 ORDER BY views DESC LIMIT 1;
+  ```
+
+#### 4.7.1.3. 性能分析与优化
+
+- 无索引时，为All
+  ```
+  mysql> EXPLAIN SELECT id, author_id FROM article WHERE category_id = 1 AND comments > 1 ORDER BY views DESC LIMIT 1;
+  +----+-------------+---------+------+---------------+------+---------+------+------+-----------------------------+
+  | id | select_type | table   | type | possible_keys | key  | key_len | ref  | rows | Extra                       |
+  +----+-------------+---------+------+---------------+------+---------+------+------+-----------------------------+
+  |  1 | SIMPLE      | article | ALL  | NULL          | NULL | NULL    | NULL |    3 | Using where; Using filesort |
+  +----+-------------+---------+------+---------------+------+---------+------+------+-----------------------------+
+  1 row in set (0.00 sec)
+  ```
+
+- 结论：
+  - 很显然，type是ALL，即最坏的情况。
+  - Extra 里还出现了Using filesort，也是最坏的情况。
+  - 优化是必须的。
+
+---
+
+- 优化1：
+  - 构建索引：`create index idx_article_ccv on article(category_id, comments, views);`
+  - 查看索引
+    ```
+    mysql> SHOW INDEX FROM article;
+    +---------+------------+-----------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+    | Table   | Non_unique | Key_name        | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
+    +---------+------------+-----------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+    | article |          0 | PRIMARY         |            1 | id          | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+    | article |          1 | idx_article_ccv |            1 | category_id | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+    | article |          1 | idx_article_ccv |            2 | comments    | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+    | article |          1 | idx_article_ccv |            3 | views       | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+    +---------+------------+-----------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+    4 rows in set (0.00 sec)
+    ```
+  - 分析
+    ```
+    mysql> EXPLAIN SELECT id, author_id FROM article WHERE category_id = 1 AND comments > 1 ORDER BY views DESC LIMIT 1;
+    +----+-------------+---------+-------+-----------------+-----------------+---------+------+------+---------------------------------------+
+    | id | select_type | table   | type  | possible_keys   | key             | key_len | ref  | rows | Extra                                 |
+    +----+-------------+---------+-------+-----------------+-----------------+---------+------+------+---------------------------------------+
+    |  1 | SIMPLE      | article | range | idx_article_ccv | idx_article_ccv | 8       | NULL |    1 | Using index condition; Using filesort |
+    +----+-------------+---------+-------+-----------------+-----------------+---------+------+------+---------------------------------------+
+    1 row in set (0.00 sec)
+    ```
+    - **再次执行查询：type变成了range，这是可以忍受的。但是extra里使用Using filesort仍是无法接受的。**
+    - 但是我们已经建立了索引，为啥没用呢？
+    - 这是因为按照B+Tree索引的工作原理，先排序 category_id，如果遇到相同的 category_id 则再排序comments，如果遇到相同的 comments 则再排序 views。
+    - 当comments字段在联合索引里处于 **中间位置** 时，因为comments>1条件是一个 **范围值（所谓 range）** ，MySQL 无法利用索引再对后面的views部分进行检索，即 **range 类型查询字段后面的索引无效** 。因此就无法使用views的索引进行排序，只能通过filesort
+      > 稍微想一下应该就能想通。后面索引失效也会讲。
+    - 如果将查询条件中的 comments > 1 改为 comments = 1 ，发现 Use filesort 神奇地消失了，从这点可以验证： **范围后的索引会导致索引失效**
+      ```
+      mysql> EXPLAIN SELECT id, author_id FROM article WHERE category_id = 1 AND comments = 1 ORDER BY views DESC LIMIT 1;
+      +----+-------------+---------+------+-----------------+-----------------+---------+-------------+------+-------------+
+      | id | select_type | table   | type | possible_keys   | key             | key_len | ref         | rows | Extra       |
+      +----+-------------+---------+------+-----------------+-----------------+---------+-------------+------+-------------+
+      |  1 | SIMPLE      | article | ref  | idx_article_ccv | idx_article_ccv | 8       | const,const |    1 | Using where |
+      +----+-------------+---------+------+-----------------+-----------------+---------+-------------+------+-------------+
+      1 row in set (0.00 sec)
+      ```
+---
+
+- 优化2：为了解决优化1带来的view索引无法使用的问题
+  - 删除刚才创建的 idx_article_ccv 索引 `DROP INDEX idx_article_ccv ON article;`
+  - 解决说明
+    - 由于 range 后（comments > 1）的索引会失效，这次我们建立索引时，直接抛弃 comments 列，
+    - 先利用 category_id 索引查出所需要的数据
+    - 并遍历得到comment>1的数据（此处没有用索引）
+    - 再使用views索引进行排序
+  - 建立索引 `create index idx_article_ccv on article(category_id, views);`
+  - 结果：再次执行查询：可以看到，type变为了ref，Extra中的Using filesort也消失了，结果非常理想
+    ```
+    mysql> EXPLAIN SELECT id, author_id FROM article WHERE category_id = 1 AND comments > 1 ORDER BY views DESC LIMIT 1;
+    +----+-------------+---------+------+-----------------+-----------------+---------+-------+------+-------------+
+    | id | select_type | table   | type | possible_keys   | key             | key_len | ref   | rows | Extra       |
+    +----+-------------+---------+------+-----------------+-----------------+---------+-------+------+-------------+
+    |  1 | SIMPLE      | article | ref  | idx_article_ccv | idx_article_ccv | 4       | const |    2 | Using where |
+    +----+-------------+---------+------+-----------------+-----------------+---------+-------+------+-------------+
+    1 row in set (0.00 sec)
+    ```
+
+### 4.7.2. 两表索引优化
+
+#### 4.7.2.1. 数据准备
+
+#### 4.7.2.2. 需求与查询
+
+#### 4.7.2.3. 优化
+
+### 4.7.3. 三表索引优化
+
+#### 4.7.3.1. 数据准备
+
+#### 4.7.3.2. 需求与查询
+
+#### 4.7.3.3. 优化
+
+## 4.8. 索引失效
+
+### 4.8.1. 失效原因
+
+### 4.8.2. 索引最左前缀原理
+
 
 - 表现：
 ![Mysql2-4](./image/Mysql2-4.png)
@@ -1325,11 +1774,14 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
   - 上图例子中，只有name相同时，才会按照age进行排序
   - 没办法直接根据第二个字段直接去查索引B+树。
 
-## 4.2. 索引性能分析
 
-## 4.3. 索引优化
+### 4.8.3. 总结
 
-## 4.4. 索引失效
+类型转换等计算 + 查索引查的是一个范围 
+
+会导致索引失效。
+
+## 4.9. 面试题实践
 
 # 5. 查询截取优化
 
@@ -1355,11 +1807,11 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
 
 ## 5.5. 全局查询日志
 
-# 锁机制
+# 6. 锁机制
 
-# 主从复制
+# 7. 主从复制
 
-# 其他待做
+# 8. 其他待做
 
 - 唯一索引和普通索引关键不同点: buffer区
 
