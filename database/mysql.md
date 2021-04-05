@@ -1076,14 +1076,15 @@ in
 3. 隔离性：多个事务之间相互独立。但一般会相互影响。
 4. 一致性：表示事务操作前后数据总量不变。
 
-### 2.10.3. 隔离等级（了解）
+### 2.10.3. 隔离等级
 
 - 概念：多个事务之间，是相互独立的。但如果多个事务操作**同一批数据**，也就是并发操作，则会引发一些问题，设置不同的隔离级别就可以解决这些问题
 - 存在问题：
-  1. 脏读：一个事务读取到另一个事务中没有提交的数据
-  2. 不可重复读（虚读）：同一个事务中，两次读取的数据不一样
-  3. 幻读：一个事务操作（DML）数据表中所有记录，而此时另一个事务添加了一条数据，导致第一个事务查询不到自己的修改（MySQL 中并不存在该问题）
-- 隔离级别：
+  1. 脏读：事务 A 读取了事务 B 更新的数据，然后 B 回滚操作，那么 A 读取到的数据是脏数据
+  2. 不可重复读：事务 A 多次读取同一数据，事务 B 在事务 A 多次读取的过程中，对数据作了更新并提交，导致事务 A 多次读取同一数据时，结果因此本事务先后两次读到的数据结果会不一致。
+  3. 幻读：幻读解决了不重复读，保证了同一个事务里，查询的结果都是事务开始时的状态（一致性）。
+
+- 隔离级别：`show variables like 'tx_isolation';`查看
   - 隔离级别从小到大安全性越来越高，效率越来越低
   1. read uncommitted:读未提交（事务 1 修改的数据未提交时，事务 2 会读到修改后的数据）
      - 产生问题：脏读，不可重复读，幻读
@@ -1182,7 +1183,7 @@ in
 
 # 3. MySQL架构
 
-# 4. Mysql索引优化
+# 4. Mysql索引优化基础
 
 > 使用的外部截图。
 > 图片来源：[来源](https://blog.csdn.net/oneby1314/category_10278969.html)
@@ -1615,7 +1616,7 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
 
 #### 4.7.1.1. 数据准备
 
-- 建表sql
+- 建表与插入sql
   <details>
   <summary style="color:red;">sql</summary>
 
@@ -1745,24 +1746,777 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
 
 #### 4.7.2.1. 数据准备
 
+- 建表与插入sql
+
+  <details>
+  <summary style="color:red;">sql</summary>
+
+  ```sql
+  CREATE TABLE IF NOT EXISTS class(
+      id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+      card INT(10) UNSIGNED NOT NULL,
+      PRIMARY KEY(id)
+  );
+
+  CREATE TABLE IF NOT EXISTS book(
+      bookid INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+      card INT(10) UNSIGNED NOT NULL,
+      PRIMARY KEY(bookid)
+  );
+
+  INSERT INTO class(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO class(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO class(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO class(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO class(card) VALUES(FLOOR(1+(RAND()*20)));
+  -- ...
+
+  INSERT INTO book(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO book(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO book(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO book(card) VALUES(FLOOR(1+(RAND()*20)));
+  -- ...
+  ```
+  </details>
+
+- 数据展示
+  ```
+  mysql> select * from class;
+  +----+------+
+  | id | card |
+  +----+------+
+  |  1 |   12 |
+  |  2 |   13 |
+  |  3 |   12 |
+  |  4 |   17 |
+  |  5 |   11 |
+
+  mysql> select * from book;
+  +--------+------+
+  | bookid | card |
+  +--------+------+
+  |      1 |   16 |
+  |      2 |    1 |
+  |      3 |   17 |
+  |      4 |    3 |
+  |      5 |   20 |
+  |      6 |   12 |
+  ```
+
 #### 4.7.2.2. 需求与查询
 
+- 实现两表的连接，连接条件是 class.card = book.card
+- sql:`SELECT * FROM class LEFT JOIN book ON class.card = book.card;`
+
 #### 4.7.2.3. 优化
+
+- 未创建索引
+  - 结果
+    ```
+    mysql> EXPLAIN SELECT * FROM class LEFT JOIN book ON class.card = book.card;
+    +----+-------------+-------+------+---------------+------+---------+------+------+-------+
+    | id | select_type | table | type | possible_keys | key  | key_len | ref  | rows | Extra |
+    +----+-------------+-------+------+---------------+------+---------+------+------+-------+
+    |  1 | SIMPLE      | class | ALL  | NULL          | NULL | NULL    | NULL |   21 |       |
+    |  1 | SIMPLE      | book  | ALL  | NULL          | NULL | NULL    | NULL |   20 |       |
+    +----+-------------+-------+------+---------------+------+---------+------+------+-------+
+    2 rows in set (0.00 sec)
+    ```
+  - 分析
+    - **type 有 All ，rows 为表中数据总行数，说明 class 和 book 进行了全表检索**
+    - 驱动表是左表 class 表，被驱动表是右表。
+    - **即每次 class 表对 book 表进行左外连接时，都需要在 book 表中进行一次全表检索**
+
+- 右表添加索引:
+  - sql
+    ```sql
+    ALTER TABLE 'book' ADD INDEX Y ('card');
+    ```
+  - 结果
+    ```
+    mysql> EXPLAIN SELECT * FROM class LEFT JOIN book ON class.card = book.card;
+    +----+-------------+-------+------+---------------+------+---------+-----------------+------+-------------+
+    | id | select_type | table | type | possible_keys | key  | key_len | ref             | rows | Extra       |
+    +----+-------------+-------+------+---------------+------+---------+-----------------+------+-------------+
+    |  1 | SIMPLE      | class | ALL  | NULL          | NULL | NULL    | NULL            |   21 | NULL        |
+    |  1 | SIMPLE      | book  | ref  | Y             | Y    | 4       | db01.class.card |    1 | Using index |
+    +----+-------------+-------+------+---------------+------+---------+-----------------+------+-------------+
+    2 rows in set (0.00 sec)
+    ``` 
+  - 分析：
+    - 这是由左连接特性决定的。LEFT JOIN条件用于确定如何从右表搜索行，左边一定都有，所以右边是我们的关键点，一定需要建立索引。
+    - **左表每一行都会扫描一遍右表**
+    - 左表连接右表，则需要拿着左表的数据去右表里面查，索引需要在右表中建立索引
+
+- 尝试在左表添加索引
+  - sql
+    ```sql
+    DROP INDEX Y ON book;
+    ALTER TABLE class ADD INDEX X(card);
+    ```
+  - 结果：用不到索引
+    ```
+    mysql> EXPLAIN SELECT * FROM class LEFT JOIN book ON class.card = book.card;
+    +----+-------------+-------+-------+---------------+------+---------+------+------+----------------------------------------------------+
+    | id | select_type | table | type  | possible_keys | key  | key_len | ref  | rows | Extra                                              |
+    +----+-------------+-------+-------+---------------+------+---------+------+------+----------------------------------------------------+
+    |  1 | SIMPLE      | class | index | NULL          | X    | 4       | NULL |   21 | Using index                                        |
+    |  1 | SIMPLE      | book  | ALL   | NULL          | NULL | NULL    | NULL |   20 | Using where; Using join buffer (Block Nested Loop) |
+    +----+-------------+-------+-------+---------------+------+---------+------+------+----------------------------------------------------+
+    2 rows in set (0.00 sec)
+    ```
+  - 换成右连接执行:
+    - sql:`EXPLAIN SELECT * FROM class RIGHT JOIN book ON class.card = book.card;`
+    - 结果
+      ```
+      mysql> EXPLAIN SELECT * FROM class RIGHT JOIN book ON class.card = book.card;
+      +----+-------------+-------+------+---------------+------+---------+----------------+------+-------------+
+      | id | select_type | table | type | possible_keys | key  | key_len | ref            | rows | Extra       |
+      +----+-------------+-------+------+---------------+------+---------+----------------+------+-------------+
+      |  1 | SIMPLE      | book  | ALL  | NULL          | NULL | NULL    | NULL           |   20 | NULL        |
+      |  1 | SIMPLE      | class | ref  | X             | X    | 4       | db01.book.card |    1 | Using index |
+      +----+-------------+-------+------+---------------+------+---------+----------------+------+-------------+
+      2 rows in set (0.00 sec)
+      ```
+    - 分析：
+      - 这是因为RIGHT JOIN条件用于确定如何从左表搜索行，右边一定都有，所以左边是我们的关键点，一定需要建立索引。
+      - class RIGHT JOIN book ：book 里面的数据一定存在于结果集中，我们需要拿着 book 表中的数据，去 class 表中搜索，所以索引需要建立在 class 表中
+      - **也就是说right join时，右表的每一行都会遍历一遍左表**
+
+---
+
+为了不妨碍之后的测试，删除索引：`DROP INDEX X ON class;`
 
 ### 4.7.3. 三表索引优化
 
 #### 4.7.3.1. 数据准备
 
+- 建表和插入sql
+  <details>
+  <summary style="color:red;">sql</summary>
+
+  ```sql
+  CREATE TABLE IF NOT EXISTS phone(
+      phoneid INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+      card INT(10) UNSIGNED NOT NULL,
+      PRIMARY KEY(phoneid)
+  )ENGINE=INNODB;
+
+  INSERT INTO phone(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO phone(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO phone(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO phone(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO phone(card) VALUES(FLOOR(1+(RAND()*20)));
+  INSERT INTO phone(card) VALUES(FLOOR(1+(RAND()*20)));
+  ```
+  </details>
+- 数据展示
+  ```
+  mysql> select * from phone;
+  +---------+------+
+  | phoneid | card |
+  +---------+------+
+  |       1 |    7 |
+  |       2 |    7 |
+  |       3 |   13 |
+  |       4 |    6 |
+  |       5 |    8 |
+  ```
+
 #### 4.7.3.2. 需求与查询
+
+- sql
+  ```sql
+  SELECT * FROM class LEFT JOIN book ON class.card = book.card LEFT JOIN phone ON book.card = phone.card;
+  ```
 
 #### 4.7.3.3. 优化
 
+- explain分析：
+  ```
+  mysql> EXPLAIN SELECT * FROM class LEFT JOIN book ON class.card = book.card LEFT JOIN phone ON book.card = phone.card;
+  +----+-------------+-------+------+---------------+------+---------+------+------+----------------------------------------------------+
+  | id | select_type | table | type | possible_keys | key  | key_len | ref  | rows | Extra                                              |
+  +----+-------------+-------+------+---------------+------+---------+------+------+----------------------------------------------------+
+  |  1 | SIMPLE      | class | ALL  | NULL          | NULL | NULL    | NULL |   21 | NULL                                               |
+  |  1 | SIMPLE      | book  | ALL  | NULL          | NULL | NULL    | NULL |   20 | Using where; Using join buffer (Block Nested Loop) |
+  |  1 | SIMPLE      | phone | ALL  | NULL          | NULL | NULL    | NULL |   20 | Using where; Using join buffer (Block Nested Loop) |
+  +----+-------------+-------+------+---------------+------+---------+------+------+----------------------------------------------------+
+  3 rows in set (0.00 sec)
+  ```
+  - type 有All ，rows 为表数据总行数，说明 class、 book 和 phone 表 **都进行了全表检索**
+  - Extra 中 Using join buffer ，表明连接过程中 **使用了 join 缓冲区**
+
+- **左连接，在右表建立索引**
+  - sql
+    ```sql
+    ALTER TABLE book ADD INDEX Y (card);
+    ALTER TABLE phone ADD INDEX Z (card);
+    ```
+  - 结果：
+    ```
+    mysql> EXPLAIN SELECT * FROM class LEFT JOIN book ON class.card=book.card LEFT JOIN phone ON book.card = phone.card;
+    +----+-------------+-------+------+---------------+------+---------+-----------------+------+-------------+
+    | id | select_type | table | type | possible_keys | key  | key_len | ref             | rows | Extra       |
+    +----+-------------+-------+------+---------------+------+---------+-----------------+------+-------------+
+    |  1 | SIMPLE      | class | ALL  | NULL          | NULL | NULL    | NULL            |   21 | NULL        |
+    |  1 | SIMPLE      | book  | ref  | Y             | Y    | 4       | db01.class.card |    1 | Using index |
+    |  1 | SIMPLE      | phone | ref  | Z             | Z    | 4       | db01.book.card  |    1 | Using index |
+    +----+-------------+-------+------+---------------+------+---------+-----------------+------+-------------+
+    3 rows in set (0.00 sec)
+    ``` 
+
+- 结论分析
+  - left join 是左表驱动右表
+  - right join 是右表驱动左表
+  - 小标驱动大表
+    <details>
+    <summary style="color:red;">为什么要小标驱动大表</summary>
+
+    - 为什么要小表驱动大表。
+      - user表10000条数据，class表20条数据
+      - `select * from user u left join class c u.userid=c.userid`
+      - 这样则需要用user表循环10000次才能查询出来，而如果用class表驱动user表则只需要循环20次就能查询出来。
+      - 由于MySQL使用BTREE结构，内部查询成本（3层查找or4层查找）和外部循环成本不成比例。
+      - 因此建议内表走索引，也叫INLJ，但是如果内表是二级索引，效率也低，因为要回表查主键。
+      - 如果都是全表扫描（NJL），则相差不多，成本也很高，笛卡尔积。
+    </details>
+  - 在大表上建立索引:为了更快遍历大表。
+
 ## 4.8. 索引失效
 
-### 4.8.1. 失效原因
+### 4.8.1. 数据准备
 
-### 4.8.2. 索引最左前缀原理
+- 建表和插入和索引sql
+  ```sql
+  CREATE TABLE staffs(
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      `name` VARCHAR(24)NOT NULL DEFAULT'' COMMENT'姓名',
+      `age` INT NOT NULL DEFAULT 0 COMMENT'年龄',
+      `pos` VARCHAR(20) NOT NULL DEFAULT'' COMMENT'职位',
+      `add_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT'入职时间'
+  )CHARSET utf8 COMMENT'员工记录表';
 
+  INSERT INTO staffs(`name`,`age`,`pos`,`add_time`) VALUES('z3',22,'manager',NOW());
+  INSERT INTO staffs(`name`,`age`,`pos`,`add_time`) VALUES('July',23,'dev',NOW());
+  INSERT INTO staffs(`name`,`age`,`pos`,`add_time`) VALUES('2000',23,'dev',NOW());
+
+  ALTER TABLE staffs ADD INDEX index_staffs_nameAgePos(`name`,`age`,`pos`);
+  ```
+- 数据展示
+  ```
+  mysql> select * from staffs;
+  +----+------+-----+---------+---------------------+
+  | id | name | age | pos     | add_time            |
+  +----+------+-----+---------+---------------------+
+  |  1 | z3   |  22 | manager | 2020-08-04 14:42:33 |
+  |  2 | July |  23 | dev     | 2020-08-04 14:42:33 |
+  |  3 | 2000 |  23 | dev     | 2020-08-04 14:42:33 |
+  +----+------+-----+---------+---------------------+
+  3 rows in set (0.00 sec)
+  ```
+  ```
+  mysql> SHOW INDEX FROM staffs;
+  +--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+  | Table  | Non_unique | Key_name                | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
+  +--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+  | staffs |          0 | PRIMARY                 |            1 | id          | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+  | staffs |          1 | index_staffs_nameAgePos |            1 | name        | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+  | staffs |          1 | index_staffs_nameAgePos |            2 | age         | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+  | staffs |          1 | index_staffs_nameAgePos |            3 | pos         | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+  +--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+  4 rows in set (0.00 sec)
+  ```
+
+
+
+### 4.8.2. 失效原因
+
+#### 4.8.2.1. 原因
+
+- 不遵循最佳左前缀法则
+  - 最佳左前缀法则：如果索引了多例，要遵守最左前缀法则。指的是查询从索引的最左前列开始并且不跳过索引中的列。
+- 索引列上的任何操作（ **计算、函数、（自动or手动）类型转换** ），会导致索引失效而转向全表扫描
+  - 如字符串不加单引号索引失效
+- **范围条件** 会导致 **右边的索引列** 会失效
+  - `between and`,`in` 等
+  - mysql在使用不等于（`!=或者<>`）的时候无法使用索引会导致全表扫描(也可以归为 **范围条件**)
+  - like以通配符开头（’%abc…’）mysql索引失效会变成全表扫描操作(也可以归为 **范围条件**)
+    - 注意： **可以使用覆盖索引，使 %str% 不会使索引失效**
+  - `is null`，`is not null` 也无法使用索引（早期版本不能走索引，后续版本应该优化过，可以走索引）(也可以归为 **范围条件**)
+  - 少用or，用它连接时会索引失效
+
+#### 4.8.2.2. 建议
+
+- 建议
+  - 尽量使用全值匹配
+  - 最佳左前缀法则：如果索引了多例，要遵守最左前缀法则。指的是查询从索引的最左前列开始并且不跳过索引中的列。
+  - 不在索引列上做任何操作（计算、函数、（自动or手动）类型转换），会导致索引失效而转向全表扫描
+  - 存储引擎不能使用索引中范围条件右边的列
+  - 尽量使用覆盖索引（只访问索引的查询（索引列和查询列一致）），减少`select *`
+  - mysql在使用不等于（`!=或者<>`）的时候无法使用索引会导致全表扫描
+  - is null，is not null 也无法使用索引（早期版本不能走索引，后续版本应该优化过，可以走索引）
+  - like以通配符开头（’%abc…’）mysql索引失效会变成全表扫描操作
+  - 字符串不加单引号索引失效
+  - 少用or，用它连接时会索引失效
+
+
+#### 4.8.2.3. 示例
+
+> **注意：索引顺序是name,age,pos**
+
+---
+
+> **最佳左匹配法则：带头大哥不能死，中间兄弟不能断**
+
+- 只有带头大哥 name 时
+  - key = index_staffs_nameAgePos 表明索引生效
+  - ref = const ：这个常量就是查询时的 ‘July’ 字符串常量
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name = 'July';
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+| id | select_type | table  | type | possible_keys           | key                     | key_len | ref   | rows | Extra                 |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+|  1 | SIMPLE      | staffs | ref  | index_staffs_nameAgePos | index_staffs_nameAgePos | 74      | const |    1 | Using index condition |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- 带头大哥 name 带上小弟 age
+  - key = index_staffs_nameAgePos 表明索引生效
+  - ref = const,const：两个常量分别为 ‘July’ 和 23
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name = 'July'AND age = 23;
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------+------+-----------------------+
+| id | select_type | table  | type | possible_keys           | key                     | key_len | ref         | rows | Extra                 |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------+------+-----------------------+
+|  1 | SIMPLE      | staffs | ref  | index_staffs_nameAgePos | index_staffs_nameAgePos | 78      | const,const |    1 | Using index condition |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- 带头大哥 name 带上小弟 age ，小弟 age 带上小小弟 pos
+  - key = index_staffs_nameAgePos 表明索引生效
+  - ref = const,const,const ：三个常量分别为 ‘July’、23 和 ‘dev’
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name = 'July'AND age = 23 AND pos = 'dev';
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------------+------+-----------------------+
+| id | select_type | table  | type | possible_keys           | key                     | key_len | ref               | rows | Extra                 |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------------+------+-----------------------+
+|  1 | SIMPLE      | staffs | ref  | index_staffs_nameAgePos | index_staffs_nameAgePos | 140     | const,const,const |    1 | Using index condition |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- 带头大哥 name 挂了
+  - key = NULL 说明索引失效
+  - ref = null 表示 ref 也失效
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE age = 23 AND pos = 'dev';
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+| id | select_type | table  | type | possible_keys | key  | key_len | ref  | rows | Extra       |
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | staffs | ALL  | NULL          | NULL | NULL    | NULL |    3 | Using where |
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+```
+
+- 带头大哥 name 没挂，小弟 age 跑了
+  - key = index_staffs_nameAgePos 说明索引没有失效
+  - ref = const 表明只使用了一个常量，即第二个常量（pos = ‘dev’）没有生效
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name = 'July'AND pos = 'dev';
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+| id | select_type | table  | type | possible_keys           | key                     | key_len | ref   | rows | Extra                 |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+|  1 | SIMPLE      | staffs | ref  | index_staffs_nameAgePos | index_staffs_nameAgePos | 74      | const |    1 | Using index condition |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+> **在索引列上进行计算，会导致索引失效，进而转向全表扫描**
+
+- 不对带头大哥 name 进行任何操作：key = index_staffs_nameAgePos 表明索引生效
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name = 'July';
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+| id | select_type | table  | type | possible_keys           | key                     | key_len | ref   | rows | Extra                 |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+|  1 | SIMPLE      | staffs | ref  | index_staffs_nameAgePos | index_staffs_nameAgePos | 74      | const |    1 | Using index condition |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- 对带头大哥 name 进行操作：使用 LEFT 函数截取子串
+  - key = NULL 表明索引生效
+  - type = ALL 表明进行了全表扫描
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE LEFT(name,4) = 'July';
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+| id | select_type | table  | type | possible_keys | key  | key_len | ref  | rows | Extra       |
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | staffs | ALL  | NULL          | NULL | NULL    | NULL |    3 | Using where |
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+```
+
+> **范围之后全失效**
+
+- 精确匹配
+  - type = ref 表示非唯一索引扫描，SQL 语句将返回匹配某个单独值的所有行。
+  - key_len = 140 表明表示索引中使用的字节数
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name = 'July'AND age = 23 AND pos = 'dev';
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------------+------+-----------------------+
+| id | select_type | table  | type | possible_keys           | key                     | key_len | ref               | rows | Extra                 |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------------+------+-----------------------+
+|  1 | SIMPLE      | staffs | ref  | index_staffs_nameAgePos | index_staffs_nameAgePos | 140     | const,const,const |    1 | Using index condition |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- 将 age 改为范围匹配
+  - type = range 表示范围扫描
+  - key = index_staffs_nameAgePos 表示索引并没有失效
+  - key_len = 78 ，ref = NULL 均表明范围搜索使其后面的索引均失效
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name = 'July'AND age > 23 AND pos = 'dev';
++----+-------------+--------+-------+-------------------------+-------------------------+---------+------+------+-----------------------+
+| id | select_type | table  | type  | possible_keys           | key                     | key_len | ref  | rows | Extra                 |
++----+-------------+--------+-------+-------------------------+-------------------------+---------+------+------+-----------------------+
+|  1 | SIMPLE      | staffs | range | index_staffs_nameAgePos | index_staffs_nameAgePos | 78      | NULL |    1 | Using index condition |
++----+-------------+--------+-------+-------------------------+-------------------------+---------+------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+> **尽量使用覆盖索引（只访问索引的查询（索引列和查询列一致）），减少 select \***
+
+- `SELECT *` 的写法
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name = 'July'AND age > 23 AND pos = 'dev';
++----+-------------+--------+-------+-------------------------+-------------------------+---------+------+------+-----------------------+
+| id | select_type | table  | type  | possible_keys           | key                     | key_len | ref  | rows | Extra                 |
++----+-------------+--------+-------+-------------------------+-------------------------+---------+------+------+-----------------------+
+|  1 | SIMPLE      | staffs | range | index_staffs_nameAgePos | index_staffs_nameAgePos | 78      | NULL |    1 | Using index condition |
++----+-------------+--------+-------+-------------------------+-------------------------+---------+------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- 覆盖索引的写法：Extra = Using where; Using index ，Using index 表示使用索引列进行查询，将大大提高查询的效率
+
+```
+mysql> EXPLAIN SELECT name, age, pos FROM staffs WHERE name = 'July'AND age = 23 AND pos = 'dev';
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------------+------+--------------------------+
+| id | select_type | table  | type | possible_keys           | key                     | key_len | ref               | rows | Extra                    |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------------+------+--------------------------+
+|  1 | SIMPLE      | staffs | ref  | index_staffs_nameAgePos | index_staffs_nameAgePos | 140     | const,const,const |    1 | Using where; Using index |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------------------+------+--------------------------+
+1 row in set (0.00 sec)
+```
+
+- 覆盖索引中包含 range 条件：type = ref 并且 Extra = Using where; Using index ，虽然在查询条件中使用了 范围搜索，但是由于我们只需要查找索引列，所以无需进行全表扫描
+
+```
+mysql> EXPLAIN SELECT name, age, pos FROM staffs WHERE name = 'July'AND age > 23 AND pos = 'dev';
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+--------------------------+
+| id | select_type | table  | type | possible_keys           | key                     | key_len | ref   | rows | Extra                    |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+--------------------------+
+|  1 | SIMPLE      | staffs | ref  | index_staffs_nameAgePos | index_staffs_nameAgePos | 74      | const |    1 | Using where; Using index |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+--------------------------+
+1 row in set (0.00 sec)
+```
+
+> **mysql在使用不等于（!=或者<>）的时候无法使用索引会导致全表扫描**
+
+- 在使用 != 会 <> 时会导致索引失效：
+  - key = null 表示索引失效
+  - rows = 3 表示进行了全表扫描
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name != 'July';
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+| id | select_type | table  | type | possible_keys           | key  | key_len | ref  | rows | Extra       |
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | staffs | ALL  | index_staffs_nameAgePos | NULL | NULL    | NULL |    3 | Using where |
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+
+mysql> EXPLAIN SELECT * FROM staffs WHERE name <> 'July';
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+| id | select_type | table  | type | possible_keys           | key  | key_len | ref  | rows | Extra       |
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | staffs | ALL  | index_staffs_nameAgePos | NULL | NULL    | NULL |    3 | Using where |
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+```
+
+> **is null，is not null 也无法使用索引**
+
+- is null，is not null 会导致索引失效：key = null 表示索引失效
+
+```
+ysql> EXPLAIN SELECT * FROM staffs WHERE name is null;
++----+-------------+-------+------+---------------+------+---------+------+------+------------------+
+| id | select_type | table | type | possible_keys | key  | key_len | ref  | rows | Extra            |
++----+-------------+-------+------+---------------+------+---------+------+------+------------------+
+|  1 | SIMPLE      | NULL  | NULL | NULL          | NULL | NULL    | NULL | NULL | Impossible WHERE |
++----+-------------+-------+------+---------------+------+---------+------+------+------------------+
+1 row in set (0.00 sec)
+
+mysql> EXPLAIN SELECT * FROM staffs WHERE name is not null;
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+| id | select_type | table  | type | possible_keys           | key  | key_len | ref  | rows | Extra       |
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | staffs | ALL  | index_staffs_nameAgePos | NULL | NULL    | NULL |    3 | Using where |
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+```
+
+> **like % 写最右**
+
+- staffs 表的索引关系
+
+```
+mysql> SHOW INDEX from staffs;
++--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table  | Non_unique | Key_name                | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| staffs |          0 | PRIMARY                 |            1 | id          | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+| staffs |          1 | index_staffs_nameAgePos |            1 | name        | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+| staffs |          1 | index_staffs_nameAgePos |            2 | age         | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+| staffs |          1 | index_staffs_nameAgePos |            3 | pos         | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
++--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+4 rows in set (0.00 sec)
+```
+
+- like % 写在左边的情况
+  - type = All ，rows = 3 表示进行了全表扫描
+  - key = null 表示索引失效
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name like '%July';
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+| id | select_type | table  | type | possible_keys | key  | key_len | ref  | rows | Extra       |
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | staffs | ALL  | NULL          | NULL | NULL    | NULL |    3 | Using where |
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+
+mysql> EXPLAIN SELECT * FROM staffs WHERE name like '%July%';
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+| id | select_type | table  | type | possible_keys | key  | key_len | ref  | rows | Extra       |
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | staffs | ALL  | NULL          | NULL | NULL    | NULL |    3 | Using where |
++----+-------------+--------+------+---------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+```
+
+- like % 写在右边的情况：key = index_staffs_nameAgePos 表示索引未失效
+
+```
+mysql> EXPLAIN SELECT * FROM staffs WHERE name like 'July%';
++----+-------------+--------+-------+-------------------------+-------------------------+---------+------+------+-----------------------+
+| id | select_type | table  | type  | possible_keys           | key                     | key_len | ref  | rows | Extra                 |
++----+-------------+--------+-------+-------------------------+-------------------------+---------+------+------+-----------------------+
+|  1 | SIMPLE      | staffs | range | index_staffs_nameAgePos | index_staffs_nameAgePos | 74      | NULL |    1 | Using index condition |
++----+-------------+--------+-------+-------------------------+-------------------------+---------+------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+> **解决【like ‘%str%’ 】索引失效的问题：覆盖索引**
+
+**创建表**
+
+- 建表 SQL
+
+```sql
+CREATE TABLE `tbl_user`(
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(20) DEFAULT NULL,
+	`age`INT(11) DEFAULT NULL,
+	`email` VARCHAR(20) DEFAULT NULL,
+	PRIMARY KEY(`id`)
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+INSERT INTO tbl_user(`name`,`age`,`email`)VALUES('1aa1',21,'a@163.com');
+INSERT INTO tbl_user(`name`,`age`,`email`)VALUES('2bb2',23,'b@163.com');
+INSERT INTO tbl_user(`name`,`age`,`email`)VALUES('3cc3',24,'c@163.com');
+INSERT INTO tbl_user(`name`,`age`,`email`)VALUES('4dd4',26,'d@163.com');
+```
+
+- tbl_user 表中的测试数据
+
+```
+mysql> select * from tbl_user;
++----+------+------+-----------+
+| id | name | age  | email     |
++----+------+------+-----------+
+|  1 | 1aa1 |   21 | a@163.com |
+|  2 | 2bb2 |   23 | b@163.com |
+|  3 | 3cc3 |   24 | c@163.com |
+|  4 | 4dd4 |   26 | d@163.com |
++----+------+------+-----------+
+4 rows in set (0.00 sec)
+```
+
+------
+
+创建索引
+
+- 创建索引的 SQL 指令
+
+```mysql
+CREATE INDEX idx_user_nameAge ON tbl_user(name, age);
+```
+
+- 在 tbl_user 表的 name 字段和 age 字段创建联合索引
+
+```
+mysql> CREATE INDEX idx_user_nameAge ON tbl_user(name, age);
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SHOW INDEX FROM tbl_user;
++----------+------------+------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table    | Non_unique | Key_name         | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++----------+------------+------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| tbl_user |          0 | PRIMARY          |            1 | id          | A         |           4 |     NULL | NULL   |      | BTREE      |         |               |
+| tbl_user |          1 | idx_user_nameAge |            1 | name        | A         |           4 |     NULL | NULL   | YES  | BTREE      |         |               |
+| tbl_user |          1 | idx_user_nameAge |            2 | age         | A         |           4 |     NULL | NULL   | YES  | BTREE      |         |               |
++----------+------------+------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+3 rows in set (0.00 sec)
+```
+
+------
+
+**测试覆盖索引**
+
+- 如下 SQL 的索引均不会失效：
+  - 只要查询的字段能和覆盖索引扯得上关系，并且没有多余字段，覆盖索引就不会失效
+  - 但我就想不通了，id 扯得上啥关系。。。
+
+```mysql
+EXPLAIN SELECT name, age FROM tbl_user WHERE NAME LIKE '%aa%';
+
+EXPLAIN SELECT name FROM tbl_user WHERE NAME LIKE '%aa%';
+EXPLAIN SELECT age FROM tbl_user WHERE NAME LIKE '%aa%';
+
+EXPLAIN SELECT id FROM tbl_user WHERE NAME LIKE '%aa%';
+EXPLAIN SELECT id, name FROM tbl_user WHERE NAME LIKE '%aa%';
+EXPLAIN SELECT id, age FROM tbl_user WHERE NAME LIKE '%aa%';
+EXPLAIN SELECT id, name, age FROM tbl_user WHERE NAME LIKE '%aa%';
+mysql> EXPLAIN SELECT id FROM tbl_user WHERE NAME LIKE '%aa%';
++----+-------------+----------+-------+---------------+------------------+---------+------+------+--------------------------+
+| id | select_type | table    | type  | possible_keys | key              | key_len | ref  | rows | Extra                    |
++----+-------------+----------+-------+---------------+------------------+---------+------+------+--------------------------+
+|  1 | SIMPLE      | tbl_user | index | NULL          | idx_user_nameAge | 68      | NULL |    4 | Using where; Using index |
++----+-------------+----------+-------+---------------+------------------+---------+------+------+--------------------------+
+1 row in set (0.00 sec)
+
+mysql> EXPLAIN SELECT name, age FROM tbl_user WHERE NAME LIKE '%aa%';
++----+-------------+----------+-------+---------------+------------------+---------+------+------+--------------------------+
+| id | select_type | table    | type  | possible_keys | key              | key_len | ref  | rows | Extra                    |
++----+-------------+----------+-------+---------------+------------------+---------+------+------+--------------------------+
+|  1 | SIMPLE      | tbl_user | index | NULL          | idx_user_nameAge | 68      | NULL |    4 | Using where; Using index |
++----+-------------+----------+-------+---------------+------------------+---------+------+------+--------------------------+
+1 row in set (0.00 sec)
+```
+
+- 如下 SQL 的索引均会失效：但凡有多余字段，覆盖索引就会失效
+
+```mysql
+EXPLAIN SELECT * FROM tbl_user WHERE NAME LIKE '%aa%';
+EXPLAIN SELECT id, name, age, email FROM tbl_user WHERE NAME LIKE '%aa%';
+mysql> EXPLAIN SELECT * FROM tbl_user WHERE NAME LIKE '%aa%';
++----+-------------+----------+------+---------------+------+---------+------+------+-------------+
+| id | select_type | table    | type | possible_keys | key  | key_len | ref  | rows | Extra       |
++----+-------------+----------+------+---------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | tbl_user | ALL  | NULL          | NULL | NULL    | NULL |    4 | Using where |
++----+-------------+----------+------+---------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+
+mysql> EXPLAIN SELECT id, name, age, email FROM tbl_user WHERE NAME LIKE '%aa%';
++----+-------------+----------+------+---------------+------+---------+------+------+-------------+
+| id | select_type | table    | type | possible_keys | key  | key_len | ref  | rows | Extra       |
++----+-------------+----------+------+---------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | tbl_user | ALL  | NULL          | NULL | NULL    | NULL |    4 | Using where |
++----+-------------+----------+------+---------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+```
+
+> **字符串不加单引号索引失效**
+
+- 正常操作，索引没有失效
+
+```
+mysql> SHOW INDEX FROM staffs;
++--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table  | Non_unique | Key_name                | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| staffs |          0 | PRIMARY                 |            1 | id          | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+| staffs |          1 | index_staffs_nameAgePos |            1 | name        | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+| staffs |          1 | index_staffs_nameAgePos |            2 | age         | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+| staffs |          1 | index_staffs_nameAgePos |            3 | pos         | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
++--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+4 rows in set (0.00 sec)
+
+mysql> explain select * from staffs where name='2000';
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+| id | select_type | table  | type | possible_keys           | key                     | key_len | ref   | rows | Extra                 |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+|  1 | SIMPLE      | staffs | ref  | index_staffs_nameAgePos | index_staffs_nameAgePos | 74      | const |    1 | Using index condition |
++----+-------------+--------+------+-------------------------+-------------------------+---------+-------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- 如果字符串忘记写 ‘’ ，那么 mysql 会为我们进行隐式的类型转换，但凡进行了类型转换，索引都会失效
+
+```
+mysql> explain select * from staffs where name=2000;
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+| id | select_type | table  | type | possible_keys           | key  | key_len | ref  | rows | Extra       |
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | staffs | ALL  | index_staffs_nameAgePos | NULL | NULL    | NULL |    3 | Using where |
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+```
+
+> **少用or，用它连接时会索引失效**
+
+- 使用 or 连接，会导致索引失效
+
+```
+mysql> SHOW INDEX FROM staffs;
++--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table  | Non_unique | Key_name                | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| staffs |          0 | PRIMARY                 |            1 | id          | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+| staffs |          1 | index_staffs_nameAgePos |            1 | name        | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+| staffs |          1 | index_staffs_nameAgePos |            2 | age         | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
+| staffs |          1 | index_staffs_nameAgePos |            3 | pos         | A         |           3 |     NULL | NULL   |      | BTREE      |         |               |
++--------+------------+-------------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+4 rows in set (0.00 sec)
+
+mysql> explain select * from staffs where name='z3' or name = 'July';
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+| id | select_type | table  | type | possible_keys           | key  | key_len | ref  | rows | Extra       |
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+|  1 | SIMPLE      | staffs | ALL  | index_staffs_nameAgePos | NULL | NULL    | NULL |    3 | Using where |
++----+-------------+--------+------+-------------------------+------+---------+------+------+-------------+
+1 row in set (0.00 sec)
+```
+
+### 4.8.3. 索引最左前缀原理
 
 - 表现：
 ![Mysql2-4](./image/Mysql2-4.png)
@@ -1774,8 +2528,7 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
   - 上图例子中，只有name相同时，才会按照age进行排序
   - 没办法直接根据第二个字段直接去查索引B+树。
 
-
-### 4.8.3. 总结
+### 4.8.4. 总结
 
 类型转换等计算 + 查索引查的是一个范围 
 
@@ -1783,31 +2536,521 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
 
 ## 4.9. 面试题实践
 
+> **索引优化面试题**
+
+**创建表**
+
+- 建表 SQL
+
+```sql
+create table test03(
+    id int primary key not null auto_increment,
+    c1 char(10),
+    c2 char(10),
+    c3 char(10),
+    c4 char(10),
+    c5 char(10)
+);
+
+insert into test03(c1,c2,c3,c4,c5) values ('a1','a2','a3','a4','a5');
+insert into test03(c1,c2,c3,c4,c5) values ('b1','b2','b3','b4','b5');
+insert into test03(c1,c2,c3,c4,c5) values ('c1','c2','c3','c4','c5');
+insert into test03(c1,c2,c3,c4,c5) values ('d1','d2','d3','d4','d5');
+insert into test03(c1,c2,c3,c4,c5) values ('e1','e2','e3','e4','e5');
+
+create index idx_test03_c1234 on test03(c1,c2,c3,c4);
+```
+
+- test03 表中的测试数据
+
+```
+mysql> select * from test03;
++----+------+------+------+------+------+
+| id | c1   | c2   | c3   | c4   | c5   |
++----+------+------+------+------+------+
+|  1 | a1   | a2   | a3   | a4   | a5   |
+|  2 | b1   | b2   | b3   | b4   | b5   |
+|  3 | c1   | c2   | c3   | c4   | c5   |
+|  4 | d1   | d2   | d3   | d4   | d5   |
+|  5 | e1   | e2   | e3   | e4   | e5   |
++----+------+------+------+------+------+
+5 rows in set (0.00 sec)
+```
+
+- test03 表中的索引
+
+```
+mysql> SHOW INDEX FROM test03;
++--------+------------+------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table  | Non_unique | Key_name         | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++--------+------------+------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| test03 |          0 | PRIMARY          |            1 | id          | A         |           5 |     NULL | NULL   |      | BTREE      |         |               |
+| test03 |          1 | idx_test03_c1234 |            1 | c1          | A         |           5 |     NULL | NULL   | YES  | BTREE      |         |               |
+| test03 |          1 | idx_test03_c1234 |            2 | c2          | A         |           5 |     NULL | NULL   | YES  | BTREE      |         |               |
+| test03 |          1 | idx_test03_c1234 |            3 | c3          | A         |           5 |     NULL | NULL   | YES  | BTREE      |         |               |
+| test03 |          1 | idx_test03_c1234 |            4 | c4          | A         |           5 |     NULL | NULL   | YES  | BTREE      |         |               |
++--------+------------+------------------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+5 rows in set (0.00 sec)
+```
+
+> **问题：我们创建了复合索引idx_test03_c1234，根据以下SQL分析下索引使用情况？**
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c3='a3' AND c4='a4';`
+- 即全值匹配
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c3='a3' AND c4='a4';
++----+-------------+--------+------+------------------+------------------+---------+-------------------------+------+-----------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref                     | rows | Extra                 |
++----+-------------+--------+------+------------------+------------------+---------+-------------------------+------+-----------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 124     | const,const,const,const |    1 | Using index condition |
++----+-------------+--------+------+------------------+------------------+---------+-------------------------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c4='a4' AND c3='a3' AND c2='a2' AND c1='a1';`
+- mysql 优化器进行了优化，所以我们的索引都生效了
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c4='a4' AND c3='a3' AND c2='a2' AND c1='a1';
++----+-------------+--------+------+------------------+------------------+---------+-------------------------+------+-----------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref                     | rows | Extra                 |
++----+-------------+--------+------+------------------+------------------+---------+-------------------------+------+-----------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 124     | const,const,const,const |    1 | Using index condition |
++----+-------------+--------+------+------------------+------------------+---------+-------------------------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c3>'a3' AND c4='a4';`
+- c3 列使用了索引进行排序，并没有进行查找，导致 c4 无法用索引进行查找
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c3>'a3' AND c4='a4'; 
++----+-------------+--------+-------+------------------+------------------+---------+------+------+-----------------------+
+| id | select_type | table  | type  | possible_keys    | key              | key_len | ref  | rows | Extra                 |
++----+-------------+--------+-------+------------------+------------------+---------+------+------+-----------------------+
+|  1 | SIMPLE      | test03 | range | idx_test03_c1234 | idx_test03_c1234 | 93      | NULL |    1 | Using index condition |
++----+-------------+--------+-------+------------------+------------------+---------+------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4>'a4' AND c3='a3';`
+- mysql 优化器进行了优化，所以我们的索引都生效了，在 c4 时进行了范围搜索
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4>'a4' AND c3='a3'; 
++----+-------------+--------+-------+------------------+------------------+---------+------+------+-----------------------+
+| id | select_type | table  | type  | possible_keys    | key              | key_len | ref  | rows | Extra                 |
++----+-------------+--------+-------+------------------+------------------+---------+------+------+-----------------------+
+|  1 | SIMPLE      | test03 | range | idx_test03_c1234 | idx_test03_c1234 | 124     | NULL |    1 | Using index condition |
++----+-------------+--------+-------+------------------+------------------+---------+------+------+-----------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4='a4' ORDER BY c3;`
+- c3 列将索引用于排序，而不是查找，c4 列没有用到索引
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4='a4' ORDER BY c3; 
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                              |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 62      | const,const |    1 | Using index condition; Using where |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c3;`
+- 那不就和上面一样的嘛~~~，c4 列都没有用到索引
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c3; 
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                              |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 62      | const,const |    1 | Using index condition; Using where |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c4;`
+- 妈耶，因为索引建立的顺序和使用的顺序不一致，导致 mysql 动用了文件排序
+- 看到 Using filesort 就要知道：此句 SQL 必须优化
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c4; 
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+----------------------------------------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                                              |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+----------------------------------------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 62      | const,const |    1 | Using index condition; Using where; Using filesort |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+----------------------------------------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c5='a5' ORDER BY c2, c3;`
+- 只用 c1 一个字段索引，但是c2、c3用于排序，无filesort
+- 难道因为排序的时候，c2 紧跟在 c1 之后，所以就不用 filesort 吗？
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c5='a5' ORDER BY c2, c3; 
++----+-------------+--------+------+------------------+------------------+---------+-------+------+------------------------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref   | rows | Extra                              |
++----+-------------+--------+------+------------------+------------------+---------+-------+------+------------------------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 31      | const |    1 | Using index condition; Using where |
++----+-------------+--------+------+------------------+------------------+---------+-------+------+------------------------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c5='a5' ORDER BY c3, c2;`
+- 出现了filesort，我们建的索引是1234，它没有按照顺序来，32颠倒了
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c5='a5' ORDER BY c3, c2; 
++----+-------------+--------+------+------------------+------------------+---------+-------+------+----------------------------------------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref   | rows | Extra                                              |
++----+-------------+--------+------+------------------+------------------+---------+-------+------+----------------------------------------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 31      | const |    1 | Using index condition; Using where; Using filesort |
++----+-------------+--------+------+------------------+------------------+---------+-------+------+----------------------------------------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c2, c3;`
+- 用c1、c2两个字段索引，但是c2、c3用于排序，无filesort
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c2, c3; 
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                              |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 62      | const,const |    1 | Using index condition; Using where |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c5='a5' ORDER BY c2, c3;`
+- 和 c5 这个坑爹货没啥关系
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c5='a5' ORDER BY c2, c3; 
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                              |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 62      | const,const |    1 | Using index condition; Using where |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c5='a5' ORDER BY c3, c2;`
+- 注意查询条件 c2=‘a2’ ，我都把 c2 查出来了（c2 为常量），我还给它排序作甚，所以没有产生 filesort
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c5='a5' ORDER BY c3, c2; 
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                              |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 62      | const,const |    1 | Using index condition; Using where |
++----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c2, c3;`
+- 顺序为 1 2 3 ，没有产生文件排序
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c2, c3; 
++----+-------------+--------+------+------------------+------------------+---------+-------+------+------------------------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref   | rows | Extra                              |
++----+-------------+--------+------+------------------+------------------+---------+-------+------+------------------------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 31      | const |    1 | Using index condition; Using where |
++----+-------------+--------+------+------------------+------------------+---------+-------+------+------------------------------------+
+1 row in set (0.00 sec)
+```
+
+- `EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;`
+- group by 表面上叫分组，分组之前必排序，group by 和 order by 在索引上的问题基本是一样的
+- Using temporary; Using filesort 两个都有，我只能说是灭绝师太
+
+```
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2; 
++----+-------------+--------+------+------------------+------------------+---------+-------+------+---------------------------------------------------------------------+
+| id | select_type | table  | type | possible_keys    | key              | key_len | ref   | rows | Extra                                                               |
++----+-------------+--------+------+------------------+------------------+---------+-------+------+---------------------------------------------------------------------+
+|  1 | SIMPLE      | test03 | ref  | idx_test03_c1234 | idx_test03_c1234 | 31      | const |    1 | Using index condition; Using where; Using temporary; Using filesort |
++----+-------------+--------+------+------------------+------------------+---------+-------+------+---------------------------------------------------------------------+
+1 row in set (0.01 sec)
+```
+
+- 结论：
+  - group by 基本上都需要进行排序，但凡使用不当，会有临时表产生
+  - 定值为常量、范围之后失效，最终看排序的顺序
+
+
 # 5. 查询截取优化
 
-## 5.1. 查询优化
+## 5.1. 一般优化流程
 
-### 5.1.1. MySQL 优化原则
+- 慢查询的开启并捕获
+  - 观察，至少跑1天，看看生产的慢SQL情况。
+  - 开启慢查询日志，设置阙值，比如超过5秒钟的就是慢SQL,并将它抓取出来。
+- explain+慢SQL分析
+- show profile查询SQL在Mysq1服务器里面的执行细节和生命周期情况
+- SQL数据库服务器的参数调优。
+  - 运维经理orDBA,进行SQL数据库服务器的参数调优。
 
-### 5.1.2. ORDER BY 优化
+## 5.2. 查询优化
 
-### 5.1.3. GROUP BY 优化
+### 5.2.1. MySQL 优化原则:小表驱动大表
 
-## 5.2. 慢查询日志
+#### 5.2.1.1. 原因
 
-### 5.2.1. 慢查询日志介绍
+- 为什么要小表驱动大表。
+  - user表10000条数据，class表20条数据
+  - `select * from user u left join class c u.userid=c.userid`
+  - 这样则需要用user表循环10000次才能查询出来，而如果用class表驱动user表则只需要循环20次就能查询出来。
+  - 由于MySQL使用BTREE结构，内部查询成本（3层查找or4层查找）和外部循环成本不成比例。
+  - 因此建议内表走索引，也叫INLJ，但是如果内表是二级索引，效率也低，因为要回表查主键。
+  - 如果都是全表扫描（NJL），则相差不多，成本也很高，笛卡尔积。
 
-### 5.2.2. 慢查询日志开启
+#### 5.2.1.2. exist和in
 
-### 5.2.3. 慢查询日志示例
+![Mysql-4-23](./image/Mysql-4-23.png)
 
-## 5.3. 批量数据脚本
+- 基本使用：exist和in使用方式：看上面Mysql基础
 
-## 5.4. Show Profile
+- exist说明
+  - EXISTS 语法：`SELECT ... FROM table WHERE EXISTS(subquery)`
+    > 该语法可以理解为：将查询的数据，放到子查询中做条件验证，根据验证结果（TRUE或FALSE）来决定主查询的数据结果是否得以保留。
+  - 说明
+    - EXISTS(subquery) 只返回TRUE或FALSE，因此子查询中的SELECT *也可以是SELECT 1或其他，官方说法是实际执行时会忽略SELECT清单，因此没有区别
+    - EXISTS子查询的实际执行过程可能经过了优化而不是我们理解上的逐条对比，如果担忧效率问题，可进行实际检验以确定是否有效率问题。
+    - EXISTS子查询往往也可以用条件表达式、其他子查询或者JOIN来替代，何种最优需要具体问题具体分析
+  - 示例
+    ```sql
+    select * from tbl_emp e where exists (select 1 from tbl_dept d where e.deptId = d.id);
+    ```
+- in说明
+  - IN 语法： `select .... from table where field in ...`
+  - 示例
+    ```sql
+    select * from tbl_emp e where e.deptId in (select id from tbl_dept);
+    ```
 
-## 5.5. 全局查询日志
+- 结论：
+  - 永远记住小表驱动大表
+  - 当 右 表数据集小于 左 表数据集时，使用 in
+    > 也就是使用in时，右表为驱动表
+  - 当 左 表数据集小于 右 表数据集时，使用 exist
+    > 也就是使用exist是，左表为驱动表
+
+### 5.2.2. ORDER BY 优化
+
+### 5.2.3. GROUP BY 优化
+
+## 5.3. 慢查询日志
+
+### 5.3.1. 慢查询日志介绍
+
+### 5.3.2. 慢查询日志开启
+
+### 5.3.3. 慢查询日志示例
+
+## 5.4. 批量数据脚本
+
+## 5.5. Show Profile
+
+
+
+- status中如果出现下面的一个，就 **十分危险**
+  - converting HEAP to MyISAM：查询结果太大，内存都不够用了往磁盘上搬了。
+  - Creating tmp table：创建临时表，mysql 先将拷贝数据到临时表，然后用完再将临时表删除。
+  - Copying to tmp table on disk：把内存中临时表复制到磁盘，危险！！！
+  - locked：锁表
+
+## 5.6. 全局查询日志
+
+- 注意： **只能在测试环境上用，永远不要在生产环境开启这个功能。**
+- 开启
+  - 配置文件方式启动
+  - 命令方式启动
+
+
+### 5.6.1. 启动方式
 
 # 6. 锁机制
+
+## 6.1. 概述
+
+- 锁的定义：
+  - 锁是计算机协调多个进程或线程并发访问某一资源的机制。
+  - 在数据库中，除传统的计算资源（如CPU、RAM、I/O等）的争用以外，数据也是一种供许多用户共享的资源。
+  - 如何保证数据并发访问的一致性、有效性是所有数据库必须解决的一个问题，锁冲突也是影响数据库并发访问性能的一个重要因素。
+  - 从这个角度来说，锁对数据库而言显得尤其重要，也更加复杂。
+
+- 锁的分类：
+  - 从数据操作的类型（读、写）分
+    - 读锁（共享锁）：针对同一份数据，多个读操作可以同时进行而不会互相影响
+    - 写锁（排它锁）：当前写操作没有完成前，它会阻断其他写锁和读锁。
+  - 从对数据操作的颗粒度
+    - 表锁: 
+      - **偏向MyISAM存储引擎**
+      - 开销小，加锁快，无死锁，锁定粒度大， **发生锁冲突的概率最高，并发最低**
+    - 行锁
+      - **偏向InnoDB存储引擎**
+      - 开销大，加锁慢；会出现死锁；锁定粒度最小， **发生锁冲突的概率最低，并发度也最高**。
+
+- InnoDB与MyISAM的最大不同有两点：
+  - 一是支持事务（TRANSACTION）
+  - 二是采用了行级锁
+
+## 6.2. 表锁
+
+### 6.2.1. 语法
+
+- 注意：
+  - **MyISAM在执行查询语句（SELECT)前，会自动给涉及的所有表加读锁，在执行增删改操作前，会自动给涉及的表加写锁。**
+  - 通过命令的方式可以实现一直加锁的效果。
+
+---
+
+- 查看表的锁状态：
+  ```sql
+  show open tables;
+  ``` 
+- 加锁
+  ```sql
+  lock table 表名1 read(write), 表名2 read(write), ...;
+  ```
+- 释放表锁
+  ```sql
+  unlock tables;
+  ```
+
+
+### 6.2.2. 读锁
+
+- 情景：
+  - 两个连接：session1，session2。
+  - 两张表：mylock,book
+  - session1对mylock加了读锁。
+
+- 结果
+  - 当前 session 和其他 session 均可以读取加了读锁的表
+  - 当前 session 不能读取其他表，并且不能修改加了读锁的表
+  - 其他 session 想要修改加了读锁的表，就会堵塞，必须等待其读锁释放
+
+### 6.2.3. 写锁
+
+- 情景：
+  - 两个连接：session1，session2。
+  - 两张表：mylock,book
+  - session1对mylock加了写锁。
+
+- 结果
+  - 当前 session 可以读取和修改加了写锁的表
+  - 当前 session 不能读取其他表
+  - 其他 session 想要读取加了写锁的表，就会堵塞，必须等待其读锁释放
+
+### 6.2.4. 总结
+
+- MyISAM在执行查询语句（SELECT）前，会自动给涉及的所有表加读锁，在执行增删改操作前，会自动给涉及的表加写锁。
+- MySQL的表级锁有两种模式：
+  - 表共享读锁（Table Read Lock）
+  - 表独占写锁（Table Write Lock）
+
+![Mysql-4-24](./image/Mysql-4-24.png)
+
+- 对MyISAM表的读操作（加读锁），不会阻塞其他进程对同一表的读请求，但会阻塞对同一表的写请求。只有当读锁释放后，才会执行其它进程的写操作。
+- 对MyISAM表的写操作（加写锁），会阻塞其他进程对同一表的读和写操作，只有当写锁释放后，才会执行其它进程的读写操作
+- **简而言之，就是读锁会阻塞写，但是不会堵塞读。而写锁则会把读和写都堵塞。**
+  > mysql读写锁的区别
+
+### 6.2.5. 其他
+
+- 查看锁的相关记录：`show status link 'table%'`
+  - Table_locks_immediate：产生表级锁定的次数，表示可以立即获取锁的查询次数，每立即获取锁值加1；
+  - Table_locks_waited：出现表级锁定争用而发生等待的次数（不能立即获取锁的次数，每等待一次锁值加1），此值高则说明存在着较严重的表级锁争用情况；
+
+- myisam不适合做以写为主的表的引擎
+  - Myisam的读写锁调度是写优先
+    > 比如两个session争夺一个加了写锁的表，一个争夺读锁，一个争夺写锁。最后会分给争夺写锁的session
+  - 因为写锁后，其他线程不能做任何操作，大量的更新会使查询很难得到锁，从而造成永远阻塞
+
+## 6.3. 行锁
+
+### 6.3.1. 事务复习
+
+**事务（Transation）及其ACID属性**
+
+事务是由一组SQL语句组成的逻辑处理单元，事务具有以下4个属性，通常简称为事务的ACID属性。
+
+- **原子性（Atomicity）**
+  - **原子性是指事务包含的所有操作要么全部成功，要么全部失败回滚，因此事务的操作如果成功就必须要完全应用到数据库，如果操作失败则不能对数据库有任何影响。**
+- **一致性（Consistency）**
+  - **事务开始前和结束后，数据库的完整性约束没有被破坏。比如 A 向 B 转账，不可能 A 扣了钱，B 却没收到。 **
+- **隔离性（Isolation）**
+  - **隔离性是当多个用户并发访问数据库时，比如操作同一张表时，数据库为每一个用户开启的事务，不能被其他事务的操作所干扰，多个并发事务之间要相互隔离。**
+  - 同一时间，只允许一个事务请求同一数据，不同的事务之间彼此没有任何干扰。比如 A 正在从一张银行卡中取钱，在 A 取钱的过程结束前，B 不能向这张卡转账。
+- **持久性（Durability）**
+  - **持久性是指一个事务一旦被提交了，那么对数据库中的数据的改变就是永久性的，即便是在数据库系统遇到故障的情况下也不会丢失提交事务的操作。**
+
+------
+
+**并发事务处理带来的问题**
+
+1. 更新丢失 （Lost Update）：
+
+   - 当两个或多个事务选择同一行，然后基于最初选定的值更新该行时，由于每个事务都不知道其他事务的存在，就会发生丢失更新问题一一最后的更新覆盖了由其他事务所做的更新。
+   - 例如，两个程序员修改同一java文件。每程序员独立地更改其副本，然后保存更改后的副本，这样就覆盖了原始文档。最后保存其更改副本的编辑人员覆盖前一个程序员所做的更改。
+   - 如果在一个程序员完成并提交事务之前，另一个程序员不能访问同一文件，则可避免此问题。
+
+2. 脏读 （Dirty Reads）：
+
+   - 一个事务正在对一条记录做修改，在这个事务完成并提交前，这条记录的数据就处于不一致状态；这时，另一个事务也来读取同一条记录，如果不加控制，第二个事务读取了这些“脏”数据，并据此做进一步的处理，就会产生未提交的数据依赖关系。这种现象被形象地叫做”脏读”。
+   - 一句话：事务A读取到了事务B已修改但尚未提交的的数据，还在这个数据基础上做了操作。此时，如果B事务回滚，A读取的数据无效，不符合一致性要求。
+
+3. 不可重复读 （Non-Repeatable Reads）：
+
+   - 一个事务在读取某些数据后的某个时间，再次读取以前读过的数据，却发现其读出的数据已经发生了改变、或某些记录已经被删除了！这种现象就叫做“不可重复读”。
+   - 一句话：事务A读取到了事务B已经提交的修改数据，不符合隔离性
+
+4. 幻读 （Phantom Reads）
+
+   - 一个事务按相同的查询条件重新读取以前检索过的数据，却发现其他事务插入了满足其查询条件的新数据，这种现象就称为“幻读一句话：事务A读取到了事务B体提交的新增数据，不符合隔离性。
+   - 多说一句：幻读和脏读有点类似，脏读是事务B里面修改了数据，幻读是事务B里面新增了数据。
+
+------
+
+**事物的隔离级别**
+
+- 说明：
+  1. 脏读”、“不可重复读”和“幻读”，其实都是数据库读一致性问题，必须由数据库提供一定的事务隔离机制来解决。
+  2. 数据库的事务隔离越严格，并发副作用越小，但付出的代价也就越大，因为事务隔离实质上就是使事务在一定程度上“串行化”进行，这显然与“并发”是矛盾的。
+  3. 同时，不同的应用对读一致性和事务隔离程度的要求也是不同的，比如许多应用对“不可重复读”和“幻读”并不敏感，可能更关心数据并发访问的能力。
+  4. 查看当前数据库的事务隔离级别：`show variables like 'tx_isolation';` **innodb默认是可重复读**
+
+- 四个隔离级别
+  - **读未提交**：另一个事务修改了数据，但尚未提交，而本事务中的 SELECT 会读到这些未被提交的数据 **脏读**
+  - **不可重复读**：事务 A 多次读取同一数据，事务 B 在事务 A 多次读取的过程中，对数据作了更新并提交，导致事务 A 多次读取同一数据时，结果因此本事务先后两次读到的数据结果会不一致。			
+  - **可重复读**：在同一个事务里，SELECT 的结果是事务开始时时间点的状态，因此，同样的 SELECT 操作读到的结果会是一致的。但是，会有 **幻读**现象			
+  - **串行化**：最高的隔离级别，在这个隔离级别下，不会产生任何异常。并发的事务，就像事务是在一个个按照顺序执行一样
+
+
+| 事务隔离级别              | 读数据一致性                           | 脏读 | 不可重复读 | 幻读 |
+| :------------------------ | :------------------------------------- | :--- | :--------- | :--- |
+| 读未提交 read-uncommitted | 最低级别，只能保证不读物理上损坏的数据 | 是   | 是         | 是   |
+| 不可重复读 read-committed | 语句级                                 | 否   | 是         | 是   |
+| 可重复读 repeatable-read  | 事务级                                 | 否   | 否         | 是   |
+| 串行化 serializable       | 最高级别，事务级                       | 否   | 否         | 否   |
+
+### 6.3.2. 行锁案例
+
+### 6.3.3. 间隙锁
+
+### 6.3.4. 手动行锁
+
+### 6.3.5. 行锁分析
+
+### 6.3.6. 行锁优化
 
 # 7. 主从复制
 
@@ -1817,4 +3060,8 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
 
 - MRR: multi range read
 
+# 9. 参考资料
+
+- [尚硅谷MySQL数据库高级，mysql优化，数据库优化](https://www.bilibili.com/video/BV1KW411u7vy?p=44)
+- [Mysql笔记博客](https://blog.csdn.net/oneby1314/category_10278969.html)
 
