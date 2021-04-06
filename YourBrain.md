@@ -60,6 +60,7 @@
     - [resize死循环](https://juejin.cn/post/6844903554264596487)
   - 1.8
     - 存储结构：数组+链表+红黑树。红黑树结构转换条件
+    - [红黑树由来：2-3树](https://blog.csdn.net/zhichaosong/article/details/88844371)
     - 尾插：为什么改了
     - 如何解决的resize死循环
   - 线程不安全：put的时候导致的多线程数据不一致
@@ -68,6 +69,7 @@
   - 容量为什么要2的幂
   - [遍历方法及性能](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
   - 有什么同步容器/并发容器
+  - put流程
   - HashMap,HashTable,ConcurrentHashMap区别
     - 1.7
       - 三者数据结构
@@ -119,7 +121,7 @@
 
 ## 多线程
 
-- 基础
+- 并发基础
   - [创建线程的方式](https://segmentfault.com/a/1190000037589073)
   - 调用`start()`和`run()`方法区别
   - 停止线程：interrupt
@@ -391,50 +393,44 @@
     - 任务的执行(Executor)
     - 异步计算的结果(Future)
   - 创建
-    - ThreadPoolExecutor构造方法
-    - Executors默认实现
-  - 参数的含义
-    - int corePoolSize：该线程池中核心线程数最大值
-    - int maximumPoolSize：该线程池中线程总数最大值 。
-    - long keepAliveTime：非核心线程闲置超时时长。
-    - TimeUnit unit：keepAliveTime的单位。
-    - BlockingQueue workQueue：阻塞队列，维护着等待执行的Runnable任务对象。
-    - ThreadFactory threadFactory：<br />创建线程的工厂 ，用于批量创建线程，统一在创建线程时设置一些参数，<br/>如是否守护线程、线程的优先级等。<br />如果不指定，会新建一个默认的线程工厂。
-    - RejectedExecutionHandler handler 拒绝策略
-      - AbortPolicy：默认拒绝处理策略，丢弃任务并抛出RejectedExecutionException异常。
-      - DiscardPolicy：丢弃新来的任务，但是不抛出异常。
-      - DiscardOldestPolicy：丢弃队列头部（最旧的）的任务，然后重新尝试执行程序（如果再次失败，重复此过程）。
-      - CallerRunsPolicy：由调用线程处理该任务。
-  - 线程池工作流程
+    - ThreadPoolExecutor构造方法参数的含义
+      - int corePoolSize：该线程池中核心线程数最大值
+      - int maximumPoolSize：该线程池中线程总数最大值 。
+      - long keepAliveTime：非核心线程闲置超时时长。
+      - TimeUnit unit：keepAliveTime的单位。
+      - BlockingQueue workQueue：阻塞队列，维护着等待执行的Runnable任务对象。
+      - ThreadFactory threadFactory：<br />创建线程的工厂 ，用于批量创建线程，统一在创建线程时设置一些参数，<br/>如是否守护线程、线程的优先级等。<br />如果不指定，会新建一个默认的线程工厂。
+      - RejectedExecutionHandler handler 拒绝策略
+        - AbortPolicy：默认拒绝处理策略，丢弃任务并抛出RejectedExecutionException异常。
+        - DiscardPolicy：丢弃新来的任务，但是不抛出异常。
+        - DiscardOldestPolicy：丢弃队列头部（最旧的）的任务，然后重新尝试执行程序（如果再次失败，重复此过程）。
+        - CallerRunsPolicy：由调用线程处理该任务。
+    - Executors默认实现(底层使用ThreadPoolExecutor)
+      - FixedThreadPool
+        - 参数设置
+        - 执行过程
+        - 弊端
+      - CachedThreadPool 
+        - 参数设置
+        - 执行过程
+        - 弊端
+      - SingleThreadExecutor
+        - 参数设置
+        - 执行过程
+        - 弊端
+  - **线程池工作流程**
   - ThreadPool状态转换
     - RUNNING
     - SHUTDOWN
     - STOP
     - TIDYING
     - TERMINATED
-  - 默认实现
-    - ThreadPoolExecutor
-      - 参数设置
-      - 执行过程
-      - 弊端
-    - FixedThreadPool
-      - 参数设置
-      - 执行过程
-      - 弊端
-    - CachedThreadPool 
-      - 参数设置
-      - 执行过程
-      - 弊端
-    - SingleThreadExecutor
-      - 参数设置
-      - 执行过程
-      - 弊端
   - ScheduledThreadPool:
     - 继承了ThreadPoolExecutor
     - 主要用来在给定的延迟后运行任务，或者定期执行任务
     - 实际项目中会使`用quartz`
-  - **为什么不要用默认实现** <br/> (上面的四个默认实现有什么弊端)
-  - 参数如何设置
+  - **为什么不要用默认实现** <br/> (上面的默认实现有什么弊端)
+  - 参数如何设置(N+1,2N)
   - [异常线程处理](https://mp.weixin.qq.com/s?__biz=Mzg3NjU3NTkwMQ==&mid=2247505057&idx=1&sn=621ebc409b589478e2e05388e079d8c0&source=41#wechat_redirect)
   - 常见区别
     - sumbit() vs execute()
@@ -606,7 +602,7 @@
   - 在Hotspot JVM中，直接将本地方法栈和虚拟机栈合二为一。
 
 - 堆
-  - 空间划分与比例
+  - 空间划分与比例`1:2` `6:1:1`
   - 堆大小设置参数`-Xms``-Xmx`
   - 对象分配
     - 一般过程
@@ -771,7 +767,7 @@
       - 热点代码
         - 概念
         - 热点探测
-          - 基于计数器的热点探测
+          - 方法调用计数器
             - 工作机制
             - 默认使用相对频率<br />关闭热度衰减使用绝对次数
             - 阀值
