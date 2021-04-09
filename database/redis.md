@@ -79,6 +79,7 @@
 
 ## 1.3. Alibaba架构演变
 
+[链接](https://blog.csdn.net/u011863024/article/details/107476187)
 
 ## 1.4. NOSQL概念说明
 
@@ -106,7 +107,6 @@
   - 而在关系数据库里，增删字段是一件非常麻烦的事情。如果是非常大数据量的表，增加字段简直就是一个噩梦。
 
 ### 1.4.3. 关系型数据库比较
-
 
 - nosql
   - 优点：
@@ -528,116 +528,534 @@
 
 ## 3.7. HyperLogLog
 
-# 配置文件说明
+- 说明：
+  - Redis 在 2.8.9 版本添加了 HyperLogLog 结构。
+  - Redis HyperLogLog 是用来做 **基数统计** 的算法，HyperLogLog 的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的空间总是固定 的、并且是很小的。
+    - 基数:比如数据集 {1, 3, 5, 7, 5, 7, 8}， 那么这个数据集的基数集为 {1, 3, 5 ,7, 8}, 基数(不重复元素)为5。 基数估计就是在误差可接受的范围内，快速计算基数。
+  - 在 Redis 里面，每个 HyperLogLog 键只需要花费 12 KB 内存，就可以计算接近 2^64 个不同元素的基 数。这和计算基数时，元素越多耗费内存就越多的集合形成鲜明对比。
+  - 但是，因为 HyperLogLog 只会根据输入元素来计算基数，而不会储存输入元素本身，所以 HyperLogLog 不能像集合那样，返回输入的各个元素。
 
-| 序号 | 配置项                                                       | 说明                                                         |
-| ---- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 1    | `daemonize no`                                               | Redis 默认不是以守护进程的方式运行，可以通过该配置项修改，使用 yes 启用守护进程（Windows 不支持守护线程的配置为 no ） |
-| 2    | `pidfile /var/run/redis.pid`                                 | 当 Redis 以守护进程方式运行时，Redis 默认会把 pid 写入 /var/run/redis.pid 文件，可以通过 pidfile 指定 |
-| 3    | `port 6379`                                                  | 指定 Redis 监听端口，默认端口为 6379，作者在自己的一篇博文中解释了为什么选用 6379 作为默认端口，因为 6379 在手机按键上 MERZ 对应的号码，而 MERZ 取自意大利歌女 Alessia Merz 的名字 |
-| 4    | `bind 127.0.0.1`                                             | 绑定的主机地址                                               |
-| 5    | `timeout 300`                                                | 当客户端闲置多长秒后关闭连接，如果指定为 0 ，表示关闭该功能  |
-| 6    | `loglevel notice`                                            | 指定日志记录级别，Redis 总共支持四个级别：debug、verbose、notice、warning，默认为 notice |
-| 7    | `logfile stdout`                                             | 日志记录方式，默认为标准输出，如果配置 Redis 为守护进程方式运行，而这里又配置为日志记录方式为标准输出，则日志将会发送给 /dev/null |
-| 8    | `databases 16`                                               | 设置数据库的数量，默认数据库为0，可以使用SELECT 命令在连接上指定数据库id |
-| 9    | `save <seconds> <changes>` Redis 默认配置文件中提供了三个条件： `save 900 1` `save 300 10` `save 60 10000` | 分别表示 900 秒（15 分钟）内有 1 个更改，300 秒（5 分钟）内有 10 个更改以及 60 秒内有 10000 个更改。 指定在多长时间内，有多少次更新操作，就将数据同步到数据文件，可以多个条件配合 |
-| 10   | `rdbcompression yes`                                         | 指定存储至本地数据库时是否压缩数据，默认为 yes，Redis 采用 LZF 压缩，如果为了节省 CPU 时间，可以关闭该选项，但会导致数据库文件变的巨大 |
-| 11   | `dbfilename dump.rdb`                                        | 指定本地数据库文件名，默认值为 dump.rdb                      |
-| 12   | `dir ./`                                                     | 指定本地数据库存放目录                                       |
-| 13   | `slaveof <masterip> <masterport>`                            | 设置当本机为 slave 服务时，设置 master 服务的 IP 地址及端口，在 Redis 启动时，它会自动从 master 进行数据同步 |
-| 14   | `masterauth <master-password>`                               | 当 master 服务设置了密码保护时，slav 服务连接 master 的密码  |
-| 15   | `requirepass foobared`                                       | 设置 Redis 连接密码，如果配置了连接密码，客户端在连接 Redis 时需要通过 AUTH 命令提供密码，默认关闭 |
-| 16   | `maxclients 128`                                             | 设置同一时间最大客户端连接数，默认无限制，Redis 可以同时打开的客户端连接数为 Redis 进程可以打开的最大文件描述符数，如果设置 maxclients 0，表示不作限制。当客户端连接数到达限制时，Redis 会关闭新的连接并向客户端返回 max number of clients reached 错误信息 |
-| 17   | `maxmemory <bytes>`                                          | 指定 Redis 最大内存限制，Redis 在启动时会把数据加载到内存中，达到最大内存后，Redis 会先尝试清除已到期或即将到期的 Key，当此方法处理 后，仍然到达最大内存设置，将无法再进行写入操作，但仍然可以进行读取操作。Redis 新的 vm 机制，会把 Key 存放内存，Value 会存放在 swap 区 |
-| 18   | `appendonly no`                                              | 指定是否在每次更新操作后进行日志记录，Redis 在默认情况下是异步的把数据写入磁盘，如果不开启，可能会在断电时导致一段时间内的数据丢失。因为 redis 本身同步数据文件是按上面 save 条件来同步的，所以有的数据会在一段时间内只存在于内存中。默认为 no |
-| 19   | `appendfilename appendonly.aof`                              | 指定更新日志文件名，默认为 appendonly.aof                    |
-| 20   | `appendfsync everysec`                                       | 指定更新日志条件，共有 3 个可选值： no：表示等操作系统进行数据缓存同步到磁盘（快） always：表示每次更新操作后手动调用 fsync() 将数据写到磁盘（慢，安全） everysec：表示每秒同步一次（折中，默认值） |
-| 21   | `vm-enabled no`                                              | 指定是否启用虚拟内存机制，默认值为 no，简单的介绍一下，VM 机制将数据分页存放，由 Redis 将访问量较少的页即冷数据 swap 到磁盘上，访问多的页面由磁盘自动换出到内存中（在后面的文章我会仔细分析 Redis 的 VM 机制） |
-| 22   | `vm-swap-file /tmp/redis.swap`                               | 虚拟内存文件路径，默认值为 /tmp/redis.swap，不可多个 Redis 实例共享 |
-| 23   | `vm-max-memory 0`                                            | 将所有大于 vm-max-memory 的数据存入虚拟内存，无论 vm-max-memory 设置多小，所有索引数据都是内存存储的(Redis 的索引数据 就是 keys)，也就是说，当 vm-max-memory 设置为 0 的时候，其实是所有 value 都存在于磁盘。默认值为 0 |
-| 24   | `vm-page-size 32`                                            | Redis swap 文件分成了很多的 page，一个对象可以保存在多个 page 上面，但一个 page 上不能被多个对象共享，vm-page-size 是要根据存储的 数据大小来设定的，作者建议如果存储很多小对象，page 大小最好设置为 32 或者 64bytes；如果存储很大大对象，则可以使用更大的 page，如果不确定，就使用默认值 |
-| 25   | `vm-pages 134217728`                                         | 设置 swap 文件中的 page 数量，由于页表（一种表示页面空闲或使用的 bitmap）是在放在内存中的，，在磁盘上每 8 个 pages 将消耗 1byte 的内存。 |
-| 26   | `vm-max-threads 4`                                           | 设置访问swap文件的线程数,最好不要超过机器的核数,如果设置为0,那么所有对swap文件的操作都是串行的，可能会造成比较长时间的延迟。默认值为4 |
-| 27   | `glueoutputbuf yes`                                          | 设置在向客户端应答时，是否把较小的包合并为一个包发送，默认为开启 |
-| 28   | `hash-max-zipmap-entries 64` `hash-max-zipmap-value 512`     | 指定在超过一定的数量或者最大的元素超过某一临界值时，采用一种特殊的哈希算法 |
-| 29   | `activerehashing yes`                                        | 指定是否激活重置哈希，默认为开启（后面在介绍 Redis 的哈希算法时具体介绍） |
-| 30   | `include /path/to/local.conf`                                | 指定包含其它的配置文件，可以在同一主机上多个Redis实例之间使用同一份配置文件，而同时各个实例又拥有自己的特定配置文件 |
+**常用命令**
 
-# 4. 内部基础数据结构
+| 序号 | 命令                                      | 描述                                      |
+| ---- | ----------------------------------------- | ----------------------------------------- |
+| 1    | PFADD key element [element ...]           | 添加指定元素到 HyperLogLog 中。           |
+| 2    | PFCOUNT key [key ...]                     | 返回给定 HyperLogLog 的基数估算值。       |
+| 3    | PFMERGE destkey sourcekey [sourcekey ...] | 将多个 HyperLogLog 合并为一个 HyperLogLog |
 
-## 4.1. summary
+## 3.8. 关于过期删除
 
-## 4.2. sds 简单动态字符串
+- **key过期后不会立即删除**
+  - 因为删除key时肯定是主服务来删除(因为redis是 **单线程** 的)，所以当他在执行删除指令的时候，他就无法进行其他的操作
+  - 立即删除会影响性能；所以呢，他不会立即进行删除；
 
-## 4.3. linkedlist 双端链表
+- 删除机制：
+  - (1)定期删除：
+    - redis每隔一段时间就会去查看reids，设置了过期时间的key，会在100ms的间隔内默认查看3个key。
+  - (2)惰性删除：
+    - 如果当你去查询一个已经过了生存时间的key时，redis会先查看当前key的生存时间，
+    - 如果你查询的key已经过了生存时间，redis会立即删除，并且返回给用户一个null值；
+    - 也就是当你去查询的时候，redis去进行删除；
 
-## 4.4. ziplist 压缩列表
+**注意：当然无论redis删没删掉这个key外界都是查不到的；只是没删的话还占着内存而已**
 
-## 4.5. quicklist 快速链表
 
-## 4.6. dict 字典
+# 4. 配置文件说明
 
-## 4.7. inset 整数集合
+通过 `CONFIG` 命令set或get配置项。
 
-## 4.8. skiplist 跳表
+- 面试题：redis内存过期策略/最大内存策略：如果达到内存限制了，Redis如何选择删除key。(下面配置文件中的)
+  > 注意：对所有策略来说，如果Redis找不到合适的可以删除的key都会在写操作时返回一个错误。
+  - volatile-lru -> 根据LRU算法删除设置过期时间的key
+  - allkeys-lru -> 根据LRU算法删除任何key
+  - volatile-random -> 随机移除设置过过期时间的key
+  - allkeys-random -> 随机移除任何key
+  - volatile-ttl -> 移除即将过期的key(minor TTL)
+  - noeviction -> **默认策略** 。不移除任何key，只返回一个写错误
+    > 生产环境中千万别用
+
+<details>
+<summary style="color:red;">配置文件翻译解读</summary>
+
+  ```
+  ######################### 引用 #########################
+
+  # 不同redis server可以使用同一个模版配置作为主配置，并引用其它配置文件用于本server的个性# 化设置
+  # include并不会被CONFIG REWRITE命令覆盖。但是主配置文件的选项会被覆盖。
+  # 想故意覆盖主配置的话就把include放文件前面，否则最好放末尾
+  # include /path/to/local.conf
+  # include /path/to/other.conf
+
+  ######################### 网络 #########################
+
+  # 不指定bind的话redis将会监听所有网络接口。这个配置是肯定需要指定的。
+  # Examples:
+  # bind 192.168.1.100 10.0.0.1
+  # bind 127.0.0.1 ::1
+  # 下面这个配置是只允许本地客户端访问。
+  bind 127.0.0.1
+
+  # 是否开启保护模式。默认开启，如果没有设置bind项的ip和redis密码的话，服务将只允许本地访 问。
+  protected-mode yes
+
+  # 端口设置，默认为 6379
+  # 如果port设置为0 redis将不会监听tcp socket
+  port 6379
+
+  # 在高并发环境下需要一个高backlog值来避免慢客户端连接问题。注意Linux内核默默将这个值减小到/proc/sys/net/core/somaxconn的值，所以需要确认增大somaxconn和tcp_max_syn_backlog 两个值来达到需要的效果。
+  tcp-backlog 511
+
+  # 指定用来监听Unix套套接字的路径。没有默认值，没有指定的情况下Redis不会监听Unix socket
+  # unixsocket /tmp/redis.sock
+  # unixsocketperm 700
+
+  # 客户端空闲多少秒后关闭连接（0为不关闭）timeout 0# tcp-keepalive设置。如果非零，则设置SO_KEEPALIVE选项来向空闲连接的客户端发送ACK，用途如下：
+  # 1）能够检测无响应的对端
+  # 2）让该连接中间的网络设备知道这个连接还存活
+  # 在Linux上，这个指定的值(单位秒)就是发送ACK的时间间隔。
+  # 注意：要关闭这个连接需要两倍的这个时间值。
+  # 在其他内核上这个时间间隔由内核配置决定# 从redis3.2.1开始默认值为300秒
+  tcp-keepalive 300
+
+  ######################### 通用 #########################
+
+  # 是否将Redis作为守护进程运行。如果需要的话配置成'yes'
+  # 注意配置成守护进程后Redis会将进程号写入文件/var/run/redis.pid
+  daemonize no
+
+  # 是否通过upstart或systemd管理守护进程。默认no没有服务监控，其它选项有upstart, systemd, auto
+  supervised no
+
+  # pid文件在redis启动时创建，退出时删除。最佳实践为配置该项。
+  pidfile /var/run/redis_6379.pid
+
+  # 配置日志级别。选项有debug, verbose, notice, warning
+  loglevel notice
+
+  # 日志名称。空字符串表示标准输出。注意如果redis配置为后台进程，标准输出中信息会发送到/dev/null
+  logfile ""
+
+  # 是否启动系统日志记录。
+  # syslog-enabled no
+
+  # 指定系统日志身份。
+  # syslog-ident redis
+
+  # 指定syslog设备。必须是user或LOCAL0 ~ LOCAL7之一。
+  # syslog-facility local0
+
+  # 设置数据库个数。默认数据库是 DB 0
+  # 可以通过SELECT where dbid is a number between 0 and 'databases'-1为每个连接使用不同的数据库。
+  databases 16
+
+  ######################### 备份  #########################
+  # 持久化设置:
+  # 下面的例子将会进行把数据写入磁盘的操作:
+  #  900秒（15分钟）之后，且至少1次变更
+  #  300秒（5分钟）之后，且至少10次变更
+  #  60秒之后，且至少10000次变更
+  # 不写磁盘的话就把所有 "save" 设置注释掉就行了。
+  # 通过添加一条带空字符串参数的save指令也能移除之前所有配置的save指令，如: save ""
+  save 900 1
+  save 300 10
+  save 60 10000
+
+  # 默认情况下如果上面配置的RDB模式开启且最后一次的保存失败，redis 将停止接受写操作，让用户知道问题的发生。
+  # 如果后台保存进程重新启动工作了，redis 也将自动的允许写操作。如果有其它监控方式也可关闭。
+  stop-writes-on-bgsave-error yes
+
+  # 是否在备份.rdb文件时是否用LZF压缩字符串，默认设置为yes。如果想节约cpu资源可以把它设置为no。
+  rdbcompression yes
+
+  # 因为版本5的RDB有一个CRC64算法的校验和放在了文件的末尾。这将使文件格式更加可靠,
+  # 但在生产和加载RDB文件时，这有一个性能消耗(大约10%)，可以关掉它来获取最好的性能。
+  # 生成的关闭校验的RDB文件有一个0的校验和，它将告诉加载代码跳过检查rdbchecksum yes
+  # rdb文件名称
+  dbfilename dump.rdb
+
+  # 备份文件目录，文件名就是上面的 "dbfilename" 的值。累加文件也放这里。
+  # 注意你这里指定的必须是目录，不是文件名。
+  dir /Users/wuji/redis_data/
+
+  ######################### 主从同步 #########################
+
+  # 主从同步配置。
+  # 1) redis主从同步是异步的，但是可以配置在没有指定slave连接的情况下使master停止写入数据。
+  # 2) 连接中断一定时间内，slave可以执行部分数据重新同步。
+  # 3) 同步是自动的，slave可以自动重连且同步数据。
+  # slaveof <masterip> <masterport>
+
+  # master连接密码
+  # masterauth <master-password>
+
+  # 当一个slave失去和master的连接，或者同步正在进行中，slave的行为有两种可能：
+  # 1) 如果 slave-serve-stale-data 设置为 "yes" (默认值)，slave会继续响应客户端请求，可能是正常数据，也可能是还没获得值的空数据。
+  # 2) 如果 slave-serve-stale-data 设置为 "no"，slave会回复"正在从master同步（SYNC with master in progress）"来处理各种请求，除了 INFO 和 SLAVEOF 命令。
+  slave-serve-stale-data yes
+
+  # 你可以配置salve实例是否接受写操作。可写的slave实例可能对存储临时数据比较有用(因为写入salve# 的数据在同master同步之后将很容被删除)，但是如果客户端由于配置错误在写入时也可能产生一些问题。
+  # 从Redis2.6默认所有的slave为只读
+  # 注意:只读的slave不是为了暴露给互联网上不可信的客户端而设计的。它只是一个防止实例误用的保护层。
+  # 一个只读的slave支持所有的管理命令比如config,debug等。为了限制你可以用'rename-command'来隐藏所有的管理和危险命令来增强只读slave的安全性。
+  slave-read-only yes
+
+  # 同步策略: 磁盘或socket，默认磁盘方式
+  repl-diskless-sync no
+
+  # 如果非磁盘同步方式开启，可以配置同步延迟时间，以等待master产生子进程通过socket传输RDB数据给slave。
+  # 默认值为5秒，设置为0秒则每次传输无延迟。
+  repl-diskless-sync-delay 5
+
+  # slave根据指定的时间间隔向master发送ping请求。默认10秒。
+  # repl-ping-slave-period 10
+
+  # 同步的超时时间
+  # 1）slave在与master SYNC期间有大量数据传输，造成超时
+  # 2）在slave角度，master超时，包括数据、ping等
+  # 3）在master角度，slave超时，当master发送REPLCONF ACK pings# 确保这个值大于指定的repl-ping-slave-period，否则在主从间流量不高时每次都会检测到超时
+  # repl-timeout 60
+
+  # 是否在slave套接字发送SYNC之后禁用 TCP_NODELAY
+  # 如果选择yes，Redis将使用更少的TCP包和带宽来向slaves发送数据。但是这将使数据传输到slave上有延迟，Linux内核的默认配置会达到40毫秒。
+  # 如果选择no，数据传输到salve的延迟将会减少但要使用更多的带宽。
+  # 默认我们会为低延迟做优化，但高流量情况或主从之间的跳数过多时，可以设置为“yes”。
+  repl-disable-tcp-nodelay no
+
+  # 设置数据备份的backlog大小。backlog是一个slave在一段时间内断开连接时记录salve数据的缓冲，所以一个slave在重新连接时，不必要全量的同步，而是一个增量同步就足够了，将在断开连接的这段# 时间内把slave丢失的部分数据传送给它。
+  # 同步的backlog越大，slave能够进行增量同步并且允许断开连接的时间就越长。
+  # backlog只分配一次并且至少需要一个slave连接。
+  # repl-backlog-size 1mb
+
+  # 当master在一段时间内不再与任何slave连接，backlog将会释放。以下选项配置了从最后一个
+  # slave断开开始计时多少秒后，backlog缓冲将会释放。
+  # 0表示永不释放backlog
+  # repl-backlog-ttl 3600
+
+  # slave的优先级是一个整数展示在Redis的Info输出中。如果master不再正常工作了，sentinel将用它来选择一个slave提升为master。
+  # 优先级数字小的salve会优先考虑提升为master，所以例如有三个slave优先级分别为10，100，25，sentinel将挑选优先级最小数字为10的slave。
+  # 0作为一个特殊的优先级，标识这个slave不能作为master，所以一个优先级为0的slave永远不会被# sentinel挑选提升为master。
+  # 默认优先级为100
+  slave-priority 100
+
+  # 如果master少于N个延时小于等于M秒的已连接slave，就可以停止接收写操作。
+  # N个slave需要是“oneline”状态。
+  # 延时是以秒为单位，并且必须小于等于指定值，是从最后一个从slave接收到的ping（通常每秒发送）开始计数。
+  # 该选项不保证N个slave正确同步写操作，但是限制数据丢失的窗口期。
+  # 例如至少需要3个延时小于等于10秒的slave用下面的指令：
+  # min-slaves-to-write 3
+  # min-slaves-max-lag 10
+
+  # 两者之一设置为0将禁用这个功能。
+  # 默认 min-slaves-to-write 值是0（该功能禁用）并且 min-slaves-max-lag 值是10。
+
+  ######################### 安全 #########################
+
+  # 要求客户端在处理任何命令时都要验证身份和密码。通过auth 命令来验证登录
+  # requirepass foobared
+
+  # 命令重命名
+  # 在共享环境下，可以为危险命令改变名字。比如，你可以为 CONFIG 改个其他不太容易猜到的名字，这样内部的工具仍然可以使用。
+  # 例如：
+  # rename-command CONFIG b840fc02d524045429941cc15f59e41cb7be6c52
+  # 也可以通过改名为空字符串来完全禁用一个命令
+  # rename-command CONFIG ""
+  # 请注意：改变命令名字被记录到AOF文件或被传送到从服务器可能产生问题。
+
+  ######################### 限制 #########################
+
+  # 设置最多同时连接的客户端数量。默认这个限制是10000个客户端，然而如果Redis服务器不能配置
+  # 处理文件的限制数来满足指定的值，那么最大的客户端连接数就被设置成当前文件限制数减32（因为Redis服务器保留了一些文件描述符作为内部使用）
+  # 一旦达到这个限制，Redis会关闭所有新连接并发送错误'max number of clients reached'
+  # maxclients 10000
+
+  # 不要使用比设置的上限更多的内存。一旦内存使用达到上限，Redis会根据选定的回收策略（参见：maxmemmory-policy）删除key。
+  # 如果因为删除策略Redis无法删除key，或者策略设置为 "noeviction"，Redis会回复需要更多内存的错误信息给命令。例如，SET,LPUSH等等，但是会继续响应像Get这样的只读命令。
+  # 在使用Redis作为LRU缓存，或者为实例设置了硬性内存限制的时候（使用 "noeviction" 策略）
+  的时候，这个选项通常事很有用的。
+  # 警告：当有多个slave连上达到内存上限时，master为同步slave的输出缓冲区所需内存不计算在使用内存中。这样当移除key时，就不会因网络问题 / 重新同步事件触发移除key的循环，反过来slaves的输出缓冲区充满了key被移除的DEL命令，这将触发删除更多的key，直到这个数据库完全被清空为止。
+  # 总之，如果你需要附加多个slave，建议你设置一个稍小maxmemory限制，这样系统就会有空闲的内存作为slave的输出缓存区(但是如果最大内存策略设置为"noeviction"的话就没必要了)
+  # maxmemory <bytes>
+
+  # 最大内存策略：如果达到内存限制了，Redis如何选择删除key。
+  # volatile-lru -> 根据LRU算法删除设置过期时间的key
+  # allkeys-lru -> 根据LRU算法删除任何key
+  # volatile-random -> 随机移除设置过过期时间的key
+  # allkeys-random -> 随机移除任何key
+  # volatile-ttl -> 移除即将过期的key(minor TTL)
+  # noeviction -> 不移除任何key，只返回一个写错误
+  # 注意：对所有策略来说，如果Redis找不到合适的可以删除的key都会在写操作时返回一个错误。# 目前为止涉及的命令：set setnx setex append incr decr rpush lpush rpushx lpushx linsert lset rpoplpush sadd sinter sinterstore sunion sunionstore sdiff sdiffstore zadd zincrby zunionstore zinterstore hset hsetnx hmset hincrby incrby decrby getset mset msetnx exec sort
+  # 默认策略:
+  # maxmemory-policy noeviction
+
+  # LRU和最小TTL算法的实现都不是很精确，但是很接近（为了省内存），所以你可以用样本量做检测。 例如：默认Redis会检查3个key然后取最旧的那个，你可以通过下面的配置指令来设置样本的个数。
+  # 默认值为5，数字越大结果越精确但是会消耗更多CPU。
+  # maxmemory-samples 5
+
+  ######################### APPEND ONLY MODE #########################
+
+  # 默认情况下，Redis是异步的把数据导出到磁盘上。这种模式在很多应用里已经足够好，但Redis进程出问题或断电时可能造成一段时间的写操作丢失(这取决于配置的save指令)。
+  # AOF是一种提供了更可靠的替代持久化模式，例如使用默认的数据写入文件策略（参见后面的配置）。
+  # 在遇到像服务器断电或单写情况下Redis自身进程出问题但操作系统仍正常运行等突发事件时，Redis能只丢失1秒的写操作。
+  # AOF和RDB持久化能同时启动并且不会有问题。
+  # 如果AOF开启，那么在启动时Redis将加载AOF文件，它更能保证数据的可靠性。
+  appendonly no
+
+  # AOF文件名（默认："appendonly.aof"）
+  appendfilename "appendonly.aof"
+
+  # fsync() 系统调用告诉操作系统把数据写到磁盘上，而不是等更多的数据进入输出缓冲区。
+  # 有些操作系统会真的把数据马上刷到磁盘上；有些则会尽快去尝试这么做。
+  # Redis支持三种不同的模式：
+  # no：不要立刻刷，只有在操作系统需要刷的时候再刷。比较快。
+  # always：每次写操作都立刻写入到aof文件。慢，但是最安全。
+  # everysec：每秒写一次。折中方案。
+  # 默认的 "everysec" 通常来说能在速度和数据安全性之间取得比较好的平衡。
+  # appendfsync always
+  appendfsync everysec
+  # appendfsync no
+
+  # 如果AOF的同步策略设置成 "always" 或者 "everysec"，并且后台的存储进程（后台存储或写入AOF 日志）会产生很多磁盘I/O开销。某些Linux的配置下会使Redis因为 fsync()系统调用而阻塞很久。
+  # 注意，目前对这个情况还没有完美修正，甚至不同线程的 fsync() 会阻塞我们同步的write(2)调用。
+  # 为了缓解这个问题，可以用下面这个选项。它可以在 BGSAVE 或 BGREWRITEAOF 处理时阻止fsync()。
+  # 这就意味着如果有子进程在进行保存操作，那么Redis就处于"不可同步"的状态。
+  # 这实际上是说，在最差的情况下可能会丢掉30秒钟的日志数据。（默认Linux设定）
+  # 如果把这个设置成"yes"带来了延迟问题，就保持"no"，这是保存持久数据的最安全的方式。
+  no-appendfsync-on-rewrite no
+
+  # 自动重写AOF文件。如果AOF日志文件增大到指定百分比，Redis能够通过 BGREWRITEAOF 自动重写AOF日志文件。# 工作原理：Redis记住上次重写时AOF文件的大小（如果重启后还没有写操作，就直接用启动时的AOF大小）
+  # 这个基准大小和当前大小做比较。如果当前大小超过指定比例，就会触发重写操作。你还需要指定被重写日志的最小尺寸，这样避免了达到指定百分比但尺寸仍然很小的情况还要重写。
+  # 指定百分比为0会禁用AOF自动重写特性。
+  auto-aof-rewrite-percentage 100
+  auto-aof-rewrite-min-size 64mb
+
+  # 如果设置为yes，如果一个因异常被截断的AOF文件被redis启动时加载进内存，redis将会发送日志通知用户。如果设置为no，erdis将会拒绝启动。此时需要用"redis-check-aof"工具修复文件。
+  aof-load-truncated yes
+
+  ######################### 集群 #########################
+
+  # 只有开启了以下选项，redis才能成为集群服务的一部分
+  # cluster-enabled yes
+
+  # 配置redis自动生成的集群配置文件名。确保同一系统中运行的各redis实例该配置文件不要重名。
+  # cluster-config-file nodes-6379.conf
+
+  # 集群节点超时毫秒数。超时的节点将被视为不可用状态。
+  # cluster-node-timeout 15000
+
+  # 如果数据太旧，集群中的不可用master的slave节点会避免成为备用master。如果slave和master失联时间超过:
+   (node-timeout * slave-validity-factor) + repl-ping-slave-period
+  则不会被提升为master。
+  # 如node-timeout为30秒，slave-validity-factor为10, 默认default repl-ping-slave-period为10秒,失联时间超过310秒slave就不会成为master。
+  # 较大的slave-validity-factor值可能允许包含过旧数据的slave成为master，同时较小的值可能会阻止集群选举出新master。
+  #为了达到最大限度的高可用性，可以设置为0，即slave不管和master失联多久都可以提升为master
+  # cluster-slave-validity-factor 10
+
+  # 只有在之前master有其它指定数量的工作状态下的slave节点时，slave节点才能提升为master。默认为1（即该集群至少有3个节点，1 master＋2 slaves，master宕机，仍有另外1个slave的情况下其中1个slave可以提升）
+  # 测试环境可设置为0，生成环境中至少设置为1
+  # cluster-migration-barrier 1
+
+  # 默认情况下如果redis集群如果检测到至少有1个hash slot不可用，集群将停止查询数据。
+  # 如果所有slot恢复则集群自动恢复。
+  # 如果需要集群部分可用情况下仍可提供查询服务，设置为no。
+  # cluster-require-full-coverage yes
+
+  ######################### 慢查询日志 #########################
+
+  # 慢查询日志，记录超过多少微秒的查询命令。查询的执行时间不包括客户端的IO执行和网络通信时间，只是查询命令执行时间。
+  # 1000000等于1秒，设置为0则记录所有命令
+  slowlog-log-slower-than 10000
+
+  # 记录大小，可通过SLOWLOG RESET命令重置
+  slowlog-max-len 128
+  ```
+</details>
+
 
 # 5. 持久化
 
-# 6. 集群
+<!--https://www.cnblogs.com/ysocean/p/9114268.html-->
 
-## 6.1. 主从复制实现
+## 5.1. RDB
 
-## 6.2. 哨兵
+### 5.1.1. 说明
 
-## 6.3. 集群
+- 说明：在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里
 
-# 7. 事务的控制
-
-# 8. 应用Application
-
-## 8.1. 普通缓存
-
-## 8.2. 分布式锁
-
-## 8.3. 布隆过滤器
-
-## 8.4. 布谷鸟过滤器
-
-## 8.5. UV 统计
-
-## 8.6. 排行榜
-
-## 8.7. 关注列表和粉丝列表
-
-## 8.8. 广告弹窗触达频率的控制
-
-## 8.9. 延时队列
+- 实现：
+  - Redis会单独创建（fork）一个子进程来进行持久化，会先将数据写入到 一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。 
+    > Fork:Fork的作用是复制一个与当前进程一样的进程。新进程的所有数据（变量、环境变量、程序计数器等） 数值都和原进程一致，但是是一个全新的进程，并作为原进程的子进程
+  - 整个过程中，主进程是不进行任何IO操作的，这就确保了极高的性能。
+  - 如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。
+  - RDB的缺点是 **最后一次持久化后的数据可能丢失** 。
 
 
-# 9. 高级算法
+- rdb 保存的是dump.rdb文件
 
-## 9.1. GeoHash(坐标定位算法)
+### 5.1.2. 配置
 
-## 9.2. scan(数据快速查询算法)
+上面配置文件 `###SNAPSHOTTING###`
 
-# 10. 常见问题
+### 5.1.3. 备份触发与恢复
 
-## 10.1. 容器型数据结构的通用规则
+- 自动触发
+  - 配置文件中默认：
+    - 900秒（15分钟）之后，且至少1次变更
+    - 300秒（5分钟）之后，且至少10次变更
+    - 60秒之后，且至少10000次变更
+  - 关闭备份：`save ''`
+- 手动触发
+  - shutdown时也会进行备份
+  - save
+    - 该命令会 **阻塞** 当前Redis服务器，执行save命令期间，Redis不能处理其他命令，直到RDB过程完成为止。
+    - 显然该命令对于内存比较大的实例会造成长时间阻塞，这是致命的缺陷，为了解决此问题，Redis提供了第二种方式bgsave
+  - bgsave
+    - 执行该命令时，Redis会在 **后台异步** 进行快照操作，快照同时还可以响应客户端请求。
+    - 具体操作是Redis进程执行fork操作创建子进程，RDB持久化过程由子进程负责，完成后自动结束。阻塞只发生在fork阶段，一般时间很短。
+    - 基本上 Redis 内部所有的RDB操作都是采用 bgsave 命令。
+  - flushall
+    - 执行执行 flushall 命令，也会产生dump.rdb文件，但里面是 **空的**.
 
-## 10.2. Redis 和 memcached 区别
+- 恢复：
+  - 将备份文件 (dump.rdb) 移动到 redis 安装目录并启动服务即可，redis就会自动加载文件数据至内存了。Redis 服务器在载入 RDB 文件期间，会一直处于阻塞状态，直到载入工作完成为止。
+  - 获取 redis 的安装目录可以使用 `config get dir` 命令
 
-## 10.3. Redis 是如何进行过期处理的
+> 主机和备机一般不是一台机器。
 
-## 10.4. Redis 持久化机制(防止 Redis 挂掉后数据丢失)
+### 5.1.4. 优劣势
 
-## 10.5. redis 的 6 种数据淘汰策略
+- 优势
+  - RDB是一个非常紧凑(compact)的文件，它保存了redis 在某个时间点上的数据集。这种文件非常适合用于进行备份和灾难恢复。
+  - 生成RDB文件的时候，redis主进程会fork()一个子进程来处理所有保存工作，主进程不需要进行任何磁盘IO操作。
+  - RDB 在恢复大数据集时的速度比 AOF 的恢复速度要快。
+- 劣势
+  - RDB方式数据没办法做到实时持久化/秒级持久化。
+    - 因为bgsave每次运行都要执行fork操作创建子进程，属于重量级操作，如果不采用压缩算法(内存中的数据被克隆了一份，大致2倍的膨胀性需要考虑)，频繁执行成本过高(影响性能)
+    - 当数据集比较大的时候fork的过程是非常耗时的吗，可能会导致Redis在一些毫秒级不能回应客户端请求。
+  - RDB文件使用特定二进制格式保存，Redis版本演进过程中有多个格式的RDB版本，存在老版本Redis服务无法兼容新版RDB格式的问题(版本不兼容)
+  - 在一定间隔时间做一次备份，所以如果redis意外down掉的话，就会丢失最后一次快照后的所有修改(数据有丢失)
 
-## 10.6. 缓存雪崩
+### 5.1.5. RDB原理
 
-## 10.7. 缓存穿透
+- Redis有个服务器状态结构：
+  - 结构代码说明：
+    <details>
+    <summary style="color:red;">c++</summary>
 
-## 10.8. 分布式锁
+      ```c++
+      struct redisService{
+          //1、记录保存save条件的数组
+          struct saveparam *saveparams;
+          //2、修改计数器
+          long long dirty;
+          //3、上一次执行保存的时间
+          time_t lastsave;
+      }
 
-## 10.9. 延时队列的实现
+      struct saveparam{
+          //秒数
+          time_t seconds;
+          //修改数
+          int changes;
+      };
+      ```
+    </details>
+  - 属性：
+    - dirty 计数器记录距离上一次成功执行 save 命令或者 bgsave 命令之后，Redis服务器进行了多少次修改（包括写入、删除、更新等操作）。
+    - lastsave 属性是一个时间戳，记录上一次成功执行 save 命令或者 bgsave 命令的时间。
+  - 流程
+    - 通过save和bgsave，当服务器成功执行一次修改操作，那么dirty 计数器就会加 1，而lastsave 属性记录上一次执行save或bgsave的时间
+    - Redis 服务器还有一个周期性操作函数`severCron`,默认每隔 100 毫秒就会执行一次
+    - 该函数会遍历并检查 saveparams 数组中的所有保存条件，只要有一个条件被满足，那么就会执行 bgsave 命令。
+    - 执行完成之后，dirty 计数器更新为 0 ，lastsave 也更新为执行命令的完成时间。
 
-## 10.10. 为什么单线程的 Redis 能处理那么多的并发客户端连接?
+- 实例说明：前面我们在 redis.conf 配置文件中进行了关于save 的配置：
+  - save 900 1：表示900 秒内如果至少有 1 个 key 的值变化，则保存
+  - save 300 10：表示300 秒内如果至少有 10 个 key 的值变化，则保存
+  - save 60 10000：表示60 秒内如果至少有 10000 个 key 的值变化，则保存
+  - 那么服务器状态中的saveparam 数组将会是如下的样子：
+
+  ![redis-9](./image/redis-9.png)
+
+
+
+### 5.1.6. 总结
+
+## 5.2. AOF
+
+# 6. 内部基础数据结构
+
+## 6.1. 概要说明
+
+## 6.2. sds 简单动态字符串
+
+## 6.3. linkedlist 双端链表
+
+## 6.4. ziplist 压缩列表
+
+## 6.5. quicklist 快速链表
+
+## 6.6. dict 字典
+
+## 6.7. inset 整数集合
+
+## 6.8. skiplist 跳表
+
+
+# 7. 集群
+
+## 7.1. 主从复制实现
+
+## 7.2. 哨兵
+
+## 7.3. 集群
+
+# 8. 事务的控制
+
+# 9. 应用Application
+
+## 9.1. 普通缓存
+
+## 9.2. 分布式锁
+
+## 9.3. 布隆过滤器
+
+## 9.4. 布谷鸟过滤器
+
+## 9.5. UV 统计
+
+## 9.6. 排行榜
+
+## 9.7. 关注列表和粉丝列表
+
+## 9.8. 广告弹窗触达频率的控制
+
+## 9.9. 延时队列
+
+
+# 10. 高级算法
+
+## 10.1. GeoHash(坐标定位算法)
+
+## 10.2. scan(数据快速查询算法)
+
+# 11. 常见问题
+
+## 11.1. 容器型数据结构的通用规则
+
+## 11.2. Redis 和 memcached 区别
+
+## 11.3. Redis 是如何进行过期处理的
+
+## 11.4. Redis 持久化机制(防止 Redis 挂掉后数据丢失)
+
+## 11.5. redis 的 6 种数据淘汰策略
+
+## 11.6. 缓存雪崩
+
+## 11.7. 缓存穿透
+
+## 11.8. 分布式锁
+
+## 11.9. 延时队列的实现
+
+## 11.10. 为什么单线程的 Redis 能处理那么多的并发客户端连接?
