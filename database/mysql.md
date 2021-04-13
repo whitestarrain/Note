@@ -1385,6 +1385,8 @@ in
 
 ### 5.5.4. Innodb存储引擎
 
+#### 5.5.4.1. 索引结构与种类
+
 - 一张Innodb表对应两个文件
   - .frm:表结构文件
   - .ibd:索引+数据文件
@@ -1400,23 +1402,24 @@ in
   - 聚集索引/聚簇索引:索引和数据聚集在一个文件中，如Innodb
     - 因为只需要查找一次，因此性能要比非聚集索引性能要高
 
----
+#### 5.5.4.2. 聚簇索引的选择
 
 - 包含所有数据的聚簇索引的选择：
   - 每个InnoDB表具有一个特殊的索引称为聚簇索引（也叫聚集索引，聚类索引，簇集索引）。
   - 如果表上定义有主键，该主键索引就是聚簇索引。
   - 如果未定义主键，MySQL取第一个唯一索引（unique）而且只含非空列（NOT NULL）作为主键，InnoDB使用它作为聚簇索引。
   - 如果没有这样的列，InnoDB就自己产生一个这样的ID值，它有六个字节，而且是隐藏的，使其作为聚簇索引。
-  - 表中的聚簇索引（clustered index ）就是一级索引，除此之外，表上的其他非聚簇索引都是二级索引，又叫辅助索引（secondary indexes）。
+  - 表中的聚簇索引（clustered index ）就是**一级索引**，除此之外，表上的其他非聚簇索引都是**二级索引**，又叫辅助索引（secondary indexes）。
 
----
+#### 5.5.4.3. 二级索引的检索过程(重要)
 
-- 二级索引的检索过程
-  - 在MySQL的查询过程中，SQL优化器会选择合适的索引进行检索，
-  - 在使用二级索引的过程中，因为 **二级索引没有存储全部的数据** ，
-  - 假如二级索引满足查询需求，则直接返回，即为 **覆盖索引** （后面explain会讲到），反之则需要 **回表** 去主键索引(聚簇索引)查询。
+- 在MySQL的查询过程中，SQL优化器会选择合适的索引进行检索，
+- 在使用二级索引的过程中，因为 **二级索引没有存储全部的数据** ，
+- 假如二级索引满足查询需求，则直接返回，即为 **覆盖索引** （后面explain会讲到），反之则需要 **回表** 去主键索引(聚簇索引)查询。
 
-  ![Mysql-5-1](./image/Mysql-5-1.png)
+![Mysql-5-1](./image/Mysql-5-1.png)
+
+> 后面的加锁过程和这个有关联
 
 ### 5.5.5. 两个存储引擎的区别
 
@@ -1530,10 +1533,9 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
 
 - 说明： **select查询的序列号，包含一组数字，表示查询中执行select子句或操作表的顺序**
 
-
 - id 取值的三种情况：
   - id相同，执行顺序由上至下
-    > ![Mysql-4-1](./image/Mysql-4-1.png) 
+    > ![Mysql-4-25](./image/Mysql-4-25.png)
   - id不同，如果是子查询，id的序号会递增，id值越大优先级越高，越先被执行
     > ![Mysql-4-2](./image/Mysql-4-2.png) 
   - id相同不同，同时存在：id如果相同，可以认为是一组，从上往下顺序执行；在所有组中，id值越大，优先级越高，越先执行；衍生=DERIVED
@@ -2074,7 +2076,9 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
       - 由于MySQL使用BTREE结构，内部查询成本（3层查找or4层查找）和外部循环成本不成比例。
       - 因此建议内表走索引，也叫INLJ，但是如果内表是二级索引，效率也低，因为要回表查主键。
       - 如果都是全表扫描（NJL），则相差不多，成本也很高，笛卡尔积。
+
     </details>
+
   - 在大表上建立索引:为了更快遍历大表。
 
 ## 5.8. 索引失效
@@ -3460,6 +3464,8 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
 
 # 7. 分表分库分区
 
+(待补充)
+
 - 顺序
   - 分表:按业务垂直拆分
   - 分表：单表容量超过500万，常用分表策略是使用用户id水平拆分
@@ -3857,7 +3863,7 @@ Buffer Pool的使用大大提高了读写数据的效率，但是也带了新的
    - 一句话：事务A读取到了事务B体提交的新增数据，不符合隔离性。
    - 多说一句：幻读和脏读有点类似，脏读是事务B里面修改了数据，幻读是事务B里面新增了数据。
    - 概括： **A读到了B新插入的数据，多次重复读的结果不同**
-   - 重要： **需要注意的是，在SQL标准中，RR是无法避免幻读问题的，但是InnoDB实现的RR避免了幻读问题(间隙锁)。**
+   - 重要： **需要注意的是，在SQL标准中，RR是无法避免幻读问题的，但是InnoDB实现的RR一定程度上了幻读问题(看下面)。**
 
 
 #### 8.3.1.4. 事物的隔离级别
@@ -3893,10 +3899,13 @@ Buffer Pool的使用大大提高了读写数据的效率，但是也带了新的
 
 ### 8.3.3. 行锁触发
 
-- 事务中修改数据
-- 事务中`select ... for update`
-
-> 注意，innodb支持行锁，并不是说innodb不支持表锁。innodb也可以使用lock table命令来锁表。
+- 隐式加锁：
+  - InnoDB自动加意向锁。
+  - 对于UPDATE、DELETE和INSERT语句，InnoDB会自动给涉及数据集加排他锁（X)；
+  - 对于普通SELECT语句，InnoDB不会加任何锁(RR下，通过MVCC保证可重复读)；
+- 显示加锁：
+  - 共享锁（S）：`SELECT * FROM table_name WHERE ... LOCK IN SHARE MODE`
+  - 排他锁（X) ：`SELECT * FROM table_name WHERE ... FOR UPDATE`
 
 ### 8.3.4. 测试数据
 
@@ -4002,6 +4011,8 @@ Buffer Pool的使用大大提高了读写数据的效率，但是也带了新的
   ```
 
 #### 8.3.5.3. **无索引导致行锁升级为表锁**
+
+> 详细原理看下面的加锁过程中的`id无索引+RR`，非常恐怖的一种情况
 
 - session1 开启事务，修改 test_innodb_lock 中的数据，varchar 不用 ’ ’ ，导致系统自动转换类型，导致索引失效
   ```
@@ -4211,7 +4222,11 @@ InnoDB引擎实现了标准的行级别锁，分别是共享锁和排他锁。
 
 (7) 自增锁(Auto-inc Locks)
 
-### 8.4.2. 加锁过程(重要)
+### 8.4.2. 加锁过程(重要※)
+
+https://blog.csdn.net/geekjoker/article/details/79444076
+
+一定要看，重要
 
 ### 8.4.3. lock和latch
 
@@ -4230,6 +4245,8 @@ InnoDB引擎实现了标准的行级别锁，分别是共享锁和排他锁。
 我们通常讲的MySQL的“锁”，一般就是说的lock。
 
 ![Mysql-7-3](./image/Mysql-7-3.png)
+
+[B+树并发控制涉及lock和latch](http://mysql.taobao.org/monthly/2020/11/02/)
 
 ### 8.4.4. innodb锁说明
 
@@ -4328,9 +4345,21 @@ InnoDB引擎实现了标准的行级别锁，分别是共享锁和排他锁。
 
 ##### 8.4.4.4.1. 记录锁Record Lock
 
+单个行记录上的锁。
+
+待补充
+
 ##### 8.4.4.4.2. 间隙锁Gap lock
 
+间隙锁，锁定一个范围，但不包括记录本身。GAP锁的目的，是为了防止同一事务的两次当前读，出现幻读的情况。
+
+待补充
+
 ##### 8.4.4.4.3. 临键锁next-key lock
+
+1+2，锁定一个范围，并且锁定记录本身。对于行的查询，都是采用该方法，主要目的是解决幻读的问题。
+
+待补充
 
 #### 8.4.4.5. 插入意向锁(Insert Intention Locks)
 
@@ -4342,16 +4371,184 @@ InnoDB引擎实现了标准的行级别锁，分别是共享锁和排他锁。
 
 [说明](https://www.jianshu.com/p/8845ddca3b23)
 
-MVCC就是因为大牛们，不满意只让数据库采用悲观锁这样性能不佳的形式去解决读-写冲突问题，而提出的解决方案，所以在数据库中，因为有了MVCC，所以我们可以形成两个组合：
+MVCC就是因为不满意只让数据库采用悲观锁这样性能不佳的形式去解决读-写冲突问题，而提出的解决方案，所以在数据库中，因为有了MVCC，所以我们可以形成两个组合：
 
 - MVCC + 悲观锁:MVCC解决读写冲突，悲观锁解决写写冲突
 - MVCC + 乐观锁:MVCC解决读写冲突，乐观锁解决写写冲突
 
 这种组合的方式就可以最大程度的提高数据库并发性能，并解决读写冲突，和写写冲突导致的问题
 
-### 内部原理
+MVCC使用的就是下面的快照读，既不加锁，又能保证可重复读。
 
-[讲解](https://www.bilibili.com/video/BV1YJ411J7vb?from=search&seid=8176876032281963392)
+### 8.5.2. 当前读和快照读
+
+#### 8.5.2.1. 说明
+
+- 当前读： 读取的是 **最新版本** (注意：也就是不走MVCC) , 并且 **对读取的记录加锁, 阻塞其他事务同时改动相同记录，避免出现安全问题** 。
+  - 触发：
+    - select...lock in share mode (共享读锁)
+    - select...for update
+    - update , delete , insert
+      > 例如，假设要update一条记录，但是另一个事务已经delete这条数据并且commit了，如果不加锁就会产生冲突。所以update的时候肯定要是当前读，得到最新的信息并且锁定相应的记录。
+  - 原理：
+    - next-key锁:可以简单的理解为X锁+GAP锁
+    - Gap间隙锁:见上方
+
+- 快照读（也就是下面MVCC内部原理中的read-view）
+  - 触发
+    - 单纯的select操作，不包括上述 select ... lock in share mode, select ... for update。　　　　
+    - Read Committed隔离级别：每次select都生成一个快照读。
+    - Read Repeatable隔离级别：开启事务后第一个select语句才是快照读的地方，而不是一开启事务就快照读。
+  - 原理：
+    - undolog实现的MVCC
+
+<details>
+<summary style="color:red;">示例:当前读示例和快照读示例</summary>
+
+```
+t Session A                      Session B
+|
+| START TRANSACTION;             START TRANSACTION;
+|
+| SELECT * FROM t_bitfly;
+| +----+-------+
+| | id | value |
+| +----+-------+
+| |  1 | a     |
+| +----+-------+
+|                                INSERT INTO t_bitfly
+|                                VALUES (2, 'b');
+|                                COMMIT;
+|
+| SELECT * FROM t_bitfly; -- 快照读
+| +----+-------+
+| | id | value |
+| +----+-------+
+| |  1 | a     |
+| +----+-------+
+|
+| SELECT * FROM t_bitfly LOCK IN SHARE MODE;-- 当前读
+| +----+-------+
+| | id | value |
+| +----+-------+
+| |  1 | a     |
+| |  2 | b     |
+| +----+-------+
+|
+| SELECT * FROM t_bitfly FOR UPDATE;
+| +----+-------+
+| | id | value |
+| +----+-------+
+| |  1 | a     |
+| |  2 | b     |
+| +----+-------+
+|
+| SELECT * FROM t_bitfly;
+| +----+-------+
+| | id | value |
+| +----+-------+
+| |  1 | a     |
+| +----+-------+
+v
+```
+</details>
+
+#### 8.5.2.2. innodb RR避免幻读问题
+
+**innodb RR下，只进行select，可以避免幻读**
+
+- 在当前读读情况下，mysql通过next-key+间隙锁来避免幻读
+- 在快照读读情况下，mysql通过mvcc来避免幻读。
+
+示例就看上面当前读和快照读的说明
+
+---
+
+**innodb RR下，update和insert无法避免幻读**
+
+<details>
+<summary style="color:red;">示例1:读的时候为空，插入的时候却冲突</summary>
+
+```
+t Session A                   Session B
+|
+| START TRANSACTION;          START TRANSACTION;
+|
+| SELECT * FROM t_bitfly;
+| empty set
+|                             INSERT INTO t_bitfly
+|                             VALUES (1, 'a');
+|
+| SELECT * FROM t_bitfly;
+| empty set
+|                             COMMIT;
+|
+| SELECT * FROM t_bitfly;
+| empty set
+|
+| INSERT INTO t_bitfly VALUES (1, 'a');
+| ERROR 1062 (23000):
+| Duplicate entry '1' for key 1
+v (shit, 刚刚明明告诉我没有这条记录的)
+```
+</details>
+
+
+<details>
+<summary style="color:red;">示例2:读的时候只有一行，更新时却change两行</summary>
+
+```
+t Session A                  Session B
+|
+| START TRANSACTION;         START TRANSACTION;
+|
+| SELECT * FROM t_bitfly;
+| +------+-------+
+| | id   | value |
+| +------+-------+
+| |    1 | a     |
+| +------+-------+
+|                            INSERT INTO t_bitfly
+|                            VALUES (2, 'b');
+|
+| SELECT * FROM t_bitfly;
+| +------+-------+
+| | id   | value |
+| +------+-------+
+| |    1 | a     |
+| +------+-------+
+|                            COMMIT;
+|
+| SELECT * FROM t_bitfly;
+| +------+-------+
+| | id   | value |
+| +------+-------+
+| |    1 | a     |
+| +------+-------+
+|
+| UPDATE t_bitfly SET value='z';
+| Rows matched: 2  Changed: 2  Warnings: 0
+| (change 2??? 怎么多出来一行)
+|
+| SELECT * FROM t_bitfly;
+| +------+-------+
+| | id   | value |
+| +------+-------+
+| |    1 | z     |
+| |    2 | z     |
+| +------+-------+
+|
+v
+```
+</details>
+
+- 解决：
+  - 使用加锁读读到最新数据(而这个加锁度使用到的机制就是next-key locks)。
+  - 然后在判断是否要插入
+
+### 8.5.3. MVCC实现原理
+
+[讲解视频](https://www.bilibili.com/video/BV1YJ411J7vb?from=search&seid=8176876032281963392)
 
 ![Mysql-8-2](./image/Mysql-8-2.png)
 
@@ -4363,13 +4560,13 @@ MVCC就是因为大牛们，不满意只让数据库采用悲观锁这样性能�
   - read-view生成
     - 可重复读：select时，read-view会沿用第一条查询语句的read-view。
     - 读已提交：每次select都会生成最新的read-view
-
-- 示例1(重要)
-  > ![Mysql-8-4](./image/Mysql-8-4.png) 
   - select时，对undo回滚日志一直向前查询，逐一对事务id进行比对， **每条回滚日志中的事务id** 满足以下情况中的任何一种符合就可以取值返回
     - 落在绿色部分（已提交事务生成的版本），可以取值返回
     - 落在黄色部分，且select所在的事务有生成事务id，那么如果查询undo日志得到到的事务id和当前事务的id相同，可以取值返回。
     - 落在黄色部分，且活跃数组中没有该事务id(说明在select所在的事务开始时，那个事务已经提交了)。可以取值返回
+
+- 示例1(重要)
+  > ![Mysql-8-4](./image/Mysql-8-4.png) 
 
 - 示例2(重要)
   > ![Mysql-8-5](./image/Mysql-8-5.png) 
@@ -4377,19 +4574,41 @@ MVCC就是因为大牛们，不满意只让数据库采用悲观锁这样性能�
 - 比较
   > ![Mysql-8-6](./image/Mysql-8-6.png)
 
-- 对于删除的情况
+- 对于删除的情况:看上面的图
 
 # 9. 主从复制
 
 slave会从master读取binlog来进行数据同步，slave将master的binlog拷贝到它的中继日志，mysql的复制是异步且串行化的。
 
-# 10. 其他待做
+# 10. 优化
+
+## 10.1. MRR
+
+在不使用 MRR 时，优化器需要根据二级索引返回的记录来进行“回表”，这个过程一般会有较多的随机 IO, 使用 MRR 时，SQL 语句的执行过程是这样的：
+
+- 优化器将二级索引查询到的记录放到一块缓冲区中；
+- 如果二级索引扫描到文件的末尾或者缓冲区已满，则使用快速排序对缓冲区中的内容按照主键进行排序；
+- 用户线程调用 MRR 接口取 cluster index，然后根据cluster index 取行数据；(回表，查看二级索引查询流程)
+- 当根据缓冲区中的 cluster index 取完数据，则继续调用过程 2) 3)，直至扫描结束；
+
+通过上述过程，优化器将二级索引随机的 IO 进行排序，转化为主键的有序排列，从而实现了随机 IO 到顺序 IO 的转化，提升性能。
+
+- 随机io说明：
+  - 顺序IO是指读写操作的访问地址连续。在顺序IO访问中，HDD所需的磁道搜索时间显着减少，因为读/写磁头可以以最小的移动访问下一个块。数据备份和日志记录等业务是顺序IO业务。
+  - 随机IO是指读写操作时间连续，但访问地址不连续，随机分布在磁盘的地址空间中。产生随机IO的业务有OLTP服务，SQL，即时消息服务等。
+
+- 开启：`SET GLOBAL optimizer_switch='mrr=on,mrr_cost_based=off';`
+  - 是否启用MRR优化，可以通过参数optimizer_switch中的flag来控制。
+  - 当MRR为on时，表示启用MRR优化。
+  - mrr_cost_based表示是否通过costbased的方式来选择是否启用mrr。若设置mrr=on,mrr_cost_based=off，则总是启用MRR优化。如下：
+
+# 11. 其他待做
 
 - 唯一索引和普通索引关键不同点: buffer区
 
-- MRR: multi range read
+- MySQL联接查询算法（NLJ、BNL、BKA、HashJoin）
 
-# 11. 参考资料
+# 12. 参考资料
 
 - [尚硅谷MySQL数据库高级，mysql优化，数据库优化](https://www.bilibili.com/video/BV1KW411u7vy?p=44)
 - [Mysql笔记博客](https://blog.csdn.net/oneby1314/category_10278969.html)
