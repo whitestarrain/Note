@@ -2628,6 +2628,8 @@ mysql> explain select * from staffs where name='z3' or name = 'July';
 
 ### 5.8.4. 总结
 
+待补充
+
 类型转换等计算 + 查索引查的是一个范围 
 
 会导致索引失效。
@@ -4804,15 +4806,79 @@ slave会从master读取binlog来进行数据同步，slave将master的binlog拷�
   - 当MRR为on时，表示启用MRR优化。
   - mrr_cost_based表示是否通过costbased的方式来选择是否启用mrr。若设置mrr=on,mrr_cost_based=off，则总是启用MRR优化。如下：
 
+## ICP
+
+> mysql 5.6 索引优化
+
+- SQL的where条件提取规则: **Index Key(Fist key & Last Key)，Index Filter，Table Filter**
+  > 在ICP（Index Condition Pushdown，索引条件下推）特性之前，必须先搞明白根据何登成大神总结出一套放置于所有SQL语句而皆准的where查询条件的提取规则：所有SQL的where条件，均可归纳为3大类：Index Key (First Key & Last Key)，Index Filter，Table Filter。<br />
+  > 接下来，简单说一下这3大类分别是如何定义，以及如何提取的，详情请看：[SQL语句中where条件在数据库中提取与应用浅析](https://cloud.tencent.com/developer/article/1526033)。
+- **Index First Key**
+  - 只是用来定位索引的起始范围
+  - 因此只在索引第一次Search Path(沿着索引B+树的根节点一直遍历，到索引正确的叶节点位置)时使用，一次判断即可；
+- **Index Last Key**
+  - 用来定位索引的终止范围
+  - 因此对于起始范围之后读到的每一条索引记录，均需要判断是否已经超过了Index Last Key的范围，若超过，则当前查询结束；
+- **Index Filter**
+  - 用于过滤索引查询范围中不满足查询条件的记录
+  - 因此对于索引范围中的每一条记录，均需要与Index Filter进行对比，若不满足Index Filter则直接丢弃，继续读取索引下一条记录；
+- **Table Filter**
+  - 最后一道where条件的防线，用于过滤通过前面索引的层层考验的记录
+  - 此时的记录已经满足了Index First Key与Index Last Key构成的范围，并且满足Index Filter的条件，回表读取了完整的记录
+  - 此时只要判断完整记录是否满足Table Filter中的查询条件
+    - 若不满足，跳过当前记录，继续读取索引的下一条记录
+    - 若满足，则返回记录，此记录满足了where的所有条件，可以返回给前端用户。
+
+- ICP特性介绍
+  - 出现：Index Condition Pushdown (ICP)是MySQL 5.6版本中的新特性，是一种在存储引擎层使用索引过滤数据的一种优化方式。
+  - 作用过程
+    - mysql server和storage engine是两个组件
+      - server负责sql的parse，执行
+      - storage engine去真正的做数据/index的读取/写入
+    - 以前是这样：
+      - server命令storage engine按index key把相应的数据从数据表读出，传给server
+      - 然后server来按where条件（index filter和table filter）做选择。
+    - 而在MySQL 5.6加入ICP后：
+      - Index Filter与Table Filter分离
+      - Index Filter下降到InnoDB的索引层面进行过滤，如果不符合条件则无须回表读取数据
+      - 减少了回表与返回MySQL Server层的记录交互开销，节省了disk IO，提高了SQL的执行效率。
+
+- 详细原理
+  - 当关闭ICP时，
+    - index仅仅是data access的一种访问方式
+    - 存储引擎通过索引回表获取的数据会传递到MySQL Server层进行where条件过滤，也就是做index filter和table filter。
+  - 当打开ICP时
+    - **如果部分where条件能使用索引中的字段，MySQL Server会把这部分下推到引擎层**
+    - **可以利用index filter的where条件在存储引擎层进行数据过滤**，而非将所有通过index access的结果传递到MySQL server层进行where过滤。
+
+- 优化效果：ICP能减少引擎层回表访问基表的次数和MySQL Server访问存储引擎的次数，减少io次数，提高查询语句性能。
+
+- 注意：
+  - 如果索引的第一个字段的查询就是没有边界的比如 key_part1 like '%xxx%'，那么不要说ICP，就连索引都会没法利用。
+  - 如果select的字段全部在索引里面，那么就是直接的index scan(索引覆盖)了，没有必要什么ICP。
+
+- 使用限制：
+  - 当sql需要全表访问时,ICP的优化策略可用于range, ref, eq_ref,  ref_or_null 类型的访问数据方法 。
+  - 支持InnoDB和MyISAM表。
+  - ICP只能用于二级索引，不能用于主索引。
+  - 并非全部where条件都可以用ICP筛选。
+  - 如果where条件的字段不在索引列中,还是要读取整表的记录到server端做where过滤。
+  - ICP的加速效果取决于在存储引擎内通过ICP筛选掉的数据的比例。
+  - 5.6 版本的不支持分表的ICP 功能，5.7 版本的开始支持。
+  - 当sql 使用覆盖索引时，不支持ICP 优化方法。
+
 # 11. 其他待做
 
 - 唯一索引和普通索引关键不同点: buffer区
 
 - MySQL联接查询算法（NLJ、BNL、BKA、HashJoin）
 
+- mysql5.6优化：
+  - 索引下推优化(ICP)
+
 # 12. 参考资料
 
 - [尚硅谷MySQL数据库高级，mysql优化，数据库优化](https://www.bilibili.com/video/BV1KW411u7vy?p=44)
 - [Mysql笔记博客](https://blog.csdn.net/oneby1314/category_10278969.html)
 - [InnoDB解决幻读的方案--LBCC&MVCC](https://mp.weixin.qq.com/s/4ncvGW7klk8pDLE5o4jhFw)
-
+- [一分钟理清mysql锁种类](https://blog.csdn.net/zcl_love_wx/article/details/82052479)

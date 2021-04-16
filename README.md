@@ -13,3 +13,22 @@
 - [java学习笔记](https://github.com/whitestarrain/java_study_note)
 - [大数据与深度学习笔记](https://github.com/whitestarrain/big_data)
 - [python学习笔记](https://github.com/whitestarrain/python_learn)
+
+
+# 待做/学习
+
+- [ ] 设计模式
+- [ ] zookeeper完善
+- [ ] java并发整理
+- [ ] 微服务架构
+- [ ] 分布式系统相关
+- [ ] 计算机网络整理
+- [ ] 操作系统完善
+<!--
+- [ ] SpringBoot原理
+- [ ] JVM字节码
+- [ ] JVM调优
+
+cookie和session攻击
+25匹马赛马
+-->
