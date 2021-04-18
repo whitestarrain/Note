@@ -124,3 +124,6 @@
 - 独立性:各个Client之间互不干预
 - 原子性:更新只能成功或者失败，没有中间状态。
 - 顺序性:所有Server,同一消息发布顺序一致。
+
+
+[待整理](https://piaosanlang.gitbooks.io/faq/content/zookeeperde-gong-neng-yi-ji-gong-zuo-yuan-li.html)

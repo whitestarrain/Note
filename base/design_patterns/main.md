@@ -1178,26 +1178,202 @@ class SchoolManager {
 
 - 找出应用中可能需要变化之处， 把它们独立出来， 不要和那些不需要变化的代码混在一起。
 - 针对接口编程， 而不是针对实现编程。
-- 为了交互对象之间的松耦合设计而努力
+- **为了交互对象之间的松耦合设计而努力**
 
 # 2. UML类图复习
 
-![design-patterns-3](./image/design-patterns-3.png)
+![design-patterns-10](./image/design-patterns-10.png)
 
-- Note：对象UML 进行注释说明
-- Class：表示类，可以添加属性和方法
-- Interface：表示接口，可以添加抽象方法
-- Dependency：表示依赖（使用）
-- Association：表示关联
-- Generalization：表示泛化（继承）
-- Realization：表示实现
-- Aggregation：表示聚合
-- Composite：表示组合
+## Dependency：表示依赖（使用）
 
+只要是在类中用到了对方， 那么他们之间就存在依赖关系，比如：
+
+- 类的成员属性
+- 方法的返回类型
+- 方法接收的参数类型
+- 方法中使用的局部变量
+
+```java
+public class PersonServiceBean {
+    private PersonDao personDao;//类
+    
+    public void save(Person person){}
+    
+    public IDCard getIDCard(Integer personid){
+        return null;
+    }
+    
+    public void modify(){
+    	Department department = new Department();
+    }
+} 
+
+public class PersonDao{}
+
+public class IDCard{}
+
+public class Person{}
+
+public class Department{}
+```
+
+![design-patterns-8](./image/design-patterns-8.png)
+
+---
+
+## Association：表示关联
+
+**依赖关系的特例**
+
+- 关联关系实际上就是类与类之间的联系，他是依赖关系的特例
+- 关联具有导航性：即双向关系或单向关系
+- 关系具有多重性：如“1”（表示有且仅有一个），“0…”（表示0个或者多个），“0， 1”（表示0个或者一个），“n…m”(表示n到 m个都可以)，“m…*”（表示至少m个）
+
+```java
+public class Person {
+	private IDCard card;
+}
+
+public class IDCard{
+    
+}
+
+// 双向一对一关系
+public class Person {
+	private IDCard card;
+}
+
+public class IDCard{
+	private Person person
+}
+```
+
+![design-patterns-9](./image/design-patterns-9.png)
+
+---
+
+## Generalization：表示泛化（继承）
+
+**依赖关系的特例**
+
+- 泛化关系实际上就是继承关系
+- 如果 A 类继承了 B 类， 我们就说 A 和 B 存在泛化关系
+
+```java
+public abstract class DaoSupport{
+    public void save(Object entity){
+        
+    }
+    
+    public void delete(Object id){
+        
+    }
+}
+
+public class PersonServiceBean extends Daosupport{
+    
+}
+```
+
+![design-patterns-11](./image/design-patterns-11.png)
+
+---
+
+## Realization：表示实现
+
+**依赖关系的特例**
+
+- 实现关系实际上就是 A 类实现 B 接口， 他是依赖关系的特例
+
+```java
+public interface PersonService {
+	public void delete(Integer id);
+} 
+
+public class PersonServiceBean implements PersonService {
+	public void delete(Integer id){
+        
+    }
+}
+```
+
+![design-patterns-14](./image/design-patterns-14.png)
+
+---
+
+## Aggregation：表示聚合
+
+**关联关系的特列**
+
+- 聚合关系（Aggregation）表示的是整体和部分的关系，整体与部分可以分开。 聚合关系是关联关系的特例，所以他具有关联的导航性与多重性。
+- 如：一台电脑由键盘(keyboard)、显示器(monitor)，鼠标等组成；组成电脑的各个配件是可以从电脑上分离出来的， 使用带空心菱形的实线来表示：
+
+```java
+public class Computer {
+	private Mouse mouse; // 鼠标可以和Computer分离
+	private Moniter moniter;// 显示器可以和Computer分离
+
+	public void setMouse(Mouse mouse) {
+		this.mouse = mouse;
+	}
+
+	public void setMoniter(Moniter moniter) {
+		this.moniter = moniter;
+	}
+}
+```
+
+![design-patterns-12](./image/design-patterns-12.png)
+
+---
+
+## Composite：表示组合
+
+**关联关系的特列**
+
+- 组合关系：也是整体与部分的关系，但是整体与部分不可以分开。
+- 在程序中我们定义实体： Person与IDCard、 Head，那么 Head 和Person 就是组合关系， IDCard 和 Person 就是聚合关系。
+- 但是如果在程序中Person实体中定义了对IDCard进行级联删除，即删除Person时连同IDCard一起删除， 那么IDCard 和 Person 就是组合了
+
+> **注意观察聚合关系和组合关系在代码中的区别**
+
+```java
+public class Person {
+	private IDCard card; // 聚合关系
+	private Head head = new Head(); // 组合关系
+}
+```
+
+![design-patterns-13](./image/design-patterns-13.png)
 
 # 3. 设计模式
 
-## 3.1. 设计模式间的关系
+## 设计模式概述
+
+### 设计模式的层次
+
+1. 第 1 层： 刚开始学编程不久， 听说过什么是设计模式
+2. 第 2 层： 有很长时间的编程经验， 自己写了很多代码， 其中用到了设计模式， 但是自己却不知道
+3. 第 3 层： 学习过了设计模式， 发现自己已经在使用了， 并且发现了一些新的模式挺好用的
+4. 第 4 层： 阅读了很多别人写的源码和框架， 在其中看到别人设计模式， 并且能够领会设计模式的精妙和带来的好处。
+5. 第 5 层： 代码写着写着， 自己都没有意识到使用了设计模式， 并且熟练的写了出来。
+
+### 设计模式介绍
+
+1. 设计模式是程序员在面对同类软件工程设计问题所总结出来的有用的经验， **模式不是代码， 而是某类问题的通用解决方案**， 设计模式（Design pattern） 代表了最佳的实践。 这些解决方案是众多软件开发人员经过相当长的一段时间的试验和错误总结出来的。
+2. 设计模式的本质提高 软件的维护性， 通用性和扩展性， 并降低软件的复杂度。
+3. 《设计模式》是经典的书， 作者是 Erich Gamma、 Richard Helm、 Ralph Johnson 和 John Vlissides Design（俗称 “四人组 GOF” ）
+4. 设计模式并不局限于某种语言， java， php， c++ 都有设计模式。
+
+### 设计模式类型与关系
+
+> 注意： 不同的书籍上对分类和名称略有差别
+
+设计模式分为三种类型， 共 23 种
+
+1. 创建型模式： 单例模式、 抽象工厂模式、 原型模式、 建造者模式、 工厂模式。
+2. 结构型模式： 适配器模式、 桥接模式、 装饰模式、 组合模式、 外观模式、 享元模式、 代理模式。
+3. 行为型模式： 模版方法模式、 命令模式、 访问者模式、 迭代器模式、 观察者模式、 中介者模式、 备忘录模式、解释器模式（Interpreter 模式） 、 状态模式、 策略模式、 职责链模式(责任链模式)。
 
 ![design-patterns-1](./image/design-patterns-1.png)
 
@@ -1207,34 +1383,545 @@ class SchoolManager {
 ### 3.2.1. 概述
 
 这些设计模式提供了一种在创建对象的同时隐藏创建逻辑的方式，而不是使用 new 运算符直接实例化对象。这使得程序在判断针对某个给定实例需要创建哪些对象时更加灵活。
-工厂模式（Factory Pattern）
-
-### 3.2.2. 抽象工厂模式（Abstract Factory Pattern）
 
 ### 3.2.3. 单例模式（Singleton Pattern）
 
-- 优点：
-  - 1、在内存里只有一个实例，减少了内存的开销，尤其是频繁的创建和销毁实例（比如管理学院首页页面缓存）。
-  - 2、避免对资源的多重占用（比如写文件操作）。
-- 缺点：没有接口，不能继承，与单一职责原则冲突，一个类应该只关心内部逻辑，而不关心外面怎么样来实例化。
+#### 单例设计模式介绍
 
----
+1. 所谓类的单例设计模式， 就是采取一定的方法保证在整个的软件系统中， 对某个类只能存在一个对象实例，并且该类只提供一个取得其对象实例的方法(静态方法)。
+2. 比如 `Hibernate` 的 `SessionFactory`， 它充当数据存储源的代理， 并负责创建 `Session` 对象。`SessionFactory` 并不是轻量级的， 一般情况下， 一个项目通常只需要一个 `SessionFactory` 就够，这是就会使用到单例模式。
 
-- 使用场景：
-  - 1、要求生产唯一序列号。
-  - 2、WEB 中的计数器，不用每次刷新都在数据库里加一次，用单例先缓存起来。
-  - 3、创建的一个对象需要消耗的资源过多，比如 I/O 与数据库的连接等。
+#### 单例设计模式八种方式
 
----
+单例模式有八种方式：
 
-- 【可用】懒汉式，线程不安全
-- 【可用】懒汉式，线程安全（静态代码块）
-- 懒汉式，线程安全（静态常量）
-- 饿汉式（静态常量）
-- 饿汉式（静态代码块）
-- doubleCheckLock
-- 登记式/静态内部类
-- 枚举
+1. **饿汉式(静态常量)**
+2. **饿汉式(静态代码块)**
+3. 懒汉式(线程不安全)
+4. 懒汉式(线程安全， 同步方法)
+5. 懒汉式(线程安全， 同步代码块)
+6. **双重锁检查**(推荐)
+7. **静态内部类**(推荐)
+8. **枚举**
+
+#### 饿汉式（静态常量）
+
+> **饿汉式（静态常量）的具体实现步骤**
+
+1. 构造器私有化 (防止 `new`)
+2. 类的内部创建对象
+3. 向外暴露一个静态的公共方法： `getInstance()`
+
+> **饿汉式（静态常量）的代码实现**
+
+1. 代码实现
+
+   ```java
+   public class SingletonTest01 {
+
+   	public static void main(String[] args) {
+   		// 测试
+   		Singleton instance = Singleton.getInstance();
+   		Singleton instance2 = Singleton.getInstance();
+   		System.out.println(instance == instance2); // true
+   		System.out.println("instance.hashCode=" + instance.hashCode());
+   		System.out.println("instance2.hashCode=" + instance2.hashCode());
+   	}
+
+   }
+
+   //饿汉式(静态变量)
+   class Singleton {
+
+   	// 1. 构造器私有化, 外部不能new
+   	private Singleton() {
+
+   	}
+
+   	// 2.本类内部创建对象实例
+   	private final static Singleton instance = new Singleton();
+
+   	// 3. 提供一个公有的静态方法，返回实例对象
+   	public static Singleton getInstance() {
+   		return instance;
+   	}
+
+   }
+   ```
+
+2. 程序运行结果
+
+   ```
+   true
+   instance.hashCode=366712642
+   instance2.hashCode=366712642
+   ```
+
+> **饿汉式（静态常量）的优缺点说明**
+
+1. 优点： 这种写法比较简单， 就是在类装载的时候就完成实例化。 避免了线程同步问题。
+2. 缺点： 在类装载的时候就完成实例化， 没有达到 `Lazy Loading` 的效果。 如果从始至终从未使用过这个实例， 则会造成内存的浪费
+3. 这种方式基于 `Classloder` 机制避免了多线程的同步问题， 不过， `instance` 在类装载时就实例化， 在单例模式中大多数都是调用 `getInstance()` 方法获取单例对象， 但是导致类装载的原因有很多种， 因此不能确定有其他的方式（或者其他的静态方法） 导致类装载， 这时候初始化单例对象，就没有达到 `lazy loading` 的效果
+4. 结论： 这种单例模式可用， 可能造成内存浪费
+
+#### 饿汉式（静态代码块）
+
+> **饿汉式（静态代码块）的具体实现步骤**
+
+1. 构造器私有化，外部不能 `new`
+2. 在本类内部的静态代码块中，创建单例对象
+3. 提供一个公有的静态方法，返回实例对象
+
+> **饿汉式（静态代码块）的代码实现**
+
+1. 代码实现
+
+   ```java
+   public class SingletonTest02 {
+
+   	public static void main(String[] args) {
+   		// 测试
+   		Singleton instance = Singleton.getInstance();
+   		Singleton instance2 = Singleton.getInstance();
+   		System.out.println(instance == instance2); // true
+   		System.out.println("instance.hashCode=" + instance.hashCode());
+   		System.out.println("instance2.hashCode=" + instance2.hashCode());
+   	}
+
+   }
+
+   //饿汉式(静态变量)
+   class Singleton {
+
+   	// 1. 构造器私有化, 外部不能new
+   	private Singleton() {
+
+   	}
+
+   	// 2.本类内部创建对象实例
+   	private static Singleton instance;
+
+   	static { // 在静态代码块中，创建单例对象
+   		instance = new Singleton();
+   	}
+
+   	// 3. 提供一个公有的静态方法，返回实例对象
+   	public static Singleton getInstance() {
+   		return instance;
+   	}
+
+   }
+   ```
+
+2. 程序运行结果
+
+   ```
+   true
+   instance.hashCode=366712642
+   instance2.hashCode=366712642
+   ```
+
+> **饿汉式（静态代码块）的优缺点说明**
+
+1. 这种方式和上面的方式其实类似，只不过将类实例化的过程放在了静态代码块中，也是在类装载的时候，就执行静态代码块中的代码，初始化类的实例。优缺点和上面是一样的。
+2. 结论： 这种单例模式可用，但是可能造成内存浪费
+
+#### 懒汉式（线程不安全）
+
+> **懒汉式（线程不安全）的具体实现步骤**
+
+1. 构造器私有化，外部不能 `new`
+
+2. 在本类内部的 `getInstance()`:
+
+   静态方法中，判断单例对象是否为空
+
+   1. 如果为空，则创建单例对象并返回
+   2. 如果不为空，则直接返回此对象
+
+> **懒汉式（线程不安全）的代码实现**
+
+1. 代码实现
+
+   ```java
+   public class SingletonTest03 {
+
+   	public static void main(String[] args) {
+   		System.out.println("懒汉式1 ， 线程不安全~");
+   		Singleton instance = Singleton.getInstance();
+   		Singleton instance2 = Singleton.getInstance();
+   		System.out.println(instance == instance2); // true
+   		System.out.println("instance.hashCode=" + instance.hashCode());
+   		System.out.println("instance2.hashCode=" + instance2.hashCode());
+   	}
+
+   }
+
+   class Singleton {
+   	private static Singleton instance;
+
+   	private Singleton() {
+   	}
+
+   	// 提供一个静态的公有方法，当使用到该方法时，才去创建 instance
+   	// 即懒汉式
+   	public static Singleton getInstance() {
+   		if (instance == null) {
+   			instance = new Singleton();
+   		}
+   		return instance;
+   	}
+   }
+   ```
+
+2. 程序运行结果
+
+  ```
+  懒汉式1 ， 线程不安全~
+  true
+  instance.hashCode=366712642
+  instance2.hashCode=366712642
+  ```
+
+> **懒汉式（线程不安全）的优缺点说明**
+
+1. 起到了 `Lazy Loading` 的效果， 但是只能在单线程下使用。
+2. 如果在多线程下， 一个线程进入了 `if (singleton == null)` 判断语句块， 还没来得及往下执行， 另一个线程也通过了这个判断语句， 这时便会产生多个实例。 所以在多线程环境下不可使用这种方式
+3. 结论： 在实际开发中， 不要使用这种方式
+
+#### 懒汉式（同步方法）
+
+> **懒汉式（同步方法）的具体实现步骤**
+
+1. 构造器私有化，外部不能 `new`
+
+2. 在本类内部的
+
+   ```
+   getInstance()
+   ```
+
+   静态同步方法中，判断单例对象是否为空
+
+   1. 如果为空，则创建单例对象并返回
+   2. 如果不为空，则直接返回此对象
+
+> **懒汉式（同步方法）的代码实现**
+
+1. 代码实现
+
+   ```java
+   public class SingletonTest04 {
+
+   	public static void main(String[] args) {
+   		System.out.println("懒汉式2 ， 线程安全~");
+   		Singleton instance = Singleton.getInstance();
+   		Singleton instance2 = Singleton.getInstance();
+   		System.out.println(instance == instance2); // true
+   		System.out.println("instance.hashCode=" + instance.hashCode());
+   		System.out.println("instance2.hashCode=" + instance2.hashCode());
+   	}
+
+   }
+
+   // 懒汉式(线程安全，同步方法)
+   class Singleton {
+   	private static Singleton instance;
+
+   	private Singleton() {
+   	}
+
+   	// 提供一个静态的公有方法，加入同步处理的代码，解决线程安全问题
+   	// 即懒汉式
+   	public static synchronized Singleton getInstance() {
+   		if (instance == null) {
+   			instance = new Singleton();
+   		}
+   		return instance;
+   	}
+   }
+   ```
+
+2. 程序运行结果
+
+   ```
+   懒汉式2 ， 线程安全~
+   true
+   instance.hashCode=366712642
+   instance2.hashCode=366712642
+   ```
+
+> **懒汉式（同步方法）的优缺点说明**
+
+1. 解决了线程安全问题
+2. 效率太低了， 每个线程在想获得类的实例时候， 执行 `getInstance()` 方法都要进行同步。 而其实这个方法只执行一次实例化代码就够了， 后面的想获得该类实例， 直接 `return` 就行了。 方法进行同步效率太低
+3. 结论： 在实际开发中， 不推荐使用这种方式
+
+#### 懒汉式（同步代码块）
+
+> **懒汉式（同步代码块）的具体实现步骤**
+
+1. 构造器私有化，外部不能 `new`
+
+2. 在本类内部的
+
+   ```
+   getInstance()
+   ```
+
+   静态方法中，先判断对象是否为空
+
+   1. 如果为空，则加锁创建单例对象，并返回
+   2. 如果不为空，则直接返回此对象
+
+> **懒汉式（同步代码块）的代码实现**
+
+代码实现
+
+```java
+class Singleton{
+    private static Singleton singleton;
+    private Singleton(){
+    }
+
+    public static singleton getInstance(){
+        if(singleton==null){
+            synchronized(Singleton. class){
+                singleton=new Singleton();
+            }
+        }
+    }
+    return singleton;
+}
+```
+
+> **懒汉式（同步代码块）的优缺点说明**
+
+1. 这种方式，本意是想对第四种实现方式的改进，因为前面同步方法效率太低，改为同步产生实例化的的代码块
+2. 但是这种同步**并不能起到线程同步的作用**。跟第`3`种实现方式遇到的情形一致，假如一个线程进入了 `if (singleton == null)` 判断语句块，还未来得及往下执行，另一个线程也通过了这个判断语句，这时便会产生多个实例
+3. 结论：在实际开发中， 不能使用这种方式
+
+#### 懒汉式（双重锁检查）(推荐)
+
+> **懒汉式（双重检查）的具体实现步骤**
+
+1. 构造器私有化，外部不能 `new`
+
+2. 在本类内部的
+
+   ```
+   getInstance()
+   ```
+
+   静态方法中，先判断对象是否为空
+
+   1. 如果为空，则先加锁，再判断此单例对象是否为空，如果还为空，才创建对象
+   2. 如果不为空，则直接返回此对象
+
+3. 注意：单例变量需要使用 `volatile` 关键字进行修饰，保证内存可见性，以及防止指令重排序
+
+> **懒汉式（双重检查）的代码实现**
+
+1. 代码实现
+
+   ```java
+   public class SingletonTest06 {
+
+   	public static void main(String[] args) {
+   		System.out.println("双重检查");
+   		Singleton instance = Singleton.getInstance();
+   		Singleton instance2 = Singleton.getInstance();
+   		System.out.println(instance == instance2); // true
+   		System.out.println("instance.hashCode=" + instance.hashCode());
+   		System.out.println("instance2.hashCode=" + instance2.hashCode());
+   	}
+
+   }
+
+   // 懒汉式(线程安全，同步方法)
+   class Singleton {
+   	private static volatile Singleton instance;
+
+   	private Singleton() {
+   	}
+
+   	// 提供一个静态的公有方法，加入双重检查代码，解决线程安全问题, 同时解决懒加载问题
+   	// 同时保证了效率, 推荐使用
+   	public static Singleton getInstance() {
+   		if (instance == null) {
+   			synchronized (Singleton.class) {
+   				if (instance == null) {
+   					instance = new Singleton();
+   				}
+   			}
+
+   		}
+   		return instance;
+   	}
+   }
+   ```
+
+2. 程序运行结果
+
+   ```
+   双重检查
+   true
+   instance.hashCode=366712642
+   instance2.hashCode=366712642
+   ```
+
+> **懒汉式（双重检查）的优缺点说明**
+
+1. `Double-Check` 概念是多线程开发中常使用到的， 如代码中所示， 我们进行了两次 `if (singleton == null)` 检查， 这样就可以保证线程安全了
+2. 这样， 实例化代码只用执行一次， 后面再次访问时， 判断 `if (singleton == null)`， 直接 `return` 实例化对象， 也避免的反复进行方法同步
+3. 线程安全； 延迟加载； 效率较高
+4. 结论： 在实际开发中， 推荐使用这种单例设计模式
+
+#### 懒汉式（静态内部类）
+
+> **懒汉式（静态内部类）的具体实现步骤**
+
+1. 构造器私有化，外部不能 `new`
+2. 在本类内部新增一个静态内部类，封装一个单例对象，用于实现单例模式
+3. 静态内部类的实现方式本质是利用类加载的同步机制，保证单例对象的线程安全，并且该方式能保证该单例对象的懒加载机制，因为只有用到静态内部类时，才会加载该静态内部类以及单例对象
+4. 在本类内部提供一个静态方法 `getInstance()` 用于返回静态内部类中的单例对象
+
+> **懒汉式（静态内部类）的代码实现**
+
+1. 代码实现
+
+   ```java
+   public class SingletonTest07 {
+
+   	public static void main(String[] args) {
+   		System.out.println("使用静态内部类完成单例模式");
+   		Singleton instance = Singleton.getInstance();
+   		Singleton instance2 = Singleton.getInstance();
+   		System.out.println(instance == instance2); // true
+   		System.out.println("instance.hashCode=" + instance.hashCode());
+   		System.out.println("instance2.hashCode=" + instance2.hashCode());
+   	}
+
+   }
+
+   // 静态内部类完成， 推荐使用
+   class Singleton {
+   	//构造器私有化
+   	private Singleton() {}
+
+   	//写一个静态内部类,该类中有一个静态属性 Singleton
+   	private static class SingletonInstance {
+   		private static final Singleton INSTANCE = new Singleton();
+   	}
+
+   	//提供一个静态的公有方法，直接返回SingletonInstance.INSTANCE
+   	public static Singleton getInstance() {
+   		return SingletonInstance.INSTANCE;
+   	}
+   }
+   ```
+
+2. 程序运行结果
+
+   ```
+   使用静态内部类完成单例模式
+   true
+   instance.hashCode=366712642
+   instance2.hashCode=366712642
+   ```
+
+> **懒汉式（静态内部类）的优缺点说明**
+
+1. 这种方式采用了类装载的机制来保证初始化实例时只有一个线程。
+2. **静态内部类方式在`Singleton`类被装载时并不会立即实例化，而是在需要实例化时，调用`getInstance()`方法，才会装载`SingletonInstance`类，从而完成`Singleton`的实例化**。
+3. 类的静态属性只会在第一次加载类的时候初始化，所以在这里， `JVM`帮助我们保证了线程的安全性(CAS,TLAB)，在类进行初始化时，别的线程是无法进入的。
+4. 优点：避免了线程不安全，利用静态内部类特点实现延迟加载，效率高。
+5. 结论：推荐使用。
+
+#### 饿汉式（枚举）
+
+> **饿汉式（枚举）的具体实现步骤**
+
+通过枚举类实现单例模式
+
+> **饿汉式（枚举）的代码实现**
+
+1. 代码实现
+
+   ```java
+   public class SingletonTest08 {
+   	public static void main(String[] args) {
+   		Singleton instance = Singleton.INSTANCE;
+   		Singleton instance2 = Singleton.INSTANCE;
+   		System.out.println(instance == instance2);
+
+   		System.out.println(instance.hashCode());
+   		System.out.println(instance2.hashCode());
+
+   		instance.sayOK();
+   	}
+   }
+
+   //使用枚举，可以实现单例, 推荐
+   enum Singleton {
+   	INSTANCE; // 属性
+
+   	public void sayOK() {
+   		System.out.println("ok~");
+   	}
+   }
+   ```
+
+2. 程序运行结果
+
+   ```
+   true
+   366712642
+   366712642
+   ok~
+   ```
+
+> **饿汉式（枚举）的优缺点说明**
+
+1. 这借助`JDK1.5`中添加的枚举来实现单例模式。不仅能避免多线程同步问题，而且还能防止反序列化重新创建新的对象。
+2. 这种方式是`Effective Java`作者`Josh Bloch`提倡的方式。如果用枚举去实现一个单例，属于饿汉模式。
+3. 结论：推荐使用
+
+#### 源码示例
+
+> **Runtime 源码**。单例模式
+
+这是典型的饿汉式啊
+
+```java
+public class Runtime {
+    private static Runtime currentRuntime = new Runtime();
+
+    /**
+     * Returns the runtime object associated with the current Java application.
+     * Most of the methods of class <code>Runtime</code> are instance
+     * methods and must be invoked with respect to the current runtime object.
+     *
+     * @return  the <code>Runtime</code> object associated with the current
+     *          Java application.
+     */
+    public static Runtime getRuntime() {
+        return currentRuntime;
+    }
+
+    /** Don't let anyone else instantiate this class */
+    private Runtime() {}
+```
+
+#### 单例模式注意事项
+
+1. 单例模式保证了系统内存中该类只存在一个对象，节省了系统资源，对于一些需要频繁创建销毁的对象，使用单例模式可以提高系统性能
+2. 当想实例化一个单例类的时候，必须要记住使用相应的获取对象的方法，而不是使用 `new`
+3. 单例模式使用的场景：需要频繁的进行创建和销毁的对象、创建对象时耗时过多或耗费资源过多(即： 重量级对象)，但又经常用到的对象、工具类对象、频繁访问数据库或文件的对象(比如数据源、 `session` 工厂等)
+
+### 工厂模式（Factory Pattern）
+
+### 3.2.2. 抽象工厂模式（Abstract Factory Pattern）
 
 ### 3.2.4. 建造者模式（Builder Pattern）
 
