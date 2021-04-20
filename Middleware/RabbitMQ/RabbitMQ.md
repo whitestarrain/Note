@@ -508,7 +508,7 @@ public class Consumer {
         DefaultConsumer consumer = new DefaultConsumer(channel){
             @Override
             /**
-             * consumerTag 消息者标签，在channel.basicConsume时候可以指定
+             * consumerTag 消息者标签
              * envelope 消息包的内容，可从中获取消息id，消息routingkey，交换机，消息和重传标志(收到消息失败后是否需要重新发送)
              * properties 属性信息
              * body 消息
@@ -597,8 +597,6 @@ RabbitMQ是AMQP协议的Erlang的实现。
 1. 客户端与代理服务器Broker建立连接。会调用newConnection() 方法,这个方法会进一步封装Protocol Header 0-9-1 的报文头发送给Broker ，以此通知Broker 本次交互采用的是AMQPO-9-1 协议，紧接着Broker 返回Connection.Start 来建立连接，在连接的过程中涉及Connection.Start/.Start-OK 、Connection.Tune/.Tune-Ok ，Connection.Open/ .Open-Ok 这6 个命令的交互。
 2. 客户端调用connection.createChannel方法。此方法开启信道，其包装的channel.open命令发送给Broker,等待channel.basicPublish方法，对应的AMQP命令为Basic.Publish,这个命令包含了content Header 和content Body()。content Header 包含了消息体的属性，例如:投递模式，优先级等，content Body 包含了消息体本身。
 3. 客户端发送完消息需要关闭资源时，涉及到Channel.Close和Channl.Close-Ok 与Connetion.Close和Connection.Close-Ok的命令交互。
-
-[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-QcAgBkKR-1614701356653)(F:\12-消息中间件-RabbitMQ\day01_RabbitMQ基础入门\讲义\assets/生产者流转过程图.bmp)]
 
 ## 4.4. 消费者流转过程说明
 
@@ -759,6 +757,8 @@ public class Consumer1 {
 
 在一个队列中如果有多个消费者，那么消费者之间对于同一个消息的关系是**竞争**的关系。
 
+每一个消息只能由一个消费者消费。
+
 ## 5.2. 订阅模式类型
 
 订阅模式示例图：
@@ -787,14 +787,23 @@ public class Consumer1 {
 
 ### 5.3.1. 模式说明
 
-Sending messages to many consumers at once
+**Sending messages to many consumers at once**
 
 ![img](https://img-blog.csdnimg.cn/img_convert/a2755c3a0e1e77ecbd8df6b295f16c80.png)
 
-发布订阅模式：
+在订阅模型中，多了一个`exchange`角色，而且过程略有变化：
 
-1、每个消费者监听自己的队列。
-2、生产者将消息发给broker，由交换机将消息转发到绑定此交换机的每个队列，**每个绑定交换机的队列都将接收到消息**
+- P：生产者，不再发送消息到队列中，而是发给X（交换机）
+- C：消费者，消息的接受者，会一直等待消息到来。
+- Queue：消息队列，接收消息、缓存消息。
+- Exchange：交换机，图中的X。一方面，接收生产者发送的消息。另一方面，知道如何处理消息，例如递交给某个特别队列、递交给所有队列、或是将消息丢弃。到底如何操作，取决于Exchange的类型。Exchange有常见以下3种类型：
+  - Fanout：广播，将消息交给所有绑定到交换机的队列
+  - Direct：定向，把消息交给符合指定routing key 的队列
+  - Topic：通配符，把消息交给符合routing pattern（路由模式） 的队列
+
+`Exchange（交换机）只负责转发消息，不具备存储消息的能力`，因此如果没有任何队列与Exchange绑定，或者没有符合路由规则的队列，那么消息会丢失！
+
+
 
 ### 5.3.2. 代码
 
@@ -835,7 +844,7 @@ public class Producer {
         channel.exchangeDeclare(FANOUT_EXCHAGE, BuiltinExchangeType.FANOUT);
 
         // 声明（创建）队列
-        /**
+        /**	
          * 参数1：队列名称
          * 参数2：是否定义持久化队列
          * 参数3：是否独占本次连接
@@ -845,7 +854,7 @@ public class Producer {
         channel.queueDeclare(FANOUT_QUEUE_1, true, false, false, null);
         channel.queueDeclare(FANOUT_QUEUE_2, true, false, false, null);
 
-        //队列绑定交换机
+        //队列绑定交换机。还有更多参数的重载方法
         channel.queueBind(FANOUT_QUEUE_1, FANOUT_EXCHAGE, "");
         channel.queueBind(FANOUT_QUEUE_2, FANOUT_EXCHAGE, "");
 
@@ -1023,7 +1032,7 @@ public class Consumer2 {
 - 消息的发送方在 向 Exchange发送消息时，也必须指定消息的 `RoutingKey`。
 - Exchange不再把消息交给每一个绑定的队列，而是根据消息的`Routing Key`进行判断，只有队列的`Routingkey`与消息的 `Routing key`完全一致，才会接收到消息
 
-Receiving messages selectively。下图代表不同级别的日志怎么处理，比如C1是文件，C2是控制台
+选择性接收消息。下图代表不同级别的日志怎么处理，比如C1是文件，C2是控制台
 
 ![img](image/c8d5b11876f77cc201409d3071423c58.png)
 
@@ -2018,37 +2027,23 @@ public class RabbitMQTest {
 
 另外；也可以在RabbitMQ的管理控制台中查看到交换机与队列的绑定：
 
-**RabbitMQ\**\**高级特性**
-
-•消息可靠性投递：生产者到MQ中间件
-
-•Consumer ACK：MQ中间件到消费端
-
-•消费端限流
-
-•TTL
-
-•死信队列
-
-•延迟队列
-
-•日志与监控
-
-•消息可靠性分析与追踪
-
-•管理
-
-**RabbitMQ应用问题**
-
-•消息可靠性保障
-
-•消息幂等性处理
-
-**RabbitMQ集群搭建**
-
-•RabbitMQ高可用集群
-
 ## 7.5. RabbitMQ 高级特性
+
+- 消息可靠性投递：生产者到MQ中间件
+- Consumer ACK：MQ中间件到消费端
+- 消费端限流
+- TTL
+- 死信队列
+- 延迟队列
+- 日志与监控
+- 消息可靠性分析与追踪
+- 管理
+- RabbitMQ应用问题
+- 消息可靠性保障
+- 消息幂等性处理
+- RabbitMQ集群搭建
+- RabbitMQ高可用集群
+
 
 ### 7.5.1. **消息的可靠投递**
 
@@ -2685,7 +2680,7 @@ RabbitMQ应用问题
 
 如果2个都发送失败了，有MDB的定时检查服务，比对业务数据库DB与消息数据库MDB，就能发现差异
 
-#### 7.6.1.1. 消息幂等性保障
+### 7.6.2. 消息幂等性保障
 
 幂等性指一次和多次请求某一个资源，对于资源本身应该具有同样的结果。也就是说，其任意多次执行对资源本身所产生的影响均与一次执行的影响相同。
 
@@ -2693,7 +2688,7 @@ RabbitMQ应用问题
 
 ![img](image/ab36146ee01eada35a2ff9fd0959b8b1.png)
 
-##### 7.6.1.1.1. 生产
+#### 7.6.2.1. 生产
 
 ```java
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -2713,7 +2708,7 @@ public class ProducerTest {
 }
 ```
 
-##### 7.6.1.1.2. 消费
+#### 7.6.2.2. 消费
 
 ```java
 /**

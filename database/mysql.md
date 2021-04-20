@@ -3870,6 +3870,8 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
   - 分库
   - 分区
 
+[参考](https://mp.weixin.qq.com/s/rYG58KS9kHDDOMajKT9y5Q)
+
 # 8. 锁机制
 
 ## 8.1. 概述
@@ -5176,7 +5178,7 @@ v
   - 使用加锁读读到最新数据(而这个加锁度使用到的机制就是next-key locks)。
   - 然后再判断是否要插入
 
-# 9. 主从复制
+# 9. 主从复制，读写分离
 
 slave会从master读取binlog来进行数据同步，slave将master的binlog拷贝到它的中继日志，mysql的复制是异步且串行化的。
 

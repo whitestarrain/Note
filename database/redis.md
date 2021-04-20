@@ -1685,6 +1685,8 @@ RDB和AOF，看上面说明
 
 # 14. java客户端
 
+## 基本说明
+
 Redis支持的java客户端都Redisson、Jedis、lettuce等等，官方推荐使用Redisson
 
 - Redis和Redisson的关系
@@ -1696,5 +1698,17 @@ Redis支持的java客户端都Redisson、Jedis、lettuce等等，官方推荐使
   - Jedis是Redis的java实现的客户端，其中API提供了比较全面的Redis命令的支持；
   - Redisson实现了分布式和扩展的java数据结构，和Jedis相比功能比较简单，不支持字符串操作，不支持排序、事务、管道、分区等Redis特性。
   - Redisson的宗旨是 **促进使用者对Redis的关注分离，从而让使用者能够将精力更集中的放在处理业务逻辑上** 。
+
+# 其他
+
+- Redis的集群：Redis分片的缺点、集群架构、集群操作基本命令。
+- Lua脚本语言的介绍。
+- Redis和Lua结合，Redis的Lua脚本编程，构建强大的Redis服务。
+- Redis整合Spring等。
+- Redis集群实现Tomcat集群的Session共享等
+
+# 参考
+
+[redis笔记](https://blog.csdn.net/u011863024/article/details/107476187)
 
 
