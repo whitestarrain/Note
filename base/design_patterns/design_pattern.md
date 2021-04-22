@@ -1933,9 +1933,6 @@ public class Runtime {
 
 ![design-patterns-15](./image/design-patterns-15.png)
 
-<details>
-<summary style="color:red;">传统方式代码</summary>
-
 1. `Pizza` 抽象父类
 
    ```java
@@ -2062,7 +2059,6 @@ public class Runtime {
    
    }
    ```
-</details>
 
 传统方式的优缺点分析：
 
@@ -2085,9 +2081,6 @@ public class Runtime {
 3. 在软件开发中，当我们会用到大量的创建某种、某类或者某批对象时，就会使用到工厂模式
 
 ![design-patterns-16](./image/design-patterns-16.png)
-
-<details>
-<summary style="color:red;">代码实现</summary>
 
 1. `Pizza` 抽象父类以及 `Pizza` 的具体实现类和上面一样
 
@@ -2208,7 +2201,6 @@ public class SimpleFactory {
 	}
 }
 ```
-</details>
 
 
 简单工厂模式总结：
@@ -2243,9 +2235,6 @@ public class SimpleFactory {
 项目需求：披萨项目新的需求： 客户在点披萨时， 可以点不同口味的披萨， 比如 北京的奶酪 `pizza`、 北京的胡椒 `pizza` 或者是伦敦的奶酪 `pizza`、 伦敦的胡椒 `pizza`
 
 ![design-patterns-17](./image/design-patterns-17.png)
-
-<details>
-<summary style="color:red;">代码实现</summary>
 
 1. `Pizza`：抽象父类，和之前的定义一样
 
@@ -2420,7 +2409,6 @@ public class SimpleFactory {
    
    }
    ```
-</details>
 
 ---
 
@@ -2442,14 +2430,13 @@ public class SimpleFactory {
 
 - 抽象工厂模式的基本介绍
   - 抽象工厂模式： 定义了一个 `interface` 用于创建相关或有依赖关系的对象簇， 而无需指明具体的类
-  - 抽象工厂模式可以将简单工厂模式和工厂方法模式进行整合。
+  - 抽象工厂模式可以**将简单工厂模式和工厂方法模式进行整合**。
+    > 简单工厂：由这个类来封装实例化对象的行为<br />
+    > 工厂方法：将方法实现下沉到子类
   - 从设计层面看， 抽象工厂模式就是对简单工厂模式的改进(或者称为进一步的抽象)。
   - 将工厂抽象成两层， `AbsFactory`(抽象工厂) 和 具体实现的工厂子类。 程序员可以根据创建对象类型使用对应的工厂子类。 这样将单个的简单工厂类变成了工厂簇， 更利于代码的维护和扩展。
 
 ![design-patterns-18](./image/design-patterns-18.png)
-
-<details>
-<summary style="color:red;">代码实现(依旧是这个案例)</summary>
 
 1. `Pizza` 抽象父类以及 `Pizza` 的具体实现类和上面一样
 
@@ -2523,6 +2510,7 @@ public class SimpleFactory {
    		do {
    			orderType = getType();
    			// factory 可能是北京工厂子类，也可能是伦敦工厂子类
+        // 复习：动态链接
    			pizza = factory.createPizza(orderType);
    			if (pizza != null) { // 订购ok
    				pizza.prepare();
@@ -2563,7 +2551,6 @@ public class SimpleFactory {
    
    }
    ```
-</details>
 
 ------
 
@@ -2573,9 +2560,1116 @@ public class SimpleFactory {
 2. 抽象工厂模式分为两层：抽象层和实现层。`AbsFactory` 作为工厂抽象层，只对工厂规范进行定义，其具体的实现交由工厂子类
 3. 简单工厂模式很难满足对多种不同类型的 `Bean` 进行创建，所以我们使用抽象工厂模式，定义一个工厂抽象层，但具体实现需下沉到各个工厂子类
 
-### 3.2.4. 建造者模式（Builder Pattern）
+#### 3.2.3.6. 源码实例
 
-### 3.2.5. 原型模式（Prototype Pattern）
+**JDK Calendar 中使用到了简单工厂模式**
+
+测试代码
+
+```java
+public class Factory {
+
+	public static void main(String[] args) {
+		
+		// getInstance 是 Calendar 静态方法
+		Calendar cal = Calendar.getInstance();
+	    // 注意月份下标从0开始，所以取月份要+1
+	    System.out.println("年:" + cal.get(Calendar.YEAR));
+	    System.out.println("月:" + (cal.get(Calendar.MONTH) + 1));       
+	    System.out.println("日:" + cal.get(Calendar.DAY_OF_MONTH));
+	    System.out.println("时:" + cal.get(Calendar.HOUR_OF_DAY));
+	    System.out.println("分:" + cal.get(Calendar.MINUTE));
+	    System.out.println("秒:" + cal.get(Calendar.SECOND));
+	    
+	}
+
+}
+```
+
+`Calendar.getInstance()` 方法的实现
+
+```java
+/**
+ * Gets a calendar using the default time zone and locale. The
+ * <code>Calendar</code> returned is based on the current time
+ * in the default time zone with the default
+ * {@link Locale.Category#FORMAT FORMAT} locale.
+ *
+ * @return a Calendar.
+ */
+public static Calendar getInstance()
+{
+    return createCalendar(TimeZone.getDefault(), Locale.getDefault(Locale.Category.FORMAT));
+}
+```
+
+`createCalendar()` 方法的实现：如果 `provider == null`，就会根据 `caltype` 的值，来创建具体的工厂子类对象
+
+```java
+private static Calendar createCalendar(TimeZone zone,
+                                       Locale aLocale)
+{
+    CalendarProvider provider =
+        LocaleProviderAdapter.getAdapter(CalendarProvider.class, aLocale)
+                             .getCalendarProvider();
+    if (provider != null) {
+        try {
+            return provider.getInstance(zone, aLocale);
+        } catch (IllegalArgumentException iae) {
+            // fall back to the default instantiation
+        }
+    }
+
+    Calendar cal = null;
+
+    if (aLocale.hasExtensions()) {
+        String caltype = aLocale.getUnicodeLocaleType("ca");
+        if (caltype != null) {
+            switch (caltype) {
+            case "buddhist":
+            cal = new BuddhistCalendar(zone, aLocale);
+                break;
+            case "japanese":
+                cal = new JapaneseImperialCalendar(zone, aLocale);
+                break;
+            case "gregory":
+                cal = new GregorianCalendar(zone, aLocale);
+                break;
+            }
+        }
+    }
+    if (cal == null) {
+        // If no known calendar type is explicitly specified,
+        // perform the traditional way to create a Calendar:
+        // create a BuddhistCalendar for th_TH locale,
+        // a JapaneseImperialCalendar for ja_JP_JP locale, or
+        // a GregorianCalendar for any other locales.
+        // NOTE: The language, country and variant strings are interned.
+        if (aLocale.getLanguage() == "th" && aLocale.getCountry() == "TH") {
+            cal = new BuddhistCalendar(zone, aLocale);
+        } else if (aLocale.getVariant() == "JP" && aLocale.getLanguage() == "ja"
+                   && aLocale.getCountry() == "JP") {
+            cal = new JapaneseImperialCalendar(zone, aLocale);
+        } else {
+            cal = new GregorianCalendar(zone, aLocale);
+        }
+    }
+    return cal;
+} 
+```
+
+#### 3.2.3.7. 小结
+
+- 工厂模式的意义：将实例化对象的代码提取出来，放到一个类中统一管理和维护，达到和主项目的依赖关系的解耦。从而提高项目的扩展和维护性。
+
+- 三种工厂模式
+  1. 简单工厂模式
+  2. 工厂方法模式
+  3. 抽象工厂模式
+
+- 设计模式的依赖抽象原则
+  1. 创建对象实例时，不要直接 `new` 这个类，而是把这个`new` 类的动作放在一个工厂的方法中，并返回。有的书上说，变量不要直接持有具体类的引用。这样做的好处是：我们依赖的是一个抽象层（缓冲层），如果之后有什么变动，修改工厂类中的代码即可
+  2. 不要让类继承具体类，而是继承抽象类或者是实现`interface`(接口)
+  3. 不要覆盖基类中已经实现的方法
+
+### 3.2.4. 原型模式（Prototype Pattern）
+
+#### 3.2.4.1. 情景
+
+> **克隆羊问题描述**
+
+现在有一只羊`tom`， 姓名为: `tom`，年龄为： `1`， 颜色为：白色，请编写程序创建和`tom`羊属性完全相同的`10`只羊
+
+#### 3.2.4.2. 传统方式
+
+> 类图
+
+![design-patterns-19](./image/design-patterns-19.png)
+
+------
+
+代码实现
+
+1. `Sheep`：羊的实体类
+
+   ```java
+   public class Sheep {
+   	private String name;
+   	private int age;
+   	private String color;
+   ```
+
+2. `Client`：客户端，发出克隆羊的指令
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 传统的方法
+   		Sheep sheep = new Sheep("tom", 1, "白色");
+   
+   		Sheep sheep2 = new Sheep(sheep.getName(), sheep.getAge(), sheep.getColor());
+   		Sheep sheep3 = new Sheep(sheep.getName(), sheep.getAge(), sheep.getColor());
+   		Sheep sheep4 = new Sheep(sheep.getName(), sheep.getAge(), sheep.getColor());
+   		Sheep sheep5 = new Sheep(sheep.getName(), sheep.getAge(), sheep.getColor());
+   		// ....
+   
+   		System.out.println(sheep);
+   		System.out.println(sheep2);
+   		System.out.println(sheep3);
+   		System.out.println(sheep4);
+   		System.out.println(sheep5);
+   		// ...
+   	}
+   
+   }
+   ```
+
+------
+
+传统的方式的优缺点
+
+1. 优点是比较好理解，简单易操作
+2. 在创建新的对象时， 总是需要重新获取原始对象的属性，如果创建的对象比较复杂时，效率较低
+3. 总是需要重新初始化对象，而不是动态地获得对象运行时的状态，不够灵活
+
+------
+
+改进思路
+
+`Java`中`Object`类是所有类的根类， `Object`类提供了一个`clone()`方法，该方法可以将一个`Java`对象复制一份，但是需要实现`clone`的`Java`类必须要实现一个接口`Cloneable`，该接口表示该类能够复制且具有复制的能力 --> 原型模式
+
+#### 3.2.4.3. 原型模式介绍
+
+1. 原型模式(`Prototype`模式)是指：用原型实例指定创建对象的种类，并且通过拷贝这些原型， 创建新的对象
+2. 原型模式是一种创建型设计模式，允许一个对象在创建另外一个可定制的对象，无需知道如何创建的细节
+3. 工作原理是：通过将一个原型对象传给那个要发动创建的对象，这个要发动创建的对象通过请求原型对象拷贝它们自己来实施创建，即 `对象.clone()`
+
+#### 3.2.4.4. 原型模式原理
+
+![design-patterns-20](./image/design-patterns-20.png)
+
+1. `Prototype`：原型类，在该类中声明一个克隆自己的接口
+2. `ConcretePrototype`：具体的原型类，实现一个克隆自己的操作
+3. `Client`：让一个原型对象克隆自己，从而创建一个新的对象(属性一样)
+
+#### 3.2.4.5. 原型模式代码
+
+原型模式解决克隆羊问题的应用实例：使用原型模式改进传统方式，让程序具有更高的效率和扩展性
+
+------
+
+代码实现
+
+1. `Sheep`：羊的实体类
+
+   ```java
+   public class Sheep implements Cloneable {
+   	private String name;
+   	private int age;
+   	private String color;
+   
+   	// 克隆该实例，使用默认的clone方法来完成
+   	@Override
+   	protected Object clone() {
+   		Sheep sheep = null;
+   		try {
+   			sheep = (Sheep) super.clone();
+   		} catch (Exception e) {
+   			System.out.println(e.getMessage());
+   		}
+   		return sheep;
+   	}
+       
+       // ...
+   ```
+
+2. `Client`：利用原型模式创建对象
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		System.out.println("原型模式完成对象的创建");
+   		
+   		Sheep sheep = new Sheep("tom", 1, "白色");
+   		
+   		Sheep sheep2 = (Sheep) sheep.clone(); // 克隆
+   		Sheep sheep3 = (Sheep) sheep.clone(); // 克隆
+   		Sheep sheep4 = (Sheep) sheep.clone(); // 克隆
+   		Sheep sheep5 = (Sheep) sheep.clone(); // 克隆
+   
+   		System.out.println("sheep2 =" + sheep2 + "sheep2.hashCoe=" + sheep2.hashCode());
+   		System.out.println("sheep3 =" + sheep3 + "sheep3.hashCoe=" + sheep3.hashCode());
+   		System.out.println("sheep4 =" + sheep4 + "sheep4.hashCoe=" + sheep4.hashCode());
+   		System.out.println("sheep5 =" + sheep5 + "sheep5.hashCoe=" + sheep5.hashCode());
+   	}
+   
+   }
+   ```
+
+3. 程序运行结果
+
+   ```
+   原型模式完成对象的创建
+   sheep2 =Sheep [name=tom, age=1, color=白色]；sheep2.hashCoe=366712642
+   sheep3 =Sheep [name=tom, age=1, color=白色]；sheep3.hashCoe=1829164700
+   sheep4 =Sheep [name=tom, age=1, color=白色]；sheep4.hashCoe=2018699554
+   sheep5 =Sheep [name=tom, age=1, color=白色]；sheep5.hashCoe=1311053135
+   ```
+
+#### 3.2.4.6. Spring源码示例
+
+> **准备工作**
+
+1. 创建实体类 `Monster`
+
+   ```java
+   public class Monster {
+   	private Integer id = 10;
+   	private String nickname = "牛魔王";
+   	private String skill = "芭蕉扇";
+       
+       public Monster() {
+   		System.out.println("monster 创建..");
+   	}
+   ```
+
+2. 通过 `XML` 配置文件 配置 `Bean`
+
+   ```xml
+   <!-- 这里我们的 scope="prototype" 即 原型模式来创建 -->
+   <bean id="id01" class="com.atguigu.spring.bean.Monster" scope="prototype" />
+   ```
+
+3. 测试代码
+
+   ```java
+   public class ProtoType {
+   
+   	public static void main(String[] args) {
+   		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+   		
+   		// 获取monster[通过id获取monster]
+   		Object bean = applicationContext.getBean("id01");
+   		System.out.println("bean" + bean); // 输出 "牛魔王" .....
+   
+   		Object bean2 = applicationContext.getBean("id01");
+   		System.out.println("bean2" + bean2); // 输出 "牛魔王" .....
+   
+   		System.out.println(bean == bean2); // false
+   
+   		// ConfigurableApplicationContext
+   	}
+   
+   }
+   ```
+
+4. 程序运行结果
+
+   ```
+   monster 创建..
+   beanMonster [id=10, nickname=牛魔王, skill=芭蕉扇]
+   monster 创建..
+   bean2Monster [id=10, nickname=牛魔王, skill=芭蕉扇]
+   false
+   ```
+
+> **Spring 源码追踪**
+
+1. `applicationContext.getBean("id01");` 方法中先调用 `getBeanFactory()` 获取 `Bean` 工厂，再调用 `Bean` 工厂的 `getBean(name)` 方法获取 `Bean` 实例
+
+   ```java
+   @Override
+   public Object getBean(String name) throws BeansException {
+   	assertBeanFactoryActive();
+   	return getBeanFactory().getBean(name);
+   }
+   ```
+
+2. `getBean(name)` 方法调用 `doGetBean(name, null, null, false);` 方法获取 `Bean` 实例
+
+   ```java
+   @Override
+   public Object getBean(String name) throws BeansException {
+   	return doGetBean(name, null, null, false);
+   }
+   ```
+
+3. 获取 `Bean` 实例时
+
+   1. 判断 `Bean` 是否为单例对象：`if (mbd.isSingleton())`，若是，则调用 `bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);` 获取单例对象
+   2. 判断 `Bean` 是否为原型对象：`else if (mbd.isPrototype())`，若是，则调用 `bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);` 获取原型对象
+
+   ```java
+   /**
+    * Return an instance, which may be shared or independent, of the specified bean.
+    * @param name the name of the bean to retrieve
+    * @param requiredType the required type of the bean to retrieve
+    * @param args arguments to use if creating a prototype using explicit arguments to a
+    * static factory method. It is invalid to use a non-null args value in any other case.
+    * @param typeCheckOnly whether the instance is obtained for a type check,
+    * not for actual use
+    * @return an instance of the bean
+    * @throws BeansException if the bean could not be created
+    */
+   @SuppressWarnings("unchecked")
+   protected <T> T doGetBean(
+   		final String name, final Class<T> requiredType, final Object[] args, boolean typeCheckOnly)
+   		throws BeansException {
+   
+   	final String beanName = transformedBeanName(name);
+   	Object bean;
+   
+   	// Eagerly check singleton cache for manually registered singletons.
+   	Object sharedInstance = getSingleton(beanName);
+   	if (sharedInstance != null && args == null) {
+   		if (logger.isDebugEnabled()) {
+   			if (isSingletonCurrentlyInCreation(beanName)) {
+   				logger.debug("Returning eagerly cached instance of singleton bean '" + beanName +
+   						"' that is not fully initialized yet - a consequence of a circular reference");
+   			}
+   			else {
+   				logger.debug("Returning cached instance of singleton bean '" + beanName + "'");
+   			}
+   		}
+   		bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
+   	}
+   
+   	else {
+   		// Fail if we're already creating this bean instance:
+   		// We're assumably within a circular reference.
+   		if (isPrototypeCurrentlyInCreation(beanName)) {
+   			throw new BeanCurrentlyInCreationException(beanName);
+   		}
+   
+   		// Check if bean definition exists in this factory.
+   		BeanFactory parentBeanFactory = getParentBeanFactory();
+   		if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
+   			// Not found -> check parent.
+   			String nameToLookup = originalBeanName(name);
+   			if (args != null) {
+   				// Delegation to parent with explicit args.
+   				return (T) parentBeanFactory.getBean(nameToLookup, args);
+   			}
+   			else {
+   				// No args -> delegate to standard getBean method.
+   				return parentBeanFactory.getBean(nameToLookup, requiredType);
+   			}
+   		}
+   
+   		if (!typeCheckOnly) {
+   			markBeanAsCreated(beanName);
+   		}
+   
+   		try {
+   			final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
+   			checkMergedBeanDefinition(mbd, beanName, args);
+   
+   			// Guarantee initialization of beans that the current bean depends on.
+   			String[] dependsOn = mbd.getDependsOn();
+   			if (dependsOn != null) {
+   				for (String dependsOnBean : dependsOn) {
+   					if (isDependent(beanName, dependsOnBean)) {
+   						throw new BeanCreationException("Circular depends-on relationship between '" +
+   								beanName + "' and '" + dependsOnBean + "'");
+   					}
+   					registerDependentBean(dependsOnBean, beanName);
+   					getBean(dependsOnBean);
+   				}
+   			}
+   
+   			// Create bean instance.
+        // ****判断是否为单例模式****
+   			if (mbd.isSingleton()) {
+   				sharedInstance = getSingleton(beanName, new ObjectFactory<Object>() {
+   					@Override
+   					public Object getObject() throws BeansException {
+   						try {
+   							return createBean(beanName, mbd, args);
+   						}
+   						catch (BeansException ex) {
+   							// Explicitly remove instance from singleton cache: It might have been put there
+   							// eagerly by the creation process, to allow for circular reference resolution.
+   							// Also remove any beans that received a temporary reference to the bean.
+   							destroySingleton(beanName);
+   							throw ex;
+   						}
+   					}
+   				});
+   				bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
+   			}
+   
+        //****是否为原型****
+        // 不为单例对象的话，判断是否为原型
+   			else if (mbd.isPrototype()) {
+   				// It's a prototype -> create a new instance.
+   				Object prototypeInstance = null;
+   				try {
+   					beforePrototypeCreation(beanName);
+            //****返回原型实例****
+   					prototypeInstance = createBean(beanName, mbd, args);
+   				}
+   				finally {
+   					afterPrototypeCreation(beanName);
+   				}
+   				bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
+   			}
+   
+   			else {
+   				String scopeName = mbd.getScope();
+   				final Scope scope = this.scopes.get(scopeName);
+   				if (scope == null) {
+   					throw new IllegalStateException("No Scope registered for scope '" + scopeName + "'");
+   				}
+   				try {
+   					Object scopedInstance = scope.get(beanName, new ObjectFactory<Object>() {
+   						@Override
+   						public Object getObject() throws BeansException {
+   							beforePrototypeCreation(beanName);
+   							try {
+   								return createBean(beanName, mbd, args);
+   							}
+   							finally {
+   								afterPrototypeCreation(beanName);
+   							}
+   						}
+   					});
+   					bean = getObjectForBeanInstance(scopedInstance, name, beanName, mbd);
+   				}
+   				catch (IllegalStateException ex) {
+   					throw new BeanCreationException(beanName,
+   							"Scope '" + scopeName + "' is not active for the current thread; " +
+   							"consider defining a scoped proxy for this bean if you intend to refer to it from a singleton",
+   							ex);
+   				}
+   			}
+   		}
+   		catch (BeansException ex) {
+   			cleanupAfterBeanCreationFailure(beanName);
+   			throw ex;
+   		}
+   	}
+   
+   	// Check if required type matches the type of the actual bean instance.
+   	if (requiredType != null && bean != null && !requiredType.isAssignableFrom(bean.getClass())) {
+   		try {
+   			return getTypeConverter().convertIfNecessary(bean, requiredType);
+   		}
+   		catch (TypeMismatchException ex) {
+   			if (logger.isDebugEnabled()) {
+   				logger.debug("Failed to convert bean '" + name + "' to required type [" +
+   						ClassUtils.getQualifiedName(requiredType) + "]", ex);
+   			}
+   			throw new BeanNotOfRequiredTypeException(name, requiredType, bean.getClass());
+   		}
+   	}
+   	return (T) bean;
+   }
+   ```
+
+4. `final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);` 其中的 `mbd` 对象有一个名为 `scope` 属性，用于指示 `Bean` 的生命周期
+
+  ![design-patterns-21](./image/design-patterns-21.png)
+
+#### 3.2.4.7. 深拷贝与浅拷贝
+
+##### 3.2.4.7.1. 浅拷贝
+
+> **浅拷贝的介绍**
+
+1. 对于数据类型是基本数据类型的成员变量，浅拷贝会直接进行值传递，也就是将该属性值复制一份给新的对象
+2. 对于数据类型是引用数据类型的成员变量，比如说成员变量是某个数组、某个类的对象等，那么浅拷贝会进行引用传递，也就是只是将该成员变量的引用值（内存地址）复制一份给新的对象。因为实际上两个对象的该成员变量都指向同一个实例。在这种情况下，在一个对象中修改该成员变量会影响到另一个对象的该成员变量值
+3. 前面我们克隆羊就是浅拷贝，浅拷贝是使用默认的`clone()`方法来实现：`sheep = (Sheep) super.clone();`
+
+------
+
+代码示例
+
+1. `Sheep`：羊的实体类
+
+   ```java
+   public class Sheep implements Cloneable {
+   	private String name;
+   	private int age;
+   	private String color;
+   	private String address = "蒙古";
+   	public Sheep friend; // 对象克隆时会如何处理，默认是浅拷贝
+   
+   	// 克隆该实例，使用默认的clone方法来完成
+   	@Override
+   	protected Object clone() {
+   		Sheep sheep = null;
+   		try {
+   			sheep = (Sheep) super.clone();
+   		} catch (Exception e) {
+   			System.out.println(e.getMessage());
+   		}
+   		return sheep;
+   	}
+       
+       // ...
+   ```
+
+2. `Client`：测试代码
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		System.out.println("原型模式完成对象的创建");
+   		
+   		Sheep sheep = new Sheep("tom", 1, "白色");
+   		sheep.friend = new Sheep("jack", 2, "黑色");
+   		
+   		Sheep sheep2 = (Sheep) sheep.clone(); // 克隆
+   		Sheep sheep3 = (Sheep) sheep.clone(); // 克隆
+   		Sheep sheep4 = (Sheep) sheep.clone(); // 克隆
+   		Sheep sheep5 = (Sheep) sheep.clone(); // 克隆
+   
+   		System.out.println("sheep2 =" + sheep2 + "sheep2.friend=" + sheep2.friend.hashCode());
+   		System.out.println("sheep3 =" + sheep3 + "sheep3.friend=" + sheep3.friend.hashCode());
+   		System.out.println("sheep4 =" + sheep4 + "sheep4.friend=" + sheep4.friend.hashCode());
+   		System.out.println("sheep5 =" + sheep5 + "sheep5.friend=" + sheep5.friend.hashCode());
+   	}
+   
+   }
+   ```
+
+3. 程序运行结果：可以看到，所有 `Sheep` 的 `friend` 属性的 `hashCode` 均相同，说明使用 `Object` 类的 `Clone` 方法为浅拷贝
+
+   ```
+   原型模式完成对象的创建
+   sheep2 =Sheep [name=tom, age=1, color=白色, address=蒙古]sheep2.friend=366712642
+   sheep3 =Sheep [name=tom, age=1, color=白色, address=蒙古]sheep3.friend=366712642
+   sheep4 =Sheep [name=tom, age=1, color=白色, address=蒙古]sheep4.friend=366712642
+   sheep5 =Sheep [name=tom, age=1, color=白色, address=蒙古]sheep5.friend=366712642
+   ```
+
+##### 3.2.4.7.2. 深拷贝
+
+> **深拷贝基本介绍**
+
+1. 复制对象的所有基本数据类型的成员变量值
+2. 为所有引用数据类型的成员变量申请存储空间，并复制每个引用数据类型成员变量所引用的对象，直到该对象可达的所有对象。也就是说，对象进行深拷贝要对整个对象进行拷贝
+3. 深拷贝实现方式 1：重写`clone`方法来实现深拷贝
+4. 深拷贝实现方式 2：通过对象序列化实现深拷贝(**推荐**)
+
+> **深拷贝应用实例**
+
+1. `DeepCloneableTarget`：该类将会以成员变量的形式出现在其他类中，我们要对其实现深拷贝
+
+   ```java
+   public class DeepCloneableTarget implements Serializable, Cloneable {
+   	private static final long serialVersionUID = 1L;
+   
+   	private String cloneName;
+   
+   	private String cloneClass;
+   
+   	// 构造器
+   	public DeepCloneableTarget(String cloneName, String cloneClass) {
+   		this.cloneName = cloneName;
+   		this.cloneClass = cloneClass;
+   	}
+   
+   	// 因为该类的属性，都是String , 因此我们这里使用默认的clone完成即可
+   	@Override
+   	protected Object clone() throws CloneNotSupportedException {
+   		return super.clone();
+   	}
+   }
+   ```
+
+2. `DeepProtoType`：该类中演示了两种实现深拷贝的方法
+
+   ```java
+   public class DeepProtoType implements Serializable, Cloneable {
+   
+   	public String name; // String 属性
+   	public DeepCloneableTarget deepCloneableTarget;// 引用类型
+   
+   	public DeepProtoType() {
+   		super();
+   	}
+   
+   	// 深拷贝 - 方式 1 使用clone 方法
+   	@Override
+   	protected Object clone() throws CloneNotSupportedException {
+   		Object deep = null;
+   		
+   		// 这里完成对基本数据类型(属性)和String的克隆
+   		deep = super.clone();		
+   		DeepProtoType deepProtoType = (DeepProtoType) deep;
+   		// 对引用类型的属性，进行单独处理
+   		deepProtoType.deepCloneableTarget = (DeepCloneableTarget) deepCloneableTarget.clone();
+   
+   		return deepProtoType;
+   	}
+   
+   	// 深拷贝 - 方式2 通过对象的序列化实现 (推荐)
+   	public Object deepClone() {
+   		// 创建流对象
+   		ByteArrayOutputStream bos = null;
+   		ObjectOutputStream oos = null;
+   		ByteArrayInputStream bis = null;
+   		ObjectInputStream ois = null;
+   
+   		try {
+   			// 序列化
+   			bos = new ByteArrayOutputStream();
+   			oos = new ObjectOutputStream(bos);
+   			oos.writeObject(this); // 当前这个对象以对象流的方式输出
+   
+   			// 反序列化
+   			bis = new ByteArrayInputStream(bos.toByteArray());
+   			ois = new ObjectInputStream(bis);
+   			DeepProtoType copyObj = (DeepProtoType) ois.readObject(); // 从流中读入对象
+   
+   			return copyObj;
+   		} catch (Exception e) {
+   			// TODO: handle exception
+   			e.printStackTrace();
+   			return null;
+   		} finally {
+   			// 关闭流
+   			try {
+   				bos.close();
+   				oos.close();
+   				bis.close();
+   				ois.close();
+   			} catch (Exception e2) {
+   				System.out.println(e2.getMessage());
+   			}
+   		}
+   	}
+   
+   }
+   ```
+
+3. `Client`：测试代码
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) throws Exception {
+   		DeepProtoType p = new DeepProtoType();
+   		p.name = "宋江";
+   		p.deepCloneableTarget = new DeepCloneableTarget("大牛", "小牛");
+   
+   		// 方式1 完成深拷贝
+   		DeepProtoType p2 = (DeepProtoType) p.clone();
+   		System.out.println("p.name=" + p.name + "；p.deepCloneableTarget.hashCode=" + p.deepCloneableTarget.hashCode());
+   		System.out.println("p2.name=" + p2.name + "；p2.deepCloneableTarget.hashCode=" + p2.deepCloneableTarget.hashCode());
+   
+   		// 方式2 完成深拷贝
+   //		DeepProtoType p2 = (DeepProtoType) p.deepClone();
+   //		System.out.println("p.name=" + p.name + "；p.deepCloneableTarget.hashCode=" + p.deepCloneableTarget.hashCode());
+   //		System.out.println("p2.name=" + p2.name + "；p2.deepCloneableTarget.hashCode=" + p2.deepCloneableTarget.hashCode());
+   	}
+   
+   }
+   ```
+
+------
+
+#### 3.2.4.8. 原型模式注意事项
+
+- **原型模式的注意事项和细节**
+  1. 创建新的对象比较复杂时，可以利用原型模式简化对象的创建过程，同时也能够提高效率
+  2. 不用重新初始化对象，可以动态地获得对象运行时的状态
+    > 动态地进行clone
+  3. 如果原始对象发生变化(增加或者减少属性)，其它克隆对象的也会发生相应的变化，无需修改代码
+  4. 在实现深克隆的时候可能需要比较复杂的代码，其实使用序列化机制实现克隆的代码也不难
+  5. 缺点：**需要为每一个类配备一个克隆方法，这对全新的类来说不是很难，但对已有的类进行改造时，需要修改其源代码，违背了`ocp` 原则**
+
+### 3.2.5. 建造者模式（Builder Pattern）
+
+#### 3.2.5.1. 情景介绍
+
+1. 需要建房子：这一过程为打桩、 砌墙、封顶
+2. 房子有各种各样的，比如普通房，高楼，别墅，各种房子的过程虽然一样，但是各自实现的细节不同
+3. 请编写程序，完成需求
+
+#### 3.2.5.2. 传统方式
+
+![design-patterns-22](./image/design-patterns-22.png)
+
+---
+
+1. `AbstractHouse`：房子的抽象父类，指定建造房子的规范，以及建造房子的具体流程
+
+   ```java
+   public abstract class AbstractHouse {
+   
+   	// 打地基
+   	public abstract void buildBasic();
+   
+   	// 砌墙
+   	public abstract void buildWalls();
+   
+   	// 封顶
+   	public abstract void roofed();
+   
+   	// 建造房子的具体流程
+   	public void build() {
+   		buildBasic();
+   		buildWalls();
+   		roofed();
+   	}
+   
+   }
+   ```
+
+2. `CommonHouse`：普通房子，继承 `AbstractHouse` 类，实现了建造房子中各个步骤的具体细节
+
+   ```java
+   public class CommonHouse extends AbstractHouse {
+   
+   	@Override
+   	public void buildBasic() {
+   		System.out.println(" 普通房子打地基 ");
+   	}
+   
+   	@Override
+   	public void buildWalls() {
+   		System.out.println(" 普通房子砌墙 ");
+   	}
+   
+   	@Override
+   	public void roofed() {
+   		System.out.println(" 普通房子封顶 ");
+   	}
+   
+   }
+   ```
+
+3. `HighBuilding`：高楼大厦，继承 `AbstractHouse` 类，实现了建造房子中各个步骤的具体细节
+
+   ```java
+   public class HighBuilding extends AbstractHouse{
+   
+   	@Override
+   	public void buildBasic() {
+   		System.out.println(" 高楼的打地基100米 ");
+   	}
+   
+   	@Override
+   	public void buildWalls() {
+   		System.out.println(" 高楼的砌墙20cm ");
+   	}
+   
+   	@Override
+   	public void roofed() {
+   		System.out.println(" 高楼的透明屋顶 ");
+   	}
+   
+   
+   }
+   ```
+
+4. `Client`：客户端，发出建造房子的命令
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		CommonHouse commonHouse = new CommonHouse();
+   		commonHouse.build();
+   	}
+   
+   }
+   ```
+
+---
+
+传统方式优缺点分析
+
+1. 优点是比较好理解，简单易操作。
+2. 设计的程序结构，过于简单，没有设计缓存层对象，程序的扩展和维护不好，也就是说，这种设计方案，把产品(即：房子) 和创建产品的过程(即：建房子流程) 封装在一起，代码耦合性增强了。
+3. 解决方案：将产品和产品建造过程解耦 --> 建造者模式
+
+#### 3.2.5.3. 建造者模式介绍
+
+1. 建造者模式（`Builder Pattern`） 又叫生成器模式，是一种对象构建模式。它可以将复杂对象的建造过程抽象出来（抽象类别），使这个抽象过程的不同实现方法可以构造出不同表现（属性）的对象。
+2. 建造者模式是一步一步创建一个复杂的对象，它允许用户只通过指定复杂对象的类型和内容就可以构建它们，用户不需要知道内部的具体构建细节。
+3. 实际应用场景：建造房子、组装车辆
+
+#### 3.2.5.4. 建造者模式原理
+
+-  建造者模式的四个角色
+  1. `Product`（产品角色）： 一个具体的产品对象
+  2. `Builder`（抽象建造者）： 创建一个`Product`对象的抽象接口（或抽象类），抽象建造者主要负责规范建造的流程，不关心具体的建造细节
+  3. `ConcreteBuilder`（具体建造者）： 实现接口，构建和装配各个部件，具体建造者负责实现具体的建造细节
+  4. `Director`（指挥者）： 构建一个使用`Builder`接口的具体实现类的对象。它主要是用于创建一个复杂的对象。它主要有两个作用，一是：隔离了客户与对象的生产过程，二是：负责控制产品对象的生产过程
+
+---
+
+![design-patterns-23](./image/design-patterns-23.png)
+
+- 建造者模式原理类图
+  1. `Product`（产品类）：一个具体的产品
+  2. `Builder`（抽象建造者）：`Builder` 中组合了一个 `Product` 实例
+  3. `ConcreteBuilder`（具体建造者）：实现了 `Builder` 中的抽象方法
+  4. `Director`（指挥者）：将 `Builder` 的具体实现类聚合到 `Director` 中，在 `Director` 中调用具体的 `Builder` 完成具体产品的制造
+
+#### 3.2.5.5. 建造者模式代码
+
+![design-patterns-24](./image/design-patterns-24.png)
+
+---
+
+1. `House`：产品类
+
+   ```java
+   //产品->Product
+   public class House {
+   	private String base;
+   	private String wall;
+   	private String roofed;
+   ```
+
+2. `HouseBuilder`：抽象建造者，规定制造房子的规范，并提供 `buildHouse()` 方法返回制造好的房子（产品）
+
+   ```java
+   // 抽象的建造者
+   public abstract class HouseBuilder {
+   
+   	protected House house = new House();
+   
+   	// 将建造的流程写好, 抽象的方法
+   	public abstract void buildBasic();
+   
+   	public abstract void buildWalls();
+   
+   	public abstract void roofed();
+   
+   	// 建造房子好， 将产品(房子) 返回
+   	public House buildHouse() {
+   		return house;
+   	}
+   
+   }
+   ```
+
+3. `CommonHouse`：具体建造者，负责建造普通房子，重写父类 `HouseBuilder` 中的抽象方法来指定普通房子的建造细节
+
+   ```java
+   public class CommonHouse extends HouseBuilder {
+   
+   	@Override
+   	public void buildBasic() {
+   		house.setBase("普通房子打地基5米");
+   	}
+   
+   	@Override
+   	public void buildWalls() {
+   		house.setWall("普通房子砌墙10cm");
+   	}
+   
+   	@Override
+   	public void roofed() {
+   		house.setRoofed("普通房子屋顶");
+   	}
+   
+   }
+   ```
+
+4. `HighBuilding`：具体建造者，负责建造高楼大厦，重写父类 `HouseBuilder` 中的抽象方法来指定高楼大厦的建造细节
+
+   ```java
+   public class HighBuilding extends HouseBuilder {
+   
+   	@Override
+   	public void buildBasic() {
+   		house.setBase("高楼的打地基100米");
+   	}
+   
+   	@Override
+   	public void buildWalls() {
+   		house.setWall("高楼的砌墙20cm");
+   	}
+   
+   	@Override
+   	public void roofed() {
+   		house.setRoofed("高楼的透明屋顶");
+   	}
+   
+   }
+   ```
+
+5. `HouseDirector`：指挥者，指挥具体的 `Builder` 对象制造产品，可指定制造产品的流程
+
+   ```java
+   //指挥者，这里去指定制作流程，返回产品
+   public class HouseDirector {
+   
+   	HouseBuilder houseBuilder = null;
+   
+   	// 构造器传入 houseBuilder
+   	public HouseDirector(HouseBuilder houseBuilder) {
+   		this.houseBuilder = houseBuilder;
+   	}
+   
+   	// 通过setter 传入 houseBuilder
+   	public void setHouseBuilder(HouseBuilder houseBuilder) {
+   		this.houseBuilder = houseBuilder;
+   	}
+   
+   	// 如何处理建造房子的流程，交给指挥者
+   	public House constructHouse() {
+   		houseBuilder.buildBasic();
+   		houseBuilder.buildWalls();
+   		houseBuilder.roofed();
+   		return houseBuilder.buildHouse();
+   	}
+   
+   }
+   ```
+
+6. `Client`：客户端，发出建造房子的命令
+
+   ```java
+   public class Client {
+   	public static void main(String[] args) {
+   		// 盖普通房子
+   		CommonHouse commonHouse = new CommonHouse();
+   		// 准备创建房子的指挥者
+   		HouseDirector houseDirector = new HouseDirector(commonHouse);
+   		// 完成盖房子，返回产品(普通房子)
+   		House house = houseDirector.constructHouse();
+   		// 查看建造的普通房子
+   		System.out.println(house);
+   
+   		System.out.println("--------------------------");
+   		// 盖高楼
+   		HighBuilding highBuilding = new HighBuilding();
+   		// 重置建造者
+   		houseDirector.setHouseBuilder(highBuilding);
+   		// 完成盖房子，返回产品(高楼)
+   		house = houseDirector.constructHouse();
+   		// 查看建造的高楼
+   		System.out.println(house);
+   	}
+   }
+   ```
+
+7. 程序运行结果
+
+   ```
+   House [base=普通房子打地基5米, wall=普通房子砌墙10cm, roofed=普通房子屋顶]
+   --------------------------
+   House [base=高楼的打地基100米, wall=高楼的砌墙20cm, roofed=高楼的透明屋顶]
+   ```
+
+---
+
+#### 3.2.5.6. 总结
+
+1. 首先，`Product` 为产品类，将 `Product` 的实例对象**组合**在抽象建造者 `AbstractBuilder` 中，并通过抽象建造者中定义的抽象方法，来约定制造产品的规范
+2. 然后，通过 `Builder` 具体的实现类：具体建造者 `ConcreteBuilder`，重写抽象父类 `AbstractBuilder` 中的抽象方法，来指定具体产品的制造细节
+3. 最后，将 `ConcreteBuilder` 的实例对象聚合在指挥者 `Director` 中，通过指挥者实现具体产品的制造流程（抽象方法的调用顺序），最后返回产品即可
+
+#### 3.2.5.7. jdk源码示例
+
+1. `StringBuilder` 的 `append()` 方法：调用父类`AbstractStringBuilder` 的 `append()` 方法
+
+   ```java
+   public final class StringBuilder
+       extends AbstractStringBuilder
+       implements java.io.Serializable, CharSequence
+   {
+       // ...
+       
+       @Override
+       public StringBuilder append(String str) {
+           super.append(str);
+           return this;
+       }
+       
+       // ...
+   ```
+
+2. `AbstractStringBuilder` 的 `append()` 方法是由 `Appendable` 接口定义的规范
+
+   ```java
+   abstract class AbstractStringBuilder implements Appendable, CharSequence {
+       /**
+        * The value is used for character storage.
+        */
+       char[] value;
+   
+       /**
+        * The count is the number of characters used.
+        */
+       int count;
+   
+       /**
+        * This no-arg constructor is necessary for serialization of subclasses.
+        */
+       AbstractStringBuilder() {
+       }
+   
+       /**
+        * Creates an AbstractStringBuilder of the specified capacity.
+        */
+       AbstractStringBuilder(int capacity) {
+           value = new char[capacity];
+       }
+       
+       // ...
+       
+       public AbstractStringBuilder append(String str) {
+           if (str == null)
+               return appendNull();
+           int len = str.length();
+           ensureCapacityInternal(count + len);
+           str.getChars(0, len, value, count);
+           count += len;
+           return this;
+       }
+       
+       // ...
+   ```
+
+3. `Appendable` 接口：定义了 `append()` 方法的规范，相当于是一个抽象的建造者
+
+   ```java
+   public interface Appendable {
+   
+       Appendable append(CharSequence csq) throws IOException;
+   
+       Appendable append(CharSequence csq, int start, int end) throws IOException;
+   
+       Appendable append(char c) throws IOException;
+   }
+   ```
+
+4. 说明：**实际源码中的生产模式有可能和我们讲的有细微差别**。
+
+------
+
+源码中建造者模式角色分析
+
+1. `Appendable` 接口定义了多个 `append()` 方法(抽象方法)，即 `Appendable` 为抽象建造者，定义了制造产品的抽象方法（规范）
+2. `AbstractStringBuilder` 实现了 `Appendable` 接口方法，这里的 `AbstractStringBuilder` 已经是建造者，只是不能实例化
+3. `StringBuilder` 既充当了指挥者角色，同时充当了具体的建造者， 因为建造方法的实现是由 `AbstractStringBuilder` 完成，而 `StringBuilder` 继承了`AbstractStringBuilder`
+
+#### 3.2.5.8. 注意事项
+
+> **建造者模式的注意事项和细节**
+
+1. 客户端(使用程序)不必知道产品内部组成的细节，将产品本身与产品的创建过程解耦，使得相同的创建过程可以创建不同的产品对象
+2. 每一个具体建造者都相对独立，而与其他的具体建造者无关，因此可以很方便地替换具体建造者或增加新的具体建造者， 用户使用不同的具体建造者即可得到不同的产品对象
+3. 可以更加精细地控制产品的创建过程 。将复杂产品的创建步骤分解在不同的方法中，使得创建过程更加清晰，也更方便使用程序来控制创建过程
+4. 增加新的具体建造者无须修改原有类库的代码，指挥者类针对抽象建造者类编程，系统扩展方便，符合 “开闭原则”
+5. 建造者模式所创建的产品一般具有较多的共同点，其组成部分相似，如果产品之间的差异性很大，则不适合使用建造者模式，因此其使用范围受到一定的限制
+6. 如果产品的内部变化复杂，可能会导致需要定义很多具体建造者类来实现这种变化，导致系统变得很庞大， 因此在这种情况下，要考虑是否选择建造者模式
+
+> **抽象工厂模式 VS 建造者模式**
+
+1. 抽象工厂模式实现对产品家族的创建，一个产品家族是这样的一系列产品：具有不同分类维度的产品组合，采用抽象工厂模式不需要关心构建过程，只关心什么产品由什么工厂生产即可
+2. 而建造者模式则是要求按照指定的蓝图建造产品，它的主要目的是通过组装零配件而产生一个新产品，可以这样理解：建造者模式制造产品需要有一个具体的流程，对于不同产品整体流程相差不大，但是每个流程的实现细节较大
 
 ## 3.3. 结构型模式
 

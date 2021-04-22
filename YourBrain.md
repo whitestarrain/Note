@@ -12,6 +12,10 @@
   - `常量.equals`
   - `Objects.equals` **推荐**
   - hashcode和equals
+- String,StringBuilder,StringBuffer
+  - 字符串常量池
+  - AbstractStringBilder,建造者
+  - synchronized
 - 包装类
   - Integer当数值在-128 ~127时，会将创建的 Integer 对象缓存起来
   - 包装数据类型不能用 equals 来判断

@@ -526,7 +526,33 @@
 | zunionstore destination numkeys key [key …]    | 计算给定的一个或多个有序集的并集，并存储在新的 key 中        |
 | zscan key cursor [match pattern] [count count] | 迭代有序集合中的元素（包括元素成员和元素分值）               |
 
-## 3.7. HyperLogLog
+## 3.7. Hash
+
+![redis-31](./image/redis-31.png)
+
+- Redis hash 是一个string类型的field和value的映射表，hash特别适合用于存储对象。
+- 哈希类型中的 **映射关系** 叫作 `field-value`，这里的 `value` 是指 `field` 对应的 **值**，不是 **键** 对应的值。
+- Redis 中每个 hash 可以存储 232 - 1 键值对（40多亿）。
+
+
+| 序号 | 命令及描述                                                   |
+| :--- | :----------------------------------------------------------- |
+| 1    | [hdel key field2 [field2\]](../order/3564.html) 删除一个或多个哈希表字段 |
+| 2    | hexists key field 查看哈希表 key 中，指定的字段是否存在。 |
+| 3    | hget key field 获取存储在哈希表中指定字段的值/td> |
+| 4    | hgetall key 获取在哈希表中指定 key 的所有字段和值 |
+| 5    | hincrby key field increment 为哈希表 key 中的指定字段的整数值加上增量 increment 。 |
+| 6    | hincrbyfloat key field increment 为哈希表 key 中的指定字段的浮点数值加上增量 increment 。 |
+| 7    | hkeys key 获取所有哈希表中的字段       |
+| 8    | hlen key 获取哈希表中字段的数量        |
+| 9    | hmget key field1 [field2] 获取所有给定字段的值 |
+| 10   | hmset key field1 value1 [field2 value2] 同时将多个 field-value (域-值)对设置到哈希表 key 中。 |
+| 11   | hset key field value 将哈希表 key 中的字段 field 的值设为 value 。 |
+| 12   | hsetnx key field value 只有在字段 field 不存在时，设置哈希表字段的值。 |
+| 13   | hvals key 获取哈希表中所有值           |
+| 14   | hscan key cursor [match pattern] [count count] 迭代哈希表中的键值对。 |
+
+## 3.8. HyperLogLog
 
 - 说明：
   - Redis 在 2.8.9 版本添加了 HyperLogLog 结构。
@@ -543,7 +569,9 @@
 | 2    | PFCOUNT key [key ...]                     | 返回给定 HyperLogLog 的基数估算值。       |
 | 3    | PFMERGE destkey sourcekey [sourcekey ...] | 将多个 HyperLogLog 合并为一个 HyperLogLog |
 
-## 3.8. 关于过期删除
+## 3.9. 关于过期删除
+
+> 详情看下面的过期淘汰机制
 
 - **key过期后不会立即删除**
   - 因为删除key时肯定是主服务来删除(因为redis是 **单线程** 的)，所以当他在执行删除指令的时候，他就无法进行其他的操作
@@ -562,318 +590,174 @@
 
 # 4. 配置文件说明
 
-通过 `CONFIG` 命令set或get配置项。
+## 4.1. 说明
 
-<details>
-<summary style="color:red;">配置文件翻译解读</summary>
+[配置文件(翻译)](./资料/redis-config.txt)
 
+## 4.2. 配置方式
+
+- 修改配置文件
+- 通过 `CONFIG` 命令set或get配置项。
+
+
+# 5. 缓存淘汰策略
+
+> 针对于redis 6.0.8
+
+## 5.1. 说明
+
+- 过期删除：当一个key过期后，什么时候释放内存
+- 淘汰策略：当内存不够后，要删除哪些数据
+
+---
+
+- 过期数据：
+  - set key的时候，都可以给一个expire time，就是过期时间，通过过期时间就可以指定这个key可以存活的时间
+  - Redis是一种内存级数据库，所有数据均存放在内存中，内存中的数据可以通过TTL指令获取其状态
+
+- 失效数据结构：
+
+  ![redis-28](./image/redis-28.png)
+
+## 5.2. 内存查看与设置
+
+- 获取内存设置：
+  - config get maxmemory 获取 redis 最大占用内存
+
+- 查看内存使用情况
+  - 通过 info 指令可以查看 redis 内存使用情况：
+  - used_memory_human 表示实际已经占用的内存
+  - maxmemory 表示 redis 最大占用内存
+
+  ![redis-29](./image/redis-29.png)
+
+- 默认内存大小：
+  - 默认设置为0
+  - 在 64 位操作系统下不限制内存大小
+  - 在32位操作系统下最多使用 3GB 内存
+
+- 修改内存设置：
+  - 通过命令修改（重启失效）：config set maxmemory 104857600 设置 redis 最大占用内存为 100MB
+
+- 一般生产上如何配置 redis 的内存
+  - 一般推荐Redis设置内存为最大物理内存的四分之三，也就是 0.75
+
+> **总结 & 结论**
+
+如果设置了 `maxmemory` 的选项，假如 redis 内存使用达到上限，并且 key 都没有加上过期时间，就会导致数据写爆 redis 内存。
+
+为了避免类似情况，于是引出下一部分的过期删除策略
+
+## 5.3. 三种过期删除策略
+
+### 5.3.1. 定时删除
+
+- 立即删除：
+  - 优点：立即删除能保证内存中数据的最大新鲜度，因为它保证过期键值会在过期后马上被删除，其所占用的内存也会随之释放。
+  - 缺点：
+    - 但是立即删除对 CPU 是最不友好的。
+    - 因为删除操作会占用 CPU 的时间，如果刚好碰上了 CPU 很忙的时候，比如正在做交集或排序等计算的时候，就会给 CPU 造成额外的压力。
+    - 这会产生大量的性能消耗，同时也会影响数据的读取操作。
+
+
+- 定时删除：
+  - 说明：创建一个定时器，当key设置有过期时间，且过期时间到达时，由定时器任务立即执行对键的删除操作
+  - 优点：节约内存，到时就删除，快速释放掉不必要的内存占用
+  - 缺点：CPU压力很大，无论CPU此时负载量多高，均占用CPU，会影响redis服务器响应时间和指令吞吐量
+  - **总结**：定时删除对 CPU 不友好，但对 memory 友好，用处理器性能换取存储空间（拿时间换空间）
+
+### 5.3.2. 惰性删除
+
+- 说明:
+  - 惰性删除的策略刚好和定时删除相反，惰性删除在数据到达过期时间后不做处理，等**下次访问该数据时发现已过期，并将其删除，并返回不存在**。
+  - 使用惰性删除访问数据的特点：**访问一个数据，如果发现其在过期时间之内，则返回改数据；如果发现已经过了过期时间，则将其删除，并返回不存在**
+  - 如果一个键已经过期，而这个键又仍然保留在数据库中，那么只要这个过期键不被删除，它所占用的内存就不会释放。因此惰性删除策略的缺点是：它对内存是最不友好的。
+- 优点：节约CPU性能，发现必须删除的时候才删除
+- 缺点：内存压力很大，出现长期占用内存的数据
   ```
-  ######################### 引用 #########################
-
-  # 不同redis server可以使用同一个模版配置作为主配置，并引用其它配置文件用于本server的个性# 化设置
-  # include并不会被CONFIG REWRITE命令覆盖。但是主配置文件的选项会被覆盖。
-  # 想故意覆盖主配置的话就把include放文件前面，否则最好放末尾
-  # include /path/to/local.conf
-  # include /path/to/other.conf
-
-  ######################### 网络 #########################
-
-  # 不指定bind的话redis将会监听所有网络接口。这个配置是肯定需要指定的。
-  # Examples:
-  # bind 192.168.1.100 10.0.0.1
-  # bind 127.0.0.1 ::1
-  # 下面这个配置是只允许本地客户端访问。
-  bind 127.0.0.1
-
-  # 是否开启保护模式。默认开启，如果没有设置bind项的ip和redis密码的话，服务将只允许本地访 问。
-  protected-mode yes
-
-  # 端口设置，默认为 6379
-  # 如果port设置为0 redis将不会监听tcp socket
-  port 6379
-
-  # 在高并发环境下需要一个高backlog值来避免慢客户端连接问题。注意Linux内核默默将这个值减小到/proc/sys/net/core/somaxconn的值，所以需要确认增大somaxconn和tcp_max_syn_backlog 两个值来达到需要的效果。
-  tcp-backlog 511
-
-  # 指定用来监听Unix套套接字的路径。没有默认值，没有指定的情况下Redis不会监听Unix socket
-  # unixsocket /tmp/redis.sock
-  # unixsocketperm 700
-
-  # 客户端空闲多少秒后关闭连接（0为不关闭）timeout 0# tcp-keepalive设置。如果非零，则设置SO_KEEPALIVE选项来向空闲连接的客户端发送ACK，用途如下：
-  # 1）能够检测无响应的对端
-  # 2）让该连接中间的网络设备知道这个连接还存活
-  # 在Linux上，这个指定的值(单位秒)就是发送ACK的时间间隔。
-  # 注意：要关闭这个连接需要两倍的这个时间值。
-  # 在其他内核上这个时间间隔由内核配置决定# 从redis3.2.1开始默认值为300秒
-  tcp-keepalive 300
-
-  ######################### 通用 #########################
-
-  # 是否将Redis作为守护进程运行。如果需要的话配置成'yes'
-  # 注意配置成守护进程后Redis会将进程号写入文件/var/run/redis.pid
-  daemonize no
-
-  # 是否通过upstart或systemd管理守护进程。默认no没有服务监控，其它选项有upstart, systemd, auto
-  supervised no
-
-  # pid文件在redis启动时创建，退出时删除。最佳实践为配置该项。
-  pidfile /var/run/redis_6379.pid
-
-  # 配置日志级别。选项有debug, verbose, notice, warning
-  loglevel notice
-
-  # 日志名称。空字符串表示标准输出。注意如果redis配置为后台进程，标准输出中信息会发送到/dev/null
-  logfile ""
-
-  # 是否启动系统日志记录。
-  # syslog-enabled no
-
-  # 指定系统日志身份。
-  # syslog-ident redis
-
-  # 指定syslog设备。必须是user或LOCAL0 ~ LOCAL7之一。
-  # syslog-facility local0
-
-  # 设置数据库个数。默认数据库是 DB 0
-  # 可以通过SELECT where dbid is a number between 0 and 'databases'-1为每个连接使用不同的数据库。
-  databases 16
-
-  ######################### 备份  #########################
-  # 持久化设置:
-  # 下面的例子将会进行把数据写入磁盘的操作:
-  #  900秒（15分钟）之后，且至少1次变更
-  #  300秒（5分钟）之后，且至少10次变更
-  #  60秒之后，且至少10000次变更
-  # 不写磁盘的话就把所有 "save" 设置注释掉就行了。
-  # 通过添加一条带空字符串参数的save指令也能移除之前所有配置的save指令，如: save ""
-  save 900 1
-  save 300 10
-  save 60 10000
-
-  # 默认情况下如果上面配置的RDB模式开启且最后一次的保存失败，redis 将停止接受写操作，让用户知道问题的发生。
-  # 如果后台保存进程重新启动工作了，redis 也将自动的允许写操作。如果有其它监控方式也可关闭。
-  stop-writes-on-bgsave-error yes
-
-  # 是否在备份.rdb文件时是否用LZF压缩字符串，默认设置为yes。如果想节约cpu资源可以把它设置为no。
-  rdbcompression yes
-
-  # 因为版本5的RDB有一个CRC64算法的校验和放在了文件的末尾。这将使文件格式更加可靠,
-  # 但在生产和加载RDB文件时，这有一个性能消耗(大约10%)，可以关掉它来获取最好的性能。
-  # 生成的关闭校验的RDB文件有一个0的校验和，它将告诉加载代码跳过检查rdbchecksum yes
-  # rdb文件名称
-  dbfilename dump.rdb
-
-  # 备份文件目录，文件名就是上面的 "dbfilename" 的值。累加文件也放这里。
-  # 注意你这里指定的必须是目录，不是文件名。
-  dir /Users/wuji/redis_data/
-
-  ######################### 主从同步 #########################
-
-  # 主从同步配置。
-  # 1) redis主从同步是异步的，但是可以配置在没有指定slave连接的情况下使master停止写入数据。
-  # 2) 连接中断一定时间内，slave可以执行部分数据重新同步。
-  # 3) 同步是自动的，slave可以自动重连且同步数据。
-  # slaveof <masterip> <masterport>
-
-  # master连接密码
-  # masterauth <master-password>
-
-  # 当一个slave失去和master的连接，或者同步正在进行中，slave的行为有两种可能：
-  # 1) 如果 slave-serve-stale-data 设置为 "yes" (默认值)，slave会继续响应客户端请求，可能是正常数据，也可能是还没获得值的空数据。
-  # 2) 如果 slave-serve-stale-data 设置为 "no"，slave会回复"正在从master同步（SYNC with master in progress）"来处理各种请求，除了 INFO 和 SLAVEOF 命令。
-  slave-serve-stale-data yes
-
-  # 你可以配置salve实例是否接受写操作。可写的slave实例可能对存储临时数据比较有用(因为写入salve# 的数据在同master同步之后将很容被删除)，但是如果客户端由于配置错误在写入时也可能产生一些问题。
-  # 从Redis2.6默认所有的slave为只读
-  # 注意:只读的slave不是为了暴露给互联网上不可信的客户端而设计的。它只是一个防止实例误用的保护层。
-  # 一个只读的slave支持所有的管理命令比如config,debug等。为了限制你可以用'rename-command'来隐藏所有的管理和危险命令来增强只读slave的安全性。
-  slave-read-only yes
-
-  # 同步策略: 磁盘或socket，默认磁盘方式
-  repl-diskless-sync no
-
-  # 如果非磁盘同步方式开启，可以配置同步延迟时间，以等待master产生子进程通过socket传输RDB数据给slave。
-  # 默认值为5秒，设置为0秒则每次传输无延迟。
-  repl-diskless-sync-delay 5
-
-  # slave根据指定的时间间隔向master发送ping请求。默认10秒。
-  # repl-ping-slave-period 10
-
-  # 同步的超时时间
-  # 1）slave在与master SYNC期间有大量数据传输，造成超时
-  # 2）在slave角度，master超时，包括数据、ping等
-  # 3）在master角度，slave超时，当master发送REPLCONF ACK pings# 确保这个值大于指定的repl-ping-slave-period，否则在主从间流量不高时每次都会检测到超时
-  # repl-timeout 60
-
-  # 是否在slave套接字发送SYNC之后禁用 TCP_NODELAY
-  # 如果选择yes，Redis将使用更少的TCP包和带宽来向slaves发送数据。但是这将使数据传输到slave上有延迟，Linux内核的默认配置会达到40毫秒。
-  # 如果选择no，数据传输到salve的延迟将会减少但要使用更多的带宽。
-  # 默认我们会为低延迟做优化，但高流量情况或主从之间的跳数过多时，可以设置为“yes”。
-  repl-disable-tcp-nodelay no
-
-  # 设置数据备份的backlog大小。backlog是一个slave在一段时间内断开连接时记录salve数据的缓冲，所以一个slave在重新连接时，不必要全量的同步，而是一个增量同步就足够了，将在断开连接的这段# 时间内把slave丢失的部分数据传送给它。
-  # 同步的backlog越大，slave能够进行增量同步并且允许断开连接的时间就越长。
-  # backlog只分配一次并且至少需要一个slave连接。
-  # repl-backlog-size 1mb
-
-  # 当master在一段时间内不再与任何slave连接，backlog将会释放。以下选项配置了从最后一个
-  # slave断开开始计时多少秒后，backlog缓冲将会释放。
-  # 0表示永不释放backlog
-  # repl-backlog-ttl 3600
-
-  # slave的优先级是一个整数展示在Redis的Info输出中。如果master不再正常工作了，sentinel将用它来选择一个slave提升为master。
-  # 优先级数字小的salve会优先考虑提升为master，所以例如有三个slave优先级分别为10，100，25，sentinel将挑选优先级最小数字为10的slave。
-  # 0作为一个特殊的优先级，标识这个slave不能作为master，所以一个优先级为0的slave永远不会被# sentinel挑选提升为master。
-  # 默认优先级为100
-  slave-priority 100
-
-  # 如果master少于N个延时小于等于M秒的已连接slave，就可以停止接收写操作。
-  # N个slave需要是“oneline”状态。
-  # 延时是以秒为单位，并且必须小于等于指定值，是从最后一个从slave接收到的ping（通常每秒发送）开始计数。
-  # 该选项不保证N个slave正确同步写操作，但是限制数据丢失的窗口期。
-  # 例如至少需要3个延时小于等于10秒的slave用下面的指令：
-  # min-slaves-to-write 3
-  # min-slaves-max-lag 10
-
-  # 两者之一设置为0将禁用这个功能。
-  # 默认 min-slaves-to-write 值是0（该功能禁用）并且 min-slaves-max-lag 值是10。
-
-  ######################### 安全 #########################
-
-  # 要求客户端在处理任何命令时都要验证身份和密码。通过auth 命令来验证登录
-  # requirepass foobared
-
-  # 命令重命名
-  # 在共享环境下，可以为危险命令改变名字。比如，你可以为 CONFIG 改个其他不太容易猜到的名字，这样内部的工具仍然可以使用。
-  # 例如：
-  # rename-command CONFIG b840fc02d524045429941cc15f59e41cb7be6c52
-  # 也可以通过改名为空字符串来完全禁用一个命令
-  # rename-command CONFIG ""
-  # 请注意：改变命令名字被记录到AOF文件或被传送到从服务器可能产生问题。
-
-  ######################### 限制 #########################
-
-  # 设置最多同时连接的客户端数量。默认这个限制是10000个客户端，然而如果Redis服务器不能配置
-  # 处理文件的限制数来满足指定的值，那么最大的客户端连接数就被设置成当前文件限制数减32（因为Redis服务器保留了一些文件描述符作为内部使用）
-  # 一旦达到这个限制，Redis会关闭所有新连接并发送错误'max number of clients reached'
-  # maxclients 10000
-
-  # 不要使用比设置的上限更多的内存。一旦内存使用达到上限，Redis会根据选定的回收策略（参见：maxmemmory-policy）删除key。
-  # 如果因为删除策略Redis无法删除key，或者策略设置为 "noeviction"，Redis会回复需要更多内存的错误信息给命令。例如，SET,LPUSH等等，但是会继续响应像Get这样的只读命令。
-  # 在使用Redis作为LRU缓存，或者为实例设置了硬性内存限制的时候（使用 "noeviction" 策略）
-  的时候，这个选项通常事很有用的。
-  # 警告：当有多个slave连上达到内存上限时，master为同步slave的输出缓冲区所需内存不计算在使用内存中。这样当移除key时，就不会因网络问题 / 重新同步事件触发移除key的循环，反过来slaves的输出缓冲区充满了key被移除的DEL命令，这将触发删除更多的key，直到这个数据库完全被清空为止。
-  # 总之，如果你需要附加多个slave，建议你设置一个稍小maxmemory限制，这样系统就会有空闲的内存作为slave的输出缓存区(但是如果最大内存策略设置为"noeviction"的话就没必要了)
-  # maxmemory <bytes>
-
-  # 最大内存策略：如果达到内存限制了，Redis如何选择删除key。
-  # volatile-lru -> 根据LRU算法删除设置过期时间的key
-  # allkeys-lru -> 根据LRU算法删除任何key
-  # volatile-random -> 随机移除设置过过期时间的key
-  # allkeys-random -> 随机移除任何key
-  # volatile-ttl -> 移除即将过期的key(minor TTL)
-  # noeviction -> 不移除任何key，只返回一个写错误
-  # 注意：对所有策略来说，如果Redis找不到合适的可以删除的key都会在写操作时返回一个错误。# 目前为止涉及的命令：set setnx setex append incr decr rpush lpush rpushx lpushx linsert lset rpoplpush sadd sinter sinterstore sunion sunionstore sdiff sdiffstore zadd zincrby zunionstore zinterstore hset hsetnx hmset hincrby incrby decrby getset mset msetnx exec sort
-  # 默认策略:
-  # maxmemory-policy noeviction
-
-  # LRU和最小TTL算法的实现都不是很精确，但是很接近（为了省内存），所以你可以用样本量做检测。 例如：默认Redis会检查3个key然后取最旧的那个，你可以通过下面的配置指令来设置样本的个数。
-  # 默认值为5，数字越大结果越精确但是会消耗更多CPU。
-  # maxmemory-samples 5
-
-  ######################### APPEND ONLY MODE #########################
-
-  # 默认情况下，Redis是异步的把数据导出到磁盘上。这种模式在很多应用里已经足够好，但Redis进程出问题或断电时可能造成一段时间的写操作丢失(这取决于配置的save指令)。
-  # AOF是一种提供了更可靠的替代持久化模式，例如使用默认的数据写入文件策略（参见后面的配置）。
-  # 在遇到像服务器断电或单写情况下Redis自身进程出问题但操作系统仍正常运行等突发事件时，Redis能只丢失1秒的写操作。
-  # AOF和RDB持久化能同时启动并且不会有问题。
-  # 如果AOF开启，那么在启动时Redis将加载AOF文件，它更能保证数据的可靠性。
-  appendonly no
-
-  # AOF文件名（默认："appendonly.aof"）
-  appendfilename "appendonly.aof"
-
-  # fsync() 系统调用告诉操作系统把数据写到磁盘上，而不是等更多的数据进入输出缓冲区。
-  # 有些操作系统会真的把数据马上刷到磁盘上；有些则会尽快去尝试这么做。
-  # Redis支持三种不同的模式：
-  # no：不要立刻刷，只有在操作系统需要刷的时候再刷。比较快。
-  # always：每次写操作都立刻写入到aof文件。慢，但是最安全。
-  # everysec：每秒写一次。折中方案。
-  # 默认的 "everysec" 通常来说能在速度和数据安全性之间取得比较好的平衡。
-  # appendfsync always
-  appendfsync everysec
-  # appendfsync no
-
-  # 如果AOF的同步策略设置成 "always" 或者 "everysec"，并且后台的存储进程（后台存储或写入AOF 日志）会产生很多磁盘I/O开销。某些Linux的配置下会使Redis因为 fsync()系统调用而阻塞很久。
-  # 注意，目前对这个情况还没有完美修正，甚至不同线程的 fsync() 会阻塞我们同步的write(2)调用。
-  # 为了缓解这个问题，可以用下面这个选项。它可以在 BGSAVE 或 BGREWRITEAOF 处理时阻止fsync()。
-  # 这就意味着如果有子进程在进行保存操作，那么Redis就处于"不可同步"的状态。
-  # 这实际上是说，在最差的情况下可能会丢掉30秒钟的日志数据。（默认Linux设定）
-  # 如果把这个设置成"yes"带来了延迟问题，就保持"no"，这是保存持久数据的最安全的方式。
-  no-appendfsync-on-rewrite no
-
-  # 自动重写AOF文件。如果AOF日志文件增大到指定百分比，Redis能够通过 BGREWRITEAOF 自动重写AOF日志文件。# 工作原理：Redis记住上次重写时AOF文件的大小（如果重启后还没有写操作，就直接用启动时的AOF大小）
-  # 这个基准大小和当前大小做比较。如果当前大小超过指定比例，就会触发重写操作。你还需要指定被重写日志的最小尺寸，这样避免了达到指定百分比但尺寸仍然很小的情况还要重写。
-  # 指定百分比为0会禁用AOF自动重写特性。
-  auto-aof-rewrite-percentage 100
-  auto-aof-rewrite-min-size 64mb
-
-  # 如果设置为yes，如果一个因异常被截断的AOF文件被redis启动时加载进内存，redis将会发送日志通知用户。如果设置为no，erdis将会拒绝启动。此时需要用"redis-check-aof"工具修复文件。
-  aof-load-truncated yes
-
-  ######################### 集群 #########################
-
-  # 只有开启了以下选项，redis才能成为集群服务的一部分
-  # cluster-enabled yes
-
-  # 配置redis自动生成的集群配置文件名。确保同一系统中运行的各redis实例该配置文件不要重名。
-  # cluster-config-file nodes-6379.conf
-
-  # 集群节点超时毫秒数。超时的节点将被视为不可用状态。
-  # cluster-node-timeout 15000
-
-  # 如果数据太旧，集群中的不可用master的slave节点会避免成为备用master。如果slave和master失联时间超过:
-   (node-timeout * slave-validity-factor) + repl-ping-slave-period
-  则不会被提升为master。
-  # 如node-timeout为30秒，slave-validity-factor为10, 默认default repl-ping-slave-period为10秒,失联时间超过310秒slave就不会成为master。
-  # 较大的slave-validity-factor值可能允许包含过旧数据的slave成为master，同时较小的值可能会阻止集群选举出新master。
-  #为了达到最大限度的高可用性，可以设置为0，即slave不管和master失联多久都可以提升为master
-  # cluster-slave-validity-factor 10
-
-  # 只有在之前master有其它指定数量的工作状态下的slave节点时，slave节点才能提升为master。默认为1（即该集群至少有3个节点，1 master＋2 slaves，master宕机，仍有另外1个slave的情况下其中1个slave可以提升）
-  # 测试环境可设置为0，生成环境中至少设置为1
-  # cluster-migration-barrier 1
-
-  # 默认情况下如果redis集群如果检测到至少有1个hash slot不可用，集群将停止查询数据。
-  # 如果所有slot恢复则集群自动恢复。
-  # 如果需要集群部分可用情况下仍可提供查询服务，设置为no。
-  # cluster-require-full-coverage yes
-
-  ######################### 慢查询日志 #########################
-
-  # 慢查询日志，记录超过多少微秒的查询命令。查询的执行时间不包括客户端的IO执行和网络通信时间，只是查询命令执行时间。
-  # 1000000等于1秒，设置为0则记录所有命令
-  slowlog-log-slower-than 10000
-
-  # 记录大小，可通过SLOWLOG RESET命令重置
-  slowlog-max-len 128
+  在使用惰性删除策略时，如果数据库中有非常多的过期键，而这些过期键又恰好没有被访问到的话，
+  那么它们也许永远也不会被删除（除非用户手动执行 `FLUSHDB`），
+  我们甚至可以将这种情况看作是一种内存泄漏——无用的垃圾数据占用了大量的内存，而服务器却不会自己去释放它们，
+  这对于运行状态非常依赖于内存的 redis 服务器来说，肯定不是一个好消息
   ```
-</details>
+- **总结**：惰性删除对 memory 不友好，但对 CPU 友好，用存储空间换取处理器性能（拿空间换时间）
+
+### 5.3.3. 折中方案：定期删除(默认)
+
+- 说明：
+  - 上面两种删除策略都走极端，因此引出我们的定期删除策略。
+  - 定期删除策略是前两种策略的折中：
+    - 定期删除策略**每隔一段时间执行一次删除过期键操作**，并通过**限制删除操作执行的时长和频率**来减少删除操作对 CPU 时间的影响。
+    - 其做法为：**周期性轮询 redis 库中的时效性数据，采用随机抽取的策略，利用过期数据占比的方式控制删除频度**。
+
+- **定期删除的特点**
+  - 特点1：CPU 性能占用设置有峰值，检测频度可自定义设置
+  - 特点2：内存压力不是很大，长期占用内存的冷数据会被持续清理
 
 
-# 5. 持久化
+- **定期删除的举例**
+  - redis 默认每间隔 100ms 检查是否有过期的 key，如果有过期 key 则删除。
+  - 注意：redis 不是每隔100ms 将所有的 key 检查一次而是**随机抽取**进行检查（如果每隔 100ms，全部 key 进行检查，redis 直接进去ICU）
+  - 因此，如果只采用定期删除策略，会导致很多 key 到时间没有删除。
+
+- **定期删除的难点**
+  - 定期删除策略的难点是确定删除操作执行的时长和频率：redis 不可能时时刻刻遍历所有被设置了生存时间的 key，来检测数据是否已经到达过期时间，然后对它进行删除。
+  - 如果删除操作执行得太频繁，或者执行的时间太长，定期删除策略就会退化成定时删除策略，以至于将 CPU 时间过多地消耗在删除过期键上面。
+  - 如果删除操作执行得太少，或者执行的时间太短，定期删除策略又会和惰性删除束略一样，出现浪费内存的情况。
+  - 因此，**如果采用定期删除策略的话，服务器必须根据情况，合理地设置删除操作的执行时长和执行频率**。
+
+- **总结**:周期性抽查存储空间（随机抽查，重点抽查)
+
+
+### 5.3.4. 总结
+
+![redis-27](./image/redis-27.png)
+
+惰性删除和定期删除都存在数据没有被抽到的情况，如果这些数据已经到了过期时间，没有任何作用，这会导致大量过期的 key 堆积在内存中，导致 redis 内存空间紧张或者很快耗尽
+
+因此必须要有一个更好的兜底方案，接下来引出 redis 内存淘汰策略
+
+## 5.4. 种内存淘汰策略(逐出算法)
+
+- 8 种内存淘汰策略
+  - 不管不顾
+    - no-eviction（redis4.0默认策略）：不会驱逐任何key
+  - 检测易失性数据
+    - volatile-random：对所有设置了过期时间的key随机删除
+    - volatile-lru：对所有设置了过期时间的key使用LRU算法进行删除
+    - volatile-ttl：删除马上要过期的key
+    - volatile-lfu：对所有设置了过期时间的key使用LFU算法进行删除
+  - 检测全库数据
+    - allkeys-lru：对所有key使用LRU算法进行删除
+    - allkeys-random：对所有key随机删除
+    - allkeys-lfu：对所有key使用LFU算法进行删除
+
+- 总结
+  - 2个维度
+    - 过期键中筛选
+    - 所有键中筛选
+  - 4个方面
+    - lru
+    - lfu
+    - random
+    - ttl
+
+## 5.5. 手写LRU
+
+
+# 6. 持久化
 
 <!--https://www.cnblogs.com/ysocean/p/9114268.html-->
 
-## 5.1. RDB
+## 6.1. RDB
 
-### 5.1.1. 说明
+### 6.1.1. 说明
 
 - 说明：在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里
 
 - rdb 保存的是dump.rdb文件
 
-### 5.1.2. 原理
+### 6.1.2. 原理
 
 - Redis会单独创建（fork）一个子进程来进行持久化，会先将数据写入到 一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。 
   > Fork:Fork的作用是复制一个与当前进程一样的进程。新进程的所有数据（变量、环境变量、程序计数器等） 数值都和原进程一致，但是是一个全新的进程，并作为原进程的子进程
@@ -882,7 +766,7 @@
 - RDB的缺点是 **最后一次持久化后的数据可能丢失** 。
 
 
-### 5.1.3. 配置
+### 6.1.3. 配置
 
 上面配置文件 `###SNAPSHOTTING###`
 
@@ -906,7 +790,7 @@
 
 > 也就是说通过在配置文件中配置的 save 方式，当实际操作满足该配置形式时就会进行 RDB 持久化，将当前的内存快照保存在 dir 配置的目录中，文件名由配置的 dbfilename 决定。
 
-### 5.1.4. 备份触发与恢复
+### 6.1.4. 备份触发与恢复
 
 - 自动触发
   - 配置文件中默认：
@@ -934,7 +818,7 @@
 
 > 主机和备机一般不是一台机器。
 
-### 5.1.5. 优劣势
+### 6.1.5. 优劣势
 
 - 优势
   - RDB是一个非常紧凑(compact)的文件，它保存了redis 在某个时间点上的数据集。这种文件非常适合用于进行备份和灾难恢复。
@@ -947,7 +831,7 @@
   - RDB文件使用特定二进制格式保存，Redis版本演进过程中有多个格式的RDB版本，存在老版本Redis服务无法兼容新版RDB格式的问题(版本不兼容)
   - 在一定间隔时间做一次备份，所以如果redis意外down掉的话，就会丢失最后一次快照后的所有修改(数据有丢失)
 
-### 5.1.6. RDB触发条件原理
+### 6.1.6. RDB触发条件原理
 
 - Redis有个服务器状态结构：
   - 结构代码说明：
@@ -991,7 +875,7 @@
 
 
 
-### 5.1.7. 总结
+### 6.1.7. 总结
 
 ![redis-12](./image/redis-12.png)
 
@@ -1001,9 +885,9 @@
 - 数据丢失风险大。
 - RDB需要经常fork子进程来保存数据集到硬盘上，当数据集比较大的时候fork的过程是非常耗时的吗，可能会导致Redis在一些毫秒级不能回应客户端请求。
 
-## 5.2. AOF
+## 6.2. AOF
 
-### 5.2.1. 说明
+### 6.2.1. 说明
 
 - 说明
   - **以日志的形式来记录每个写操作，select操作，以及Flushall操作** ，将Redis执行过的所有写指令记录下来(读操作不记录)， 
@@ -1032,7 +916,7 @@ lpush str3 "1" "2" "3"
 RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文件中，而 AOF 持久化则是将执行的 set,sadd,lpush **三个命令** 保存到 AOF 文件中。
 </details>
 
-### 5.2.2. 原理
+### 6.2.2. 原理
 
 - 开启 AOF 机制后，所有的写入命令都会 **追加到 aof_buf 缓冲区中** ，并按照指定的策略 **定时将缓冲区中的数据同步到磁盘上(appendfsync)** 。 
   - **有专门的子进程去调用fsync()函数把数据从aof_buf写入到aof文件**
@@ -1042,7 +926,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 
 [详细解析(重要)](https://blog.csdn.net/wenmeishuai/article/details/106096186)
 
-### 5.2.3. 配置
+### 6.2.3. 配置
 
 - appendonly：默认值为no，也就是说redis 默认使用的是rdb方式持久化，如果想要开启 AOF 持久化方式，需要将 appendonly 修改为 yes。
 - appendfilename ：aof文件名，默认是"appendonly.aof"
@@ -1069,7 +953,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - 如果选择的是yes，当截断的aof文件被导入的时候，会自动发布一个log给客户端然后load。
   - 如果是no，用户必须手动redis-check-aof修复AOF文件才可以。默认值为 yes。
 
-### 5.2.4. 开启与恢复
+### 6.2.4. 开启与恢复
 
 - 开启
   - 将 redis.conf 的 appendonly 配置改为 yes 即可。
@@ -1080,7 +964,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - 异常修复命令：`redis-check-aof --fix config_file` 进行修复
     - 会把不符合语法规范的自动删除
 
-### 5.2.5. AOF重写
+### 6.2.5. AOF重写
 
 - 重写机制说明：
   - 由于AOF持久化是Redis不断将写命令记录到 AOF 文件中，随着Redis不断的进行，AOF 的文件会越来越大，文件越大，占用服务器内存越大以及 AOF 恢复要求时间越长。
@@ -1126,7 +1010,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
     - 当子进程 **完成 AOF 重写** 之后，就会给父进程发送一个信号
     - **父进程** 接收此信号后，就会调用函数 **将 AOF 重写缓冲区的内容都写到新的 AOF 文件中** 。
 
-### 5.2.6. 优缺点
+### 6.2.6. 优缺点
 
 - 优点：
   - AOF 持久化的方法提供了多种的同步频率，即使使用默认的同步频率每秒同步一次，Redis 最多也就丢失 1 秒的数据而已。
@@ -1139,7 +1023,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - RDB 使用快照的形式来持久化整个 Redis 数据，而 AOF 只是将每次执行的命令追加到 AOF 文件中，因此从理论上说，RDB 比 AOF 方式更健壮。官方文档也指出，AOF 的确也存在一些 BUG，这些 BUG 在 RDB 没有存在。
 
 
-### 5.2.7. 总结
+### 6.2.7. 总结
 
 ![redis-11](./image/redis-11.png)
 
@@ -1149,13 +1033,13 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 - 对于相同的数据集来说，AOF文件的体积通常要大于RDB文件的体积
 - 根据所使用的fsync 策略，AOF的速度可能会慢于RDB
 
-## 5.3. AOF和RDB选择
+## 6.3. AOF和RDB选择
 
 如果可以忍受一小段时间内数据的丢失，毫无疑问使用 RDB 是最好的，定时生成 RDB 快照（snapshot）非常便于进行数据库备份， 并且 RDB 恢复数据集的速度也要比 AOF 恢复的速度要快，而且使用 RDB 还可以避免 AOF 一些隐藏的 bug；否则就使用 AOF 重写。
 
 但是一般情况下建议不要单独使用某一种持久化机制，而是应该 **两种一起用** ，在这种情况下,当redis重启的时候会优先载入AOF文件来恢复原始的数据，因为在通常情况下AOF文件保存的数据集要比RDB文件保存的数据集要完整。Redis后期官方可能都有将两种持久化方式整合为一种持久化模型。
 
-## 5.4. AOF-RDB混合持久化
+## 6.4. AOF-RDB混合持久化
 
 在Redis4.0之后，既上一篇文章介绍的RDB和这篇文章介绍的AOF两种持久化方式，又新增了RDB-AOF混合持久化方式。
 
@@ -1171,42 +1055,42 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 
 这种方式优点我们很好理解，缺点就是不能兼容Redis4.0之前版本的备份文件了。
 
-# 6. redis数据结构
+# 7. redis数据结构
 
-## 6.1. 底层基本数据结构
+## 7.1. 底层基本数据结构
 
 
-### 6.1.1. 概要说明
+### 7.1.1. 概要说明
 
-### 6.1.2. sds 简单动态字符串
+### 7.1.2. sds 简单动态字符串
 
-### 6.1.3. linkedlist 双端链表
+### 7.1.3. linkedlist 双端链表
 
-### 6.1.4. ziplist 压缩列表
+### 7.1.4. ziplist 压缩列表
 
-### 6.1.5. quicklist 快速链表
+### 7.1.5. quicklist 快速链表
 
-### 6.1.6. dict 字典
+### 7.1.6. dict 字典
 
-### 6.1.7. inset 整数集合
+### 7.1.7. inset 整数集合
 
-### 6.1.8. skiplist 跳表
+### 7.1.8. skiplist 跳表
 
-## 6.2. 五大数据结构实现原理
+## 7.2. 五大数据结构实现原理
 
-### 6.2.1. 字符串对象
+### 7.2.1. 字符串对象
 
-### 6.2.2. 列表对象
+### 7.2.2. 列表对象
 
-### 6.2.3. 哈希对象
+### 7.2.3. 哈希对象
 
-### 6.2.4. 集合对象
+### 7.2.4. 集合对象
 
-### 6.2.5. 有序集合对象
+### 7.2.5. 有序集合对象
 
-# 7. 事务的控制
+# 8. 事务的控制
 
-## 7.1. 说明
+## 8.1. 说明
 
 - 说明：可以一次执行多个命令，本质是一组命令的集合。一个事务中的所有命令都会序列化，按顺序地串行化执行而不会被其它命令插入，不许加塞。
 
@@ -1222,7 +1106,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - **没有隔离级别的概念**：队列中的命令没有提交之前都不会实际的被执行，因为事务提交前任何指令都不会被实际执行， 也就不存在”事务内的查询要看到事务里的更新，在事务外查询不能看到”这个让人万分头痛的问题
   - **不保证原子性**：在语法正确的情况下，如果redis同一个事务中如果有一条命令执行失败，其后的命令仍然会被执行，没有回滚
 
-## 7.2. 常用命令
+## 8.2. 常用命令
 
 | 命令              | 描述                                                                                           |
 | ----------------- | ---------------------------------------------------------------------------------------------- |
@@ -1232,7 +1116,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 | unwatch           | 取消 watch 命令对所有 key 的监视。                                                             |
 | watch key [key …] | 监视一个(或多个) key ，如果在事务执行之前这个(或这些) key 被其他命令所改动，那么事务将被打断。 |
 
-## 7.3. redis的乐观锁
+## 8.3. redis的乐观锁
 
 - watch和unwatch搭配使用，为乐观锁。类似CAS。
   - 事务开启前watch一个key:k1
@@ -1244,7 +1128,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - unwatch
   - exec
 
-## 7.4. 执行示例
+## 8.4. 执行示例
 
 - 正常执行
   > ![redis-14](./image/redis-14.png)
@@ -1259,15 +1143,15 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 - 事务提交前监控变量被修改
   > ![redis-19](./image/redis-19.png)
 
-# 8. 并发问题解决
+# 9. 并发问题解决
 
 > Redis 并发竞争 的问题就是高并发写同一个key时导致的值错误如何解决
 
-## 8.1. watch乐观锁
+## 9.1. watch乐观锁
 
 乐观锁，注意不要在分片集群中使用
 
-## 8.2. 分布式锁
+## 9.2. 分布式锁
 
 分布式锁，适合分布式系统环境
 
@@ -1275,13 +1159,13 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 
 不管哪种方式实现，基本原理是不变的：用一个状态值表示锁，对锁的占用和释放通过状态值来标识。
 
-## 8.3. 时间戳
+## 9.3. 时间戳
 
 时间戳，适合有序场景
 
 比如：假设系统B先抢到锁，将key1设置为{ValueB 7:05}。接下来系统A抢到锁，发现自己的key1的时间戳早于缓存中的时间戳（`7:00<7:05`），那就不做set操作了。
 
-## 8.4. 消息队列
+## 9.4. 消息队列
 
 消息队列，串行化处理
 
@@ -1291,9 +1175,9 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 
 这种方式在一些高并发的场景中算是一种通用的解决方案。
 
-# 9. 消息发布订阅
+# 10. 消息发布订阅
 
-## 9.1. 说明
+## 10.1. 说明
 
 - 说明
   - 进程间的一种消息通信模式：发送者(pub)发送消息，订阅者(sub)接收消息。
@@ -1305,7 +1189,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 - 当有新消息通过 PUBLISH 命令发送给频道 channel1 时， 这个消息就会被发送给订阅它的三个客户端：
   > ![redis-21](./image/redis-21.png)
 
-## 9.2. 命令
+## 10.2. 命令
 
 | 命令                                      | 描述                               |
 | ----------------------------------------- | ---------------------------------- |
@@ -1316,11 +1200,11 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 | subscribe channel [channel …]             | 订阅给定的一个或多个频道的信息。   |
 | unsubscribe [channel [channel …]]         | 指退订给定的频道。                 |
 
-# 10. 集群
+# 11. 集群
 
-## 10.1. 主从复制
+## 11.1. 主从复制
 
-### 10.1.1. 说明
+### 11.1.1. 说明
 
 - redis的主从模式
 - 复制方式：使用异步复制，slave节点异步从master节点复制数据
@@ -1335,7 +1219,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 
 ![redis-22](./image/redis-22.png)
 
-### 10.1.2. 配置
+### 11.1.2. 配置
 
 只要对从节点进行配置即可，让从节点找到主节点
 
@@ -1356,7 +1240,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - 启动slave需要密码，在配置中进行配置即可
   - 客户端访问slave不需要密码
 
-### 10.1.3. 实现架构
+### 11.1.3. 实现架构
 
 - 一主多从
   ```
@@ -1370,7 +1254,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - 可以通过`SLAVEOF no one`命令，使slave1成为master
   - slave1和slave2共同构成一个`master<--slave`集群
 
-### 10.1.4. 复制原理
+### 11.1.4. 复制原理
 
 - slave启动成功连接到master后会发送一个sync命令
 - master接到命令，启动后台的存盘进程，同时收集所有接收到的用于修改数据集命令， 在后台进程执行完毕之后，master将传送整个数据文件到slave,以完成一次完全同步
@@ -1378,7 +1262,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 - **增量复制** ：Master继续将新的所有收集到的修改命令依次传给slave,完成同步
 - 只要是 **重新连接master** ，一次完全同步（全量复制)将被自动执行
 
-### 10.1.5. 宕机情况
+### 11.1.5. 宕机情况
 
 一主多从情况下
 
@@ -1393,15 +1277,15 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - 不会从slave节点中重新选一个master
   - master重新启动后，Slave将自动重新连接master，将重新对外提供写服务。
 
-### 10.1.6. 缺点
+### 11.1.6. 缺点
 
 - master节点挂了以后，redis就不能对外提供写服务了，因为剩下的slave不能成为master
 - 这个缺点影响是很大的，尤其是对生产环境来说，是一刻都不能停止服务的，所以一般的生产坏境是不会单单只有主从模式的。所以有了下面的sentinel模式。
 - 由于所有的写操作都是先在Master上操作，然后同步更新到slave上，所以从Master同步到Slave机器有一定的延迟，当系统很繁忙的时候，延迟问题会更加严重，Slave机器数量的增加也会使这个问题更加严重。
 
-## 10.2. 哨兵机制
+## 11.2. 哨兵机制
 
-### 10.2.1. 说明
+### 11.2.1. 说明
 
 - 目的：解决主从复制中，主节点宕机之后无法提供写服务的问题
 - 说明：
@@ -1421,7 +1305,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 
 - 高可用要求：一个健壮的部署至少需要三个哨兵实例。
 
-### 10.2.2. 配置
+### 11.2.2. 配置
 
 - 编写一个配置文件`sentinel.conf`，内容为：
   ```
@@ -1432,51 +1316,466 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 
 - 启动哨兵：`redis-sentinel /etc/redis/sentinel.conf`
 
-## 10.3. cluster分片集群
+## 11.3. cluster分片集群
 
 官方实现
 
 [搭建说明](https://juejin.cn/post/6844904057044205582#heading-0)
 
 
-# 11. 应用Application
+# 12. 应用Application
 
-## 11.1. 普通缓存
+## 12.1. 普通缓存
 
-## 11.2. 分布式锁
+## 12.2. 分布式锁
 
-先拿setnx来争抢锁，抢到之后再用expire给锁加一个过期时间防止锁忘记释放。
+### 12.2.1. 高效分布式锁条件
 
-如果在setnx之后执行expire之前的进程意外crash或重启维护了，那会咋样？Set指令 有非常复杂的参数，可以同时把setnx和expire合成一条指令来用的。
+- 互斥
+  - 说明：在分布式高并发的条件下，我们最需要保证，同一时刻只能有一个线程获得锁
+  - 这是最基本的一点。
 
-## 11.3. 布隆过滤器
+- 防止死锁
+  - 说明：在分布式高并发的条件下，比如有个线程获得锁的同时，还没有来得及去释放锁，就因为系统故障或者其它原因使它无法执行释放锁的命令,导致其它线程都无法获得锁，造成死锁。
+  - 思路：所以分布式非常有必要设置锁的`有效时间`，确保系统出现故障后，在一定时间内能够主动去释放锁，避免造成死锁的情况。
 
-## 11.4. 布谷鸟过滤器
+- 性能
+  - 说明：对于访问量大的共享资源，需要考虑减少锁等待的时间，避免导致大量线程阻塞。
+  - 所以在锁的设计时，需要考虑两点。
+    - 1、`锁的颗粒度要尽量小`。比如你要通过锁来减库存，那这个锁的名称你可以设置成是商品的ID,而不是任取名称。这样这个锁只对当前商品有效,锁的颗粒度小。
+    - 2、`锁的范围尽量要小`。比如只要锁2行代码就可以解决问题的，那就不要去锁10行代码了。
+- 重入
+  - 我们知道ReentrantLock是可重入锁，那它的特点就是：同一个线程可以重复拿到同一个资源的锁。重入锁非常有利于资源的高效利用。
+
+### 12.2.2. 锁相关问题
+
+- 基本流程：
+  - 先拿setnx来争抢锁，抢到之后再用expire给锁加一个过期时间防止锁忘记释放。
+
+- 问题1：如果在setnx之后执行expire之前的进程意外crash或重启维护了，如何解决
+  - 解决1：
+    - Set指令有非常复杂的参数，可以同时把setnx和expire合成一条指令来用的。
+    - SpringBoot的StringRedisTemplate的setIfAbsent()就是一个api
+    - 其实本质就是下面的使用lua脚本
+  - 解决2：使用lua脚本
+    ```
+      从 Redis 2.6.0 版本开始，通过内置的 Lua 解释器，可以使用 EVAL 命令对 Lua 脚本进行求值。
+
+      Redis 使用单个 Lua 解释器去运行所有脚本，并且， Redis 也保证脚本会以原子性(atomic)的方式执行：
+      当某个脚本正在运行的时候，不会有其他脚本或 Redis 命令被执行。这和使用 MULTI / EXEC 包围的事务很类似。
+      在其他别的客户端看来，脚本的效果(effect)要么是不可见的(not visible)，要么就是已完成的(already completed)。
+    ```
+    - 在resource目录下面新增一个后缀名为.lua结尾的文件
+    - 编写lua脚本 add.lua
+    - 传入lua脚本的key和arg
+    - 调用redisTemplate.execute方法执行脚本
+
+      <details>
+      <summary style="color:red;">脚本，代码</summary>
+
+      ```lua
+      local lockKey = KEYS[1]
+      local lockTime = KEYS[2]
+      local lockValue = KEYS[3]
+
+      -- setnx info
+      local result_1 = redis.call('SETNX', lockKey, lockValue)
+      if result_1 == 1
+      then
+      local result_2= redis.call('SETEX', lockKey,lockTime, lockValue)
+      return result_2
+      else
+      return 'faild'
+      end
+      ```
+      ```java
+      public Boolean luaExpress(String key,String  time,String value) {
+          lockScript = new DefaultRedisScript<String>();
+          lockScript.setScriptSource(
+                  new ResourceScriptSource(new ClassPathResource("add.lua")));
+          lockScript.setResultType(String.class);
+          // 封装参数
+          List<Object> keyList = new ArrayList<Object>();
+          keyList.add(key);
+          keyList.add(time);
+          keyList.add(value);
+          String result= (String)redisTemplate.execute(lockScript, keyList);
+          System.out.println(result);
+          logger.info("redis set result："+result);
+          if (!"ok".equals(result.toLowerCase())){
+              return false;
+          }
+          return true;
+      }
+      ```
+      </details>
+
+- 问题2：失效时间导致的**锁永久失效**
+  - 说明：
+
+    ![redis-27](./image/redis-27.png)
+
+    - 还没执行完成锁就失效了
+    - 然后第二个线程来了，进行加锁
+    - 然后第一个线程在finally中又给解锁了（也就是第二个线程加的锁，第一个线程给解了）
+    - 然后第二和第三个线程也可能出现上面那种情况。
+
+  - 解决1：使用UUID，一个线程加的锁，只能一个线程解锁
+
+    ![redis-29](./image/redis-29.png)
+
+    ![redis-28](./image/redis-28.png)
+
+    - 每一个线程都生成一个UUID
+    - 当UUID相同时才能解锁
+
+  - 解决2：
+    - 当拿到锁后，开启一个线程
+    - 每经过1/3的TTL后，重新设置为原来的TTL。（续命）
+    - 实现比较难，可以使用`redisson`实现
+
+### 12.2.3. redisson锁原理
+
+![redis-30](./image/redis-30.png)
+
+
+- 加锁机制
+  - 线程去获取锁，获取成功: 执行lua脚本，保存数据到redis数据库。
+  - 线程去获取锁，获取失败: 一直通过while循环尝试获取锁，获取成功后，执行lua脚本，保存数据到redis数据库。
+
+
+- 自动延期机制
+  - 主要针对两种情况(上面也提到了)：
+    - 服务器宕机导致不释放锁，导致死锁。因此设置了过期时间
+    - 业务时间执行时间大于过期时间，导致锁失效（看上面）
+  - 使用：
+    - 所以这个时候`看门狗`就出现了，它的作用就是 线程1 业务还没有执行完，时间就过了，线程1 还想持有锁的话，就会启动一个watch dog后台线程，不断的延长锁key的生存时间。
+    - **注意**: 正常这个看门狗线程是不启动的，还有就是这个看门狗启动后对整体性能也会有一定影响，所以不建议开启看门狗。
+
+
+- 为啥要用lua脚本呢？
+  - 主要是如果你的业务逻辑复杂的话，通过封装在lua脚本中发送给redis
+  - 而且redis是单线程的，这样就保证这段复杂业务逻辑执行的**原子性**。
+
+- 如何实现的可重入锁
+  - Redis存储锁的数据类型是 Hash类型
+
+    ![redis-32](./image/redis-32.png)
+
+    这里表面数据类型是Hash类型,Hash类型相当于我们java的 `<key,<key1,value>>` 类型,这里key是指 'redisson'
+
+    它的有效期还有9秒，我们再来看里们的key1值为`078e44a3-5f95-4e24-b6aa-80684655a15a:45`它的组成是:
+
+    guid + 当前线程的ID。后面的value是就和可重入加锁有关。
+
+    ![redis-33](./image/redis-33.png)
+
+  - Hash数据类型的key值包含了当前线程信息。
+
+### 12.2.4. redisson分布式锁实现
+
+> 公平，可重入
+
+#### 12.2.4.1. RLock接口
+
+> Redisson分布式锁的实现是基于RLock接口。
+
+- 继承：`public interface RLock extends Lock, RExpirable, RLockAsync`
+- 很明显RLock是继承Lock锁，所以他有Lock锁的所有特性，比如lock、unlock、trylock等特性
+- 同时它还有很多新特性：强制锁释放，带有效期的锁,。
+
+- 常见方法
+
+  <details>
+  <summary style="color:red;">源码</summary>
+
+  ```java
+  public interface RRLock {
+      //----------------------Lock接口方法-----------------------
+
+      /**
+      * 加锁 锁的有效期默认30秒
+      */
+      void lock();
+      /**
+      * tryLock()方法是有返回值的，它表示用来尝试获取锁，如果获取成功，则返回true，如果获取失败（即锁已被其他线程获取），则返回false .
+      */
+      boolean tryLock();
+      /**
+      * tryLock(long time, TimeUnit unit)方法和tryLock()方法是类似的，只不过区别在于这个方法在拿不到锁时会等待一定的时间，
+      * 在时间期限之内如果还拿不到锁，就返回false。如果如果一开始拿到锁或者在等待期间内拿到了锁，则返回true。
+      *
+      * @param time 等待时间
+      * @param unit 时间单位 小时、分、秒、毫秒等
+      */
+      boolean tryLock(long time, TimeUnit unit) throws InterruptedException;
+      /**
+      * 解锁
+      */
+      void unlock();
+      /**
+      * 中断锁 表示该锁可以被中断 假如A和B同时调这个方法，A获取锁，B为获取锁，那么B线程可以通过
+      * Thread.currentThread().interrupt(); 方法真正中断该线程
+      */
+      void lockInterruptibly();
+
+      //----------------------RLock接口方法-----------------------
+      /**
+      * 加锁 上面是默认30秒这里可以手动设置锁的有效时间
+      *
+      * @param leaseTime 锁有效时间
+      * @param unit      时间单位 小时、分、秒、毫秒等
+      */
+      void lock(long leaseTime, TimeUnit unit);
+      /**
+      * 这里比上面多一个参数，多添加一个锁的有效时间
+      *
+      * @param waitTime  等待时间
+      * @param leaseTime 锁有效时间
+      * @param unit      时间单位 小时、分、秒、毫秒等
+      */
+      boolean tryLock(long waitTime, long leaseTime, TimeUnit unit) throws InterruptedException;
+      /**
+      * 检验该锁是否被线程使用，如果被使用返回True
+      */
+      boolean isLocked();
+      /**
+      * 检查当前线程是否获得此锁（这个和上面的区别就是该方法可以判断是否当前线程获得此锁，而不是此锁是否被线程占有）
+      * 这个比上面那个实用
+      */
+      boolean isHeldByCurrentThread();
+      /**
+      * 中断锁 和上面中断锁差不多，只是这里如果获得锁成功,添加锁的有效时间
+      * @param leaseTime  锁有效时间
+      * @param unit       时间单位 小时、分、秒、毫秒等
+      */
+      void lockInterruptibly(long leaseTime, TimeUnit unit);  
+  }
+  ```
+  </details>
+
+#### 12.2.4.2. RedissonLock实现类
+
+- 继承：`public class RedissonLock extends RedissonExpirable implements RLock`
+
+- 常用方法：
+  - void lock()方法
+    - 发现lock锁里面进去其实用的是lockInterruptibly（中断锁，表示可以被中断）,
+    - 而且捕获异常后用 Thread.currentThread().interrupt()来真正中断当前线程
+
+    <details>
+    <summary style="color:red;">源码</summary>
+
+    ```java
+    @Override
+    public void lock() {
+        try {
+            lockInterruptibly();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+    ```
+    ```java
+    /**
+        * 1、带上默认值调另一个中断锁方法
+        */
+        @Override
+        public void lockInterruptibly() throws InterruptedException {
+            lockInterruptibly(-1, null);
+        }
+        /**
+        * 2、另一个中断锁的方法
+        */
+        void lockInterruptibly(long leaseTime, TimeUnit unit) throws InterruptedException 
+        /**
+        * 3、这里已经设置了锁的有效时间默认为30秒  （commandExecutor.getConnectionManager().getCfg().getLockWatchdogTimeout()=30）
+        */
+        RFuture<Long> ttlRemainingFuture = tryLockInnerAsync(commandExecutor.getConnectionManager().getCfg().getLockWatchdogTimeout(), TimeUnit.MILLISECONDS, threadId, RedisCommands.EVAL_LONG);
+        /**
+        * 4、最后通过lua脚本访问Redis,保证操作的原子性
+        */
+        <T> RFuture<T> tryLockInnerAsync(long leaseTime, TimeUnit unit, long threadId, RedisStrictCommand<T> command) {
+            internalLockLeaseTime = unit.toMillis(leaseTime);
+
+            return commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, command,
+                    "if (redis.call('exists', KEYS[1]) == 0) then " +
+                            "redis.call('hset', KEYS[1], ARGV[2], 1); " +
+                            "redis.call('pexpire', KEYS[1], ARGV[1]); " +
+                            "return nil; " +
+                            "end; " +
+                            "if (redis.call('hexists', KEYS[1], ARGV[2]) == 1) then " +
+                            "redis.call('hincrby', KEYS[1], ARGV[2], 1); " +
+                            "redis.call('pexpire', KEYS[1], ARGV[1]); " +
+                            "return nil; " +
+                            "end; " +
+                            "return redis.call('pttl', KEYS[1]);",
+                    Collections.<Object>singletonList(getName()), internalLockLeaseTime, getLockName(threadId));
+        }
+    ```
+    </details>
+
+  - tryLock(long waitTime, long leaseTime, TimeUnit unit)
+    - tryLock一般用于特定满足需求的场合，但不建议作为一般需求的分布式锁，
+    - 一般分布式锁建议用void lock(long leaseTime, TimeUnit unit)。
+    - 因为从性能上考虑，在高并发情况下后者效率是前者的好几倍
+
+    <details>
+    <summary style="color:red;">源码</summary>
+
+    ```java
+    @Override
+        public boolean tryLock(long waitTime, long leaseTime, TimeUnit unit) throws InterruptedException {
+            long time = unit.toMillis(waitTime);
+            long current = System.currentTimeMillis();
+            long threadId = Thread.currentThread().getId();
+            Long ttl = tryAcquire(leaseTime, unit, threadId);
+            //1、 获取锁同时获取成功的情况下，和lock(...)方法是一样的 直接返回True，获取锁False再往下走
+            if (ttl == null) {
+                return true;
+            }
+            //2、如果超过了尝试获取锁的等待时间,当然返回false 了。
+            time -= System.currentTimeMillis() - current;
+            if (time <= 0) {
+                acquireFailed(threadId);
+                return false;
+            }
+
+            // 3、订阅监听redis消息，并且创建RedissonLockEntry，其中RedissonLockEntry中比较关键的是一个 Semaphore属性对象,用来控制本地的锁请求的信号量同步，返回的是netty框架的Future实现。
+            final RFuture<RedissonLockEntry> subscribeFuture = subscribe(threadId);
+            //  阻塞等待subscribe的future的结果对象，如果subscribe方法调用超过了time，说明已经超过了客户端设置的最大wait time，则直接返回false，取消订阅，不再继续申请锁了。
+            //  只有await返回true，才进入循环尝试获取锁
+            if (!await(subscribeFuture, time, TimeUnit.MILLISECONDS)) {
+                if (!subscribeFuture.cancel(false)) {
+                    subscribeFuture.addListener(new FutureListener<RedissonLockEntry>() {
+                        @Override
+                        public void operationComplete(Future<RedissonLockEntry> future) throws Exception {
+                            if (subscribeFuture.isSuccess()) {
+                                unsubscribe(subscribeFuture, threadId);
+                            }
+                        }
+    ```
+    </details>
+
+  - unlock():使用 EVAL 命令执行 Lua 脚本来释放锁：
+    - key 不存在，说明锁已释放，直接执行 `publish` 命令发布释放锁消息并返回 `1`。
+    - key 存在，但是 field 在 Hash 中不存在，说明自己不是锁持有者，无权释放锁，返回 `nil`。
+    - 因为锁可重入，所以释放锁时不能把所有已获取的锁全都释放掉，一次只能释放一把锁，因此执行 `hincrby` 对锁的值**减一**。
+    - 释放一把锁后，如果还有剩余的锁，则刷新锁的失效时间并返回 `0`；如果刚才释放的已经是最后一把锁，则执行 `del` 命令删除锁的 key，并发布锁释放消息，返回 `1`。
+   
+    <details>
+    <summary style="color:red;">源码</summary>
+
+    ```java
+    @Override
+        public void unlock() {
+            // 1.通过 Lua 脚本执行 Redis 命令释放锁
+            Boolean opStatus = commandExecutor.evalWrite(getName(), LongCodec.INSTANCE,
+                    RedisCommands.EVAL_BOOLEAN,
+                    "if (redis.call('exists', KEYS[1]) == 0) then " +
+                            "redis.call('publish', KEYS[2], ARGV[1]); " +
+                            "return 1; " +
+                            "end;" +
+                            "if (redis.call('hexists', KEYS[1], ARGV[3]) == 0) then " +
+                            "return nil;" +
+                            "end; " +
+                            "local counter = redis.call('hincrby', KEYS[1], ARGV[3], -1); " +
+                            "if (counter > 0) then " +
+                            "redis.call('pexpire', KEYS[1], ARGV[2]); " +
+                            "return 0; " +
+                            "else " +
+                            "redis.call('del', KEYS[1]); " +
+                            "redis.call('publish', KEYS[2], ARGV[1]); " +
+                            "return 1; "+
+                            "end; " +
+                            "return nil;",
+                    Arrays.<Object>asList(getName(), getChannelName()),
+                    LockPubSub.unlockMessage, internalLockLeaseTime,
+                    getLockName(Thread.currentThread().getId()));
+            // 2.非锁的持有者释放锁时抛出异常
+            if (opStatus == null) {
+                throw new IllegalMonitorStateException(
+                        "attempt to unlock lock, not locked by current thread by node id: "
+                                + id + " thread-id: " + Thread.currentThread().getId());
+            }
+            // 3.释放锁后取消刷新锁失效时间的调度任务
+            if (opStatus) {
+                cancelExpirationRenewal();
+            }
+        }
+    ```
+    </details>
+
+    - 注意这里有个实际开发过程中，容易出现很容易出现上面第二步异常，非锁的持有者释放锁时抛出异常。比如下面这种情况
+      > 也就是锁相关问题中的问题2，不过redisson中会返回nil，不会导致锁失效
+      ```java
+      //设置锁1秒过去
+        redissonLock.lock("redisson", 1);
+        /**
+        * 业务逻辑需要咨询2秒
+        */
+        redissonLock.release("redisson");
+      /**
+      * 线程1 进来获得锁后，线程一切正常并没有宕机，但它的业务逻辑需要执行2秒，这就会有个问题，在 线程1 执行1秒后，这个锁就自动过期了，
+      * 那么这个时候 线程2 进来了。在线程1去解锁就会抛上面这个异常（因为解锁和当前锁已经不是同一线程了）
+      */
+      ```
+
+### 12.2.5. redis分布式锁缺陷
+
+- 缺陷:**在哨兵模式或者主从模式下，如果 master实例宕机的时候，可能导致多个客户端同时完成加锁。**
+  - Redis分布式锁会有个缺陷，就是在Redis哨兵模式下:
+  - `客户端1` 对某个`master节点`写入了redisson锁，此时会异步复制给对应的 slave节点。但是这个过程中一旦发生 master节点宕机，主备切换，slave节点从变为了 master节点。
+  - 这时`客户端2` 来尝试加锁的时候，在新的master节点上也能加锁，此时就会导致多个客户端对同一个分布式锁完成了加锁。
+  - 这时系统在业务语义上一定会出现问题，**导致各种脏数据的产生**。
+
+
+### 12.2.6. 思考题
+
+- 如何解决上述缺陷
+
+待补充
+
+---
+
+```
+redis锁每秒并发量只有几万，如何增大并发量
+```
+
+- 资源分段存储
+  - 仿照ConcurrentHashMap的分段锁
+  - 也就是不能去所整个方法，应该根据商品id去锁
+
+
+
+## 12.3. 布隆过滤器
+
+## 12.4. 布谷鸟过滤器
 
 [链接](https://juejin.cn/post/6844903861749055502)
 
-## 11.5. UV 统计
+## 12.5. UV 统计
 
-## 11.6. 排行榜
+## 12.6. 排行榜
 
-## 11.7. 关注列表和粉丝列表
+## 12.7. 关注列表和粉丝列表
 
-## 11.8. 广告弹窗触达频率的控制
+## 12.8. 广告弹窗触达频率的控制
 
-## 11.9. 延时队列
+## 12.9. 延时队列
 
 
-# 12. 高级算法
+# 13. 高级算法
 
-## 12.1. GeoHash(坐标定位算法)
+## 13.1. GeoHash(坐标定位算法)
 
-## 12.2. scan(数据快速查询算法)
+## 13.2. scan(数据快速查询算法)
 
-# 13. 常见问题
+# 14. 常见问题
 
-## 13.1. 容器型数据结构的通用规则
+## 14.1. 容器型数据结构的通用规则
 
-## 13.2. Redis 和 memcached 区别
+## 14.2. Redis 和 memcached 区别
 
 - Redis和memcached相比的优势
   - Memcached所有的值均是简单的字符串，Redis作为其替代者，支持更为丰富的数据类型
@@ -1496,7 +1795,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   | 持久化支持   | 1.RDB<br>2.AOF                                                  | 不支持                                             |
 
 
-## 13.3. Redis 过期策略
+## 14.3. Redis 过期策略
 
 - 过期策略
   - 说明
@@ -1513,27 +1812,17 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
       - 如果已经过期Redis会删除这个key，并且返回空。
 
 
-## 13.5. Redis 的 6 种数据淘汰策略
+## 14.4. Redis 的 数据淘汰策略
 
-- 淘汰策略：
-  - 说明：
-    - 其实当内存占用过多的时候，此时会进行内存淘汰，Redis提供了6种内存淘汰策策略：
-  - 分类：
-    - Noevication(默认):返回错误当内存限制达到，并且客户端尝试执行让更多的内存被使用的命令
-    - Allkeys-lru(最常用)：尝试回收使用最少的键（LRU），使得新添加的数据有空间存放
-    - Volatile-LRU：尝试回收最少使用的键（LRU），但仅限于在过期集合的键，使得新添加的数据有空间存放。
-    - Allkeys-random：回收随机的键使得新添加的数据有空间存放。
-    - Volatile-random：回收随机的建使得新添加的数据有空间存放，但仅限于在过期集合的键
-    - Volatile-ttl：回收过期集合的键，并且优先回收存活时间（TTL）较短的键，使得新添加的数据有空间存放。
- 
+> 看上面 
 
-## 13.4. Redis 持久化机制(防止 Redis 挂掉后数据丢失)
+## 14.5. Redis 持久化机制(防止 Redis 挂掉后数据丢失)
 
 RDB和AOF，看上面说明
 
-## 13.6. 缓存雪崩
+## 14.6. 缓存雪崩
 
-### 13.6.1. 说明
+### 14.6.1. 说明
 
 - 出现原因：
   - Redis不可能把所有的数据都缓存起来(内存昂贵且有限)，所以Redis需要对数据设置过期时间，并采用的是惰性删除+定期删除两种策略对过期键删除。
@@ -1541,7 +1830,7 @@ RDB和AOF，看上面说明
 
 - 定义： **缓存同一时间大面积的失效，所以，后面的请求都会落到数据库上，造成数据库短时间内承受大量请求而崩掉。**
 
-### 13.6.2. 解决方案
+### 14.6.2. 解决方案
 
 情景： 对缓存数据设置相同的过期时间，导致某段时间内 **缓存失效** ，请求全部走数据库。
 
@@ -1573,16 +1862,16 @@ RDB和AOF，看上面说明
 - 同样会导致用户等待超时，这是个治标不治本的方法！
 - 注意：加锁排队的解决方式分布式环境的并发问题，有可能还要解决分布式锁的问题；线程还会被阻塞，用户体验很差！因此，在真正的高并发场景下很少使用！
 
-## 13.7. 缓存穿透
+## 14.7. 缓存穿透
 
-### 13.7.1. 说明
+### 14.7.1. 说明
 
 - 缓存穿透是指查询一个一定不存在的数据。
 - 由于缓存不命中，就会去数据库查询，
 - 但是如果从数据库查不到数据则不写入缓存
 - 这将导致这个不存在的数据每次请求都要到数据库去查询，失去了缓存的意义。
 
-### 13.7.2. 解决方案
+### 14.7.2. 解决方案
 
 - 拦截
   - 说明：
@@ -1600,7 +1889,7 @@ RDB和AOF，看上面说明
   - 下次再请求的时候，就可以从缓存里边获取了。
   - 这种情况我们一般会将空对象设置一个较短的过期时间。
 
-## 13.8. 缓存与数据库双写一致
+## 14.8. 缓存与数据库双写一致
 
 - 说明
   - 如果仅仅查询的话，缓存的数据和数据库的数据是没问题的。但是当更新时，各种情况可能导致数据库和缓存的数据不一致。
@@ -1664,7 +1953,7 @@ RDB和AOF，看上面说明
 
 ![redis-27](./image/redis-27.png)
 
-## 13.9. 为什么单线程的 Redis 能处理那么多的并发客户端连接?
+## 14.9. 为什么单线程的 Redis 能处理那么多的并发客户端连接?
 
 - 原因
   - 纯内存操作
@@ -1683,9 +1972,9 @@ RDB和AOF，看上面说明
         - 负责轮训所有socket产生的请求
         - 压进队列（与阻塞式IO多路复用的区别）
 
-# 14. java客户端
+# 15. java客户端
 
-## 基本说明
+## 15.1. 基本说明
 
 Redis支持的java客户端都Redisson、Jedis、lettuce等等，官方推荐使用Redisson
 
@@ -1699,7 +1988,7 @@ Redis支持的java客户端都Redisson、Jedis、lettuce等等，官方推荐使
   - Redisson实现了分布式和扩展的java数据结构，和Jedis相比功能比较简单，不支持字符串操作，不支持排序、事务、管道、分区等Redis特性。
   - Redisson的宗旨是 **促进使用者对Redis的关注分离，从而让使用者能够将精力更集中的放在处理业务逻辑上** 。
 
-# 其他
+# 16. 其他
 
 - Redis的集群：Redis分片的缺点、集群架构、集群操作基本命令。
 - Lua脚本语言的介绍。
@@ -1707,8 +1996,9 @@ Redis支持的java客户端都Redisson、Jedis、lettuce等等，官方推荐使
 - Redis整合Spring等。
 - Redis集群实现Tomcat集群的Session共享等
 
-# 参考
+# 17. 参考
 
-[redis笔记](https://blog.csdn.net/u011863024/article/details/107476187)
-
+- [redis笔记](https://blog.csdn.net/u011863024/article/details/107476187)
+- [Redisson实现分布式锁](https://www.cnblogs.com/qdhxhz/p/11046905.html)
+- [Redis删除策略](https://www.cnblogs.com/liushoudong/p/12679174.html)
 
