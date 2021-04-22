@@ -83,7 +83,12 @@
       - 三者数据结构
       - 同步机制/锁
       - `put(null)`
-
+- TreeMap
+  - 底层结构：红黑树
+  - 红黑树由来：[2-3树](https://blog.csdn.net/zhichaosong/article/details/88844371)
+    - 2-节点,3-节点
+    - 4-节点分解
+    - 不平衡时融合
 - ConcurrentHashMap
   - [快速失败，安全失败](https://segmentfault.com/a/1190000016969753)
   - 1.7
@@ -99,7 +104,6 @@
       - 再失败就synchronized
     - node
 
-
 - ArrayList
   - 底层结构：数组
   - 初始大小与扩容机制
@@ -112,7 +116,8 @@
   - comparable 和 Comparator 的区别
   - 无序性和不可重复性的含义是什么
   - 有什么同步容器/并发容器
-
+  - HashMap和HashSet
+  - TreeMap和TreeSet
 - 集合比较问题
   - List,Set,Map 三者的区别？
   - Arraylist 和 Vector 的区别?
@@ -382,13 +387,19 @@
         - LinkedBlockingDeque
         - LinkedTransferQueue
       - ConcurrenLinkedQueue
+        - Unsafe:CAS
         - [LinkedBlockingQueue与ConcurrentLinkedQueue的区别](https://blog.csdn.net/lzxlfly/article/details/86710382)
     - ConcurrentMap
       - ConcurrentHashMap
+        - LockSupport
+        - 分段锁继承ReentrantLock
+        - Unsafe:CAS
+        - AtomicInteger
       - ConcurrentNavigableMap
       - ConcurrentSkipListMap
     - CopyOnWrite
       - CopyOnWriteArrayList
+        - ReentrantLock加锁
       - CopyOnWriteArrayMap
       - CopyOnWriteArraySet
 - 线程池

@@ -1200,6 +1200,10 @@ in
 
 # 4. MySQL架构
 
+待补充
+
+[sql语句执行过程](https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485097&idx=1&sn=84c89da477b1338bdf3e9fcd65514ac1&chksm=cea24962f9d5c074d8d3ff1ab04ee8f0d6486e3d015cfd783503685986485c11738ccb542ba7&token=79317275&lang=zh_CN#rd)
+
 ![Mysql-4-1](./image/Mysql-4-1.png)
 
 如上图所示，MySQL服务器逻辑架构从上往下可以分为三层：
@@ -3860,9 +3864,23 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
 
 ### 6.5.1. 启动方式
 
-# 7. 分表分库分区
+# 7. 大表优化
 
-(待补充)
+[待补充](https://segmentfault.com/a/1190000006158186)
+
+## 7.1. 限定数据范围诶
+
+务必禁止不带任何限制数据范围条件的查询语句。比如：我们当用户在查询订单历史的时候，我们可以控制在一个月的范围内；
+
+## 7.2. 读写分离
+
+经典的数据库拆分方案，主库负责写，从库负责读；
+
+详情请看下面的主从复制，读写分离
+
+## 7.3. 分区分库分表
+
+待补充
 
 - 顺序
   - 分表:按业务垂直拆分
@@ -3871,6 +3889,28 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
   - 分区
 
 [参考](https://mp.weixin.qq.com/s/rYG58KS9kHDDOMajKT9y5Q)
+
+### 7.3.1. 分表
+
+### 7.3.2. 分库
+
+### 7.3.3. 分区
+
+垂直分区
+
+水平分区
+> 水平拆分可以支持非常大的数据量。需要注意的一点是：分表仅仅是解决了单一表数据过大的问题，但由于表的数据还是在同一台机器上，其实对于提升MySQL并发能力没有什么意义，所以 水平拆分最好分库 。
+
+## 7.4. 分库分表后id处理
+
+待补充
+
+- **UUID**：不适合作为主键，因为太长了，并且无序不可读，查询效率低。比较适合用于生成唯一的名字的标示比如文件的名字。
+- **数据库自增 id** : 两台数据库分别设置不同步长，生成不重复ID的策略来实现高可用。这种方式生成的 id 有序，但是需要独立部署数据库实例，成本高，还会有性能瓶颈。
+- **利用 redis 生成 id :** 性能比较好，灵活方便，不依赖于数据库。但是，引入了新的组件造成系统更加复杂，可用性降低，编码更加复杂，增加了系统成本。
+- **Twitter的snowflake算法** ：Github 地址：https://github.com/twitter-archive/snowflake。
+- **美团的Leaf分布式ID生成系统** ：Leaf 是美团开源的分布式ID生成器，能保证全局唯一性、趋势递增、单调递增、信息安全，里面也提到了几种分布式方案的对比，但也需要依赖关系数据库、Zookeeper等中间件。感觉还不错。美团技术团队的一篇文章：https://tech.meituan.com/2017/04/21/mt-leaf.html 。
+- ......
 
 # 8. 锁机制
 
@@ -4299,7 +4339,7 @@ Buffer Pool的使用大大提高了读写数据的效率，但是也带了新的
 
 ### 8.3.2. innodb使用表锁
 
-待整理
+待补充整理
 
 （１）使用LOCK TALBES虽然可以给InnoDB加表级锁，但必须说明的是，表锁不是由InnoDB存储引擎层管理的，而是由其上一层ＭySQL Server负责的，仅当autocommit=0、innodb_table_lock=1（默认设置）时，InnoDB层才能知道MySQL加的表锁，ＭySQL Server才能感知InnoDB加的行锁，这种情况下，InnoDB才能自动识别涉及表级锁的死锁（带求证)；否则，InnoDB将无法自动检测并处理这种死锁（验证没通过）innodb 并没有做出回滚操作。
 
@@ -5274,7 +5314,11 @@ slave会从master读取binlog来进行数据同步，slave将master的binlog拷�
 - mysql5.6优化：
   - 索引下推优化(ICP)
 
-# 12. 参考资料
+# 12. 推荐阅读
+
+[MySQL高性能优化规范建议](https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485117&idx=1&sn=92361755b7c3de488b415ec4c5f46d73&chksm=cea24976f9d5c060babe50c3747616cce63df5d50947903a262704988143c2eeb4069ae45420&token=79317275&lang=zh_CN#rd)
+
+# 13. 参考资料
 
 - [尚硅谷MySQL数据库高级，mysql优化，数据库优化](https://www.bilibili.com/video/BV1KW411u7vy?p=44)
 - [Mysql笔记博客](https://blog.csdn.net/oneby1314/category_10278969.html)

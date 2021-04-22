@@ -29,7 +29,7 @@
 - 说明
 - 原理:<br />内存屏障
 
-## 3.3. 不保证原子性：
+## 3.3. 不保证原子性
 
 - 原因
 - 解决
@@ -57,7 +57,7 @@
 
 # 5. synchronized
 
-## 3 种使用方法
+## 5.1. 种使用方法
 
 - 代码块
   - 自己指定对象锁
@@ -73,7 +73,7 @@
   - 底层原理：ACC_SYNCHRONIZED，ACC_STATIC
 - 注意：构造方法本身就属于线程安全的，不存在同步的构造方法一说。<br />不能加 synchronized
 
-## 锁的升级(不可逆)
+## 5.2. 锁的升级(不可逆)
 
 - 无锁(CAS)
 - 偏向锁
@@ -94,9 +94,9 @@
 
 
 
-## synchronized 和 ReentrantLock 的区别
+## 5.3. synchronized 和 ReentrantLock 的区别
 
-## synchronized 和 volatile 的区别
+## 5.4. synchronized 和 volatile 的区别
 
 # 6. CAS
 
@@ -125,13 +125,507 @@
   - 示例
   - 基本原理
 
-# 8. AQS
+# 8. 三种线程等待唤醒的方法(LockSupport)
 
-- 概念
-- 底层
-  - Unsafe(提供 CAS 操作)
-  - LockSupport(提供 park/unpark 操作)
-- 数据结构
+> 主要是为了说LockSupport
+
+## 8.1. Object类
+
+### 8.1.1. 说明
+
+Object类中的wait和notify方法实现线程等待和唤醒
+
+> **1、正常情况：实现线程的等待和唤醒**
+
+1. 代码
+
+   ```java
+   static Object objectLock = new Object();
+   
+   private static void synchronizedWaitNotify() {
+       new Thread(() -> {
+           synchronized (objectLock) {
+               System.out.println(Thread.currentThread().getName() + "\t" + "------come in");
+               try {
+                   objectLock.wait(); // 等待
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
+           }
+       }, "A").start();
+   
+       new Thread(() -> {
+           synchronized (objectLock) {
+               objectLock.notify(); // 唤醒
+               System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
+           }
+       }, "B").start();
+   }
+   ```
+
+2. 程序运行结果：A 线程先执行，执行 `objectLock.wait()` 后被阻塞，B 线程在 A 线程之后执行 `objectLock.notify()` 将 A线程唤醒
+
+  ```
+  A ---come in
+  B ---通知
+  A ---被唤醒
+  ```
+
+### 8.1.2. 异常情况
+
+> **异常情况一：不在 synchronized 关键字中使用 wait() 和 notify() 方法**
+
+1. 代码
+
+   ```java
+   static Object objectLock = new Object();
+   
+   private static void synchronizedWaitNotify() {
+       new Thread(() -> {
+           //synchronized (objectLock) {
+           System.out.println(Thread.currentThread().getName() + "\t" + "------come in");
+           try {
+               objectLock.wait(); // 等待
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+           System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
+           //}
+       }, "A").start();
+   
+       new Thread(() -> {
+           //synchronized (objectLock) {
+           objectLock.notify(); // 唤醒
+           System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
+           //}
+       }, "B").start();
+   }
+   ```
+
+2. 程序运行结果：不在 synchronized 关键字中使用 wait() 和 notify() 方法 ，将抛出 `java.lang.IllegalMonitorStateException` 异常
+
+
+> **异常情况二：先 notify() 后 wait()**
+
+1. 代码
+
+   ```java
+   static Object objectLock = new Object();
+   
+   private static void synchronizedWaitNotify() {
+       new Thread(() -> {
+           try {
+               TimeUnit.SECONDS.sleep(3L);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+           synchronized (objectLock) {
+               System.out.println(Thread.currentThread().getName() + "\t" + "------come in");
+               try {
+                   objectLock.wait(); // 等待
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
+           }
+       }, "A").start();
+   
+       new Thread(() -> {
+           synchronized (objectLock) {
+               objectLock.notify(); // 唤醒
+               System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
+           }
+       }, "B").start();
+   }
+   ```
+
+2. 程序运行结果：B 线程先执行 `objectLock.notify()`，A 线程再执行 `objectLock.wait()`，这样 A 线程无法被唤醒
+
+---
+
+- wait和notify方法必须要在同步块或者方法里面且成对出现使用
+- 先wait后notify才OK
+
+## 8.2. Condition接口
+
+### 8.2.1. 说明
+
+Condition接口中的await后signal方法实现线程的等待和唤醒
+
+> **1、正常情况：实现线程的等待和唤醒**
+
+1. 代码
+
+   ```java
+   static Lock lock = new ReentrantLock();
+   static Condition condition = lock.newCondition();
+   
+   private static void lockAwaitSignal() {
+       new Thread(() -> {
+           lock.lock();
+           try {
+               System.out.println(Thread.currentThread().getName() + "\t" + "------come in");
+               try {
+                   condition.await();
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
+           } finally {
+               lock.unlock();
+           }
+       }, "A").start();
+   
+       new Thread(() -> {
+           lock.lock();
+           try {
+               condition.signal();
+               System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
+           } finally {
+               lock.unlock();
+           }
+       }, "B").start();
+   }
+   ```
+
+2. 程序运行结果：A 线程先执行，执行 `condition.await()` 后被阻塞，B 线程在 A 线程之后执行 `condition.signal()` 将 A线程唤醒
+
+  ```
+  A ---come in
+  B ---通知
+  A ---被唤醒
+  ```
+
+### 8.2.2. 异常情况
+
+> **异常情况一：不在 lock() 和 unlock() 方法内使用 await() 和 signal() 方法**
+
+1. 代码
+
+   ```java
+   static Lock lock = new ReentrantLock();
+   static Condition condition = lock.newCondition();
+   
+   private static void lockAwaitSignal() {
+       new Thread(() -> {
+           //lock.lock();
+           try {
+               System.out.println(Thread.currentThread().getName() + "\t" + "------come in");
+               try {
+                   condition.await();
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
+           } finally {
+               //lock.unlock();
+           }
+       }, "A").start();
+   
+       new Thread(() -> {
+           //lock.lock();
+           try {
+               condition.signal();
+               System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
+           } finally {
+               //lock.unlock();
+           }
+       }, "B").start();
+   }
+   ```
+
+2. 程序运行结果：不在 lock() 和 unlock() 方法内使用 await() 和 signal() 方法，将抛出 `java.lang.IllegalMonitorStateException` 异常
+
+> **异常情况二：先 signal() 后 await()**
+
+1. 代码
+
+   ```java
+   static Lock lock = new ReentrantLock();
+   static Condition condition = lock.newCondition();
+   
+   private static void lockAwaitSignal() {
+       new Thread(() -> {
+           try {
+               TimeUnit.SECONDS.sleep(3L);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+           lock.lock();
+           try {
+               System.out.println(Thread.currentThread().getName() + "\t" + "------come in");
+               try {
+                   condition.await();
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
+           } finally {
+               lock.unlock();
+           }
+       }, "A").start();
+   
+       new Thread(() -> {
+           lock.lock();
+           try {
+               condition.signal();
+               System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
+           } finally {
+               lock.unlock();
+           }
+       }, "B").start();
+   }
+   ```
+
+2. 程序运行结果：B 线程先执行 `condition.signal()`，A 线程再执行 `condition.await()`，这样 A 线程无法被唤醒
+
+  ```
+  B ---通知
+  A ---come in
+  ```
+
+---
+
+> **传统的 synchronized 和 Lock 实现等待唤醒通知的约束**
+
+- 线程先要获得并持有锁，必须在锁块（synchronized或lock）中
+- 必须要先等待后唤醒，线程才能够被唤醒
+
+## 8.3. LockSupport类
+
+### 8.3.1. 是什么
+
+- 用途：LockSupport 是用来创建锁和其他同步类的基本线程阻塞原语。
+- 使用方式：
+  - LockSupport中的park()和unpark()的作用分别是阻塞线程和解除阻塞线程，
+  - 可以将其看作是线程等待唤醒机制(wait/notify)的加强版
+- 原理：
+  - LockSupport 类使用了一种名为 permit（许可）的概念来做到阻塞和唤醒线程的功能，
+  - 每个线程都有一个许可（permit），permit 只有两个值 1 和0
+  - **permit默认为0**
+  - **可以把permit看成是一种（0, 1）信号量（Semaphore），但与 Semaphore 不同的是，许可的累加上限是 1**。
+
+### 8.3.2. 主要方法
+
+![concorrence-7](./image/concorrence-7.png)
+
+---
+
+> **阻塞park**
+
+- 使用：`LockSupport.park()`
+- 作用:阻塞**当前线程**
+- 注意：
+  - permit 默认是 0，
+  - 所以一开始调用 `park()` 方法，当前线程就会阻塞，
+  - 直到别的线程将当前线程的 permit 设置为 1 时，`park()` 方法会被唤醒，然后会将 permit 再次设置为 0 并返回。
+
+- 原理:park() 方法通过 Unsafe 类实现
+  ```java
+  // Disables the current thread for thread scheduling purposes unless the permit is available.
+  public static void park() {
+      UNSAFE.park(false, 0L);
+  }
+  ```
+
+---
+
+> **唤醒unpark()**
+
+- 使用：`unpark(Thread)`
+- 作用：唤醒处于阻断状态的指定线程
+- 注意：
+  - 调用 `unpark(thread)` 方法后，就会将 thread 线程的许可 permit 设置成 1
+  - 注意多次调用 `unpark()`方法，**不会累加**，permit 值还是 1
+  - 若此时有线程在阻塞，会自动唤醒 thread 线程，即之前阻塞线程中的`LockSupport.park()`方法会立即返回。
+
+- 原理： `unpark()` 方法通过 Unsafe 类实现
+  ```java
+  // Makes available the permit for the given thread
+  public static void unpark(Thread thread) {
+      if (thread != null)
+          UNSAFE.unpark(thread);
+  }
+  ```
+
+### 8.3.3. 代码示例
+
+1. 代码
+
+   ```java
+   private static void lockSupportParkUnpark() {
+       Thread a = new Thread(() -> {
+           System.out.println(Thread.currentThread().getName() + "\t" + "------come in");
+           LockSupport.park(); // 线程 A 阻塞
+           System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
+       }, "A");
+       a.start();
+   
+       new Thread(() -> {
+           LockSupport.unpark(a); // B 线程唤醒线程 A
+           System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
+       }, "B").start();
+   }
+   ```
+
+2. 程序运行结果：A 线程先执行 `LockSupport.park()` 方法将通行证（permit）设置为 0，其实这并没有什么鸟用，因为 permit 初始值本来就为 0，然后 B 线程执行 `LockSupport.unpark(a)` 方法将 permit 设置为 1，此时 A 线程可以通行
+
+  ```
+  A ---come in
+  B ---通知
+  A ---被唤醒
+  ```
+
+### 8.3.4. 异常情况
+
+> 先 unpark() 后 park()
+
+1. 代码
+
+   ```java
+   private static void lockSupportParkUnpark() {
+       Thread a = new Thread(() -> {
+           try {
+               TimeUnit.SECONDS.sleep(3L);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+           System.out.println(Thread.currentThread().getName() + "\t" + "------come in" + System.currentTimeMillis());
+           LockSupport.park();
+           System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒" + System.currentTimeMillis());
+       }, "A");
+       a.start();
+   
+       new Thread(() -> {
+           LockSupport.unpark(a);
+           System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
+       }, "B").start();
+   }
+   ```
+
+2. 程序运行结果：因为引入了通行证的概念，所以先唤醒（`unpark()`）其实并不会有什么影响，从程序运行结果可以看出，A 线程执行 `LockSupport.park()` 时并没有被阻塞
+  ```
+  A ---come in
+  B ---通知
+  A ---被唤醒
+  ```
+
+---
+
+> 异常情况：没有考虑到 permit 上限值为 1
+
+1. 代码
+
+   ```java
+   private static void lockSupportParkUnpark() {
+       Thread a = new Thread(() -> {
+           try {
+               TimeUnit.SECONDS.sleep(3L);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+           System.out.println(Thread.currentThread().getName() + "\t" + "------come in" + System.currentTimeMillis());
+           LockSupport.park();
+           LockSupport.park();
+           System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒" + System.currentTimeMillis());
+       }, "A");
+       a.start();
+   
+       new Thread(() -> {
+           LockSupport.unpark(a);
+           LockSupport.unpark(a);
+           System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
+       }, "B").start();
+   }
+   ```
+
+2. 程序运行结果：由于 permit 的上限值为 1，所以执行两次 `LockSupport.park()` 操作将导致 A 线程阻塞
+  ```
+  B -----通知
+  A -----come in1609053197873
+  ```
+
+
+### 8.3.5. 总结
+
+- 以前的两种方式：
+  - 以前的等待唤醒通知机制必须synchronized里面执行wait和notify，在lock里面执行await和signal，这上面这两个都必须要持有锁才能干
+
+- LockSupport：俗称锁中断，LockSupport 解决了 synchronized 和 lock 的痛点
+  - 优势1：LockSupport不用持有锁块，不用加锁，程序性能好
+  - 优势2：无须注意唤醒和阻塞的先后顺序，不容易导致卡死
+
+---
+
+- **1、LockSupport是用来创建锁和其他同步类的基本线程阻塞原语**
+  - LockSupport是一个线程阻塞工具类，所有的方法都是静态方法，可以让线程在任意位置阻塞，阻塞之后也有对应的唤醒方法。
+  - 归根结底，LockSupport调用的Unsafe中的native代码。
+
+- **2、LockSupport提供park()和unpark()方法实现阻塞线程和解除线程阻塞的过程**
+  - LockSupport和每个使用它的线程都有一个许可(permit)关联。permit相当于1，0的开关，默认是0，
+  - 调用一次unpark就加1变成1，调用一次park会消费permit，也就是将1变成0，同时park立即返回。
+  - 如再次调用park会变成阻塞(因为permit为零了会阻塞在这里，一直到permit变为1)，这时调用unpark会把permit置为1。
+  - 每个线程都有一个相关的permit，permit最多只有一个，重复调用unpark也不会积累凭证。
+
+- **3、形象的理解**:线程阻塞需要消耗凭证(permit)，这个凭证最多只有1个。
+  - 当调用park方法时
+    - 如果有凭证，则会直接消耗掉这个凭证然后正常退出;
+    - 如果无凭证，就必须阻塞等待凭证可用;
+  - 而unpark则相反，它会增加一个凭证，但凭证最多只能有1个，累加无效。
+
+### 8.3.6. 相关问题
+
+- park 底层使用的是`UNSAFE.park`
+- 为什么 LockSupport 也是核心基础类? AQS 框架借助于两个类：Unsafe(提供 CAS 操作)和 LockSupport(提供 park/unpark 操作)
+- 写出分别通过 wait/notify 和 LockSupport 的 park/unpark 实现同步?
+- LockSupport.park()会释放锁资源吗? 那么 Condition.await()呢?
+- Thread.sleep()、Object.wait()、Condition.await()、LockSupport.park()的区别? **重点**
+- 如果在 wait()之前执行了 notify()会怎样? 如果在 park()之前执行了 unpark()会怎样?
+
+### 8.3.7. 底层原理
+
+LockSupport和Atomic类都是调用的Unsafe类中的方法。
+
+[Unsafe类park和unpark方法源码深入分析（mutex+cond)](https://blog.csdn.net/saintyyu/article/details/107426428)
+
+
+# 9. AQS
+
+## 9.1. 概念
+
+- **AQS**是`AbstractQueuedSynchronizer`的简称，即`抽象队列同步器`，从字面意思上理解:
+  - 抽象：抽象类，只实现一些主要逻辑，有些方法由子类实现；
+  - 队列：使用先进先出（FIFO）队列存储数据；
+  - 同步：实现了同步的功能。
+
+- 作用：
+  - AQS是一个用来构建锁和同步器的框架，使用AQS能简单且高效地构造出应用广泛的同步器
+  - 只要子类实现它的几个`protected`方法就可以了，
+  - 比如我们提到的ReentrantLock，Semaphore，ReentrantReadWriteLock，SynchronousQueue，FutureTask等等皆是基于AQS的。
+
+---
+
+一般我们说的 AQS 指的是 `java.util.concurrent.locks` 包下的 AbstractQueuedSynchronizer，但其实还有另外三种抽象队列同步器：`AbstractOwnableSynchronizer`、`AbstractQueuedLongSynchronizer` 和 `AbstractQueuedSynchronizer`
+
+## 9.2. 和AQS有关的并发编程类
+
+![concorrence-8](./image/concorrence-8.png)
+
+## 9.3. 底层依赖
+
+- Unsafe(提供 CAS 操作)
+- LockSupport(提供 park/unpark 操作)
+  - LockSupport底层又是Unsafe
+
+## 9.4. 原理
+
+### 9.4.1. state
+
+### 9.4.2. CLH
+
+<!--
+
 - 资源共享模式/同步方式
 - **模版设计模式**
 - 源码分析
@@ -145,14 +639,7 @@
   - AOS
   - AQLS
 
-# 9. LockSupport
-
-- park 底层使用的是`UNSAFE.park`
-- 为什么 LockSupport 也是核心基础类? AQS 框架借助于两个类：Unsafe(提供 CAS 操作)和 LockSupport(提供 park/unpark 操作)
-- 写出分别通过 wait/notify 和 LockSupport 的 park/unpark 实现同步?
-- LockSupport.park()会释放锁资源吗? 那么 Condition.await()呢?
-- Thread.sleep()、Object.wait()、Condition.await()、LockSupport.park()的区别? **重点**
-- 如果在 wait()之前执行了 notify()会怎样? 如果在 park()之前执行了 unpark()会怎样?
+-->
 
 # 10. 锁、通信工具类
 
@@ -298,7 +785,13 @@
 
 ## 13.3. 线程池工作流程
 
-## 13.4. ThreadPool 状态转换
+## 13.4. 非核心线程的回收
+
+待补充
+
+[深入讲解](https://segmentfault.com/a/1190000039815066)
+
+## 13.5. ThreadPool 状态转换
 
 - RUNNING
 - SHUTDOWN
@@ -306,19 +799,21 @@
 - TIDYING
 - TERMINATED
 
-## 13.5. ScheduledThreadPool:
+## 13.6. ScheduledThreadPool:
 
 - 继承了 ThreadPoolExecutor
 - 主要用来在给定的延迟后运行任务，或者定期执行任务
 - 实际项目中会使`用quartz`
 
-## 13.6. 参数如何设置
+## 13.7. 参数如何设置
 
-## 13.7. 异常线程处理
+## 13.8. 异常线程处理
 
 [异常线程处理](https://mp.weixin.qq.com/s?__biz=Mzg3NjU3NTkwMQ==&mid=2247505057&idx=1&sn=621ebc409b589478e2e05388e079d8c0&source=41#wechat_redirect)
 
-# 14. ThreadLocal(待做)
+# 14. ThreadLocal
+
+看上面三种等待唤醒的方法
 
 # 15. 常见区别
 
@@ -332,3 +827,5 @@
 # 16. 参考文献
 
 ![《深入浅出java多线程》](http://concurrent.redspider.group/RedSpider.html)
+
+
