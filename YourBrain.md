@@ -103,7 +103,15 @@
       - CAS失败自旋保证成功
       - 再失败就synchronized
     - node
-
+- [LinkedHashMap](https://www.jianshu.com/p/8f4f58b4b8ab)
+  - 结构：HashMap+双向链表
+  - 两种模式
+    - 插入顺序模式
+    - 访问顺序模式
+      - `get`
+      - 重排序
+  - 扩容
+  - 实现LRU
 - ArrayList
   - 底层结构：数组
   - 初始大小与扩容机制
