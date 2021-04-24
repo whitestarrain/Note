@@ -811,6 +811,10 @@ public class WaitNotifyPrintOddEveWait {
 
 ## 2.7. 线程的未捕获异常
 
+待整理
+
+[未捕获异常](https://droidyue.com/blog/2019/01/06/how-java-handle-uncaught-exceptions/)
+
 ## 2.8. 多线程导致的问题
 
 ### 2.8.1. 线程安全

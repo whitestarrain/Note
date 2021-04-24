@@ -608,9 +608,6 @@ LockSupport和Atomic类都是调用的Unsafe类中的方法。
 
 一般我们说的 AQS 指的是 `java.util.concurrent.locks` 包下的 AbstractQueuedSynchronizer，但其实还有另外三种抽象队列同步器：`AbstractOwnableSynchronizer`、`AbstractQueuedLongSynchronizer` 和 `AbstractQueuedSynchronizer`
 
-## 9.2. 和AQS有关的并发编程类
-
-![concorrence-8](./image/concorrence-8.png)
 
 ## 9.3. 底层依赖
 
@@ -624,22 +621,71 @@ LockSupport和Atomic类都是调用的Unsafe类中的方法。
 
 ### 9.4.2. CLH
 
+## 源码分析
+
+待整理（重要）
+
+[AQS源码分析](https://www.cnblogs.com/waterystone/p/4920797.html)
+
+[AQS详解](https://www.cnblogs.com/chengxiao/archive/2017/07/24/7141160.html)
+
+### 模板设计模式
+
+
+### acquire
+
+```java
+public final void acquire(int arg) {
+    if (!tryAcquire(arg) &&
+        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+        selfInterrupt();
+}
+```
+
+- aquire()方法为获取资源的入口
+- tryAcquire()尝试直接去获取资源，如果成功则直接返回（这里体现了非公平锁，每个线程获取锁时会尝试直接抢占加塞一次，而CLH队列中可能还有别的线程在等待）；
+- 如果无法获取资源就会执行addWaiter，addWaiter()将该线程加入等待队列的尾部，并标记为独占模式；
+- acquireQueued()使线程阻塞在等待队列中获取资源，一直获取到资源后才返回。如果在整个等待过程中被中断过，则返回true，否则返回false。
+- 如果线程在等待过程中被中断过，它是不响应的。只是获取资源后才再进行自我中断selfInterrupt()，将中断补上。
+
+![concorrence-advance-1](./image/concorrence-advance-1.png)
+
+### release
+
+### acquireShared
+
+### releaseShared
+
+## AQS组件
+
+### 总览
+
+![concorrence-8](./image/concorrence-8.png)
+
+
+### ReentrantLock
+
+### ReentrantReadWriteLock
+
+### Semaphore
+
+### CountDownLatch
+
+### CyclicBarrier
+
 <!--
 
-- 资源共享模式/同步方式
-- **模版设计模式**
-- 源码分析
-  - 获取资源流程
-  - 释放资源流程
-- 三个组件
-  - Semaphore
-  - CountDownLatch
-  - CyclicBarrier
 - 其他
   - AOS
   - AQLS
 
 -->
+
+## 其他通信工具类
+
+![concorrence-9](./image/concorrence-9.png)
+
+## 自定义Mutex
 
 # 10. 锁、通信工具类
 
@@ -787,7 +833,7 @@ LockSupport和Atomic类都是调用的Unsafe类中的方法。
 
 ## 13.4. 非核心线程的回收
 
-待补充
+待补充（重要）
 
 [深入讲解](https://segmentfault.com/a/1190000039815066)
 

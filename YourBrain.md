@@ -8,19 +8,21 @@
 - java泛型原理及使用
   - T ,T extends xxx, ？,？extends xxx 和 ？super xxx 的区别？
   - 为何不能通过直接通过`T[] arr=new T[10]`的方式来创建数组<br />如何正确创建泛型数组。
+  - 类型擦除
 - equals方法使用注意
   - `常量.equals`
   - `Objects.equals` **推荐**
-  - hashcode和equals
+  - [hashcode和equals(重要)](https://www.cnblogs.com/skywang12345/p/3324958.html)
 - String,StringBuilder,StringBuffer
   - 字符串常量池
   - AbstractStringBilder,建造者
   - synchronized
 - 包装类
   - Integer当数值在-128 ~127时，会将创建的 Integer 对象缓存起来
-  - 包装数据类型不能用 equals 来判断
 - BigDecimal
-  - 浮点数之间的等值判断，基本数据类型不能用==来比较（精度丢失）
+  - 浮点数之间的等值判断，
+    - 基本数据类型不能用==来比较（精度丢失）
+    - 包装数据类型不能用 equals 来判断
   - 使用 BigDecimal 来定义浮点数的值，再进行浮点数的运算操作。
   - 推荐使用String作为参数传入BigDecimal构造方法
 - 类型选取
@@ -66,7 +68,7 @@
     - 存储结构：数组+链表+红黑树。红黑树结构转换条件
     - [红黑树由来：2-3树](https://blog.csdn.net/zhichaosong/article/details/88844371)
     - 尾插：为什么改了
-    - 如何解决的resize死循环
+    - [如何解决的resize死循环](https://blog.csdn.net/weixin_43067762/article/details/105635547)
   - 线程不安全：put的时候导致的多线程数据不一致
   - 初始化大小
   - 扩容机制，LoadFactory
@@ -96,7 +98,7 @@
     - **segment分段锁** -- HashBucket--HashEntry
       - 继承了ReentrantLock
       - 尝试获取锁存在并发，竞争，阻塞
-    - get高效，volatile修饰，不需要加锁
+    - get高效，不需要加锁(count,value被volatile修饰)
   - 1.8
     - 数组+链表/红黑树
     - CAS+synchronized
@@ -105,9 +107,9 @@
     - node
 - [LinkedHashMap](https://www.jianshu.com/p/8f4f58b4b8ab)
   - 结构：HashMap+双向链表
-  - 两种模式
-    - 插入顺序模式
-    - 访问顺序模式
+  - 两种模式(accessOrder变量)
+    - 插入顺序模式(false)
+    - 访问顺序模式(true)
       - `get`
       - 重排序
   - 扩容
@@ -257,6 +259,10 @@
       - 对象头中的内容
       - 阻塞的好处(cpu)与代价(内核态)
   - synchronized 和 ReentrantLock 的区别
+    - jvm-api层面
+    - 是否可中断
+    - 公平非公平
+    - 锁绑定多个条件
   - synchronized 和 volatile 的区别
 
 - CAS
@@ -1029,6 +1035,130 @@
 ## nosql
 
 ### Redis
+
+- 基本数据类型
+  - String
+    - 说明
+    - 应用场景
+    - 数据结构
+  - Hash
+    - 说明
+    - 应用场景
+    - 数据结构
+  - List
+    - 说明
+    - 应用场景
+    - 数据结构
+  - Set
+    - 说明
+    - 应用场景
+    - 数据结构
+  - ZSet
+    - 说明
+    - 应用场景
+    - 数据结构
+
+- 过期淘汰
+  - 过期删除策略
+    - 定时删除
+    - 惰性删除
+    - 定期删除
+  - 内存淘汰策略
+    - no-eviction
+    - allkeys
+      - random
+      - lru
+      - lfu
+    - volatile
+      - ttl
+      - random
+      - lru
+      - lfu
+- 持久化
+  - RDB
+    - 持久化原理/过程
+    - 配置
+    - 触发
+      - 自动
+        - 默认的三个
+        - 原理
+      - 手动(4种)
+    - check检查
+    - 优劣势
+  - AOF
+    - 持久化原理/过程
+    - 配置
+    - 触发
+      - 开启后自动
+      - 手动`bgrewriteaof`
+    - check检查
+    - AOF重写
+      - 原理
+        - 读取服务器现有KV
+        - fork子**进程**
+      - 触发
+      - 重写数据不一致问题
+      - 重写数据不一致问题解决
+    - (总结)两个缓冲区
+
+- 事务
+  - 基本命令
+  - 乐观锁
+  - 两种异常情况：
+    - 全都不执行
+    - 执行可以执行的
+
+- 并发问题解决
+  - 乐观锁
+  - 分布式锁
+  - 消息队列
+  - 时间戳
+
+- 消息发布订阅
+
+- 集群
+  - 主从复制
+  - 哨兵模式
+  - 分片cluster
+
+- 常见问题
+  - 缓存雪崩
+    - 说明
+    - 解决方案
+  - 缓存穿透
+    - 说明
+    - 解决方案
+  - 双写一致
+    - 说明
+    - 解决方案
+  - 线程模型
+    - 为什么能单线程处理那么多客户端
+    - 为什么6.0前不使用多线程
+    - Redis 6.0为什么使用多线程
+
+- redis应用
+  - redis分布式锁
+    - 高校分布式锁条件
+      - 互斥
+      - 防止死锁
+      - 性能
+      - 可重入
+    - 两个问题及解决思路
+      - setnx,expire原子性
+      - 锁提前失效
+    - redisson锁
+      - 流程/原理
+      - 看门狗机制
+      - lua脚本
+      - 实现可重入:Hash
+      - 缺陷
+  - 缓存
+    - 旁路缓存模式
+    - 读写穿透
+    - 异步缓存写入
+  - 布隆过滤器
+  - 布谷鸟过滤器
+
 
 ### MongoDB
 

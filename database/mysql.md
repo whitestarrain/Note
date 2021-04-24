@@ -5365,6 +5365,10 @@ RC模式类似，这里不再进行说明
   - MVCC:不再赘述
   - LBCC:LBCC是Lock-Based Concurrent Control的简称，意思是基于锁的并发控制。
 
+- 两种情况
+  - 在快照读读情况下，mysql通过mvcc来避免幻读。
+  - 在当前读读情况下，mysql通过next-key来避免幻读
+
 ---
 
 **innodb RR下，只进行select，可以避免幻读**
