@@ -1,3 +1,7 @@
+
+> 该文件中的内容主要从参考资料中整理修改得到，为的是构建一个体系比较完整的JUC只是点框架。<br />
+> 详细内容会不断补充整理。
+
 # 1. 并发编程三大特性
 
 # 2. JMM
@@ -609,19 +613,19 @@ LockSupport和Atomic类都是调用的Unsafe类中的方法。
 一般我们说的 AQS 指的是 `java.util.concurrent.locks` 包下的 AbstractQueuedSynchronizer，但其实还有另外三种抽象队列同步器：`AbstractOwnableSynchronizer`、`AbstractQueuedLongSynchronizer` 和 `AbstractQueuedSynchronizer`
 
 
-## 9.3. 底层依赖
+## 9.2. 底层依赖
 
 - Unsafe(提供 CAS 操作)
 - LockSupport(提供 park/unpark 操作)
   - LockSupport底层又是Unsafe
 
-## 9.4. 原理
+## 9.3. 原理
 
-### 9.4.1. state
+### 9.3.1. state
 
-### 9.4.2. CLH
+### 9.3.2. CLH
 
-## 源码分析
+## 9.4. 源码分析
 
 待整理（重要）
 
@@ -629,10 +633,10 @@ LockSupport和Atomic类都是调用的Unsafe类中的方法。
 
 [AQS详解](https://www.cnblogs.com/chengxiao/archive/2017/07/24/7141160.html)
 
-### 模板设计模式
+### 9.4.1. 模板设计模式
 
 
-### acquire
+### 9.4.2. acquire
 
 ```java
 public final void acquire(int arg) {
@@ -650,28 +654,28 @@ public final void acquire(int arg) {
 
 ![concorrence-advance-1](./image/concorrence-advance-1.png)
 
-### release
+### 9.4.3. release
 
-### acquireShared
+### 9.4.4. acquireShared
 
-### releaseShared
+### 9.4.5. releaseShared
 
-## AQS组件
+## 9.5. AQS组件
 
-### 总览
+### 9.5.1. 总览
 
 ![concorrence-8](./image/concorrence-8.png)
 
 
-### ReentrantLock
+### 9.5.2. ReentrantLock
 
-### ReentrantReadWriteLock
+### 9.5.3. ReentrantReadWriteLock
 
-### Semaphore
+### 9.5.4. Semaphore
 
-### CountDownLatch
+### 9.5.5. CountDownLatch
 
-### CyclicBarrier
+### 9.5.6. CyclicBarrier
 
 <!--
 
@@ -681,11 +685,11 @@ public final void acquire(int arg) {
 
 -->
 
-## 其他通信工具类
+## 9.6. 其他通信工具类
 
 ![concorrence-9](./image/concorrence-9.png)
 
-## 自定义Mutex
+## 9.7. 自定义Mutex
 
 # 10. 锁、通信工具类
 

@@ -865,7 +865,7 @@ public static void main(String[] args){
   - 作用
     - 主管Java程序的运行，它保存方法的局部变量、部分结果，并参与方法的调用和返回。
     - 其中局部变量包括：
-      - 8种基本数据类型
+      - 8种基本数据类型(byte,short,int,long,float,double,boolean,char)
       - 对象的引用地址（对象会放到堆中）
 
 - 优点
@@ -1195,7 +1195,7 @@ public static void main(String[] args){
 ##### 2.2.3.8.3. 相关指令
 
 > 下方前四条指令固化在虚拟机内部，方法的调用执行不可人为干预，而invokedynamic指令则支持由用户确定方法版本。<br />
-> **其中invokestatic指令和invokespecial指令调用的方法称为： 虚方法，其余的（final修饰的除外）称为虚方法。**
+> **其中invokestatic指令和invokespecial指令调用的方法称为： 非虚方法，其余的（final修饰的除外）称为虚方法。**
 
 - 普通调用指令
   - 调用非虚方法
@@ -2788,7 +2788,7 @@ public class OOMTest extends ClassLoader {
     > 查看反编译文件
     - 在Prepare环节会进行一个默认初始化为0
     - 然后再Initiallization赋值为1
-    - 如果还在静态代码块中进行赋值，即就会在`<client>`中进行赋值。
+    - 如果还在静态代码块中进行赋值，即就会在`<clinit>`中进行赋值。
     > ![method_area-10](./image/method_area-10.png) 
   - final static的初始化:
     > 查看反编译文件

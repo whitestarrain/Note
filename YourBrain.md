@@ -534,9 +534,9 @@
     - 引导类加载器（Bootstrap ClassLoader） c/c++编写
     - 自定义类加载器（User-Defined ClassLoader） java编写
       - 为何要自定义类加载器
-  - 抽象类
+  - 抽象类ClassLoader
     - 继承结构
-    - sun.misc.Launcher 
+    - 虚拟机的入口应用:`sun.misc.Launcher`
     - 获取classloader的方式
   - **双亲委派机制**
     - **原理**
@@ -547,7 +547,7 @@
     - 例外案例
   - 沙箱安全机制
   - 其他
-    - jvm 中判断两个class对象是否为同一个类3个判断条件
+    - jvm 中判断两个class对象是否为同一个类2个判断条件
     - 类加载器作为类型信息，引用类型转换
 
 ### 中层
