@@ -71,7 +71,11 @@
     - [如何解决的resize死循环](https://blog.csdn.net/weixin_43067762/article/details/105635547)
   - 线程不安全：put的时候导致的多线程数据不一致
   - 初始化大小
-  - 扩容机制，LoadFactory
+  - 扩容机制
+    - put流程
+    - LoadFactory
+    - [树化阀值8来源](https://juejin.cn/post/6921914880559677447])
+    - 退化阀值6
   - 容量为什么要2的幂
   - [遍历方法及性能](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
   - 有什么同步容器/并发容器
@@ -92,7 +96,6 @@
     - 4-节点分解
     - 不平衡时融合
 - ConcurrentHashMap
-  - [快速失败，安全失败](https://segmentfault.com/a/1190000016969753)
   - 1.7
     - 分段锁+数组+链表
     - **segment分段锁** -- HashBucket--HashEntry
@@ -120,6 +123,7 @@
   - RandomAccess 接口
   - `System.arraycopy()` 和 `Arrays.copyOf()`方法
   - 有什么同步容器/并发容器
+  - [快速失败，安全失败](https://segmentfault.com/a/1190000016969753)
 - LinkedList
   - 底层结构：双向链表
 - Set

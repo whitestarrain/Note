@@ -1,5 +1,5 @@
 
-> 该文件中的内容主要从参考资料中整理修改得到，为的是构建一个体系比较完整的JUC只是点框架。<br />
+> 该文件中的内容主要从参考资料中整理修改得到，为的是构建一个体系比较完整的JUC知识点框架。<br />
 > 详细内容会不断补充整理。
 
 # 1. 并发编程三大特性
@@ -876,6 +876,6 @@ public final void acquire(int arg) {
 
 # 16. 参考文献
 
-![《深入浅出java多线程》](http://concurrent.redspider.group/RedSpider.html)
+- [《深入浅出java多线程》](http://concurrent.redspider.group/RedSpider.html)
 
 
