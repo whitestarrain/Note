@@ -3387,13 +3387,13 @@ private static Calendar createCalendar(TimeZone zone,
 2. 设计的程序结构，过于简单，没有设计缓存层对象，程序的扩展和维护不好，也就是说，这种设计方案，把产品(即：房子) 和创建产品的过程(即：建房子流程) 封装在一起，代码耦合性增强了。
 3. 解决方案：将产品和产品建造过程解耦 --> 建造者模式
 
-#### 3.2.5.3. 建造者模式介绍
+#### 3.2.5.3. 基本介绍
 
 1. 建造者模式（`Builder Pattern`） 又叫生成器模式，是一种对象构建模式。它可以将复杂对象的建造过程抽象出来（抽象类别），使这个抽象过程的不同实现方法可以构造出不同表现（属性）的对象。
 2. 建造者模式是一步一步创建一个复杂的对象，它允许用户只通过指定复杂对象的类型和内容就可以构建它们，用户不需要知道内部的具体构建细节。
 3. 实际应用场景：建造房子、组装车辆
 
-#### 3.2.5.4. 建造者模式原理
+#### 3.2.5.4. 类图原理
 
 -  建造者模式的四个角色
   1. `Product`（产品角色）： 一个具体的产品对象
@@ -3411,7 +3411,7 @@ private static Calendar createCalendar(TimeZone zone,
   3. `ConcreteBuilder`（具体建造者）：实现了 `Builder` 中的抽象方法
   4. `Director`（指挥者）：将 `Builder` 的具体实现类聚合到 `Director` 中，在 `Director` 中调用具体的 `Builder` 完成具体产品的制造
 
-#### 3.2.5.5. 建造者模式代码
+#### 3.2.5.5. 优化代码
 
 > **类图**
 
@@ -3562,15 +3562,13 @@ private static Calendar createCalendar(TimeZone zone,
    House [base=高楼的打地基100米, wall=高楼的砌墙20cm, roofed=高楼的透明屋顶]
    ```
 
----
-
-#### 3.2.5.6. 总结
+> **总结**
 
 1. 首先，`Product` 为产品类，将 `Product` 的实例对象**组合**在抽象建造者 `AbstractBuilder` 中，并通过抽象建造者中定义的抽象方法，来约定制造产品的规范
 2. 然后，通过 `Builder` 具体的实现类：具体建造者 `ConcreteBuilder`，重写抽象父类 `AbstractBuilder` 中的抽象方法，来指定具体产品的制造细节
 3. 最后，将 `ConcreteBuilder` 的实例对象聚合在指挥者 `Director` 中，通过指挥者实现具体产品的制造流程（抽象方法的调用顺序），最后返回产品即可
 
-#### 3.2.5.7. jdk源码示例
+#### 3.2.5.6. jdk源码示例
 
 1. `StringBuilder` 的 `append()` 方法：调用父类`AbstractStringBuilder` 的 `append()` 方法
 
@@ -3655,7 +3653,7 @@ private static Calendar createCalendar(TimeZone zone,
 2. `AbstractStringBuilder` 实现了 `Appendable` 接口方法，这里的 `AbstractStringBuilder` 已经是建造者，只是不能实例化
 3. `StringBuilder` 既充当了指挥者角色，同时充当了具体的建造者， 因为建造方法的实现是由 `AbstractStringBuilder` 完成，而 `StringBuilder` 继承了`AbstractStringBuilder`
 
-#### 3.2.5.8. 注意事项
+#### 3.2.5.7. 注意事项
 
 > **建造者模式的注意事项和细节**
 
@@ -4347,6 +4345,342 @@ private static Calendar createCalendar(TimeZone zone,
 **实际开发中，实现起来不拘泥于我们讲解的三种经典形式**
 
 ### 3.3.3. 桥接模式（Bridge Pattern）
+
+
+#### 3.3.3.1. 情景介绍
+
+现在对不同手机类型、不同品牌的手机实现操作编程(比如：开机、关机、上网，打电话等)
+
+![design-patterns-30](./image/design-patterns-30.png)
+
+#### 3.3.3.2. 传统方式
+
+![design-patterns-31](./image/design-patterns-31.png)
+
+问题：
+
+1. 扩展性问题(类爆炸)， 如果我们再增加手机的样式(旋转式)，就需要增加各个品牌手机的类，同样如果我们增加一个手机品牌，也要在各个手机样式类下增加
+2. 违反了单一职责原则，当我们增加手机样式时，要同时增加所有品牌的手机，这样增加了代码维护成本
+3. 解决方案 --> 使用桥接模式
+
+#### 3.3.3.3. 基本介绍
+
+1. 桥接模式(`Bridge`模式)是指：将实现与抽象放在两个不同的类层次中，使两个层次可以独立改变，桥接模式是一种结构型设计模式
+2. `Bridge`模式基于类的最小设计原则，通过使用封装、聚合及继承等行为让不同的类承担不同的职责。它的主要特点是把抽象(`Abstraction`)与行为实现(`Implementation`)分离开来，从而可以保持各部分的独立性以及应对他们的功能扩展
+
+
+> *出现两层继承，或者以继承的方式实现组合的时候，可以稍微试试这种设计模式。不通过两层继承，而通过客户端的自己指定组合方式*
+>
+> 简单来说就是通过客户端组合的方式，替代了继承
+
+#### 3.3.3.4. 类图原理
+
+![design-patterns-32](./image/design-patterns-32.png)
+
+1. `Client`：桥接模式的调用者
+2. `Abstraction`：抽象类，`Abstraction` 中维护了一个 `Implementor` 实现类的实例（聚合关系），`Abstraction` 充当桥接类
+3. `RefinedAbstraction`：`Abstraction` 的具体实现类
+4. `Implementor`：定义行为的接口
+5. `ConcreteImplementor`：`Implementor` 的具体实现类
+
+从 `UML` 图： 这里的抽象类和接口是聚合的关系， 其实也是调用和被调用关系，抽象在 `Abstraction` 这一块，行为实现在 `Implementor` 这一块
+
+
+#### 3.3.3.5. 优化代码
+
+> **类图**
+
+![design-patterns-33](./image/design-patterns-33.png)
+
+
+> **代码实现**
+
+1. `Brand`：规定各个品牌手机的行为
+
+   ```java
+   //接口
+   public interface Brand {
+   	void open();
+   
+   	void close();
+   
+   	void call();
+   }
+   ```
+
+2. `XiaoMi`：实现了 `Brand` 接口，指定了小米手机的具体行为
+
+   ```java
+   public class XiaoMi implements Brand {
+   
+   	@Override
+   	public void open() {
+   		System.out.println(" 小米手机开机 ");
+   	}
+   
+   	@Override
+   	public void close() {
+   		System.out.println(" 小米手机关机 ");
+   	}
+   
+   	@Override
+   	public void call() {
+   		System.out.println(" 小米手机打电话 ");
+   	}
+   
+   }
+   ```
+
+3. `Vivo`：实现了 `Brand` 接口，指定了 `Vivo` 手机的具体行为
+
+   ```java
+   public class Vivo implements Brand {
+   
+   	@Override
+   	public void open() {
+   		System.out.println(" Vivo手机开机 ");
+   	}
+   
+   	@Override
+   	public void close() {
+   		System.out.println(" Vivo手机关机 ");
+   	}
+   
+   	@Override
+   	public void call() {
+   		System.out.println(" Vivo手机打电话 ");
+   	}
+   
+   }
+   ```
+
+4. `Phone`：电话的抽象类，在该类中聚合了一个 `Brand` 接口的具体实现类
+
+   ```java
+   public abstract class Phone {
+   
+   	// 组合品牌
+   	private Brand brand;
+   
+   	// 构造器
+   	public Phone(Brand brand) {
+   		this.brand = brand;
+   	}
+   
+   	protected void open() {
+   		this.brand.open();
+   	}
+   
+   	protected void close() {
+   		this.brand.close();
+   	}
+   
+   	protected void call() {
+   		this.brand.call();
+   	}
+   
+   }
+   ```
+
+5. `FoldedPhone`：继承抽象父类 `Phone`，对抽象父类中的方法进行重写
+
+   ```java
+   //折叠式手机类，继承 抽象类 Phone
+   public class FoldedPhone extends Phone {
+   
+   	// 构造器
+   	public FoldedPhone(Brand brand) {
+   		super(brand);
+   	}
+   
+   	@Override
+   	public void open() {
+   		super.open();
+   		System.out.println(" 折叠样式手机 ");
+   	}
+   
+   	@Override
+   	public void close() {
+   		super.close();
+   		System.out.println(" 折叠样式手机 ");
+   	}
+   
+   	@Override
+   	public void call() {
+   		super.call();
+   		System.out.println(" 折叠样式手机 ");
+   	}
+   
+   }
+   ```
+
+6. `UpRightPhone`：继承抽象父类 `Phone`，对抽象父类中的方法进行重写
+
+   ```java
+   public class UpRightPhone extends Phone {
+   
+   	// 构造器
+   	public UpRightPhone(Brand brand) {
+   		super(brand);
+   	}
+   
+   	@Override
+   	public void open() {
+   		super.open();
+   		System.out.println(" 直立样式手机 ");
+   	}
+   
+   	@Override
+   	public void close() {
+   		super.close();
+   		System.out.println(" 直立样式手机 ");
+   	}
+   
+   	@Override
+   	public void call() {
+   		super.call();
+   		System.out.println(" 直立样式手机 ");
+   	}
+   	
+   }
+   ```
+
+7. `Client`：客户端，可以看到，使用桥接模式可以轻松地组合出不同手机类型、不同品牌的手机
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   
+   		// 折叠式的小米手机 (样式 + 品牌 )
+   		Phone phone1 = new FoldedPhone(new XiaoMi());
+   		phone1.open();
+   		phone1.call();
+   		phone1.close();
+   		System.out.println("=======================");
+   
+   		// 折叠式的Vivo手机 (样式 + 品牌 )
+   		Phone phone2 = new FoldedPhone(new Vivo());
+   		phone2.open();
+   		phone2.call();
+   		phone2.close();
+   		System.out.println("==============");
+   
+   		// 直立式的小米手机 (样式 + 品牌 )
+   		UpRightPhone phone3 = new UpRightPhone(new XiaoMi());
+   		phone3.open();
+   		phone3.call();
+   		phone3.close();
+   		System.out.println("==============");
+   
+   		// 直立式的Vivo手机 (样式 + 品牌 )
+   		UpRightPhone phone4 = new UpRightPhone(new Vivo());
+   		phone4.open();
+   		phone4.call();
+   		phone4.close();
+   		
+   	}
+   
+   }
+   ```
+
+> **总结**
+
+![design-patterns-34](./image/design-patterns-34.png)
+
+1. `Phone` 就像一座桥的感觉，它其实并没有做什么实质性的工作，只是调用 `Brand` 的具体实现类中的方法，就感觉像是一个请求从 `Phone` 的具体实现类通过 `Phone` 传递到了 `Brand` 的具体实现类
+2. 通过代码我们可以看到，增加一个新的手机样式，并不会引起类膨胀，因为只要新样式继承了 `Phone`，并通过构造器或者 `setter` 方法聚合一个 `Brand` 实现类的实例，就能完成组合的作用
+
+#### 3.3.3.6. JDBC源码
+
+> **类图**
+
+![design-patterns-35](./image/design-patterns-35.png)
+
+- `Jdbc` 的 `Driver`接口，如果从桥接模式来看， `Driver`就是一个接口（行为规范）
+- 下面可以有`MySQL`的`Driver`， `Oracle`的`Driver`，为行为实现类
+- 如果严格按照桥接模式的话，`DriverManager`其实还会有子类，子类作为抽象具体实现，不过这里直接就一个抽象具体实现。
+
+> **源码**
+
+1. 客户端通过 `DriverManager` 操作数据库，`DriverManager` 里面定义了很多方法，就比如说如下的 `getConnection()` 方法，它返回一个 `Connection` 对象
+
+  ![design-patterns-36](./image/design-patterns-36.png)
+
+   ```java
+   @CallerSensitive
+   public static Connection getConnection(String url,
+       java.util.Properties info) throws SQLException {
+   
+       return (getConnection(url, info, Reflection.getCallerClass()));
+   }
+   ```
+
+2. `Connection` 为 `java.sql` 包下的接口，里面定义了 超多的抽象方法，比如 `prepareStatement()` 方法
+
+   ```java
+   public interface Connection  extends Wrapper, AutoCloseable {
+       
+       // ...  
+       PreparedStatement prepareStatement(String sql, int resultSetType,
+                                          int resultSetConcurrency, int resultSetHoldability)
+           throws SQLException;
+   
+       CallableStatement prepareCall(String sql, int resultSetType,
+                                     int resultSetConcurrency,
+                                     int resultSetHoldability) throws SQLException;
+   
+       PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
+           throws SQLException;
+   
+       PreparedStatement prepareStatement(String sql, int columnIndexes[])
+           throws SQLException;
+   
+       PreparedStatement prepareStatement(String sql, String columnNames[])
+           throws SQLException;
+   
+       // ...
+   ```
+
+3. `com.mysql.jdbc.Connection` 接口继承了 `java.sql.Connection` 接口
+
+  ![design-patterns-37](./image/design-patterns-37.png)
+
+   ```java
+   public interface Connection extends java.sql.Connection, ConnectionProperties {
+   ```
+
+4. `ConnectionImpl` 类实现了 `MySQLConnection` 接口，其中 `MySQLConnection` 接口继承了 `com.mysql.jdbc.Connection` 接口
+
+   ```java
+   public class ConnectionImpl extends ConnectionPropertiesImpl implements MySQLConnection {
+   ```
+
+>　**总结**
+
+就以 `getConnection()` 方法的调用过程为例，`Client` 端调用 `DriverManager`（桥接器），`DriverManager` 去找 `java.sql.Connection` 的具体实现类
+
+
+#### 3.3.3.7. 注意事项及应用场景
+
+> **注意事项**
+
+1. 实现了抽象和实现部分的分离， 从而极大的提供了系统的灵活性， 让抽象部分和实现部分独立开来， 这有助于系统进行分层设计， 从而产生更好的结构化系统。
+2. 对于系统的高层部分， 只需要知道抽象部分和实现部分的接口就可以了， 其它的部分由具体业务来完成。
+3. **桥接模式替代多层继承方案**， 可以**减少子类的个数**， 降低系统的管理和维护成本
+4. 桥接模式的引入增加了系统的理解和设计难度， 由于聚合关联关系建立在抽象层， 要求开发者针对抽象进行设计和编程
+5. 桥接模式要求**正确识别出系统中两个独立变化的维度(抽象和实现)**， 因此其使用范围有一定的局限性， 即需要有这样的应用场景
+
+> **应用场景**
+
+1. `JDBC` 驱动程序
+2. 银行转账系统
+   1. 转账分类（抽象层）：网上转账， 柜台转账， `AMT` 转账
+   2. 转账用户类型（行为实现）： 普通用户， 银卡用户， 金卡用户
+3. 消息管理
+   1. 消息类型（抽象层）： 即时消息， 延时消息
+   2. 消息分类（行为实现）： 手机短信， 邮件消息， `QQ` 消息
+
 
 ### 3.3.4. 过滤器模式（Filter、Criteria Pattern）
 
