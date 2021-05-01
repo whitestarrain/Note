@@ -276,7 +276,8 @@ public class TestBuffer {
   - 在 JDK 1.7 中的 NIO.2 针对各个实现类提供了静态方法 open()
   - 在 JDK 1.7 中的 NIO.2 的 Files 工具类的 newByteChannel()
 
-- 通道之间的数据传输，使用的是直接缓冲区的方式
+- 通道之间的数据传输
+  > 下面的方法使用的是直接缓冲区的方式
   - transferFrom()
   - transferTo()
 - 分散(Scatter)与聚集(Gather)
@@ -294,9 +295,6 @@ public class TestBuffer {
 ### 示例
 
 **使用直接缓冲区和非直接缓冲区的api区别挺大的，好好看看。**
-
-<br /><br />
-
 
 <details>
 <summary style="color:red;">channel全部测试代码</summary>
