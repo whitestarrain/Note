@@ -96,7 +96,9 @@ VO
 
 ## 概念
 
-> **不同情况**
+### 说明
+
+> **所有的调用情况**
 
 ![java-basic-1](./image/java-basic-1.png)
 
@@ -133,12 +135,16 @@ VO
 
 - SPI和API也不一定是接口，我这里都是指狭义的具体的接口。
 
+### SPI原理
+
+- **将接口的实现类放在配置文件中，我们在程序运行过程中读取配置文件，通过反射加载实现类**
+- 这样，我们可以在运行的时候，**动态替换接口的实现类**。和 IoC 的解耦思想是类似的。
 
 ## JDK SPI示例
 
 ### 手动实现案例
 
-#### jdk实现
+#### jdk依赖
 
 - 说明：
   - 在**jdk6**里面引进的一个新的特性**ServiceLoader**，从官方的文档来说，它主要是用来装载一系列的service provider
@@ -147,6 +153,8 @@ VO
   - 当服务的提供者，提供了服务接口的一种实现之后，我们只需要在jar包的META-INF/services/目录里同时创建一个以服务接口命名的文件
   - 该文件里就是实现该服务接口的具体实现类
   - 而当外部程序装配这个模块的时候，就能通过该jar包META-INF/services/里的配置文件找到具体的实现类名，并装载实例化，完成模块的注入。
+
+  ![java-basic-3](./image/java-basic-3.png)
 
 #### 示例代码
 
@@ -246,10 +254,7 @@ VO
 - 针对一个数据库，可能会存在着不同的数据库驱动实现。
 - 在使用特定的驱动实现时，不希望修改现有的代码，而希望通过一个简单的配置就可以达到效果。
 
-#### 代码说明
-
-
-> **手动`Class.forName("com.mysql.jdbc.Driver")`**
+#### 手动加载
 
 可以使用`Class.forName("com.mysql.jdbc.Driver")`加载mysql驱动
 
@@ -272,7 +277,7 @@ VO
   ```
   > 体现了`使用方来提供规范`(java提供sql规范)，`提供方根据规范把自己加载到使用方`(Mysql实现Driver等接口)中的spi思想
 
-> **不手动加载**
+#### 不手动加载
 
 也可以不手动加载，尽管不调用`Class.forName("com.mysql.jdbc.Driver")` 也会加载驱动器，原因是因为调用方(java源码中的DriverManager)有使用ServiceLoader
 
@@ -305,21 +310,17 @@ VO
 不符合配置文件规则
 
 
-#### 使用总结
-
-![java-basic-3](./image/java-basic-3.png)
-
 ## 其他案例
 
 ### Spring SPI
 
-#### scan
+> **scan**
 
 我们在spring中可以通过component-scan标签来对指定包路径进行扫描，只要扫到spring制定的@service、@controller等注解，spring自动会把它注入容器。
 
 这就相当于spring**制定了注解规范**，我们按照这个注解规范开发相应的实现类或controller，spring并不需要感知我们是怎么实现的，他只需要根据注解规范和scan标签注入相应的bean，这正是spi理念的体现。
 
-#### 自定义Scope
+> **自定义Scope**
 
 spring中有作用域scope的概念。
 除了singleton、prototype、request、session等spring为我们提供的域，我们还可以自定义scope。
@@ -340,7 +341,7 @@ beanFactory.registerScope("thread", threadScope);
 
 spring作为使用方**提供了自定义scope的规则**，提供方根据规则进行编码和配置，这样在spring中就能运用我们自定义的scope了，并不需要spring感知我们scope里的实现，这也是平台使用方制定规则，提供方负责实现的思想。
 
-#### 自定义标签
+> **自定义标签**
 
 扩展Spring自定义标签配置大致需要以下几个步骤
 
@@ -351,7 +352,7 @@ spring作为使用方**提供了自定义scope的规则**，提供方根据规�
 
 这样我们就边写出了一个自定义的标签，spring只是为我们**定义好了创建标签的流程**，不用感知我们是如何实现的，我们通过register就把自定义标签加载到了spring中，实现了spi的思想。
 
-#### ConfigurableBeanFactory
+> **ConfigurableBeanFactory**
 
 spring里为我们提供了许多属性编辑器，这时我们如果想把spring配置文件中的字符串转换成相应的对象进行注入，就要自定义属性编辑器，这时我们可以按照spring为我们提供的规则来自定义我们的编辑器
 

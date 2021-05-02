@@ -217,11 +217,18 @@ ZooKeeper 最早起源于雅虎研究院的一个研究小组。在当时，研�
 
 ## 3.3. 监听机制(Watcher)
 
-- Watcher（事件监听器），是 ZooKeeper 中的一个很重要的特性。
-- ZooKeeper 允许用户在指定节点上注册一些 Watcher，并且在一些特定事件触发的时候，ZooKeeper 服务端会将事件通知到感兴趣的客户端上去
-- 该机制是 ZooKeeper 实现分布式协调服务的重要特性。
+- 说明：
+  - Watcher（事件监听器），是 ZooKeeper 中的一个很重要的特性。
+  - ZooKeeper 允许用户在指定节点上注册一些 Watcher，并且在一些特定事件触发的时候，ZooKeeper 服务端会将事件通知到感兴趣的客户端上去
+  - 该机制是 ZooKeeper 实现分布式协调服务的重要特性。
 
-![zookeeper-8](./image/zookeeper-8.png)
+  ![zookeeper-8](./image/zookeeper-8.png)
+
+- 事件
+  - 节点创建
+  - 节点删除
+  - 节点数据修改
+  - 子节点变更
 
 - 示例：
   - 比如hadoop中的ZKFC
@@ -837,16 +844,24 @@ List<String> childrenPaths = zkClient.getChildren().forPath("/node1");
     - 能够很好地在保证 **在高并发的情况下保证节点创建的全局唯一性** 
     - 即无法重复创建同样的节点。
 
-- 简单锁实现流程：
-  - 因为创建节点的唯一性，我们可以让多个客户端同时创建一个临时节点，**创建成功的就说明获取到了锁**
-  - 然后没有获取到锁的客户端也像上面选主的非主节点创建一个 watcher 进行节点状态的监听
-  - 如果这个互斥锁被释放了（可能获取锁的客户端宕机了，或者那个客户端主动释放了锁）可以调用回调函数重新获得锁。
+- **普通锁**实现流程：
+  - **非公平锁**：使用临时节点+客户端抢锁
+    - 因为创建节点的唯一性，我们可以让多个客户端同时创建一个临时节点，**创建成功的就说明获取到了锁**
+    - 然后没有获取到锁的客户端也像上面选主的非主节点创建一个 watcher 进行节点状态的监听。**所有客户端监听一个节点**
+    - 如果这个互斥锁被释放了（可能获取锁的客户端宕机了，或者那个客户端主动释放了锁）可以调用回调函数重新获得锁。
+  - **公平锁**：使用临时有序节点+回调
+    - 使用 ZK 的临时节点和有序节点，每个线程获取锁就是在 ZK 创建一个临时有序的节点，比如在 /lock/ 目录下。
+    - 创建节点成功后，获取 /lock 目录下的所有临时节点，再判断当前线程创建的节点是否是所有的节点的序号最小的节点。
+    - 如果当前线程创建的节点是所有节点序号最小的节点，则认为获取锁成功。
+    - 如果当前线程创建的节点不是所有节点序号最小的节点，则**对节点序号的前一个节点添加一个事件监听**。
+    - 比如当前线程获取到的节点序号为 /lock/003，然后所有的节点列表为[/lock/001，/lock/002，/lock/003]，则对 /lock/002 这个节点添加一个事件监听器。
+      - 如果锁释放了，会唤醒下一个序号的节点，然后重新执行第 3 步，判断是否自己的节点序号是最小。
+      - 比如 /lock/001 释放了，/lock/002 监听到时间，此时节点集合为[/lock/002，/lock/003]，则 /lock/002 为最小序号节点，获取到锁。
 
-- 相交于redis锁优势
-  - zk 中不需要向 redis 那样考虑锁得不到释放的问题了
-  - 因为当客户端挂了，节点也挂了，锁也释放了。是不是很简答？
+    ![zookeeper-22](./image/zookeeper-22.png)
 
-- 读写锁
+
+- **读写锁**大致思路(也可以实现公平锁和非公平锁，思路和上面的一样)：
   - 规定所有创建节点必须有序
   - 如果是读请求（要获取共享锁）的话
     - 如果**没有比自己更小的节点，或比自己小的节点都是读请求**，则可以获取到读锁，读取数据。
@@ -860,6 +875,81 @@ List<String> childrenPaths = zkClient.getChildren().forPath("/node1");
   - 此时你可以通过让等待的节点只监听他们前面的节点。
   - 让读请求监听比自己小的最后一个写请求节点，写请求只监听比自己小的最后一个节点
 
+- 相交于redis锁优势
+  - zk 中不需要向 redis 那样考虑锁得不到释放的问题了
+  - 因为当客户端挂了，节点也挂了，锁也释放了。是不是很简答？
+
+---
+
+<details>
+<summary style="color:red;">Curator代码实现</summary>
+
+- Curator 客户端的自带分布式锁实现
+  ```java
+  InterProcessMutex interProcessMutex = new InterProcessMutex(client,"/anyLock");
+  interProcessMutex.acquire();
+  interProcessMutex.release();
+  ```
+- 其中的核心源码
+  ```java
+  private boolean internalLockLoop(long startMillis, Long millisToWait, String ourPath) throws Exception {
+      boolean  haveTheLock = false;
+      boolean  doDelete = false;
+      try {
+          if ( revocable.get() != null ) {
+              client.getData().usingWatcher(revocableWatcher).forPath(ourPath);
+          }
+
+          while ( (client.getState() == CuratorFrameworkState.STARTED) && !haveTheLock ) {
+              // 获取当前所有节点排序后的集合
+              List<String>   children = getSortedChildren();
+              // 获取当前节点的名称
+              String sequenceNodeName = ourPath.substring(basePath.length() + 1); // +1 to include the slash
+              // 判断当前节点是否是最小的节点
+              PredicateResults predicateResults = driver.getsTheLock(client, children, sequenceNodeName, maxLeases);
+              if ( predicateResults.getsTheLock() ) {
+                  // 获取到锁
+                  haveTheLock = true;
+              } else {
+                  // 没获取到锁，对当前节点的上一个节点注册一个监听器
+                  String previousSequencePath = basePath + "/" + predicateResults.getPathToWatch();
+                  synchronized(this){
+                      Stat stat = client.checkExists().usingWatcher(watcher).forPath(previousSequencePath);
+                      if (stat != null){
+                          if ( millisToWait != null ){
+                              millisToWait -= (System.currentTimeMillis() - startMillis);
+                              startMillis = System.currentTimeMillis();
+                              if ( millisToWait <= 0 ){
+                                  doDelete = true;    // timed out - delete our node
+                                  break;
+                              }
+                              wait(millisToWait);
+                          }else{
+                              wait();
+                          }
+                      }
+                  }
+                  // else it may have been deleted (i.e. lock released). Try to acquire again
+              }
+          }
+      }
+      catch ( Exception e ) {
+          doDelete = true;
+          throw e;
+      } finally{
+          if ( doDelete ){
+              deleteOurPath(ourPath);
+          }
+      }
+      return haveTheLock;
+  }
+  ```
+
+  ![zookeeper-23](./image/zookeeper-23.png)
+
+</details>
+
+
 ## 8.3. 命名服务
 
 ## 8.4. 集群管理和注册中心
@@ -870,6 +960,6 @@ List<String> childrenPaths = zkClient.getChildren().forPath("/node1");
 - 《从 Paxos 到 Zookeeper——分布式一致性原理与实践》
 - [万字带你入门Zookeeper](https://juejin.cn/post/6844904045283377165)
 - [实例详解ZooKeeper ZAB协议、分布式锁与领导选举](https://dbaplus.cn/news-141-1875-1.html)
-
+- [分布式锁用Redis坚决不用Zookeeper？](https://cloud.tencent.com/developer/article/1476050)
 
 待整理
