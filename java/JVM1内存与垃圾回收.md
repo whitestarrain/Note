@@ -3995,6 +3995,7 @@ public class IntCompTest {
     System.out.println(s1);//abc
     System.out.println(s2);//mbc
     ```
+  - 因为不可变，因此是线程安全的
 
 ---
 

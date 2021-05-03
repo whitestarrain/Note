@@ -3,8 +3,9 @@
 
 # Java 基础
 
-## 基础
+## 基础 <!-- fold -->
 
+- Object的11个方法
 - java泛型原理及使用
   - T ,T extends xxx, ？,？extends xxx 和 ？super xxx 的区别？
   - 为何不能通过直接通过`T[] arr=new T[10]`的方式来创建数组<br />如何正确创建泛型数组。
@@ -14,13 +15,19 @@
   - `Objects.equals` **推荐**
   - [hashcode和equals(重要)](https://www.cnblogs.com/skywang12345/p/3324958.html)
 - String,StringBuilder,StringBuffer
+  - 使用场景
+    - 操作少量的数据: 适用 String
+    - 单线程操作字符串缓冲区下操作大量数据: 适用 StringBuilder
+    - 多线程操作字符串缓冲区下操作大量数据: 适用 StringBuffer
   - 字符串常量池
   - AbstractStringBilder,建造者
   - synchronized
 - 包装类
   - Integer当数值在-128 ~127时，会将创建的 Integer 对象缓存起来
+  - Character当数值在0-~127时，会将创建的Character对象缓存起来
+  - 因此，整型包装类对象之间值的比较，全部使用 equals 方法比较
 - BigDecimal
-  - 浮点数之间的等值判断，
+  - 浮点数之间的等值判断
     - 基本数据类型不能用==来比较（精度丢失）
     - 包装数据类型不能用 equals 来判断
   - 使用 BigDecimal 来定义浮点数的值，再进行浮点数的运算操作。
@@ -55,8 +62,11 @@
   - Java 7 和 Java SE 7
   - JDK1.8和Java8
 - java8新特性
+- 语法糖
+  - 双大括号初始化(不推荐)
+  - try-with-resources(针对io资源，推荐)
 
-## 集合
+## 集合 <!-- fold -->
 
 - 为什么要使用集合
 - HashMap
@@ -142,7 +152,7 @@
   - HashMap与HashSet区别（HashSet底层基于HashMap）
   - HashMap和TreeMap区别
 
-## 多线程
+## 多线程 <!-- fold -->
 
 - 并发基础
   - [创建线程的方式](https://segmentfault.com/a/1190000037589073)
@@ -377,19 +387,6 @@
 
 - 并发集合容器
   - [什么是同步容器和并发容器](https://juejin.cn/post/6844903954719965192)
-    ```
-    markmap中会隐藏
-    什么是同步容器？
-    同步容器通过synchronized关键字修饰容器保证同一时刻内只有一个线程在使用容器，从而使得容器线程安全。
-    synchronized的意思是同步，它体现在将多线程变为串行等待执行。
-    （但注意一点，复合操作不能保证线程安全。举例：A线程第一步获取尾节点，
-    第二步将尾结点的值加1，但在A线程执行完第一步的时候，B线程删除了尾节点，在A线程执行第二步的时候就会报空指针）
-
-    什么是并发容器？
-    并发容器指的是允许多线程同时使用容器，并且保证线程安全。
-    而为了达到尽可能提高并发，Java并发工具包中采用了多种优化方式来提高并发容器的执行效率，
-    核心的就是：锁、CAS（无锁）、COW（读写分离）、分段锁。
-    ```
   - 同步容器
     - vector:在面对多线程下的复合操作的时候也是需要通过客户端加锁的方式保证原子性
     - HashTable
@@ -475,11 +472,11 @@
 
 - **ThreadLocal(待做)**
 
-## IO/NIO/AIO
+## IO/NIO/AIO <!-- fold -->
 
 # JVM
 
-## 基础知识
+## 基础知识 <!-- fold -->
 
 - jvm发展
 - 特点：
@@ -494,7 +491,7 @@
   - 执行
   - 退出
 
-## 内存与垃圾回收
+## 内存与垃圾回收 <!-- fold -->
 
 ### 上层
 
@@ -968,29 +965,302 @@
     - CMS和G1了解么，CMS解决什么问题，说一下回收的过程。
     - CMS回收停顿了几次，为什么要停顿两次。
 
-## 字节码与类加载子系统
+## 字节码与类加载子系统 <!-- fold -->
 
-## 优化
+## jvm调优 <!-- fold -->
 
 # 常用框架
 
-## Spring
+## Spring<!-- fold -->
 
-## SpringMVC
+### 基础
 
-## SpringBoot
+- 什么是Spring框架
+- Spring框架的重要模块
+- 为什么要使用Spring框架
+- Spring框架的两大核心
+  - IOC
+  - AOP
+- BeanFactory和ApplicationContextSpring
 
-## Mybatis
+### IOC
 
-## Netty
+- 概念
+- [IOC容器初始化过程](https://javadoop.com/post/spring-ioc)
 
-## quartz
+- 基于xml的IOC
+  - 存入容器方式
+    - Bean标签(各种属性可以进行配置)
+  - 依赖注入方式
+    - 注入Bean类型
+      - 使用构造函数(一般不用)
+      - 使用set方法(常用)
+      - 使用注解
+    - 注入基本类型和集合类型
+      - 通过xml
+
+- 基于注解的IOC
+  - 存入容器的注解
+    - @Component
+    - @Controller
+    - @Service
+    - @Repository
+  - 依赖注入的注解
+    - 注入Bean类型
+      - @AutoWired
+      - @Qualifier
+      - @Reasource
+    - 注入基本类型
+      - @Value
+  - 改变作用范围(和存入容器的注解搭配使用)
+    - @Scope
+  - 生命周期相关注解
+    - @PostConstruct
+    - @PreDestroy
+
+- 注意：对于无法添加注解<br />如导入的第三方依赖<br />可以通过xml将其存入或者向其注入<br />或者使用下面的`@Bean`
+
+### 摆脱xml的注解
+
+- @Configuration
+- @ComponentScan
+  - 对应`component:scan`
+- @Bean
+  - 对应xml中的工厂方法
+  - 通常配置在Config类<br />返回指定对象的上方
+- @Import
+- @PropertySource
+
+### AOP
+
+- 说明
+- 相关概念
+  - Joinpoint
+  - Pointcut
+  - Advice
+    - 前置通知
+    - 后置通知
+    - 异常通知
+    - 最终通知
+    - 环绕通知
+  - Introduction
+  - Target
+  - Weaving
+  - Proxy
+  - Aspect
+
+- 实现原理
+  - 静态代理AspectJ
+  - 动态代理
+    - JDK
+    - GBLib
+    - 两者对比
+  - 动态和静态对比
+
+- 使用
+  - xml
+    - 配置步骤
+    - 切入点表达式
+  - 注解
+    - 开启支持
+      - xml：`aop:aspectj-autoproxy`
+      - 注解：`@EnableAspectJAutoProxy`
+    - 配置步骤
+    - 切入点表达式
+
+### Bean
+
+- 创建Bean的方式
+  - 默认构造函数
+  - 工厂类
+  - 静态工厂
+
+- Scope作用范围
+  - singleton：单例的（默认值）
+  - prototype：多例的
+  - request：作用于web应用的请求范围
+  - session：作用于web应用的会话范围
+  - global-session：Spring5中已经没有了
+
+- 生命周期
+
+- 线程安全问题
+
+### 事务
+
+- Spring对事务的支持
+  - 取决于数据库
+
+- Spring事务相关API
+  - PlatformTransactionManager
+  - TransactionDefinition
+  - TransactionStatus
+
+- 事务管理方式
+  - 编程式（基本不用，仅仅为了了解原理）
+  - 声明式（基于AOP）
+    - 基于xml
+      - 配置流程
+    - xml开启支持+注解配置
+      - 配置流程
+    - 纯注解配置
+      - 配置流程
+
+- **事务属性**<br />tx:advice标签内部可以配置<br />也可以使用注解配置
+  - propagation(传播行为):(7)
+    - 支持当前事务的情况(3)
+      - required(默认)
+      - supports
+      - mandatory
+    - 不支持当前事务的情况(3)
+      - requires_new
+      - not_supported
+      - never
+    - 其他情况(1)
+      - nested
+  - isolation(隔离级别)(5)
+    - default
+    - read_uncommitted
+    - read_committed
+    - repeatable_read
+    - serializable
+  - timeout(超时属性)
+    - 用于指定事务的超时时间
+    - 默认值是-1
+  - read-only(只读属性)
+    - 用于指定事务是否只读
+    - 默认false
+  - 回滚规则
+    - rollback-for
+    - no-rollback-for
+
+
+### 设计模式
+
+- 工厂设计模式
+  - BeanFactory
+  - ApplicationContext
+- 单例设计模式
+  - bean默认作用域
+  - 实现：ConcurrentHashMap 实现单例注册表的特殊方式
+- 代理设计模式
+  - 代理模式在 AOP 中的应用
+  - 代理模式的实现
+    - 静态代理AspectJ
+    - 动态代理
+      - JDK
+      - GBLib
+      - 两者对比
+    - 动态和静态对比
+- 模板方法
+  - jdbcTemplate
+  - hibernateTemplate
+  - RedisTemplate
+- 观察者模式
+  - Spring 事件驱动模型中的三种角色
+    - 事件角色
+    - 事件监听者角色
+    - 事件发布者角色
+  - Spring 的事件流程总结
+- 适配器模式
+  - spring AOP中的适配器模式
+  - spring MVC中的适配器模式
+- 装饰者模式
+
+## SpringMVC <!-- fold -->
+
+## SpringBoot <!-- fold -->
+
+## Mybatis <!-- fold -->
+
+- 基本使用
+  - xml
+    - 常见标签
+      - select
+      - insert
+        - selectKey(获取插入数据的主键)
+      - update
+      - delete
+    - 配置标签
+      - typeAliases
+        - package<br />(指定**实体类**包，用于起别名)
+      - mapper
+        - package<br />(指定**dao类**包，避免往SqlConfig文件中的<br />mappers中添加mapper标签)
+    - 其他标签
+      - resultMap
+      - parameterMap
+      - include
+      - sql
+      - selectKey
+    - 动态sql标签
+      - trim
+      - where
+      - set
+      - foreach
+      - if
+      - choose
+      - when
+      - otherwise
+      - bind
+      - include
+        - 搭配`sql`标签
+  - 注解
+    - 常见标签
+      - @Select
+      - @Insert
+      - @Update
+      - @Delete
+    - 其他标签
+      - @Results
+        - 定义并使用
+      - @ResultMap
+        - 使用已定义的
+
+
+- **执行流程**
+
+- 动态sql
+
+- 多表查询
+  - 一对一(多对一)
+  - 一对多
+  - 多对多
+
+- 加载
+  - 立即加载
+    - 使用场景
+    - 说明
+  - 延迟加载
+    - 使用场景
+    - 说明
+    - 配置
+- 缓存
+  - 说明
+  - 种类
+    - 一级缓存
+      - 概念
+      - 触发
+    - 二级缓存
+      - 概念
+      - 配置开启
+        - xml
+          - config.xml
+          - dao.xml
+          - `<select>`
+        - 注解
+          - SqlMapConfig.xml
+          - @CacheNamespace(blocking=true)
+      - 触发
+
+## Netty <!-- fold -->
+
+## quartz <!-- fold -->
 
 # 数据库
 
 ## 关系型数据库
 
-### Mysql
+### Mysql<!-- fold -->
 
 - 存储引擎
   - MyISAM
@@ -1034,11 +1304,11 @@
         - 可以解决所有问题
  
 
-### oracle
+### oracle<!-- fold -->
 
 ## nosql
 
-### Redis
+### Redis<!-- fold -->
 
 - 基本数据类型
   - String
@@ -1164,11 +1434,11 @@
   - 布谷鸟过滤器
 
 
-### MongoDB
+### MongoDB<!-- fold -->
 
 # 基础
 
-## 设计模式
+## 设计模式<!-- fold -->
 
 - 创建型模式
   - [单例模式](https://www.runoob.com/design-pattern/singleton-pattern.html)
@@ -1187,7 +1457,7 @@
 - 行为
 - J2EE
 
-## 计算机网络
+## 计算机网络<!-- fold -->
 
 - 理论<br />(参考《计算机网络》谢希仁)
   - 概述
@@ -1306,23 +1576,19 @@
     - 什么是NAT (网络地址转换)？
   - 从 URL 输入到页面展现到底发生什么
 
-## 操作系统
+## 操作系统<!-- fold -->
 
-## 算法
+## 算法<!-- fold -->
 
-# zookeeper
 
-# 分布式框架
+# 分布式相关
 
-## SpringCloud
+## zookeeper<!-- fold -->
 
-## Dubbo
+## SpringCloud<!-- fold -->
 
-# 消息队列
+## Dubbo<!-- fold -->
 
-## Kafka
-
-## RocketMQ
 
 # 分布式锁
 
@@ -1333,3 +1599,10 @@
 ## zookeeper
 
 ## etcd
+
+# 消息队列
+
+## Kafka<!-- fold -->
+
+## RocketMQ<!-- fold -->
+

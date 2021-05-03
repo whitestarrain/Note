@@ -348,6 +348,52 @@ after method send
   > 复习：ThreadLoacl内存泄漏问题
 - 改变 Bean 的作用域为 “prototype”：每次请求都会创建一个新的 bean 实例，自然不会存在线程安全问题。
 
+## 生命周期
+
+### 整体流程
+
+![springQuestion-5](./image/springQuestion-5.png)
+
+> 若容器注册了以上各种接口，程序那么将会按照以上的流程进行
+
+- Bean 容器找到配置文件中 Spring Bean 的定义。
+- Bean 容器利用 Java Reflection API 创建一个Bean的实例。
+- 如果涉及到一些属性值 利用 `set()`方法设置一些属性值。
+- 如果 Bean 实现了 `BeanNameAware` 接口，调用 `setBeanName()`方法，传入Bean的名字。
+- 如果 Bean 实现了 `BeanClassLoaderAware` 接口，调用 `setBeanClassLoader()`方法，传入 `ClassLoader`对象的实例。
+- 与上面的类似，如果实现了其他 `*.Aware`接口，就调用相应的方法。
+- 如果有和加载这个 Bean 的 Spring 容器相关的 `BeanPostProcessor` 对象，执行`postProcessBeforeInitialization()` 方法
+- 如果Bean实现了`InitializingBean`接口，执行`afterPropertiesSet()`方法。
+- 如果 Bean 在配置文件中的定义包含 init-method 属性，执行指定的方法。
+- 如果有和加载这个 Bean的 Spring 容器相关的 `BeanPostProcessor` 对象，执行`postProcessAfterInitialization()` 方法
+- 当要销毁 Bean 的时候，如果 Bean 实现了 `DisposableBean` 接口，执行 `destroy()` 方法。
+- 当要销毁 Bean 的时候，如果 Bean 在配置文件中的定义包含 destroy-method 属性，执行指定的方法。
+
+代码实验看这里：[Spring Bean的生命周期（非常详细）](https://www.cnblogs.com/zrtqsk/p/3735273.html)
+
+### 方法调用说明
+
+- 各种方法调用分类
+  - 1、Bean自身的方法：
+    - Bean本身调用的方法
+    - 通过配置文件中`<bean>`的init-method和destroy-method指定的方法
+  - 2、Bean级生命周期接口方法
+    - `BeanNameAware`接口的方法
+    - `BeanFactoryAware`接口的方法
+    - `InitializingBean` 接口的方法
+    - `DiposableBean`接口的方法
+  - 3、容器级生命周期接口方法
+    > 一般称下面下面两个接口的实现类为“后处理器”。
+    - `InstantiationAwareBeanPostProcessor`接口的方法
+    - `BeanPostProcessor`接口的方法
+  - 4、工厂后处理器接口方法
+    > 工厂后处理器接口的方法。工厂后处理器也是容器级的。在应用上下文装配配置文件之后立即调用。
+    - AspectJWeavingEnabler
+    - ConfigurationClassPostProcessor
+    - CustomAutowireConfigurer
+    - 等等
+
+
 # 5. Spring 注解
 
 # 6. Spring数据访问
@@ -394,4 +440,8 @@ after method send
 
 ## 11.3. Spring容器与MCV容器
 
+
+# 参考文献
+
+- [Spring Bean的生命周期（非常详细）](https://www.cnblogs.com/zrtqsk/p/3735273.html)
 

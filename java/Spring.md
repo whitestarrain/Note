@@ -23,14 +23,14 @@
         - 阐述了 J2EE 开发不使用 EJB 的解决方式（Spring 雏形）
         - 2017 年 9 月份发布了 spring 的最新版本 spring 5.0 通用版（GA）
 
-- 优势：pdf
+- 优势：[pdf](./资料/pdf/spring/spring5第一天.pdf)
 
 - 体系结构
     > ![](./image/spring-overview.png)
 
 ## 1.2. 程序耦合和解耦
 
-- 解释：pdf
+- 解释：[pdf](./资料/pdf/spring/spring5第一天.pdf)
 
 ## 1.3. 工厂模式结构
 
@@ -91,22 +91,25 @@
         PetStoreService service = context.getBean("accountService", accountService.class);
         ```
 
-- ApplicationContext三个常用实现类
-    - ClassPathXmlApplicationContext：加载类路径下的配置文件，要求配置文件必须在类路径下
-    - FileSystemApplicationContext：可以加载磁盘任意路径下的配置文件。（必须有访问权限）
-    - AnnocationConfigApplicationContext：读取注解来创建容器
 
-- 核心容器的两个接口引发的问题：
+- 核心容器的两个接口
+  - 说明：
     > 接口图：<br>
     > ![](./image/spring-application.jpg)
-    - ApplicationContext：构建核心容器时，采用立即加载的方式。读取后立即创建配置文件中的class对象
-        - 使用时机：单例模式
-    - BeanFactory：构建核心容器时，采用延迟加载的方式。什么时候根据id获取对象什么时候才创建对象
-        - 使用时机：多对象使用
-- 解决：
-    - BeanFactory是一个顶层接口，不适合直接使用
-    - ApplicationContext有继承BeanFactory接口，可以通过配置文件来设置延迟和立即加载
-    - 见Bean对象作用范围
+    - BeanFactory：Spring容器中的顶层接口
+      - 说明：构建核心容器时，采用延迟加载的方式。什么时候根据id获取对象什么时候才创建对象
+      - 使用时机：多对象使用
+    - ApplicationContext：Spring的顶级接口
+      - 说明：构建核心容器时，采用立即加载的方式。读取后立即创建配置文件中的class对象
+      - 使用时机：单例模式
+      - 实现类
+        - ClassPathXmlApplicationContext：加载类路径下的配置文件，要求配置文件必须在类路径下
+        - FileSystemApplicationContext：可以加载磁盘任意路径下的配置文件。（必须有访问权限）
+        - AnnocationConfigApplicationContext：读取注解来创建容器
+  - 使用：
+      - BeanFactory是一个顶层接口，不适合直接使用
+      - ApplicationContext有继承BeanFactory接口，可以通过配置文件来设置延迟和立即加载
+      - 见Bean对象作用范围
 
 ### 1.4.2. bean对象细节
 
@@ -225,52 +228,52 @@
 <br>
 
 - 注入方式：
-    - 第一种：使用构造函数提供（一般不用）
-        - 使用方式：
-            - 使用的标签:constructor-arg
-            - 标签出现的位置：bean标签的内部
-            - 标签中的属性
-                - type：用于指定要注入的数据的数据类型，该数据类型也是构造函数中某个或某些参数的类型。
-                - index：用于指定要注入的数据给构造函数中指定索引位置的参数赋值。索引的位置是从0开始
-                - name：用于指定给构造函数中指定名称的参数赋值	（常用的）
-                - =============以上三个用于指定给构造函数中哪个参数赋值。下面用来给指定参数赋值
-                - value：用于提供基本类型和String类型的数据。（字符串和数字类型会spring内会自动转换）
-                - ref：用于指定其他的bean类型数据。它指的就是在spring的Ioc核心容器中出现过的bean对象
-        - 示例：
-            ```xml
-            <bean id="accountService" class="com.itheima.service.impl.AccountServiceImpl">
-            <!-- name是构造函数中的参数名称。 -->
-            <constructor-arg name="name" value="泰斯特"></constructor-arg>
-            <constructor-arg name="age" value="18"></constructor-arg>
-            <constructor-arg name="birthday" ref="now"></constructor-arg>
+  - 第一种：使用构造函数提供（一般不用）
+    - 使用方式：
+      - 使用的标签:constructor-arg
+      - 标签出现的位置：bean标签的内部
+      - 标签中的属性
+        - type：用于指定要注入的数据的数据类型，该数据类型也是构造函数中某个或某些参数的类型。
+        - index：用于指定要注入的数据给构造函数中指定索引位置的参数赋值。索引的位置是从0开始
+        - name：用于指定给构造函数中指定名称的参数赋值	（常用的）
+        - =============以上三个用于指定给构造函数中哪个参数赋值。下面用来给指定参数赋值
+        - value：用于提供基本类型和String类型的数据。（字符串和数字类型会spring内会自动转换）
+        - ref：用于指定其他的bean类型数据。它指的就是在spring的Ioc核心容器中出现过的bean对象
+    - 示例：
+      ```xml
+      <bean id="accountService" class="com.itheima.service.impl.AccountServiceImpl">
+      <!-- name是构造函数中的参数名称。 -->
+      <constructor-arg name="name" value="泰斯特"></constructor-arg>
+      <constructor-arg name="age" value="18"></constructor-arg>
+      <constructor-arg name="birthday" ref="now"></constructor-arg>
 
-            </bean>
-            <!-- 配置一个日期对象 -->
-            <bean id="now" class="java.util.Date"></bean>
-            ```
-        - 优势：在获取bean对象时，注入数据是必须的操作，否则对象无法创建成功。
+      </bean>
+      <!-- 配置一个日期对象 -->
+      <bean id="now" class="java.util.Date"></bean>
+      ```
+    - 优势：在获取bean对象时，注入数据是必须的操作，否则对象无法创建成功。
     - 弊端：改变了bean对象的实例化方式，使我们在创建对象时，如果用不到这些数据，也必须提供。同时，如果只想赋几个成员的值，就要重载构造函数
 
-    - 第二种：使用set方法提供（常用）
-        - 使用：
-            - 涉及的标签：property
-            - 出现的位置：bean标签的内部
-            - 标签的属性：
-                - name：用于指定注入时所调用的set方法名称（也就是属性名称）
-                - value：用于提供基本类型和String类型的数据
-                - ref：用于指定其他的bean类型数据。它指的就是在spring的Ioc核心容器中出现过的bean对象
-        - 示例：
-            ```xml
-            <bean id="accountService2" class="com.itheima.service.impl.AccountServiceImpl2">
-                    <property name="name" value="TEST" ></property>
-                    <property name="age" value="21"></property>
-                    <property name="birthday" ref="now"></property>
-            </bean>
-            <bean id="now" class="java.util.Date"></bean>
-            ```
-        - 优势： 创建对象时没有明确的限制，可以直接使用默认构造函数
-        - 弊端： 如果有某个成员必须有值，则获取对象是有可能set方法没有执行。（也就是忘了写）
-    - 第三种：使用注解提供（之后的内容）
+  - 第二种：使用set方法提供（常用）
+    - 使用：
+      - 涉及的标签：property
+      - 出现的位置：bean标签的内部
+      - 标签的属性：
+        - name：用于指定注入时所调用的set方法名称（也就是属性名称）
+        - value：用于提供基本类型和String类型的数据
+        - ref：用于指定其他的bean类型数据。它指的就是在spring的Ioc核心容器中出现过的bean对象
+    - 示例：
+      ```xml
+      <bean id="accountService2" class="com.itheima.service.impl.AccountServiceImpl2">
+              <property name="name" value="TEST" ></property>
+              <property name="age" value="21"></property>
+              <property name="birthday" ref="now"></property>
+      </bean>
+      <bean id="now" class="java.util.Date"></bean>
+      ```
+    - 优势： 创建对象时没有明确的限制，可以直接使用默认构造函数
+    - 弊端： 如果有某个成员必须有值，则获取对象时有可能set方法没有执行。（也就是忘了写）
+  - 第三种：使用注解提供（之后的内容）
 
 # 2. 基于注解ioc
 
@@ -1103,22 +1106,22 @@ public class JdbcConfig {
 > 目的：通过配置的方式实现案例引入中的功能
 
 - Joinpoint(连接点):
-    > 所谓连接点是指那些被拦截到的点。在 spring 中,这些点指的是方法,因为 spring 只支持方法类型的连接点。（被拦截即可）
+  > 所谓连接点是指那些被拦截到的点。在 spring 中,这些点指的是方法,因为 spring 只支持方法类型的连接点。（被拦截即可）
 - Pointcut(切入点):
-    > 所谓切入点是指我们要对哪些 Joinpoint 进行拦截的定义。（被拦截且增强）
+  > 所谓切入点是指我们要对哪些 Joinpoint 进行拦截的定义。（被拦截且增强）
 - Advice(通知/增强):
-    > 所谓通知是指拦截到 Joinpoint 之后所要做的事情就是通知。
-    - 通知的类型：
-        > 就是拦截后的增强
-        - 前置通知：在切入点方法执行之前执行
-        - 后置通知：在切入点方法正常执行之后执行。它和异常通知永远只能执行一个
-        - 异常通知：它和后置通知永远只能执行一个
-        - 最终通知：无论切入点方法是否正常执行它都会在其后面执行
-        - 环绕通知：***可以做到上面的所有***，就相当于动态代理。
-    - 图解：
-        > ![](./image/通知的类型.jpg)
-    - 顺序说明：
-      <details>
+  > 所谓通知是指拦截到 Joinpoint 之后所要做的事情就是通知。
+  - 通知的类型：
+    > 就是拦截后的增强
+    - 前置通知：在切入点方法执行之前执行
+    - 后置通知：在切入点方法正常执行之后执行。它和异常通知永远只能执行一个
+    - 异常通知：它和后置通知永远只能执行一个
+    - 最终通知：无论切入点方法是否正常执行它都会在其后面执行
+    - 环绕通知：***可以做到上面的所有***，就相当于动态代理。
+  - 图解：
+    > ![](./image/通知的类型.jpg)
+  - 执行顺序说明：
+    <details>
       <summary style="color:red;">展开</summary>
 
       - 没有异常情况下的执行顺序：
@@ -1136,20 +1139,22 @@ public class JdbcConfig {
         - after advice
         - afterThrowing
         - java.lang.RuntimeException: 异常发生
-      </details>
+
+    </details>
 
 - Introduction(引介):
-    > 引介是一种特殊的通知在不修改类代码的前提下, Introduction 可以在运行期为类动态地添加一些方法或 Field。
+  > 引介是一种特殊的通知在不修改类代码的前提下, Introduction 可以在运行期为类动态地添加一些方法或 Field。
 - Target(目标对象):
-    > 代理的目标对象。即被代理对象
+  > 代理的目标对象。即被代理对象
 - Weaving(织入):
-    > 是指把增强应用到目标对象来创建新的代理对象的**过程**。<br>
-    > spring 采用动态代理织入，而 AspectJ 采用编译期织入和类装载期织入。
+  > 是指把增强应用到目标对象来创建新的代理对象的**过程**。<br>
+  > spring 采用动态代理织入，而 AspectJ 采用编译期织入和类装载期织入。
 - Proxy（代理）:
-    > 一个类被 AOP 织入增强后，就产生一个结果代理类。
+  > 一个类被 AOP 织入增强后，就产生一个结果代理类。
 - Aspect(切面):
-    > 是切入点和通知（引介）的结合。<br>
-    > 即切入点方法和通知方法的对应关系
+  > 是切入点和通知（引介）的结合。<br>
+  > 即切入点方法和通知方法的对应关系
+
 
 #### 3.3.1.2. 明确
 
@@ -2053,21 +2058,21 @@ public class AccountDaoImpl implements IAccountDao {
 
 #### 5.2.4.1. 基于xml
 
--  事务配置一次后，以后再写方法都没问题。而注解要每个方法都配置（具体看下面）。
+- 事务配置一次后，以后再写方法都没问题。而注解要每个方法都配置（具体看下面）。
 
-- 步骤
-1. 配置事务管理器
-2. 配置事务的通知
-  - 此时我们需要导入事务的约束 tx名称空间和约束，同时也需要aop的
-  - 使用tx:advice标签配置事务通知
-    - 属性：
-      - id：给事务通知起一个唯一标识
-      - transaction-manager：给事务通知提供一个事务管理器引用
-3. 配置AOP中的通用切入点表达式
-4. 建立事务通知和切入点表达式的对应关系
-5. 配置事务的属性
-  - 是在事务的通知tx:advice标签的内部
-    - 属性：
+- 配置方式：
+  - 配置事务管理器
+  - 配置事务的通知
+    - 此时我们需要导入事务的约束 tx名称空间和约束，同时也需要aop的
+    - 使用tx:advice标签配置事务通知
+      - 属性：
+        - id：给事务通知起一个唯一标识
+        - transaction-manager：给事务通知提供一个事务管理器引用
+  - 配置AOP中的通用切入点表达式
+  - 建立事务通知和切入点表达式的对应关系
+  - 配置事务的属性
+    - 是在事务的通知tx:advice标签的内部
+      - 属性：
         - isolation：用于指定事务的隔离级别。默认值是DEFAULT，表示使用数据库的默认隔离级别。
         - propagation：用于指定事务的传播行为。默认值是REQUIRED，表示一定会有事务，进行增删改时选择。查询方法可以选择SUPPORTS。
         - read-only：用于指定事务是否只读。只有查询方法才能设置为true。默认值是false，表示读写。
