@@ -5,40 +5,65 @@
 
 ## 基础 <!-- fold -->
 
+### 基础中的基础
+
+- 基本概念
+  - JRE与JDK
+  - Java 7 和 Java SE 7
+  - JDK1.8和Java8
+
 - Object的11个方法
-- java泛型原理及使用
-  - T ,T extends xxx, ？,？extends xxx 和 ？super xxx 的区别？
-  - 为何不能通过直接通过`T[] arr=new T[10]`的方式来创建数组<br />如何正确创建泛型数组。
-  - 类型擦除
-- equals方法使用注意
-  - `常量.equals`
-  - `Objects.equals` **推荐**
-  - [hashcode和equals(重要)](https://www.cnblogs.com/skywang12345/p/3324958.html)
-- String,StringBuilder,StringBuffer
-  - 使用场景
-    - 操作少量的数据: 适用 String
-    - 单线程操作字符串缓冲区下操作大量数据: 适用 StringBuilder
-    - 多线程操作字符串缓冲区下操作大量数据: 适用 StringBuffer
-  - 字符串常量池
-  - AbstractStringBilder,建造者
-  - synchronized
+  - equals
+    - `常量.equals`
+    - `Objects.equals` **推荐**
+    - [hashcode和equals(重要)](https://www.cnblogs.com/skywang12345/p/3324958.html)
+
+- 面向对象
+  - 封装
+  - 继承
+  - 多态
+    - 上转下转
+    - 深入(JVM内容)
+      - 动态链接
+      - 非虚方法和虚方法
+      - 方法重写本质
+      - 虚方法表
+
+- Java异常体系
+
+- 常用关键字
+
+- [静/非静态内部类](https://juejin.cn/post/6844903791863529480)
+    - 是否懒加载
+    - 是否可以创建静态成员
+    - 能否调用调用外部类静态成员
+    - 有没有指向外部类的引用<br />`外部类类名.this`
+    - 创建方式
+
+- 枚举
+  - 本质
+  - 常见用法
+
 - 包装类
-  - Integer当数值在-128 ~127时，会将创建的 Integer 对象缓存起来
-  - Character当数值在0-~127时，会将创建的Character对象缓存起来
-  - 因此，整型包装类对象之间值的比较，全部使用 equals 方法比较
-- BigDecimal
-  - 浮点数之间的等值判断
-    - 基本数据类型不能用==来比较（精度丢失）
-    - 包装数据类型不能用 equals 来判断
-  - 使用 BigDecimal 来定义浮点数的值，再进行浮点数的运算操作。
-  - 推荐使用String作为参数传入BigDecimal构造方法
-- 类型选取
-  - 所有的 POJO 类属性必须使用包装数据类型。
-  - RPC 方法的返回值和参数必须使用包装数据类型。
-  - 所有的局部变量使用基本数据类型。
+  - 缓存机制
+    - Integer当数值在-128 ~127时，会将创建的 Integer 对象缓存起来
+    - Character当数值在0-~127时，会将创建的Character对象缓存起来
+    - 因此，整型包装类对象之间值的比较，全部使用 equals 方法比较
+  - BigDecimal
+    - 浮点数之间的等值判断
+      - 基本数据类型不能用==来比较（精度丢失）
+      - 包装数据类型不能用 equals 来判断
+      - **使用 BigDecimal 来定义浮点数的值，再进行浮点数的运算操作**
+    - 使用 BigDecimal 来定义浮点数的值，再进行浮点数的运算操作。
+    - 推荐使用String作为参数传入BigDecimal构造方法
+  - 使用标准
+    - 所有的 POJO 类属性必须使用包装数据类型。
+    - RPC 方法的返回值和参数必须使用包装数据类型。
+    - 所有的局部变量使用基本数据类型。
+
 - Arrays.asList
   - Arrays.asList()将数组转换为集合后,底层其实还是数组
-  - 传递的数组必须是对象数组，而不是基本类型。<br />当传入一个原生数据类型数组时，Arrays.asList() 的真正得到的参数就不是数组中的元素，而是数组对象本身
+  - 传递的数组必须是对象数组，而不是基本类型。<br />**当传入一个原生数据类型数组时，Arrays.asList() 的真正得到的参数就不是数组中的元素，而是数组对象本身**
   - 使用集合的修改方法:`add()、remove()、clear()`会抛出异常。<br />Arrays.asList() 方法返回的并不是 java.util.ArrayList ，而是 java.util.Arrays 的一个内部类,
   - 如何正确的将数组转换为ArrayList?
     - `new ArrayList<>(Arrays.asList("a", "b", "c"))`(推荐)
@@ -46,25 +71,70 @@
     - 使用 Guava(推荐)
     - 使用 Apache Commons Collections
     - 使用 Java9 的 List.of()方法
-- [fail-fast、fail-safe机制](https://juejin.cn/post/6879291161274482695)
-- 枚举
-  - 本质
-  - 常见用法
-- 静态内部类与非静态内部类
-- 什么是Java多态
-- Java异常体系
-- 常用关键字
-- 什么是反射
-- 静态代理+JDK/CGLIB 动态代理
-- 常见的 IO 模型有哪些？Java 中的 BIO、NIO、AIO 有啥区别?
-- 基本概念
-  - JRE与JDK
-  - Java 7 和 Java SE 7
-  - JDK1.8和Java8
-- java8新特性
-- 语法糖
-  - 双大括号初始化(不推荐)
-  - try-with-resources(针对io资源，推荐)
+
+### [反射](https://www.cnblogs.com/yougewe/p/10125073.html)
+
+- 说明
+- 原理
+  - 如何获取
+  - 成员的查找
+  - 线程安全
+  - 内存使用（软指针）
+  - 数据隔离
+  - 方法执行
+
+### java泛型
+
+- 什么是泛型
+- 原理与类型擦除
+- 使用方式和场景
+- 泛型通配符
+- 泛型数组
+
+- 常见问题：
+  - T ,T extends xxx, ？,？extends xxx <br />和 ？super xxx 的区别？
+  - 为何不能通过直接通过`T[] arr=new T[10]`的方式来创建数组<br />如何正确创建泛型数组。
+
+### String
+
+- String,StringBuilder,StringBuffer 使用场景
+- AbstractStringBilder,建造者
+- synchronized
+- 字符串拼接
+  - 编译器优化
+  - StringBuilder
+- 字符串常量池
+
+
+### SPI
+
+- 原理
+  - api
+  - spi
+- 示例
+  - java spi
+    - 提供的api及使用
+    - DriverManager
+      - mysql自动加载
+      - oracle必须手动加载
+  - Spring spi思想
+    - scan
+    - 自定义scope
+    - 自定义标签
+
+
+### java8新特性
+
+- Stream
+- Function Interface
+- Lambda
+- Optional
+- Data Time-api
+
+### 语法糖
+
+- 双大括号初始化(不推荐)
+- try-with-resources(针对io资源，推荐)
 
 ## 集合 <!-- fold -->
 
@@ -72,24 +142,44 @@
 - HashMap
   - 1.7
     - 存储结构：数组+链表
-    - 头插
-    - [resize死循环](https://juejin.cn/post/6844903554264596487)
+    - 扩容机制
+      - 创建新的数组
+      - 头插 <!-- fold -->
+        - 使用头插可能与缓存的时间局部性原则有关
+        - 最近访问过的数据下次大概率会再次访问
+        - 把刚访问过的元素放在链表最前面可以直接被查询到，减少查找次数
+      - [resize死循环](https://juejin.cn/post/6844903554264596487)
+      - resize重新计算hash
   - 1.8
-    - 存储结构：数组+链表+红黑树。红黑树结构转换条件
-    - [红黑树由来：2-3树](https://blog.csdn.net/zhichaosong/article/details/88844371)
-    - 尾插：为什么改了
-    - [如何解决的resize死循环](https://blog.csdn.net/weixin_43067762/article/details/105635547)
-  - 线程不安全：put的时候导致的多线程数据不一致
+    - 存储结构
+      - 数组+链表+红黑树
+      - 红黑树结构转换条件
+        - 数组长度64
+        - [树化阀值8来源](https://juejin.cn/post/6921914880559677447])
+        - 退化阀值6
+    - 插曲：[红黑树由来：2-3树](https://blog.csdn.net/zhichaosong/article/details/88844371)
+    - 扩容机制
+      - 创建新的数组
+      - 尾插
+      - [如何解决的resize死循环](https://www.fangzhipeng.com/javainterview/2019/03/11/hashmap-dead-cycle.html) <!-- fold -->
+        - transfer调用 <!-- fold -->
+          - 直接将原来transfer()方法中的代码写在自己方法体内，不再调用
+        - 使用尾插 <!-- fold -->
+          - **扩容后，新数组中的链表顺序依然与旧数组中的链表顺序保持一致**
+      - [resize不重新计算hash](https://juejin.cn/post/6844903682664824845) <!-- fold -->
+        - 1.7扩容时需要重新计算哈希值和索引位置
+        - 1.8并不重新计算哈希值，巧妙地采用和扩容后容量进行&操作来计算新的索引位置。
+  - 线程不安全
+    - put的时候导致的多线程数据不一致
   - 初始化大小
-  - 扩容机制
-    - put流程
-    - LoadFactory
-    - [树化阀值8来源](https://juejin.cn/post/6921914880559677447])
-    - 退化阀值6
+  - 扩容时机
+    - threshold = capacity * loadFactor
+    - Size>=threshold
+    - [loadFactor 0.75来源](https://www.cnblogs.com/aspirant/p/11470928.html)
+  - put流程
   - 容量为什么要2的幂
   - [遍历方法及性能](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
   - 有什么同步容器/并发容器
-  - put流程
   - HashMap,HashTable,ConcurrentHashMap区别
     - 1.7
       - 三者数据结构
@@ -106,18 +196,32 @@
     - 4-节点分解
     - 不平衡时融合
 - ConcurrentHashMap
-  - 1.7
-    - 分段锁+数组+链表
-    - **segment分段锁** -- HashBucket--HashEntry
-      - 继承了ReentrantLock
+  - [1.7](https://www.cnblogs.com/ITtangtang/p/3948786.html)
+    - 数据结构:分段锁+数组+链表
+    - 同步机制: 
+      - **segment分段锁** 粒度为一段(几个hash槽)<br />分段锁继承了ReentrantLock
       - 尝试获取锁存在并发，竞争，阻塞
-    - get高效，不需要加锁(count,value被volatile修饰)
-  - 1.8
-    - 数组+链表/红黑树
-    - CAS+synchronized
-      - CAS失败自旋保证成功
-      - 再失败就synchronized
-    - node
+    - 键值对:HashEntry
+    - 操作
+      - put
+      - size
+      - get
+  - [1.8](https://blog.csdn.net/programmer_at/article/details/79715177)
+    - 数据结构:数组+链表/红黑树
+    - 同步机制
+      - hash槽。减小了加锁粒度
+      - CAS+synchronized <!-- fold -->
+        - CAS失败自旋保证成功
+        - 再失败就synchronized
+      - [使用synchronized原因](https://www.cnblogs.com/aspirant/p/8623864.html) <!-- fold -->
+        - 锁粒度降低了，synchronized并不比ReentrantLock差
+        - synchronized优化空间大
+        - 大量数据操作，ReentrantLock开销较多内存
+    - 键值对：node
+    - 操作
+      - put
+      - size
+      - get
 - [LinkedHashMap](https://www.jianshu.com/p/8f4f58b4b8ab)
   - 结构：HashMap+双向链表
   - 两种模式(accessOrder变量)
@@ -125,15 +229,18 @@
     - 访问顺序模式(true)
       - `get`
       - 重排序
-  - 扩容
+  - 扩容:遍历链表
   - 实现LRU
+    - 构造器:传入capacity
+    - removeEldestEntry:`return size() > capacity; `
+
 - ArrayList
   - 底层结构：数组
   - 初始大小与扩容机制
   - RandomAccess 接口
   - `System.arraycopy()` 和 `Arrays.copyOf()`方法
   - 有什么同步容器/并发容器
-  - [快速失败，安全失败](https://segmentfault.com/a/1190000016969753)
+  - **[fail-fast、fail-safe机制](https://juejin.cn/post/6879291161274482695)**
 - LinkedList
   - 底层结构：双向链表
 - Set
@@ -1331,6 +1438,14 @@
     - 说明
     - 应用场景
     - 数据结构
+  - HyperLogLog
+    - 说明
+    - 应用场景
+    - 数据结构
+
+- 高级算法
+  - scan
+  -  GeoHash
 
 - 过期淘汰
   - 过期删除策略
@@ -1438,24 +1553,20 @@
 
 # 基础
 
+
 ## 设计模式<!-- fold -->
 
-- 创建型模式
-  - [单例模式](https://www.runoob.com/design-pattern/singleton-pattern.html)
-    - 1、懒汉式，线程不安全
-    - 2、懒汉式，线程安全
-    - 3、饿汉式
-    - 4、双检锁/双重校验锁（DCL，即 double-checked locking）
-    - 5、登记式/静态内部类
-    - 6、枚举
-- 结构型模式
-  - 代理模式
-    - 静态代理
-    - 动态代理
-      - JDK
-      - CGLIB
-- 行为
-- J2EE
+### 七大原则
+
+### 设计模式
+
+#### 创建型模式
+
+####  结构型模式
+
+#### 行为型模式
+
+#### J2EE型模式
 
 ## 计算机网络<!-- fold -->
 
@@ -1580,29 +1691,62 @@
 
 ## 算法<!-- fold -->
 
-
 # 分布式相关
 
-## zookeeper<!-- fold -->
+## 分布式理论 <!-- fold -->
 
-## SpringCloud<!-- fold -->
+### 基础理论
 
-## Dubbo<!-- fold -->
+#### 分布式
 
+#### 分布式和集群
 
-# 分布式锁
+#### 微服务
 
-## 数据库
+### 通信设计
 
-## redis
+#### RPC
 
-## zookeeper
+#### REST
 
-## etcd
+### 分布式事务算法
+
+#### 一致性问题
+
+#### 2PC
+
+#### 3PC
+
+#### paxos
+
+#### raft
+
+## 高可用
+
+## 分布式锁
+
+### 数据库
+
+### redis
+
+### zookeeper
+
+### etcd
+
+## 分布式协调框架
+
+### zookeeper
+
+## RPC框架
+
+### SpringCloud
+
+### Dubbo<!-- fold -->
 
 # 消息队列
 
 ## Kafka<!-- fold -->
 
 ## RocketMQ<!-- fold -->
+
 
