@@ -297,7 +297,7 @@
     - 为什么要使用多线程
     - sleep() 方法和 wait() 方法区别和共同点
 
-- 并发编程三大特性
+- **并发编程三大特性** <!-- fold -->
   - 原子性
   - 可见性
   - 有序性
@@ -305,9 +305,17 @@
 - JMM
   - 基础结构
   - JMM与Java内存区域划分的区别与联系
-  - 原子操作
+  - JMM原子操作 <!-- fold -->
+    - read(读取）:从主内存读取数据
+    - load(载入）:将主内存读取到的数据写入工作内存
+    - use(使用）:从工作内存读取数据来计算
+    - assign(赋值）:将计算好的值重新赋值到工作内存中
+    - store(存储）:将工作内存数据写入主内存
+    - write(写入）:将store过去的变量值赋值给主内存中的变量
+    - lock(锁定）:将主内存变量加锁，标识为线程独占状态。其他线程将无法读或写
+    - unlock(解锁）:将主内存变量解锁，解锁后其他线程可以锁定该变量
   - 重排序
-    - 组成
+    - 组成 <!-- fold -->
       - 编译器优化重排
       - 指令并行重排
       - 内存系统重排
@@ -315,14 +323,23 @@
       - as-if-serial
       - happens-before
 
-- volatile
+- [volatile](https://zhuanlan.zhihu.com/p/137193948)
   - 保证内存可见性
     - 说明
-    - 原理:<br /> MESI缓存一致性协议<br /> cpu总线嗅探机制<br /> lock
+    - 原理
+      - MESI缓存一致性协议
+      - cpu总线嗅探机制
+      - lock
     - 总线风暴
   - 禁止重排序
     - 说明
-    - 原理:<br />内存屏障
+    - 原理(内存屏障) <!-- fold -->
+      - volatile写
+        - 前面:storestore
+        - 后面:sotreload
+      - volatile写
+        - 后面1:loadload
+        - 后面2:loadstore
   - 不保证原子性：
     - 原因
     - 解决
@@ -385,6 +402,12 @@
     - 公平非公平
     - 锁绑定多个条件
   - synchronized 和 volatile 的区别
+  - synchronized如何保证可见性 <!-- fold -->
+    - 获得锁，清空工作内存
+    - 从主内存拷贝共享变量最新的值到工作内存成为副本
+    - 执行代码，将修改后的副本的值刷新回主内存中，线程释放锁
+    - 而获取不到锁的线程会阻塞等待，所以变量的值肯定一直都是最新的。
+
 
 - CAS
   - 乐观锁与悲观锁
@@ -406,16 +429,33 @@
   - 底层
     - Unsafe(提供CAS操作)
     - LockSupport(提供park/unpark操作)
-  - 数据结构
+  - CLH数据结构
   - 资源共享模式/同步方式
   - **模版设计模式**
   - 源码分析
     - 获取资源流程
+      - acquire
+      - acquireShared
     - 释放资源流程
-  - 三个组件
-    - Semaphore
-    - CountDownLatch
-    - CyclicBarrier
+      - release
+      - releaseShared
+  - 两个队列
+    - CLH队列
+    - 条件队列
+  - AQS组件
+    - AQS实现的锁(实现Lock接口)
+      - ReentrantLock
+        - 内部类Sync继承AQS
+        - Condition底层使用LockSupport
+      - ReentrantReadWriteLock
+        - 读锁和写锁都有继承AQS的内部类Sync
+    - AQS通信工具类
+      - Semaphore
+        - 内部有一个继承了AQS的同步器Sync
+      - CountDownLatch
+        - 内部有一个继承了AQS的同步器Sync
+      - CyclicBarrier
+        - 内部使用ReentrantLock
   - 其他
     - AOS
     - AQLS
@@ -431,12 +471,16 @@
     - 基本原理
 
 - LockSupport
-  - park底层使用的是`UNSAFE.park`
-  - 为什么LockSupport也是核心基础类? AQS框架借助于两个类：Unsafe(提供CAS操作)和LockSupport(提供park/unpark操作)
-  - 写出分别通过wait/notify和LockSupport的park/unpark实现同步?
-  - LockSupport.park()会释放锁资源吗? 那么Condition.await()呢? 
-  - Thread.sleep()、Object.wait()、Condition.await()、LockSupport.park()的区别? **重点**
-  - 如果在wait()之前执行了notify()会怎样? 如果在park()之前执行了unpark()会怎样? 
+  - 是什么
+  - 使用原理
+  - [底层原理](https://blog.csdn.net/saintyyu/article/details/107426428)
+  - [常见问题](https://www.pdai.tech/md/java/thread/java-thread-x-lock-LockSupport.html)
+    - park底层使用的是`UNSAFE.park`
+    - 为什么LockSupport也是核心基础类? AQS框架借助于两个类：Unsafe(提供CAS操作)和LockSupport(提供park/unpark操作)
+    - 写出分别通过wait/notify和LockSupport的park/unpark实现同步?
+    - LockSupport.park()会释放锁资源吗? 那么Condition.await()呢? 
+    - Thread.sleep()、Object.wait()、Condition.await()、LockSupport.park()的区别? **重点**
+    - 如果在wait()之前执行了notify()会怎样? 如果在park()之前执行了unpark()会怎样? 
 
 - 锁、通信工具类<br />和底层使用
   - AQS实现的锁(实现Lock接口)
@@ -494,6 +538,8 @@
 
 - 并发集合容器
   - [什么是同步容器和并发容器](https://juejin.cn/post/6844903954719965192)
+    - 同步容器：synchronized
+    - 并发容器：AQS锁、CAS、COW、分段锁
   - 同步容器
     - vector:在面对多线程下的复合操作的时候也是需要通过客户端加锁的方式保证原子性
     - HashTable
@@ -513,10 +559,7 @@
         - [LinkedBlockingQueue与ConcurrentLinkedQueue的区别](https://blog.csdn.net/lzxlfly/article/details/86710382)
     - ConcurrentMap
       - ConcurrentHashMap
-        - LockSupport
-        - 分段锁继承ReentrantLock
-        - Unsafe:CAS
-        - AtomicInteger
+        - 看HashMap那里
       - ConcurrentNavigableMap
       - ConcurrentSkipListMap
     - CopyOnWrite
@@ -524,6 +567,7 @@
         - ReentrantLock加锁
       - CopyOnWriteArrayMap
       - CopyOnWriteArraySet
+
 - 线程池
   - 结构
     - 任务(Runnable /Callable) 
@@ -1369,47 +1413,263 @@
 
 ### Mysql<!-- fold -->
 
-- 存储引擎
-  - MyISAM
-  - Innodb
-  - 两者区别
+#### [三大范式](https://blog.csdn.net/weixin_43649997/article/details/105835007)
 
-- 锁机制
-  - MyISAM
-  - Innodb
+- 第一范式
+- 第二范式
+- 第三范式
 
-- 范式
-  - 第一范式
-  - 第二范式
-  - 第三范式
-  - Boyce-Codd 范式（BCNF）
+#### 事务
 
-- 事务
-  - 四大特征
-    - 原子性：是不可分割的最小操作单位，要么同时成功，要么同时失败
-    - 持久性：如果事务一旦提交或者回滚，数据库会持久更新数据。
-    - 隔离性：多个事务之间相互独立。但一般会相互影响。
-    - 一致性：表示事务操作前后数据总量不变。
-  - 隔离等级
-    - 并发事务的问题
-      - 脏读
-      - 丢失修改
-      - 不可重复读（虚读）
-      - 幻读
-    - 隔离级别<br />与问题解决
-      - read uncommitted:
-        - 说明
-        - 产生问题：脏读，不可重复读，幻读
-      - read committed:
-        - 说明
-        - 产生问题：不可重复读，幻读
-      - repeatalbe read:
-        - 说明
-        - 产生问题：幻读
+- 四大特征
+  - A原子性
+    - 概述
+    - 原理
+      - undo log
+      - 回滚
+  - C持久性
+    - 概述
+    - 原理:其他三个
+  - I隔离性
+    - 概述
+    - 原理
+      - MVCC
+      - 锁
+  - D一致性
+    - 概述
+    - 原理(双写缓冲)
+      - buffer pool
+      - redo log
+
+- 并发事务的问题
+  - 脏读
+  - 不可重复读（虚读）
+  - 幻读
+
+- 隔离级别
+  - read uncommitted:
+    - 说明
+    - 产生问题
+  - read committed:
+    - 说明
+    - 产生问题
+  - repeatalbe read:
+    - 说明
+    - 产生问题
+  - serializable
+    - 说明
+    - 可以解决所有问题
+
+#### 索引
+
+- 概述
+  - 索引是什么
+  - 什么时候需要建索引 <!-- fold -->
+    - 不修改
+    - 经常作为条件查询，排序，分组
+    - 外键
+  - 什么时候不要建索引 <!-- fold -->
+    - 用不到
+    - 记录少
+    - 频繁更新
+    - 经常增删
+    - 数据重复且分布平均的表字段
+  - 什么时候创建复合索引 <!-- fold -->
+    - 用得到
+    - 高并发
+    - 一个索引当几个用
+  - 索引优点
+    - 查询速度
+    - 优化使用(MRR,ICP)
+    - 创建维护消耗
+    - 磁盘占用
+
+- 索引分类
+  - 按属性/作用分类
+    - 普通索引
+    - 唯一索引
+    - 主键索引
+    - 复合索引
+    - 全文索引
+  - 按引擎分类
+    - B+
+    - Hash
+    - 全文
+    - R-Tree
+  - 按是否聚簇分类
+    - 聚簇索引
+    - 二级索引
+
+- 索引语法
+  - 创建
+  - 删除
+  - 查看
+
+- 索引添加与Cardinality
+  - fast index creation
+  - Cardinality
+
+#### 存储引擎
+
+- MyISAM
+  - 索引树结构
+  - 聚簇索引的选择
+  - 二级索引检索过程
+- Innodb
+  - 索引树结构
+  - 二级索引检索过程
+- 常见问题
+  - M和I两者区别 <!-- fold -->
+    - 事务
+    - 主键
+    - 外键
+    - 锁
+    - 索引
+    - count(*)
+  - 为什么使用B+树，不使用：
+    - B树
+    - 红黑树
+
+#### 调优
+
+- explain使用与分析
+  - **id**
+  - select_type
+  - table
+  - **type**
+  - possible_keys
+  - **key**
+  - **key_len**
+  - **ref**
+  - **rows**
+  - **extra**
+    - using filesort(危险)
+    - using temporary(非常危险)
+    - using index
+    - using where
+    - using join buffer
+    - impossible where
+
+- 最左前缀原则
+
+- 索引失效原因
+  - 不遵循最左前缀
+  - 索引列上的任何操作
+    -  计算
+    -  函数
+    -  （自动or手动）类型转换
+  - 范围查询
+    - `between and;in`
+    - `or`
+    - `%...`(覆盖索引有奇效)
+    - `is null;is not null`
+    - `!=;<>`
+
+- 小标驱动大表
+  - 左表驱动右表
+    - left join
+    - exist
+  - 右表驱动左表
+    - right join
+    - in
+
+- 排序优化
+  - mysql排序方式
+    - index sort
+    - file sort
+      - 单路
+        - io次数:2
+        - 第二次随机io
+      - 双路
+        - io次数:1
+        - 一次顺序io
+        - buffer不够：多次io
+      - **参数优化策略**
+  - order by优化
+    - 遵循最左前缀进行排序
+      - order
+      - where(const)+order
+    - 不让索引失效
+    - 不能一升一降
+  - group by优化
+    - 实质是先排序后进行分组
+    - 能写在where限定的条件就不要去having限定了
+
+- 慢查询日志
+
+#### 锁
+
+- Mysql锁底层
+  - latch
+  - lock
+
+- 锁的分类
+  - [乐观锁](https://www.cnblogs.com/laoyeye/p/8097684.html)
+    - 时间戳
+    - 版本号
+    - 条件限制
+  - 悲观锁
+    - Myisam表锁
+      - 读锁
+      - 写锁
+    - Innodb锁
+      - 意向表锁
+        - 意向共享锁
+        - 意向排他锁
+      - 普通行锁
+        - 共享锁
+        - 排它锁
+      - 锁算法
+        - 记录锁
+        - 间隙锁
+        - 临键锁
+      - 插入意向锁
+      - 自增锁
+
+- **[加锁流程](https://blog.csdn.net/geekjoker/article/details/79444076)**
+  - 需要了解
+    - 聚集索引和二级索引
+    - innodb二级索引查询流程
+    - innodb的锁算法
+  - 不同情景 <br />(**下列条件相互组合**)
+    - 查询方式
+      - 等值查询
+      - 范围查询
+    - 隔离级别
+      - RC
+      - RR
       - serializable
-        - 说明
-        - 可以解决所有问题
- 
+    - 操作
+      - `select`(只用在serializable下考虑)
+      - `delete`/`select...for update`
+    - 使用索引
+      - 主键索引<br />(注意临键锁会不会加在主键)
+      - 唯一索引
+      - 非唯一索引<br />(注意临键锁会不会加在主键)
+      - 无索引
+
+#### MVCC
+
+- 快照读与当前读
+- 原理
+  - 版本链
+    - 隐藏字段
+    - undo log
+  - readview
+
+
+#### 主从复制
+
+- 主从复制
+  - 原理
+- 读写分离
+
+#### 底层优化
+
+- MRR
+- ICP
+
+#### 大表调优
 
 ### oracle<!-- fold -->
 
@@ -1473,7 +1733,7 @@
         - 原理
       - 手动(4种)
     - check检查
-    - 优劣势
+    - 优缺点
   - AOF
     - 持久化原理/过程
     - 配置
@@ -1488,7 +1748,9 @@
       - 触发
       - 重写数据不一致问题
       - 重写数据不一致问题解决
-    - (总结)两个缓冲区
+    - 优缺点
+    - (总结)AOF的两个缓冲区
+  - AOF+RDB混合
 
 - 事务
   - 基本命令
@@ -1507,27 +1769,66 @@
 
 - 集群
   - 主从复制
+    - 说明
+    - 配置
+    - master宕机
   - 哨兵模式
+    - 说明
+    - 配置
+    - master宕机
   - 分片cluster
+    - 说明
+      - 两个端口
+      - 集群总线
+      - 数据存取 <!-- fold -->
+        - CRC16
+        - hash槽
+        - 重定向
+      - 主从复制模型
+    - 配置
+    - master宕机
 
-- 常见问题
+- 缓存失效/更新问题
   - 缓存雪崩
     - 说明
     - 解决方案
   - 缓存穿透
     - 说明
     - 解决方案
-  - 双写一致
+  - 缓存击穿
     - 说明
     - 解决方案
-  - 线程模型
-    - 为什么能单线程处理那么多客户端
-    - 为什么6.0前不使用多线程
-    - Redis 6.0为什么使用多线程
+  - 双写一致
+    - 分析问题
+      - 先更新数据库，<br />再删除缓存
+        - 正常
+        - 失败
+        - 并发
+      - 先删除缓存，<br />再更新数据库
+        - 正常
+        - 失败
+        - 并发
+        - `关联：缓存读写策略中的旁路缓存`
+    - 解决方案
+
+- 线程模型
+  - 为什么使用单线程 <!-- fold -->
+    - 可维护性，方便开发和调试
+    - 单线程也能处理并发请求(多路复用)
+    - 性能瓶颈不是cpu，而是内存和网络
+  - 为什么能单线程处理那么多客户端 <!-- fold -->
+    - 纯内存
+    - 单线程，无锁
+    - 多路复用
+    - 高效底层数据结构优化
+  - 为什么6.0前不使用多线程
+  - Redis 6.0为什么使用多线程 <!-- fold -->
+    - 提高网络io读写性能
+    - `默认禁用`
 
 - redis应用
   - redis分布式锁
-    - 高校分布式锁条件
+    - 高效分布式锁条件
       - 互斥
       - 防止死锁
       - 性能
@@ -1542,7 +1843,8 @@
       - 实现可重入:Hash
       - 缺陷
   - 缓存
-    - 旁路缓存模式
+    - 旁路缓存模式 <!-- fold -->
+      - 关联：双写一致问题
     - 读写穿透
     - 异步缓存写入
   - 布隆过滤器
@@ -1552,7 +1854,6 @@
 ### MongoDB<!-- fold -->
 
 # 基础
-
 
 ## 设计模式<!-- fold -->
 
