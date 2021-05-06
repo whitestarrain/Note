@@ -22,7 +22,7 @@
 - 🎈思维导图上的链接
   - 都是一些好的博客文章。大多针对一些知识点。
   - 思维导图与本仓库笔记的链接之后会在上面的**目录索引**中给出
-
+- 💣**请每次查看时使用ctrl+F5更新，避免浏览器缓存导致思维导图过旧**
 
 # 笔记风格
 
@@ -52,6 +52,29 @@
 - [java学习笔记](https://github.com/whitestarrain/java_study_note)
 - [大数据与深度学习笔记](https://github.com/whitestarrain/big_data)
 - [python学习笔记](https://github.com/whitestarrain/python_learn)
+
+# 目录调整
+
+之前目录调整用来`git mv`图片的代码。因为`git mv`不支持正则表达式匹配，所以只能使用awk了。
+
+```awk
+awk 'BEGIN{
+      target = "../javaFrame/image"
+      print target
+    }
+    {
+      a = match($0,/!\[.*\](.*)/);
+      if(a!=0){
+        str = substr($0,a);
+        i = index(str,"(");
+        j = index(str,")");
+        image_path = substr(str,i+1,j-i-1);
+        command = sprintf("git mv %s %s",image_path,target);
+        print command
+        system(command)
+      }
+    }' Spring.md
+```
 
 # 待做/学习
 

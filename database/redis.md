@@ -617,6 +617,31 @@
 
 **注意：当然无论redis删没删掉这个key外界都是查不到的；只是没删的话还占着内存而已**
 
+## 3.10. 常用命令
+
+<details>
+<summary style="color:red;">常用命令</summary>
+
+```
+key:
+  del expire--persist rename ttl exsits scan
+
+string:
+  set setnx setex strlen get mget incr decr append
+
+hash:
+  hexists hget hdel hset hsetnx hlen hincr hvals hkeys
+
+list: 
+  [b](l/r)(pop/push) llen lrange lset lindex
+
+set:
+  sadd scard sdiff sinter sunion smembers spop
+
+zset:
+  zadd zcard zscore zrangebylex zrangebyscore zremrangebylex zremrangebyrank zremrangebyscore
+
+</details>
 
 # 4. 配置文件说明
 
