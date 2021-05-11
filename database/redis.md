@@ -640,6 +640,7 @@ set:
 
 zset:
   zadd zcard zscore zrangebylex zrangebyscore zremrangebylex zremrangebyrank zremrangebyscore
+```
 
 </details>
 
@@ -1156,52 +1157,218 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 
 ![redis-40](./image/redis-40.png)
 
+- 结构说明
+  - len: 表示字符串的真正长度（不包含NULL结束符在内）。
+  - alloc: 表示字符串的最大容量（不包含最后多余的那个字节）。
+  - flags: 总是占用一个字节。其中的最低3个bit用来表示header的类型。
+  - buf：字符串内容
+
+
 - 源码位置：`sds.h/sdshdr` 
   > 可以看到 SDS 完整的实现细节
-- 大致说明：
-  - **多增加 len 表示当前字符串的长度**
-    - 这样就可以直接获取长度了，复杂度 O(1)；
+
+- 优化
+  - **有效降低内存分配次数**
+    - **空间预分配**
+      - 若修改之后sds长度小于1MB,则多分配现有len长度的空间
+      - 若修改之后sds长度大于等于1MB，则扩充除了满足修改之后的长度外，额外多1MB空间
+    - **惰性空间释放**
+      - 为避免缩短字符串时候的内存重分配操作，sds在数据减少时，并不立刻释放空间。
+  - **二进制安全**
+    - C 语言字符串只能保存 `ascii` 码，对于图片、音频等信息无法保存
+    - SDS 是二进制安全的，**通过len来获取数据**，而不是根据`\0`来设置字符串末尾
   - **自动扩展空间**
     - 当 SDS 需要对字符串进行修改时，首先借助于 `len` 和 `alloc` 检查空间是否满足修改所需的要求
     - 如果空间不够的话，SDS 会自动扩展空间，避免了像 C 字符串操作中的覆盖情况；
-  - **有效降低内存分配次数**：
-    - C 字符串在涉及增加或者清除操作时会改变底层数组的大小造成重新分配，SDS 使用了 **空间预分配** 和 **惰性空间释放** 机制
-    - 简单理解就是每次在**扩展时是成倍的多分配**的，在**缩容时也是先留着并不正式归还给 OS**；
-  - **二进制安全**：
-    - C 语言字符串只能保存 `ascii` 码，对于图片、音频等信息无法保存
-    - SDS 是二进制安全的，写入什么读取就是什么，不做任何过滤和限制；
 
 ### 7.2.2. linkedlist 双端链表
 
+linkedlist是标准的双向链表，Node节点包含prev和next指针，可以进行双向遍历；
+
+还保存了 head 和 tail 两个指针，因此，对链表的表头和表尾进行插入的复杂度都为 O(1)，这是高效实现 LPUSH 、 RPOP、 RPOPLPUSH 等命令的关键。
+
 ### 7.2.3. ziplist 压缩列表
-
-这是 Redis 为了节约内存 而使用的一种数据结构，zset 和 hash 容器对象会在元素个数较少的时候，采用压缩列表（ziplist）进行存储。压缩列表是 一块连续的内存空间，元素之间紧挨着存储，没有任何冗余空隙。
-
-待补充
-
-[图解Redis之数据结构篇——压缩列表](https://mp.weixin.qq.com/s/nba0FUEAVRs0vi24KUoyQg)
-
-[这一篇稍微底层稍微硬核一点](http://www.web-lovers.com/redis-source-ziplist.html)
-
-### 7.2.4. dict 字典
-
-待补充：源码解析
-
-[Redis之字典(hashtable)](https://blog.csdn.net/u010710458/article/details/80604740)
 
 > **说明**
 
-- 说明：
-  - 字典是 Redis 服务器中出现最为频繁的复合型数据结构。
-  - 字典是由HashTable实现的。
-    <details>
-    <summary style="color:red;">图示</summary>
+- 压缩列表是Redis为节约内存自己设计的一种顺序型数据结构。
+- 压缩列表被用作列表键和哈希键的底层实现之一。
+- 压缩列表可以包含多个节点,每个节点可以保存一个字节数组或者整数值。
+- 添加新节点到压缩列表,或者从压缩列表中删除节点,可能会引发连锁更新操作,但这种操作出现的几率并不高。
 
-    ![redis-41](./image/redis-41.png)
-    > dictht就是指的HashTable
-    </details>
+> **问题引入**
 
-- 使用：
+![redis-47](./image/redis-47.png)
+
+- 一共五个元素，每个元素的长度都是不一样的，
+- 这个时候选择最大值5作为每个元素的内存大小，如果选择小于5的，那么第一个元素hello，第二个元素world就不能完整存储，数据会丢失。
+- 所以只能声明为 `new char[5][5]`
+- **需要用最大长度的字符串大小作为整个数组所有元素的内存大小**
+- 如果只有一个元素的长度超大，但是其他的元素长度都比较小，那么我们所有元素的内存都用超大的数字就会导致内存的浪费。
+
+> **整体结构**
+
+- **结构图示**
+
+  ![redis-43](./image/redis-43.png)
+
+  ![redis-48](./image/redis-48.png)
+
+  - zlbytes：记录整个压缩列表占用的内存字节数。
+  - zltail_offset：记录压缩列表尾节点距离压缩列表的起始地址的字节数（目的是为了直接定位到尾节点，方便反向查询）。
+  - zllength：记录了压缩列表的节点数量。即在上图中节点数量为2。
+  - zlend：保存一个常数255(0xFF)，标记压缩列表的末端。
+
+- 示例
+
+  ![redis-44](./image/redis-44.png)
+
+> **列表节点详细说明**
+
+- 保存值的种类
+  - 字节数组
+    - 长度小于等于63(2^6-1)字节的字节数组;
+    - 长度小于等于16383(2^14-1)字节的字节数组
+    - 长度小于等于4294967295(2^32-1)字节的字节数组
+  - 一个整数值
+    - 4位长,介于0至12之间的无符号整数
+    - 1字节长的有符号整数
+    - 3字节长的有符号整数
+    - int16_t类型整数
+    - int32_t类型整数
+    - int64_t类型整数
+
+- 数据结构
+
+  ![redis-45](./image/redis-45.png)
+
+  - previous_entry_length：
+    - 说明：以字节为单位,记录了压缩列表中 **前一个节点的长度** 。 
+    - 长度：previous_entry_length属性的长度可以是1字节或者5字节。
+      - 如果前一节点的长度小于254字节,那么 previous_entry_length属性的长度为1字节，前一节点的长度就保存在这一个字节里面。
+      - 如果前一节点的长度大于等于254字节,那么 previous_entry_length属性的长度为5字节:其中属性的第一字节会被设置为0xFE(十进制值254),而之后的四个字节则用于保存前一节点的长度.
+
+  - encoding：
+    - 说明：记录了节点的content属性所保存数据的类型以及长度。
+    - encodding长度说明：
+      - 一字节、两字节或者五字节长值的最高位为00、01或者10的是**字节数组编码**。
+        - 这种编码表示节点的 content属性保存着字节数组
+        - 数组的长度由编码除去最高两位之后的其他位记录。
+      - 一字节长，值的最高位以11开头的是**整数编码**
+        - 这种编码表示节点的content属性保存着整数值
+        - 整数值的类型和长度由编码除去最高两位之后的其他位记录。
+
+  - content：负责保存节点的具体数据,节点值可以是一个字节数组或者整数,值的类型和长度由节点的encoding属性决定。
+
+- 示例
+
+  ![redis-46](./image/redis-46.png)
+
+  - 编码的最高两位00表示节点保存的是一个字节数组。
+  - 编码的后六位001011记录了字节数组的长度11。
+  - content属性保存着节点的值”hello world”。
+  - 编码11000000表示节点保存的是一个int16_t类型的整数值;
+  - content属性保存着节点的值10086
+
+> **优缺点**
+
+- 优点
+  - 节约内存
+
+- 缺点
+  - 因为压缩表是紧凑存储的，没有多余的空间。
+    - 这就意味着插入一个新的元素就需要调用函数扩展内存。
+    - 过程中可能需要重新分配新的内存空间，并将之前的内容一次性拷贝到新的地址。
+  - 如果数据量太多，重新分配内存和拷贝数据会有很大的消耗。
+  - **所以压缩表不适合存储大型字符串，并且数据元素不能太多**。
+
+> **时间复杂度**
+
+| 操作                                                         | 时间复杂度                                                   |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 创建一个新的压缩列表                                         | O(1)                                                         |
+| 创建一个包含给定值的新节点,并将这个新节点添加到压缩列表的表头或者表尾 | 平均O(N)，最坏O(N^2)(可能发生连锁更新)                       |
+| 将包含给定值的新节点插人到给定节点之后                       | 平均O(N)，最坏O(N^2)(可能发生连锁更新)                       |
+| 返回压缩列表给定索引上的节点                                 | O(N)                                                         |
+| 在压缩列表中査找并返回包含了给定值的节点                     | 因为节点的值可能是一个字节数组,所以检查节点值和给定值是否相同的复杂度为O(N),而查找整个列表的复杂度则为(N^2) |
+| 返回给定节点的下一个节点                                     | O(1)                                                         |
+| 返回给定节点的前一个节点                                     | O(1)                                                         |
+| 获取给定节点所保存的值                                       | O(1)                                                         |
+| 从压缩列表中删除给定的节点                                   | 平均O(N)，最坏O(N^2)(可能发生连锁更新)                       |
+| 删除压缩列表在给定索引上的连续多个                           | 平均O(N)，最坏O(N^2)(可能发生连锁更新)                       |
+| 返回压缩列表目前占用的内存字节数                             | O(1)                                                         |
+| 返回压缩列表目前包含的节点数量                               | 点数量小于65535时为O(1),大于65535时为O(N)                    |
+
+### 7.2.4. dict 字典
+
+> **redis哈希表数据结构**
+
+![redis-41](./image/redis-41.png)
+
+- dictht整体结构
+    ```c
+    typedef struct dictht {
+        // 哈希表数组
+        dictEntry **table;
+        // 哈希表大小
+        unsigned long size;
+        // 哈希表大小掩码，用于计算索引值
+        // 总是等于 size - 1
+        unsigned long sizemask;
+        // 该哈希表已有节点的数量
+        unsigned long used;
+    } dictht;
+    ```
+
+- dictEntry结构
+  ```c
+  typedef struct dictEntry {
+      // 键
+      void *key;
+      // 值
+      union {
+          void *val;
+          uint64_t u64;
+          int64_t s64;
+      } v;
+      // 指向下个哈希表节点，形成链表
+      struct dictEntry *next;
+  } dictEntry;
+  ```
+  - key属性保存着键值对中的键
+  - 而v属性则保存着键值对中的值，其中键值对中的值可以是一个指针，或者是一个整数。
+  - next属性是指向另一个哈希表节点的指针，这个指针可以将多个哈希值相同的键值对连接在一起，来解决键冲突问题（以链表的方式解决冲突问题）。
+
+> **字典数据结构**
+
+![redis-57](./image/redis-57.png)
+
+- 结构:主要由两个哈希表组成
+  ```c
+  typedef struct dict {
+
+      // 类型特定函数
+      dictType *type;
+
+      // 私有数据
+      void *privdata;
+
+      // 哈希表
+      dictht ht[2];
+
+      // rehash 索引
+      // 当 rehash 不在进行时，值为 -1
+      int rehashidx; /* rehashing not in progress if rehashidx == -1 */
+
+  } dict;
+  ```
+  - type属性和privdata属性是针对不同类型的键值对，而创建多态字典而设置的：
+    - type属性是一个指向dictType结构的指针，每个dictType结构保存了一组用于操作特定类型键值对的函数，Redis会为用途不同的字典设置不同类型的特定函数。
+    - 而privadata属性则保存了需要传给那些类型特定函数的可选参数。
+  - ht属性是一个包含了两个项的数组，数组中每个项都是一个dictht哈希表，一般情况下，字典只使用ht[0]哈希表，而ht[1]哈希表只对ht[0]哈希表进行rehash时使用。
+  - 另一个与rehash有关的就是rehashidx属性，它积累了rehash目前的进度，如果没有进行rehash，则它的值为-1。
+
+- 字典的使用：
   - 除了 **hash** 结构的数据会用到字典外
   - 整个 Redis 数据库的所有 `key` 和 `value` 也组成了一个 **全局字典**
   - 还有带过期时间的 `key` 也是一个字典。*(存储在 RedisDb 数据结构中)*
@@ -1209,6 +1376,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 > **内部结构和rehash**
 
 - 冲突解决
+  > 上面也提到了
   - **Redis** 中的字典相当于 Java 中的 **HashMap**，内部实现也差不多类似
   - 都是通过 **"数组 + 链表"** 的 **链地址法** 来解决部分哈希冲突
 
@@ -1217,30 +1385,300 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - 通常情况下只有一个 `hashtable` 有值，但是在字典扩容缩容时，需要分配新的 `hashtable`，然后进行 **渐进式搬迁** *(rehash)*
   - 这时候两个 `hashtable` 分别存储旧的和新的 `hashtable`，待搬迁结束后，旧的将被删除，新的 `hashtable` 取而代之。
 
-> **扩容的条件**
+> **扩容**
 
-- 正常情况下
-  - 当 hash 表中 **元素的个数等于第一维数组的长度时**，就会开始扩容
-  - 扩容的新数组是 **原数组大小的 2 倍**
-- 如果 Redis 正在做 `bgsave(持久化命令)`
-  - 为了减少内存也得过多分离，Redis 尽量不去扩容
-  - 但是如果 hash 表非常满了，**达到了第一维数组长度的 5 倍了**，这个时候就会 **强制扩容**。
+- 扩容说明
+  - 随着操作的不断进行，哈希表保存的键值对会逐渐增多或减少
+  - 为了让哈希表**负载因子**维持在一个合理范围之内，当哈希表保存的键值对太多或太少时，程序要对哈希表的大小进行相应的扩展或收缩。
+
+- 扩容条件
+  - 正常情况下
+    - 当 hash 表中 **元素的个数等于第一维数组的长度时**，就会开始扩容
+    - 扩容的新数组是 **原数组大小的 2 倍**
+  - 如果 Redis 正在做 `bgsave(持久化命令)`
+    - 为了减少内存也得过多分离，Redis 尽量不去扩容
+    - 但是如果 hash 表非常满了，**达到了第一维数组长度的 5 倍了**，这个时候就会 **强制扩容**。
+
+    ```
+    为什么在执行 BGSAVE 命令或者 BGREWRITEAOF 命令， 负载因子要大于等于 5？而未执行时大于等于1？
+
+    区分这两种情况的目的在于，因为执行BGSAVE与BGREWRITEAOF过程中，Redis都需要创建子进程，
+    而大多数操作系统都采用写时复制技术来优化子进程使用效率，
+    所以在子进程存在期间，服务器会提高执行扩展操作所需的负载因子，从而尽可能避免在子进程存在期间进行哈希表扩展操作，
+    这可以避免不必要的内存写入，最大限度的节约空间。
+    ```
+
+- 扩容步骤
+  - 为字典的ht[1]哈希表分配空间，这个空间大小取决于要执行的操作：
+    - 如果执行的是扩展操作，则ht[1]的大小为第一个大于等于ht[0].used*2的2^n；
+    - 如果执行的收缩操作，则ht[1]的大小为第一个大于等于ht[0].used的2^n；
+  - 将保存在ht[0]中的所有键值对rehash到ht[1]上面：rehash指的是重新计算键的哈希值和索引值，然后将键值对放置到ht[1]的指定位置上。
+  - 当ht[0]包含的所有键值对都迁移到ht[1]之后，释放ht[0]，将ht[1]设置为ht[0]，并在ht[1]新创建一个空白哈希表，为下一次rehash做准备。
+
+- 图示示例
+
+  <details>
+  <summary style="color:red;">图示示例</summary>
+
+  ![redis-58](./image/redis-58.png)
+  ![redis-59](./image/redis-59.png)
+  ![redis-60](./image/redis-60.png)
+  ![redis-61](./image/redis-61.png)
+  </details>
+
+- 渐进式hash
+  - 原因
+    - 如果服务器中包含很多键值对，要一次性的将这些键值对全部rehash到ht[1]的话，庞大的计算量可能导致服务器在一段时间内停止服务于。
+  - 步骤
+    - 为ht[1]分配空间，让字典同时持有ht[0]和ht[1]两个哈希表。
+    - 在字典中维持一个索引计数器变量rehashidx，并将它置为0，表示rehash工作开始。
+    - 在rehash进行期间， **每次对字典执行添加、删除、查找或者更新操作时，程序除了执行指定操作以外，还会顺带将ht[0]哈希表在rehashidx索引上的所有键值对rehash到ht[1]中** ，当rehash工作完成之后，程序将rehashidx属性的值+1。
+    - 随着字典操作的不断进行，最终在某个时间点上，ht[0]的所有键值对都被rehash到ht[1]上，这时将rehashidx属性设为-1，表示rehash完成。
+  - 图示示例
+
+    <details>
+    <summary style="color:red;">图示示例</summary>
+
+    ![redis-62](./image/redis-62.png)
+    ![redis-63](./image/redis-63.png)
+    ![redis-64](./image/redis-64.png) 
+    ![redis-65](./image/redis-65.png)
+    ![redis-66](./image/redis-66.png)
+    ![redis-67](./image/redis-67.png)
+    </details>
+
+- 扩容时的api操作
+  - 渐进式rehash执行期间的哈希表操作
+  - 因为在渐进式rehash的过程中，字典会同时使用ht[0]和ht[1]两个哈希表
+  - **所以在渐进式rehash进行期间，字典的删除、查找、更新等操作都是在两个表上进行的** 。如：
+    - 查找操作会先在ht[0]上进行，如果没找到再在ht[1]上进行。
+    - 添加操作的键值对会一律保存到ht[1]中，这一措施保证ht[0]包含的键值对只会减少不会增加。
 
 > **缩容的条件**
 
 - 当 hash 表因为元素逐渐被删除变得越来越稀疏时，Redis 会对 hash 表进行缩容来减少 hash 表的第一维数组空间占用
-- 所用的条件是 **元素个数低于数组长度的 10%**
+- 所用的条件是 **元素个数低于数组长度的 10%（负载因子小于0.1）**
 - 缩容不会考虑 Redis 是否在做 `bgsave`。	
 
 ### 7.2.5. intset 整数集合
 
 ### 7.2.6. skiplist 跳表
 
-待补充
+> **基本说明**
 
-[Redis-跳跃表](https://www.wmyskxz.com/2020/02/29/redis-2-tiao-yue-biao/)
+- 是一种可以于平衡树媲美的层次化链表结构
+- 查找、删除、添加等操作都可以在对数期望时间下完成，以下是一个典型的跳跃表例子：
 
-![redis-42](./image/redis-42.png)
+  ![redis-42](./image/redis-42.png)
+
+- 有序列表 zset 的内部实现就依赖了一种叫做 「跳跃列表」 的数据结构。
+
+> **问题引入**
+
+- zset 
+  - 要支持随机的插入和删除，所以它 **不宜使用数组来实现**
+  - 关于排序问题，可以想到 **红黑树/ 平衡树** 这样的树形结构
+
+- 为什么 Redis 不使用这样一些结构呢？
+  - **性能考虑：** 在高并发的情况下，树形结构需要执行一些类似于 rebalance 这样的可能涉及整棵树的操作，相对来说跳跃表的变化只涉及局部。
+  - **实现考虑：** 在复杂度与红黑树相同的情况下，跳跃表实现起来更简单，看起来也更加直观；
+
+- 基于以上的一些考虑，Redis 基于 **William Pugh** 的论文做出一些改进后采用了 **跳跃表** 这样的结构。
+
+> **本质是解决查找问题**
+
+- 普通链表
+
+  ![redis-49](./image/redis-49.png) 
+
+  - 我们需要这个链表按照 score 值进行排序，
+  - 然后因为链表不能像数组一样定位，因此查找复杂度依旧为:O(N)
+
+
+- 优化：每相邻两个节点之间就增加一个指针，让指针指向下一个节点
+
+  ![redis-50](./image/redis-50.png)
+
+  ![redis-51](./image/redis-51.png)
+
+  - 新增的指针连成了一个新的链表，但它包含的数据却只有原来的一半
+  - 找数据时，可以根据这条新的链表查找，如果碰到比待查找数据大的节点时，再回到原来的链表中进行查找
+  - 在此基础上，可以继续添加三层链表
+
+> **更进一步：跳表**
+
+- **跳跃表 skiplist** 说明：
+  - 受到上面那种多层链表结构的启发从而设计出来的
+  - 按照上面生成链表的方式，上面每一层链表的节点个数，是下面一层的节点个数的一半，这样查找过程就非常类似于一个二分查找
+  - 使得查找的时间复杂度可以降低到 _O(logn)_。
+
+- 问题：
+  - 新插入一个节点之后，就会打乱上下相邻两层链表上节点个数严格的 2:1 的对应关系。
+  - 如果要维持这种对应关系，就必须把新插入的节点后面的所有节点 *（也包括新插入的节点）* 重新进行调整
+  - 这会让时间复杂度重新蜕化成 _O(n)_。
+  - 删除数据也有同样的问题。
+
+- 问题解决
+  - **skiplist** 为了避免这一问题，它不要求上下相邻两层链表之间的节点个数有严格的对应关系，而是 **为每个节点随机出一个层数(level)** 。
+  - 比如，一个节点随机出的层数是 3，那么就把它链入到第 1 层到第 3 层这三层链表中。
+  - 为了表达清楚，下图展示了如何通过一步步的插入操作从而形成一个 skiplist 的过程：
+
+    <details>
+    <summary style="color:red;">图示</summary>
+
+    ![redis-52](./image/redis-52.png)
+    </details>
+
+  - 从上面的创建和插入的过程中可以看出
+    - 每一个节点的层数（level）是随机出来的
+    - 而且新插入一个节点并不会影响到其他节点的层数
+    - 因此， **插入操作只需要修改节点前后的指针，而不需要对多个节点都进行调整** ，这就降低了插入操作的复杂度。
+
+
+- 层数分配：
+  - 50% 的概率被分配到 `Level 1`，25% 的概率被分配到 `Level 2`，12.5% 的概率被分配到 `Level 3`，以此类推
+  - **Redis 跳跃表默认允许最大的层数是 32**，被源码中 `ZSKIPLIST_MAXLEVEL` 定义，当 `Level[0]` 有 264 个元素时，才能达到 32 层，所以定义 32 完全够用了。
+
+- 查找过程
+
+  ![redis-53](./image/redis-53.png)
+
+> **插入实现**
+
+- 找到当前我需要插入的位置
+  - 先根据score进行比较，如果score相同，就根据value进行比较
+  - 逐步降级寻找目标节点，得到**搜索路径**
+    - 因为随机插入到一层，因此必须记录每一层的位置
+
+  <details>
+  <summary style="color:red;">源码</summary>
+
+  ```c
+  serverAssert(!isnan(score));
+  x = zsl->header;
+  // 逐步降级寻找目标节点，得到 "搜索路径"
+  for (i = zsl->level-1; i >= 0; i--) {
+      /* store rank that is crossed to reach the insert position */
+      rank[i] = i == (zsl->level-1) ? 0 : rank[i+1];
+      // 如果 score 相等，还需要比较 value 值
+      while (x->level[i].forward &&
+              (x->level[i].forward->score < score ||
+                  (x->level[i].forward->score == score &&
+                  sdscmp(x->level[i].forward->ele,ele) < 0)))
+      {
+          rank[i] += x->level[i].span;
+          x = x->level[i].forward;
+      }
+      // 记录 "搜索路径"
+      update[i] = x;
+  }
+  ```
+  </details>
+
+- 创建新节点
+  - 如果随机生成的 level 超过了当前最大 level 需要更新跳跃表的信息
+
+  <details>
+  <summary style="color:red;">源码</summary>
+
+  ```c
+  /* we assume the element is not already inside, since we allow duplicated
+  * scores, reinserting the same element should never happen since the
+  * caller of zslInsert() should test in the hash table if the element is
+  * already inside or not. */
+  level = zslRandomLevel();
+  // 如果随机生成的 level 超过了当前最大 level 需要更新跳跃表的信息
+  if (level > zsl->level) {
+      for (i = zsl->level; i < level; i++) {
+          rank[i] = 0;
+          update[i] = zsl->header;
+          update[i]->level[i].span = zsl->length;
+      }
+      zsl->level = level;
+  }
+  // 创建新节点
+  x = zslCreateNode(level,score,ele);
+  ```
+  </details>
+
+- 调整前后的指针指向，完成插入；
+  - 重排前向指针
+  - 重排后向指针并返回
+
+> **删除实现**
+
+- 类似插入过程：
+  - 先得到搜索路径
+  - 再重排前后指针
+  - 更新最高层数
+
+> **节点更新实现**
+
+- 说明：
+  - 当我们调用 `ZADD` 方法时，如果对应的 value 不存在，那就是插入过程，
+  - 如果这个 value 已经存在，只是调整一下 score 的值，那就需要走一个更新流程。
+
+
+- **把这个元素删除再插入这个**
+
+  <details>
+  <summary style="color:red;">源码</summary>
+
+  ```c
+  COPY/* Remove and re-insert when score changed. */
+  if (score != curscore) {
+      zobj->ptr = zzlDelete(zobj->ptr,eptr);
+      zobj->ptr = zzlInsert(zobj->ptr,ele,score);
+      *flags |= ZADD_UPDATED;
+  }
+  ```
+  </details>
+
+  - 从源码 `t_zset.c/zsetAdd` 函数 `1350` 行左右
+  - 非常简单，但是要两次路径搜索，因此可以进一步优化
+
+
+> **排名实现**
+
+- 重要：span
+  - 跳跃表本身是有序的，Redis 在 skiplist 的 forward 指针上进行了优化，给每一个 forward 指针都增加了 `span` 属性
+  - 用来 **表示从前一个节点沿着当前层的 forward 指针跳到当前这个节点中间会跳过多少个节点**。
+  - 在上面的源码中我们也可以看到 Redis 在插入、删除操作时都会小心翼翼地更新 `span` 值的大小。
+  - 所以，沿着 **“搜索路径”**，把所有经过节点的跨度 `span` 值进行累加就可以算出当前元素的最终 rank 值了：
+
+  <details>
+  <summary style="color:red;">源码</summary>
+
+  ```c
+  /* Find the rank for an element by both score and key.
+  * Returns 0 when the element cannot be found, rank otherwise.
+  * Note that the rank is 1-based due to the span of zsl->header to the
+  * first element. */
+  unsigned long zslGetRank(zskiplist *zsl, double score, sds ele) {
+      zskiplistNode *x;
+      unsigned long rank = 0;
+      int i;
+
+      x = zsl->header;
+      for (i = zsl->level-1; i >= 0; i--) {
+          while (x->level[i].forward &&
+              (x->level[i].forward->score < score ||
+                  (x->level[i].forward->score == score &&
+                  sdscmp(x->level[i].forward->ele,ele) <= 0))) {
+              // span 累加
+              rank += x->level[i].span;
+              x = x->level[i].forward;
+          }
+
+          /* x might be equal to zsl->header, so test if obj is non-NULL */
+          if (x->ele && sdscmp(x->ele,ele) == 0) {
+              return rank;
+          }
+      }
+      return 0;
+  }
+  ```
+  </details>
 
 ### 7.2.7. HyperLogLog(2.8.9)
 
@@ -1251,14 +1689,114 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 
 ### 7.2.8. quicklist 快速链表(3.2)
 
-Redis 早期版本存储 list 列表数据结构使用的是压缩列表 ziplist 和普通的双向链表 linkedlist，也就是说当元素少时使用 ziplist，当元素多时用 linkedlist。但考虑到链表的附加空间相对较高，`prev` 和 `next` 指针就要占去 `16` 个字节（64 位操作系统占用 `8` 个字节），另外每个节点的内存都是单独分配，会家具内存的碎片化，影响内存管理效率。
+> **说明**
 
-后来 Redis 新版本（3.2）对列表数据结构进行了改造，使用 `quicklist` 代替了 `ziplist` 和 `linkedlist`。
+- quicklist是对ziplist进行一次封装
+- 使用小块的ziplist来既保证了少使用内存，也保证了性能。
 
-待补充
+> **双向链表和压缩链表缺点**
 
-[Redis列表list 底层原理](https://zhuanlan.zhihu.com/p/102422311)
+- 双向链表linkedlist
+  - 便于在表的两端进行push和pop操作，在插入节点上复杂度很低，但是它的内存开销比较大
+  - 首先，它在每个节点上除了要保存数据之外，还要额外保存两个指针
+  - 其次，双向链表的各个节点是单独的内存块，地址不连续，节点多了容易产生内存碎片。
+- ziplist
+  - 存储在一段连续的内存上，所以存储效率很高。但是，它不利于修改操作
+  - 插入和删除操作需要频繁的申请和释放内存。
+  - 特别是当ziplist长度很长的时候，一次realloc可能会导致大批量的数据拷贝
 
+> **结构**
+
+![redis-54](./image/redis-54.png)
+
+- quicklist节点结构
+  ```c
+  typedef struct quicklistNode {
+      struct quicklistNode *prev;     //前驱节点指针
+      struct quicklistNode *next;     //后继节点指针
+
+      //不设置压缩数据参数recompress时指向一个ziplist结构
+      //设置压缩数据参数recompress指向quicklistLZF结构
+      unsigned char *zl;
+
+      //压缩列表ziplist的总长度
+      unsigned int sz;                  /* ziplist size in bytes */
+
+      //ziplist中包的节点数，占16 bits长度
+      unsigned int count : 16;          /* count of items in ziplist */
+
+      //表示是否采用了LZF压缩算法压缩quicklist节点，1表示压缩过，2表示没压缩，占2 bits长度
+      unsigned int encoding : 2;        /* RAW==1 or LZF==2 */
+
+      //表示一个quicklistNode节点是否采用ziplist结构保存数据，2表示压缩了，1表示没压缩，默认是2，占2bits长度
+      unsigned int container : 2;       /* NONE==1 or ZIPLIST==2 */
+
+      //标记quicklist节点的ziplist之前是否被解压缩过，占1bit长度
+      //如果recompress为1，则等待被再次压缩
+      unsigned int recompress : 1; /* was this node previous compressed? */
+
+      //测试时使用
+      unsigned int attempted_compress : 1; /* node can't compress; too small */
+
+      //额外扩展位，占10bits长度
+      unsigned int extra : 10; /* more bits to steal for future usage */
+  } quicklistNode;
+  ```
+
+- 压缩过的ziplist结构—quicklistLZF
+  > 当指定使用lzf无损压缩算法压缩ziplist的entry节点时，quicklistNode结构的zl成员指向quicklistLZF结构
+  ```c
+  typedef struct quicklistLZF {
+      //表示被LZF算法压缩后的ziplist的大小
+      unsigned int sz; /* LZF size in bytes*/
+
+      //保存压缩后的ziplist的数组，柔性数组
+      char compressed[];
+  } quicklistLZF;
+  ```
+
+- 存储ziplist信息的结构
+  ```c
+  typedef struct quicklistEntry {
+      const quicklist *quicklist;   //指向所属的quicklist的指针
+      quicklistNode *node;          //指向所属的quicklistNode节点的指针
+      unsigned char *zi;            //指向当前ziplist结构的指针
+      unsigned char *value;         //指向当前ziplist结构的字符串vlaue成员
+      long long longval;            //指向当前ziplist结构的整数value成员
+      unsigned int sz;              //保存当前ziplist结构的字节数大小
+      int offset;                   //保存相对ziplist的偏移量
+  } quicklistEntry;
+  ```
+
+> **插入操作**
+
+- 头部或者尾部进行插入(`quicklistPushHead`和`quicklistPushTail`)，不管是在头部还是尾部插入数据，都包含两种情况：
+  - 如果头节点（或尾节点）上ziplist大小没有超过限制（即`_quicklistNodeAllowInsert`返回1），那么新数据被直接插入到ziplist中（调用`ziplistPush`）。
+  - 如果头节点（或尾节点）上ziplist太大了，那么新创建一个quicklistNode节点（对应地也会新创建一个ziplist），然后把这个新创建的节点插入到quicklist双向链表中。
+
+  ![redis-56](./image/redis-56.png)
+
+- 随机插入，`quicklistInsertAfter`和`quicklistInsertBefore`就是分别在指定位置后面和前面插入数据项
+  - 当插入位置所在的ziplist大小没有超过限制时，直接插入到ziplist中就好了；
+  - 当插入位置所在的ziplist大小超过了限制
+    - 插入的位置位于ziplist两端
+      - 相邻的quicklist链表节点的ziplist大小没有超过限制，那么就转而插入到相邻的那个quicklist链表节点的ziplist的尾部(前驱)或者头部(后继)
+      - 相邻的quicklist链表节点的ziplist大小也超过限制，这时需要新创建一个quicklist链表节点插入。
+    - 在ziplist中间插入数据的情况
+      - 则需要把当前ziplist分裂为两个节点，然后再其中一个节点上插入数据。
+
+> **查找**
+
+每个ziplist都有大小。所以我们就只需要先根据我们每个node的个数，从而找到对应的ziplist，调用ziplist的index就能成功找到。
+
+> **删除**
+
+- 区间元素删除的函数是 `quicklistDelRange`
+  - 流程
+    - quicklist 在区间删除时，会先找到 start 所在的 quicklistNode
+    - 计算删除的元素是否小于要删除的 count，
+    - 如果不满足删除的个数，则会移动至下一个 quicklistNode 继续删除，依次循环直到删除完成为止。
+  - 返回值:`quicklistDelRange` 函数的返回值为 int 类型，当返回 1 时表示成功的删除了指定区间的元素，返回 0 时表示没有删除任何元素。
 
 ### 7.2.9. Stream(5.0)
 
@@ -1271,17 +1809,37 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 - [妈妈再也不担心我面试被Redis问得脸都绿了](https://segmentfault.com/a/1190000022146622)
 - [菜鸟教程](https://www.runoob.com/redis/redis-stream.html)
 
-## 7.3. 五大数据结构实现说明
+## 7.3. 基本数据结构实现说明
 
-### 7.3.1. 字符串对象
+### 7.3.1. string
 
-### 7.3.2. 列表对象
+使用SDS简单动态字符串数据结构
 
-### 7.3.3. 哈希对象
+### 7.3.2. list
 
-### 7.3.4. 集合对象
+- 在版本3.2之前，Redis 列表list使用两种数据结构作为底层实现：
+  - 组成：
+    - 压缩列表ziplist
+    - 双向链表linkedlist
+  - 说明
+    - 因为双向链表占用的内存比压缩列表要多， 所以当创建新的列表键时， 列表会优先考虑使用压缩列表
+    - 并且在有需要的时候， 才从压缩列表实现转换到双向链表实现。
+  - 转换条件
+    > 下面两个设置都可以更改
+    - 试图往列表新添加一个字符串值，且这个字符串的长度超过 server.list_max_ziplist_value （默认值为 64 ）。
+    - ziplist 包含的节点超过 server.list_max_ziplist_entries （默认值为 512 ）。
 
-### 7.3.5. 有序集合对象
+- 3.2时，使用quicklist替换了ziplist和linkedlist
+
+### 7.3.3. hash
+
+- redis的哈希对象的底层存储可以使用ziplist（压缩列表）和hashtable。当hash对象可以同时满足一下两个条件时，哈希对象使用ziplist编码。
+  - 哈希对象保存的所有键值对的键和值的字符串长度都小于64字节
+  - 哈希对象保存的键值对数量小于512个
+
+### 7.3.4. set
+
+### 7.3.5. zset
 
 ## 7.4. 高级算法
 
@@ -2333,3 +2891,7 @@ Redis支持的java客户端都Redisson、Jedis、lettuce等等，官方推荐使
 - [Redisson实现分布式锁](https://www.cnblogs.com/qdhxhz/p/11046905.html)
 - [Redis删除策略](https://www.cnblogs.com/liushoudong/p/12679174.html)
 - [妈妈再也不担心我面试被Redis问得脸都绿了](https://segmentfault.com/a/1190000022146622)
+- [图解Redis之数据结构篇——压缩列表](https://mp.weixin.qq.com/s/nba0FUEAVRs0vi24KUoyQg)
+- [Redis(2)——跳跃表(含源码解析，未整理)](https://www.wmyskxz.com/2020/02/29/redis-2-tiao-yue-biao/)
+- [Redis之字典](https://www.jianshu.com/p/bfecf4ccf28b)
+- [内存节省到极致！！！Redis中的压缩表,值得了解...(待进一步整理)](https://juejin.cn/post/6847009772353355783)

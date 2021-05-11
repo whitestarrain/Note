@@ -6429,6 +6429,7 @@ G1补充
   - server模式下
     - jdk1.7 默认垃圾收集器Parallel Scavenge（新生代）+Serial Old（老年代）
     - jdk1.8 默认垃圾收集器Parallel Scavenge（新生代）+Serial Old（老年代）
+      - 补充注意：Parallel Scavage 收集器架构中本身有PS MarkSweep收集器来收集老年代，并非直接使用了Serial Old,但二者接近。
     - jdk1.9 默认垃圾收集器G1
     - jdk10 默认垃圾收集器G1
 

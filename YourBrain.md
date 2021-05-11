@@ -180,6 +180,13 @@
   - 容量为什么要2的幂
   - [遍历方法及性能](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
   - 有什么同步容器/并发容器
+  - HashMap漏洞导致变慢 <!-- fold -->
+    - 中间对计算hashcode的成员变量做了修改，内存泄漏
+    - hashcode设计不标准，元素落到一个桶中
+  - 如何为key设计hashcode <!-- fold -->
+    - 计算hashCode依赖的值是不可变
+    - hashCode必须基于对象的内容生成
+    - hashCode产生的散列码最好能均匀分布
   - HashMap,HashTable,ConcurrentHashMap区别
     - 1.7
       - 三者数据结构
@@ -203,8 +210,8 @@
       - 尝试获取锁存在并发，竞争，阻塞
     - 键值对:HashEntry
     - 操作
-      - put
       - size
+      - put
       - get
   - [1.8](https://blog.csdn.net/programmer_at/article/details/79715177)
     - 数据结构:数组+链表/红黑树
@@ -219,8 +226,8 @@
         - 大量数据操作，ReentrantLock开销较多内存
     - 键值对：node
     - 操作
-      - put
       - size
+      - put
       - get
 - [LinkedHashMap](https://www.jianshu.com/p/8f4f58b4b8ab)
   - 结构：HashMap+双向链表
@@ -258,6 +265,8 @@
   - HashMap和HashTable区别
   - HashMap与HashSet区别（HashSet底层基于HashMap）
   - HashMap和TreeMap区别
+
+- [其他重要问题](https://www.jianshu.com/p/8bc28d6b0a5e)
 
 ## 多线程 <!-- fold -->
 
@@ -368,16 +377,16 @@
   - 3种使用方法
     - 代码块
       - 自己指定对象锁
-      - 底层原理：
+      - **底层原理**：
         - monitorenter
         - monitorexit
         - 程序计数器
     - 成员方法
       - this对象锁
-      - 底层原理：ACC_SYNCHRONIZED
+      - **底层原理**：ACC_SYNCHRONIZED
     - 静态方法
       - .class类锁
-      - 底层原理：ACC_SYNCHRONIZED，ACC_STATIC
+      - **底层原理**：ACC_SYNCHRONIZED，ACC_STATIC
     - 注意：构造方法本身就属于线程安全的，不存在同步的构造方法一说。<br />不能加synchronized
   - 锁的升级(不可逆)
     - 无锁(CAS)
@@ -396,17 +405,24 @@
       - 锁的性质
       - 对象头中的内容
       - 阻塞的好处(cpu)与代价(内核态)
-  - synchronized 和 ReentrantLock 的区别
+  - 特性保证
+    - 可见性 <!-- fold -->
+      - 获得锁，清空工作内存
+      - 从主内存拷贝共享变量最新的值到工作内存成为副本
+      - 执行代码，将修改后的副本的值刷新回主内存中，线程释放锁
+      - 而获取不到锁的线程会阻塞等待，所以变量的值肯定一直都是最新的。
+    - 原子性 <!-- fold -->
+      - 单一线程持有
+      - 可见性的强制刷新
+    - 有序性 <!-- fold -->
+      - as-if-serial
+      - happends-before
+  - synchronized 和 ReentrantLock 的区别 <!-- fold -->
     - jvm-api层面
     - 是否可中断
     - 公平非公平
     - 锁绑定多个条件
   - synchronized 和 volatile 的区别
-  - synchronized如何保证可见性 <!-- fold -->
-    - 获得锁，清空工作内存
-    - 从主内存拷贝共享变量最新的值到工作内存成为副本
-    - 执行代码，将修改后的副本的值刷新回主内存中，线程释放锁
-    - 而获取不到锁的线程会阻塞等待，所以变量的值肯定一直都是最新的。
 
 
 - CAS
@@ -516,24 +532,22 @@
     - 可重入锁和非可重入锁
       - 表现
       - 原理：粒度（加锁范围）
-      - 实例
+      - 实例 <!-- fold -->
         - 可重入锁
         - 不可重入锁
-        - 可以切换
-    - 公平锁与非公平锁
+    - 公平锁与非公平锁 <!-- fold -->
       - 表现
       - 原理
       - 实例
         - 公平锁
         - 非公平锁
-        - 可以切换
-    - 读写锁和排它锁
+        - 可以切换:ReentrantLock
+    - 读写锁和排它锁 <!-- fold -->
       - 表现
       - 原理
       - 实例
         - 读写锁
         - 排它锁
-        - 可以切换
     - 是否可中断
 
 - 并发集合容器
@@ -574,7 +588,7 @@
     - 任务的执行(Executor)
     - 异步计算的结果(Future)
   - 创建
-    - ThreadPoolExecutor构造方法参数的含义
+    - ThreadPoolExecutor构造方法参数及含义 <!-- fold -->
       - int corePoolSize：该线程池中核心线程数最大值
       - int maximumPoolSize：该线程池中线程总数最大值 。
       - long keepAliveTime：非核心线程闲置超时时长。
@@ -586,7 +600,7 @@
         - DiscardPolicy：丢弃新来的任务，但是不抛出异常。
         - DiscardOldestPolicy：丢弃队列头部（最旧的）的任务，然后重新尝试执行程序（如果再次失败，重复此过程）。
         - CallerRunsPolicy：由调用线程处理该任务。
-    - Executors默认实现(底层使用ThreadPoolExecutor)
+    - Executors默认实现(底层使用ThreadPoolExecutor) <!-- fold -->
       - FixedThreadPool
         - 参数设置
         - 执行过程
@@ -600,13 +614,13 @@
         - 执行过程
         - 弊端
   - **线程池工作流程**
-  - ThreadPool状态转换
+  - ThreadPool状态转换 <!-- fold -->
     - RUNNING
     - SHUTDOWN
     - STOP
     - TIDYING
     - TERMINATED
-  - ScheduledThreadPool:
+  - ScheduledThreadPool <!-- fold -->
     - 继承了ThreadPoolExecutor
     - 主要用来在给定的延迟后运行任务，或者定期执行任务
     - 实际项目中会使`用quartz`
@@ -1127,11 +1141,12 @@
         - Serial
           - 说明
             - 分类 
-            - 作用位置 
+            - 作用位置
             - 使用算法 
             - 吞吐/响应 优先
             - 适用场景
           - 工作流程
+          - 触发:见中层的堆
         - Serial Old
           - 说明
             - 分类 
@@ -1140,6 +1155,7 @@
             - 吞吐/响应 优先
             - 适用场景
           - 工作流程
+          - 触发:见中层的堆
         - ParNew 
           - 说明
             - 分类 
@@ -1148,6 +1164,7 @@
             - 吞吐/响应 优先
             - 适用场景
           - 工作流程
+          - 触发:见中层的堆
           - 背景：Serial多线程版本
           - `单核/多核` `serial/parnew`
         - Parallel Scavenge
@@ -1158,6 +1175,7 @@
             - 吞吐/响应 优先
             - 适用场景
           - 工作流程
+          - 触发:见中层的堆
           - 与parNew区别
         - Parallel Old
           - 说明
@@ -1167,6 +1185,7 @@
             - 吞吐/响应 优先
             - 适用场景
           - 工作流程
+          - 触发:见中层的堆
         - CMS
           - 概述
             - 分类 
@@ -1174,20 +1193,20 @@
             - 使用算法 
             - 吞吐/响应 优先
             - 适用场景
-          - 垃圾回收机制
-            - 回收时机：
+          - 触发(特殊)
               - **达到阀值，而不是满了**
+          - 垃圾回收机制
             - 回收流程 <!-- fold -->
               - 初始标记(STW):仅仅只是标记出GC Roots能直接关联到的对象。
               - 并发标记(不STW):从GC Roots的直接关联对象开始遍历整个对象图的过程
               - 重新标记(STW):为了修正并发标记期间，因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录
-              - 并发清楚(不STW):此阶段清理删除掉标记阶段判断的已经死亡的对象，释放内存空间
+              - 并发清除(不STW):此阶段清理删除掉标记阶段判断的已经死亡的对象，释放内存空间
             - 后备方案
               - 情况：比如大对象导致空间不足
               - 错误：Concurrent Mode Failure
               - 解决：serial old fullGC
           - 搭配问题 <!-- fold -->
-            - 无法与Parallel Old搭配
+            - 无法与Parallel Scavenge搭配
           - 废弃原因 <!-- fold -->
             - 内存碎片，大对象无法分配
             - 后备serial old效率过低
@@ -1213,8 +1232,10 @@
           - 参数调优
           - 垃圾回收机制
             - 预备知识
-              - dirty card queue
-              - Remember Set
+              - dirty card queue <!-- fold -->
+                - 作用：用来更新Rset，避免线程同步开销
+              - Remember Set <!-- fold -->
+                - 作用：准确的反映老年代对所在的内存分段中对象的引用
             - 回收种类
               - minorGC
                 - 触发
@@ -1301,7 +1322,10 @@
 
 - 基于xml的IOC
   - 存入容器方式
-    - Bean标签(各种属性可以进行配置)
+    - Bean标签
+      - 默认构造函数
+      - 工厂类
+      - 静态工厂方法
   - 依赖注入方式
     - 注入Bean类型
       - 使用构造函数(一般不用)
@@ -1309,6 +1333,7 @@
       - 使用注解
     - 注入基本类型和集合类型
       - 通过xml
+  - 生命周期，类型等都通过bean标签属性
 
 - 基于注解的IOC
   - 存入容器的注解
@@ -1323,11 +1348,11 @@
       - @Reasource
     - 注入基本类型
       - @Value
-  - 改变作用范围(和存入容器的注解搭配使用)
-    - @Scope
   - 生命周期相关注解
     - @PostConstruct
     - @PreDestroy
+  - 改变作用范围<br />(和存入容器的注解搭配使用<br />上面四四个或@bean)
+    - @Scope
 
 - 注意：对于无法添加注解<br />如导入的第三方依赖<br />可以通过xml将其存入或者向其注入<br />或者使用下面的`@Bean`
 
@@ -1527,10 +1552,19 @@
       - @ResultMap
         - 使用已定义的
 
+- 映射关系
+  - `<parameterMap>`---ParameterMap
+  - `<resultMap>`---ResultMap
+    - 子元素:ResultMapping
+  - `<select>/<update>/<insert>/<delet>`---MappedStatement
 
 - **执行流程**
 
+- dao接口到MappedStatement的映射
+
 - 动态sql
+  - 原理
+  - 应用:dao方法重载
 
 - 多表查询
   - 一对一(多对一)
@@ -1545,6 +1579,8 @@
     - 使用场景
     - 说明
     - 配置
+    - 原理:拦截器
+
 - 缓存
   - 说明
   - 种类
@@ -1562,6 +1598,19 @@
           - SqlMapConfig.xml
           - @CacheNamespace(blocking=true)
       - 触发
+
+- 分页
+  - RowBounds <!-- fold -->
+    - 内存分页
+    - 返回结果集的子集
+  - 分页插件 <!-- fold -->
+    - 拦截sql,物理分页
+    - `select _ from student`
+    - 拦截 sql 后重写为：<br /> `select t._ from （select \* from student）t limit 0，10`
+
+- 插件
+  - 分页插件原理
+  - 自定义插件步骤
 
 ## Netty <!-- fold -->
 
@@ -1841,7 +1890,14 @@
   - String
     - 说明
     - 应用场景
-    - 数据结构
+    - 数据结构:SDS <!-- fold -->
+      - 减少修改字符串时带来的内存重分配次数
+        - 空间预分配
+        - 惰性空间释放
+      - 二进制安全
+        - 保存字符串长度
+        - 不判断空字符，只判断长度
+
   - Hash
     - 说明
     - 应用场景
@@ -1862,10 +1918,11 @@
     - 说明
     - 应用场景
     - 数据结构
+  - BitMap
 
 - 高级算法
   - scan
-  -  GeoHash
+  - GeoHash
 
 - 过期淘汰
   - 过期删除策略
@@ -1883,6 +1940,7 @@
       - random
       - lru
       - lfu
+
 - 持久化
   - RDB
     - 持久化原理/过程
