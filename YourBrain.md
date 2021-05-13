@@ -1745,7 +1745,14 @@
   - **id**
   - select_type
   - table
-  - **type**
+  - **type** <!-- fold -->
+    - system
+    - const
+    - eq_ref
+    - ref
+    - range
+    - index
+    - ALL
   - possible_keys
   - **key**
   - **key_len**
@@ -1890,30 +1897,34 @@
   - String
     - 说明
     - 应用场景
-    - 数据结构:SDS <!-- fold -->
-      - 减少修改字符串时带来的内存重分配次数
-        - 空间预分配
-        - 惰性空间释放
-      - 二进制安全
-        - 保存字符串长度
-        - 不判断空字符，只判断长度
+    - 数据结构:SDS
 
   - Hash
     - 说明
     - 应用场景
-    - 数据结构
+    - 数据结构 <!-- fold -->
+      - 小于(64,512):ziplist
+      - 否则：hashtable
+
   - List
     - 说明
     - 应用场景
     - 数据结构
+
   - Set
     - 说明
     - 应用场景
-    - 数据结构
+    - 数据结构 <!-- fold -->
+      - 默认使用IntSet
+      - 一定情况下IntSet转换为HashTable
+
   - ZSet
     - 说明
     - 应用场景
-    - 数据结构
+    - 数据结构 <!-- fold -->
+      - 小于(64,512):ziplist
+      - 否则：hashtable+skiplist
+
   - HyperLogLog
     - 说明
     - 应用场景

@@ -1462,6 +1462,41 @@ linkedlist是标准的双向链表，Node节点包含prev和next指针，可以�
 
 ### 7.2.5. intset 整数集合
 
+> **说明**
+
+- `intset`是Redis内存数据结构之一，用来实现Redis的Set结构（当元素较小且为数字类型时），它的特点有：
+  - 元素类型只能为数字。
+  - 元素有三种类型：int16_t、int32_t、int64_t。
+  - 元素有序，不可重复。
+  - intset和sds一样，内存连续，就像数组一样。
+
+> **数据结构定义**
+
+```c
+typedef struct intset {
+    uint32_t encoding;  // 编码类型 int16_t、int32_t、int64_t
+    uint32_t length;    // 长度 最大长度:2^32
+    int8_t contents[];  // 柔性数组
+    // 可以看出，虽然contents部分指明的类型是int8_t，但是数据并不以这个类型存放。详细看升级操作
+    // 数据以int16_t类型存放，每个占2个字节，能存放-32768~32767范围内的整数
+    // #define INTSET_ENC_INT16 (sizeof(int16_t)) 
+    // 数据以int32_t类型存放，每个占4个字节，能存放-2^32-1~2^32范围内的整数
+    // #define INTSET_ENC_INT32 (sizeof(int32_t)) 
+    // 数据以int64_t类型存放，每个占8个字节，能存放-2^64-1~2^64范围内的整数
+    // #define INTSET_ENC_INT64 (sizeof(int64_t)) 
+} intset;
+```
+
+> **升级**
+
+![redis-68](./image/redis-68.png)
+
+- 当intset中添加的整数超过当前编码类型的时候，intset会自定升级到能容纳该整数类型的编码模式
+- 如 1,2,3,4，创建该集合的时候，采用int16_t的类型存储，
+- 现在需要像集合中添加一个大整数，超出了当前集合能存放的最大范围，这个时候就需要对该整数集合进行升级操作，
+  - 将encoding字段改成int32_6类型
+  - 并对contents字段内的数据进行重排列。
+
 ### 7.2.6. skiplist 跳表
 
 > **基本说明**
@@ -1680,14 +1715,7 @@ linkedlist是标准的双向链表，Node节点包含prev和next指针，可以�
   ```
   </details>
 
-### 7.2.7. HyperLogLog(2.8.9)
-
-待补充
-
-[Redis(4)——神奇的HyperLoglog解决统计问题](https://www.wmyskxz.com/2020/03/02/reids-4-shen-qi-de-hyperloglog-jie-jue-tong-ji-wen-ti/)
-
-
-### 7.2.8. quicklist 快速链表(3.2)
+### 7.2.7. quicklist 快速链表(3.2)
 
 > **说明**
 
@@ -1798,7 +1826,7 @@ linkedlist是标准的双向链表，Node节点包含prev和next指针，可以�
     - 如果不满足删除的个数，则会移动至下一个 quicklistNode 继续删除，依次循环直到删除完成为止。
   - 返回值:`quicklistDelRange` 函数的返回值为 int 类型，当返回 1 时表示成功的删除了指定区间的元素，返回 0 时表示没有删除任何元素。
 
-### 7.2.9. Stream(5.0)
+### 7.2.8. Stream(5.0)
 
 Redis Stream 是 Redis 5.0 版本新增加的数据结构。
 
@@ -1833,13 +1861,55 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 
 ### 7.3.3. hash
 
-- redis的哈希对象的底层存储可以使用ziplist（压缩列表）和hashtable。当hash对象可以同时满足一下两个条件时，哈希对象使用ziplist编码。
-  - 哈希对象保存的所有键值对的键和值的字符串长度都小于64字节
-  - 哈希对象保存的键值对数量小于512个
+- redis的哈希对象的底层存储可以使用ziplist（压缩列表）和hashtable。
+  - 当hash对象可以同时满足一下两个条件时，哈希对象使用ziplist编码。
+    - 哈希对象保存的所有键值对的键和值的字符串长度都小于64字节
+    - 哈希对象保存的键值对数量小于512个
+  - 如何使用ziplist存储
+    - 将同一键值对的两个节点紧挨着保存，保存键的节点在前，保存值的节点在后，新加入的键值对，放在压缩列表表尾
 
 ### 7.3.4. set
 
+- 说明：
+  - 默认使用IntSet
+  - 一定情况下IntSet转换为HashTable
+
+- IntSet转变为HashTable条件
+  - 当set中插入第一个字符串时
+  - 插入的数字超过8字节
+
+- dict如何实现set
+  - key就是set的元素，val为NULL
+  - 和java中HashSet利用HashMap实现的原理一致
+
+- 优劣势
+  - 查找时间：
+    - 使用dict结构查找时间复杂度为O(1)
+    - 而intset用二分查找时间复杂度O(logN)
+  - 空间使用：
+    - dict空间使用更多，是一种空间换时间策略
+    - 当存储的都是小于8字节的整数时，intset可以省下很多内存
+
 ### 7.3.5. zset
+
+- 说明：zset有两种不同的实现，分别是zipList和skipList
+
+- 底层结构条件：
+  - zipList：满足以下两个条件
+    - [score,value]键值对数量少于128个；
+    - 每个元素的长度小于64字节；
+  - skipList：不满足以上两个条件时使用跳表、组合了hash和skipList
+    - hash用来存储value到score的映射，这样就可以在O(1)时间内找到value对应的分数；
+    - skipList按照从小到大的顺序存储分数
+    - skipList每个元素的值都是[socre,value]对
+
+### 7.3.6. HyperLogLog(2.8.9)
+
+待补充
+
+[Redis(4)——神奇的HyperLoglog解决统计问题](https://www.wmyskxz.com/2020/03/02/reids-4-shen-qi-de-hyperloglog-jie-jue-tong-ji-wen-ti/)
+
+
 
 ## 7.4. 高级算法
 
@@ -1941,7 +2011,11 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 
 这种方式在一些高并发的场景中算是一种通用的解决方案。
 
-# 10. 消息发布订阅
+# 10. 消息发布订阅与Stream
+
+待整理
+
+[Redis(8)——发布/订阅与Stream](https://www.wmyskxz.com/2020/03/15/redis-8-fa-bu-ding-yue-yu-stream/)
 
 ## 10.1. 说明
 
@@ -2085,7 +2159,7 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 
 ## 11.3. cluster分片集群
 
-### 说明
+### 11.3.1. 说明
 
 - 两个端口
   - 一个是用于客户端的Redis TCP，如6379。
@@ -2117,9 +2191,9 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
     - 节点的 fail 是通过集群中超过半数的节点检测失效时才生效。
     - 客户端与 Redis 节点直连，不需要中间代理层.客户端不需要连接集群所有节点，连接集群中任何一个可用节点即可。
 
-### 架构
+### 11.3.2. 架构
 
-### 配置搭建
+### 11.3.3. 配置搭建
 
 [搭建说明](https://juejin.cn/post/6844904057044205582#heading-0)
 
@@ -2895,3 +2969,4 @@ Redis支持的java客户端都Redisson、Jedis、lettuce等等，官方推荐使
 - [Redis(2)——跳跃表(含源码解析，未整理)](https://www.wmyskxz.com/2020/02/29/redis-2-tiao-yue-biao/)
 - [Redis之字典](https://www.jianshu.com/p/bfecf4ccf28b)
 - [内存节省到极致！！！Redis中的压缩表,值得了解...(待进一步整理)](https://juejin.cn/post/6847009772353355783)
+- [redis底层数据结构思维导图(待整理)](https://www.cnblogs.com/christmad/p/11364372.html)
