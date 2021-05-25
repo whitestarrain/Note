@@ -4684,9 +4684,9 @@ private static Calendar createCalendar(TimeZone zone,
 
 ### 3.3.4. 过滤器模式（Filter、Criteria Pattern）
 
-### 3.3.5. 组合模式（Composite Pattern）
 
-### 3.3.6. 装饰器模式（Decorator Pattern）
+
+### 3.3.5. 组合模式（Composite Pattern）
 
 ### 3.3.7. 外观模式（Facade Pattern）
 

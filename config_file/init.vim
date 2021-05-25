@@ -14,15 +14,14 @@ let mapleader="\<space>"
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('D:\learn\neovim0.5\Neovim\share\autoload')
 
-
 "---------------------
-" toc插件
-" Plug 'mzlogin/vim-markdown-toc'
-
+" snippt插件
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 "---------------------
 " coc 插件
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 "---------------------
 " 彩虹括号
@@ -399,16 +398,16 @@ let g:airline#extensions#wordcount#enabled = 0
 
 
 
-" coc Config
-" 解决启动稍微延迟问题： 让coc服务，在neovim启动后，500ms后才启动
-let g:coc_start_at_startup=0
-function! CocTimerStart(timer)
-    exec "CocStart"
-endfunction
-call timer_start(500,'CocTimerStart',{'repeat':1})
-
-"解决coc.nvim大文件卡死状况。超过0.5m的文件，禁用coc补全。我们很多时候要打开log文件，tag文件等嘛！
-" let g:trigger_size = 0.5 * 1048576
+" " coc Config
+" " 解决启动稍微延迟问题： 让coc服务，在neovim启动后，500ms后才启动
+" let g:coc_start_at_startup=0
+" function! CocTimerStart(timer)
+"     exec "CocStart"
+" endfunction
+" call timer_start(500,'CocTimerStart',{'repeat':1})
+" 
+" "解决coc.nvim大文件卡死状况。超过0.2m的文件，禁用coc补全。我们很多时候要打开log文件，tag文件等嘛！
+" let g:trigger_size = 0.1 * 1048576
 " augroup hugefile
 "   autocmd!
 "   autocmd BufReadPre *
@@ -421,8 +420,15 @@ call timer_start(500,'CocTimerStart',{'repeat':1})
 "         \ endif |
 "         \ unlet size
 " augroup END
+" 
 
+" snippet config
 
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
+let g:UltiSnipsExpandTrigger="<tab>"               
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
 
 "================plugConfig end==================
 
@@ -602,12 +608,6 @@ noremap <C-h> <C-w>h
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-l> <C-w>l
-
-
-" 输出两个换行符
-nnoremap <leader>o o<br /><br /><cr><esc>
-
-nnoremap <leader>zd o <details><cr><summary style="color:red;"></summary><cr></details><cr><esc>kkwf>a
 
 " 设置缓冲区跳转
 noremap <M-h> :bf<cr>
