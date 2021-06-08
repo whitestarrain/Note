@@ -1,0 +1,44 @@
+" enable plugin
+set easymotion
+set surround
+
+let mapleader=","
+
+" set clipboard=unnamed,autoselect
+set hlsearch
+set scrolloff=3
+set ignorecase
+set smartcase
+set showmode
+set incsearch
+set history=1000
+
+" 禁用铃声
+set visualbell
+set noerrorbells
+
+" 映射idea常用快捷键
+
+" 重命名
+nnoremap <leader>r :action RenameElement<CR>
+
+" 格式化当前文件
+nnoremap <leader>f :action ReformatCode<CR><esc>
+
+" quick java doc
+nnoremap <leader>d :action QuickJavaDoc<CR>
+
+" 设置一直留下的行数，向上时会有瞬间移动，所以取消使用
+" set scrolloff=10
+
+" 显示大纲
+ nnoremap <leader>l :action FileStructurePopup<CR>
+
+ " 显示所有使用
+ nnoremap <leader>use :action ShowUsages<CR>
+
+ " 向末尾添加；
+ nnoremap <leader>; A;<Esc>
+
+
+
