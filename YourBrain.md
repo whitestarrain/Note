@@ -340,6 +340,8 @@
       - cpu总线嗅探机制
       - lock
     - 总线风暴
+    - [修饰引用变量的陷阱](https://blog.csdn.net/u010454030/article/details/80800098)
+    - [修饰数组](https://blog.csdn.net/u014674862/article/details/89168376)|[资料](https://stackoverflow.com/questions/53753792/java-volatile-array-my-test-results-do-not-match-the-expectations)
   - 禁止重排序
     - 说明
     - 原理(内存屏障) <!-- fold -->

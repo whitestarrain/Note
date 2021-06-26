@@ -1,207 +1,289 @@
 let mapleader="\<space>"
-
+let g:which_key_map =  {}
+let g:which_key_map.z = { 'name' : '+second' }
 " 关于帮助文档。:help startify 即可
 " 然后使用 c-] c-i c-o 进行跳转查看
 " nvim-qt 要加上 --no-ext-tabline，才能使用airline的bufferline
 " 命令行模式输入 map ,inoremap ,nnoremap等可以查看 map键的映射，如果按键相关有什么问题可以查一下。比如auto-pairs占了<C-r>
-"================leader end==================
+"=================================================leader end===================================================
 
 
-"================plug start==================
+
+"=================================================plug start===================================================
 
 " Specify a directory for plugins
 " - For Neovim: stdpath('data') . '/plugged'
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('D:\learn\neovim0.5\Neovim\share\autoload')
 
-"---------------------
-" snippt插件
+"-----------------------------------snippt插件--------------------------------------
+"
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+"-----------------------------------snippt插件--------------------------------------
 
-"---------------------
+"-----------------------------------coc插件--------------------------------------
 " coc 插件
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"-----------------------------------coc插件--------------------------------------
 
-"---------------------
+"-----------------------------------彩虹括号--------------------------------------
 " 彩虹括号
 Plug 'luochen1990/rainbow'
+"-----------------------------------彩虹括号--------------------------------------
 
-
-"---------------------
+"-----------------------------------翻页流畅插件--------------------------------------
 "让翻页更顺畅
 "有长文本，syntax过烂，免了吧
 Plug 'yuttie/comfortable-motion.vim'
-"---------------------
+"-----------------------------------翻页流畅插件--------------------------------------
 
+"-----------------------------------搜索优化--------------------------------------
 " 优化搜索，移动光标后清除高亮
 " Plug 'junegunn/vim-slash'
+"-----------------------------------搜索优化--------------------------------------
 
-"---------------------
-
-
+"-----------------------------------格式化化插件--------------------------------------
 " prettier 格式化插件
 " post install (yarn install | npm install) then load plugin only for editing supported files
 " 安装依赖npm i -g prettier
 Plug 'prettier/vim-prettier', {
   \ 'do': 'npm install',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
+"-----------------------------------格式化化插件--------------------------------------
 
 
-
-"---------------------
-
+"-----------------------------------vim-which-key--------------------------------------
 
 " leader键提示插件
 " On-demand lazy load
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
-
-"---------------------
+autocmd User vim-which-key call which_key#register('<Space>', 'g:which_key_map')
+"-----------------------------------vim-which-key--------------------------------------
 
 " git插件
 Plug 'tpope/vim-fugitive'
 
-"---------------------
+"-----------------------------------vim-gitgutter--------------------------------------
 
 " 显示文件每行的状态
 Plug 'airblade/vim-gitgutter'
+"-----------------------------------vim-gitgutter--------------------------------------
 
-"---------------------
-
-
+"-----------------------------------vim-markdown--------------------------------------
 "markdonw 语法高亮
 Plug 'plasticboy/vim-markdown'
+"-----------------------------------vim-markdown--------------------------------------
 
-"---------------------
+"-----------------------------------nerdcommenter--------------------------------------
 
 " 注释插件
 " Plug 'preservim/nerdcommenter'
 
-"---------------------
+"-----------------------------------nerdcommenter--------------------------------------
 
+"-------------------------------------theme------------------------------------
 
 " 主题
 Plug 'w0ng/vim-hybrid'
 Plug 'joshdick/onedark.vim'
+"-------------------------------------theme------------------------------------
 
-"---------------------
 
-
+"-------------------------------------vim-airline------------------------------------
 " 下方提示栏
 Plug 'vim-airline/vim-airline'
-
-"---------------------
-
 " 下方提示栏主题
 Plug 'vim-airline/vim-airline-themes'
 
-"---------------------
+"-------------------------------------vim-airline------------------------------------
 
+"---------------------------------------缩进线----------------------------------
 " 增加缩进线
 Plug 'yggdroot/indentline'
+"---------------------------------------缩进线----------------------------------
 
-"---------------------
-
+"-------------------------------------vim-startify------------------------------------
 " 开始菜单
 Plug 'mhinz/vim-startify'
+"-------------------------------------vim-startify------------------------------------
 
-"---------------------
-
-
+"--------------------------------------nerdtree-----------------------------------
 " 文件树
 Plug 'scrooloose/nerdtree'
-
-"---------------------
-
-
+"
 " 文件树 git 显示支持
 Plug 'Xuyuanp/nerdtree-git-plugin'
+"--------------------------------------nerdtree-----------------------------------
 
-"---------------------
-
+"--------------------------------------ctrlp-----------------------------------
 
 " 单文件模糊搜索跳转
 Plug 'ctrlpvim/ctrlp.vim'
 
-"---------------------
+"--------------------------------------ctrlp-----------------------------------
 
-
-" 位置跳转
-
-"---------------------
+"------------------------------------easymotion-------------------------------------
 
 Plug 'easymotion/vim-easymotion'
 
-" 成对编辑
+"------------------------------------easymotion-------------------------------------
 
-"---------------------
-
+"------------------------------------vim-surround-------------------------------------
+" 可以删除括号，修改括号等
 Plug 'tpope/vim-surround'
+"------------------------------------vim-surround-------------------------------------
 
-"---------------------
-
-
+"------------------------------------fzf-------------------------------------
 " 多文件模糊搜索
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+"------------------------------------fzf-------------------------------------
 
-"---------------------
-
-
+"------------------------------------far-------------------------------------
 "多文件搜索替换
 Plug 'brooth/far.vim'
+"------------------------------------far-------------------------------------
 
-"---------------------
 
+"------------------------------------python-------------------------------------
 
 " python插件
 " Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 
+"------------------------------------python-------------------------------------
+
+"------------------------------------tagbar-------------------------------------
 " 代码大纲
 Plug 'majutsushi/tagbar'
+"------------------------------------tagbar-------------------------------------
 
-"---------------------
 
-
+"------------------------------------img-paste-------------------------------------
 " 粘贴图片
 Plug 'ferrine/md-img-paste.vim'
+"------------------------------------img-paste-------------------------------------
 
-"---------------------
-
-
+"------------------------------------auto-pairs-------------------------------------
 "括号补全
 Plug 'jiangmiao/auto-pairs'
-
-"---------------------
-
+"------------------------------------auto-pairs-------------------------------------
 
 call plug#end()
 
 
-"================plug end==================
 
+"=================================================plug end===================================================
 
-" ===============plugConfig start==================
+"=================================================plug config start===================================================
 
-" auto-pairs config
-" 自动删除括号的键设置，为了释放<C-h>
-let g:AutoPairsMapCh=0
+"------------------------------------snippet-------------------------------------
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
+let g:UltiSnipsExpandTrigger="<tab>"               
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
+"------------------------------------snippet-------------------------------------
 
-" prettier
+"------------------------------------coc-------------------------------------
+" " 解决启动稍微延迟问题： 让coc服务，在neovim启动后，500ms后才启动
+" let g:coc_start_at_startup=0
+" function! CocTimerStart(timer)
+"     exec "CocStart"
+" endfunction
+" call timer_start(500,'CocTimerStart',{'repeat':1})
+" 
+" "解决coc.nvim大文件卡死状况。超过0.2m的文件，禁用coc补全。我们很多时候要打开log文件，tag文件等嘛！
+" let g:trigger_size = 0.1 * 1048576
+" augroup hugefile
+"   autocmd!
+"   autocmd BufReadPre *
+"         \ let size = getfsize(expand('<afile>')) |
+"         \ if (size > g:trigger_size) || (size == -2) |
+"         \   echohl WarningMsg | echomsg 'WARNING: altering options for this huge file!' | echohl None |
+"         \   exec 'CocDisable' |
+"         \ else |
+"         \   exec 'CocEnable' |
+"         \ endif |
+"         \ unlet size
+" augroup END
+" markmap
+command! -range=% Markmap CocCommand markmap.create <line1> <line2>
+"------------------------------------coc-------------------------------------
+
+"------------------------------------prettier-------------------------------------
+" prettier config
 " 取消注解需求
 let g:prettier#autoformat_require_pragma = 0
 " 关闭自动格式化
 let g:prettier#autoformat = 0
 let g:prettier#autoformat_config_present = 0
 
-" vim-smooth-scroll config
-" noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 4)<CR>
-" noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 4)<CR>
-" noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
-" noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+" vim-which-key
+" By default timeoutlen is 1000 ms
+set timeoutlen=500
 
+" vim-gitgutter
+" set the default value of updatetime to 600ms
+set updatetime=600
+"------------------------------------prettier-------------------------------------
 
-" vim-startify config
+"------------------------------------markdown-------------------------------------
+" markdown config
+" 禁用折叠
+let g:vim_markdown_folding_disabled=1
+" 禁用插件按键映射
+let g:vim_markdown_no_default_key_mappings = 1
+  " gx: 在浏览器中打开光标所在处的链接
+  " ge: 在 Vim 中打开光标下的链接指向的文件。主要用于打开使用相对位置标识的 markdown 文件
+  " ]]: 跳转到下一个 header
+  " [[: 跳转到之前的 header，与 ]c 相反
+  " ][: 跳转到下一个兄弟 header
+  " []: 跳转到上一个兄弟 header
+  " ]c: 跳转到当前文本所属的 header
+  " ]u: 跳转到"父"header
+ 
+" 语法隐藏相关，不进行语法隐藏
+set conceallevel=2
+let g:vim_markdown_conceal=0
+" 开启math公式高亮
+let g:vim_markdown_math = 1
+" 修改缩进格数量
+let g:vim_markdown_list_item_indent = 2
+" 代码块不隐藏``
+let g:vim_markdown_conceal_code_blocks = 0
+
+"------------------------------------markdown-------------------------------------
+
+"------------------------------------airline-------------------------------------
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#bufferline#enabled = 1
+let g:airline_theme='bubblegum'
+set laststatus=2  "永远显示状态栏
+
+" "取消显示warning部分
+let g:airline_section_warning = ''
+" "取消显示section_b
+" " let g:airline_section_b = ''
+" "section_c显示为tagbar检索出来的标题
+" let g:airline_section_c = airline#section#create(['tagbar'])
+" "section_x显示文件名
+" let g:airline_section_x = '%{expand("%")}'
+" "section_y显示时间
+""let g:airline_section_y = airline#section#create(['%{strftime("%D")}'])
+" "section_z显示日期
+let g:airline_section_y = airline#section#create(['%{strftime("%H:%M")}'])
+" "激活tagbar扩展
+" let g:airline#extensions#tagbar#enabled = 1
+" "不显示文件编码（Windows系统）
+" " let g:airline#parts#ffenc#skip_expected_string='utf-8[dos]'
+" "不显示文档总字数
+let g:airline#extensions#wordcount#enabled = 0
+
+"------------------------------------airline-------------------------------------
+
+"------------------------------------startify-------------------------------------
+" startify config
 " 设置Session时不要打开插件，比如NERDTree侧边栏，否则会报错
 " 关闭自动切换目录
 let g:startify_change_to_dir = 0
@@ -231,89 +313,44 @@ let g:startify_session_savevars = [
         \ 'g:mdip_imgdir',
         \ 'g:mdip_imgdir_intext'
         \ ]
-
 " 自动跳转到版本管理工具的目录
 " let g:startify_change_to_vcs_root = 1
-" 跳转到开始菜单
-nnoremap <leader>st :Startify<cr>
-nnoremap <leader>ss :SSave<cr>
 
+"------------------------------------startify-------------------------------------
 
-
-" vim-markdown config
-" 禁用折叠
-let g:vim_markdown_folding_disabled=1
-" 禁用插件按键映射
-let g:vim_markdown_no_default_key_mappings = 1
-  " gx: 在浏览器中打开光标所在处的链接
-  " ge: 在 Vim 中打开光标下的链接指向的文件。主要用于打开使用相对位置标识的 markdown 文件
-  " ]]: 跳转到下一个 header
-  " [[: 跳转到之前的 header，与 ]c 相反
-  " ][: 跳转到下一个兄弟 header
-  " []: 跳转到上一个兄弟 header
-  " ]c: 跳转到当前文本所属的 header
-  " ]u: 跳转到"父"header
- 
-" 语法隐藏相关，不进行语法隐藏
-set conceallevel=2
-let g:vim_markdown_conceal=0
-" 开启math公式高亮
-let g:vim_markdown_math = 1
-" 修改缩进格数量
-let g:vim_markdown_list_item_indent = 2
-" 代码块不隐藏``
-let g:vim_markdown_conceal_code_blocks = 0
-
-
-
-
-
-" NERDTree config
-
-" auto turn on
-" autocmd vimenter * NERDTree
-" ctrl+n to toggle file tree
-noremap <silent><C-n> :NERDTreeToggle<CR>
+"------------------------------------nerdtree-------------------------------------
 " ignore file
 let NERDTreeIgnore=[
     \ '\.pyc$','\~$','\.swp','\.git$','\.pyo$','\.svn$','\.swp$','__pycache__'
     \ ]
-nnoremap <silent><leader>v :NERDTreeFind<cr>
 " 样式
 " let g:NERDTreeDirArrowExpandable = '>'
 " let g:NERDTreeDirArrowCollapsible = '-'
 " 注意： m 可以进行创建文件等操作，不要漏了
+"------------------------------------nerdtree-------------------------------------
+
+"------------------------------------python-------------------------------------
+" python 插件配置
+let g:python3_host_prog='D:/learn/anaconda3/envs/learn/python.exe'
+"------------------------------------python-------------------------------------
 
 
+"------------------------------------tagbar-------------------------------------
+" 设置宽度
+" let g:tagbar_width = 30
+"设置tagber对于markdown的支持
+let g:tagbar_type_markdown = {
+        \ 'ctagstype' : 'markdown',
+        \ 'kinds' : [
+                \ 'h:headings',
+        \ ],
+    \ 'sort' : 0
+\ }
+"------------------------------------tagbar-------------------------------------
 
-
-
-" ctrlp config
-
-let g:ctrlp_map = '<leader>fa'
-" 不能搜索下层文件
-" 选择文件后 ,v 来定位
-
-
-" easymotion config
-
-nmap <leader>j <Plug>(easymotion-s2)
-" acejump
-" 其中<leader><leader>{j|k|w|b}，可以快速跳转行和列
-
-
-" tagbar config
-" 设置快速开关大纲
-" nnoremap ,t :TagbarToggle<CR>
-
-
-
-"md-img-paste config 粘贴图片配置
-autocmd FileType markdown nmap <buffer><silent> <leader>m :call mdip#MarkdownClipboardImage()<CR>
-autocmd FileType md nmap <buffer><silent> <leader>m :call mdip#MarkdownClipboardImage()<CR>
+"------------------------------------image paste-------------------------------------
 let g:mdip_imgdir = './image'  " 图片存放位置
 let g:mdip_imgdir_intext = g:mdip_imgdir " md中()中的位置
-
 " 定义设置路径的函数。注意：调用要使用call。
 " ! 是重复时强行覆盖
 function! SetImagePath()
@@ -323,122 +360,27 @@ function! SetImagePath()
     let g:mdip_imgdir_intext = l:name
     return name
 endfunction
+
 " . 作为字符串连接符
 function! ShowImagePath()
   echo 'now:::mdip_imgdir:  ' . g:mdip_imgdir
   echo 'now:::mdip_imgdir_intext:  ' . g:mdip_imgdir_intext
 endfunction
+"------------------------------------image paste-------------------------------------
 
-nnoremap <leader>sm :call SetImagePath()<cr>
-
-
-" python 插件配置
-let g:python3_host_prog='D:/learn/anaconda3/envs/learn/python.exe'
-
-
+"------------------------------------auto-pair-------------------------------------
+" 自动删除括号的键设置，为了释放<C-h>
+let g:AutoPairsMapCh=0
+"------------------------------------auto-pair-------------------------------------
 
 
-" vim-which-key
-nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
-" By default timeoutlen is 1000 ms
-set timeoutlen=500
+""=================================================plug config end===================================================
 
+"=================================================config end===================================================
 
-
-
-" vim-gitgutter
-" set the default value of updatetime to 600ms
-set updatetime=600
-nmap <leader>hf <Plug>(GitGutterNextHunk)
-nmap <leader>hb  <Plug>(GitGutterPrevHunk)
-
-" markdown tag
-"设置tagber对于markdown的支持
-let g:tagbar_type_markdown = {
-        \ 'ctagstype' : 'markdown',
-        \ 'kinds' : [
-                \ 'h:headings',
-        \ ],
-    \ 'sort' : 0
-\ }
-" 设置宽度
-" let g:tagbar_width = 30
-nnoremap <leader>t :TagbarToggle<CR>
-
-
-" vim-airline config
-
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#bufferline#enabled = 1
-let g:airline_theme='bubblegum'
-set laststatus=2  "永远显示状态栏
-
-" "取消显示warning部分
-let g:airline_section_warning = ''
-" "取消显示section_b
-" " let g:airline_section_b = ''
-" "section_c显示为tagbar检索出来的标题
-" let g:airline_section_c = airline#section#create(['tagbar'])
-" "section_x显示文件名
-" let g:airline_section_x = '%{expand("%")}'
-" "section_y显示时间
-" "let g:airline_section_y = airline#section#create(['%{strftime("%D")}'])
-" "section_z显示日期
-let g:airline_section_y = airline#section#create(['%{strftime("%H:%M")}'])
-" "激活tagbar扩展
-" let g:airline#extensions#tagbar#enabled = 1
-" "不显示文件编码（Windows系统）
-" " let g:airline#parts#ffenc#skip_expected_string='utf-8[dos]'
-" "不显示文档总字数
-let g:airline#extensions#wordcount#enabled = 0
-
-" 分割符
-" let g:airline_left_sep=' '
-" let g:airline_right_sep=' '
-
-
-
-" " coc Config
-" " 解决启动稍微延迟问题： 让coc服务，在neovim启动后，500ms后才启动
-" let g:coc_start_at_startup=0
-" function! CocTimerStart(timer)
-"     exec "CocStart"
-" endfunction
-" call timer_start(500,'CocTimerStart',{'repeat':1})
-" 
-" "解决coc.nvim大文件卡死状况。超过0.2m的文件，禁用coc补全。我们很多时候要打开log文件，tag文件等嘛！
-" let g:trigger_size = 0.1 * 1048576
-" augroup hugefile
-"   autocmd!
-"   autocmd BufReadPre *
-"         \ let size = getfsize(expand('<afile>')) |
-"         \ if (size > g:trigger_size) || (size == -2) |
-"         \   echohl WarningMsg | echomsg 'WARNING: altering options for this huge file!' | echohl None |
-"         \   exec 'CocDisable' |
-"         \ else |
-"         \   exec 'CocEnable' |
-"         \ endif |
-"         \ unlet size
-" augroup END
-" 
-
-" snippet config
-
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
-let g:UltiSnipsExpandTrigger="<tab>"               
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<c-b>"
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
-
-"================plugConfig end==================
-
-
-
-"================config start==================
-
-"----------------------------------------------------------------
+"--------------------------------------------------------
 "编码设置 linux上不用写
-"----------------------------------------------------------------
+"--------------------------------------------------------
 "Vim 在与屏幕/键盘交互时使用的编码(取决于实际的终端的设定)        
 set encoding=utf-8
 set langmenu=zh_CN.UTF-8
@@ -456,8 +398,6 @@ language messages zh_CN.utf-8
 set helplang=cn
 "设置为双字宽显示，否则无法完整显示如:☆
 set ambiwidth=double
-
-
 
 
 set nocompatible
@@ -514,7 +454,7 @@ syntax sync minlines=256
 
 
 " 设置字体大小
-" set guifont=Cousine_NF:h11
+"  set guifont=Cousine_NF:h11
 " let g:Guifont="Cousine_NF:h11"
 
 " F2进入粘贴模式
@@ -558,8 +498,6 @@ set linespace=2
 " endif
 
 
-
-
 " 不同的文件显示不同的缩进
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
 autocmd Filetype md setlocal ts=2 sw=2 expandtab
@@ -569,25 +507,81 @@ autocmd Filetype javascript setlocal ts=4 sw=4 sts=0 expandtab
 autocmd Filetype java setlocal ts=4 sw=4 sts=0 expandtab
 autocmd Filetype coffeescript setlocal ts=4 sw=4 sts=0 expandtab
 
-
-
-
-
 set foldlevelstart=99       " 打开文件是默认不折叠代码
-
 
 set vb t_vb=
 au GuiEnter * set t_vb=
 
+"=================================================config end===================================================
 
 
 
-"================config end==================
+"=================================================map start===================================================
+
+" startify map
+" 跳转到开始菜单
+nnoremap <leader>st :Startify<cr>
+nnoremap <leader>ss :SSave<cr>
+let g:which_key_map.s = { 'name' : '+startify' }
+let g:which_key_map.s.t = "start page"
+let g:which_key_map.s.s = "session save"
+
+" NeROTreeToggle map
+" auto turn on
+" autocmd vimenter * NERDTree
+" ctrl+n to toggle file tree
+noremap <silent><C-n> :NERDTreeToggle<CR>
+nnoremap <silent><leader>v :NERDTreeFind<cr>
+let g:which_key_map.v = 'NERDTreeFind'
+
+" ctrlp map
+let g:ctrlp_map = '<leader>fp'
+let g:which_key_map.f = { 'name' : '+find' }
+let g:which_key_map.f.p = 'ctrlp'
+" 不能搜索下层文件
+" 选择文件后 ,v 来定位
+
+" FZF
+nnoremap <silent><leader>ff :FZF<CR>
+let g:which_key_map.f.f = 'fzf'
 
 
+" easymotion map
+nmap <leader>j <Plug>(easymotion-s2)
+let g:which_key_map.j = 'easymotion'
+" acejump
+" 其中<leader><leader>{j|k|w|b}，可以快速跳转行和列
 
-"================map start==================
 
+"md-img-paste map
+autocmd FileType markdown nmap <buffer><silent> <leader>m :call mdip#MarkdownClipboardImage()<CR>
+autocmd FileType md nmap <buffer><silent> <leader>m :call mdip#MarkdownClipboardImage()<CR>
+let g:which_key_map.m = "imagePaste"
+
+" 上面自定义方法的map
+nnoremap <leader>zm :call SetImagePath()<cr>
+let g:which_key_map.z.m = "setImagePath"
+
+" vim-which-key map
+nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
+
+" vim-gitgutter map
+nmap <leader>hf <Plug>(GitGutterNextHunk)
+nmap <leader>hb  <Plug>(GitGutterPrevHunk)
+nmap <leader>hh  :GitGutterLineHighlightsToggle<CR>
+nnoremap [c :GitGutterPrevHunk<CR>
+nnoremap ]c :GitGutterNextHunk<CR>
+let g:which_key_map.h = { 'name' : '+hunk' }
+let g:which_key_map.h.b = "findBack"
+let g:which_key_map.h.f = "findForward"
+let g:which_key_map.h.p = "preview"
+let g:which_key_map.h.s = "stage"
+let g:which_key_map.h.u = "undo"
+let g:which_key_map.h.h = "highLight"
+
+" tagbar map
+nnoremap <leader>t :TagbarToggle<CR>
+let g:which_key_map.t = "tagbar"
 
 " 设置插入模式下括号等自动补全。
 "inoremap ' ''<ESC>i
@@ -616,15 +610,16 @@ noremap <M-l> :bn<cr>
 
 "设置路径为当前文件所在路径
 nnoremap <silent><leader>p :cd %:h<cr>
+let g:which_key_map.p = "setPathNow"
 
 nnoremap <silent>o A<cr>
 
 nnoremap <silent><leader>d :bd<cr>
+let g:which_key_map.d = "deleteNow"
 
 nnoremap < <<
 nnoremap > >>
 
-command! -range=% Markmap CocCommand markmap.create <line1> <line2>
 
 command! BcloseOthers call <SID>BufCloseOthers()
 function! <SID>BufCloseOthers()
@@ -638,14 +633,10 @@ function! <SID>BufCloseOthers()
      endif
    endfor
 endfunction
-map <leader>bdo :BcloseOthers<cr><cr>
-"================map end==================
-
-
-
-
-
-
+map <leader>bo :BcloseOthers<cr><cr>
+let g:which_key_map.b = { 'name' : '+buffer' }
+let g:which_key_map.b.o = "deleteOthers"
+"=================================================map end===================================================
 
 " 不知道干啥的
 "set list                   " Show non-printable characters.
@@ -662,4 +653,6 @@ map <leader>bdo :BcloseOthers<cr><cr>
 "endif
 "
 
+"=================================================end===================================================
 
+"=================================================end===================================================
