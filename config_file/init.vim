@@ -620,9 +620,11 @@ let g:which_key_map.d = "deleteNow"
 nnoremap < <<
 nnoremap > >>
 
-nnoremap <silent><leader>oc :!chrome %:p <cr>
+nnoremap <silent><leader>ob :!chrome %:p <cr> <cr>
+nnoremap <silent><leader>ov :!code % <cr> <cr>
 let g:which_key_map.o = { 'name' : '+open in' }
-let g:which_key_map.o.c = "chrome"
+let g:which_key_map.o.b = "browser"
+let g:which_key_map.o.v = "vscode"
 
 command! BcloseOthers call <SID>BufCloseOthers()
 function! <SID>BufCloseOthers()

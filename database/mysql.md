@@ -5952,6 +5952,8 @@ v
 - mysql5.6优化：
   - 索引下推优化(ICP)
 
+- mysql死锁分析
+
 # 15. 推荐阅读
 
 [MySQL高性能优化规范建议](https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485117&idx=1&sn=92361755b7c3de488b415ec4c5f46d73&chksm=cea24976f9d5c060babe50c3747616cce63df5d50947903a262704988143c2eeb4069ae45420&token=79317275&lang=zh_CN#rd)
