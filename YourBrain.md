@@ -82,6 +82,9 @@
   - 内存使用（软指针）
   - 数据隔离
   - 方法执行
+- 应用
+  - [重写private方法](https://www.cnblogs.com/lixinjie/p/combine-reflect-and-oo-in-java.html)
+  - 框架编写
 
 ### java泛型
 

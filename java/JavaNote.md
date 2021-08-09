@@ -75,6 +75,20 @@
 
 > Field Constructor Method 都是类。Class 类中有这三个类
 
+## 深入解析
+
+待做
+
+[资料](https://www.cnblogs.com/yougewe/p/10125073.html)
+
+## 应用
+
+### 重写private方法
+
+待做
+
+[资料](https://www.cnblogs.com/lixinjie/p/combine-reflect-and-oo-in-java.html)
+
 # 2. 注解：
 
 ## 2.1. 基本概念
