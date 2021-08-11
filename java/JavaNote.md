@@ -2307,11 +2307,22 @@
 ## 11.2. 快速入门
 
 1. 创建 javaee 项目，勾选 web application,勾选 web.xml（Servlet3.0 版本后面再说）
-2. 定义一个类，实现 Servlet 接口
+2. 定义一个类，实现 `Servlet` 接口
 3. 实现 5 个抽象方法
 4. 配置 Servlet
+  ```xml
+    <servlet>
+        <servlet-name>DeleteUserServlet</servlet-name>
+        <servlet-class>com.smbs.ctrl.DeleteUserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteUserServlet</servlet-name>
+        <url-pattern>/DeleteUserServlet</url-pattern>
+    </servlet-mapping>
+  ```
 
-> 实质就是让一个虚拟路径映射到一个实现 Servlet 接口的类。类中有相关方法。
+> 实质就是让一个虚拟路径映射到一个实现 Servlet 接口的类。类中有相关方法。 <br />
+> 基本都是继承HttpServlet方法，该类间接实现了Servlet接口，做了一些默认实现，用起来更方便，下面有写
 
 ## 11.3. 执行原理
 
@@ -2321,8 +2332,8 @@
 4. tomcat 会将字节码文件加载进内存，并创建其对象
 5. 调用其方法
 6. 图示：
+  > ![](./image/servlet2.jpg)
 
-   > ![](./image/servlet2.jpg)
 
 ## 11.4. Servlet 中的生命周期
 

@@ -597,6 +597,7 @@ http.createServer((req, res) => {
   - 客户端：
     - 客户端需要在认证服务器中预先设置 **access key（AK 或叫 app ID）**  和 **secure key（SK）**
     - 在调用 API 时，客户端需要对参数和 access key 进行自然排序后并使用 secure key 进行签名生成一个额外的参数 digest(摘要)
+    - **sk只作为加密算法的参数**，不会进行传输
   - 服务端
     - 服务器根据预先设置的 secure key 进行同样的摘要计算
     - 要求结果完全一致，否则说明认证失败
