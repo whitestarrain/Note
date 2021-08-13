@@ -85,11 +85,22 @@ awk 'BEGIN{
 - [ ] 分布式系统相关
 - [ ] 计算机网络整理
 - [ ] 操作系统完善
+- [ ] JVM字节码与类的加载
+- [ ] JVM性能监控和调优
 - [ ] java Mocikto框架
 - [ ] go语言入门
 - [ ] 跨域问题整理
 - [ ] Mysql XA
 - [ ] 鉴权方式整理
+- [ ] Mockito框架
+- [ ] JOOQ框架
+- [ ] jersey框架
+- [ ] 分布式缓存算法整理
+- [ ] java编程思想 整理
+- [ ] SpringBatch
+- [ ] Mysql XA
+- [ ] RabbitMQ整理
+- [ ] CORS补充
 
 <!--
 - [ ] SpringBoot原理
