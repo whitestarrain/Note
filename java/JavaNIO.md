@@ -1,11 +1,11 @@
-﻿# 简介
+﻿# 1. 简介
 
 - 说明
   - Java NIO（New IO）是从Java 1.4版本开始引入的一个新的IO API，可以替代标准的Java IO API
   - NIO与原来的IO有同样的作用和目的，但是使用的方式完全不同，NIO支持面向缓冲区的、基于通道的IO操作。
   - NIO将以更加高效的方式进行文件的读写操作。
 
-# NIO 与 IO区别
+# 2. NIO 与 IO区别
 
 - BIO
   - 面向流
@@ -19,18 +19,18 @@
   - 双向
   - 非阻塞式
 
-# 缓冲区buffer与通道channel
+# 3. 缓冲区buffer与通道channel
 
-## 概述
+## 3.1. 概述
 
 Java NIO系统的核心在于通道和缓冲区
 
 若需要使用NIO 系统，需要获取用于连接IO 设备的通道以及用于容纳数据的缓冲区。然后操作缓冲区，对数据进行处理。
 **简而言之，Channel 负责传输，Buffer 负责存储**
 
-## buffer
+## 3.2. buffer
 
-### 基础
+### 3.2.1. 基础
 
 - 概念： 
   - 一个用于特定基本数据类型的容器。
@@ -73,7 +73,7 @@ Java NIO系统的核心在于通道和缓冲区
   - 非直接缓冲区：通过 allocate() 方法分配缓冲区，将缓冲区建立在 JVM 的内存中
   - 直接缓冲区：通过 allocateDirect() 方法分配直接缓冲区，将缓冲区建立在 **物理内存** 中。可以提高效率
 
-### 直接与非直接缓冲区
+### 3.2.2. 直接与非直接缓冲区
 
 ![nio-4](./image/nio-4.png)
 
@@ -87,7 +87,7 @@ Java NIO系统的核心在于通道和缓冲区
 
 字节缓冲区是直接缓冲区还是非直接缓冲区可通过调用其isDirect()方法来确定。提供此方法是为了能够在性能关键型代码中执行显式缓冲区管理。
 
-### 示例
+### 3.2.3. 示例
 
 <details>
 <summary style="color:red;">Buffer全部测试代码</summary>
@@ -232,9 +232,9 @@ public class TestBuffer {
 ```
 </details>
 
-## channel
+## 3.3. channel
 
-### 基础
+### 3.3.1. 基础
 
 - 概念：
   - 通道（Channel）：由java.nio.channels 包定义的。
@@ -292,7 +292,7 @@ public class TestBuffer {
   - 分散读取（Scattering Reads）：将通道中的数据分散到多个缓冲区中
   - 聚集写入（Gathering Writes）：将多个缓冲区中的数据聚集到通道中
 
-### 示例
+### 3.3.2. 示例
 
 **使用直接缓冲区和非直接缓冲区的api区别挺大的，好好看看。**
 
@@ -492,16 +492,16 @@ public class TestChannel {
 ```
 </details>
 
-# NIO  的非阻塞式网络通信
+# 4. NIO  的非阻塞式网络通信
 
-## 阻塞与非阻塞
+## 4.1. 阻塞与非阻塞
 
 
 传统的IO 流都是阻塞式的。也就是说，当一个线程调用read() 或write() 时，该线程被阻塞，直到有一些数据被读取或写入，该线程在此期间不能执行其他任务。因此，在完成网络通信进行IO 操作时，由于线程会阻塞，所以服务器端必须为每个客户端都提供一个独立的线程进行处理，当服务器端需要处理大量客户端时，性能急剧下降。
 
 Java NIO 是非阻塞模式的。当线程从某通道进行读写数据时，若没有数据可用时，该线程可以进行其他任务。线程通常将非阻塞IO 的空闲时间用于在其他通道上执行IO 操作，所以单独的线程可以管理多个输入和输出通道。因此，NIO 可以让服务器端使用一个或有限几个线程来同时处理连接到服务器端的所有客户端。
 
-## 基础
+## 4.2. 基础
 
 - 通道（Channel）：负责连接。java.nio.channels.Channel 接口：
   - SelectableChannel
@@ -513,7 +513,7 @@ Java NIO 是非阻塞模式的。当线程从某通道进行读写数据时，�
 - 缓冲区（Buffer）：负责数据的存取
 - 选择器（Selector）：是 SelectableChannel 的多路复用器。用于监控 SelectableChannel 的 IO 状况
 
-## Selector
+## 4.3. Selector
 
 > 用于实现NIO非阻塞
 
@@ -535,7 +535,7 @@ Java NIO 是非阻塞模式的。当线程从某通道进行读写数据时，�
     - 若注册时不止监听一个事件，则可以使用“位或”操作符连接
       > `SelectionKey.OP_READ|SelectionKey.OP_WRITE;`
 
-## 示例代码
+## 4.4. 示例代码
 
 - 待解决：
   - shutdownOutput的使用
@@ -829,7 +829,7 @@ public class TestNonBlockingNIO2 {
 </details>
 
 
-# 管道
+# 5. 管道
 
 Java NIO 管道是2个线程之间的单向数据连接。Pipe有一个source通道和一个sink通道。数据会被写到sink通道，从source通道读取。
 

@@ -1,5 +1,7 @@
 <!--请使用Markmap查看-->
 
+<!-- 待整理：https://mp.weixin.qq.com/s?__biz=MzI0ODk2NDIyMQ==&mid=2247486785&idx=1&sn=4377e0e3764d0f4245cb74d83949aa2d&chksm=e999f853deee71452650dce82fd8efdd5854cd640d88cae22ff2a164cb0a6f584059a47932bd&scene=21#wechat_redirect -->
+
 # 基础
 
 ## 设计模式<!-- fold -->
@@ -128,7 +130,7 @@
       - 种类
         - 差错报告报文 <!-- fold -->
           - 终点不可达
-          - 圆点抑制
+          - 源点抑制
           - 时间超过
           - 参数问题
           - 改变路由(重定向)
@@ -2409,6 +2411,16 @@
 #### RPC
 
 #### REST
+
+### 分布式缓存算法
+
+#### 传统hash算法
+
+#### 一致性hash算法
+
+#### 集群算法
+
+#### 分块hash算法
 
 ### 分布式事务算法
 

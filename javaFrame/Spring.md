@@ -1542,6 +1542,10 @@ public class JdbcConfig {
 
     ```
 
+## 3.4. AOP避坑指南
+
+[资料](https://www.liaoxuefeng.com/wiki/1252599548343744/1310052317134882)
+
 # 4. JDBCTemplate
 
 ## 4.1. 作用说明：
@@ -2422,7 +2426,7 @@ public class JdbcConfig {
 }
 ```
 
-# SPEL
+# 6. SPEL
 
 待做
 

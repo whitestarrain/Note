@@ -629,11 +629,17 @@ class OpenAndClose implements IOpenAndClose {
   3. 问题提出：在编程中，如何正确的使用继承? => 里氏替换原则
 
 - 基本介绍
-  1. 里氏替换原则(Liskov Substitution Principle)在1988年，由麻省理工学院的以为姓里的女士提出的。
-  2. 如果对每个类型为T1的对象o1，都有类型为T2的对象o2，使得以T1定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变化，那么类型T2是类型T1的子类型。**换句话说，所有引用基类的地方必须能透明地使用其子类的对象**。
-  3. 在使用继承时，遵循里氏替换原则，**在子类中尽量不要重写父类的方法**
-  4. 里氏替换原则告诉我们，继承实际上让两个类耦合性增强了， **在适当的情况下，可以通过聚合，组合，依赖来解决问题**
-    > 我们也可以通过提升的方法，来尽量满足里氏替换原则，假设现在有两个类，A 类和 B 类，如果 B 类继承 A 类，需要重写 A 类中的某些方法，那么，我们在 A 类 和 B 类之上，再抽取出一个更加通用的父类 CommonSuper，让 A 类和 B 类同时去继承 CommonSuper，这样 B 类就无须重写 A 类中的某些方法，达到基类的引用对子类对象透明的效果
+  - 里氏替换原则(Liskov Substitution Principle)在1988年，由麻省理工学院的以为姓里的女士提出的。
+  - 如果对每个类型为T1的对象o1，都有类型为T2的对象o2，使得以T1定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变化，那么类型T2是类型T1的子类型。 **换句话说，所有引用基类的地方必须能透明地使用其子类的对象** 。
+  - 里氏替换原则通俗来讲就是： **子类可以扩展父类的功能，但不能改变父类原有的功能** 。
+  - 也就是说：在使用继承时，遵循里氏替换原则， **子类继承父类时，除添加新的方法完成新增功能外，尽量不要重写父类的方法** 。
+  - 里氏替换原则告诉我们，继承实际上让两个类耦合性增强了， **在适当的情况下，可以通过聚合，组合，依赖来解决问题**
+
+  > 我们也可以通过提升的方法，来尽量满足里氏替换原则 <br />
+  > 假设现在有两个类，A 类和 B 类，如果 B 类继承 A 类，需要重写 A 类中的某些方法， <br />
+  > 那么，我们在 A 类 和 B 类之上，再抽取出一个更加通用的父类 CommonSuper，让 A 类和 B 类同时去继承 CommonSuper， <br />
+  > 这样 B 类就无须重写 A 类中的某些方法，达到基类的引用对子类对象透明的效果
+
 
 #### 1.2.4.2. 案例
 
@@ -756,197 +762,9 @@ class B extends Base {
 
 #### 1.2.4.3. 注意
 
-### 1.2.5. 开闭原则 ocp(核心)
+### 1.2.5. 迪米特法则
 
 #### 1.2.5.1. 基本介绍
-
-> 核心
-
-1. 开闭原则（Open Closed Principle） 是编程中最基础、最重要的设计原则
-2. 一个软件实体如类，模块和函数应该对扩展开放(对提供方)， 对修改关闭(对使用方)。 **用抽象构建框架，用实现扩展细节**。
-  > 也就是你怎么该内部代码我都不管，只要提供的API不变就行
-3. 当软件需要变化时，**尽量通过扩展软件实体**的行为来实现变化，而不是通过修改已有的代码来实现变化。
-  > 也就是说最好新增api，而不要乱改api
-4. **编程中遵循其它原则，以及使用设计模式的目的就是遵循开闭原则**。
-
-#### 1.2.5.2. 案例
-
-
-<details>
-<summary style="color:red;">案例1：未遵循开闭原则，导致新增一个图形类时，需要在【使用方 GraphicEditor】中添加很多代码</summary>
-
-![design-patterns-6](./image/design-patterns-6.png)
-
-```java
-public class Ocp {
-
-	public static void main(String[] args) {
-		// 使用看看存在的问题
-		GraphicEditor graphicEditor = new GraphicEditor();
-		graphicEditor.drawShape(new Rectangle());
-		graphicEditor.drawShape(new Circle());
-		graphicEditor.drawShape(new Triangle());
-	}
-
-}
-
-//这是一个用于绘图的类 [使用方，需使用图形绘图]
-class GraphicEditor {
-	// 接收Shape对象，然后根据type，来绘制不同的图形
-	public void drawShape(Shape s) {
-		if (s.m_type == 1)
-			drawRectangle(s);
-		else if (s.m_type == 2)
-			drawCircle(s);
-
-    // ***************新增**************
-    // 给使用方新增了代码
-		else if (s.m_type == 3)
-			drawTriangle(s);
-	}
-
-	// 绘制矩形
-	public void drawRectangle(Shape r) {
-		System.out.println(" 绘制矩形 ");
-	}
-
-	// 绘制圆形
-	public void drawCircle(Shape r) {
-		System.out.println(" 绘制圆形 ");
-	}
-
-  // ***************新增**************
-	// 绘制三角形
-	public void drawTriangle(Shape r) {
-		System.out.println(" 绘制三角形 ");
-	}
-}
-
-//Shape类，基类
-class Shape {
-	int m_type;
-}
-
-// 具体的图形为提供方，提供具体的绘图流程
-class Rectangle extends Shape {
-	Rectangle() {
-		super.m_type = 1;
-	}
-}
-
-class Circle extends Shape {
-	Circle() {
-		super.m_type = 2;
-	}
-}
-
-// ***************新增**************
-//新增画三角形
-class Triangle extends Shape {
-	Triangle() {
-		super.m_type = 3;
-	}
-}
-```
-</details>
-
-- 案例一的优缺点分析
-  1. 优点是比较好理解，简单易操作。
-  2. 缺点是违反了设计模式的ocp原则，即对扩展开放(提供方)，对修改关闭(使用方)。即当我们给类增加新功能的时候，尽量不修改代码，或者尽可能少修改代码。
-  3. 比如我们这时要新增加一个图形种类：三角形，我们需要做大量的修改， 修改的地方较多
-
-
-- 改进思路分析：
-  1. 把创建Shape类做成抽象类，并提供一个抽象的draw方法，让子类去实现即可
-  2. 这样我们有新的图形种类时，只需要让新的图形类继承Shape，并实现draw方法即可，使用方的代码就不需要修 -> 满足了开闭原则
-
-
-<details>
-<summary style="color:red;">案例2：改进</summary>
-
-1. 所有的图形类都继承自公共的抽象父类 Shape，并重写父类中的 draw() 方法，之后新增图形类时，只需要重写 draw() 方法即可，在【使用方 GraphicEditor】中无需做任何修改
-2. PS：和前面的接收消息例子很像，通过 IReceiver 接口定义各种接收者的行为，这样扩展新的接受者时，就无须在【使用方 Person】中修改任何代码
-
-```java
-public class Ocp {
-
-	public static void main(String[] args) {
-		// 使用看看存在的问题
-		GraphicEditor graphicEditor = new GraphicEditor();
-		graphicEditor.drawShape(new Rectangle());
-		graphicEditor.drawShape(new Circle());
-		graphicEditor.drawShape(new Triangle());
-		graphicEditor.drawShape(new OtherGraphic());
-	}
-
-}
-
-//这是一个用于绘图的类 [使用方]
-class GraphicEditor {
-	// 接收Shape对象，调用draw方法
-	public void drawShape(Shape s) {
-		s.draw();
-	}
-}
-
-//Shape类，基类
-abstract class Shape {
-	int m_type;
-
-	public abstract void draw();// 抽象方法
-}
-
-class Rectangle extends Shape {
-	Rectangle() {
-		super.m_type = 1;
-	}
-
-	@Override
-	public void draw() {
-		System.out.println(" 绘制矩形 ");
-	}
-}
-
-class Circle extends Shape {
-	Circle() {
-		super.m_type = 2;
-	}
-
-	@Override
-	public void draw() {
-		System.out.println(" 绘制圆形 ");
-	}
-}
-
-//新增画三角形
-class Triangle extends Shape {
-	Triangle() {
-		super.m_type = 3;
-	}
-
-	@Override
-	public void draw() {
-		System.out.println(" 绘制三角形 ");
-	}
-}
-
-//新增一个图形
-class OtherGraphic extends Shape {
-	OtherGraphic() {
-		super.m_type = 4;
-	}
-
-	@Override
-	public void draw() {
-		System.out.println(" 绘制其它图形 ");
-	}
-}
-```
-</details>
-
-### 1.2.6. 迪米特法则
-
-#### 1.2.6.1. 基本介绍
 
 - 一个对象应该对其他对象保持最少的了解
 - 类与类关系越密切，耦合度越大
@@ -956,7 +774,7 @@ class OtherGraphic extends Shape {
   - 其中，我们称出现**成员变量，方法参数，方法返回值**中的类为**直接的朋友**，
   - 而出现在**局部变量**中的类不是直接的朋友。也就是说，**陌生的类最好不要以局部变量的形式出现在类的内部**。
 
-#### 1.2.6.2. 案例
+#### 1.2.5.2. 案例
 
 > 应用实例：有一个学校， 下属有各个学院和总部， 现要求打印出学校总部员工ID和学院员工的id
 
@@ -1163,16 +981,205 @@ class SchoolManager {
 </details>
 
 
-#### 1.2.6.3. 注意
+#### 1.2.5.3. 注意
 
 1. 迪米特法则的核心是降低类之间的耦合
 2. 但是注意：由于每个类都减少了不必要的依赖，因此迪米特法则只是要求降低类间(对象间)耦合关系， 并不是要求完全没有依赖关系(也没办法做到)
 
-### 1.2.7. 合成复用原则
+### 1.2.6. 合成复用原则
 
 原则是尽量使用合成/聚合的方式，而不是使用继承，即尽量使用 has a 的关系，而不要使用 is a 的关系
 
 ![design-patterns-7](./image/design-patterns-7.png)
+
+### 1.2.7. 开闭原则 ocp(核心)
+
+#### 1.2.7.1. 基本介绍
+
+> 核心
+
+1. 开闭原则（Open Closed Principle） 是编程中最基础、最重要的设计原则
+2. 一个软件实体如类，模块和函数应该对扩展开放(对提供方)， 对修改关闭(对使用方)。 **用抽象构建框架，用实现扩展细节**。
+  > 也就是你怎么该内部代码我都不管，只要提供的API不变就行
+3. 当软件需要变化时，**尽量通过扩展软件实体**的行为来实现变化，而不是通过修改已有的代码来实现变化。
+  > 也就是说最好新增api，而不要乱改api
+4. **编程中遵循其它原则，以及使用设计模式的目的就是遵循开闭原则**。
+
+#### 1.2.7.2. 案例
+
+
+<details>
+<summary style="color:red;">案例1：未遵循开闭原则，导致新增一个图形类时，需要在【使用方 GraphicEditor】中添加很多代码</summary>
+
+![design-patterns-6](./image/design-patterns-6.png)
+
+```java
+public class Ocp {
+
+	public static void main(String[] args) {
+		// 使用看看存在的问题
+		GraphicEditor graphicEditor = new GraphicEditor();
+		graphicEditor.drawShape(new Rectangle());
+		graphicEditor.drawShape(new Circle());
+		graphicEditor.drawShape(new Triangle());
+	}
+
+}
+
+//这是一个用于绘图的类 [使用方，需使用图形绘图]
+class GraphicEditor {
+	// 接收Shape对象，然后根据type，来绘制不同的图形
+	public void drawShape(Shape s) {
+		if (s.m_type == 1)
+			drawRectangle(s);
+		else if (s.m_type == 2)
+			drawCircle(s);
+
+    // ***************新增**************
+    // 给使用方新增了代码
+		else if (s.m_type == 3)
+			drawTriangle(s);
+	}
+
+	// 绘制矩形
+	public void drawRectangle(Shape r) {
+		System.out.println(" 绘制矩形 ");
+	}
+
+	// 绘制圆形
+	public void drawCircle(Shape r) {
+		System.out.println(" 绘制圆形 ");
+	}
+
+  // ***************新增**************
+	// 绘制三角形
+	public void drawTriangle(Shape r) {
+		System.out.println(" 绘制三角形 ");
+	}
+}
+
+//Shape类，基类
+class Shape {
+	int m_type;
+}
+
+// 具体的图形为提供方，提供具体的绘图流程
+class Rectangle extends Shape {
+	Rectangle() {
+		super.m_type = 1;
+	}
+}
+
+class Circle extends Shape {
+	Circle() {
+		super.m_type = 2;
+	}
+}
+
+// ***************新增**************
+//新增画三角形
+class Triangle extends Shape {
+	Triangle() {
+		super.m_type = 3;
+	}
+}
+```
+</details>
+
+- 案例一的优缺点分析
+  1. 优点是比较好理解，简单易操作。
+  2. 缺点是违反了设计模式的ocp原则，即对扩展开放(提供方)，对修改关闭(使用方)。即当我们给类增加新功能的时候，尽量不修改代码，或者尽可能少修改代码。
+  3. 比如我们这时要新增加一个图形种类：三角形，我们需要做大量的修改， 修改的地方较多
+
+
+- 改进思路分析：
+  1. 把创建Shape类做成抽象类，并提供一个抽象的draw方法，让子类去实现即可
+  2. 这样我们有新的图形种类时，只需要让新的图形类继承Shape，并实现draw方法即可，使用方的代码就不需要修 -> 满足了开闭原则
+
+
+<details>
+<summary style="color:red;">案例2：改进</summary>
+
+1. 所有的图形类都继承自公共的抽象父类 Shape，并重写父类中的 draw() 方法，之后新增图形类时，只需要重写 draw() 方法即可，在【使用方 GraphicEditor】中无需做任何修改
+2. PS：和前面的接收消息例子很像，通过 IReceiver 接口定义各种接收者的行为，这样扩展新的接受者时，就无须在【使用方 Person】中修改任何代码
+
+```java
+public class Ocp {
+
+	public static void main(String[] args) {
+		// 使用看看存在的问题
+		GraphicEditor graphicEditor = new GraphicEditor();
+		graphicEditor.drawShape(new Rectangle());
+		graphicEditor.drawShape(new Circle());
+		graphicEditor.drawShape(new Triangle());
+		graphicEditor.drawShape(new OtherGraphic());
+	}
+
+}
+
+//这是一个用于绘图的类 [使用方]
+class GraphicEditor {
+	// 接收Shape对象，调用draw方法
+	public void drawShape(Shape s) {
+		s.draw();
+	}
+}
+
+//Shape类，基类
+abstract class Shape {
+	int m_type;
+
+	public abstract void draw();// 抽象方法
+}
+
+class Rectangle extends Shape {
+	Rectangle() {
+		super.m_type = 1;
+	}
+
+	@Override
+	public void draw() {
+		System.out.println(" 绘制矩形 ");
+	}
+}
+
+class Circle extends Shape {
+	Circle() {
+		super.m_type = 2;
+	}
+
+	@Override
+	public void draw() {
+		System.out.println(" 绘制圆形 ");
+	}
+}
+
+//新增画三角形
+class Triangle extends Shape {
+	Triangle() {
+		super.m_type = 3;
+	}
+
+	@Override
+	public void draw() {
+		System.out.println(" 绘制三角形 ");
+	}
+}
+
+//新增一个图形
+class OtherGraphic extends Shape {
+	OtherGraphic() {
+		super.m_type = 4;
+	}
+
+	@Override
+	public void draw() {
+		System.out.println(" 绘制其它图形 ");
+	}
+}
+```
+</details>
+
 
 ## 1.3. 设计原则核心思想
 
@@ -4688,11 +4695,11 @@ private static Calendar createCalendar(TimeZone zone,
 
 ### 3.3.5. 组合模式（Composite Pattern）
 
-### 3.3.7. 外观模式（Facade Pattern）
+### 3.3.6. 外观模式（Facade Pattern）
 
-### 3.3.8. 享元模式（Flyweight Pattern）
+### 3.3.7. 享元模式（Flyweight Pattern）
 
-### 3.3.9. 代理模式（Proxy Pattern）
+### 3.3.8. 代理模式（Proxy Pattern）
 
 ## 3.4. 行为型模式
 
