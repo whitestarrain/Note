@@ -197,7 +197,7 @@ Synchronized使得同时只有一个线程可以执行，性能较差，有什�
 
 锁的升级
 
-# 2. 并发基础
+# 2. 并发基础-Thread和Runnable
 
 ## 2.1. 创建线程方式
 
@@ -821,39 +821,43 @@ public class WaitNotifyPrintOddEveWait {
 
 ### 2.8.2. 性能问题
 
-# 3. Java 内存模型
+# 3. 并发基础--Callable、Future与FutureTask
 
-## 3.1. 三大结构模型
+# 4. Java 内存模型
 
-## 3.2. JMM 是什么
+[跳转](./java并发进阶.md)
 
-## 3.3. 重排序
+## 4.1. 三大结构模型
 
-## 3.4. 可见性
+## 4.2. JMM 是什么
 
-## 3.5. JMM 的抽象：本地内存和主内存
+## 4.3. 重排序
 
-## 3.6. happens-before 原则
+## 4.4. 可见性
 
-## 3.7. volatile 关键字
+## 4.5. JMM 的抽象：本地内存和主内存
 
-## 3.8. 并发编程三大特性
+## 4.6. happens-before 原则
 
-### 3.8.1. 可见性
+## 4.7. volatile 关键字
 
-### 3.8.2. 原子性
+## 4.8. 并发编程三大特性
 
-### 3.8.3. 有序性
+### 4.8.1. 可见性
 
-# 4. 死锁
+### 4.8.2. 原子性
 
-# 5. 常见问题
+### 4.8.3. 有序性
 
-# 6. 线程池
+# 5. 死锁
+
+# 6. 常见问题
+
+# 7. 线程池
 
 <!--黑马程Java线程池深入浅出视频教程-->
 
-## 6.1. 概述
+## 7.1. 概述
 
 - 线程池优势
   - 1:线程和任务分离,提升线程重用性;
@@ -893,7 +897,7 @@ public class WaitNotifyPrintOddEveWait {
     - 用户可以根据经验和系统产生任务的时间间隔合理设置一个值即可;
 
 
-## 6.2. 自定义线程池
+## 7.2. 自定义线程池
 
 - 任务类
   <details>
@@ -1066,7 +1070,7 @@ public class WaitNotifyPrintOddEveWait {
   </details>
 
 
-## 6.3. ExecutorService接口
+## 7.3. ExecutorService接口
 
 - ExecutorService接口是java内置的线程池接口,通过学习接口中的方法,可以快速的掌握java内置线程池的基本使用
 - **常用方法**:
@@ -1076,9 +1080,9 @@ public class WaitNotifyPrintOddEveWait {
   - `Future<?> submit(Runnable task)`  执行 Runnable 任务，并返回一个表示该任务的 Future。 
   - `<T> Future<T> submit(Runnable task, T result)`  执行 Runnable 任务，并返回一个表示该任务的 Future。 
 
-## 6.4. ThreadPoolExecutor
+## 7.4. ThreadPoolExecutor
 
-## 6.5. Executors工具类
+## 7.5. Executors工具类
 
 用来获取常用线程池。
 
@@ -1111,7 +1115,7 @@ public class WaitNotifyPrintOddEveWait {
     - `ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit)` 
       > 创建并执行一个在给定初始延迟后首次启用的定期操作，随后，在每一次执行终止和下一次执行开始之间都存在给定的延迟。 
 
-## 6.6. Future
+## 7.6. Future
 
 我们刚刚在学习java内置线程池使用时,没有考虑线程计算的结果,但开发中,我们有时需要利用线程进行一些计算,然后获取这些计算的结果,而java中的Future接口就是专门用于描述异步计算结果的,我们可以通过Future 对象获取线程计算的结果;
 
@@ -1182,12 +1186,11 @@ class MyCall implements Callable<Integer>{
 }
 ```
 
-## 6.7. sumbit 和 execute区别
+## 7.7. sumbit 和 execute区别
 
 https://www.jianshu.com/p/29610984f1dd
 
 - 1、submit在执行过程中与execute不一样，不会抛出异常而是把异常保存在成员变量中，在FutureTask.get阻塞获取的时候再把异常抛出来。
 - 2、Spring的@Schedule注解的内部实现就是使用submit，因此，如果你构建的任务内部有未检查异常，你是永远也拿不到这个异常的。
 - 3、execute直接抛出异常之后线程就死掉了，submit保存异常线程没有死掉，因此execute的线程池可能会出现没有意义的情况，因为线程没有得到重用。而submit不会出现这种情况。
-
 

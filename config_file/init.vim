@@ -562,6 +562,10 @@ let g:which_key_map.m = "imagePaste"
 nnoremap <leader>zm :call SetImagePath()<cr>
 let g:which_key_map.z.m = "setImagePath"
 
+"map syntax sync fromstart，大文件渲染
+nnoremap <leader>p :syntax sync fromstart<cr>
+let g:which_key_map.p = "syntax"
+
 " vim-which-key map
 nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
 
@@ -607,10 +611,9 @@ noremap <C-l> <C-w>l
 noremap <M-h> :bf<cr>
 noremap <M-l> :bn<cr>
 
-
 "设置路径为当前文件所在路径
-nnoremap <silent><leader>p :cd %:h<cr>
-let g:which_key_map.p = "setPathNow"
+nnoremap <silent><leader>zp :cd %:h<cr>
+let g:which_key_map.z.p = "setPathNow"
 
 nnoremap <silent>o A<cr>
 

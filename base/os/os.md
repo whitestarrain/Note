@@ -1,3 +1,7 @@
+# 待补充
+
+- [Operating Systems:Three Easy Pieces](https://pages.cs.wisc.edu/~remzi/OSTEP/Chinese/)
+
 # 1. 操作系统基础
 
 ## 1.1. 什么是操作系统
@@ -1082,3 +1086,4 @@ IO多路复用除了需要阻塞之外，`select 函数所提供的功能（异�
 
 - [聊聊Linux 五种IO模型](https://www.jianshu.com/p/486b0965c296)
 - [Linux中的异步I/O模型](http://cxd2014.github.io/2018/12/09/aio/)
+- [Operating Systems:Three Easy Pieces](https://pages.cs.wisc.edu/~remzi/OSTEP/Chinese/)

@@ -3199,7 +3199,15 @@ mysql> explain select * from staffs where name='z3' or name = 'July';
 1 row in set (0.00 sec)
 ```
 
-## 5.10. 面试题实践
+## 5.10. 其他情况
+
+- 多列+in
+  ```sql
+  select * from role_component where (role_id,user_id) in ((1,2),(3,4));
+  ```
+  - 只有role_id,user_id联合索引才能使用索引
+
+## 5.11. 面试题实践
 
 > **索引优化面试题**
 
