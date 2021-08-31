@@ -76,31 +76,35 @@ awk 'BEGIN{
     }' Spring.md
 ```
 
-# 待做/学习
+# 待做项
 
-- [ ] 设计模式
-- [ ] zookeeper完善
-- [ ] java并发整理
-- [ ] 微服务架构
-- [ ] 分布式系统相关
-- [ ] 计算机网络整理
-- [ ] 操作系统完善
-- [ ] JVM字节码与类的加载
-- [ ] JVM性能监控和调优
-- [ ] java Mocikto框架
-- [ ] go语言入门
-- [ ] 跨域问题整理
-- [ ] Mysql XA
-- [ ] 鉴权方式整理
-- [ ] Mockito框架
-- [ ] JOOQ框架
-- [ ] jersey框架
-- [ ] 分布式缓存算法整理
-- [ ] java编程思想 整理
-- [ ] SpringBatch
-- [ ] Mysql XA
-- [ ] RabbitMQ整理
-- [ ] CORS补充
+- 长期
+  - [ ] java编程思想 整理
+  - [ ] 计算机网络完善
+  - [ ] 操作系统完善
+- 待完善/整理
+  - [ ] 设计模式
+  - [ ] zookeeper完善
+  - [ ] java并发整理
+  - [ ] RabbitMQ整理
+  - [ ] 鉴权方式整理
+  - [ ] CORS跨域完善+整理
+  - [x] 分布式缓存算法整理
+- 学习深入+笔记完善
+  - [ ] 微服务架构
+  - [ ] 分布式系统相关
+  - [ ] JVM字节码与类的加载
+  - [ ] JVM性能监控和调优
+- 待学习
+  - [ ] Mysql XA
+  - [ ] Mocikto框架
+  - [ ] JOOQ框架
+  - [ ] jersey框架
+  - [ ] SpringBatch
+- 其他
+  - [ ] go语言入门
+  - [ ] C++
+  - [ ] JNI
 
 <!--
 - [ ] SpringBoot原理
