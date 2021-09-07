@@ -2161,6 +2161,8 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 
 ### 11.3.1. 说明
 
+![redis-69](./image/redis-69.png)
+
 - 两个端口
   - 一个是用于客户端的Redis TCP，如6379。
   - 另一个由客户端加10000所得，如16379，用于Redis集群**总线连接**。
@@ -2180,6 +2182,11 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
     - 把哈希槽从一个节点移动到另外一个节点并不需要停止集群。
     - 用户可以通过哈希标签强制的把多个键放到一个哈希槽里面。
     - 让集群增加或者减少节点变得很简单。
+      - 增加一个 master，就将其他 master 的 hash slot 移动部分过去，
+      - 减少一个 master，就将它的 hash slot 移动到其他 master 上去。
+      - 移动 hash slot 的成本是非常低的。客户端的 api，可以对指定的数据，让他们走同一个 hash slot，通过 hash tag 来实现。
+      - 任何一台机器宕机，其他节点，不影响的。因为 key 找的是 hash slot，不是机器。
+
 
 - Redis 集群的主从复制模型
   - 说明

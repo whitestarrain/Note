@@ -9,6 +9,7 @@
   - 当用户登陆过后系统便能追踪到他的身份做出符合相应业务逻辑的操作。
   - 即使用户没有登录，大多数系统也会追踪他的身份，只是当做来宾或者匿名用户来处理。
   - 认证技术解决的是 "我是谁？"的问题。
+
 - 授权是 authorization
   - 指的是什么样的身份被允许访问某些资源，在获取到用户身份后继续检查用户的权限。
   - 单一的系统授权往往是伴随认证来完成的，但是在开放 API 的多系统结构下，授权可以由不同的系统来完成，例如 OAuth。
@@ -21,6 +22,24 @@
   - 在互联网世界中，服务器为每一个访问者颁发 session ID 存放到 cookie，这就是一种凭证技术。
   - 数字凭证还表现在方方面面，SSH 登录的密匙、JWT 令牌、一次性密码等。
 
+## 权限种类
+
+- 页面权限:
+  - 即用户登录系统可以看到的页面
+  - 由菜单来控制,菜单包括一级菜单和二级菜单
+  - 只要用户有一级和二级菜单的权限,那么用户就可以访问页面
+- 操作权限:
+  - 即页面的功能按钮,包括查看,新增,修改,删除,审核等
+  - 用户点击删除按钮时,后台会校验用户角色下的所有权限是否包含该删除权限,如果是,就可以进行下一步操作,反之提示无权限。
+  - 有的系统要求"可见即可操作",意思是如果页面上能够看到操作按钮,那么用户就可以操作,要实现此需求
+  - 这里就需要前端来配合,前端开发把用户的权限信息缓存,在页面判断用户是否包含此权限,如果有,就显示该按钮,如果没有,就隐藏该按钮。
+  - 某种程度上提升了用户体验,但是在实际场景可自行选择是否需要这样做
+- 数据权限:
+  - 数据权限就是用户在同一页面看到的数据是不同的,
+  - 比如财务部只能看到其部门下的用户数据,采购部只看采购部的数据,
+  - 解决方案一般是把数据和具体的组织架构关联起来,
+  - 举个例子,再给用户授权的时候,用户选择某个角色同时绑定组织如财务部或者合肥分公司,那么该用户就有了该角色下财务部或合肥分公司下的的数据权限。
+
 ## 1.2. 其他注意点
 
 - 用户账户的存储:
@@ -31,12 +50,9 @@
 
 # 2. 访问控制策略
 
-## 2.1. 基于访问控制列表（ACL）
+## 2.1. 基于用户角色的访问控制（RBAC）
 
-## 2.2. 基于用户角色的访问控制（RBAC）
-
-
-### 2.2.1. 说明
+### 2.1.1. 说明
 
 ![rbac-1](./image/rbac-1.png)
 
@@ -52,7 +68,7 @@
   - 我们可以根据自家产品权限的复杂程度，选取适合的权限模型。
 
 
-### 2.2.2. RBAC0
+### 2.1.2. RBAC0
 
 ![rbac-2](./image/rbac-2.png)
 
@@ -63,7 +79,7 @@
 - 用户和角色，角色和权限都是**多对多**的关系。
 - 用户拥有的权限等于他所有的角色持有**权限之和**。
 
-### 2.2.3. RBAC1
+### 2.1.3. RBAC1
 
 ![rbac-3](./image/rbac-3.png)
 
@@ -73,7 +89,7 @@
  - 在角色中引入了**继承**的概念。
  - 简单理解就是，**给角色可以分成几个等级**，每个等级权限不同，从而实现更细粒度的权限管理。
 
-### 2.2.4. RBAC2
+### 2.1.4. RBAC2
 
 - RBAC2同样建立在RBAC0基础之上，
 - 仅是对用户、角色和权限三者之间增加了一些限制。
@@ -95,13 +111,13 @@
 
   ![rbac-4](./image/rbac-4.png)
 
-### 2.2.5. RBAC3
+### 2.1.5. RBAC3
 
 ![rbac-5](./image/rbac-5.png)
 
 - RBAC3是RBAC1和RBAC2的合集，所以RBAC3既有角色分层，也包括可以增加各种限制。
 
-### 2.2.6. 延伸:用户组
+### 2.1.6. 延伸:用户组
 
 ![rbac-6](./image/rbac-6.png)
 
@@ -126,6 +142,374 @@
 - 基于RBAC模型，还可以适当延展，使其更适合我们的产品。
 - 譬如增加用户组概念，直接给用户组分配角色，再把用户加入用户组。
 - 这样用户除了拥有自身的权限外，还拥有了所属用户组的所有权限。
+
+### 优缺点
+
+- 优点
+  - 稳定：
+    - 从管理角度出发，角色是为了解决特定问题而被创造的，也就是解决分工问题
+    - 而用户的变动几率比系统里的角色大多了，角色这一定义相对会更加稳定一些。
+  - 简单：
+    - 用户与权限的逻辑分离，使得权限只和角色相关。
+    - 而根据上文，角色是被相关干系人或行业直接创造出来的，以角色为核心的权限管理体系的理解成本和学习成本相对于新造概念会少上很多，非常利于在内部推广。
+
+- 缺点
+  > 从管理角度出发，角色是为了解决特定问题而被创造的，也就是解决分工问题， <br />
+  > 而自然人的变动几率比系统里的角色大多了，角色这一定义相对会更加稳定一些，<br />
+  > 这一优点实际上也带来了缺点<br />
+  - 角色管理困难：
+    - 现实生活中人是不稳定的，在 RBAC 中通常表现为一个人关联了多个角色，这样就给角色管理带来了很大的难题，
+    - 尽管有权限继承、角色互斥等等办法提高角色管理的效率，但是在面对以下难题时依然束手无策：
+      - 产品经理Ａ拥有产品相关权限，但是由于最近在负责业务Ｂ，需要获取Ｂ的临时权限；这个时候需要新增一个角色；
+      - 产品经理 C 需要业务 D 中一个单独后台页面的查看和修改权限；这个时候也需要新增一个角色
+    - 新增资源时，需要维护所有与之相关的角色，维护起来费时费力，而且角色是一个相对静态的权限定义，如果需要把一个流程权限化：
+      - 运营 A 创建了兑换码后，产品 B 才能去看兑换订单的详情数据
+      - 像这样一类权限获取，是 RBAC 所不支持的。
+  - 与最小权限原则冲突
+    - 用户应该仅能访问其工作所需的资源和服务，拥有既不超过也不低于完成工作所需的管理权限。过度预配访问权限可能会增加内部人员威胁、资源配置错误以及难以进行审核跟踪的风险。如果权限预配不足，则用户可能无法访问完成任务所需的资源——如果严格按照最小权限原则，将会让角色爆炸这个问题更加严重
+
+
+## 2.2. 基于属性的访问控制（ABAC）
+
+### 2.2.1. RBAC的不适用
+
+> RBAC 在很多时候是管用的 比如我们的系统是面向销售公司或者学校这种组织架构很严整的地方，但是在复杂场景下，RBAC 渐渐就不够用了
+>
+> 它会产生很多虚无的 role 而且在管理和控制上更难
+
+- 比如在某个医疗机构中，我们想要控制一个科室内，护士只能访问自己所负责的病人资料时
+  - 我们就无法直接使用 nurse 这个 role，我们需要更细粒度的 role 去划分病人老张还是老王
+  - 这就会产生和现实不对应的 role，例如：老张的护士，老王的护士。
+  - 在医院这种病人流动性很大的场景下，频繁的创建和销毁 role 是很容易出问题
+  - 我们的确要求很频繁，但是与现实不 match 的虚无的 role 很难管理。
+
+  > ![authen-10](./image/authen-10.png)
+
+- 另一种情况是，如果管理者考虑医疗数据的安全性与隐私性，不希望护士在离开医院后能够访问到病人资料，我们会更加难办
+  - 常见的策略要么是在底层网络层进行处理，直接禁止在院外的一切访问
+  - 但是很多企业的需求往往是，使用 VPN 我依旧可以访问内部的资源，但是我还是希望基于所在地进行精确的控制
+  - 比如看邮件是可以的，但是看财务数据是不行的。
+  - 在 RBAC 下，我们也可以通过虚拟的 role 来控制，比如下班后给与其 Out of Office 的 role，然后给与这个 role 最小的权限
+  - 这自然又需要虚拟的 role 与大量的动态控制。
+    > 一般来说，在 RBAC 中滥用 role 所带来的问题被称为 “role explosion”
+
+  > ![authen-11](./image/authen-11.png)
+
+
+### 2.2.2. 介绍
+
+- ABAC基于属性的访问控制 (Attribute Based Access Control)解决的问题:
+  - 上述情况为例
+  - 直觉上来说我们需要更多的"东西"来进行更精细的访问控制，用来匹配我们复杂的业务场景
+  - 同时，我们也希望这个新的模型易于理解和实现，也利于控制与运维
+  - 简单来说，对于 ABAC 我们判断一个用户是否能访问某项资源，是对其很多不同属性的计算而得到的。
+
+**传统的 RBAC 与 ACL 等访问控制机制中，可以认为是 ABAC 的子集，对于 RBAC，只是我们的访问机制的实现只是基于属性 role 而已，ACL 则是基于属性是 identity 的 AC。**
+
+### 2.2.3. 术语
+
+- **Attribute**：
+  - 属性,用于表示 subject、object 或者 environment conditions 的特点
+  - attribute 使用 key-value 的形式来存储这些信息
+  - 比如我在公司的 role 是 developer，role 是 key，developer 是 value，而我的小组昵称袋熊，key 是 team，value 是 wombat。
+- **Subject**：
+  - 常常指代使用系统的人或者其他使用者（non-person entity，NPE）
+  - 比如说客户端程序，访问 API 的 client 或者移动设备等等
+  - 当然一个 subject 可以有多个的 attributes，就像用户属性这些我们曾经用过的名词一样。
+- **Object**：指代我们这个 ACM 需要管理的资源
+  - 比如文件，比如某项记录，比如某台机器或者某个网站，任何你需要进行访问控制的资源都可以称为 object，
+  - **同样 object 也可以有多项属性，比如袋熊组的桌子，或者洛克组的线上实例**
+  - 我们也常常使用 resource 来描述这些资源，但是在 ABAC 的环境下，我们称为 object。
+- **Operation**：
+  - 有了 object 有了 subject，自然就有了 subject 需要做的事情
+  - 比如查看某条记录，登录某台服务器，使用某个 SaaS 服务进行报销或者查看候选人的作业。
+  - 往往包括我们常说的读、写、修改、拷贝等等， **一般 operation 是会表达在 request 中的，比如 HTTP method。**
+- **Policy**：通过 subject、object 的 attribute 与 environment conditions 一起来判断 subject 的请求是否能够允许的关系表示
+  - **比如说：policy 可以用人类语言这样表达：只有袋熊组的人才能访问这几台服务器，或者只有在办公室才能访问这些资源，但对于机器来说，无非就是一个判断语句罢了**。
+  - 当然了，policy 可以是 **一堆这样 boolean 逻辑判断的组合** ，比如只有公司的正式员工、并且在公司的六楼区域的网络中，才能访问某个服务。
+  - 可以使用 [Specification Pattern](https://en.wikipedia.org/wiki/Specification_pattern) 来实现 policy，其实没那么复杂。
+- **Environment Conditions**：
+  - 表示目前进行的访问请求发生时，操作或情境的上下文。
+  - Environment conditions 常常用来描述环境特征，是独立于 subject 与 object 的，常用来描述系统的情况
+  - 比如时间，当前的安全等级，生产环境还是测试环境等等。
+
+### 2.2.4. 基本场景与概念
+
+- 基本场景：
+  - 当 subject 需要去读取某一条记录时，我们的访问控制机制在请求发起后便开始运作
+  - 该机制需要计算，来自 policy 中记录的规则，subject 的 attribute，object 的 attribute 以及 environment conditions
+  - 而最后会产生一个是否允许读取的结果。
+
+  > ![authen-12](./image/authen-12.png)
+
+- 进一步抽象
+  > 在 NIST 的描述中，我们对 ACM 内部进行进一步的抽象，可以得出这两个核心模块
+  - Policy Decision Point (PDP) 
+  - Policy Enforcement Point (PEP)
+
+  > ![authen-13](./image/authen-13.png)
+
+- 核心机制
+  - 在请求发起后
+  - subject attributes、object attributes 与 environment conditions 作为输入
+  - PEP 获取规则，PDP 进行计算
+  - 最后确定是否有权进行请求
+
+  > ![authen-14](./image/authen-14.png)
+
+- opterion与request的关系
+  ```
+  RESTful 是我们常用的设计风格，RESTful 的流行是与 HTTP 协议密不可分的，
+  其中我们很看重 HTTP 协议中的 methods，并且赋予了这些 methods 易于理解的语义，
+  我们会很自然的认为 GET 是获取资源，而 POST 是创建新的资源，PUT 则是修改，
+  使用这些 methods 是与控制资源联系在一起。
+  但是，在 HTTP 协议中，并没有规定 GET 是否可以进行资源上的修改和更新，因为这只是个传输协议罢了，
+  是我们在这个协议之上发明了新的东西，所以也没有“官方的、标准的” RESTful。
+  之所以在这里提到 RESTful 与 HTTP 的关系，是因为在进行 ABAC 系统设计时，operation 是可以有很多种表达的，
+  而重要的是定义这些 operation 与 request 的关系，你可以使用 SOAP 或者其他协议，或者在 RESTful 之上自己发明一些字段
+  或者加入进 HTTP header，但是一定需要有清楚的 operation 描述。
+  ```
+
+### 2.2.5. ABAC如何应对复杂场景
+
+- Attribute 灵活
+  - 我们可以很容易的为不同的用户设计 attribute，
+  - 往往在很多企业的实现中存在一个 consumer profile 或者 user details 的服务
+  - 这些服务中很多字段比如职位、职级、办公室、项目等就是天然的 attribute
+  - 对于需要管理的 object，如果是一台虚拟机，那么 IP 地址、归属组织、cost code 等都可以是 attribute
+  - 而且因为 attribute 是 K-V 式的，往往一张一对多的表就可以控制好 subject、object 与 attribute 的对应。
+
+- 细粒度授权支持
+  - ABAC 能做到细粒度的授权管理
+  - 在 policy 中，我们的准许访问的判断是可以写的很灵活的
+    - 可以判断请求中的某个属性是否满足于一个正则表达式，或者字符串相等（这个很常见，特别是在使用 AWS IAM 做最小权限原则时）
+    - 也可以使用逻辑与、逻辑或的关系自由组合很多不同的访问规则。
+    - **也可以使用之前提到的 Specification Pattern 很轻松的实现灵活的 policy，解析 JSON 或者 XML 去动态的创建规则，而这些含有规则的 JSON 或 XML，则是可以被编程实现的（可编程的 policy 是动态的授权验权的前提）**
+    -  policy 甚至可以做到，只有姓张的工程师在某个项目时才能访问某个资源，在 RBAC 的时代，这是很难的。
+
+- 访问控制管理成本很低
+  - ABAC 对系统管理员是友好的
+  - 在 RBAC 的时代，如果我需要实现细粒度的资源管理或者经常 subject 与 object 的对应关系经常变动，那么管理员难以操作的，也很容易出现问题
+  - 其中常常被采用的解决方案就是创建那些本不应该存在的 role
+  - 但是在 ABAC 时代，管理员的管理对象会缩减到 policy，也就是只处理访问控制
+    - 我们再回到医疗机构的那个例子中，如果某个护士负责照顾老张，系统管理员只需要新建一个 policy 并写上允许访问即可
+    - 当老张出院后，**只需要删除或者失效这个 policy 就可以了**
+    - 在 RBAC 的环境中，你可能需要为某个虚拟的 role 动态的添加 permission
+    - 而 permission 如果到了针对单个病人的情况下，是绝对多如牛毛的，特别是有两个叫做老张的病人时。
+  - 往往，我们会使用 JSON 或者 XML 定义这个 policy，那么，这一切都可以完全自动化，而不需要使用管理员点击
+  - 再现实一些的话，我们可以完全实现一个审批的流程，如果你使用过 Google Drive，你会对这个请求访问的过程绝不陌生。
+    > ![authen-15](./image/authen-15.png) 
+
+- 动态的总体控制
+  - Environment conditions 也能够提供统一的系统级别的控制
+  - 比如威胁等级或者按照区域划分安全级别，不同的区域使用 ABAC 时，可能环境上会有变化
+  - 例如我们常用红区来表示最高安全级别，那么我们默认就需要 deny 所有请求，并且会触发警报等等，但是在绿区这种办公区域，可能默认所有的请求都是被允许的等等。
+  - **Environment conditions 可以提供“拉闸”这样的功能**，而且它也是可以动态调整的。
+
+### 优缺点
+
+- 优点
+  - 灵活：
+    - attibute灵活：见上方
+    - policy灵活
+  - 颗粒度小：见上方
+  - 统计系统级别控制:见上方
+
+- 缺点
+  - 策略定制比较麻烦:
+    - 不能直观看出用户和资源的访问关系，
+    - 策略的维护也比较麻烦
+  - 性能
+    - ABAC 的一系列优点都是建立在占用更多性能的前提下
+    - 需要实时计算，较多规则会有性能问题
+
+
+
+### 2.2.6. ABAC 应用
+
+#### AWS IAM
+
+- 当企业正在使用公有云时，对公有云的资源进行控制是非常难以管理的
+- 当然可以为每个小组安排好虚拟机或者 RDS 之类的，但是这太静态了，而且也不足以细粒度
+- 比如，当我们想实现最小权限原则时就很难办到（例如你的数据库只想被你确定的几台实例所访问到）
+  - 往往这种需求会实现为，在某个网段内，大家都可以访问到某个数据库或者中间件
+  - 那自然是不够理想的。
+- 如果公有云的资源是租用的，你可以按照自己的需求动态的扩容或者降低你的资源，
+- 那么这种场景下，资源是动态的，而且变化很大（可能会根据流量动态的启动实例或者关闭）
+- 那在这种情况下如何做到访问控制与最小权限原则，那你就不能再基于 users 与 roles 进行操作，这时候你就需要 ABAC
+- AWS 作为云计算的领导者，很早就实现了类似的功能，而使用 IAM 则是 operations 的必修课。
+
+
+待整理
+
+[ IAM 与 ABAC 介绍](https://www.youtube.com/watch?v=Iq_hDc385t4&t=2378s)。
+
+#### k8s
+
+<details>
+<summary style="color:red;">示例</summary>
+
+```json
+({
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": {
+    "group": "system:authenticated",
+    "nonResourcePath": "*",
+    "readonly": true
+  }
+},
+{
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": {
+    "group": "system:unauthenticated",
+    "nonResourcePath": "*",
+    "readonly": true
+  }
+},
+{
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": {
+    "user": "admin",
+    "namespace": "*",
+    "resource": "*",
+    "apiGroup": "*"
+  }
+},
+{
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": {
+    "user": "scheduler",
+    "namespace": "*",
+    "resource": "pods",
+    "readonly": true
+  }
+},
+{
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": { "user": "scheduler", "namespace": "*", "resource": "bindings" }
+},
+{
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": {
+    "user": "kubelet",
+    "namespace": "*",
+    "resource": "pods",
+    "readonly": true
+  }
+},
+{
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": {
+    "user": "kubelet",
+    "namespace": "*",
+    "resource": "services",
+    "readonly": true
+  }
+},
+{
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": {
+    "user": "kubelet",
+    "namespace": "*",
+    "resource": "endpoints",
+    "readonly": true
+  }
+},
+{
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": { "user": "kubelet", "namespace": "*", "resource": "events" }
+},
+{
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": {
+    "user": "alice",
+    "namespace": "projectCaribou",
+    "resource": "*",
+    "apiGroup": "*"
+  }
+},
+{
+  "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+  "kind": "Policy",
+  "spec": {
+    "user": "bob",
+    "namespace": "projectCaribou",
+    "resource": "*",
+    "apiGroup": "*",
+    "readonly": true
+  }
+})
+```
+
+</details>
+
+### 2.2.7. 总结
+
+- 复杂性
+  - ABAC 在概念上的设计的确是有先进性的，对于有 RBAC 知识的人，ABAC 不难理解，也就是 基于用户属性进行访问权限判断
+  - **对于 ABAC 的概念，这并不是复杂度的来源，而是授权这件事本身的复杂性**
+  - **对于系统的设计者与管理者来说，一旦需要关注细粒度的授权管理，那么复杂是无法避免的。**
+
+- 微服务: **关于微服务的流行与 ABAC 的配合，特别是分布式身份验证之后，有很多方面需要考虑与完善：**
+  - **怎么做到分布式的授权与验权**
+  - **怎么实现 PEP、PDP 等 ABAC 提倡的模块设计**
+  - **这些东西可否做成应用程序透明的方式，可否与 security sidecar 集成等等**
+
+## 2.3. 自主型访问控制（DAC）
+
+<p style="color:red;">
+待做
+</p>
+
+[Linux安全操作系统构建方法与技术(第三讲)——自主访问控制与强制访问控制]()https://www.doc88.com/p-5196497909047.html)
+
+Discretionary Access Control -
+
+用户/对象来决定访问控制权限。信息的所有者来决定谁有权利来访问信息以及操作类型（读，写，执行...）
+
+- 定义：由资源的所有者、某些组的成员确定访问权限。
+- 优点：可以基于数据/资源自主控制权限。
+- 缺点：控制较为分散，不易管理。
+- 例子：文章的发布者指定哪些其它用户可以对这篇文章进行哪些操作。例如UNIX权限管理
+
+## 2.5. 强制性访问控制（MAC）
+
+[Linux安全操作系统构建方法与技术(第三讲)——自主访问控制与强制访问控制]()https://www.doc88.com/p-5196497909047.html)
+
+Mandatory Access Controll
+
+系统来决定访问权限。安全属性是强制型的规定，它由安全管理员或操作系统根据限定的规则确定的，是一种规则的访问控制。
+
+- 定义：给信息添加敏感程度标签，与用户的敏感程度标签进行对比确定能否访问。而标签是由管理员设定，
+- 优点：适用于安全要求较高如军事相关的系统。
+- 缺点：不够灵活。
+- 例子：A 资源拥有敏感标签B，C用户拥有敏感标签D，如果D不小于B，则B可以访问A。
+
+## 2.4. 基于访问控制列表（ACL）
+
+Access Control List
+
+- 网络：[ACL（访问控制列表）基础篇](https://zhuanlan.zhihu.com/p/39191464)
+- centos8:[ACCESS CONTROL LISTS](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-access_control_lists)
+
+
+## 2.6. 规则驱动的基于角色的访问控制
+
+提供了一种基于约束的访问控制。
+
+## 2.7. 基于属性证书的访问控制
+
+访问权限信息存放在用户属性证书的权限属性中，每个权限属性描述了一个或多个用户的访问权限。当用户对某一个资源提出访问请求时，系统根据用户的属性证书中的权限来判断是否允许。
 
 # 3. 鉴权方法
 
@@ -641,5 +1025,10 @@ http.createServer((req, res) => {
 - [深入理解令牌认证机制（token）](https://segmentfault.com/a/1190000018632472) 待整理
 - [细说API - 认证、授权和凭证](https://juejin.cn/post/6844903807839649806)
 - [用户权限管理数据库设计（RBAC）](https://www.cnblogs.com/myseries/p/10871633.html) 待整理
-
+- [细说API - 认证、授权和凭证](https://juejin.cn/post/6844903807839649806)
+- [ABAC - 基于属性的访问控制 - 复杂场景下访问控制解决之道](https://blog.csdn.net/XiaoBeiTu/article/details/100773968)
+- [权限体系解析 功能&数据](https://zhuanlan.zhihu.com/p/67486776) 待整理
+- [NIST (美国国家标准技术研究所) 的 ABAC 的定义与实现考虑，最重要的资料](https://nvlpubs.nist.gov/nistpubs/specialpublications/NIST.SP.800-162.pdf) 待阅读
+- [一文读懂 AWS IAM - 知乎](https://zhuanlan.zhihu.com/p/111676632) 待整理
+- [权限系统设计](https://zhuanlan.zhihu.com/p/362733752)
 

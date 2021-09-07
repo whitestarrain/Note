@@ -397,6 +397,34 @@
 	- 安装： 挑一个
 		- Ag.vim
 		- fzf.vim
+      <details>
+      <summary style="color:red;">fzf命令</summary>
+
+        | `:Files [path]`  | 列出path路径下的所有文件 (功能等价于 `:FZF` 命令)            |
+        | ---------------- | ------------------------------------------------------------ |
+        | `:Buffers`       | 文件缓冲区切换                                               |
+        | `:Colors`        | 选择Vim配色方案                                              |
+        | `:Tags [QUERY]`  | 当前项目中的Tag (等价于：`ctags -R`)                         |
+        | `:BTags [QUERY]` | 当前活动缓冲区的标记                                         |
+        | `:Marks`         | 所有Vim标记                                                  |
+        | `:Windows`       | 窗口                                                         |
+        | `:Lines [QUERY]` | 在所有加载的文件缓冲区里包含目标词的所有行                   |
+        | `BLines [QUERY]` | 在当前文件缓冲区里包含目标词的行                             |
+        | `Locate PATTERN` | `locate` command output                                      |
+        | `History`        | `v:oldfiles` and open buffers                                |
+        | `History:`       | 命令行命令历史                                               |
+        | `History/`       | 搜索历史                                                     |
+        | `Commands`       | Vim命令列表                                                  |
+        | `Maps`           | 普通模式下的按键映射                                         |
+        | `Snippets`       | Snippets ([UltiSnips][us])                                   |
+        | `Commits`        | Git commits (requires [fugitive.vim][f])                     |
+        | `BCommits`       | Git commits for the current buffer                           |
+        | `GFiles [OPTS]`  | Git files (`git ls-files`)                                   |
+        | `GFiles?`        | Git files (`git status`)                                     |
+        | `Ag [PATTERN]`   | [ag][ag] search result (`ALT-A` to select all, `ALT-D` to deselect all) |
+        | `Rg [PATTERN]`   | [rg][rg] search result (`ALT-A` to select all, `ALT-D` to deselect all) |
+        | `Filetypes`      | File types                                                   |
+      </details>
 	- 完全可以提到 ctrlp
 	- 常用命令:
 		- Files
