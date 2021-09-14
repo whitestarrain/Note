@@ -73,10 +73,11 @@
 
 - git branch branchname 创建新分支
 - git checkout branch_name 切换到某条分支
+- git checkout branch_name ./ 使用指定分支的内容覆盖当前内容
 - git checkout -b branch_name [hash] 建立的同时并切换到分支，可以指定指向的commit节点，默认HEAD
 - git branch -d branch_name 删除本地分支（只是指针，数据删除要在 gc 时）
 - git branch -D branch_name 强制删除本地未 merge 的分支
-- git branch -f branch_name ref 强制移动branch指向
+- git branch -f branch_name ref **强制移动branch指向**
 
 ### 1.4.2. 远程分支
 
@@ -147,6 +148,7 @@
 > 默认情况下，git stash 只会贮藏已修改和暂存的 已跟踪 文件。 如果指定 --include-untracked 或 -u 选项，Git 也会贮藏任何未跟踪文件。
 
 - git stash 将修改内容储藏到栈上
+- git stash save "comment" 将修改内容储藏到栈上，并添加注释
 - git apply 应用最新的存储
 - git stash list 展示所有储藏
 - git stash apply stash@{2} 应用指定的储藏（可以通过上一条指令）

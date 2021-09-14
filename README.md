@@ -83,6 +83,10 @@ awk 'BEGIN{
   - [ ] java编程思想 整理
   - [ ] 计算机网络完善
   - [ ] 操作系统完善
+- 学习深入+笔记完善
+  - [ ] 微服务架构
+  - [ ] 分布式系统相关
+  - [ ] 数据库架构
 - 待完善/整理
   - [ ] 设计模式
   - [ ] zookeeper完善
@@ -90,20 +94,20 @@ awk 'BEGIN{
   - [ ] RabbitMQ整理
   - [ ] 鉴权方式整理
   - [ ] CORS跨域完善+整理
+  - [x] 鉴权认证
   - [x] 分布式缓存算法整理
-- 学习深入+笔记完善
-  - [ ] 微服务架构
-  - [ ] 分布式系统相关
   - [ ] JVM字节码与类的加载
   - [ ] JVM性能监控和调优
-  - [ ] 数据库架构
-- 待学习
+  - [ ] 各种加密算法
+- 待继续学习
   - [ ] Mysql XA
   - [ ] Mocikto框架
   - [ ] JOOQ框架
   - [ ] jersey框架
   - [ ] SpringBatch
   - [ ] Cassandra
+  - [ ] xdb
+  - [ ] elasticsearch
 - 阅读书目
   - [x] 代码整洁之道
   - [ ] 重构：改善既有代码设计
@@ -111,7 +115,8 @@ awk 'BEGIN{
   - [ ] Redis设计与实现
   - [ ] Operating Systems:Three Easy Pieces
 - 短期小任务
-  - Gossip 协议
+  - [ ] Gossip 协议
+  - [ ] SPEL
 - 其他
   - [ ] go语言入门
   - [ ] C++
