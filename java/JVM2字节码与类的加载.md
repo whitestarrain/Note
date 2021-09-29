@@ -196,6 +196,8 @@ Son类的字节码：
 
 ## 2.3. class文件结构
 
+### 2.3.1. 整体说明
+
 - Class类的本质
   - 任何一个C1ass文件都对应着唯一一个类或接口的定义信息,
   - 但反过来说,C1ass文件实际上它并不一定以磁盘文件的形式存在，也能以网络等的方式传输过来
@@ -294,13 +296,96 @@ Son类的字节码：
     - methods[methods_count];
     - attributes_count;
   - 属性表集合
-    > 注意，field和attribute不同。日常总是称类中的字段为属性，但是JVM中属性有其他含义。比如
+    > **注意，field和attribute不同。日常总是称类中的字段为属性，但是JVM中属性有其他含义**。
+    > 比如类名，LineNumberTable,LocalVariableTable
     - attributes_count;
     - attributes[attributes_count];
 
-### 2.3.1. 使用javap指令解析Class文件
+### 2.3.2. 详细说明
 
-### 面试题
+#### 代码
+
+```java
+package com.atguigu.java1;
+
+public class Demo {
+    private int num = 1;
+
+    public int add(){
+        num = num + 2;
+        return num;
+
+    }
+}
+```
+
+#### 2.3.2.1. 魔数
+
+![jvm2-2](./image/jvm2-2.png)
+
+- 说明：
+  - 每个C1ass文件开头的**4个字节的无符号整数**称为魔数(Magic Number)
+  - 作用: 是**确定这个文件是否为一个能被虚拟机接受的有效合法的Class文件**。即**魔数是 Class文件的标识符**。
+  - 原因：
+    - 使用魔数而不是扩展名来进行识别主要是基于安全方面的考虑,因为文件扩展名可以随意地改动。
+    - 类似png格式图片，使用notepad++的HEX-Editor查看二进制内容，可以发现前32个字节也相同
+
+- 值：魔数值固定为`0xCAFEBABE`。不会改变。
+
+- 相关异常：如果一个 Class文件不以θ XCAFEBABE开头,虚拟机在进行文件校验的时候就会直接抛出以下错误:
+  ```
+  Error: A JNI error has occurred, please check your installation and try again
+  Exception in thread "main" java. lang Class Format Error: Incompatible magic value 1885430635 in class
+  file StringTest
+  ```
+
+#### 2.3.2.2. class文件版本号
+
+![jvm2-3](./image/jvm2-3.png)
+
+- 说明：文件中紧接着魔数的4个字节存储的是 Class文件的版本号。
+  - 第5个和第6个字节所代表的含义就是编译的副版本号 minor version
+  - 而第7个和第8个字节就是编译的主版本号 major version
+  - 主副版本号共同构成了c1ass文件的格式版本号。譬如某个C1ass文件的主版本号为M,副版本号为m,那么这个c1ass文件的格式版本号就确定为M.m
+- 版本号和]ava编译器的对应关系：
+  > ![jvm2-1](./image/jvm2-1.png)
+  - Java的版本号是从45开始的,JDK1.1之后的每个DK大版本发布主版本号向上加1。
+  - 虚拟机JDK版本为1.k(k>=2)时,对应的c1ass文件格式版本号的范围为45.0 - 44+k.0(含两端)
+
+- 向下兼容：
+  - 不同版本的]ava编译器编译的C1ass文件对应的版本是不一样的
+  - 目前,高版本的Java虚拟机可以执行由低版本编译器生成的Class文件,但是低版本的Java虚拟机不能执行由高版本编译器生成的C1ass文件。
+  - 否则JVM会抛出`iava.lang, UnsupportedclassVersionError`异常。
+  > 在实际应用中,由于开发环境和生产环境的不同,可能会导致该问题的发生。因此,需要我们在开发时,特别注意开发编译的JDK版本和生产环境中的DK版本是否一致
+
+#### 常量池
+
+> **说明**
+
+-重要性 
+  - 常量池是C1ass文件中内容最为丰富的区域之一。常量池对于C1ass文件中的字段和方法解析也有着至关重要的作用。
+  - 随着]ava虚拟机的不断发展,常量池的内容也日渐丰富。可以说,常量池是整个class文件的基石。
+  - 如以下三个为基于java动态的特性在1.7时添加
+    - CONSTANT MethodHandle info 表示方法句柄
+    - CONSTANT_ MethodType_into 标志方法类型
+    - CONSTANT Invoke Dynamic info 表示一个动态方法调用点
+
+- 字节码中的位置
+  - 在版本号之后,紧跟着的是**常量池的数量,以及若干个常量池表项**
+  - 常量池中常量的数量是不固定的,所以在常量池的入口需要放置一项u2类型的无符号数,代表**常量池容量计数值(constant pool count)**
+  - 与Java中语言习惯不一样的是,**这个容量计数是从1而不是开始的**。
+
+- 组成
+  > ![jvm2-4](./image/jvm2-4.png)-
+  - C1ass文件使用了一个前置的容量计数器(constant_ pool count)加若干个连续的数据项( constant poo1)的形式来描述常量池内容。
+  - 我们把这一系列连续常量池数据称为常量池集合
+  - 常量池表项中,用于存放编译时期生成的各种**字面量和符号引用**,这部分内容将在类加载后进入方法区**运行时常量池**中存放
+
+> **常量池计数器**
+
+> **常量池**
+
+### 2.3.3. 面试题
 
 ```
 类文件结构有几个部分

@@ -110,8 +110,8 @@ awk 'BEGIN{
   - [ ] elasticsearch
 - 阅读书目
   - [x] 代码整洁之道
-  - [ ] 重构：改善既有代码设计
-  - [ ] 程序设计实践
+  - [ ] **重构：改善既有代码设计**
+  - [ ] **程序设计实践**
   - [ ] Redis设计与实现
   - [ ] Operating Systems:Three Easy Pieces
 - 短期小任务
