@@ -485,7 +485,6 @@ class Person {
 
 #### 1.2.3.3. 依赖关系传递的三种方式和应用案例
 
-
 <details>
 <summary style="color:red;">接口传递</summary>
 

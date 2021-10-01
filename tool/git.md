@@ -1,96 +1,138 @@
+- **`git <command> -h`** 查看简单帮助
+- **`git help <command>`** 查看详细帮助
+
 # 1. 基本整理
 
-> 说明：此文件只是 git 常用指令，如果想要了解原理及指令的话去看 git 官方用户文档。十分推荐
-> [文档地址](https://git-scm.com/book)
+> 说明：此文件只是 git 常用指令，如果想要了解原理及指令的话去看 git 官方用户文档。十分推荐 <br />
+> [文档地址](https://git-scm.com/book) <br />
+> [学习网站内容整理](https://learngitbranching.js.org/?locale=zh_CN)
 
-## 1.1. 日常使用
+## 1.1. 添加暂存与提交
 
-- git add 文件 跟踪文件，加入暂存区
-- git commit -m "sign" 提交版本
-- git commit --amend 撤销提交
-- git commit --amend --no-edit（或者新字符串） 覆盖上次提交 但 id 会变
-- git commit -am "sign" ：直接添加并 commit 上去但必须是已经追踪的文件，这条命令无法添加追踪 **所以不太推荐**
-- git rm --cached 文件名 取消跟踪
-  > git中*好要加转义字符，因为 因为 Git 有它自己的文件模式扩展匹配方式，所以我们不用 shell 来帮忙展开。
-  > 比如：`git rm log/\*.log`.
-  > 此命令删除 log/ 目录下扩展名为 .log 的所有文件
-- git rm -r --cached . 清楚所有文件跟踪
-- git rm 文件名 删除文件并取消跟踪
-- git gc 垃圾回收命令
-- git mv file_from file_to 重命名文件。git仓库中和当前文件都会修改。
+- 添加暂存
+  - `git add` 文件 跟踪文件，加入暂存区
+  - `git add [file1] [file2] ...` 添加指定文件到暂存区
+  - `git add [dir]` 添加指定目录到暂存区，包括子目录
+  - `git add .` 添加当前目录的所有文件到暂存区
+  - `git add -p`  添加每个变化前，都会要求确认 对于同一个文件的多处变化，可以实现分次提交
+- 修改提交
+  - `git commit -m "sign"` 提交版本
+  - `git commit --amend` 撤销提交
+  - `git commit --amend [file1] [file2] ...` 重做上一次commit，并包括指定文件的新变化
+  - `git commit --amend --no-edit（或者新字符串）` 覆盖上次提交 但 id 会变
+  - `git commit -am "sign"` ：直接添加并 commit 上去但必须是已经追踪的文件，这条命令无法添加追踪 **所以不太推荐**
+  - `git commit -v` 提交时显示所有diff信息
+    > git中*好要加转义字符，因为 因为 Git 有它自己的文件模式扩展匹配方式，所以我们不用 shell 来帮忙展开。 <br />
+    > 比如：`git rm log/\*.log`. <br />
+    > 此命令删除 log/ 目录下扩展名为 .log 的所有文件 <br />
 
-- 用户信息：
-  - git config -l 查看 git 配置可以使用 -l 参数(l 就是 list 的首字母,L 的小写):
-  - 设置本地机器默认 commit 的昵称与 Email. 请使用有意义的名字与 email.
-    - git config --global user.name "tiemaocsdn"
-    - git config --global user.email "tiemaocsdn@qq.com"
-    - git config --global push.default simple
-  - 在某个项目根路径下面可以设置单独的 Email 与姓名.
-    - git config user.name "tiemaocsdn"
-    - git config user.email "tiemaocsdn@qq.com"
-  - git config --global -e 可以编辑git设置
+- `git gc` 垃圾回收命令
 
-## 1.2. 查询
+## 1.2. 配置
 
-- git status 查看状态
-- git status -s 查看状态 (简)
-- git ls-files 列出追踪文件的目录
-- git log --oneline
-- git log --oneline --graph 会按分支排布
-- git log --oneline --decorate --graph --all ，它会输出你的提交历史、各个分支的指向以及项目的分支分叉情况。
-- gitk --all 图形化界面展现分支，十分推荐。**加上all更全面直观**
-- git reflog 所有活动
+- `git config --list` 显示当前的Git配置
+- `git config -e [--global]` 编辑Git配置文件
+- 设置本地机器默认 commit 的昵称与 Email. 请使用有意义的名字与 email.
+  - `git config --global user.name "tiemaocsdn"`
+  - `git config --global user.email "tiemaocsdn@qq.com"`
+  - `git config --global push.default simple`
+- 在某个项目根路径下面可以设置单独的 Email 与姓名.
+  - `git config user.name "tiemaocsdn"`
+  - `git config user.email "tiemaocsdn@qq.com"`
+
+## 1.3. 删除/移动文件
+
+- 删除
+  - `git rm [file1] [file2] ...` 删除工作区文件，并且将这次删除放入暂存区，工作区文件也会删除
+  - `git rm -r --cached .` 清楚所有文件跟踪
+  - `git rm --cached [file]` 停止追踪指定文件，但该文件会保留在工作区
+- 移动
+  - `git mv [file-original] [file-renamed]` 改名文件，工作区会修改，并且将这个改名放入暂存区
+
+## 1.4. 状态和历史查询
+
+- 状态信息
+  - `git status` 查看状态
+  - `git status -s` 查看状态 (简)
+- 跟踪文件信息
+  - `git ls-files` 列出追踪文件的目录
+- 各种log信息
+  - `git log --oneline`
+  - `git log --oneline --graph` 会按分支排布
+  - `git log --oneline --decorate --graph --all` ，它会输出你的提交历史、各个分支的指向以及项目的分支分叉情况。
+  - `git log --follow file_path` 展示出所有修改指定文件的提交
+  - `git log -p file_path` 查看某个文件的详细修改历史
+  - `git log -p FETCH_HEAD` 查看拉取信息
+  - `git log -S [keyword]` 搜索提交历史，根据关键词
+  - `git log --follow [file]` 显示某个文件的版本历史，包括文件改名
+  - `git shortlog -sn` 显示所有提交过的用户，按提交次数排序
+  - `git reflog --all` HEAD移动记录
+  - `gitk --all` 图形化界面展现分支，十分推荐。**加上all更全面直观**
 - 修改查询
-  - git diff ref1 ref2 --stat 显示区别，以文件为单位
-  - git diff 显示为 add 的文件（unstaged）修改内容
-  - git diff --cached 观看 add 后的修改内容（staged）。（Git 1.6.1 及更高版本还允许使用 git diff --staged，效果是相同的，但更好记些。）
-  - git diff HARD 显示上面两种修改
+  - `git diff` 显示为 add 的文件（unstaged）修改内容
+  - `git diff --stat startRef endRef` 显示两个提交间文件单位的差异
+    ```
+    例：
+    README.md                                       |   4 +-
+    base/design_patterns/design_pattern.md          |  78 +-
+    ``` 
+  - `git diff --cached` 观看 add 后的修改内容（staged）。（Git 1.6.1 及更高版本还允许使用 git diff --staged，效果是相同的，但更好记些。）
+  - `git diff HARD` 显示上面两种修改
+  - `git diff ref1 ref2 --stat` 显示区别，以文件为单位
+  - `git blame [file]` 显示指定文件是什么人在什么时间修改过
+  - `git diff --shortstat "@{0 day ago}"` 显示今天你写了多少行代码
+  - `git show ref` 显示某次提交的元数据和内容变化
+    > 等同于`git diff ref~1 ref`
+  - `git show --name-only [commit]` 显示某次提交发生变化的文件
+  - `git show [commit]:[filename]` 显示某次提交时，某个文件的内容
+
+## 1.5. 远程仓库
+
+- `git remote` 查询所有远程仓库
+- `git remote -v` 此为 --verbose 的简写，取首字母，显示对应的克隆地址
+- `git remote add shortname url` 添加远程仓库（名字默认使用 origin）。url 可以是 ssh 或者 https
+- `git remote show remote-name` 查看某个远程仓库的详细信息
+- `git remote rename old_repo_name new_repo_name` 注意，对远程仓库的重命名，也会使对应的远程分支名称发生变化，原来的 pb/master 分支现在成了 paul/master。
+- `git remote rm reponame` 删除指定仓库名的仓库。对应分支也会被删除
+
+## 1.6. 分支
+
+### 1.6.1. 本地分支
+
+- `git branch branchname` 创建新分支
+- `git checkout branch_name` 切换到某条分支
+- `git checkout -b branch_name [ref]` 建立的同时并切换到分支，可以指定指向的commit节点，默认HEAD
+- `git branch -d branch_name` 删除本地分支（只是指针，数据删除要在 gc 时）
+- `git branch -D branch_name` 强制删除本地未 merge 的分支
+- `git branch -f branch_name ref` **强制移动branch指向**
 - 分支查询
-  - git branch 显示所有分支 在哪条分支上前面会有\*
-  - git branch -v 显示所有分支以及每条分支上最新的提交
-  - git branch -r 查看远程所有分支
-  - git branch -a 显示所有分支，包括 FETCH_HARD 中的分支和远程分支 **推荐**
-  - git branceh --merged 查看已经合并分支
-  - get branch --no-merged 查看未合并分支
-  - git branch -vv 查看所有本地分支与其对应远程分支，以及是否有领先，落后 **推荐**
+  - `git branch` 显示所有分支 在哪条分支上前面会有\*
+  - `git branch -v` 显示所有分支以及每条分支上最新的提交
+  - `git branch -r` 查看远程所有分支
+  - `git branch -a` 显示所有分支，包括 FETCH_HARD 中的分支和远程分支 **推荐**
+  - `git branceh --merged` 查看已经合并分支
+  - `get branch --no-merged` 查看未合并分支
+  - `git branch -vv` 查看所有本地分支与其对应远程分支，以及是否有领先，落后 **推荐**
     > 需要重点注意的一点是这些数字的值来自于你从每个服务器上最后一次抓取的数据。 这个命令并没有连接服务器，它只会告诉你关于本地缓存的服务器数据。 如果想要统计最新的领先与落后数字，需要在运行此命令前抓取所有的远程仓库。 可以像这样做：\$ git fetch --all; git branch -vv
-- 远程仓库
-  - git remote 查询所有远程仓库
-  - git remote -v 此为 --verbose 的简写，取首字母，显示对应的克隆地址
-- git log -p FETCH_HEAD 查看拉取信息
 
-## 1.3. 远程仓库
+### 1.6.2. 远程分支
 
-- git remote add shortname url 添加远程仓库（名字默认使用 origin）。url 可以是 ssh 或者 https
-- git remote show remote-name 查看某个远程仓库的详细信息
-- git remote rename old_repo_name new_repo_name 注意，对远程仓库的重命名，也会使对应的远程分支名称发生变化，原来的 pb/master 分支现在成了 paul/master。
-- git remote rm reponame 删除指定仓库名的仓库。对应分支也会被删除
-- git checkout remote_repo/branch_name 切换到远程仓库分支，会显示 HEAD detached
-
-## 1.4. 分支
-
-### 1.4.1. 本地分支
-
-- git branch branchname 创建新分支
-- git checkout branch_name 切换到某条分支
-- git checkout branch_name ./ 使用指定分支的内容覆盖当前内容
-- git checkout -b branch_name [hash] 建立的同时并切换到分支，可以指定指向的commit节点，默认HEAD
-- git branch -d branch_name 删除本地分支（只是指针，数据删除要在 gc 时）
-- git branch -D branch_name 强制删除本地未 merge 的分支
-- git branch -f branch_name ref **强制移动branch指向**
-
-### 1.4.2. 远程分支
-
-- git push remoteRep --delete remote_branch_name 删除远程分支
-- git checkout -b branch_name remote/remo_branch 或其他本地分支：以指定分支（本地分支或者 fetch 过来的远程分支，比如 origin/master）为起点建立新的分支，并进行跟踪。也就是 pull 时不指定会自动从指令中的远程分支拉取
-- git checkout --track remoteRep/remote_branch 和上一个分支效果相同，只不过本地和远程分支名称会相同
-- 另外，如果有远程分支比如 origin/abc ，执行 git checkout abc 时会自动创建本地 abc 分支并跟踪远程 abc 分支
-- 设置远程分支：
-  - 拉取分支
-    - git fetch -u origin[/branch_name] 设置**已经fetch过来**的分支作为跟踪分支 
-  - 设置分支
-    - git push -u remote_Rep remote_branch
-    - git branch -u remote_Rep/remote_branch local_branch
+- `git checkout remote_repo/branch_name` 切换到远程仓库分支，会显示 HEAD detached
+- 删除远程分支
+  - `git branch -dr [remote/branch]`
+  - `git push remoteRep --delete remote_branch_name` 
+- `git checkout -b branch_name remote/remo_branch` 以指定分支（本地分支或者 fetch 过来的远程分支，比如 origin/master）为起点建立新的分支，并进行跟踪
+  > 也就是`git checkout -b branch_name [ref]`
+- `git checkout remote_branch_name` 自动创建与远程分支同名的分支，并且会自动关联。`git checkout -b branch_name remote/remo_branch`的简写
+  > 比如，如果有远程分支比如 origin/abc ，执行 git checkout abc 时会自动创建本地 abc 分支并跟踪远程 abc 分支
+- `git branch --track [branch] [remote-branch]`:新建一个分支，与指定的远程分支建立追踪关系
+- `git checkout -` 切换到上一个分支
+- 建立追踪关系
+  - 拉取分支时
+    - `git fetch -u origin[/branch_name]` 设置**已经fetch过来**的分支作为跟踪分支 
+  - 对已有的本地分支分支建立追踪关系
+    - `git push -u remote_Rep remote_branch`
+    - `git branch -u remote_Rep/remote_branch local_branch`
   - 区别
       ```
       举个例子：我要把本地分支mybranch1与远程仓库origin里的分支mybranch1建立关联。(也就是新建立仓库时)
@@ -108,25 +150,45 @@
       git push origin mybranch1 + git branch --set-upstream-to=origin/mybranch1 mybranch1
       ```
 
-## 1.5. 拉取
+## 1.7. 标签
 
-1. git fetch --all ：这将更新 git remote 中所有的远程 repo 所包含分支的最新 commit-id, 将其记录到.git/FETCH_HEAD 文件中
-2. git fetch remote_repo ： 这将更新名称为 remote_repo 的远程 repo 上的所有 branch 的最新 commit-id，将其记录。
-3. git fetch remote_repo remote_branch_name ： 这将这将更新名称为 remote_repo 的远程 repo 上的分支： remote_branch_name
-4. git fetch remote_repo remote_branch_name:local_branch_name ： 这将这将更新名称为 remote_repo 的远程 repo 上的分支： remote_branch_name ，并在本地创建 local_branch_name 本地分支保存远端分支的所有数据。
+- `git tag` 列出所有tag
+- `git tag [tag]` 新建一个tag在当前commit
+- `git tag [tag] [commit]` 新建一个tag在指定commit
+- `git tag -d [tag]` 删除本地tag
+- `git push origin :refs/tags/[tagName]` 删除远程tag
+- `git show [tag]` 查看tag信息
+- `git push [remote] [tag]` 提交指定tag
+- `git push [remote] --tags` 提交所有tag
+- `git checkout -b [branch] [tag]` 新建一个分支，指向某个tag
 
-- git pull ：是 git fetch 与 git merge 的结合，默认从跟踪的远程仓库中抓取
+## 1.8. 拉取
 
-## 1.6. 推送
+- `git fetch --all` ：这将更新 git remote 中所有的远程 repo 所包含分支的最新 commit-id, 将其记录到.git/FETCH_HEAD 文件中
+- `git fetch remote_repo` ： 这将更新名称为 remote_repo 的远程 repo 上的所有 branch 的最新 commit-id，将其记录。
+- `git fetch remote_repo remote_branch_name` ： 这将这将更新名称为 remote_repo 的远程 repo 上的分支： remote_branch_name
+- `git fetch remote_repo remote_branch_name:local_branch_name` ： 这将这将更新名称为 remote_repo 的远程 repo 上的分支： remote_branch_name ，并在本地创建 local_branch_name 本地分支保存远端分支的所有数据。
 
-- git push remote_repo_name local_branch：remote_branch 推送 三个参数可选。不写后面的话默认 origin 与 master:master
-- git push remote_repo local_branch:remote_branch -f 强制 push，但这样会造成数据丢失，也可能出现错误， **十分不推荐**
+- `git pull`：是 git fetch 与 git merge 的结合，默认从跟踪的远程仓库中抓取
 
-## 1.7. 合并
+## 1.9. 推送
 
-- git merge other_branch 将指定分支合并到当前分支。指定分支既可以时本地分支，也可以时抓取过来的远程分支
-  - 当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支，那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移），因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”
-    - git merge --no-ff -m "sign" 禁止 fast-forward
+- `git push remote_repo_name local_ref:remote_branch` 推送 三个参数可选。不写后面的话默认 origin 与 master:master
+- `git push remote_repo local_branch:remote_branch -f` 强制 push，但这样会造成数据丢失，也可能出现错误， **十分不推荐**
+- `git push [remote] --all` 推送所有分支到远程仓库。 **别用**
+
+## 1.10. 合并
+
+- fast-forward
+  - `git merge other_branch` 将指定分支合并到当前分支。指定分支既可以时本地分支，也可以时抓取过来的远程分支
+    ```
+    当你试图合并两个分支时， 如果顺着一个分支走下去能够到达另一个分支
+    那么 Git 在合并两者的时候， 只会简单的将指针向前推进（指针右移）
+    因为这种情况下的合并操作没有需要解决的分歧——这就叫做 “快进（fast-forward）”
+    ```
+  - `git merge --no-ff -m "sign"` 禁止 fast-forward
+
+- 冲突解决
   - 非直接祖先时，merge 是三方合并，分支处一个代码基，也就是两个分支的共同祖先，以及两个最新的
   - 在合并冲突后的任意时刻使用 git status 命令来查看那些因包含合并冲突而处于未合并（unmerged）状态的文件
   - 任何因包含合并冲突而有待解决的文件，都会以未合并状态标识出来。 Git 会在有冲突的文件中加入标准的冲突解决标记，这样你可以打开这些包含冲突的文件然后手动解决冲突。 出现冲突的文件会包含一些特殊区段，看起来像下面这个样子：
@@ -141,22 +203,22 @@
     ```
   - 在你解决了所有文件里的冲突之后，对每个文件使用 git add 命令来将其标记为冲突已解决。
 
-## 1.8. 储存
+## 1.11. 储存
 
 > 注意：当应用贮藏时工作目录中也可以有修改与未提交的文件——如果有任何东西不能干净地应用，Git 会产生合并冲突。
 
 > 默认情况下，git stash 只会贮藏已修改和暂存的 已跟踪 文件。 如果指定 --include-untracked 或 -u 选项，Git 也会贮藏任何未跟踪文件。
 
-- git stash 将修改内容储藏到栈上
-- git stash save "comment" 将修改内容储藏到栈上，并添加注释
-- git apply 应用最新的存储
-- git stash list 展示所有储藏
-- git stash apply stash@{2} 应用指定的储藏（可以通过上一条指令）
-- git statsh drop stash@{2} 删除指定储藏、
-- git stash show stash@{2} 展示指定修改
-- git stash branch branch_name 将 stash 中的修改应用到一个新分支上，再删除 stash
-- git stash pop 来应用贮藏然后立即从栈上扔掉它。
-- git stash pop --index
+- `git stash` 将修改内容储藏到栈上
+- `git stash save "comment"` 将修改内容储藏到栈上，并添加注释
+- `git apply` 应用最新的存储
+- `git stash list` 展示所有储藏
+- `git stash apply stash@{2}` 应用指定的储藏（可以通过上一条指令）
+- `git statsh drop stash@{2}` 删除指定储藏、
+- `git stash show stash@{2}` 展示指定修改
+- `git stash branch branch_name` 将 stash 中的修改应用到一个新分支上，再删除 stash
+- `git stash pop` 来应用贮藏然后立即从栈上扔掉它。
+- `git stash pop --index`
   ```
   说明：
   当add一些修改到暂存区后，如果
@@ -171,13 +233,13 @@
 - 冲突解决：
   > 只有当工作区干净时才能stash，否则会禁止stash
   - 修改文件
-  - git add   (Git会把修改完的结果包括其它没有出现冲突的文件放入暂存区。)
+  - git add (Git会把修改完的结果包括其它没有出现冲突的文件放入暂存区。)
   - 分歧
     - git commit：将修改作为下一个提交
     - git reset HEAD 取消暂存，恢复到git stash pop后该有的状态
   - git stash drop stash@{0}
 
-## 1.9. 重置
+## 1.12. 重置
 
 
 - 三棵树：
@@ -187,73 +249,73 @@
   - 工作目录
 
 - 三个深度
-  > **reset 会修改HARD指向。soft mixed hard 三个深度，由浅入深，分别改动到 HARD指针，暂存区，工作目录层级** <br>
+  > **reset 会修改HARD指向。soft mixed hard 三个深度，由浅入深，分别改动到 HARD指针，暂存区，工作目录层级** <br />
   > **但如果指定了文件目录，就会跳过 移动HARD指针 一步。**
-  - git reset --soft version_id 或 HARD~版本数
-  - git reset [--mixed] version_id 或 HARD~版本数
-  - git reset --hard version_id 或 HARD~版本数 **慎用**
+  - `git reset --soft ref` 或 HARD~版本数
+  - `git reset [--mixed] ref` 或 HARD~版本数
+  - `git reset --hard ref` **慎用**
+
   > Git会将原先的Head保存为一个叫做 **ORIG_HEAD** 的标记不想查id可以用该标记返回
 
 - 一些使用：
-  - git reset [--mixed] . :取消暂存(不会修改文件)
-  - git checkout .  : 取消所有未暂存的修改（会修改文件）
+  - `git checkout version_id filename` 分支不动，将指定文件内容重置为指定提交下文件的内容 **对工作目录不安全**
+  - `git checkout ref ./` 分支不动，将所有文件内容重置为指定提交下文件的内容。 **对工作目录不安全**
+  - `git checkout .`  : 取消所有未暂存的修改（会修改文件） **不推荐简略写法**
+    > 等同于`git checkout HEAD .` 
     > 小心使用
-  - git reset filename ：取消指定文件暂存
-  - git reset [--mixed] version_id filename ：将某文件回退到某一个版本
-    - 现在是修改工作目录，未add和commit的状态
-    - 如果想还原工作目录，要进行 get checkout filename
-  - git checkout version_id filename ：效果与上面的差不多，区别看下图
-  - git reset --soft version_id + git commit ：合并 commit，或者完成git commit --amend的操作
+  - `git reset [--mixed] .` :取消暂存(不会修改文件)
+    > reset 一般都自己在自己分支上用，省略HEAD
+  - `git reset filename` ：取消指定文件暂存
+  - `git reset [--mixed] version_id filename` 将文件回退到某个版本，工作区不变，暂存区变
+  - `git reset --soft version_id + git commit`：合并 commit，或者完成git commit --amend的操作
 
+- **规则速查表**
+  > HEAD 一列中的 REF 表示该命令移动了 HEAD 指向的分支引用，而 HEAD 则表示只移动了 HEAD 自身。
+  |                             | HEAD | Index | Workdir | WD Safe? |
+  | :-------------------------- | :--- | :---- | :------ | :------- |
+  | **Commit Level**            |      |       |         |          |
+  | `reset --soft [commit]`     | REF  | NO    | NO      | YES      |
+  | `reset [commit]`            | REF  | YES   | NO      | YES      |
+  | `reset --hard [commit]`     | REF  | YES   | YES     | **NO**   |
+  | `checkout <commit>`         | HEAD | YES   | YES     | YES      |
+  | **File Level**              |      |       |         |          |
+  | `reset [commit] <paths>`    | NO   | YES   | NO      | YES      |
+  | `checkout [commit] <paths>` | NO   | YES   | YES     | **NO**   |
 
-- reset 和 checkout：
-  - 不带路径： git checkout [branch] 与运行 git reset --hard [branch] 非常相似。
-    - 相同：
-      - 都会更新三棵树
-    - 区别：
-      - checkout是安全的
-      - reset是修改分支指向，而HARD跟着分支。而checkout是修改HARD本身指向
-        > ![checkout-diff](./image/checkout-diff.png)
-  - 带路径
-    - 相同：
-      - 像 带路径的reset 一样不会移动 HEAD
-      - 同 git reset 和 git add 一样，checkout 也接受一个 --patch 选项，允许你根据选择一块一块地恢复文件内容。
-    - 相当于:
-      - git reset --hard [branch] file（如果 reset 允许你这样运行的话）
-      - 当然，也是不安全的，会完全放弃修改
+- `git revert [commit]` 新建一个commit，用来撤销指定commit,后者的所有变化都将被前者抵消，并且应用到当前分支
 
-- 规则速查表
-  > ![](./image/git-1.jpg)
-
-
-## 1.10. 变基
+## 1.13. 变基
 
 > 注意：如果提交存在于你的仓库之外，而别人可能基于这些提交进行开发，那么不要执行变基。
 
 > 无论是通过变基，还是通过三方合并，整合的最终结果所指向的快照始终是一样的，只不过提交历史不同罢了。 变基是将一系列提交按照原有次序依次应用到另一分支上，而合并是把最终结果合在一起。
 
 - 分支变基
-  - git rebase basebranch 将当前所在分支 rebase 到指定分支
-  - git rebase basebranch topicbranch 不需要切换分支，将 topicbranch 变基到 basebranch
+  - `git rebase basebranch` 将当前所在分支 rebase 到指定分支
+  - `git rebase basebranch topicbranch` 不需要切换分支，将 topicbranch 变基到 basebranch
     解决冲突后
     - 出现冲突的话：
       - 解决冲突
       - git add .
       - git rebase --continue
       - 完成后可以使用 git gc 回收垃圾
-  - git rebase --abor ：任何时候都行，终止 rebase 操作，回到 rebase 开始前状态
-  - git rebase --onto master server client：选中在 client 分支里但不在 server 分支里的修改，将它们在 master 分支上重放
+  - `git rebase --abor` ：任何时候都行，终止 rebase 操作，回到 rebase 开始前状态
+  - `git rebase --onto master server client`：选中在 client 分支里但不在 server 分支里的修改，将它们在 master 分支上重放
     > 看官方文档吧
 - commit 合并变基
-  - git rebase -i 版本 Id 合并从此处到指定 id 的所有 commit
-  - git rebase -i HARD~2 合并前两个 commit
-    ```
-    执行这个命令后会跳到一个vi编辑器 里面的提示有： pick：保留该commit（缩写:p） reword：保留该commit，但我需要修改该commit的注释（缩写:r） edit：保留该commit, 但我要停下来修改该提交(不仅仅修改注释)（缩写:e） squash：将该commit和前一个commit合并（缩写:s） fixup：将该commit和前一个commit合并，但我不要保留该提交的注释信息（缩写:f） exec：执行shell命令（缩写:x） drop：我要丢弃该commit（缩写:d）
-    ```
+  - `git rebase -i ref` 合并从此处到指定 id 的所有 commit
+  - `git rebase -i HARD~2` 合并前两个 commit
 
-## 1.11. cherry-pick
+## 1.14. cherry-pick和patch
 
-## 1.12. gitignore
+- `git cherry-pick ref` 应用提交，总之十分重要的命令
+- `git format-patch ref` 当前到指定位置的修改打为patch
+- `git apply --check patch_path` 检查是否合法
+- `git am --signoff < patch_path` 打补丁
+  > (使用-s或--signoff选项，可以commit信息中加入Signed-off-by信息)
+
+
+## 1.15. gitignore
 
 ```
   # 此为注释 – 将被 Git 忽略
@@ -271,17 +333,7 @@
   doc/**/*.txt
 ```
 
-## 1.13. 简单 linux 命令
-
-```
-ls -a 显示所有文件
-touch 文件名 添加空文件
-cat 显示文件内容
-mkdir 创建文件夹
-vi 通过vim进行编辑
-```
-
-## 1.14. 常见问题
+## 1.16. 常见问题
 
 - git乱码：
   - 右键->option->text
@@ -311,51 +363,3 @@ vi 通过vim进行编辑
 
   Port 443 /*修改端口为443*/
   ```
-
-
-# 2. [学习网站内容整理](https://learngitbranching.js.org/?locale=zh_CN)
-
-## 指令总结
-
-[其他博客](https://www.cnblogs.com/code-xu/p/14262963.html)
-
-## merge，rebase，cherry-pick
-
-- merge:
-  - 基节点base，两个从base分支出去的dev1和dev2.
-  - 在dev1上：`git merge dev2`
-  - 会根据base，比较两个dev做的修改patch1,patch2的差异。
-  - 如果没有冲突会一并作用在base上。
-  - 如果有冲突，会请求冲突解决。
-
-  ![git-11](./image/git-11.png)
-
-- rebase
-  - 基节点base，两个从base分支出去的dev1和dev2.
-  - 在dev2上：`git rebase dev2`
-  - 会以dev2为基础，把patch1作用到dev2上
-  - 这样会保证：base->dev1->dev2
-
-  ![git-12](./image/git-12.png)
-
-  > 变虚了的分支，已经不能通过`git log`找回，只能使用**`git reflog`**
-
-- cherry-pick
-  - 基节点base，两个从base分支出去的dev1和dev2.
-    - base -> a1 -> a2 -> dev1
-    - base -> b1 -> b2 -> dev2
-    - base->a1 的patch命名为`base_a1_patch`
-  - 在dev2分支上：`git cherry-pick dev1`
-  - 这样仅会添加a2_dev1_patch。
-  - **只会添加该commit所做的修改，不会管前面的修改**
-  - 如果有冲突就要手动解决
-
-  ![git-13](./image/git-13.png)
-
-- rebase -i
-
-## checkout，reset
-
-
-
-
