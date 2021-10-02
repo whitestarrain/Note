@@ -272,7 +272,6 @@
     也就是说在调用getAnnotation时，就会把上面的那个类创建一个对象病返回给你，在通过接口接收
      */
 
-
       // 3调用注解对象中定义的抽象方法（也就是属性）获取返回值
       String className = pro.className();
       String methodName = pro.methodName();
@@ -786,7 +785,6 @@
 
 - 笔记文件
   [笔记文件](./资料/pdf/Stream流、方法引用-笔记.pdf)
-
 
 - demo1
   ```java
@@ -2334,7 +2332,6 @@
 6. 图示：
   > ![](./image/servlet2.jpg)
 
-
 ## 11.4. Servlet 中的生命周期
 
 > servlet 类的对象并不需要我们自己创建，我们只需要声明 servlet 的类，
@@ -3308,7 +3305,6 @@ public class SuccessServlet extends HttpServlet {
         response.getWriter().write("登录成功，欢迎您");
         response.getWriter().write(user.getName());
 
-
     }
 
     @Override
@@ -3745,8 +3741,6 @@ for (int i = 0; i < 5; i++) {
 - 与重定向一样,转发之后的代码也会执行,所有代码执行完毕才跳转
 - jsp 的本质就是 Servlet,所以 jsp 页面执行转发或者重定向,以上结论同样适用
 
-
-
 ## 11.15. ServletContext
 
 ### 11.15.1. 基本
@@ -4056,7 +4050,6 @@ public class CookieServletDemo extends HttpServlet {
 
 - `	encodeRedirectURL(String url)`非通用，记住上面那个就行了
 
-
 ## 12.3. cookie 案例
 
 - 记住上一次访问时间
@@ -4195,7 +4188,6 @@ public class CookieServletDemo extends HttpServlet {
   - 图解：
     > ![](./image/jsp-4.jpg)
 
-
 - 原理：
 
   - 图例：
@@ -4211,7 +4203,6 @@ public class CookieServletDemo extends HttpServlet {
       - 同时该 java 文件会将 html 标签通过输出流输出到客户端
     - 第一次访问时会翻译为java文件，然后再编译为class文件。
     - 之后访问时会直接使用class文件
-
 
 - jsp 脚本
 
@@ -4434,8 +4425,6 @@ public class CookieServletDemo extends HttpServlet {
 
 ### 13.7.2. 基本使用
 
-
-
 - 运算
   - 运算符：
     - 算术运算符：+ - \* /(div) %(mod)
@@ -4644,7 +4633,6 @@ fn:trim 去除字符串前后的空格 ${fn.trim(name)}
   jsp标准动作已经很少用了。
   ```
 
-
 ## 13.8. JSTL 标签
 
 - 概念：JavaServer Pages Tag Library：jsp 标准标签库
@@ -4683,7 +4671,6 @@ fn:trim 去除字符串前后的空格 ${fn.trim(name)}
 
   - `<c:out value="" default=""></c:out>` 输出，同`<%= %>`
   - `<c:remove var="" scope=""></c:remove> `删除域中数据
-
 
 - 常用标签
 
@@ -4944,8 +4931,6 @@ public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain
   - 注解配置：按照类名的字符串比较规则，较小的先执行
   - web.xml 配置：filter-pattern 谁配置在上面，谁先执行
 
-
-
 ## 14.3. 案例
 
 ### 14.3.1. 案例需求
@@ -5083,7 +5068,6 @@ public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain
   - 域对象中属性的增加和删除
   - 监听绑定到HttpSession域中的某个对象的状态的事件监听器
 - 可以用来统计登录人数等等，当然，也可以用servlet实现该功能
-
 
 > **下面就说明一个示例**
 
@@ -5321,7 +5305,6 @@ public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain
   - for..of:（jquery3.0后才提供）
     - for(i of arr){}
 
-
 ## 16.6. 事件绑定
 
 > 这只是入门，更多请查文档
@@ -5347,7 +5330,6 @@ public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain
   - 表单对象.submit()
     - 提交表单
 - return false：可以取消冒泡以及浏览器默认行为
-
 
 ## 16.7. 链式编程
 
@@ -5455,9 +5437,7 @@ public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain
   - $.post(url, [data], [callback], [type])：发送post请求
     > 上面ajax的简化。这里的type是返回内容格式。使用同$.get
 
-
 ## 17.4. JSON
-
 
 - 概念：JavaScript Object Notation
   > javascript对象表示法
@@ -5535,7 +5515,6 @@ public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain
     - 在ajax的get或post方法中指明传回来的数据类型type指定为json
     - 不指定方法中的话，可以指定response.setContentType()中的memi类型。设为"application/json;charset=utf-8"
   - 因为要使用response.getWriter()，因此要注意中文乱码问题，设置response.setContentType()
-
 
 # 18. Redis
 
@@ -5691,7 +5670,6 @@ public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain
     > 依旧0,-1为所有元素
   - 删除：zrem key value
     > 删除key对应sortedset中的value值
-
 
 - 通用
   - keys 正则表达式：查询key值

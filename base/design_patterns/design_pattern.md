@@ -105,7 +105,6 @@ class WaterVehicle {
 
 </details>
 
-
 <details>
 <summary style="color:red;">案例3：没有完全准守单一职责原则，对方法进行拆解，实现单一职责原则</summary>
 
@@ -162,7 +161,9 @@ class Vehicle2 {
 
 #### 1.2.2.1. 基本介绍
 
-客户端不应该依赖它不需要的接口，即一个类对另一个类的依赖应该建立在最小的接口上
+- 说明:
+  - 客户端不应该依赖它不需要的接口
+  - 即一个类对另一个类的依赖应该建立在最小的接口上
 
 - 优点
   - 将臃肿庞大的接口分解为多个粒度小的接口，可以预防外来变更的扩散，提高系统的灵活性和可维护性。
@@ -399,12 +400,15 @@ class C { // C 类通过接口Interface1,Interface3 依赖(使用) D类，但是
 
 - 高层模块不应该依赖低层模块，二者都应该依赖其抽象(接口，抽象类)
 - 抽象不应该依赖细节(比如实现类)，细节应该依赖抽象
+- 依赖倒转原则是基于这样的设计理念：
+  - 相对于细节的多变性，**抽象的东西要稳定的多**
+  - **以抽象为基础搭建的架构比以细节为基础的架构要稳定的多**
+  - 在java中，抽象指的是接口或抽象类，细节就是具体的实现类
 - 依赖倒转(倒置)的中心思想是**面向接口编程**
-- 依赖倒转原则是基于这样的设计理念：相对于细节的多变性，抽象的东西要稳定的多。以抽象为基础搭建的架构比以细节为基础的架构要稳定的多。在java中，抽象指的是接口或抽象类，细节就是具体的实现类
-- **使用接口或抽象类的目的是制定好规范**，而不涉及任何具体的操作，**把展现细节的任务交给他们的实现类去完成**
+  - **使用接口或抽象类的目的是制定好规范**，而不涉及任何具体的操作
+  - **把展现细节的任务交给他们的实现类去完成**
  
 #### 1.2.3.2. 案例
-
 
 <details>
 <summary style="color:red;">案例1：未遵循依赖倒置原则，Person 类与 Email 类耦合，如果我们还想获取其他消息，比如微信、短信、QQ 等、则需要添加相应的实现方法</summary>
@@ -438,7 +442,6 @@ class Person {
 }
 ```
 </details>
-
 
 <details>
 <summary style="color:red;">案例2：引入一个抽象的接口 IReceiver，表示接收者（Email、微信、短信、QQ 等），接受者分别实现 IReceiver 接口中的方法，实现各自接收消息的逻辑，Person 类与 IReceiver 接口发生依赖，达到接收消息的功能</summary>
@@ -529,7 +532,6 @@ class OpenAndClose implements IOpenAndClose {
 ```
 </details>
 
-
 <details>
 <summary style="color:red;">构造方法传递</summary>
 
@@ -576,7 +578,6 @@ class OpenAndClose implements IOpenAndClose {
 }
 ```
 </details>
-
 
 <details>
 <summary style="color:red;">setter方式传递</summary>
@@ -641,26 +642,28 @@ class OpenAndClose implements IOpenAndClose {
 
 #### 1.2.4.1. 基本介绍
 
-- 引入
-  1. 继承包含这样一层含义：父类中凡是已经实现好的方法， 实际上是在设定规范和契约，虽然它不强制要求所有的子类必须遵循这些契约，但是如果子类对这些已经实现的方法任意修改，就会对整个继承体系造成破坏。
-  2. 继承在给程序设计带来便利的同时，也带来了弊端。比如使用继承会给程序带来侵入性，程序的可移植性降低，增加对象间的耦合性，如果一个类被其他的类所继承，则当这个类需要修改时，必须考虑到所有的子类，并且父类修改后，所有涉及到子类的功能都有可能产生故障
-  3. 问题提出：在编程中，如何正确的使用继承? => 里氏替换原则
+- 继承带来的问题
+  - 继承包含这样一层含义：
+    - 父类中凡是已经实现好的方法， 实际上是在设定规范和契约
+    - 虽然它不强制要求所有的子类必须遵循这些契约，但是如果子类对这些已经实现的方法任意修改，就会对整个继承体系造成破坏。
+  - 继承在给程序设计带来便利的同时，也带来了弊端:
+    - 比如使用继承会给程序带来侵入性，程序的可移植性降低，增加对象间的耦合性
+    - 如果一个类被其他的类所继承，则当这个类需要修改时，必须考虑到所有的子类，并且父类修改后，所有涉及到子类的功能都有可能产生故障
+  - 问题提出：在编程中，如何正确的使用继承? => 里氏替换原则
 
 - 基本介绍
   - 里氏替换原则(Liskov Substitution Principle)在1988年，由麻省理工学院的以为姓里的女士提出的。
-  - 如果对每个类型为T1的对象o1，都有类型为T2的对象o2，使得以T1定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变化，那么类型T2是类型T1的子类型。 **换句话说，所有引用基类的地方必须能透明地使用其子类的对象** 。
+    ```
+    如果对每个类型为T1的对象o1，都有类型为T2的对象o2，
+    使得以T1定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变化
+    那么类型T2是类型T1的子类型。 
+    换句话说，所有引用基类的地方必须能透明地使用其子类的对象
+    ```
   - 里氏替换原则通俗来讲就是： **子类可以扩展父类的功能，但不能改变父类原有的功能** 。
   - 也就是说：在使用继承时，遵循里氏替换原则， **子类继承父类时，除添加新的方法完成新增功能外，尽量不要重写父类的方法** 。
   - 里氏替换原则告诉我们，继承实际上让两个类耦合性增强了， **在适当的情况下，可以通过聚合，组合，依赖来解决问题**
 
-  > 我们也可以通过提升的方法，来尽量满足里氏替换原则 <br />
-  > 假设现在有两个类，A 类和 B 类，如果 B 类继承 A 类，需要重写 A 类中的某些方法， <br />
-  > 那么，我们在 A 类 和 B 类之上，再抽取出一个更加通用的父类 CommonSuper，让 A 类和 B 类同时去继承 CommonSuper， <br />
-  > 这样 B 类就无须重写 A 类中的某些方法，达到基类的引用对子类对象透明的效果
-
-
 #### 1.2.4.2. 案例
-
 
 <details>
 <summary style="color:red;">案例1：未遵循里氏替换原则，由于子类 B 继承父类 A 时重写了 func1() 方法，导致程序中使用多态时，本意是想调用重写前的方法，结果变成了重写后的方法，所以程序输出结果和预期不同</summary>
@@ -712,10 +715,8 @@ class B extends A {
 
 ![design-patterns-5](./image/design-patterns-5.png)
 
-
 <details>
 <summary style="color:red;">案例2：将类 B 的级别提升至与类 A 平级，他们有一个共同的父类 Base，这样就不会出现类 B 重写类 A 中方法的问题，此时基类的引用能够透明地使用子类的对象</summary>
-
 
 ```java
 public class Liskov {
@@ -780,10 +781,17 @@ class B extends Base {
 
 #### 1.2.4.3. **注意/要求**
 
-- 子类可以实现父类的抽象方法，但不能覆盖父类的非抽象方法
-- 子类中可以增加自己特有的方法
-- 当子类的方法重载父类的方法时，方法的前置条件（即方法的输入参数）要比父类的方法更宽松
-- 当子类的方法实现父类的方法时（重写/重载或实现抽象方法），方法的后置条件（即方法的的输出/返回值）要比父类的方法更严格或相等
+- 继承时注意
+  - 子类可以实现父类的抽象方法，但不能覆盖父类的非抽象方法
+  - 子类中可以增加自己特有的方法
+  - 当子类的方法重载父类的方法时，方法的前置条件（即方法的输入参数）要比父类的方法更宽松
+  - 当子类的方法实现父类的方法时（重写/重载或实现抽象方法），方法的后置条件（即方法的的输出/返回值）要比父类的方法更严格或相等
+
+- 另辟蹊径
+  - 我们也可以通过提升的方法，来尽量满足里氏替换原则
+  - 假设现在有两个类，A 类和 B 类，如果 B 类继承 A 类，需要重写 A 类中的某些方法
+  - 那么，我们在 A 类 和 B 类之上，再抽取出一个更加通用的父类 CommonSuper，让 A 类和 B 类同时去继承 CommonSuper
+  - 这样 B 类就无须重写 A 类中的某些方法，达到基类的引用对子类对象透明的效果
 
 ### 1.2.5. 迪米特法则
 
@@ -791,16 +799,24 @@ class B extends Base {
 
 - 一个对象应该对其他对象保持最少的了解
 - 类与类关系越密切，耦合度越大
-- 迪米特法则(Demeter Principle)又叫**最少知道原则**，即**一个类对自己依赖的类知道的越少越好**。也就是说，对于被依赖的类不管多么复杂，都尽量将逻辑封装在类的内部。**对外除了提供的public 方法，不对外泄露任何信息**
-- 迪米特法则还有个更简单的定义：只与直接的朋友通信
-- 每个对象都会与其他对象有耦合关系，只要两个对象之间有耦合关系，我们就说这两个对象之间是**朋友关系**。耦合的方式很多，依赖，关联，组合，聚合等。
-  - 其中，我们称出现**成员变量，方法参数，方法返回值**中的类为**直接的朋友**，
-  - 而出现在**局部变量**中的类不是直接的朋友。也就是说，**陌生的类最好不要以局部变量的形式出现在类的内部**。
+- 迪米特法则(Demeter Principle)又叫**最少知道原则**
+  - 即**一个类对自己依赖的类知道的越少越好**
+  - 也就是说，对于被依赖的类不管多么复杂，都尽量将逻辑封装在类的内部。
+  - **对外除了提供的public 方法，不对外泄露任何信息**
+
+- 迪米特法则还有个更简单的定义：**只与直接的朋友通信**
+  - 朋友关系：
+    - 每个对象都会与其他对象有耦合关系，只要两个对象之间有耦合关系，我们就说这两个对象之间是**朋友关系**
+    - 耦合的方式很多，依赖，关联，组合，聚合等。
+  - 直接朋友：
+    - 其中，我们称出现**成员变量，方法参数，方法返回值**中的类为**直接的朋友**
+    - 而出现在**局部变量**中的类不是直接的朋友
+  - 通信要求：
+    - **陌生的类最好不要以局部变量的形式出现在类的内部**。
 
 #### 1.2.5.2. 案例
 
 > 应用实例：有一个学校， 下属有各个学院和总部， 现要求打印出学校总部员工ID和学院员工的id
-
 
 <details>
 <summary style="color:red;">案例1：CollegeEmployee 类不是 SchoolManager 类的直接朋友，而是一个陌生类，这样的设计违背了迪米特法则</summary>
@@ -903,7 +919,6 @@ class SchoolManager {
 2. 按照迪米特法则，应该避免类中出现这样非直接朋友关系的耦合，我们将输出学院员工的方法封装到CollegeManager，这样在SchoolManager中就不会出现CollegeEmployee类了
 3. 按照迪米特法则的意思就是：SchoolManager对输出学院员工知道得越少越好，所以我们就直接将该逻辑封装到CollegeManager中
 
-
 <details>
 <summary style="color:red;">案例2：改进</summary>
 
@@ -1003,7 +1018,6 @@ class SchoolManager {
 ```
 </details>
 
-
 #### 1.2.5.3. **注意/要求**
 
 > 迪米特法则的核心是降低类之间的耦合
@@ -1013,6 +1027,7 @@ class SchoolManager {
 - 从迪米特法则的定义和特点可知，它强调以下两点：
   - 从依赖者的角度来说，只依赖应该依赖的对象。
   - 从被依赖者的角度说，只暴露应该暴露的方法。
+
 - 所以，在运用迪米特法则时要注意以下 6 点。
   - 在类的划分上，应该创建弱耦合的类。类与类之间的耦合越弱，就越有利于实现可复用的目标。
   - 在类的结构设计上，尽量降低类成员的访问权限。
@@ -1036,12 +1051,11 @@ class SchoolManager {
 1. 开闭原则（Open Closed Principle） 是编程中最基础、最重要的设计原则
 2. 一个软件实体如类，模块和函数应该对扩展开放(对提供方)， 对修改关闭(对使用方)。 **用抽象构建框架，用实现扩展细节**。
   > 也就是你怎么该内部代码我都不管，只要提供的API不变就行
-3. 当软件需要变化时，**尽量通过扩展软件实体**的行为来实现变化，而不是通过修改已有的代码来实现变化。
+3. 当软件需要变化时， **尽量通过扩展软件实体** 的行为来实现变化，而不是通过修改已有的代码来实现变化。
   > 也就是说最好新增api，而不要乱改api
 4. **编程中遵循其它原则，以及使用设计模式的目的就是遵循开闭原则**。
 
 #### 1.2.7.2. 案例
-
 
 <details>
 <summary style="color:red;">案例1：未遵循开闭原则，导致新增一个图形类时，需要在【使用方 GraphicEditor】中添加很多代码</summary>
@@ -1126,11 +1140,9 @@ class Triangle extends Shape {
   2. 缺点是违反了设计模式的ocp原则，即对扩展开放(提供方)，对修改关闭(使用方)。即当我们给类增加新功能的时候，尽量不修改代码，或者尽可能少修改代码。
   3. 比如我们这时要新增加一个图形种类：三角形，我们需要做大量的修改， 修改的地方较多
 
-
 - 改进思路分析：
   1. 把创建Shape类做成抽象类，并提供一个抽象的draw方法，让子类去实现即可
   2. 这样我们有新的图形种类时，只需要让新的图形类继承Shape，并实现draw方法即可，使用方的代码就不需要修 -> 满足了开闭原则
-
 
 <details>
 <summary style="color:red;">案例2：改进</summary>
@@ -1214,7 +1226,6 @@ class OtherGraphic extends Shape {
 }
 ```
 </details>
-
 
 ## 1.3. 设计原则核心思想
 
@@ -1419,7 +1430,6 @@ public class Person {
 
 ![design-patterns-1](./image/design-patterns-1.png)
 
-
 ## 3.2. 创建型模式
 
 ### 3.2.1. 概述
@@ -1428,7 +1438,7 @@ public class Person {
 
 ### 3.2.2. 单例模式（Singleton Pattern）
 
-#### 3.2.2.1. 单例设计模式介绍
+#### 3.2.2.1. 说明
 
 1. 所谓类的单例设计模式， 就是采取一定的方法保证在整个的软件系统中， 对某个类只能存在一个对象实例，并且该类只提供一个取得其对象实例的方法(静态方法)。
 2. 比如 `Hibernate` 的 `SessionFactory`， 它充当数据存储源的代理， 并负责创建 `Session` 对象。`SessionFactory` 并不是轻量级的， 一般情况下， 一个项目通常只需要一个 `SessionFactory` 就够，这是就会使用到单例模式。
@@ -1963,7 +1973,44 @@ public class Runtime {
 
 ### 3.2.3. 工厂模式（Factory Pattern）
 
-#### 3.2.3.1. 情景说明
+#### 3.2.3.1. 说明
+
+- 概述
+  - 目的：
+    - 定义一个创建对象的接口，让其子类自己决定实例化哪一个工厂类， **工厂模式使其创建过程延迟到子类进行**。
+    - 将实例化对象的代码提取出来，放到一个类中统一管理和维护，达到和主项目的依赖关系的解耦。从而提高项目的扩展和维护性。
+  - 主要解决：主要解决接口选择的问题。
+  - 何时使用：我们明确地计划不同条件下创建不同实例时。
+  - 如何解决：让其子类实现工厂接口，返回的也是一个抽象的产品。
+  - 关键代码：创建过程在其子类执行。
+
+- 缺点：
+  - 每次增加一个产品时，都需要增加一个具体类和对象实现工厂，使得系统中类的个数成倍增加
+  - 在一定程度上增加了系统的复杂度，同时也增加了系统具体类的依赖。
+
+- 使用场景：
+  - 注意：
+    - 作为一种创建类模式，在任何需要生成复杂对象的地方，都可以使用工厂方法模式。
+    - 有一点需要注意的地方就是复杂对象适合使用工厂模式，
+    - 而简单对象，特别是只需要通过 new 就可以完成创建的对象，无需使用工厂模式 如果使用工厂模式，就需要引入一个工厂类，会增加系统的复杂度。
+  - 示例
+    - 1、日志记录器：记录可能记录到本地硬盘、系统事件、远程服务器等，用户可以选择记录日志到什么地方。 
+    - 2、数据库访问，当用户不知道最后系统采用哪一类数据库，以及数据库可能有变化时。 
+    - 3、设计一个连接服务器的框架，需要三个协议，"POP3"、"IMAP"、"HTTP"，可以把这三个作为产品类，共同实现一个接口。
+
+- 工厂模式种类
+  - 简单工厂模式
+  - 工厂方法模式
+  - 抽象工厂模式
+
+- 设计模式的依赖抽象原则
+  -  创建对象实例时，不要直接 `new` 这个类，而是把这个`new` 类的动作放在一个工厂的方法中，并返回。
+    > 有的书上说，变量不要直接持有具体类的引用。
+    > 这样做的好处是：我们依赖的是一个抽象层（缓冲层），如果之后有什么变动，修改工厂类中的代码即可
+  - 不要让类继承具体类，而是继承抽象类或者是实现`interface`(接口)
+  - 不要覆盖基类中已经实现的方法
+
+#### 3.2.3.2. 情景说明
 
 看一个披萨的项目：要便于披萨种类的扩展，要便于维护
 
@@ -1971,7 +2018,7 @@ public class Runtime {
 2. 披萨的制作有 prepare、bake、cut、box
 3. 完成披萨店订购功能
 
-#### 3.2.3.2. 传统方法
+#### 3.2.3.3. 传统方法
 
 ![design-patterns-15](./image/design-patterns-15.png)
 
@@ -2108,13 +2155,12 @@ public class Runtime {
 2. 缺点是违反了设计模式的`ocp`原则，即对扩展开放(提供方)，对修改关闭(使用方)。即当我们给类增加新功能的时候，尽量不修改代码，或者尽可能少修改代码.
 3. 比如我们这时要新增加一个`Pizza`的种类(`Pepper`披萨)，我们需要在使用方 `OderPizza` 中添加新的判断条件，**违反开闭原则**
 
-
 > **改进思路**
 
 1. 分析： 如果说新增 `Pizza` 需要修改代码，这可以接受， 但是如果我们在其它的地方也有创建 `Pizza` 的代码，就意味着，有很多处的代码都需要修改，而且这些创建 `Pizza` 的代码全都是冗余代码。
 2. 思路： **把创建`Pizza`对象封装到一个类中，这样我们有新的`Pizza`种类时，只需要修改该类就可**， 其它有创建到`Pizza`对象的代码就不需要修改了 --> 简单工厂模式
 
-#### 3.2.3.3. 简单(静态)工厂模式
+#### 3.2.3.4. 简单(静态)工厂模式
 
 > **简单工厂模式介绍**
 
@@ -2248,14 +2294,13 @@ public class SimpleFactory {
 }
 ```
 
-
 > **简单工厂模式总结**
 
 1. 如果使用传统方法，使用方为 `OrderPizza`，提供方 `Pizza` 及其实现类，这样编写代码使用方和提供方紧紧耦合在一起，但凡需要新增 `Pizza` 的实现类，都需要修改 `OrderPizza` 中的代码，添加新的判断逻辑
 2. 为了满足 `OCP` 原则，我们建立简单工厂类 `SimpleFactory`，通过 `SimpleFactory` 作为一个中间者的角色：`SimpleFactory` 向上为 `OrderPizza` 提供相应的 `Pizza`，`SimpleFactory` 向下负责与 `Pizza` 及其实现类打交道，完成 `Pizza` 的生产
 3. 我们将生产 `Pizza` 的具体细节放在 `SimpleFactory` 工厂类里面实现，让 `SimpleFactory` 作为 `Pizza` 的提供方，这样新增 `Pizza` 的实现类时，我们只需要修改提供方（`SimpleFactory`）的代码，而无需修改使用方（`OrderPizza`）的代码
 
-#### 3.2.3.4. 工厂方法模式
+#### 3.2.3.5. 工厂方法模式
 
 > 需求说明
 
@@ -2456,7 +2501,6 @@ public class SimpleFactory {
    }
    ```
 
-
 > **工厂方法模式总结**
 
 1. 首先要说明的是，对于此案例，我们也可以采用简单工厂模式来实现，缺点是：对于一个地区的披萨，我们就需要创建一个对应的工厂类，这会造成项目类膨胀；并且生产披萨的代码几乎都是相同的，这就造成披萨工厂类中的代码冗余
@@ -2464,13 +2508,12 @@ public class SimpleFactory {
 3. 对于此例，抽象父类 `OrderPizza` 中有一个抽象方法 `abstract Pizza createPizza(String orderType);`，该方法接收 `Pizza` 的类型，并生产指定类型的 `Pizza`；在工厂子类 `BJOrderPizza`，`LDOrderPizza` 中实现了该抽象方法，实现了具体生产 `Pizza` 的逻辑
 4. 对于工厂方法模式，抽象工厂父类 `OrderPizza` 为 `Bean` 的使用方，它负责调用工厂子类 `BJOrderPizza`，`LDOrderPizza` 中已重写的抽象方法，获得生产好的 `Pizza`，然后使用该 `Pizza` 实例
 
-
 > **简单工厂模式与工厂方法模式的对比**
 
 1. 简单工厂模式：工厂类作为 `Bean` 的制造者（提供方），负责与具体的实体类打交道，并负责相应业务逻辑的处理；使用方调用工厂类获取 `Bean`，使用即可，无需关心该 `Bean` 是如何得到的，也无需关心制造此 `Bean` 的具体业务逻辑，满足 `OCP` 原则
 2. 工厂方法模式：工厂父类中有一个抽象方法负责制造 `Bean`，该抽象方法会下沉到其子类，由工厂子类实现其具体的业务细节，所以工厂子类是 `Bean` 的提供方，此时的工厂父类消费由工厂子类制造的 `Bean`，为使用方
 
-#### 3.2.3.5. 抽象工厂模式（Abstract Factory Pattern）
+#### 3.2.3.6. 抽象工厂模式（Abstract Factory Pattern）
 
 - 抽象工厂模式的基本介绍
   - 抽象工厂模式： 定义了一个 `interface` 用于创建相关或有依赖关系的对象簇， 而无需指明具体的类
@@ -2604,7 +2647,7 @@ public class SimpleFactory {
 2. 抽象工厂模式分为两层：抽象层和实现层。`AbsFactory` 作为工厂抽象层，只对工厂规范进行定义，其具体的实现交由工厂子类
 3. 简单工厂模式很难满足对多种不同类型的 `Bean` 进行创建，所以我们使用抽象工厂模式，定义一个工厂抽象层，但具体实现需下沉到各个工厂子类
 
-#### 3.2.3.6. 源码实例
+#### 3.2.3.7. 源码实例
 
 **JDK Calendar 中使用到了简单工厂模式**
 
@@ -2702,29 +2745,29 @@ private static Calendar createCalendar(TimeZone zone,
 } 
 ```
 
-#### 3.2.3.7. 小结
-
-- 工厂模式的意义：将实例化对象的代码提取出来，放到一个类中统一管理和维护，达到和主项目的依赖关系的解耦。从而提高项目的扩展和维护性。
-
-- 三种工厂模式
-  1. 简单工厂模式
-  2. 工厂方法模式
-  3. 抽象工厂模式
-
-- 设计模式的依赖抽象原则
-  1. 创建对象实例时，不要直接 `new` 这个类，而是把这个`new` 类的动作放在一个工厂的方法中，并返回。有的书上说，变量不要直接持有具体类的引用。这样做的好处是：我们依赖的是一个抽象层（缓冲层），如果之后有什么变动，修改工厂类中的代码即可
-  2. 不要让类继承具体类，而是继承抽象类或者是实现`interface`(接口)
-  3. 不要覆盖基类中已经实现的方法
-
 ### 3.2.4. 原型模式（Prototype Pattern）
 
-#### 3.2.4.1. 情景
+#### 3.2.4.1. 说明
+
+- 概述
+  - 原型模式(`Prototype`模式)是指：用原型实例指定创建对象的种类，并且通过拷贝这些原型， 创建新的对象
+  - 原型模式是一种创建型设计模式，允许一个对象在创建另外一个可定制的对象，无需知道如何创建的细节
+  - 工作原理是：通过将一个原型对象传给那个要发动创建的对象，这个要发动创建的对象通过请求原型对象拷贝它们自己来实施创建，即 `对象.clone()`
+
+- 原理
+  - `Prototype`：原型类，在该类中声明一个克隆自己的接口
+  - `ConcretePrototype`：具体的原型类，实现一个克隆自己的操作
+  - `Client`：让一个原型对象克隆自己，从而创建一个新的对象(属性一样)
+
+  ![design-patterns-20](./image/design-patterns-20.png)
+
+#### 3.2.4.2. 情景
 
 > **克隆羊问题描述**
 
 现在有一只羊`tom`， 姓名为: `tom`，年龄为： `1`， 颜色为：白色，请编写程序创建和`tom`羊属性完全相同的`10`只羊
 
-#### 3.2.4.2. 传统方式
+#### 3.2.4.3. 传统方式
 
 > 类图
 
@@ -2783,21 +2826,7 @@ private static Calendar createCalendar(TimeZone zone,
 
 `Java`中`Object`类是所有类的根类， `Object`类提供了一个`clone()`方法，该方法可以将一个`Java`对象复制一份，但是需要实现`clone`的`Java`类必须要实现一个接口`Cloneable`，该接口表示该类能够复制且具有复制的能力 --> 原型模式
 
-#### 3.2.4.3. 原型模式介绍
-
-1. 原型模式(`Prototype`模式)是指：用原型实例指定创建对象的种类，并且通过拷贝这些原型， 创建新的对象
-2. 原型模式是一种创建型设计模式，允许一个对象在创建另外一个可定制的对象，无需知道如何创建的细节
-3. 工作原理是：通过将一个原型对象传给那个要发动创建的对象，这个要发动创建的对象通过请求原型对象拷贝它们自己来实施创建，即 `对象.clone()`
-
-#### 3.2.4.4. 原型模式原理
-
-![design-patterns-20](./image/design-patterns-20.png)
-
-1. `Prototype`：原型类，在该类中声明一个克隆自己的接口
-2. `ConcretePrototype`：具体的原型类，实现一个克隆自己的操作
-3. `Client`：让一个原型对象克隆自己，从而创建一个新的对象(属性一样)
-
-#### 3.2.4.5. 原型模式代码
+#### 3.2.4.4. 原型模式代码
 
 原型模式解决克隆羊问题的应用实例：使用原型模式改进传统方式，让程序具有更高的效率和扩展性
 
@@ -2860,7 +2889,7 @@ private static Calendar createCalendar(TimeZone zone,
    sheep5 =Sheep [name=tom, age=1, color=白色]；sheep5.hashCoe=1311053135
    ```
 
-#### 3.2.4.6. Spring源码示例
+#### 3.2.4.5. Spring源码示例
 
 > **准备工作**
 
@@ -3114,9 +3143,9 @@ private static Calendar createCalendar(TimeZone zone,
 
   ![design-patterns-21](./image/design-patterns-21.png)
 
-#### 3.2.4.7. 深拷贝与浅拷贝
+#### 3.2.4.6. 深拷贝与浅拷贝
 
-##### 3.2.4.7.1. 浅拷贝
+##### 3.2.4.6.1. 浅拷贝
 
 > **浅拷贝的介绍**
 
@@ -3186,7 +3215,7 @@ private static Calendar createCalendar(TimeZone zone,
    sheep5 =Sheep [name=tom, age=1, color=白色, address=蒙古]sheep5.friend=366712642
    ```
 
-##### 3.2.4.7.2. 深拷贝
+##### 3.2.4.6.2. 深拷贝
 
 > **深拷贝基本介绍**
 
@@ -3313,7 +3342,7 @@ private static Calendar createCalendar(TimeZone zone,
 
 ------
 
-#### 3.2.4.8. 原型模式注意事项
+#### 3.2.4.7. 原型模式注意事项
 
 - **原型模式的注意事项和细节**
   1. 创建新的对象比较复杂时，可以利用原型模式简化对象的创建过程，同时也能够提高效率
@@ -3325,13 +3354,36 @@ private static Calendar createCalendar(TimeZone zone,
 
 ### 3.2.5. 建造者模式（Builder Pattern）
 
-#### 3.2.5.1. 情景介绍
+#### 3.2.5.1. 说明
+
+- 说明
+  - 建造者模式（`Builder Pattern`） 又叫生成器模式，是一种对象构建模式。
+    - 它可以将复杂对象的建造过程抽象出来（抽象类别）
+    - 使这个抽象过程的不同实现方法可以构造出不同表现（属性）的对象。
+  - 建造者模式是一步一步创建一个复杂的对象，它允许用户只通过指定复杂对象的类型和内容就可以构建它们，用户不需要知道内部的具体构建细节。
+  - 实际应用场景：建造房子、组装车辆
+
+- 原理
+  -  建造者模式的四个角色
+    1. `Product`（产品角色）： 一个具体的产品对象
+    2. `Builder`（抽象建造者）： 创建一个`Product`对象的抽象接口（或抽象类），抽象建造者主要负责规范建造的流程，不关心具体的建造细节
+    3. `ConcreteBuilder`（具体建造者）： 实现接口，构建和装配各个部件，具体建造者负责实现具体的建造细节
+    4. `Director`（指挥者）： 构建一个使用`Builder`接口的具体实现类的对象。它主要是用于创建一个复杂的对象。它主要有两个作用，一是：隔离了客户与对象的生产过程，二是：负责控制产品对象的生产过程
+  - 建造者模式原理类图
+    1. `Product`（产品类）：一个具体的产品
+    2. `Builder`（抽象建造者）：`Builder` 中组合了一个 `Product` 实例
+    3. `ConcreteBuilder`（具体建造者）：实现了 `Builder` 中的抽象方法
+    4. `Director`（指挥者）：将 `Builder` 的具体实现类聚合到 `Director` 中，在 `Director` 中调用具体的 `Builder` 完成具体产品的制造
+
+    ![design-patterns-23](./image/design-patterns-23.png)
+
+#### 3.2.5.2. 情景介绍
 
 1. 需要建房子：这一过程为打桩、 砌墙、封顶
 2. 房子有各种各样的，比如普通房，高楼，别墅，各种房子的过程虽然一样，但是各自实现的细节不同
 3. 请编写程序，完成需求
 
-#### 3.2.5.2. 传统方式
+#### 3.2.5.3. 传统方式
 
 ![design-patterns-22](./image/design-patterns-22.png)
 
@@ -3429,31 +3481,7 @@ private static Calendar createCalendar(TimeZone zone,
 2. 设计的程序结构，过于简单，没有设计缓存层对象，程序的扩展和维护不好，也就是说，这种设计方案，把产品(即：房子) 和创建产品的过程(即：建房子流程) 封装在一起，代码耦合性增强了。
 3. 解决方案：将产品和产品建造过程解耦 --> 建造者模式
 
-#### 3.2.5.3. 基本介绍
-
-1. 建造者模式（`Builder Pattern`） 又叫生成器模式，是一种对象构建模式。它可以将复杂对象的建造过程抽象出来（抽象类别），使这个抽象过程的不同实现方法可以构造出不同表现（属性）的对象。
-2. 建造者模式是一步一步创建一个复杂的对象，它允许用户只通过指定复杂对象的类型和内容就可以构建它们，用户不需要知道内部的具体构建细节。
-3. 实际应用场景：建造房子、组装车辆
-
-#### 3.2.5.4. 类图原理
-
--  建造者模式的四个角色
-  1. `Product`（产品角色）： 一个具体的产品对象
-  2. `Builder`（抽象建造者）： 创建一个`Product`对象的抽象接口（或抽象类），抽象建造者主要负责规范建造的流程，不关心具体的建造细节
-  3. `ConcreteBuilder`（具体建造者）： 实现接口，构建和装配各个部件，具体建造者负责实现具体的建造细节
-  4. `Director`（指挥者）： 构建一个使用`Builder`接口的具体实现类的对象。它主要是用于创建一个复杂的对象。它主要有两个作用，一是：隔离了客户与对象的生产过程，二是：负责控制产品对象的生产过程
-
----
-
-![design-patterns-23](./image/design-patterns-23.png)
-
-- 建造者模式原理类图
-  1. `Product`（产品类）：一个具体的产品
-  2. `Builder`（抽象建造者）：`Builder` 中组合了一个 `Product` 实例
-  3. `ConcreteBuilder`（具体建造者）：实现了 `Builder` 中的抽象方法
-  4. `Director`（指挥者）：将 `Builder` 的具体实现类聚合到 `Director` 中，在 `Director` 中调用具体的 `Builder` 完成具体产品的制造
-
-#### 3.2.5.5. 优化代码
+#### 3.2.5.4. 建造者模式代码
 
 > **类图**
 
@@ -3610,7 +3638,7 @@ private static Calendar createCalendar(TimeZone zone,
 2. 然后，通过 `Builder` 具体的实现类：具体建造者 `ConcreteBuilder`，重写抽象父类 `AbstractBuilder` 中的抽象方法，来指定具体产品的制造细节
 3. 最后，将 `ConcreteBuilder` 的实例对象聚合在指挥者 `Director` 中，通过指挥者实现具体产品的制造流程（抽象方法的调用顺序），最后返回产品即可
 
-#### 3.2.5.6. jdk源码示例
+#### 3.2.5.5. jdk源码示例
 
 1. `StringBuilder` 的 `append()` 方法：调用父类`AbstractStringBuilder` 的 `append()` 方法
 
@@ -3695,7 +3723,7 @@ private static Calendar createCalendar(TimeZone zone,
 2. `AbstractStringBuilder` 实现了 `Appendable` 接口方法，这里的 `AbstractStringBuilder` 已经是建造者，只是不能实例化
 3. `StringBuilder` 既充当了指挥者角色，同时充当了具体的建造者， 因为建造方法的实现是由 `AbstractStringBuilder` 完成，而 `StringBuilder` 继承了`AbstractStringBuilder`
 
-#### 3.2.5.7. 注意事项
+#### 3.2.5.6. 注意事项
 
 > **建造者模式的注意事项和细节**
 
@@ -3719,25 +3747,22 @@ private static Calendar createCalendar(TimeZone zone,
 
 ### 3.3.2. 适配器模式（Adapter Pattern）
 
-#### 3.3.2.1. 基本介绍
+#### 3.3.2.1. 说明
 
-泰国旅游使用插座问题：泰国插座用的是两孔的（欧标） ，可以买个多功能转换插头 (适配器) ，这样就可以使用了
+- 概述
+  - 适配器模式(`Adapter Pattern`)将某个类的接口转换成客户端期望的另一个接口表示，主的目的是兼容性，让原本因接口不匹配不能一起工作的两个类可以协同工作。
+  - 适配器的别名为包装器(`Wrapper`)，适配器模式属于结构型模式
+  - 主要分为三类：类适配器模式、对象适配器模式、接口适配器模式。但实际工作中不局限于这三种经典模式。
 
-1. 适配器模式(`Adapter Pattern`)将某个类的接口转换成客户端期望的另一个接口表示，主的目的是兼容性，让原本因接口不匹配不能一起工作的两个类可以协同工作。
-2. 适配器的别名为包装器(`Wrapper`)，适配器模式属于结构型模式
-3. 主要分为三类：类适配器模式、对象适配器模式、接口适配器模式。但实际工作中不局限于这三种经典模式。
+- 原理
+  - 适配器模式：将一个类的接口转换成另一种接口，让原本接口不兼容的类可以兼容
+  - 从用户的角度看不到被适配者，用户与被适配者是解耦的
+  - 用户调用适配器转化出来的目标接口方法， 适配器再调用被适配者的相关接口方法
+  - 用户收到反馈结果，感觉只是和目标接口交互， 如图
 
+  ![design-patterns-25](./image/design-patterns-25.png)
 
-#### 3.3.2.2. 基本原理
-
-1. 适配器模式：将一个类的接口转换成另一种接口，让原本接口不兼容的类可以兼容
-2. 从用户的角度看不到被适配者，用户与被适配者是解耦的
-3. 用户调用适配器转化出来的目标接口方法， 适配器再调用被适配者的相关接口方法
-4. 用户收到反馈结果，感觉只是和目标接口交互， 如图
-
-![design-patterns-25](./image/design-patterns-25.png)
-
-#### 3.3.2.3. 类适配器
+#### 3.3.2.2. 类适配器
 
 > **类适配器模式介绍**
 
@@ -3831,7 +3856,7 @@ private static Calendar createCalendar(TimeZone zone,
 - 优点：
   - 由于其继承了`src`类，所以它可以根据需求重写`src`类的方法，使得`Adapter`的灵活性增强了
 
-#### 3.3.2.4. 对象适配器
+#### 3.3.2.3. 对象适配器
 
 > **对象适配器模式介绍**
 
@@ -3910,7 +3935,7 @@ private static Calendar createCalendar(TimeZone zone,
   - 对象适配器和类适配器其实算是同一种思想，只不过实现方式不同。**根据合成复用原则， 使用组合替代继承**，
   - 所以它解决了类适配器必须继承`src`的局限性问题，也不再要求`dst`必须是接口(因为java不允许多继承，对象适配器允许dst为抽象类)。**对象适配器的使用成本更低，更灵活**
 
-#### 3.3.2.5. 接口适配器
+#### 3.3.2.4. 接口适配器
 
 > **接口适配器模式介绍**
 
@@ -4035,7 +4060,7 @@ private static Calendar createCalendar(TimeZone zone,
    }
    ```
 
-#### 3.3.2.6. SpringMVC源码
+#### 3.3.2.5. SpringMVC源码
 
 > **适配器模式在SpringMVC框架应用的源码剖析**
 
@@ -4047,7 +4072,6 @@ private static Calendar createCalendar(TimeZone zone,
 4. 接着调用 `InternalResourceViewResolve` 对返回的 `ModelAndView` 对象进行解析，找到指定的资源
 5. 目标资源（`JSP` 页面或者 `JSON` 字符串）最终都会以 `JSON` 字符串的形式返回给 `Tomcat`
 6. `Tomcat` 将字符串 以 `HTTP` 协议的方式返回给浏览器
-
 
 > **使用 `HandlerAdapter` 的原因分析:**
 
@@ -4372,7 +4396,7 @@ private static Calendar createCalendar(TimeZone zone,
 2. 通过 `HandlerAdapter` 可以使得 `DispatchServlet` 和具体的 `Controller` 解耦，扩展 `Controller` 时，我们只需要增加一个适配器类就完成了 `SpringMVC` 的扩展
 3. 对于同一类的请求方式，我们封装一个 `HandlerAdapter` 实现类，通过该 `HandlerAdapter` 实现类完成一类相同的请求
 
-#### 3.3.2.7. 注意事项
+#### 3.3.2.6. 注意事项
 
 三种命名方式，是根据`src`是以怎样的形式给到`Adapter`（在`Adapter`里的形式）来命名的。
 
@@ -4388,14 +4412,37 @@ private static Calendar createCalendar(TimeZone zone,
 
 ### 3.3.3. 桥接模式（Bridge Pattern）
 
+#### 3.3.3.1. 说明
 
-#### 3.3.3.1. 情景介绍
+- 概述
+  - 桥接模式(`Bridge`模式)是指：将实现与抽象放在两个不同的类层次中，使两个层次可以独立改变，桥接模式是一种结构型设计模式
+  - `Bridge`模式基于类的最小设计原则，通过使用封装、聚合及继承等行为让不同的类承担不同的职责。
+    - 它的主要特点是把抽象(`Abstraction`)与行为实现(`Implementation`)分离开来，
+    - 从而可以保持各部分的独立性以及应对他们的功能扩展
+
+> *出现两层继承，或者以继承的方式实现组合的时候，可以稍微试试这种设计模式。不通过两层继承，而通过客户端的自己指定组合方式*
+>
+> 简单来说就是通过客户端组合的方式，替代了继承
+
+- 类图
+
+  - `Client`：桥接模式的调用者
+  - `Abstraction`：抽象类，`Abstraction` 中维护了一个 `Implementor` 实现类的实例（聚合关系），`Abstraction` 充当桥接类
+  - `RefinedAbstraction`：`Abstraction` 的具体实现类
+  - `Implementor`：定义行为的接口
+  - `ConcreteImplementor`：`Implementor` 的具体实现类
+
+  > 从 `UML` 图： 这里的抽象类和接口是聚合的关系， 其实也是调用和被调用关系，抽象在 `Abstraction` 这一块，行为实现在 `Implementor` 这一块
+  >
+  ![design-patterns-32](./image/design-patterns-32.png)
+
+#### 3.3.3.2. 情景介绍
 
 现在对不同手机类型、不同品牌的手机实现操作编程(比如：开机、关机、上网，打电话等)
 
 ![design-patterns-30](./image/design-patterns-30.png)
 
-#### 3.3.3.2. 传统方式
+#### 3.3.3.3. 传统方式
 
 ![design-patterns-31](./image/design-patterns-31.png)
 
@@ -4405,35 +4452,11 @@ private static Calendar createCalendar(TimeZone zone,
 2. 违反了单一职责原则，当我们增加手机样式时，要同时增加所有品牌的手机，这样增加了代码维护成本
 3. 解决方案 --> 使用桥接模式
 
-#### 3.3.3.3. 基本介绍
-
-1. 桥接模式(`Bridge`模式)是指：将实现与抽象放在两个不同的类层次中，使两个层次可以独立改变，桥接模式是一种结构型设计模式
-2. `Bridge`模式基于类的最小设计原则，通过使用封装、聚合及继承等行为让不同的类承担不同的职责。它的主要特点是把抽象(`Abstraction`)与行为实现(`Implementation`)分离开来，从而可以保持各部分的独立性以及应对他们的功能扩展
-
-
-> *出现两层继承，或者以继承的方式实现组合的时候，可以稍微试试这种设计模式。不通过两层继承，而通过客户端的自己指定组合方式*
->
-> 简单来说就是通过客户端组合的方式，替代了继承
-
-#### 3.3.3.4. 类图原理
-
-![design-patterns-32](./image/design-patterns-32.png)
-
-1. `Client`：桥接模式的调用者
-2. `Abstraction`：抽象类，`Abstraction` 中维护了一个 `Implementor` 实现类的实例（聚合关系），`Abstraction` 充当桥接类
-3. `RefinedAbstraction`：`Abstraction` 的具体实现类
-4. `Implementor`：定义行为的接口
-5. `ConcreteImplementor`：`Implementor` 的具体实现类
-
-从 `UML` 图： 这里的抽象类和接口是聚合的关系， 其实也是调用和被调用关系，抽象在 `Abstraction` 这一块，行为实现在 `Implementor` 这一块
-
-
-#### 3.3.3.5. 优化代码
+#### 3.3.3.4. 桥接模式代码
 
 > **类图**
 
 ![design-patterns-33](./image/design-patterns-33.png)
-
 
 > **代码实现**
 
@@ -4633,7 +4656,7 @@ private static Calendar createCalendar(TimeZone zone,
 1. `Phone` 就像一座桥的感觉，它其实并没有做什么实质性的工作，只是调用 `Brand` 的具体实现类中的方法，就感觉像是一个请求从 `Phone` 的具体实现类通过 `Phone` 传递到了 `Brand` 的具体实现类
 2. 通过代码我们可以看到，增加一个新的手机样式，并不会引起类膨胀，因为只要新样式继承了 `Phone`，并通过构造器或者 `setter` 方法聚合一个 `Brand` 实现类的实例，就能完成组合的作用
 
-#### 3.3.3.6. JDBC源码
+#### 3.3.3.5. JDBC源码
 
 > **类图**
 
@@ -4702,8 +4725,7 @@ private static Calendar createCalendar(TimeZone zone,
 
 就以 `getConnection()` 方法的调用过程为例，`Client` 端调用 `DriverManager`（桥接器），`DriverManager` 去找 `java.sql.Connection` 的具体实现类
 
-
-#### 3.3.3.7. 注意事项及应用场景
+#### 3.3.3.6. 注意事项及应用场景
 
 > **注意事项**
 
@@ -4723,12 +4745,347 @@ private static Calendar createCalendar(TimeZone zone,
    1. 消息类型（抽象层）： 即时消息， 延时消息
    2. 消息分类（行为实现）： 手机短信， 邮件消息， `QQ` 消息
 
+### 3.3.4. 装饰/过滤模式（Decorator/Filter Pattern）
 
-### 3.3.4. 过滤器模式（Filter、Criteria Pattern）
+#### 3.3.4.1. 说明
 
+- 概述：
+  - 说明
+    - 装饰器模式（Decorator Pattern）允许向一个现有的对象添加新的功能，同时又不改变其结构，这种类型的设计模式属于结构型模式，它是作为现有的类的一个包装。
+    - 这种模式创建了一个装饰类，用来包装原有的类，并在保持类方法签名完整性的前提下，提供了额外的功能。它比继承更有弹性，装饰者模式也体现了开闭原则(`ocp`)
+  - 目的：
+    - **动态地给一个对象添加一些额外的职责**。
+    - 就增加功能来说，装饰器模式相比生成子类更为灵活。 可代替继承。
+  - 主要解决：一般的，我们为了扩展一个类经常使用继承方式实现，由于继承为类引入静态特征，并且随着扩展功能的增多，子类会很膨胀。
+  - 何时使用：在不想增加很多子类的情况下扩展类。
+  - 如何解决：将具体功能职责划分，同时继承装饰者模式。
+  - 关键代码：
+    - 1、Component 类充当抽象角色，不应该具体实现。
+    - 2、修饰类引用和继承 Component 类，具体扩展类重写父类方法。
 
+- 优缺点
+  - 优点：装饰类和被装饰类可以独立发展，不会相互耦合，装饰模式是继承的一个替代模式，装饰模式可以动态扩展一个实现类的功能。
+  - 缺点：多层装饰比较复杂。
+
+- 使用场景： 
+  - 1、扩展一个类的功能。
+  - 2、动态增加功能，动态撤销。
+
+- 原理
+  - 装饰者模式就像打包一个快递
+    - 主体： 比如陶瓷、衣服 ，即 `Component`，被装饰者
+    - 包装：比如报纸填充、塑料泡沫、纸板、木板，即 `Decorator`，装饰者
+  - `Component` 主体类：比如类似前面的 `Drink`
+  - `ConcreteComponent`：具体的主体，比如前面的各个单品咖啡
+  - `Decorator`：装饰者，比如各调料，装饰者里面聚合了一个 `Component` 的具体实现类
+    - 在如图的`Component`与`ConcreteComponent`之间
+    - 如果实现类 `ConcreteComponent` 有很多，还可以设计一个缓冲层，将共有的部分提取出来，抽象出一个缓冲层
+
+  ![design-patterns-40.png](./image/design-patterns-40.png)
+
+#### 3.3.4.2. 情景介绍
+
+> **星巴克咖啡订单项目（咖啡馆）**
+
+1. 咖啡种类/单品咖啡：`Espresso`(意大利浓咖啡)、 `ShortBlack`、 `LongBlack`(美式咖啡)、 `Decaf`(无因咖啡)
+2. 调料： `Milk`、 `Soy`(豆浆)、 `Chocolate`
+3. 要求在扩展新的咖啡种类时，具有良好的扩展性、改动方便、维护方便
+4. 使用`OO`的来计算不同种类咖啡的费用：客户可以点单品咖啡，也可以单品咖啡 + 调料组合
+
+#### 3.3.4.3. 传统方式
+
+> **方案1：解决星巴克咖啡订单问题分析**
+
+![design-patterns-39.png](./image/design-patterns-39.png)
+
+1. `Drink` 是一个抽象父类，表示饮料
+2. `des` 就是对咖啡的描述，比如咖啡的名字
+3. `cost()` 方法就是计算费用， 在 `Drink` 类中做成一个抽象方法
+4. `Decaf` 就是单品咖啡， 继承 `Drink`，并实现 `cost()` 方法
+5. `Espress && Milk` 就是单品咖啡 + 调料， 这类的组合有很多种
+
+- 问题：这样设计，会有很多类，当我们增加一个单品咖啡，或者一个新的调料，类的数量就会倍增，就会出现类爆炸
+
+> **方案2：解决星巴克咖啡订单(稍微好一些)**
+
+![design-patterns-38.png](./image/design-patterns-38.png)
+
+- 前面分析到方案 `1` 中，因为咖啡单品 + 调料组合会造成类的倍增
+- 因此可以做改进，将调料内置到 `Drink` 类，这样就不会造成类数量过多。从而提高项目的维护性(如图)
+- 说明：`milk`、`soy`、`chocolate` 可以设计为`Boolean`，表示是否要添加相应的调料
+
+- 问题
+  - 方案 `2` 可以控制类的数量，不至于造成很多的类
+  - 在增加或者删除调味品种类时，代码的维护量很大
+  - 考虑到用户可以添加多份调料时，可以将 `hasMilk()` 返回一个对应 `int` 整形值
+  - 考虑使用装饰者模式
+
+#### 3.3.4.4. 装饰者模式代码
+
+> **解析**
+
+- 说明
+  - `Drink` 类就是前面说的抽象类，即 `Component` 主体类
+  - 由于单品咖啡种类较多，设计 `Coffee` 抽象类作为缓冲层，`Coffee` 抽象层的实现类就是被装饰类，比如 `ShortBlack`、`Decaf` 等就是单品咖啡
+  - `Decorator` 是一个装饰类，继承了 `Drink` 类，并且聚合了一个被装饰的对象(`Drink obj`)，`Decorator` 的 `cost()` 方法进行一个费用的叠加计算，需要递归计算价格
+  - 各种调味品，比如 `Chocolate`、`Milk`、`Soy` 等，继承 `Decorator` 装饰类，聚合（装饰）了一个被装饰者
+
+  ![design-patterns-41.png](./image/design-patterns-41.png)
+
+- 解决方案
+  - `Milk`包含了`LongBlack`
+  - 一份`Chocolate`包含了(`Milk + LongBlack`)
+  - 一份`Chocolate`包含了(`Chocolate + Milk + LongBlack`)
+  - 这样不管是什么形式的单品咖啡 + 调料组合，通过递归方式可以方便的组合和维护
+  - 使用装饰者模式，程序的扩展性特别强，比如我们想添加一个新的单品咖啡种类：`DefCafe`，我们只需让此类继承 `Coffee` 抽象父类即可，其他部分的代码无须作任何修改
+
+  ![design-patterns-42.png](./image/design-patterns-42.png)
+
+> **代码实现**
+
+1. `Drink`：即 `Component` 主体类，其中定了义一个抽象方法 `cost()`，用于计算订单费用
+
+   ```java
+   public abstract class Drink {
+   
+   	public String des; // 描述
+   	private float price = 0.0f; // 价格
+   	
+   	// 计算费用的抽象方法，由子类来实现
+   	public abstract float cost();
+   
+   	public String getDes() {
+   		return des;
+   	}
+   
+   	public void setDes(String des) {
+   		this.des = des;
+   	}
+   
+   	public float getPrice() {
+   		return price;
+   	}
+   
+   	public void setPrice(float price) {
+   		this.price = price;
+   	}
+   
+   }
+   ```
+
+2. `Coffee`：被装饰者的抽象父类，因为具体的单品咖啡品种太多，所以我们将 `Coffee` 抽象类作为缓冲层
+
+   ```java
+   //被装饰者
+   public abstract class Coffee extends Drink {
+   	@Override
+   	public float cost() {
+   		return super.getPrice();
+   	}
+   }
+   ```
+
+3. `Espresso`、`LongBlack`、`ShortBlack`、`DeCaf`：被装饰者的具体实现类
+
+   ```java
+   public class Espresso extends Coffee {
+   	public Espresso() {
+   		setDes(" 意大利咖啡 ");
+   		setPrice(6.0f);
+   	}
+   }
+   
+   public class LongBlack extends Coffee {
+   	public LongBlack() {
+   		setDes(" longblack ");
+   		setPrice(5.0f);
+   	}
+   }
+   
+   public class ShortBlack extends Coffee {
+   	public ShortBlack() {
+   		setDes(" shortblack ");
+   		setPrice(4.0f);
+   	}
+   }
+   
+   public class DeCaf extends Coffee {
+   	public DeCaf() {
+   		setDes(" 无因咖啡 ");
+   		setPrice(1.0f);
+   	}
+   }
+   ```
+
+4. `Decorator`：装饰者的抽象父类，该类实现了 `Drink` 接口，同时 `Decorator` 中聚合了一个 `Drink` 的具体实现类的对象，`cost()` 方法用于计算【装饰者（调味品） + 被装饰者（咖啡）】的费用
+
+   ```java
+   // 装饰者
+   public class Decorator extends Drink {
+       
+   	private Drink obj; // 聚合一个单品咖啡（被装饰者）
+   
+   	public Decorator(Drink obj) {
+   		this.obj = obj;
+   	}
+   
+   	@Override
+   	public float cost() {
+   		// super.getPrice：调味品（装饰者）的价格
+   		// obj.cost()：单品咖啡（被装饰者）的价格
+   		return super.getPrice() + obj.cost();
+   	}
+   
+   	@Override
+   	public String getDes() {
+   		// des：调味品（装饰者）的描述信息
+   		// getPrice()：调味品（装饰者）的价格
+   		// obj.getDes()：单品咖啡（被装饰者）的信息
+   		return des + " " + getPrice() + " && " + obj.getDes();
+   	}
+   
+   }
+   ```
+
+5. `Chocolate`、`Milk`、`Soy`：装饰者的具体实现类
+
+   ```java
+   //具体的Decorator， 这里就是调味品
+   public class Chocolate extends Decorator {
+   	public Chocolate(Drink obj) {
+   		super(obj);
+   		setDes(" 巧克力 ");
+   		setPrice(3.0f); // 调味品 的价格
+   	}
+   }
+   
+   public class Milk extends Decorator {
+   	public Milk(Drink obj) {
+   		super(obj);
+   		setDes(" 牛奶 ");
+   		setPrice(2.0f);
+   	}
+   }
+   
+   public class Soy extends Decorator {
+   	public Soy(Drink obj) {
+   		super(obj);
+   		setDes(" 豆浆  ");
+   		setPrice(1.5f);
+   	}
+   }
+   ```
+
+6. `CoffeeBar`：客户端，发出咖啡订单请求
+
+   ```java
+   public class CoffeeBar {
+   
+   	public static void main(String[] args) {
+   		// 装饰者模式下的订单：2份巧克力+一份牛奶+LongBlack
+   
+   		// 1. 点一份 LongBlack
+   		Drink order = new LongBlack();
+   		System.out.println("LongBlack的费用=" + order.cost());
+   		System.out.println("LongBlack的描述=" + order.getDes());
+   
+   		// 2. order 加入一份牛奶
+   		order = new Milk(order);
+   		System.out.println("order 加入一份牛奶 费用 =" + order.cost());
+   		System.out.println("order 加入一份牛奶 描述 = " + order.getDes());
+   
+   		// 3. order 加入一份巧克力
+   		order = new Chocolate(order);
+   		System.out.println("order 加入一份牛奶 加入一份巧克力  费用 =" + order.cost());
+   		System.out.println("order 加入一份牛奶 加入一份巧克力 描述 = " + order.getDes());
+   
+   		// 3. order 加入一份巧克力
+   		order = new Chocolate(order);
+   		System.out.println("order 加入一份牛奶 加入2份巧克力   费用 =" + order.cost());
+   		System.out.println("order 加入一份牛奶 加入2份巧克力 描述 = " + order.getDes());
+   		System.out.println("===========================");
+   
+   		// 牛奶+无卡咖啡
+   		Drink order2 = new DeCaf();
+   		System.out.println("order2 无因咖啡  费用 =" + order2.cost());
+   		System.out.println("order2 无因咖啡 描述 = " + order2.getDes());
+   
+   		order2 = new Milk(order2);
+   		System.out.println("order2 无因咖啡 加入一份牛奶  费用 =" + order2.cost());
+   		System.out.println("order2 无因咖啡 加入一份牛奶 描述 = " + order2.getDes());
+   	}
+   }
+   ```
+
+7. 程序运行结果
+
+   ```
+   LongBlack的费用=5.0
+   LongBlack的描述= longblack 
+   order 加入一份牛奶 费用 =7.0
+   order 加入一份牛奶 描述 =  牛奶  2.0 &&  longblack 
+   order 加入一份牛奶 加入一份巧克力  费用 =10.0
+   order 加入一份牛奶 加入一份巧克力 描述 =  巧克力  3.0 &&  牛奶  2.0 &&  longblack 
+   order 加入一份牛奶 加入2份巧克力   费用 =13.0
+   order 加入一份牛奶 加入2份巧克力 描述 =  巧克力  3.0 &&  巧克力  3.0 &&  牛奶  2.0 &&  longblack 
+   ===========================
+   order2 无因咖啡  费用 =1.0
+   order2 无因咖啡 描述 =  无因咖啡 
+   order2 无因咖啡 加入一份牛奶  费用 =3.0
+   order2 无因咖啡 加入一份牛奶 描述 =  牛奶  2.0 &&  无因咖啡 
+   ```
+
+------
+
+#### 3.3.4.5. JDK FileInputStream
+
+> **装饰者模式在JDK应用的源码分析**
+
+- `Java`的`IO`结构， `FilterInputStream`就是一个装饰者
+
+  - `InputStream` 是(被)装饰者的抽象父类，类似我们前面讲的 `Drink`
+  - `FileInputStream` 是 `InputStream` 子类，为具体的被装饰者，类似我们前面的 `DeCaf`，`LongBlack`
+  - `FilterInputStream` 是 `InputStream` 子类，为装饰者的抽象父类，类似我们前面 的 `Decorator` 装饰者
+  - `DataInputStream` 是 `FilterInputStream` 子类，为具体的装饰者，类似前面的 `Milk`，`Soy` 等
+  - `FilterInputStream` 类中有 `protected volatile InputStream in;` 代码，即其中含有被装饰者
+  - 分析得出在`jdk` 的`io`体系中，就是使用装饰者模式
+
+  ![design-patterns-43.png](./image/design-patterns-43.png)
 
 ### 3.3.5. 组合模式（Composite Pattern）
+
+#### 说明
+
+- 概述
+  - 目的：将对象组合成树形结构以表示"部分-整体"的层次结构。组合模式使得用户对单个对象和组合对象的使用具有一致性。
+  - 主要解决：它在我们树型结构的问题中，模糊了简单元素和复杂元素的概念，客户程序可以像处理简单元素一样来处理复杂元素，从而使得客户程序与复杂元素的内部结构解耦。
+  - 何时使用： 
+    - 1、您想表示对象的部分-整体层次结构（树形结构）。 
+    - 2、您希望用户忽略组合对象与单个对象的不同，用户将统一地使用组合结构中的所有对象。
+  - 如何解决：树枝和叶子实现统一接口，树枝内部组合该接口。
+  - 关键代码：树枝内部组合该接口，并且含有内部属性 List，里面放 Component。
+
+- 应用实例： 
+  - 1、算术表达式包括操作数、操作符和另一个操作数，其中，另一个操作数也可以是操作数、操作符和另一个操作数。 
+  - 2、在 JAVA AWT 和 SWING 中，对于 Button 和 Checkbox 是树叶，Container 是树枝。
+
+- 优缺点
+  - 优点： 
+    - 1、高层模块调用简单。
+    - 2、节点自由增加。
+  - 缺点：在使用组合模式时，其叶子和树枝的声明都是实现类，而不是接口，违反了依赖倒置原则。
+
+- 使用场景：部分、整体场景，如树形菜单，文件、文件夹的管理。
+
+- 注意事项：定义时为具体类。
+
+#### 情景介绍
+
+#### 传统方式
+
+#### 组合模式代码
+
+#### HashMap 源码
 
 ### 3.3.6. 外观模式（Facade Pattern）
 
@@ -4790,12 +5147,13 @@ private static Calendar createCalendar(TimeZone zone,
 
 ### 3.5.9. 传输对象模式（Transfer Object Pattern）
 
-## 设计模式的实际应用
+## 3.6. 设计模式的实际应用
 
-### 工厂+策略模式消除if-else
+### 3.6.1. 工厂+策略模式消除if-else
 
-
-# 参考资料
+# 4. 参考资料
 
 - [设计模式六大原则详解](https://www.cnblogs.com/huansky/p/13700861.html)
 - [Java设计模式](https://www.bilibili.com/video/BV1G4411c7N4)
+- [设计模式笔记](https://blog.csdn.net/oneby1314/category_10348963.html)
+- [菜鸟教程](https://www.runoob.com/design-pattern/design-pattern-tutorial.html)

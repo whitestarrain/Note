@@ -1,6 +1,11 @@
+if exists('g:vscode')
+    " VSCode extension
+else
+    " ordinary neovim
+
 let mapleader="\<space>"
 let g:which_key_map =  {}
-let g:which_key_map.z = { 'name' : '+second' }
+let g:which_key_map.z = { 'name' : '[second]' }
 " 关于帮助文档。:help startify 即可
 " 然后使用 c-] c-i c-o 进行跳转查看
 " nvim-qt 要加上 --no-ext-tabline，才能使用airline的bufferline
@@ -63,6 +68,7 @@ autocmd User vim-which-key call which_key#register('<Space>', 'g:which_key_map')
 
 " git插件
 Plug 'tpope/vim-fugitive'
+Plug 'junegunn/gv.vim'
 
 "-----------------------------------vim-gitgutter--------------------------------------
 
@@ -356,6 +362,10 @@ let g:mdip_imgdir_intext = g:mdip_imgdir " md中()中的位置
 function! SetImagePath()
     call ShowImagePath()
     let l:name = input('Image path: ')
+    if(strlen(l:name)==0)
+      echo "image path empty!"
+      return ""
+    endif
     let g:mdip_imgdir = l:name
     let g:mdip_imgdir_intext = l:name
     return name
@@ -454,8 +464,9 @@ syntax sync minlines=256
 
 
 " 设置字体大小
-"  set guifont=Cousine_NF:h11
-" let g:Guifont="Cousine_NF:h11"
+" set guifont=Cousine_NF:h11
+" let g:Guifont="Consolas:h13""
+autocmd vimenter * GuiFont! Consolas:h13
 
 " F2进入粘贴模式
 set pastetoggle=<F2>
@@ -522,7 +533,7 @@ au GuiEnter * set t_vb=
 " 跳转到开始菜单
 nnoremap <leader>st :Startify<cr>
 nnoremap <leader>ss :SSave<cr>
-let g:which_key_map.s = { 'name' : '+startify' }
+let g:which_key_map.s = { 'name' : '[startify]' }
 let g:which_key_map.s.t = "start page"
 let g:which_key_map.s.s = "session save"
 
@@ -536,15 +547,17 @@ let g:which_key_map.v = 'NERDTreeFind'
 
 " ctrlp map
 let g:ctrlp_map = '<leader>fp'
-let g:which_key_map.f = { 'name' : '+find' }
+let g:which_key_map.f = { 'name' : '[find]' }
 let g:which_key_map.f.p = 'ctrlp'
 " 不能搜索下层文件
 " 选择文件后 ,v 来定位
 
 " FZF
 nnoremap <silent><leader>ff :FZF<CR>
-let g:which_key_map.f.f = 'fzf'
+let g:which_key_map.f.f = 'fzf-file'
 
+nnoremap <silent><leader>fb :Buffers<CR>
+let g:which_key_map.f.b = 'fzf-buffer'
 
 " easymotion map
 nmap <leader>j <Plug>(easymotion-s2)
@@ -575,7 +588,7 @@ nmap <leader>hb  <Plug>(GitGutterPrevHunk)
 nmap <leader>hh  :GitGutterLineHighlightsToggle<CR>
 nnoremap [c :GitGutterPrevHunk<CR>
 nnoremap ]c :GitGutterNextHunk<CR>
-let g:which_key_map.h = { 'name' : '+hunk' }
+let g:which_key_map.h = { 'name' : '[hunk]' }
 let g:which_key_map.h.b = "findBack"
 let g:which_key_map.h.f = "findForward"
 let g:which_key_map.h.p = "preview"
@@ -625,7 +638,7 @@ nnoremap > >>
 
 nnoremap <silent><leader>ob :!chrome %:p <cr> <cr>
 nnoremap <silent><leader>ov :!code % <cr> <cr>
-let g:which_key_map.o = { 'name' : '+open in' }
+let g:which_key_map.o = { 'name' : '[open in]' }
 let g:which_key_map.o.b = "browser"
 let g:which_key_map.o.v = "vscode"
 
@@ -642,8 +655,26 @@ function! <SID>BufCloseOthers()
    endfor
 endfunction
 map <leader>bo :BcloseOthers<cr><cr>
-let g:which_key_map.b = { 'name' : '+buffer' }
+let g:which_key_map.b = { 'name' : '[buffer]' }
 let g:which_key_map.b.o = "deleteOthers"
+
+
+" 将链接下的文件下载到指定位置
+function! SaveImageByUrl()
+    let l:name = input('Image name: ') . ".png"
+    let l:relate_path = expand("%")[0:strlen(expand("%"))-strlen(expand("%:t"))-2]
+    let l:image_path = l:relate_path . g:mdip_imgdir[1:] . "/" . l:name
+    let l:image_path = substitute(l:image_path,"\\","/","")
+    execute("!curl <cfile> >" . l:image_path)
+    execute "normal! 0Di![" . l:name . "](" . g:mdip_imgdir . "/" . l:name . ")"
+endfunction
+nnoremap <leader>zd :call SaveImageByUrl() <cr>
+let g:which_key_map.z.d = "downloadImageFile"
+
+" 压缩空行
+nnoremap <leader>zl :g/^$/,/./-j<cr> :/jj<cr>
+let g:which_key_map.z.l = "compress empty line"
+
 "=================================================map end===================================================
 
 " 不知道干啥的
@@ -664,3 +695,6 @@ let g:which_key_map.b.o = "deleteOthers"
 "=================================================end===================================================
 
 "=================================================end===================================================
+"
+endif
+

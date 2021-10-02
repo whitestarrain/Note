@@ -80,7 +80,6 @@
    数据控制语言，用来定义数据库访问权限和安全级别，及创建用户。关键字：GRANT，REVOKE 等
    ![语法分类图解](image/MySQL-3.jpg)
 
-
 ## 2.4. 数据类型
 
 ![数据类型](image/MySQL-4.jpg)
@@ -105,7 +104,6 @@
 * 数据类型和域的区别：
   * 域可以声明约束（not null,check等）
   * 域不是强类型，只要两个域中的数值类型相同，就能互相赋值；而数据类型不行
-
 
 ## 2.5. 语法
 
@@ -1275,7 +1273,6 @@ in
 
 文档 **5.1.3 Server Option, System Variable, and Status Variable Reference**中可以查看所有参数和说明
 
-
 # 3. 存储过程
 
 ## 3.1. 事务和存储过程
@@ -1299,9 +1296,7 @@ in
   - 但是，正如前文提到，在多声明更新时非常重要，因为事务能够实际提升操作速度。
   - 同样，如果需要在节省数毫秒时间和危害数据完整性之间做出一个选择的话，那么正确的答案就是保持数据清洁，不要担心那数毫秒的时间消耗。
 
-
 ## 3.2. 优缺点
-
 
 > 数据量小的，或者和钱没关系的项目不用存储过程也可以正常运作。
 
@@ -1318,8 +1313,6 @@ in
 - 缺点：
   - 程序部分功能移到了数据库内，**破坏了MVC三层结构设计**
   - **可移植性差**。
-
-
 
 # 4. MySQL架构
 
@@ -1361,8 +1354,6 @@ in
 
 - 总结  
   ![Mysql-4-22](./image/Mysql-4-22.png)-
-
-
 
 ## 5.3. 索引概述
 
@@ -1584,7 +1575,6 @@ analyze table table_index;
 
 ![Mysql-5-4](./image/Mysql-5-4.png)
 
-
 > InoDB存储引擎Cardinality的策略
 
 在InnoDB存储引擎中，这个关键字的更新发生在两个操作中：insert和update。但是，并不是每次都会更新，这样会增加负荷，所以，对于这个关键字的更新有它的策略：
@@ -1600,11 +1590,9 @@ analyze table table_index;
 
 因为随机采样，所以，每次的Cardinality值都是不一样的，只有一种情况会一样的，就是表中的叶子节点**小于或者等于8**，这时候，怎么随机采样都是这8个，所以也就一样的。
 
-
 ## 5.6. 存储引擎和索引
 
 ### 5.6.1. 概述
-
 
 ### 5.6.2. B+树
 
@@ -1661,7 +1649,6 @@ InnoDB中的二级索引存放的是主键值，如果需要查询对应的数�
 
 [页分裂问题](https://www.cnblogs.com/ZhuChangwu/p/14041410.html)
 
-
 #### 5.6.3.3. B+树节点数量计算
   > ![Mysql2-1](./image/Mysql2-1.png) 
   - mysql B+树中指针大小大概6Byte
@@ -1677,7 +1664,6 @@ InnoDB中的二级索引存放的是主键值，如果需要查询对应的数�
     - 可能存储 **索引指向的一行数据 的指向每个字段数据 的指针**(也就是存储指向数据的指针,myisam存储引擎)
     - 也可能存储 **索引指向的一行数据的每个字段的数据**(也就是存储数据,Innodb存储引擎)
   - 那么三层的B+数能够存储的数据元素数量为 1170*1170*16
-
 
 ### 5.6.4. Innodb存储引擎
 
@@ -1719,7 +1705,6 @@ InnoDB中的二级索引存放的是主键值，如果需要查询对应的数�
   - 加锁过程
   - MRR优化
 
-
 ### 5.6.5. 插曲:count(*)的表现
 
 待补充
@@ -1731,7 +1716,6 @@ InnoDB中的二级索引存放的是主键值，如果需要查询对应的数�
 ### 5.6.6. 两个存储引擎的区别(重要)
 
 ![Mysql2-5](./image/Mysql2-5.png)
-
 
 - 事务
   - 为了数据库操作的原子性，我们需要事务。保证一组操作要么都成功，要么都失败，比如转账的功能。我们通常将多条`SQL`语句放在`begin`和`commit`之间，组成一个事务。
@@ -1992,7 +1976,6 @@ MySQL 内置的修饰符，上面查询最小搜索长度时，搜索结果 ft_b
 select * test where match(content) against('a*' in boolean mode);
 ```
 
-
 ##### 5.6.7.2.7. 几个注意点
 
 1. 使用全文索引前，搞清楚版本支持情况；
@@ -2012,7 +1995,6 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
 阿里巴巴大部分mysql数据库其实使用的percona的原型加以修改。有退出AliSql和AliRedis。
 
 ### 5.6.9. 思考题(重要)
-
 
 - **为什么Innodb必须要有主键，并且推荐使用整型的自增主键(阿里)**
   - Innodb的数据是通过主键进行组织的。(见上面的图)
@@ -2068,7 +2050,6 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
     > 覆盖索引是一种从辅助索引中就可以得到查询的记录，而不需要查询聚集索引中的记录，使用覆盖索引的一个好处是辅助索引不包含整行记录的所有信息，所以大小远小于聚集索引，因此可以大大减少IO操作。覆盖索引的另外一个好处就是对于统计问题有优化。
   - **效率高**。索引列越多，通过索引筛选出的数据越少。有1000W条数据的表，有如下sql:select from table where col1=1 and col2=2 and col3=3,假设假设每个条件可以筛选出10%的数据，如果只有单值索引，那么通过该索引能筛选出1000W10%=100w条数据，然后再回表从100w条数据中找到符合col2=2 and col3= 3的数据，然后再排序，再分页；如果是联合索引，通过索引筛选出1000w10% 10% *10%=1w，效率提升可想而知！
 
-
 ---
 
 使用`explain`进行调优时，Extra列的Using filesort也与索引有关。
@@ -2113,7 +2094,6 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
     > ![Mysql-4-2](./image/Mysql-4-2.png) 
   - id相同不同，同时存在：id如果相同，可以认为是一组，从上往下顺序执行；在所有组中，id值越大，优先级越高，越先执行；衍生=DERIVED
     > ![Mysql-4-3](./image/Mysql-4-3.png) 
-
 
 #### 5.7.2.2. select_type
 
@@ -2188,7 +2168,6 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
   - **实际使用** 的索引，如果为null，则没有使用索引
   - **若查询中使用了覆盖索引，则该索引仅出现在key列表中，possible_keys中不会出现**
     ![Mysql-4-11](./image/Mysql-4-11.png)
-
 
 <details>
 <summary style="color:red;">覆盖索引（后面也会提到）</summary>
@@ -2699,7 +2678,6 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
   4 rows in set (0.00 sec)
   ```
 
-
 ### 5.9.2. 索引最左前缀原理
 
 - 表现：
@@ -2711,7 +2689,6 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
   - 排序时就是 **按照字段的顺序** 构建B+树的。
   - 上图例子中，只有name相同时，才会按照age进行排序
   - 没办法直接根据第二个字段直接去查索引B+树。
-
 
 ### 5.9.3. 失效原因
 
@@ -2742,7 +2719,6 @@ Percona为MySQL数据库服务器进行了改进，在功能和性能上较MySQL
   - like以通配符开头（’%abc…’）mysql索引失效会变成全表扫描操作
   - 字符串不加单引号索引失效
   - 少用or，用它连接时会索引失效
-
 
 #### 5.9.3.3. 示例
 
@@ -3457,7 +3433,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
   - group by 基本上都需要进行排序，但凡使用不当，会有临时表产生
   - 定值为常量、范围之后失效，最终看排序的顺序
 
-
 # 6. 查询截取优化
 
 ## 6.1. 一般优化流程
@@ -3992,7 +3967,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
     - SOURCE：显示和Source_function，Source_file，Source_line相关的开销信息
     - SWAPS：显示交换次数相关开销的信息
 
-
 - **十分注意**：status中如果出现下面的一个，就 **十分危险**
   - converting HEAP to MyISAM：查询结果太大，内存都不够用了往磁盘上搬了。
   - Creating tmp table：创建临时表，mysql 先将拷贝数据到临时表，然后用完再将临时表删除。
@@ -4128,7 +4102,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
 
 <!--file:///D:/learn/githubRepo/JavaGuide/docs/system-design/micro-service/%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.md-->
 
-
 #### 7.3.6.4. 数去迁移问题
 
 > **停机迁移**
@@ -4254,7 +4227,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
 
   ![Mysql-8-1](./image/Mysql-8-1.png)
 
-
 ### 8.2.4. 持久性原理
 
 - 说明：
@@ -4318,7 +4290,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
     - （3）内容不同：redo log是物理日志，内容基于磁盘的Page；binlog的内容是二进制的，根据binlog_format参数的不同，可能基于sql语句、基于数据本身或者二者的混合。
     - （4）写入时机不同：binlog在事务提交时写入；redo log的写入时机相对多元：
 
-
 - redo log刷盘时机：innodb_flush_log_at_trx_commit
   - 为0（默认），log buffer将每秒一次地写入log file中，并且log file的flush(刷到磁盘)操作同时进行.该模式下，在事务提交的时候，不会主动触发写入磁盘的操作。
   - 为1，每次事务提交时MySQL都会把log buffer的数据写入log file，并且flush(刷到磁盘)中去.
@@ -4352,7 +4323,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
    - 概括： **A读到了B新插入的数据，多次重复读的结果不同**
    - 重要： **需要注意的是，在SQL标准中，RR是无法避免幻读问题的，但是InnoDB实现的RR一定程度上了幻读问题(看下面)。**
 
-
 ## 8.4. 事务的隔离级别
 
 - 说明：
@@ -4368,7 +4338,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
     > innodb的间隙锁解决了幻读问题
   - **串行化**：最高的隔离级别，在这个隔离级别下，不会产生任何异常。并发的事务，就像事务是在一个个按照顺序执行一样
 
-
 | 事务隔离级别              | 读数据一致性                           | 脏读 | 不可重复读 | 幻读 |
 | :------------------------ | :------------------------------------- | :--- | :--------- | :--- |
 | 未提交读 read-uncommitted | 最低级别，只能保证不读物理上损坏的数据 | 是   | 是         | 是   |
@@ -4377,7 +4346,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
 | 串行化 serializable       | 最高级别，事务级                       | 否   | 否         | 否   |
 
 ## 8.5. 查看事务状态sql
-
 
 - **查看当前开启的事务信息：** 
   - `select * from information_schema.innodb_trx;`
@@ -4548,7 +4516,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
 
 #### 9.2.5.1. 示例
 
-
 - 在 session 1 会话中，给 mylock 表加个写锁
   ```
   mysql> lock table mylock write;
@@ -4634,7 +4601,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
   - 因为写锁后，其他线程不能做任何操作，大量的更新会使查询很难得到锁，从而造成永远阻塞
 
 ## 9.3. 行锁
-
 
 ### 9.3.1. innodb使用表锁
 
@@ -4781,7 +4747,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
   -- 在这儿阻塞着呢~~~
   ```
 
-
 ### 9.3.5. 间隙锁
 
 #### 9.3.5.1. 说明
@@ -4843,7 +4808,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
     mysql> update test_innodb_lock set b='XXX' where a=8;
     # 在这儿阻塞着呢~~~
     ```
-
 
 ### 9.3.7. 扩展：悲观锁与乐观锁
 
@@ -4911,7 +4875,6 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
 - 锁定粒度界于表锁和行锁之间，并发度一般。
 - 了解即可
 
-
 ## 9.4. 锁总结拓展
 
 ### 9.4.1. 理清思路
@@ -4975,7 +4938,6 @@ InnoDB引擎实现了标准的行级别锁，分别是共享锁和排他锁。
 
 [参考](https://i6448038.github.io/2019/02/23/mysql-lock/)
 
-
 ![Mysql-7-3](./image/Mysql-7-3.png)
 
 - latch:
@@ -5005,7 +4967,6 @@ InnoDB引擎实现了标准的行级别锁，分别是共享锁和排他锁。
 待整理
 
 [B+树并发控制涉及lock和latch](http://mysql.taobao.org/monthly/2020/11/02/)
-
 
 ### 9.4.3. innodb锁说明
 
@@ -5178,7 +5139,6 @@ InnoDB引擎实现了标准的行级别锁，分别是共享锁和排他锁。
   - 可以使用`sql`语句`select ... for update`来开启锁，`select`语句为范围查询，匹配列字段为索引项，且有数据返回
   - 或者`select`语句为等值查询，匹配列字段为索引项，不管有没有数据返回。
 
-
 #### 9.4.3.5. 插入意向锁(Insert Intention Locks)
 
 待补充。（在主键索引，唯一索引，普通索引的表现）
@@ -5271,7 +5231,6 @@ InnoDB引擎实现了标准的行级别锁，分别是共享锁和排他锁。
 
 待补充
 
-
 ### 9.4.4. 加锁过程(重要※)
 
 待整理
@@ -5325,7 +5284,6 @@ delete from t1 where id = 10;
 - 组合五： **id主键+RR**
   - 查得到数据:和id主键+RC相同
   - 查不到数据:临近节点的间隙锁(待验证)
-
 
 - 组合六： **id唯一索引+RR**
   - 查得到数据: 和id唯一索引+RC相同
@@ -5404,7 +5362,6 @@ delete from t1 where id = 10;
 - 范围查询???？
   - 如果范围查询唯一索引或查询非唯一索引且命中记录，则锁定所有命中行的临键锁 ，并同时锁定最大记录行下一个区间的间隙锁。
   - 如果范围查询索引且没有命中记录，退化为临近结点的间隙锁(包括结点也被锁定)。
-
 
 # 10. MVCC
 
@@ -5500,7 +5457,6 @@ v
 ```
 </details>
 
-
 ## 10.3. MVCC实现原理
 
 [讲解视频](https://www.bilibili.com/video/BV1YJ411J7vb?from=search&seid=8176876032281963392)
@@ -5576,7 +5532,6 @@ v
     - 因为`READ UNCOMMITTED`总是读取最新的数据行，而不是符合当前事务版本的数据行
     - 而`SERIALIZABLE` 则会对所有读取的行都加锁
 
-
 ### 10.3.4. 合作实现MVCC
 
 对于使用RC和RR隔离级别的事务来说，都必须保证读到已经提交了的事务修改过的记录，也就是说假如另一个事务已经修改了记录但是尚未提交，是不能直接读取最新版本的记录的。核心问题就是：需要判断一下版本链中的哪个版本是当前事务可见的。为此，`InnoDB`提出了一个`Read View`的概念。
@@ -5597,7 +5552,6 @@ v
 另外：对于删除的情况可以认为是update的特殊情况,会将版本链上最新的数据复制一份,然后将 trx_id 修改成除操作的trx_id,同时在该条 记录的头信息( record header)里的(deleted flag)标记位写上true,来表示当前记录已经被删除,在直询时按照上面的规则查到对应的记录如果delete_flag标记位为true,意味着记录已被除,不返回数据。
 
 ![Mysql-8-18](./image/Mysql-8-18.png)
-
 
 ---
 
@@ -5635,8 +5589,6 @@ id=1，name=‘lilei’；
 当执行`update`语句时，都是先读后写的，而这个读，是当前读，只能读当前的值，跟`readview`查找时的快照读区分开。
 
 RC模式类似，这里不再进行说明
-
-
 
 ## 10.4. innodb RR避免幻读：MVCC+LBCC
 
@@ -5687,7 +5639,6 @@ t Session A                   Session B
 v (shit, 刚刚明明告诉我没有这条记录的)
 ```
 </details>
-
 
 <details>
 <summary style="color:red;">示例2:读的时候只有一行，更新时却change两行</summary>
@@ -5745,7 +5696,6 @@ v
 
 待补充
 
-
 ## 11.1. 主从复制
 
 ### 11.1.1. 原理
@@ -5773,7 +5723,6 @@ v
   - 另外，常见的一些同步 MySQL 数据到其他数据源的工具（比如 canal）的底层一般也是依赖 binlog 。
 
 ### 11.1.2. 实现操作
-
 
 ## 11.2. 读写分离
 
@@ -5852,7 +5801,6 @@ v
   // 继续JDBC操作
   ```
 
-
 #### 11.2.3.3. 延迟读取
 
 - 说明
@@ -5862,7 +5810,6 @@ v
 
 - 使用场景：
   - 比如支付成功之后，跳转到一个支付成功的页面，当点击返回之后才返回自己的账户。
-
 
 #### 11.2.3.4. 其他解决方式
 
