@@ -2022,6 +2022,9 @@ public class Runtime {
 
 ![design-patterns-15](./image/design-patterns-15.png)
 
+<details>
+<summary style="color:red;">展开</summary>
+
 1. `Pizza` 抽象父类
 
    ```java
@@ -2149,6 +2152,8 @@ public class Runtime {
    }
    ```
 
+</details>
+
 > **传统方式的优缺点分析**
 
 1. 优点是比较好理解，简单易操作。
@@ -2173,6 +2178,9 @@ public class Runtime {
 ![design-patterns-16](./image/design-patterns-16.png)
 
 > **代码**
+
+<details>
+<summary style="color:red;">展开</summary>
 
 1. `Pizza` 抽象父类以及 `Pizza` 的具体实现类和上面一样
 
@@ -2267,6 +2275,8 @@ public class Runtime {
    }
    ```
 
+</details>
+
 > **补充说明**
 
 简单工厂模式也叫静态工厂模式，很多代码中都将简单工厂中提供示例 `Bean` 的方法声明为静态 `static` 方法，可通过工厂类直接调用
@@ -2326,6 +2336,9 @@ public class SimpleFactory {
 ![design-patterns-17](./image/design-patterns-17.png)
 
 > **代码**
+
+<details>
+<summary style="color:red;">展开</summary>
 
 1. `Pizza`：抽象父类，和之前的定义一样
 
@@ -2501,6 +2514,8 @@ public class SimpleFactory {
    }
    ```
 
+</details>
+
 > **工厂方法模式总结**
 
 1. 首先要说明的是，对于此案例，我们也可以采用简单工厂模式来实现，缺点是：对于一个地区的披萨，我们就需要创建一个对应的工厂类，这会造成项目类膨胀；并且生产披萨的代码几乎都是相同的，这就造成披萨工厂类中的代码冗余
@@ -2524,6 +2539,9 @@ public class SimpleFactory {
   - 将工厂抽象成两层， `AbsFactory`(抽象工厂) 和 具体实现的工厂子类。 程序员可以根据创建对象类型使用对应的工厂子类。 这样将单个的简单工厂类变成了工厂簇， 更利于代码的维护和扩展。
 
 ![design-patterns-18](./image/design-patterns-18.png)
+
+<details>
+<summary style="color:red;">展开</summary>
 
 1. `Pizza` 抽象父类以及 `Pizza` 的具体实现类和上面一样
 
@@ -2639,9 +2657,9 @@ public class SimpleFactory {
    }
    ```
 
-------
+</details>
 
-抽象工厂模式总结
+> **抽象工厂模式总结**
 
 1. `AbsFactory` 仍然是简单工厂（简单工厂模式），但是工厂方法的具体实现需下沉到各个工厂子类（工厂方法模式），所以说抽象工厂模式可以将简单工厂模式和工厂方法模式进行整合。
 2. 抽象工厂模式分为两层：抽象层和实现层。`AbsFactory` 作为工厂抽象层，只对工厂规范进行定义，其具体的实现交由工厂子类
@@ -2650,8 +2668,6 @@ public class SimpleFactory {
 #### 3.2.3.7. 源码实例
 
 **JDK Calendar 中使用到了简单工厂模式**
-
-测试代码
 
 ```java
 public class Factory {
@@ -2667,83 +2683,81 @@ public class Factory {
 	    System.out.println("时:" + cal.get(Calendar.HOUR_OF_DAY));
 	    System.out.println("分:" + cal.get(Calendar.MINUTE));
 	    System.out.println("秒:" + cal.get(Calendar.SECOND));
-	    
 	}
-
 }
 ```
 
-`Calendar.getInstance()` 方法的实现
+- `Calendar.getInstance()` 方法的实现
 
-```java
-/**
- * Gets a calendar using the default time zone and locale. The
- * <code>Calendar</code> returned is based on the current time
- * in the default time zone with the default
- * {@link Locale.Category#FORMAT FORMAT} locale.
- *
- * @return a Calendar.
- */
-public static Calendar getInstance()
-{
-    return createCalendar(TimeZone.getDefault(), Locale.getDefault(Locale.Category.FORMAT));
-}
-```
+  ```java
+  /**
+  * Gets a calendar using the default time zone and locale. The
+  * <code>Calendar</code> returned is based on the current time
+  * in the default time zone with the default
+  * {@link Locale.Category#FORMAT FORMAT} locale.
+  *
+  * @return a Calendar.
+  */
+  public static Calendar getInstance()
+  {
+      return createCalendar(TimeZone.getDefault(), Locale.getDefault(Locale.Category.FORMAT));
+  }
+  ```
 
-`createCalendar()` 方法的实现：如果 `provider == null`，就会根据 `caltype` 的值，来创建具体的工厂子类对象
+- `createCalendar()` 方法的实现：如果 `provider == null`，就会根据 `caltype` 的值，来创建具体的工厂子类对象
 
-```java
-private static Calendar createCalendar(TimeZone zone,
-                                       Locale aLocale)
-{
-    CalendarProvider provider =
-        LocaleProviderAdapter.getAdapter(CalendarProvider.class, aLocale)
-                             .getCalendarProvider();
-    if (provider != null) {
-        try {
-            return provider.getInstance(zone, aLocale);
-        } catch (IllegalArgumentException iae) {
-            // fall back to the default instantiation
-        }
-    }
+  ```java
+  private static Calendar createCalendar(TimeZone zone,
+                                        Locale aLocale)
+  {
+      CalendarProvider provider =
+          LocaleProviderAdapter.getAdapter(CalendarProvider.class, aLocale)
+                              .getCalendarProvider();
+      if (provider != null) {
+          try {
+              return provider.getInstance(zone, aLocale);
+          } catch (IllegalArgumentException iae) {
+              // fall back to the default instantiation
+          }
+      }
 
-    Calendar cal = null;
+      Calendar cal = null;
 
-    if (aLocale.hasExtensions()) {
-        String caltype = aLocale.getUnicodeLocaleType("ca");
-        if (caltype != null) {
-            switch (caltype) {
-            case "buddhist":
-            cal = new BuddhistCalendar(zone, aLocale);
-                break;
-            case "japanese":
-                cal = new JapaneseImperialCalendar(zone, aLocale);
-                break;
-            case "gregory":
-                cal = new GregorianCalendar(zone, aLocale);
-                break;
-            }
-        }
-    }
-    if (cal == null) {
-        // If no known calendar type is explicitly specified,
-        // perform the traditional way to create a Calendar:
-        // create a BuddhistCalendar for th_TH locale,
-        // a JapaneseImperialCalendar for ja_JP_JP locale, or
-        // a GregorianCalendar for any other locales.
-        // NOTE: The language, country and variant strings are interned.
-        if (aLocale.getLanguage() == "th" && aLocale.getCountry() == "TH") {
-            cal = new BuddhistCalendar(zone, aLocale);
-        } else if (aLocale.getVariant() == "JP" && aLocale.getLanguage() == "ja"
-                   && aLocale.getCountry() == "JP") {
-            cal = new JapaneseImperialCalendar(zone, aLocale);
-        } else {
-            cal = new GregorianCalendar(zone, aLocale);
-        }
-    }
-    return cal;
-} 
-```
+      if (aLocale.hasExtensions()) {
+          String caltype = aLocale.getUnicodeLocaleType("ca");
+          if (caltype != null) {
+              switch (caltype) {
+              case "buddhist":
+              cal = new BuddhistCalendar(zone, aLocale);
+                  break;
+              case "japanese":
+                  cal = new JapaneseImperialCalendar(zone, aLocale);
+                  break;
+              case "gregory":
+                  cal = new GregorianCalendar(zone, aLocale);
+                  break;
+              }
+          }
+      }
+      if (cal == null) {
+          // If no known calendar type is explicitly specified,
+          // perform the traditional way to create a Calendar:
+          // create a BuddhistCalendar for th_TH locale,
+          // a JapaneseImperialCalendar for ja_JP_JP locale, or
+          // a GregorianCalendar for any other locales.
+          // NOTE: The language, country and variant strings are interned.
+          if (aLocale.getLanguage() == "th" && aLocale.getCountry() == "TH") {
+              cal = new BuddhistCalendar(zone, aLocale);
+          } else if (aLocale.getVariant() == "JP" && aLocale.getLanguage() == "ja"
+                    && aLocale.getCountry() == "JP") {
+              cal = new JapaneseImperialCalendar(zone, aLocale);
+          } else {
+              cal = new GregorianCalendar(zone, aLocale);
+          }
+      }
+      return cal;
+  } 
+  ```
 
 ### 3.2.4. 原型模式（Prototype Pattern）
 
@@ -2773,9 +2787,10 @@ private static Calendar createCalendar(TimeZone zone,
 
 ![design-patterns-19](./image/design-patterns-19.png)
 
-------
+> **代码实现**
 
-代码实现
+<details>
+<summary style="color:red;">展开</summary>
 
 1. `Sheep`：羊的实体类
 
@@ -2812,17 +2827,15 @@ private static Calendar createCalendar(TimeZone zone,
    }
    ```
 
-------
+</details>
 
-传统的方式的优缺点
+> **传统的方式的优缺点**
 
 1. 优点是比较好理解，简单易操作
 2. 在创建新的对象时， 总是需要重新获取原始对象的属性，如果创建的对象比较复杂时，效率较低
 3. 总是需要重新初始化对象，而不是动态地获得对象运行时的状态，不够灵活
 
-------
-
-改进思路
+> **改进思路**
 
 `Java`中`Object`类是所有类的根类， `Object`类提供了一个`clone()`方法，该方法可以将一个`Java`对象复制一份，但是需要实现`clone`的`Java`类必须要实现一个接口`Cloneable`，该接口表示该类能够复制且具有复制的能力 --> 原型模式
 
@@ -2831,6 +2844,9 @@ private static Calendar createCalendar(TimeZone zone,
 原型模式解决克隆羊问题的应用实例：使用原型模式改进传统方式，让程序具有更高的效率和扩展性
 
 > **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
 
 1. `Sheep`：羊的实体类
 
@@ -2888,6 +2904,8 @@ private static Calendar createCalendar(TimeZone zone,
    sheep4 =Sheep [name=tom, age=1, color=白色]；sheep4.hashCoe=2018699554
    sheep5 =Sheep [name=tom, age=1, color=白色]；sheep5.hashCoe=1311053135
    ```
+
+</details>
 
 #### 3.2.4.5. Spring源码示例
 
@@ -3385,9 +3403,14 @@ private static Calendar createCalendar(TimeZone zone,
 
 #### 3.2.5.3. 传统方式
 
+ > **类图**
+
 ![design-patterns-22](./image/design-patterns-22.png)
 
----
+> **代码**
+
+<details>
+<summary style="color:red;">展开</summary>
 
 1. `AbstractHouse`：房子的抽象父类，指定建造房子的规范，以及建造房子的具体流程
 
@@ -3473,9 +3496,9 @@ private static Calendar createCalendar(TimeZone zone,
    }
    ```
 
----
+</details>
 
-传统方式优缺点分析
+> **传统方式优缺点分析**
 
 1. 优点是比较好理解，简单易操作。
 2. 设计的程序结构，过于简单，没有设计缓存层对象，程序的扩展和维护不好，也就是说，这种设计方案，把产品(即：房子) 和创建产品的过程(即：建房子流程) 封装在一起，代码耦合性增强了。
@@ -3488,6 +3511,9 @@ private static Calendar createCalendar(TimeZone zone,
 ![design-patterns-24](./image/design-patterns-24.png)
 
 > **代码**
+
+<details>
+<summary style="color:red;">展开</summary>
 
 1. `House`：产品类
 
@@ -3631,6 +3657,8 @@ private static Calendar createCalendar(TimeZone zone,
    --------------------------
    House [base=高楼的打地基100米, wall=高楼的砌墙20cm, roofed=高楼的透明屋顶]
    ```
+
+</details>
 
 > **总结**
 
@@ -3780,6 +3808,9 @@ private static Calendar createCalendar(TimeZone zone,
 
 > **代码实现**
 
+<details>
+<summary style="color:red;">展开</summary>
+
 1. `Voltage220V`：`src`类，输出 `220V` 的电压
 
    ```java
@@ -3845,6 +3876,8 @@ private static Calendar createCalendar(TimeZone zone,
    }
    ```
 
+</details>
+
 > **总结**
 
 `Voltage220V` 只能输出 `220V` 的电压，我们定义一个抽象的适配器规范：`IVoltage5V` 接口，该接口里面有一个抽象方法 `public int output5V();`，适配器 `VoltageAdapter` 继承 `Voltage220V` 并实现 `IVoltage5V` 接口，可以将 `220V` 的电压转为 `5V` 电压
@@ -3874,6 +3907,9 @@ private static Calendar createCalendar(TimeZone zone,
 ![design-patterns-27](./image/design-patterns-27.png)
 
 > **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
 
 1. `Voltage220V`：`src`类，输出 `220V` 的电压，与类适配器中的代码一样
 
@@ -3923,6 +3959,8 @@ private static Calendar createCalendar(TimeZone zone,
    }
    ```
 
+</details>
+
 > **总结**
 
 - 与类适配器模式区别
@@ -3948,6 +3986,9 @@ private static Calendar createCalendar(TimeZone zone,
 ![image-20200821210057876](https://img-blog.csdnimg.cn/img_convert/148143485d509fd428c2d9e60b2bcba6.png)
 
 > **代码示例**
+
+<details>
+<summary style="color:red;">展开</summary>
 
 1. `Interface4`：接口
 
@@ -4059,6 +4100,8 @@ private static Calendar createCalendar(TimeZone zone,
        }
    }
    ```
+
+</details>
 
 #### 3.3.2.5. SpringMVC源码
 
@@ -4460,6 +4503,9 @@ private static Calendar createCalendar(TimeZone zone,
 
 > **代码实现**
 
+<details>
+<summary style="color:red;">展开</summary>
+
 1. `Brand`：规定各个品牌手机的行为
 
    ```java
@@ -4648,6 +4694,8 @@ private static Calendar createCalendar(TimeZone zone,
    
    }
    ```
+
+</details>
 
 > **总结**
 
@@ -4843,6 +4891,9 @@ private static Calendar createCalendar(TimeZone zone,
 
 > **代码实现**
 
+<details>
+<summary style="color:red;">展开</summary>
+
 1. `Drink`：即 `Component` 主体类，其中定了义一个抽象方法 `cost()`，用于计算订单费用
 
    ```java
@@ -5035,7 +5086,7 @@ private static Calendar createCalendar(TimeZone zone,
    order2 无因咖啡 加入一份牛奶 描述 =  牛奶  2.0 &&  无因咖啡 
    ```
 
-------
+</details>
 
 #### 3.3.4.5. JDK FileInputStream
 
@@ -5054,11 +5105,19 @@ private static Calendar createCalendar(TimeZone zone,
 
 ### 3.3.5. 组合模式（Composite Pattern）
 
-#### 说明
+#### 3.3.5.1. 说明
 
 - 概述
   - 目的：将对象组合成树形结构以表示"部分-整体"的层次结构。组合模式使得用户对单个对象和组合对象的使用具有一致性。
-  - 主要解决：它在我们树型结构的问题中，模糊了简单元素和复杂元素的概念，客户程序可以像处理简单元素一样来处理复杂元素，从而使得客户程序与复杂元素的内部结构解耦。
+  - 主要解决：
+    - 它在我们树型结构的问题中，模糊了简单元素和复杂元素的概念，客户程序可以像处理简单元素一样来处理复杂元素，从而使得客户程序与复杂元素的内部结构解耦。
+    - 也就是说，而我们要对树上的节点和叶子进行操作时，它能够提供一致的方式，而不用考虑它是节点还是叶子
+
+      <details>
+      <summary style="color:red;">图片</summary>
+
+      ![design-patterns-47.png](./image/design-patterns-47.png)
+      </details>
   - 何时使用： 
     - 1、您想表示对象的部分-整体层次结构（树形结构）。 
     - 2、您希望用户忽略组合对象与单个对象的不同，用户将统一地使用组合结构中的所有对象。
@@ -5077,21 +5136,1501 @@ private static Calendar createCalendar(TimeZone zone,
 
 - 使用场景：部分、整体场景，如树形菜单，文件、文件夹的管理。
 
-- 注意事项：定义时为具体类。
+- 原理
+  - `Component`：这是组合模式中对象声明接口，在适当情况下，实现所有类共有的接口默认行为，用于访问和管理 `Component` 子部件，`Component` 可以是抽象类或者接口
+  - `Leaf`：在组合模式中表示叶子节点（没有子节点）
+  - `Composite`：在组合模式中表示非叶子节点，用于存储子部件，继承（或实现） `Component`，实现子部件的相关操作，比如添加、删除操作等，相当于其下一层 `Component` 子部件的管理者
 
-#### 情景介绍
+  ![design-patterns-46.png](./image/design-patterns-46.png)
 
-#### 传统方式
+#### 3.3.5.2. 情景介绍
 
-#### 组合模式代码
+> **看一个学校院系展示需求**
 
-#### HashMap 源码
+- 编写程序展示一个学校院系结构：
+  - 要在一个页面中展示出学校的院系组成
+  - 一个学校有多个学院，一个学院有多个系。
 
-### 3.3.6. 外观模式（Facade Pattern）
+  ![design-patterns-44.png](./image/design-patterns-44.png)
 
-### 3.3.7. 享元模式（Flyweight Pattern）
+#### 3.3.5.3. 传统方式
+
+- 传统方案解决学校院系展示
+
+  ![design-patterns-45.png](./image/design-patterns-45.png)
+
+> **传统方案解决学校院系展示存在的问题分析**
+
+1. 将学院看做是学校的子类，系是学院的子类，这样实际上是站在组织大小来进行分层次的
+2. 实际上我们的要求是 ：在一个页面中展示出学校的院系组成，一个学校有多个学院，一个学院有多个系， 因此继承这种方案，不能很好实现的管理的操作，比如对学院、系的添加，删除，遍历等
+3. 解决方案：把学校、院、系都看做是组织结构，他们之间没有继承的关系，而是一个树形结构，可以更好的实现管理操作 --> 组合模式
+
+#### 3.3.5.4. 组合模式代码
+
+编写程序展示一个学校院系结构：需求是这样，要在一个页面中展示出学校的院系组成，一个学校有多个学院，一个学院有多个系
+
+> **类图**
+
+![design-patterns-48.png](./image/design-patterns-48.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `OrganizationComponent`：组合模式中对象方法定义的接口
+
+   ```java
+   public abstract class OrganizationComponent {
+   
+   	private String name; // 名字
+   	private String des; // 说明
+   
+   	protected void add(OrganizationComponent organizationComponent) {
+   		// 默认实现，叶子节点无需添加此方法
+   		throw new UnsupportedOperationException();
+   	}
+   
+   	protected void remove(OrganizationComponent organizationComponent) {
+   		// 默认实现，叶子节点无需添加此方法
+   		throw new UnsupportedOperationException();
+   	}
+   
+   	// 方法print, 做成抽象的, 子类都需要实现
+   	protected abstract void print();
+   
+   	// 构造器
+   	public OrganizationComponent(String name, String des) {
+   		super();
+   		this.name = name;
+   		this.des = des;
+   	}
+   
+   	public String getName() {
+   		return name;
+   	}
+   
+   	public void setName(String name) {
+   		this.name = name;
+   	}
+   
+   	public String getDes() {
+   		return des;
+   	}
+   
+   	public void setDes(String des) {
+   		this.des = des;
+   	}
+   
+   }
+   ```
+
+2. `University`：表示大学节点，其子节点为 `College` 节点
+
+   ```java
+   //University 就是 Composite , 可以管理College
+   public class University extends OrganizationComponent {
+   
+   	// List 中 存放的College
+   	List<OrganizationComponent> organizationComponents = new ArrayList<OrganizationComponent>();
+   
+   	// 构造器
+   	public University(String name, String des) {
+   		super(name, des);
+   	}
+   
+   	// 重写add
+   	@Override
+   	protected void add(OrganizationComponent organizationComponent) {
+   		organizationComponents.add(organizationComponent);
+   	}
+   
+   	// 重写remove
+   	@Override
+   	protected void remove(OrganizationComponent organizationComponent) {
+   		organizationComponents.remove(organizationComponent);
+   	}
+   
+   	// print方法，就是输出University 包含的学院
+   	@Override
+   	protected void print() {
+   		System.out.println("--------------" + getName() + "--------------");
+   		// 遍历 organizationComponents
+   		for (OrganizationComponent organizationComponent : organizationComponents) {
+   			organizationComponent.print();
+   		}
+   	}
+   
+   	@Override
+   	public String getName() {
+   		return super.getName();
+   	}
+   
+   	@Override
+   	public String getDes() {
+   		return super.getDes();
+   	}
+   
+   }
+   ```
+
+3. `College`：表示学院节点，其子节点为 `Department` 节点
+
+   ```java
+   public class College extends OrganizationComponent {
+   
+   	// List 中 存放的Department
+   	List<OrganizationComponent> organizationComponents = new ArrayList<OrganizationComponent>();
+   
+   	// 构造器
+   	public College(String name, String des) {
+   		super(name, des);
+   	}
+   
+   	// 重写add
+   	@Override
+   	protected void add(OrganizationComponent organizationComponent) {
+   		// 将来实际业务中，Colleage 的 add 和 University add 不一定完全一样
+   		organizationComponents.add(organizationComponent);
+   	}
+   
+   	// 重写remove
+   	@Override
+   	protected void remove(OrganizationComponent organizationComponent) {
+   		organizationComponents.remove(organizationComponent);
+   	}
+   
+   	// print方法，就是输出学院包含的系
+   	@Override
+   	protected void print() {
+   		System.out.println("--------------" + getName() + "--------------");
+   		// 遍历 organizationComponents
+   		for (OrganizationComponent organizationComponent : organizationComponents) {
+   			organizationComponent.print();
+   		}
+   	}
+   
+   	@Override
+   	public String getName() {
+   		return super.getName();
+   	}
+   
+   	@Override
+   	public String getDes() {
+   		return super.getDes();
+   	}
+   
+   }
+   ```
+
+4. `Department`：表示专业节点，该节点为叶子节点
+
+   ```java
+   public class Department extends OrganizationComponent {
+   
+   	// 没有集合
+   
+   	public Department(String name, String des) {
+   		super(name, des);
+   	}
+   
+   	// add , remove 就不用写了，因为他是叶子节点
+   
+   	@Override
+   	protected void print() {
+            // 输出系名
+   		System.out.println(getName());
+   	}
+   
+   	@Override
+   	public String getName() {
+   		return super.getName();
+   	}
+   
+   	@Override
+   	public String getDes() {
+   		return super.getDes();
+   	}
+   
+   }
+   ```
+
+5. `Client`：表示客户端，测试代码
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   
+   		// 从大到小创建对象 学校
+   		OrganizationComponent university = new University("清华大学", " 中国顶级大学 ");
+   
+   		// 创建 学院
+   		OrganizationComponent computerCollege = new College("计算机学院", " 计算机学院 ");
+   		OrganizationComponent infoEngineercollege = new College("信息工程学院", " 信息工程学院 ");
+   
+   		// 创建各个学院下面的系(专业)
+   		computerCollege.add(new Department("软件工程", " 软件工程不错 "));
+   		computerCollege.add(new Department("网络工程", " 网络工程不错 "));
+   		computerCollege.add(new Department("计算机科学与技术", " 计算机科学与技术是老牌的专业 "));
+   		infoEngineercollege.add(new Department("通信工程", " 通信工程不好学 "));
+   		infoEngineercollege.add(new Department("信息工程", " 信息工程好学 "));
+   
+   		// 将学院加入到 学校
+   		university.add(computerCollege);
+   		university.add(infoEngineercollege);
+   
+   		university.print();
+   		// infoEngineercollege.print();
+   	}
+   
+   }
+   ```
+
+6. 程序运行结果
+
+   ```
+   --------------清华大学--------------
+   --------------计算机学院--------------
+   软件工程
+   网络工程
+   计算机科学与技术
+   --------------信息工程学院--------------
+   通信工程
+   信息工程
+   ```
+
+</details>
+
+#### 3.3.5.5. JDK HashMap 组合模式
+
+> **Java 的集合类：HashMap 就使用了组合模式**
+
+`HashMap` 测试代码
+
+```java
+public class Composite {
+
+	public static void main(String[] args) {
+
+		// 说明
+		// 1. Map 就是一个抽象的构建 (类似我们的Component)
+		// 2. HashMap是一个中间的构建(Composite), 实现/继承了相关方法
+		// put, putall
+		// 3. Node 是 HashMap的静态内部类，类似Leaf叶子节点, 这里就没有put, putall
+		// static class Node<K,V> implements Map.Entry<K,V>
+
+		Map<Integer, String> hashMap = new HashMap<Integer, String>();
+		hashMap.put(0, "东游记");// 直接存放叶子节点(Node)
+
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		map.put(1, "西游记");
+		map.put(2, "红楼梦"); // ..
+		hashMap.putAll(map);
+		System.out.println(hashMap);
+
+	}
+
+}
+```
+
+> **源码追踪**
+
+1. `Map<K,V>` 接口：相当于组合模式中的 `Component` 组件，用于规定管理子部件的行为
+
+   ```java
+   public interface Map<K,V> {
+       // ...
+       
+       V put(K key, V value);
+       void putAll(Map<? extends K, ? extends V> m);
+       
+       // ...
+   ```
+
+2. `AbstractMap<K,V>` 抽象类实现了 `Map<K,V>` 接口：也相当于组合模式中的 `Component` 组件，只不过默认实现了一些公用方法
+
+   ```java
+   public abstract class AbstractMap<K,V> implements Map<K,V> {
+       
+       // ...
+       
+       public V put(K key, V value) {
+           throw new UnsupportedOperationException();
+       }
+       
+       public void putAll(Map<? extends K, ? extends V> m) {
+           for (Map.Entry<? extends K, ? extends V> e : m.entrySet())
+               put(e.getKey(), e.getValue());
+       }
+       
+   	// ...
+   ```
+
+3. `HashMap<K,V>` 继承了 `AbstractMap<K,V>` 抽象类，并实现了 `Map<K,V>` 接口，相当于组合模式中的 `Composite` 组件，即非叶子节点
+
+   ```java
+   public class HashMap<K,V> extends AbstractMap<K,V>
+       implements Map<K,V>, Cloneable, Serializable {
+       
+       // ...
+       
+       public V put(K key, V value) {
+           return putVal(hash(key), key, value, false, true);
+       }
+       
+       public void putAll(Map<? extends K, ? extends V> m) {
+           putMapEntries(m, true);
+       }
+       
+       // ...
+   ```
+
+4. `Node<K,V>` 为 `HashMap<K,V>` 的静态内部类，实现了 `Map.Entry<K,V>` 接口，相当于组合模式中的叶子节点，只定义了一些获取值的方法，并没有添加值（子节点）的方法
+
+   ```java
+   static class Node<K,V> implements Map.Entry<K,V> {
+   
+       // ...
+   
+       public final K getKey()        { return key; }
+       public final V getValue()      { return value; }
+       public final String toString() { return key + "=" + value; }
+   
+       public final int hashCode() {
+           return Objects.hashCode(key) ^ Objects.hashCode(value);
+       }
+   
+       public final V setValue(V newValue) {
+           V oldValue = value;
+           value = newValue;
+           return oldValue;
+       }
+   
+       // ...
+   ```
+
+> **类图**
+
+![design-patterns-49.png](./image/design-patterns-49.png)
+
+#### 3.3.5.6. 注意事项
+
+1. 简化客户端操作。 客户端只需要面对一致的对象而不用考虑整体部分或者节点叶子的问题
+2. 具有较强的扩展性。 当我们要更改组合对象时， 我们只需要调整内部的层次关系， 客户端不用做出任何改动
+3. 方便创建出复杂的层次结构。 客户端不用理会组合里面的组成细节， 容易添加节点或者叶子从而创建出复杂的树形结构
+4. 需要遍历组织机构， 或者处理的对象具有树形结构时, 非常适合使用组合模式
+5. 要求较高的抽象性， **如果节点和叶子有很多差异性的话， 比如很多方法和属性都不一样， 不适合使用组合模式**
+
+### 3.3.6. 外观/过程模式（Facade Pattern）
+
+#### 3.3.6.1. 说明
+
+- 概述
+  - 目的：
+    - 外观模式（`Facade`）， 也叫过程模式，外观模式为子系统中的一组接口提供一个一致的界面，此模式定义了一个高层接口，这个接口使得这一子系统更加容易使用
+    - 外观模式通过定义一个一致的接口，用以屏蔽内部子系统的细节，使得调用端只需跟这个接口发生调用，而无需关心这个子系统的内部细节
+  - 主要解决：降低访问复杂系统的内部子系统时的复杂度，简化客户端之间的接口。
+  - 何时使用： 
+    - 1、客户端不需要知道系统内部的复杂联系，整个系统只需提供一个"接待员"即可。
+    - 2、定义系统的入口。
+  - 如何解决：客户端不与系统耦合，外观类与系统耦合。
+  - 关键代码：在客户端和复杂系统之间再加一层，这一层将调用顺序、依赖关系等处理好。
+
+- 优缺点
+  - 优点： 1、减少系统相互依赖。 2、提高灵活性。 3、提高了安全性。
+  - 缺点：不符合开闭原则，如果要改东西很麻烦，继承重写都不合适。
+
+- 使用场景：
+  - 1、为复杂的模块或子系统提供外界访问的模块。 
+  - 2、子系统相对独立。
+  - 3、预防调用底层系统带来的风险。
+
+- 注意事项：在层次化结构中，可以使用外观模式定义系统中每一层的入口。
+
+- 原理
+  - 外观类(`Facade`)：为调用端提供统一的调用接口，外观类知道哪些子系统负责处理请求，从而将用端的请求代理给适当子系统对象
+  - 调用者(`Client`)：外观接口的调用者
+  - 子系统的集合：指模块或者子系统，处理 `Facade` 对象指派的任务，他是功能的实际提供者
+
+  ![design-patterns-50.png](./image/design-patterns-50.png)
+
+#### 3.3.6.2. 情景介绍
+
+> **外观模式解决影院管理说明**
+
+外观模式可以理解为转换一群接口，客户只要调用一个接口，而不用调用多个接口才能达到目的。 比如：在`pc`上安装软件的时候经常有一键安装选项（省去选择安装目录、安装的组件等等），还有就是手机的重启功能（把关机和启动合为一个操作）。
+
+外观模式就是解决多个复杂接口带来的使用困难，起到简化用户操作的作用
+
+![design-patterns-51.png](./image/design-patterns-51.png)
+
+#### 3.3.6.3. 传统方式
+
+ > **说明**
+
+每个设备都对应于一个类，导致客户端使用时，直接依赖于具体的类
+
+![design-patterns-53.png](./image/design-patterns-53.png)
+
+> **问题分析**
+
+1. 在 `ClientTest` 的`main`方法中，创建各个子系统的对象，并直接去调用子系统(对象)相关方法，会造成调用过程混乱，没有清晰的过程
+2. 不利于在`ClientTest` 代码中对子系统进行维护操作
+
+#### 3.3.6.4. 外观模式代码
+
+> **类图**
+
+![design-patterns-52.png](./image/design-patterns-52.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `DVDPlayer`：
+
+   ```java
+   public class DVDPlayer {
+   
+   	// 使用单例模式, 使用饿汉式
+   	private static DVDPlayer instance = new DVDPlayer();
+   
+   	public static DVDPlayer getInstanc() {
+   		return instance;
+   	}
+   
+   	public void on() {
+   		System.out.println(" dvd on ");
+   	}
+   
+   	public void off() {
+   		System.out.println(" dvd off ");
+   	}
+   
+   	public void play() {
+   		System.out.println(" dvd is playing ");
+   	}
+   
+   	// ....
+   	public void pause() {
+   		System.out.println(" dvd pause ..");
+   	}
+   	
+   }
+   ```
+
+2. `Popcorn`：
+
+   ```java
+   public class Popcorn {
+   
+   	private static Popcorn instance = new Popcorn();
+   
+   	public static Popcorn getInstance() {
+   		return instance;
+   	}
+   
+   	public void on() {
+   		System.out.println(" popcorn on ");
+   	}
+   
+   	public void off() {
+   		System.out.println(" popcorn ff ");
+   	}
+   
+   	public void pop() {
+   		System.out.println(" popcorn is poping  ");
+   	}
+   	
+   }
+   ```
+
+3. `Projector`：
+
+   ```java
+   public class Projector {
+   
+   	private static Projector instance = new Projector();
+   
+   	public static Projector getInstance() {
+   		return instance;
+   	}
+   
+   	public void on() {
+   		System.out.println(" Projector on ");
+   	}
+   
+   	public void off() {
+   		System.out.println(" Projector ff ");
+   	}
+   
+   	public void focus() {
+   		System.out.println(" Projector is Projector  ");
+   	}
+   
+   	// ...
+   	
+   }
+   ```
+
+4. `Screen`：
+
+   ```java
+   public class Screen {
+   
+   	private static Screen instance = new Screen();
+   
+   	public static Screen getInstance() {
+   		return instance;
+   	}
+   
+   	public void up() {
+   		System.out.println(" Screen up ");
+   	}
+   
+   	public void down() {
+   		System.out.println(" Screen down ");
+   	}
+   
+   }
+   ```
+
+5. `Stereo`：
+
+   ```java
+   public class Stereo {
+   
+   	private static Stereo instance = new Stereo();
+   
+   	public static Stereo getInstance() {
+   		return instance;
+   	}
+   
+   	public void on() {
+   		System.out.println(" Stereo on ");
+   	}
+   
+   	public void off() {
+   		System.out.println(" Screen off ");
+   	}
+   
+   	public void up() {
+   		System.out.println(" Screen up.. ");
+   	}
+   
+   	// ...
+   }
+   ```
+
+6. `TheaterLight`：
+
+   ```java
+   public class TheaterLight {
+   
+   	private static TheaterLight instance = new TheaterLight();
+   
+   	public static TheaterLight getInstance() {
+   		return instance;
+   	}
+   
+   	public void on() {
+   		System.out.println(" TheaterLight on ");
+   	}
+   
+   	public void off() {
+   		System.out.println(" TheaterLight off ");
+   	}
+   
+   	public void dim() {
+   		System.out.println(" TheaterLight dim.. ");
+   	}
+   
+   	public void bright() {
+   		System.out.println(" TheaterLight bright.. ");
+   	}
+   }
+   ```
+
+7. `HomeTheaterFacade`：
+
+   ```java
+   public class HomeTheaterFacade {
+   
+   	// 定义各个子系统对象
+   	private TheaterLight theaterLight;
+   	private Popcorn popcorn;
+   	private Stereo stereo;
+   	private Projector projector;
+   	private Screen screen;
+   	private DVDPlayer dVDPlayer;
+   
+   	// 构造器
+   	public HomeTheaterFacade() {
+   		super();
+   		this.theaterLight = TheaterLight.getInstance();
+   		this.popcorn = Popcorn.getInstance();
+   		this.stereo = Stereo.getInstance();
+   		this.projector = Projector.getInstance();
+   		this.screen = Screen.getInstance();
+   		this.dVDPlayer = DVDPlayer.getInstanc();
+   	}
+   
+   	// 操作分成 4 步
+       
+   	public void ready() {
+   		popcorn.on();
+   		popcorn.pop();
+   		screen.down();
+   		projector.on();
+   		stereo.on();
+   		dVDPlayer.on();
+   		theaterLight.dim();
+   	}
+   
+   	public void play() {
+   		dVDPlayer.play();
+   	}
+   
+   	public void pause() {
+   		dVDPlayer.pause();
+   	}
+   
+   	public void end() {
+   		popcorn.off();
+   		theaterLight.bright();
+   		screen.up();
+   		projector.off();
+   		stereo.off();
+   		dVDPlayer.off();
+   	}
+   
+   }
+   ```
+
+8. `Client`：
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 这里直接调用。。。很麻烦，也不利于扩展
+           
+           // 使用外观模式
+   		HomeTheaterFacade homeTheaterFacade = new HomeTheaterFacade();
+   		homeTheaterFacade.ready();
+   		homeTheaterFacade.play();
+   		homeTheaterFacade.end();
+   	}
+   
+   }
+   ```
+
+</details>
+
+#### 3.3.6.5. Mybatis外观模式
+
+`MyBatis` 中的`Configuration` 去创建 `MetaObject` 对象使用到外观模式
+
+1. `Configuration` 类中的 `newMetaObject()` 方法调用 `MetaObject.forObject()` 静态方法创建 `MetaObject` 对象
+
+   1. `Configuration` 类相当于外观类，对客户端（调用方）提供统一接口
+   2. 成员变量 `reflectorFactory`、`objectFactory`、`objectWrapperFactory`、`mapperRegistry` 相当于子系统集合
+
+   ```java
+   public class Configuration {
+   
+       // ...
+       
+       protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+       protected ObjectFactory objectFactory = new DefaultObjectFactory();
+       protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
+       protected MapperRegistry mapperRegistry = new MapperRegistry(this);
+       
+       // ...
+       
+   	public MetaObject newMetaObject(Object object) {
+           return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
+       }
+   
+   	// ...
+       
+   ```
+
+2. 在 `MetaObject.forObject()` 静态方法中，调用 `MetaObject` 类的构造器创建 `MetaObject` 对象，其具体步骤为判断形参 `object` 的类型，将 `object` 强转为对应类型的对象。
+
+   ```java
+   public class MetaObject {
+   
+       private Object originalObject;
+       private ObjectWrapper objectWrapper;
+       private ObjectFactory objectFactory;
+       private ObjectWrapperFactory objectWrapperFactory;
+       private ReflectorFactory reflectorFactory;
+   
+       private MetaObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {
+           this.originalObject = object;
+           this.objectFactory = objectFactory;
+           this.objectWrapperFactory = objectWrapperFactory;
+           this.reflectorFactory = reflectorFactory;
+   
+           if (object instanceof ObjectWrapper) {
+               this.objectWrapper = (ObjectWrapper) object;
+           } else if (objectWrapperFactory.hasWrapperFor(object)) {
+               this.objectWrapper = objectWrapperFactory.getWrapperFor(this, object);
+           } else if (object instanceof Map) {
+               this.objectWrapper = new MapWrapper(this, (Map) object);
+           } else if (object instanceof Collection) {
+               this.objectWrapper = new CollectionWrapper(this, (Collection) object);
+           } else {
+               this.objectWrapper = new BeanWrapper(this, object);
+           }
+       }
+   
+       public static MetaObject forObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {
+           if (object == null) {
+               return SystemMetaObject.NULL_META_OBJECT;
+           } else {
+               return new MetaObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
+           }
+       }
+       
+       // ...
+   ```
+
+3. 类图
+
+  ![design-patterns-54.png](./image/design-patterns-54.png)
+
+#### 3.3.6.6. 外观模式的注意事项
+
+1. 外观模式对外屏蔽了子系统的细节，因此外观模式降低了客户端对子系统使用的复杂性
+2. 外观模式对客户端与子系统的耦合关系，让子系统内部的模块更易维护和扩展
+3. 通过合理的使用外观模式，可以帮我们更好的划分访问的层次
+4. 当**系统需要进行分层设计**时， 可以考虑使用`Facade`模式
+5. 在**维护一个遗留的大型系统**时，可能这个系统已经变得非常难以维护和扩展，此时可以考虑为新系统开发一个`Facade`类，来提供遗留系统的比较清晰简单的接口，让新系统与`Facade`类交互， 提高复用性
+6. 不能过多的或者不合理的使用外观模式，使用外观模式好，还是直接调用模块好，要以让系统有层次，利于维护为目的
+
+### 3.3.7. 享元/蝇量模式（Flyweight Pattern）
+
+#### 3.3.7.1. 说明
+
+- 概述
+  - 目的：运用共享技术有效地支持大量细粒度的对象。
+  - 主要解决：在有大量对象时，有可能会造成内存溢出，我们把其中共同的部分抽象出来，如果有相同的业务请求，直接返回在内存中已有的对象，避免重新创建。
+  - 何时使用： 
+    - 1、系统中有大量对象。 
+    - 2、这些对象消耗大量内存。 
+    - 3、这些对象的状态大部分可以外部化。
+    - 4、这些对象可以按照内蕴状态分为很多组，当把外蕴对象从对象中剔除出来时，每一组对象都可以用一个对象来代替。 
+    - 5、系统不依赖于这些对象身份，这些对象是不可分辨的。
+  - 如何解决：用唯一标识码判断，如果在内存中有，则返回这个唯一标识码所标识的对象。
+  - 关键代码：使用HashMap等创建池
+
+- 应用实例：
+  - 1、JAVA 中的 String，如果有则返回，如果没有则创建一个字符串保存在字符串缓存池里面。
+  - 2、数据库的数据池。
+  - 3、Integer 存储-128~127的数值
+
+- 优缺点
+  - 优点：大大减少对象的创建，降低系统的内存，使效率提高。
+  - 缺点：提高了系统的复杂度，需要分离出外部状态和内部状态，而且外部状态具有固有化的性质，不应该随着内部状态的变化而变化，否则会造成系统的混乱。
+
+- 使用场景：
+  - 1、系统有大量相似对象。
+  - 2、需要缓冲池的场景。
+
+- 注意事项：
+  - 1、注意划分**外部状态和内部状态**，否则可能会引起线程安全问题。
+  - 2、这些类必须有一个工厂对象加以控制。
+
+- 类图原理
+  - 成员
+    - `FlyWeight` 是抽象的享元角色，他是产品的抽象类，定义了对象的外部状态和内部状态(后面介绍) 的接口规范(接口)或默认实现(抽象类)
+    - `ConcreteFlyWeight` 是具体的享元角色，是具体的产品类，实现抽象角色定义相关业务方法
+    - `UnsharedConcreteFlyWeight` 是不可共享的角色，一般不会出现在享元工厂中
+    - `FlyWeightFactory` 是享元工厂类，用于构建池的容器，提供从池中获取对象的相关方法
+  - 内部与外部状态
+    - 享元模式提出了两个要求：细粒度和共享对象。这里就涉及到内部状态和外部状态了，即将对象的信息分为两个部分： 内部状态和外部状态
+    - 内部状态指对象共享出来的信息，存储在享元对象内部且不会随环境的改变而改变
+    - 外部状态指对象得以依赖的一个标记，是随环境改变而改变的、不可共享的状态
+
+    ```
+    比如围棋、五子棋、跳棋，它们都有大量的棋子对象，围棋和五子棋只有黑白两色，跳棋颜色多一点，所以棋子颜色就是棋子的内部状态；
+    而各个棋子之间的差别就是位置的不同，当我们落子后，落子颜色是定的，但位置是变化的，所以棋子坐标就是棋子的外部状态
+    ```
+
+  ![design-patterns-56.png](./image/design-patterns-56.png)
+
+#### 3.3.7.2. 情景介绍
+
+小型的外包项目，给客户`A`做一个产品展示网站， 客户`A`的朋友感觉效果不错，也希望做这样产品展示网站，但是要求都有些不同：
+
+1. 有客户要求以新闻的形式发布
+2. 客户人要求以博客的形式发布
+3. 有客户希望以微信公众号的形式发布
+
+#### 3.3.7.3. 传统方式
+
+> **方案描述**
+
+1. 直接复制粘贴一份，然后根据客户不同要求，进行定制修改
+2. 给每个网站租用一个空间
+3. 方案设计示意图
+
+![design-patterns-55.png](./image/design-patterns-55.png)
+
+> **问题分析**
+
+1. 需要的网站结构相似度很高，而且都不是高访问量网站，如果分成多个虚拟空间来处理，相当于一个相同网站的实例对象很多，造成服务器的资源浪费
+2. 解决思路：整合到一个网站中，共享其相关的代码和数据，对于硬盘、内存、 CPU、数据库空间等服务器资源都可以达成共享，减少服务器资源
+3. 对于代码来说， 由于是一份实例，维护和扩展都更加容易
+4. 上面的解决思路就可以使用享元模式来解决
+
+#### 3.3.7.4. 享元模式代码
+
+> **类图**
+
+![design-patterns-57.png](./image/design-patterns-57.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `WebSite`：产品的抽象类，定义了产品对象的内部和外部状态的规范，即前面所说的 `FlyWeight`
+
+   ```java
+   public abstract class WebSite {
+   	
+   	public abstract void use(User user);// 抽象方法
+   	
+   }
+   ```
+
+2. `ConcreteWebSite`：具体的产品类，继承了 `WebSite` 抽象类，实现了具体的业务方法，即前面所说的 `ConcreteFlyWeight`
+
+   ```java
+   //具体网站
+   public class ConcreteWebSite extends WebSite {
+   
+   	// 共享的部分，内部状态
+   	private String type = ""; // 网站发布的形式(类型)
+   
+   	// 构造器
+   	public ConcreteWebSite(String type) {
+   		this.type = type;
+   	}
+   
+   	@Override
+   	public void use(User user) {
+   		System.out.println("网站的发布形式为:" + type + " 在使用中 .. 使用者是" + user.getName());
+   	}
+   
+   }
+   ```
+
+3. `WebSiteFactory`：产品工厂类，生产具体的产品(`WebSite` 对象)，并构建产品池，即前面所说的 `FlyWeightFactory`
+
+   ```java
+   // 网站工厂类，根据需要返回压一个网站
+   public class WebSiteFactory {
+   
+   	// 集合， 充当池的作用
+   	private HashMap<String, ConcreteWebSite> pool = new HashMap<>();
+   
+   	// 根据网站的类型，返回一个网站, 如果没有就创建一个网站，并放入到池中,并返回
+   	public WebSite getWebSiteCategory(String type) {
+   		if (!pool.containsKey(type)) {
+   			// 就创建一个网站，并放入到池中
+   			pool.put(type, new ConcreteWebSite(type));
+   		}
+   
+   		return (WebSite) pool.get(type);
+   	}
+   
+   	// 获取网站分类的总数 (池中有多少个网站类型)
+   	public int getWebSiteCount() {
+   		return pool.size();
+   	}
+   	
+   }
+   ```
+
+4. `User`：实体类
+
+   ```java
+   public class User {
+   
+   	private String name;
+   
+   	public User(String name) {
+   		super();
+   		this.name = name;
+   	}
+   
+   	public String getName() {
+   		return name;
+   	}
+   
+   	public void setName(String name) {
+   		this.name = name;
+   	}
+   
+   }
+   ```
+
+5. `Client`：客户端
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   
+   		// 创建一个工厂类
+   		WebSiteFactory factory = new WebSiteFactory();
+   
+   		// 客户要一个以新闻形式发布的网站
+   		WebSite webSite1 = factory.getWebSiteCategory("新闻");
+   		webSite1.use(new User("tom"));
+   
+   		// 客户要一个以博客形式发布的网站
+   		WebSite webSite2 = factory.getWebSiteCategory("博客");
+   		webSite2.use(new User("jack"));
+   
+   		// 客户要一个以博客形式发布的网站
+   		WebSite webSite3 = factory.getWebSiteCategory("博客");
+   		webSite3.use(new User("smith"));
+   
+   		// 客户要一个以博客形式发布的网站
+   		WebSite webSite4 = factory.getWebSiteCategory("博客");
+   		webSite4.use(new User("king"));
+   
+   		System.out.println("网站的分类个数=" + factory.getWebSiteCount());
+   		
+   	}
+   
+   }
+   ```
+
+</details>
+
+> **总结**
+
+1. 利用享元模式，我们能够把外部状态(`User`)和内部状态(`type`)分开，对于共享的部分，我们共用即可
+2. 比如网站类型(`type`)不同时，我们才会创建对应的网站实例，再将其放入对象池中，如果网站类型(`type`)相同，我们直接共享即可(享元)
+3. 博客类型相同可以共用，但是我们可以通过传入 `User` 形参，让不同的使用者，访问同一份博客
+
+#### 3.3.7.5. JDK Interger 源码分析
+
+> **测试代码**
+
+```java
+public class FlyWeight {
+
+  public static void main(String[] args) {
+    
+    // 如果 Integer.valueOf(x) x 在 -128 --- 127 直接，就是使用享元模式返回,如果不在该范围类，则仍然 new
+
+    // 小结:
+    // 1. 在valueOf 方法中，先判断值是否在 IntegerCache 中，如果不在，就创建新的Integer(new), 否则，就直接从 缓存池返回
+    // 2. valueOf 方法，就使用到享元模式
+    // 3. 如果使用valueOf 方法得到一个Integer 实例，范围在 -128 - 127 ，执行速度比 new 快
+
+    Integer x = Integer.valueOf(127); // 得到 x实例，类型 Integer
+    Integer y = new Integer(127); // 得到 y 实例，类型 Integer
+    Integer z = Integer.valueOf(127);// ..
+    Integer w = new Integer(127);
+    
+    System.out.println(x.equals(y)); // 大小，true
+    System.out.println(x == y); // false
+    System.out.println(x == z); // true
+    System.out.println(w == x); // false
+    System.out.println(w == y); // false
+
+    Integer x1 = Integer.valueOf(200);
+    Integer x2 = Integer.valueOf(200);
+    System.out.println("x1==x2=" + (x1 == x2)); // false
+  }
+}
+```
+
+> **源码追踪**
+
+1. `Integer.valueOf()` 方法：该方法使用享元模式，如果数字范围在 `[IntegerCache.low, IntegerCache.high]` 之间，则直接返回缓存池中的对象，否则使用 `new` 的方式创建
+
+   ```java
+   public static Integer valueOf(int i) {
+       if (i >= IntegerCache.low && i <= IntegerCache.high)
+           return IntegerCache.cache[i + (-IntegerCache.low)];
+       return new Integer(i);
+   }
+   ```
+
+2. `IntegerCache` 用于为 `[-128, 127]` 数值的缓存池，事先就已经将 `cache[]` 缓存池创建好了
+
+   ```java
+   private static class IntegerCache {
+       static final int low = -128;
+       static final int high;
+       static final Integer cache[];
+   
+       static {
+           // high value may be configured by property
+           int h = 127;
+           String integerCacheHighPropValue =
+               sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
+           if (integerCacheHighPropValue != null) {
+               try {
+                   int i = parseInt(integerCacheHighPropValue);
+                   i = Math.max(i, 127);
+                   // Maximum array size is Integer.MAX_VALUE
+                   h = Math.min(i, Integer.MAX_VALUE - (-low) -1);
+               } catch( NumberFormatException nfe) {
+                   // If the property cannot be parsed into an int, ignore it.
+               }
+           }
+           high = h;
+   
+           cache = new Integer[(high - low) + 1];
+           int j = low;
+           for(int k = 0; k < cache.length; k++)
+               cache[k] = new Integer(j++);
+   
+           // range [-128, 127] must be interned (JLS7 5.1.7)
+           assert IntegerCache.high >= 127;
+       }
+   
+       private IntegerCache() {}
+   }
+   ```
+
+#### 3.3.7.6. 注意事项
+
+1. 在享元模式这样理解，“享”就表示共享，“元”表示对象
+2. 系统中有大量对象， 这些对象消耗大量内存， 并且对象的状态大部分可以外部化时，我们就可以考虑选用享元模式
+3. 用唯一标识码判断，如果在内存中有，则返回这个唯一标识码所标识的对象，经常用`HashMap`存储共享对象
+4. 享元模式大大减少了对象的创建，降低了程序内存的占用，提高效率
+5. 享元模式提高了系统的复杂度。需要分离出内部状态和外部状态，而外部状态具有固化特性，不应该随着内部状态的改变而改变，这是我们使用享元模式需要注意的地方
+6. 使用享元模式时，注意划分内部状态和外部状态，并且需要有一个工厂类加以控制。
+7. 享元模式经典的应用场景是需要缓冲池的场景，比如 `String` 常量池、 数据库连接池
 
 ### 3.3.8. 代理模式（Proxy Pattern）
+
+#### 3.3.8.1. 说明
+
+- 概述
+  - 目的：为其他对象提供一种代理以控制对这个对象的访问。
+  - 主要解决：
+    - 在直接访问对象时带来的问题，
+    - 比如说：要访问的对象在远程的机器上。
+    - 在面向对象系统中，有些对象由于某些原因（比如对象创建开销很大，或者某些操作需要安全控制，或者需要进程外的访问），
+    - 直接访问会给使用者或者系统结构带来很多麻烦，我们可以在访问此对象时加上一个对此对象的访问层。
+  - 何时使用：想在访问一个类时做一些控制。
+  - 如何解决：增加中间层。
+  - 关键代码：实现与被代理类组合。
+
+- 应用实例：
+  - spring aop
+  - RPC
+
+- 优缺点
+  - 优点： 
+    - 1、职责清晰。
+    - 2、高扩展性。
+    - 3、智能化。
+  - 缺点：
+    - 1、由于在客户端和真实主题之间增加了代理对象，因此有些类型的代理模式可能会造成请求的处理速度变慢。 
+    - 2、实现代理模式需要额外的工作，有些代理模式的实现非常复杂。
+
+- 使用场景：按职责来划分，通常有以下使用场景：
+  - 1、远程代理。 
+  - 2、虚拟代理。
+  - 3、Copy-on-Write 代理。
+  - 4、保护（Protect or Access）代理。
+  - 5、Cache代理。
+  - 6、防火墙（Firewall）代理。
+  - 7、同步化（Synchronization）代理。 
+  - 8、智能引用（Smart Reference）代理。
+
+- 注意事项：
+  - 1、和适配器模式的区别：**适配器模式主要改变所考虑对象的接口，而代理模式不能改变所代理类的接口** 
+  - 2、和装饰器模式的区别：**装饰器模式为了增强功能，而代理模式是为了加以控制**
+
+- 主要有两种：
+  - 静态代理
+  - 动态代理 
+    - `JDK`代理(接口代理)
+    - `Cglib`代理(可以在内存动态的创建对象，而不需要实现接口)
+
+- 原理类图
+
+  ![design-patterns-58.png](./image/design-patterns-58.png)
+
+#### 3.3.8.2. 情景介绍
+
+1. 定义一个接口：`ITeacherDao`
+2. 目标对象`TeacherDAO`实现接口`ITeacherDAO`
+3. 使用静态代理方式，就需要在代理对象`TeacherDAOProxy`中也实现`ITeacherDAO`
+4. 调用的时候通过调用代理对象的方法来调用目标对象
+5. 特别提醒：代理对象与目标对象要实现相同的接口，然后通过调用相同的方法来调用目标对象的方法
+
+#### 3.3.8.3. 静态代理代码
+
+> **类图**
+
+![design-patterns-59.png](./image/design-patterns-59.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `ITeacherDao`：定义抽象的方法(授课)规范
+
+   ```java
+   //接口
+   public interface ITeacherDao {
+   
+   	void teach(); // 授课的方法
+   	
+   }
+   ```
+
+2. `TeacherDao`：实现具体的业务功能
+
+   ```java
+   public class TeacherDao implements ITeacherDao {
+   
+   	@Override
+   	public void teach() {
+   		System.out.println(" 老师授课中  。。。。。");
+   	}
+   
+   }
+   ```
+
+3. `TeacherDaoProxy`：代理类，聚合了一个 `ITeacherDao` 具体实现类的对象，在`TeacherDaoProxy`实现了 `ITeacherDao` 接口，并在 `teach()` 方法中完成代理操作
+
+   ```java
+   //代理对象,静态代理
+   public class TeacherDaoProxy implements ITeacherDao {
+   
+   	private ITeacherDao target; // 目标对象，通过接口来聚合
+   
+   	// 构造器
+   	public TeacherDaoProxy(ITeacherDao target) {
+   		this.target = target;
+   	}
+   
+   	@Override
+   	public void teach() {
+   		System.out.println("开始代理  完成某些操作。。。。。 ");// 方法
+   		target.teach();
+   		System.out.println("提交。。。。。");// 方法
+   	}
+   
+   }
+   ```
+
+4. `Client`：客户端
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 创建目标对象(被代理对象)
+   		TeacherDao teacherDao = new TeacherDao();
+   
+   		// 创建代理对象, 同时将被代理对象传递给代理对象
+   		TeacherDaoProxy teacherDaoProxy = new TeacherDaoProxy(teacherDao);
+   
+   		// 通过代理对象，调用到被代理对象的方法
+   		// 即：执行的是代理对象的方法，代理对象再去调用目标对象的方法
+   		teacherDaoProxy.teach();
+   	}
+   
+   }
+   ```
+
+</details>
+
+> **优缺点**
+
+1. 优点：在不修改目标对象的功能前提下，能通过代理对象对目标功能扩展
+2. 缺点：因为代理对象需要与目标对象实现一样的接口，所以会有很多代理类，一旦接口增加方法，目标对象与代理对象都要维护
+
+#### 3.3.8.4. 动态代理(JDK)
+
+> **类图**
+
+![design-patterns-60.png](./image/design-patterns-60.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `ITeacherDao`
+
+   ```java
+   //接口
+   public interface ITeacherDao {
+   
+   	void teach(); // 授课方法
+   
+   	void sayHello(String name);
+   	
+   }
+   ```
+
+2. `TeacherDao`：
+
+   ```java
+   public class TeacherDao implements ITeacherDao {
+   
+   	@Override
+   	public void teach() {
+   		System.out.println(" 老师授课中.... ");
+   	}
+   
+   	@Override
+   	public void sayHello(String name) {
+   		System.out.println("hello " + name);
+   	}
+   
+   }
+   ```
+
+3. `ProxyFactory`：通过构造器传入被代理对象，通过 `Proxy.newProxyInstance()` 方法中的 `new InvocationHandler()` 匿名内部类实现具体的代理逻辑
+
+   ```java
+   public class ProxyFactory {
+   
+   	// 维护一个目标对象 , Object
+   	private Object target;
+   
+   	// 构造器 ， 对target 进行初始化
+   	public ProxyFactory(Object target) {
+   		this.target = target;
+   	}
+   
+   	// 给目标对象 生成一个代理对象
+   	public Object getProxyInstance() {
+   
+   		// 说明
+   		/*
+   		 * public static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h)
+   		 * 
+   		 * 1. ClassLoader loader ： 指定当前目标对象使用的类加载器, 获取加载器的方法固定 
+   		 * 2. Class<?>[] interfaces: 目标对象实现的接口类型，使用泛型方法确认类型 
+   		 * 3. InvocationHandler h : 事情处理，执行目标对象的方法时，会触发事情处理器方法, 会把当前执行的目标对象方法作为参数传入
+   		 */
+   		return Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(),
+   				new InvocationHandler() {
+   					@Override
+   					/*
+   					 * proxy：proxy the proxy instance that the method was invoked on
+   					 * method：待调用的目标方法（target 的方法）
+   					 * args：方法参数
+   					 */
+   					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+   						System.out.println("JDK代理开始~~");
+   						// 反射机制调用目标对象的方法
+   						Object returnVal = method.invoke(target, args);
+   						System.out.println("JDK代理提交");
+   						return returnVal;
+   					}
+   				});
+   	}
+   
+   }
+   ```
+
+4. `Client`：
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 创建目标对象
+   		ITeacherDao target = new TeacherDao();
+   
+   		// 给目标对象，创建代理对象, 可以转成 ITeacherDao
+   		ITeacherDao proxyInstance = (ITeacherDao) new ProxyFactory(target).getProxyInstance();
+   
+   		// proxyInstance=class com.sun.proxy.$Proxy0 内存中动态生成了代理对象
+   		System.out.println("proxyInstance=" + proxyInstance.getClass());
+   
+   		// 通过代理对象，调用目标对象的方法
+   		proxyInstance.teach();
+   
+   		proxyInstance.sayHello(" tom ");
+   	}
+   
+   }
+   ```
+</details>
+
+> **代码追踪**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `Step into` 进入 `proxyInstance.sayHello(" tom ");`
+
+  ![design-patterns-61.png](./image/design-patterns-61.png)
+
+2. 参数 `proxy` 为代理对象
+
+  ![design-patterns-62.png](./image/design-patterns-62.png)
+
+3. 参数 `method` 为被代理(`target`)对象中的方法
+
+  ![design-patterns-63.png](./image/design-patterns-63.png)
+
+4. 参数 `args` 为方法的形参
+
+  ![design-patterns-64.png](./image/design-patterns-64.png)
+
+</details>
+
+#### 3.3.8.5. 动态代理(Cglib)
+
+> **Cglib代理模式的基本介绍**
+
+1. 静态代理和`JDK`代理模式都要求目标对象是实现一个接口，但是有时候目标对象只是一个单独的对象，并没有实现任何的接口，这个时候可使用目标对象子类来实现代理，这就是`Cglib`代理
+
+2. `Cglib`代理也叫作子类代理，它是在内存中构建一个子类对象从而实现对目标对象功能扩展，有些书也将`Cglib`代理归属到动态代理
+
+3. `Cglib`是一个强大的高性能的代码生成包，它可以在运行期扩展`java`类与实现`java`接口，它广泛的被许多`AOP`的框架使用，例如`Spring AOP`，实现方法拦截
+
+4. 在 `AOP`编程中如何选择代理模式：
+
+   1. 目标对象需要实现接口，用`JDK`代理
+   2. 目标对象不需要实现接口，用`Cglib`代理
+
+5. `Cglib`包的底层是通过使用字节码处理框架`ASM`来转换字节码并生成新的类
+
+> **Cglib代理模式实现步骤**
+
+1. 需要引入`cglib`的`jar`文件
+
+  ![design-patterns-65.png](./image/design-patterns-65.png)
+
+2. 在内存中动态构建子类， 注意代理的类不能为`final`，否则报错`java.lang.IllegalArgumentException`
+
+3. 目标对象的方法如果为`final` 或 `static`,那么就不会被拦截，即不会执行目标对象额外的业务方法
+
+> **Cglib代理模式应用实例**
+
+![design-patterns-66.png](./image/design-patterns-66.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `TeacherDao`：被代理类
+
+   ```java
+   public class TeacherDao {
+   
+   	public String teach() {
+   		System.out.println(" 老师授课中  ， 我是cglib代理，不需要实现接口 ");
+   		return "hello";
+   	}
+   	
+   }
+   ```
+
+2. `ProxyFactory`：代理工厂类，用于获取代理对象
+
+   ```java
+   public class ProxyFactory implements MethodInterceptor {
+   
+   	// 维护一个目标对象
+   	private Object target;
+   
+   	// 构造器，传入一个被代理的对象
+   	public ProxyFactory(Object target) {
+   		this.target = target;
+   	}
+   
+   	// 返回一个代理对象: 是 target 对象的代理对象
+   	public Object getProxyInstance() {
+   		// 1. 创建一个工具类
+   		Enhancer enhancer = new Enhancer();
+   		// 2. 设置父类
+   		enhancer.setSuperclass(target.getClass());
+   		// 3. 设置回调函数
+   		enhancer.setCallback(this);
+   		// 4. 创建子类对象，即代理对象
+   		return enhancer.create();
+   	}
+   
+   	// 重写 intercept 方法，会调用目标对象的方法
+   	@Override
+   	public Object intercept(Object arg0, Method method, Object[] args, MethodProxy arg3) throws Throwable {
+   		System.out.println("Cglib代理模式 ~~ 开始");
+   		Object returnVal = method.invoke(target, args);
+   		System.out.println("Cglib代理模式 ~~ 提交");
+   		return returnVal;
+   	}
+   
+   }
+   ```
+
+3. `Client`：客户端
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 创建目标对象
+   		TeacherDao target = new TeacherDao();
+   		
+   		// 获取到代理对象，并且将目标对象传递给代理对象
+   		TeacherDao proxyInstance = (TeacherDao) new ProxyFactory(target).getProxyInstance();
+   
+   		// 执行代理对象的方法，触发intecept 方法，从而实现 对目标对象的调用
+   		String res = proxyInstance.teach();
+   		System.out.println("res=" + res);
+   	}
+   }
+   ```
+
+</details>
+
+> **代码追踪**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `Step into` 进入 `String res = proxyInstance.teach();`
+
+   ![image-20200827232343715](https://img-blog.csdnimg.cn/img_convert/e534f7b2b5d97c97efa098bd07e39ac8.png)
+
+2. 形参 `Method` 为 `public java.lang.String com.atguigu.proxy.cglib.TeacherDao.teach()`
+
+   ![image-20200827232144951](https://img-blog.csdnimg.cn/img_convert/cf4dbcaca2f57134d01c01601713c3f3.png)
+
+</details>
+
+#### 3.3.8.6. 代理模式变体
+
+- 代理模式(Proxy)的变体
+
+- 防火墙代理：内网通过代理穿透防火墙，实现对公网的访问
+- 缓存代理：比如：当请求图片文件等资源时，先到缓存代理去取，如果取到资源则`ok`，如果取不到资源，再到公网或者数据库取，然后缓存
+- 远程代理远程对象的本地代表，通过它可以把远程对象当本地对象来调用。远程代理通过网络和真正的远程对象沟通信息
+
+  ![design-patterns-67.png](./image/design-patterns-67.png)
+
+- 同步代理： 主要使用在多线程编程中，完成多线程间同步工作
+
+#### 3.3.8.7. 注意事项
 
 ## 3.4. 行为型模式
 
@@ -5099,31 +6638,151 @@ private static Calendar createCalendar(TimeZone zone,
 
 这些设计模式特别关注对象之间的通信。
 
-### 3.4.2. 责任链模式（Chain of Responsibility Pattern）
-
-### 3.4.3. 命令模式（Command Pattern）
-
-### 3.4.4. 解释器模式（Interpreter Pattern）
-
-### 3.4.5. 迭代器模式（Iterator Pattern）
-
-### 3.4.6. 中介者模式（Mediator Pattern）
-
-### 3.4.7. 备忘录模式（Memento Pattern）
-
-### 3.4.8. 观察者模式（Observer Pattern）
-
-### 3.4.9. 状态模式（State Pattern）
-
-### 3.4.10. 空对象模式（Null Object Pattern）
-
-### 3.4.11. 策略模式（Strategy Pattern）
-
-### 3.4.12. 模板模式（Template Pattern）
+### 3.4.2. 模板模式（Template Pattern）
 
 - 最经典的 JDK 应用的就是 AQS
 
+#### 3.4.2.1. 说明
+
+#### 3.4.2.2. 情景介绍
+
+#### 3.4.2.3. 传统方式
+
+#### 3.4.2.4. 代码
+
+#### 3.4.2.5. 注意事项
+
+### 3.4.3. 责任链模式（Chain of Responsibility Pattern）
+
+#### 3.4.3.1. 说明
+
+#### 3.4.3.2. 情景介绍
+
+#### 3.4.3.3. 传统方式
+
+#### 3.4.3.4. 代码
+
+#### 3.4.3.5. 注意事项
+
+### 3.4.4. 命令模式（Command Pattern）
+
+#### 3.4.4.1. 说明
+
+#### 3.4.4.2. 情景介绍
+
+#### 3.4.4.3. 传统方式
+
+#### 3.4.4.4. 代码
+
+#### 3.4.4.5. 注意事项
+
+### 3.4.5. 解释器模式（Interpreter Pattern）
+
+#### 3.4.5.1. 说明
+
+#### 3.4.5.2. 情景介绍
+
+#### 3.4.5.3. 传统方式
+
+#### 3.4.5.4. 代码
+
+#### 3.4.5.5. 注意事项
+
+### 3.4.6. 迭代器模式（Iterator Pattern）
+
+#### 3.4.6.1. 说明
+
+#### 3.4.6.2. 情景介绍
+
+#### 3.4.6.3. 传统方式
+
+#### 3.4.6.4. 代码
+
+#### 3.4.6.5. 注意事项
+
+### 3.4.7. 中介者模式（Mediator Pattern）
+
+#### 3.4.7.1. 说明
+
+#### 3.4.7.2. 情景介绍
+
+#### 3.4.7.3. 传统方式
+
+#### 3.4.7.4. 代码
+
+#### 3.4.7.5. 注意事项
+
+### 3.4.8. 备忘录模式（Memento Pattern）
+
+#### 3.4.8.1. 说明
+
+#### 3.4.8.2. 情景介绍
+
+#### 3.4.8.3. 传统方式
+
+#### 3.4.8.4. 代码
+
+#### 3.4.8.5. 注意事项
+
+### 3.4.9. 观察者模式（Observer Pattern）
+
+#### 3.4.9.1. 说明
+
+#### 3.4.9.2. 情景介绍
+
+#### 3.4.9.3. 传统方式
+
+#### 3.4.9.4. 代码
+
+#### 3.4.9.5. 注意事项
+
+### 3.4.10. 状态模式（State Pattern）
+
+#### 3.4.10.1. 说明
+
+#### 3.4.10.2. 情景介绍
+
+#### 3.4.10.3. 传统方式
+
+#### 3.4.10.4. 代码
+
+#### 3.4.10.5. 注意事项
+
+### 3.4.11. 空对象模式（Null Object Pattern）
+
+#### 3.4.11.1. 说明
+
+#### 3.4.11.2. 情景介绍
+
+#### 3.4.11.3. 传统方式
+
+#### 3.4.11.4. 代码
+
+#### 3.4.11.5. 注意事项
+
+### 3.4.12. 策略模式（Strategy Pattern）
+
+#### 3.4.12.1. 说明
+
+#### 3.4.12.2. 情景介绍
+
+#### 3.4.12.3. 传统方式
+
+#### 3.4.12.4. 代码
+
+#### 3.4.12.5. 注意事项
+
 ### 3.4.13. 访问者模式（Visitor Pattern）
+
+#### 3.4.13.1. 说明
+
+#### 3.4.13.2. 情景介绍
+
+#### 3.4.13.3. 传统方式
+
+#### 3.4.13.4. 代码
+
+#### 3.4.13.5. 注意事项
 
 ## 3.5. J2EE 模式
 
@@ -5133,19 +6792,99 @@ private static Calendar createCalendar(TimeZone zone,
 
 ### 3.5.2. MVC 模式（MVC Pattern）
 
+#### 3.5.2.1. 说明
+
+#### 3.5.2.2. 情景介绍
+
+#### 3.5.2.3. 传统方式
+
+#### 3.5.2.4. 代码
+
+#### 3.5.2.5. 注意事项
+
 ### 3.5.3. 业务代表模式（Business Delegate Pattern）
+
+#### 3.5.3.1. 说明
+
+#### 3.5.3.2. 情景介绍
+
+#### 3.5.3.3. 传统方式
+
+#### 3.5.3.4. 代码
+
+#### 3.5.3.5. 注意事项
 
 ### 3.5.4. 组合实体模式（Composite Entity Pattern）
 
+#### 3.5.4.1. 说明
+
+#### 3.5.4.2. 情景介绍
+
+#### 3.5.4.3. 传统方式
+
+#### 3.5.4.4. 代码
+
+#### 3.5.4.5. 注意事项
+
 ### 3.5.5. 数据访问对象模式（Data Access Object Pattern）
+
+#### 3.5.5.1. 说明
+
+#### 3.5.5.2. 情景介绍
+
+#### 3.5.5.3. 传统方式
+
+#### 3.5.5.4. 代码
+
+#### 3.5.5.5. 注意事项
 
 ### 3.5.6. 前端控制器模式（Front Controller Pattern）
 
+#### 3.5.6.1. 说明
+
+#### 3.5.6.2. 情景介绍
+
+#### 3.5.6.3. 传统方式
+
+#### 3.5.6.4. 代码
+
+#### 3.5.6.5. 注意事项
+
 ### 3.5.7. 拦截过滤器模式（Intercepting Filter Pattern）
+
+#### 3.5.7.1. 说明
+
+#### 3.5.7.2. 情景介绍
+
+#### 3.5.7.3. 传统方式
+
+#### 3.5.7.4. 代码
+
+#### 3.5.7.5. 注意事项
 
 ### 3.5.8. 服务定位器模式（Service Locator Pattern）
 
+#### 3.5.8.1. 说明
+
+#### 3.5.8.2. 情景介绍
+
+#### 3.5.8.3. 传统方式
+
+#### 3.5.8.4. 代码
+
+#### 3.5.8.5. 注意事项
+
 ### 3.5.9. 传输对象模式（Transfer Object Pattern）
+
+#### 3.5.9.1. 说明
+
+#### 3.5.9.2. 情景介绍
+
+#### 3.5.9.3. 传统方式
+
+#### 3.5.9.4. 代码
+
+#### 3.5.9.5. 注意事项
 
 ## 3.6. 设计模式的实际应用
 

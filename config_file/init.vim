@@ -662,6 +662,7 @@ let g:which_key_map.b.o = "deleteOthers"
 " 将链接下的文件下载到指定位置
 function! SaveImageByUrl()
     let l:name = input('Image name: ') . ".png"
+    echo "\n"
     let l:relate_path = expand("%")[0:strlen(expand("%"))-strlen(expand("%:t"))-2]
     let l:image_path = l:relate_path . g:mdip_imgdir[1:] . "/" . l:name
     let l:image_path = substitute(l:image_path,"\\","/","")
