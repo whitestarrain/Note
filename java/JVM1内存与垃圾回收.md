@@ -138,7 +138,6 @@
   - 只在Solaris平台短暂用，其他平台上还是classic vm
     - 但也没用在其他平台，终被Hotspot虚拟机替换
 
-
 - HotSpot VM
   > 商用三大虚拟机之一
   - 历史
@@ -210,7 +209,6 @@
   - 微软为了在IE3浏览器中支持Java Applets,开发了Microsoft JVM。
   - 只能在window平台下运行。但确是当时Windows下性能最好的Java VM。
   - 1997年，Sun以侵犯商标、不正当竞争罪名指控微软成功，赔了sun很多 钱。微软在WindowsXP SP3中抹掉了其VM。现在windows上安装的jdk 都是HotSpot。
-
 
 - Taobao JVM
   - 由AliJVM团队发布。阿里，国内使用Java最强大的公司，覆盖云计算、金融、物流、 电商等众多领域，需要解决高并发、高可用、分布式的复合问题。有大量的开源产品。
@@ -368,7 +366,6 @@
     - 之后的**方法调用**一节 就涉及符号引用转化为直接引用（于 学到虚方法表时 添加）
     - 在此阶段还会创建虚方法表（于 学到虚方法表时 添加）
 
-
 #### 2.1.4.4. initialization
 
 - 过程
@@ -464,7 +461,6 @@
 
 ##### 2.1.5.2.2. Extension ClassLoader
 
-
 - 扩展类加载器
   - 编写：**Java语言编写**，由`sun.misc.Launcher$ExtClassLoader`实现
   - 父类：**派生于ClassLoader类**。 父类加载器为启动类加载器
@@ -515,7 +511,6 @@
   2. 在JDK1.2之前，在自定义类加载器时，总会去继承ClassLoader类并重 写1oadClass()方法，从而实现自定义的类加载类，但是在JDK1.2之后 已不再建议用户去覆盖1oadClass()方法，而是建议把自定义的类加载逻 辑写在findClass()方法中
   3. 在编写自定义类加载器时，如果没有太过于复杂的需求，可以直接继承 URLClassLoader类，这样就可以避免自己去编写findClass()方法及 其获取字节码流的方式，使自定义类加载器编写更加简洁。
 
-
 #### 2.1.5.4. 抽象类ClassLoader
 
 - 简介：除了Bootstrap ClassLoader，所有的类加载器都继承该类
@@ -548,7 +543,6 @@
 > 面试经常被问
 
 ![parent-class-loader](./image/parent-class-loader.png)
-
 
 - java虚拟机对class文件加载方式：
   - 按需加载
@@ -590,7 +584,6 @@
     - 因为是以java开头，所有BootStrap ClassLoader 可以加载
     - 所以加载的是java自带的java.lang.String
     - 因为只有自定义的java.lang.String中有main方法，而java自带的java.lang.String中没有，所以就会报错
-
 
 - 示例2:
   > ![parent-class-loader-2](./image/parent-class-loader-2.png)
@@ -645,7 +638,6 @@
   - 如果一个类型是由自定义类加载器加载的，那么**JVM会将这个类加载器的一个引用作为类型信息的一部分保存在方法区中**。
   - 当解析一个类型到另一个类型的引用的时候，JVM需要保证这两个类型的类加载器是相同的。
     > 之后动态链接那里涉及
-
 
 - jvm对类的使用方式
   > 字节码和类的加载篇会详细说
@@ -770,7 +762,6 @@
   - 每一条指令都有对应的地址。
   - pc寄存器中保存着下一条指令的地址
   - 执行引擎会访问pc寄存器，根据地址去读并执行指令
-
 
 #### 2.2.2.2. 手动尝试
 
@@ -1040,8 +1031,6 @@ public static void main(String[] args){
 
 #### 2.2.3.5. 栈帧内部-操作数栈
 
-
-
 - 作用： **主要用于保存计算过程的中间结果，同时作为计算过程中变量临时的存储空间。**
 - 流程：
   - 当一个方法开始执行的时候，一个栈帧就会被创建出来。这个栈帧里的操作数栈一开始是**空的**。当然，空的并不意味着长度为0
@@ -1078,7 +1067,6 @@ public static void main(String[] args){
   > ![operand-stack-11](./image/operand-stack-11.png) <br/>
   > 将操作数栈中的第一个数出栈，存放在局部变量表index为3的位置<br/>
 
-
 #### 2.2.3.6. 栈顶缓存技术
 
 > top of stack cashing<br/>
@@ -1091,8 +1079,6 @@ public static void main(String[] args){
   - 这同时也就意味着将需要更多的指令分派（instruction dispatch)次数和内存读/写次数。
 - 目的：为了解决以上问题
 - 说明：将**栈顶元素**全部缓存在**物理CPU**的**寄存器**中，以此降低对内存的读/写次数，提升执行引擎的 执行效率。
-
-
 
 #### 2.2.3.7. 栈帧内部-动态链接
 
@@ -1391,15 +1377,12 @@ public static void main(String[] args){
     > ![dynamiclink-7](./image/dynamiclink-7.png) <br />
     > ![dynamiclink-8](./image/dynamiclink-8.png) 
 
-
-
 <br/> <br/> <br/>
 疑问：如何解释上转类型和下转类型的多态
 
 #### 2.2.3.9. 栈帧内部-方法返回地址
 
 - 该结构存储的数据：调用该方法时，pc寄存器（或者程序计数器）中的值
-
 
 - 过程讲解：
   - 正常退出
@@ -1556,8 +1539,6 @@ public static void main(String[] args){
         return s1.toString();
     }
   ```
-
-
 
 ### 2.2.4. 本地方法接口+库(非运行时数据区结构)
 
@@ -1874,8 +1855,6 @@ public static void main(String[] args){
   > ![heap-8](./image/heap-8.png) <br />
   > 通过查看抽样器中的信息可以判断内存溢出的原因
 
-
-
 #### 2.2.6.5. 年轻代和老年代
 
 - jvm中的对象分类
@@ -1999,7 +1978,6 @@ public static void main(String[] args){
   - GC线程：用来进行垃圾回收
     > 垃圾回收过程中会有Stop the World(STW)，也就是垃圾回收时用户线程会暂停。导致程序执行效率下降<br />
 
-
 - 针对 HotSpot VM的实现，它的GC按照回收区域分为两类：
   > JVM 进行GC时，并非每次都对三个区域（新生代，老年代，方法区）一起回收，大多数回收的都是新生代。
   - 部分收集（Partial GC）:不是完整得收集整个java堆的垃圾收集。其中可以分为：
@@ -2121,7 +2099,6 @@ public static void main(String[] args){
   ```
   > ![heap-18](./image/heap-18.png) 
 
-
 #### 2.2.6.11. TLAB：为对象分配内存
 
 - TLAB(Thread Local Allocation Buffer)出现原因：
@@ -2153,7 +2130,6 @@ public static void main(String[] args){
 
 [官网说明]( https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html)
 > 一共600多个
-
 
 - -XX:+PrintFlagsInitial : 查看**所有**的参数的默认初始值
 - -XX:+PrintFlagsFinal ：查看**所有**的参数的最终值（可能会存在修改，不再是初始值）
@@ -2197,7 +2173,6 @@ HandlePromotionFailure参数，但是在代码中已经不会再使用它。
 JDK6 Updat 24之后的规则变为只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大
 小就会进行Minor GC,否则将进行Full GC。（相当于固定设为true）
 ```
-
 
 #### 2.2.6.13. 拓展：逃逸分析
 
@@ -2796,11 +2771,9 @@ public class OOMTest extends ClassLoader {
     > ![method_area-9](./image/method_area-9.png) 
     > (可以看见编译文件中有 2 )
 
-
 #### 2.2.7.6. 常量池与运行时常量池
 
 > 细节放到中篇来讲
-
 
 > 要弄清楚方法区，需要理解清楚ClassFile,因为加载类的信息都在方法区。<br />
 > 要弄清楚方法区的运行时常量池，需要理解清楚ClassFile中的常量池。
@@ -2870,7 +2843,7 @@ public class OOMTest extends ClassLoader {
     - 字段引用
     - 方法引用
 
-#### 符号引用详解
+#### 2.2.7.7. 符号引用详解
 
 [来源](https://www.zhihu.com/question/30300585)
 
@@ -2896,7 +2869,7 @@ public class OOMTest extends ClassLoader {
   - 在刚加载好一个类的时候，Class文件里的常量池和每个方法的字节码（Code属性）会被基本原样的拷贝到内存里先放着，也就是说仍然处于使用“符号引用”的状态
   - 直到真的要被使用到的时候才会被解析（resolve）为直接引用。
 
-#### 2.2.7.7. 方法区使用示例
+#### 2.2.7.8. 方法区使用示例
 
 - 代码
   ```java
@@ -2948,7 +2921,7 @@ public class OOMTest extends ClassLoader {
     > ![method_area-29](./image/method_area-29.png) 
   - return执行，main方法栈弹出
 
-#### 2.2.7.8. 方法区细节演进（重要）
+#### 2.2.7.9. 方法区细节演进（重要）
 
 > 复习：堆的演进
 
@@ -3144,7 +3117,7 @@ public class OOMTest extends ClassLoader {
       >
       > 也可以参考这篇博客[JDK 1.8 下的 java.lang.Class 对象和 static 成员变量在堆还是方法区？](https://blog.csdn.net/Xu_JL1997/article/details/89433916)
 
-#### 2.2.7.9. 方法区垃圾回收
+#### 2.2.7.10. 方法区垃圾回收
 
 - 方法区（包括永久代和元数据区）是否要垃圾回收
   > 费力不讨好
@@ -3178,7 +3151,7 @@ public class OOMTest extends ClassLoader {
         > > ![method_area-38](./image/method_area-38.png) 
       - 该类对应的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。
 
-#### 2.2.7.10. 面试题
+#### 2.2.7.11. 面试题
 
 ```
 百度
@@ -3747,7 +3720,6 @@ jvm的永久代中会发生垃圾回收吗？
 
 #### 2.3.1.5. JIT即时编译器(重要)
 
-
 ![executor-3](./image/executor-3.png)
 
 - java代码执行分类(复习)
@@ -4264,7 +4236,6 @@ public void method2(int highLevel){
 }
 ```
 
-
 #### 2.3.2.5. intern()的使用(重要)
 
 ```
@@ -4288,8 +4259,6 @@ intern 的目的是确保字符串在内存中只有一份，
 ![executor-20](./image/executor-20.png)
 
 ![executor-21](./image/executor-21.png)
-
-
 
 ---
 
@@ -4528,7 +4497,6 @@ public class StringIntern {
         String s2 = "1"; // s1指向常量池中的"1"
         System.out.println(s == s2);//jdk6：false   jdk7/8：false
 
-
         String s3 = new String("1") + new String("1");//s3变量记录的地址为堆中的new String("11")。// 具体过程查看上面的一个面试题
         //执行完上一行代码以后，字符串常量池中，不存在"11"！！。（因为StringBuilder的toString方法）
         s3.intern();//在字符串常量池中生成"11"。
@@ -4557,8 +4525,6 @@ String s5 = s3.intern(); // 指向常量池中的"11"
 System.out.println(s3 == s4);//false
 System.out.println(s5 == s4);//true
 ```
-
-
 
 ### 2.3.3. 垃圾回收
 
@@ -4799,7 +4765,6 @@ public class RefCountGC {
     - **finalize()方法是对象逃脱死亡的最后机会**，稍后GC会对F-Queue队列中的对象进行第二次标记。**如果objA在finalize()方法中与引用链上的任何一个对象建立了联系**，那么在第二次标记时，objA会被移出“即将回收”集合。之后，对象会再次出现没有引用存在的情况。在这个情况下，finalize方法不会被再次调用，对象会直接变成不可触及的状态，也就是说，一个对象的finalize方法只会被调用一次。
       > finalize()方法只能调用一次，也就是说只能复活一次
 
-
 ##### 2.3.3.2.4. 对象的finalization机制
 
 - 说明
@@ -4875,7 +4840,6 @@ public class CanReliveObj {
 }
 ```
 
-
 ##### 2.3.3.2.5. MAT与JProfiler的GC Roots溯源
 
 > 使用MAT和JProfiler查看GC Roots
@@ -4906,8 +4870,6 @@ dump文件生成：
   - 说明：MAT是Memory Analyzer的简称， 基于Eclipse开发的，是一款免费的性能分析工具。它是一款功能强大的Java堆内存分析器。
   - 作用：用于查找内存泄漏以及查看内存消耗情况。
   - 下载：http://www.eclipse.org/mat/
-
-
 
 ##### 2.3.3.2.6. 清除阶段：标记清除算法
 
@@ -5161,7 +5123,6 @@ public class SystemGCTest {
     - 单也不是每次在抛出OOM前都要执行垃圾回收
       > 比如，分配一个超大对象，超过堆的最大值，JVM可以判别出垃圾回收不能解决问题，所以直接抛出OOM
 
-
 ##### 2.3.3.3.3. 内存泄漏
 
 - 内存泄漏：也称作“存储渗漏”。
@@ -5262,7 +5223,6 @@ public class SystemGCTest {
   - 并发（Concurrent):指**用户线程与垃圾收集线程同时执行**（但不一定是并行的，可能会交替执行）,垃圾回收线程在执行时不会停顿用户程序的运行。
     > 用户程序在继续运行，而垃圾收集程序线程运行于另一个CPU上；
     > 如：CMS、G1
-
 
 ##### 2.3.3.3.6. 安全点与安全区域
 
@@ -5460,7 +5420,6 @@ public class SystemGCTest {
     ```
     </details>
 
-
 ---
 
 - 虚引用(phantom reference)
@@ -5560,7 +5519,6 @@ public class SystemGCTest {
     ```
     </details>
 
-
 ---
 
 - 终结器引用
@@ -5607,7 +5565,6 @@ public void localvarGC4() {
 ```
 是否用过WeakHashMap
 ```
-
 
 #### 2.3.3.4. 垃圾回收器
 
@@ -5723,7 +5680,6 @@ java不同版本新特性角度
 
 ![gc-24](./image/gc-24.png)
 
-
 ---
 
 - 组合关系(下图更新到了jdk14)
@@ -5801,12 +5757,7 @@ java不同版本新特性角度
     > ![gc-27](./image/gc-27.png) 
     > > 加号为使用，减号为不使用
 
-
 <br /><br />
-
-
-
-
 
 ##### 2.3.3.4.5. 为什么要有多个回收器
 
@@ -5816,7 +5767,6 @@ java不同版本新特性角度
 虽然我们会对各个收集器进行比较，但并非为了挑选一个最好的收集器
 出来。没有一种放之四海皆准、任何场景下都适用的完美收集器存在，
 更加没有万能的收集器。所以我们**选择的只是对具体应用最合适的收集器**。
-
 
 ##### 2.3.3.4.6. Serial 回收器：串行回收
 
@@ -5879,7 +5829,6 @@ java不同版本新特性角度
   > ![gc-28](./image/gc-28.png) 
   - 对于新生代，回收次数频繁，使用并行方式高效。
   - 对于老年代，回收次数少，使用串行方式节省资源。（CPU并行需要切换线程，串行可以省去切换线程的资源）
-
 
 ---
 
@@ -6098,7 +6047,6 @@ jdk后续版本中CMS的变化
   - G1 GC有计划地避免在整个Java堆中进行全区域的垃圾收集。**G1跟踪各个Regior里面的垃圾堆积的价值大小**（**回收所获得的空间大小以及回收所需时间的经验值**）,在后台维护一个优先列表，**每次根据允许的收集时间，优先回收价值最大的Region**。
   - **由于这种方式的侧重点在于回收垃圾最大量的区间（Region),所以我们给G1一个名字：垃圾优先（Garbage First)**。
 
-
 - 使用
   - G1(Garbage-First)是一款**面向服务端应用的垃圾收集器**，**主要针对配备多核CPU及大容量内存的机器，以极高概率满足GC停顿时间的同时，还兼具高吞吐量的性能特征。**
   - 在JDK1.7版本正式启用，移除了Experimental的标识，是JDK9以后的默认垃圾回收器，取代了CMS回收器以及Parallel+Parallel O1d组合。被Oracle官方称为“全功能的垃圾收集器”。
@@ -6132,7 +6080,6 @@ jdk后续版本中CMS的变化
     - G1跟踪各个Region里面的垃圾堆积的价值大小（回收所获得的空间大小以及回收所需时间的经验值）,在后台维护一个优先列表，**每次根据允许的收集时间，优先回收价值最大的Region**。**保证了G1收集器在有限的时间内可以获取尽可能高的收集效率**。
     - 相比于CMS GC,G1未必能做到cMs在最好情况下的延时停顿，但是最差情况要好很多。
 
-
 ---
 
 - 缺点
@@ -6161,7 +6108,6 @@ jdk后续版本中CMS的变化
   - 第一步：开启G1垃圾收集器
   - 第二步：设置堆的最大内存
   - 第三步：设置最大的停顿时间
-
 
 - 优化建议
   - 年轻代大小
@@ -6239,7 +6185,6 @@ jdk后续版本中CMS的变化
 ---
 
 G1垃圾回收过程储备知识：**Remember Set**
-
 
 - 问题引入：所有对象不可能都是孤立的，不同region中的对象可能相互引用
 
@@ -6403,8 +6348,6 @@ G1补充
 
 从oracle官方透露出来的信息可获知，**回收阶段（Evacuation)其实本也有想过设计成与用户程序一起并发执行**，但这件事情做起来比较复杂，考虑到G1只是回收一部分Region,停顿时间是用户可控制的，所以并不迫切去实现，而**选择把这个特性放到了G1之后出现的低延迟垃圾收集器（即ZGC)中**。另外，还考虑到G1不是仅仅面向低延迟，停顿用户线程能够最大幅度提高垃圾收集效率，为了保证吞吐量所以才选择了完全暂停用户线程的实现方案。
 
-
-
 ##### 2.3.3.4.12. 垃圾回收器总结(背)
 
 - 总结
@@ -6515,7 +6458,6 @@ public class GCLogTest1 {
   - 触发一次GC
   - 3个2MB放到old区(60%那里)，一个4MB放到eden(53%那里)
   </details>
-
 
 - jdk8与jdk7日志比较
   > ![gc-52](./image/gc-52.png) 
@@ -6701,7 +6643,7 @@ CMS回收停顿了几次，为什么要停顿两次。
 
 # 3. 问题探讨
 
-## JVM新生代、老年代的默认比值真的是1:2吗？
+## 3.1. JVM新生代、老年代的默认比值真的是1:2吗？
 
 <!--https://www.163.com/dy/article/G7HPQ94L0531AT43.html-->
 

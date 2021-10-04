@@ -24,55 +24,46 @@
 
 > 前面就有讲过，`跨平台的语言，跨语言的平台`，此处不再重复说明
 
-### 2.1.2. java前端编译器
+### 2.1.2. java前端编译器说明
 
-Java源代码的编译结果是字节码，那么肯定需要有一种编译器能够将Java源码编译为字节码，承担这个重要责任的就是配置在path环境变量中的**javac编译器**
+- 说明
+  - Java源代码的编译结果是字节码，那么肯定需要有一种编译器能够将Java源码编译为字节码，
+  - 承担这个重要责任的就是配置在path环境变量中的**javac编译器**
+  - javac是一种能够将Java源码编译为字节码的**前端编译器**。
 
-javac是一种能够将Java源码编译为字节码的**前端编译器**。
+    ```
+    HotSpot VM并没有强制要求前端编译器只能使用javac来编译字节码，
+    其实只要编译结果符合JVM规范都可以被JVM所识别即可。
+    ```
+- 其他编译器编译器
+  - 在Java的前端编译器领域，除了javac之外，还有一种被大家经常用到的前端编译器，那就是内置在Eclipse中的**ECJ （EclipseCompiler for Java）编译器**。
+  - 和Javac的全量式编译不同，ECJ是一种增量式编译器。
+  - 在Eclipse中，当开发人员编写完代码后，使用“Ctrl+S”快捷键时，ECJ编译器所采取的编译方案是把未编译部分的源码逐行进行编译，而非每次都全量编译。
+  - 因此ECJ的编译效率会比javac更加迅速和高效，当然编译质量和javac相比大致还是一样的。
+  - ECJ不仅是Eclipse的默认内置前端编译器，在Tomcat中同样也是使用ECJ编译器来编译jsp文件。
+  - 默认情况下， IntelliJ IDEA 使用 javac编译器。（还可以自己设置为AspectJ编译器ajc）
 
-HotSpot VM并没有强制要求前端编译器只能使用javac来编译字节码，其实只要编译结果符合JVM规范都可以被JVM所识别即可。在Java的前端编译器领域，除了javac之外，还有一种被大家经常用到的前端编译器，那就是内置在Eclipse中的**ECJ （EclipseCompiler for Java）编译器**。和Javac的全量式编译不同，ECJ是一种增量式编译器。
+- 优化：前端编译器并不会直接涉及编译优化等方面的技术，而是将这些具体优化细节移交给HotSpot的JIT编译器负责。
 
-在Eclipse中，当开发人员编写完代码后，使用“Ctrl+S”快捷键时，ECJ编译器所采取的编译方案是把未编译部分的源码逐行进行编译，而非每次都全量编译。因此ECJ的编译效率会比javac更加迅速和高效，当然编译质量和javac相比大致还是一样的。
+<br />
 
-ECJ不仅是Eclipse的默认内置前端编译器，在Tomcat中同样也是使用ECJ编译器来编译jsp文件。由于ECJ编译器是采用
-GPLv2的开源协议进行源代码公开，所以，大家可以登录eclipse官网下载EC]编译器的源码进行二次开发。
+> 复习：AOT
 
-默认情况下， IntelliJ IDEA 使用 javac编译器。（还可以自己设置为AspectJ编译器ajc）
+### 2.1.3. 示例：透过字节码查看代码细节
 
-前端编译器并不会直接涉及编译优化等方面的技术，而是将这些具体优化细节移交给HotSpot的JIT编译器负责。
+#### 2.1.3.1. 示例1--Integer间的==
 
+- 通过字节码查看代码细节示例：
 
-<br /><br />
+  ```java
+  Integer i1 = 10;
+  Integer i2 = 10;
+  System.out.println(i1==i2);//true
 
-复习：AOT
-
-#### 2.1.2.1. 示例：透过字节码查看代码细节
-
-#### 2.1.2.2. 面试题
-
-下面的面试题学完之后再答
-
-```
-BAT 面试题
-
-类文件结构有几个部分
-
-知道字节码吗？Integer x=5;int y = 5;比较x==y都经过哪些步骤
-```
-
-#### 2.1.2.3. 示例1--Integer间的==
-
-通过字节码查看代码细节示例：
-
-```java
-Integer i1 = 10;
-Integer i2 = 10;
-System.out.println(i1==i2);//true
-
-Integer i1 = 128;
-Integer i2 = 128;
-System.out.println(i1==i2);//false
-```
+  Integer i1 = 128;
+  Integer i2 = 128;
+  System.out.println(i1==i2);//false
+  ```
 
 <details>
 <summary style="color:red;">解析</summary>
@@ -92,12 +83,11 @@ public static Integer valueOf(int i) {
 ```
 </details>
 
-#### 2.1.2.4. 示例2--String间的==
+#### 2.1.3.2. 示例2--String间的==
 
-该示例在上面面试题中已经说明过，不再重复说明。涉及
-
-- `new String()+new String()`实现原理
-- `StringBuilder` 的 `toString()`方法
+- 该示例在上面面试题中已经说明过，不再重复说明。涉及
+  - `new String()+new String()`实现原理
+  - `StringBuilder` 的 `toString()`方法
 
 ```java
 String str = new String("hello") + new String("world");
@@ -105,7 +95,7 @@ String str1 = "helloworld";
 System.out.println(str == str1);
 ```
 
-#### 2.1.2.5. 示例3(难)--继承
+#### 2.1.3.3. 示例3(难)--继承
 
 下面代码的输出是什么
 
@@ -143,7 +133,6 @@ public class SonTest {
 }
 ```
 
-
 <details>
 <summary style="color:red;">答案与解析</summary>
 
@@ -178,14 +167,14 @@ Son类的字节码：
 
 > （复习）属性初始化方式：1.默认初始化；2.显式初始化；3.代码块中初始化；4.构造器中初始化；5.对象.属性 初始化
 
-## 2.2. 虚拟机的基石：Class文件
+### 2.1.4. 字节码与解读
 
 - 字节码文件里是什么--字节码定义
   - 源代码经过编译器编译之后便会生成一个字节码文件
   - 字节码是一种二进制的类文件,它的内容是JVM的指令,而不像C、C++经由编译器直接生成机器码。
 
 - 什么是字节码指令(byte code)--字节码指令构成
-  - Java虚拟机的指令由一个字节长度的、代表着某种特定操作含义的**操作码( opcode)**，
+  - Java虚拟机的指令由一个字节长度的、代表着某种特定操作含义的**操作码(opcode)**，
   - 以及跟随其后的零至多个代表此操作所需参数的**操作数(operand)**所构成。
   - 虚拟机中许多指令并不包含操作数,只有一个操作码。
 
@@ -194,9 +183,9 @@ Son类的字节码：
   - javap反编译
   - Notepad++搭配HEX-Editor插件。或者Binary Viewer
 
-## 2.3. class文件结构
+## 2.2. class文件结构
 
-### 2.3.1. 整体说明
+### 2.2.1. 整体说明
 
 - Class类的本质
   - 任何一个C1ass文件都对应着唯一一个类或接口的定义信息,
@@ -221,54 +210,48 @@ Son类的字节码：
       - 由于表没有固定长度,所以通常会在其前面加上个数说明
 
 - class文件结构
-  <details>
-  <summary style="color:red;">官网定义</summary>
+  - 官网定义
 
-  ```
-  ClassFile {
-      u4             magic;
-      u2             minor_version;
-      u2             major_version;
-      u2             constant_pool_count;
-      cp_info        constant_pool[constant_pool_count-1];
-      u2             access_flags;
-      u2             this_class;
-      u2             super_class;
-      u2             interfaces_count;
-      u2             interfaces[interfaces_count];
-      u2             fields_count;
-      field_info     fields[fields_count];
-      u2             methods_count;
-      method_info    methods[methods_count];
-      u2             attributes_count;
-      attribute_info attributes[attributes_count];
-  }
-  ```
-  </details>
+    ```
+    ClassFile {
+        u4             magic;
+        u2             minor_version;
+        u2             major_version;
+        u2             constant_pool_count;
+        cp_info        constant_pool[constant_pool_count-1];
+        u2             access_flags;
+        u2             this_class;
+        u2             super_class;
+        u2             interfaces_count;
+        u2             interfaces[interfaces_count];
+        u2             fields_count;
+        field_info     fields[fields_count];
+        u2             methods_count;
+        method_info    methods[methods_count];
+        u2             attributes_count;
+        attribute_info attributes[attributes_count];
+    }
+    ```
+  - 详细说明
 
-  <details>
-  <summary style="color:red;">详细说明</summary>
-
-    | 类型           | 名称                | 说明                   | 长度    | 数量                  |
-    | -------------- | ------------------- | ---------------------- | ------- | --------------------- |
-    | u4             | magic               | 魔数,识别Class文件格式 | 4个字节 | 1                     |
-    | u2             | minor_version       | 副版本号(小版本)       | 2个字节 | 1                     |
-    | u2             | major_version       | 主版本号(大版本)       | 2个字节 | 1                     |
-    | u2             | constant_pool_count | 常量池计数器           | 2个字节 | 1                     |
-    | cp_info        | constant_pool       | 常量池表               | n个字节 | constant_pool_count-1 |
-    | u2             | access_flags        | 访问标识               | 2个字节 | 1                     |
-    | u2             | this_class          | 类索引                 | 2个字节 | 1                     |
-    | u2             | super_class         | 父类索引               | 2个字节 | 1                     |
-    | u2             | interfaces_count    | 接口计数器             | 2个字节 | 1                     |
-    | u2             | interfaces          | 接口索引集合           | 2个字节 | interfaces_count      |
-    | u2             | fields_count        | 字段计数器             | 2个字节 | 1                     |
-    | field_info     | fields              | 字段表                 | n个字节 | fields_count          |
-    | u2             | methods_count       | 方法计数器             | 2个字节 | 1                     |
-    | method_info    | methods             | 方法表                 | n个字节 | methods_count         |
-    | u2             | attributes_count    | 属性计数器             | 2个字节 | 1                     |
-    | attribute_info | attributes          | 属性表                 | n个字节 | attributes_count      |
-
-  </details>
+    | 类型           | 名称                | 说明                     | 长度     | 数量                      |
+    | -------------- | ------------------- | ------------------------ | -------- | ------------------------- |
+    | u4             | magic               | 魔数,识别 Class 文件格式 | 4 个字节 | 1                         |
+    | u2             | minor_version       | 副版本号(小版本)         | 2 个字节 | 1                         |
+    | u2             | major_version       | 主版本号(大版本)         | 2 个字节 | 1                         |
+    | u2             | constant_pool_count | 常量池计数器             | 2 个字节 | 1                         |
+    | cp_info        | constant_pool       | 常量池表                 | n 个字节 | **constant_pool_count-1** |
+    | u2             | access_flags        | 访问标识                 | 2 个字节 | 1                         |
+    | u2             | this_class          | 类索引                   | 2 个字节 | 1                         |
+    | u2             | super_class         | 父类索引                 | 2 个字节 | 1                         |
+    | u2             | interfaces_count    | 接口计数器               | 2 个字节 | 1                         |
+    | u2             | interfaces          | 接口索引集合             | 2 个字节 | interfaces_count          |
+    | u2             | fields_count        | 字段计数器               | 2 个字节 | 1                         |
+    | field_info     | fields              | 字段表                   | n 个字节 | fields_count              |
+    | u2             | methods_count       | 方法计数器               | 2 个字节 | 1                         |
+    | method_info    | methods             | 方法表                   | n 个字节 | methods_count             |
+    | u2             | attributes_count    | 属性计数器               | 2 个字节 | 1                         |
+    | attribute_info | attributes          | 属性表                   | n 个字节 | attributes_count          |
 
   - 魔数:
     - magic
@@ -301,9 +284,9 @@ Son类的字节码：
     - attributes_count;
     - attributes[attributes_count];
 
-### 2.3.2. 详细说明
+### 2.2.2. 详细说明
 
-#### 代码
+#### 2.2.2.1. 代码
 
 ```java
 package com.atguigu.java1;
@@ -319,7 +302,7 @@ public class Demo {
 }
 ```
 
-#### 2.3.2.1. 魔数
+#### 2.2.2.2. 魔数
 
 ![jvm2-2](./image/jvm2-2.png)
 
@@ -339,7 +322,7 @@ public class Demo {
   file StringTest
   ```
 
-#### 2.3.2.2. class文件版本号
+#### 2.2.2.3. class文件版本号
 
 ![jvm2-3](./image/jvm2-3.png)
 
@@ -358,11 +341,11 @@ public class Demo {
   - 否则JVM会抛出`iava.lang, UnsupportedclassVersionError`异常。
   > 在实际应用中,由于开发环境和生产环境的不同,可能会导致该问题的发生。因此,需要我们在开发时,特别注意开发编译的JDK版本和生产环境中的DK版本是否一致
 
-#### 常量池
+#### 2.2.2.4. 常量池
 
-> **说明**
+##### 2.2.2.4.1. 说明
 
--重要性 
+- 重要性 
   - 常量池是C1ass文件中内容最为丰富的区域之一。常量池对于C1ass文件中的字段和方法解析也有着至关重要的作用。
   - 随着]ava虚拟机的不断发展,常量池的内容也日渐丰富。可以说,常量池是整个class文件的基石。
   - 如以下三个为基于java动态的特性在1.7时添加
@@ -377,15 +360,183 @@ public class Demo {
 
 - 组成
   > ![jvm2-4](./image/jvm2-4.png)-
-  - C1ass文件使用了一个前置的容量计数器(constant_ pool count)加若干个连续的数据项( constant poo1)的形式来描述常量池内容。
+  - C1ass文件使用了一个前置的**容量计数器(constant_pool_count)**加**若干个连续的数据项(constant pool)**的形式来描述常量池内容。
   - 我们把这一系列连续常量池数据称为常量池集合
   - 常量池表项中,用于存放编译时期生成的各种**字面量和符号引用**,这部分内容将在类加载后进入方法区**运行时常量池**中存放
 
-> **常量池计数器**
+##### 2.2.2.4.2. 常量池计数器
 
-> **常量池**
+- 由于常量池的数量不固定，时长时短，所以需要放置两个字节来表示常量池容量计数值。
+- 常量池容量计数值（u2类型）:**从1开始，表示常量池中有多少项常量。即constant_pool_count=1表示常量池中有0个常量项**
+- Demo的值为：
 
-### 2.3.3. 面试题
+  ![jvm2-5](./image/jvm2-5.png)
+
+  - 其值为0×0016,也就是22。
+  - 也就是说实际上只有21项常量。索引为范围是1-21。
+
+  ```
+  通常我们写代码时都是从0开始的，但是这里的常量池却是从1开始，因为它把第0项常量空出来了。
+  这是为了满足后面某些指向常量池的索引值的数据在特定情况下需要表达不引用任何一个常量池项目的含义
+  这种情况可用索引值来表示。
+  ```
+
+##### 2.2.2.4.3. 概念说明(补充)
+
+- 全限定名
+  - `com/atguigu/test/Demo`这个就是类的全限定名，仅仅是把包名的`.`替换成`/`，为了使连续的多个全限定名之间不产生混淆
+  - 在使用时最后一般会加入一个`;`,表示全限定名结束。
+- 简单名称
+  - 简单名称是指没有类型和参数修饰的方法或者字段名称，上面例子中的类的add()方法和num字段的简单名称分别是add和num。
+- 描述符
+  - 作用:用来描述字段的数据类型、方法的参数列表（包括数量、类型以及顺序）和返回值。
+  - 规则:
+    > (数据类型：基本数据类型、引用数据类型）
+    - 基本数据类型(byte、char、double、float、int、long、short、boolean)以及代表无返回值的void类型都用一个大写字符来表示
+    - 而对象类型则用字符L加对象的全限定名来表示
+
+    | 标志符 | 含义                                                 |
+    | ------ | ---------------------------------------------------- |
+    | B      | 基本数据类型 byte                                    |
+    | C      | 基本数据类型 char                                    |
+    | D      | 基本数据类型 double                                  |
+    | F      | 基本数据类型 float                                   |
+    | I      | 基本数据类型 int                                     |
+    | J      | 基本数据类型 long                                    |
+    | S      | 基本数据类型 short                                   |
+    | Z      | 基本数据类型 boolean                                 |
+    | V      | 代表 void 类型                                       |
+    | L      | 对象类型，比如：`Ljava/lang/Object;`                 |
+    | `[`    | 数组类型，代表一维数组。比如：`double[][][] is [[[D` |
+
+    > 例：
+
+    ![jvm2-8](./image/jvm2-8.png)
+
+##### 2.2.2.4.4. 常量池表
+
+- constant_pool是一种表结构，以`1~constant_pool_count-1`为索引。表明了后面有多少个常量项。
+- 常量池**主要**存放**两大类常量**：
+  - `字面量（Literal)`
+    - 文本字符串
+    - 声明为final的常量值
+  - `符号引用（Symbolic References)`
+    - 类和接口的全限定名
+      >  示例：类名
+
+      ![jvm2-9](./image/jvm2-9.png)
+
+    - 字段的名称和描述符(字段类型等)
+      > 示例
+
+    - 方法的名称和描述符(返回类型，形参等)
+      > 示例：无形参，返回值为void的方法描述符
+
+      ![jvm2-10](./image/jvm2-10.png) 
+
+      > 示例：方法名
+
+      ![jvm2-11](./image/jvm2-11.png)
+
+- 常量池元素类型。常量池表中元素的类型可能是下面任何一个
+
+  | 类型                                   | 标志 | 描述                   |
+  | -------------------------------------- | ---- | ---------------------- |
+  | CONSTANT_utf8_info                     | 1    | UTF-8 编码的字符串     |
+  | CONSTANT_Integer_info                  | 3    | 整型字面量             |
+  | CONSTANT_Float_info                    | 4    | 浮点型字面量           |
+  | CONSTANT_Long_info                     | 5    | 长整型字面量           |
+  | CONSTANT_Double_info                   | 6    | 双精度浮点型字面量     |
+  | CONSTANT_Class_info                    | 7    | 类或接口的符号引用     |
+  | CONSTANT_String_info                   | 8    | 字符串类型字面量       |
+  | CONSTANT_Fieldref_info                 | 9    | 字段的符号引用         |
+  | CONSTANT_Methodref_info                | 10   | 类中方法的符号引用     |
+  | CONSTANT_InterfaceMethodref_info       | 11   | 接口中方法的符号引用   |
+  | CONSTANT_NameAndType_info              | 12   | 字段或方法的符号引用   |
+  | CONSTANT_MethodHandle_info(jdk7 引入)  | 15   | 表示方法句柄           |
+  | CONSTANT_MethodType_info(jdk7 引入)    | 16   | 标志方法类型           |
+  | CONSTANT_InvokeDynamic_info(jdk7 引入) | 18   | 表示一个动态方法调用点 |
+
+  - 常量池元素数据类型中没有基本数据类型`byte,short,boolean,char`对应的类型，是因为都可以使用integer表示
+
+##### 字节码解读
+
+- 常量类型详细说明
+
+  ![jvm2-6](./image/jvm2-6.png) 
+
+  ![jvm2-7](./image/jvm2-7.png)
+
+  - 常量池中的每一项都具备相同的特征: **第1个字节作为类型标记，用于确定该项的格式，这个字节称为tag byte(标记字节、标签字节）**。
+  - 字符串的byte部分长度这里标的是u1，但其实是不确定的。长度为length的值
+
+- 元素区分解读结果:
+  > `22-1`个元素，用两种颜色分隔标记 <br />
+  > **可以使用jclasslib，对照着看看**
+
+  ![jvm2-12](./image/jvm2-12.png)
+
+  ![jvm2-13](./image/jvm2-13.png)
+
+- 数据解读：以第一项为例
+  - 数据
+    ```
+    0a 00 04 00 12 为例
+    ```
+  - 解读:
+    - **tag**:0a是10，对应CONSTANT_Methodref_info，
+    - CONSTANT_Methodref_info 有两个长度为u2的index
+      - 指向声明方法的类描述符
+        - `00 04`，值是4
+        - 也就是找常量池表中的第4项，是一个CONSTANT_Class_info，
+        - 然后同理继续解读，最后指向字符串
+      - 指向名称及类型描述符
+        - `00 12`，值是18
+        - 也就是说常量池表中的第18项，是一个CONSTANT_NameAndType_info，
+        - 然后同理继续解读，最后指向字符串
+
+    ![jvm2-14](./image/jvm2-14.png)
+
+> 现在再用jclasslib或者bytecode viewer看看，估计可以理解透彻不少
+
+##### 2.2.2.4.5. 小结
+
+- 常量池：
+  - 可以理解为class文件之中的资源仓库
+  - 它是class文件结构中与其他项目关联最多的数据类型（后面的很多数据类型都会指向此处）
+  - 也是占用class文件空间最大的数据项目之一。
+- 常量池中为什么要包含这些内容
+  - Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这一步骤，而是在虚拟机加载Class文件的时候进行动态链接。
+  - **也就是说，在class文件中不会保存各个方法、字段的最终内存布局信息**
+  - **因此这些字段、方法的符号引用不经过运行期换的话无法得到真正的内存入口地址，也就无法直接被虚拟机使用**
+  - **当虚拟机运行时，需要从常量池获得对应的符号引用，再在类创建时或运行时解析、翻译到具体的内存地址之中**
+  - 关于类的创建和动态链接的内容，在虚拟机类加载过程时再进行详细讲解
+
+---
+
+- 符号引用和直接引用的区别与关联：
+  - 符号引用：
+    - 内容：符号引用以**一组符号**来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能**无歧义**地定位到目标即可。
+    - 内存布局：**符号引用与虚拟机实现的内存布局无关**，**引用的目标并不一定已经加载到了内存中** 。
+  - 直接引用：
+    - 内容：直接引用可以是 **直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄** 
+      > 复习：JVM1, 符号引用详解章节，复习符号引用的表现
+    - 内存布局： 
+      - **直接引用是与虚机实现的内存布局相关的**，
+      - 同一个符号引用在不同虚拟机实例上翻译出来的直接引用一般不会相同。
+      - 如果有了直接引用，那说明引用的目标必定已经存在于内存之中了。
+
+#### 访问标识(access_flag)
+
+#### 类索引，父类索引，接口索引集合
+
+#### 字段表集合
+
+#### 方法表集合
+
+#### 属性表集合
+
+### 2.2.3. 面试题
 
 ```
 类文件结构有几个部分
@@ -394,6 +545,4 @@ public class Demo {
 ```
 知道字节码吗？字节码都有哪些？Integer x = 5;int y = 5;比较x==y要经过哪些步骤
 ```
-
-
 

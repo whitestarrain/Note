@@ -6640,31 +6640,828 @@ public class FlyWeight {
 
 ### 3.4.2. 模板模式（Template Pattern）
 
-- 最经典的 JDK 应用的就是 AQS
-
 #### 3.4.2.1. 说明
+
+- 概述
+  - 目的：
+    - 在一个抽象类公开定义了执行它的方法的模板，它的子类可以按需要重写方法实现， 但调用将以抽象类中定义的方式进行
+    - 简单说， 模板方法模式定义一个操作中的算法(流程)的骨架， 而将一些步骤延迟到子类中， 使得子类可以不改变一个算法的结构， 就可以重定义该算法的某些特定步骤
+  - 主要解决：一些方法通用，却在每一个子类都重新写了这一方法。
+  - 何时使用：有一些通用的方法。
+  - 如何解决：将这些通用算法抽象出来。
+- 应用实例：
+  - spring 中对 Hibernate 的支持，将一些已经定好的方法封装起来，比如开启事务、获取 Session、关闭 Session 等
+  - AQS
+- 优缺点
+  - 优点： 
+    - 1、封装不变部分，扩展可变部分。
+    - 2、提取公共代码，便于维护。 
+    - 3、行为由父类控制，子类实现。
+  - 缺点：
+    - 每一个不同的实现都需要一个子类来实现，导致类的个数增加，使得系统更加庞大。
+- 使用场景： 
+  - 1、有多个子类共有的方法，且逻辑相同。 
+  - 2、重要的、复杂的方法，可以考虑作为模板方法。
+- 注意事项：**为防止恶意操作，一般模板方法都加上 final 关键词**
+- 类图原理
+  - `AbstractClass` 为抽象类， 类中实现了`template()`模板方法， 该方法定义了算法的骨架， 具体子类需要去实现抽象方法 `operation 2,3,4`
+  - `ConcreteClass`实现抽象方法 `operation 2,3,4`，以完成算法中特定子类的步骤
+
+  ![design-patterns-68.png](./image/design-patterns-68.png)
 
 #### 3.4.2.2. 情景介绍
 
+1. 制作豆浆的流程：选材—>添加配料—>浸泡—>放到豆浆机打碎
+2. 通过添加不同的配料， 可以制作出不同口味的豆浆
+3. 选材、 浸泡和放到豆浆机打碎这几个步骤对于制作每种口味的豆浆都是一样的
+4. 请使用模板方法模式完成 (说明：因为模板方法模式，比较简单，很容易就想到这个方案， 因此就直接使用，不再使用传统的方案来引出模板方法模式)
+
 #### 3.4.2.3. 传统方式
 
-#### 3.4.2.4. 代码
+#### 3.4.2.4. 模版模式代码
 
-#### 3.4.2.5. 注意事项
+> **类图**
 
-### 3.4.3. 责任链模式（Chain of Responsibility Pattern）
+![design-patterns-69.png](./image/design-patterns-69.png)
+
+> **代码**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `SoyaMilk`：抽象类，定义制作豆浆的模板方法，对于不同口味的豆浆，子类重写 `addCondiments()` 方法即可
+
+   ```java
+   //抽象类，表示豆浆
+   public abstract class SoyaMilk {
+   
+   	// 模板方法, make , 模板方法可以做成final , 不让子类去覆盖
+   	final void make() {
+   
+   		select();
+   		addCondiments();
+   		soak();
+   		beat();
+   
+   	}
+   
+   	// 选材料
+   	void select() {
+   		System.out.println("第一步：选择好的新鲜黄豆  ");
+   	}
+   
+   	// 添加不同的配料, 抽象方法, 子类具体实现
+   	abstract void addCondiments();
+   
+   	// 浸泡
+   	void soak() {
+   		System.out.println("第三步， 黄豆和配料开始浸泡， 需要3小时 ");
+   	}
+   
+   	void beat() {
+   		System.out.println("第四步：黄豆和配料放到豆浆机去打碎  ");
+   	}
+   }
+   ```
+
+2. `RedBeanSoyaMilk`：红豆口味的豆浆，重写 `addCondiments()` 方法，添加红豆
+
+   ```java
+   public class RedBeanSoyaMilk extends SoyaMilk {
+   
+   	@Override
+   	void addCondiments() {
+   		System.out.println(" 加入上好的红豆 ");
+   	}
+   
+   }
+   ```
+
+3. `PeanutSoyaMilk`：花生口味的豆浆，重写 `addCondiments()` 方法，添加花生
+
+   ```java
+   public class PeanutSoyaMilk extends SoyaMilk {
+   
+   	@Override
+   	void addCondiments() {
+   		System.out.println(" 加入上好的花生 ");
+   	}
+   
+   }
+   ```
+
+4. `Client`：客户端
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 制作红豆豆浆
+   		System.out.println("----制作红豆豆浆----");
+   		SoyaMilk redBeanSoyaMilk = new RedBeanSoyaMilk();
+   		redBeanSoyaMilk.make();
+   
+            // 制作花生豆浆
+   		System.out.println("----制作花生豆浆----");
+   		SoyaMilk peanutSoyaMilk = new PeanutSoyaMilk();
+   		peanutSoyaMilk.make();
+   	}
+   
+   }
+   ```
+</details>
+
+#### 3.4.2.5. 模板模式中的钩子方法
+
+> **说明**
+
+1. 在模板方法模式的父类中， 我们可以定义一个方法，它默认不做任何事，子类可以视情况要不要覆盖它，该方法称为“钩子”
+2. 还是用上面做豆浆的例子来讲解，比如，我们还希望制作纯豆浆，不添加任何的配料， 请使用钩子方法对前面的模板方法进行改造
+
+```
+想到了LinkedHashMap实现LRU
+```
+
+> **代码**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `SoyaMilk`：添加 `customerWantCondiments()` 方法用于判断是否需要添加配料
+
+   ```java
+   //抽象类，表示豆浆
+   public abstract class SoyaMilk {
+   
+   	// 模板方法, make , 模板方法可以做成final , 不让子类去覆盖.
+   	final void make() {
+   
+   		select();
+   		if (customerWantCondiments()) {
+   			addCondiments();
+   		}
+   		soak();
+   		beat();
+   	}
+   
+   	// 选材料
+   	void select() {
+   		System.out.println("第一步：选择好的新鲜黄豆  ");
+   	}
+   
+   	// 添加不同的配料， 抽象方法, 子类具体实现
+   	abstract void addCondiments();
+   
+   	// 浸泡
+   	void soak() {
+   		System.out.println("第三步， 黄豆和配料开始浸泡， 需要3小时 ");
+   	}
+   
+   	void beat() {
+   		System.out.println("第四步：黄豆和配料放到豆浆机去打碎  ");
+   	}
+   
+   	// 钩子方法，决定是否需要添加配料
+   	boolean customerWantCondiments() {
+   		return true;
+   	}
+   }
+   ```
+
+2. `PureSoyaMilk`：纯豆浆无需添加配料，所以 `customerWantCondiments()` 返回 `false`，空实现 `addCondiments()` 方法
+
+   ```java
+   public class PureSoyaMilk extends SoyaMilk{
+   
+   	@Override
+   	void addCondiments() {
+   		//空实现
+   	}
+   	
+   	@Override
+   	boolean customerWantCondiments() {
+   		return false;
+   	}
+    
+   }
+   ```
+
+3. `Client`：客户端
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 制作红豆豆浆
+   		System.out.println("----制作红豆豆浆----");
+   		SoyaMilk redBeanSoyaMilk = new RedBeanSoyaMilk();
+   		redBeanSoyaMilk.make();
+   
+   		// 制作花生豆浆
+   		System.out.println("----制作花生豆浆----");
+   		SoyaMilk peanutSoyaMilk = new PeanutSoyaMilk();
+   		peanutSoyaMilk.make();
+   
+   		// 制作纯豆浆
+   		System.out.println("----制作纯豆浆----");
+   		SoyaMilk pureSoyaMilk = new PureSoyaMilk();
+   		pureSoyaMilk.make();
+   	}
+   
+   }
+   ```
+
+</details>
+
+#### 3.4.2.6. Spring IOC初始化的模板方法模式
+
+> **类图**
+
+![design-patterns-70.png](./image/design-patterns-70.png)
+
+> **源码追踪**
+
+```java
+ConfigurableApplicationContext` 中定义了抽象方法 `refresh()
+public interface ConfigurableApplicationContext extends ApplicationContext, Lifecycle, Closeable {
+    // ...
+    void refresh() throws BeansException, IllegalStateException;
+    // ...
+```
+
+------
+
+> > **`AbstractApplicationContext`**
+
+1. `AbstractApplicationContext` 实现了 `ConfigurableApplicationContext` 接口，重写了 `refresh()` 方法，`AbstractApplicationContext` 类中的 `refresh()` 方法就是模板方法
+
+   ```java
+   public abstract class AbstractApplicationContext extends DefaultResourceLoader
+   		implements ConfigurableApplicationContext, DisposableBean {
+       // ...
+       
+   	@Override
+   	public void refresh() throws BeansException, IllegalStateException {
+   		synchronized (this.startupShutdownMonitor) {
+   			// Prepare this context for refreshing.
+   			prepareRefresh();
+   
+   			// Tell the subclass to refresh the internal bean factory.
+   			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+   
+   			// Prepare the bean factory for use in this context.
+   			prepareBeanFactory(beanFactory);
+   
+   			try {
+   				// Allows post-processing of the bean factory in context subclasses.
+   				postProcessBeanFactory(beanFactory);
+   
+   				// Invoke factory processors registered as beans in the context.
+   				invokeBeanFactoryPostProcessors(beanFactory);
+   
+   				// Register bean processors that intercept bean creation.
+   				registerBeanPostProcessors(beanFactory);
+   
+   				// Initialize message source for this context.
+   				initMessageSource();
+   
+   				// Initialize event multicaster for this context.
+   				initApplicationEventMulticaster();
+   
+   				// Initialize other special beans in specific context subclasses.
+   				onRefresh();
+   
+   				// Check for listener beans and register them.
+   				registerListeners();
+   
+   				// Instantiate all remaining (non-lazy-init) singletons.
+   				finishBeanFactoryInitialization(beanFactory);
+   
+   				// Last step: publish corresponding event.
+   				finishRefresh();
+   			}
+   
+   			catch (BeansException ex) {
+   				// Destroy already created singletons to avoid dangling resources.
+   				destroyBeans();
+   
+   				// Reset 'active' flag.
+   				cancelRefresh(ex);
+   
+   				// Propagate exception to caller.
+   				throw ex;
+   			}
+   		}
+   	}
+   
+       // ...
+   ```
+
+2. 在 `obtainFreshBeanFactory()` 方法中调用了 `refreshBeanFactory()` 方法和 `getBeanFactory()` 方法
+
+  ![design-patterns-71.png](./image/design-patterns-71.png)
+
+3. `refreshBeanFactory()` 方法和 `getBeanFactory()` 方法都是 `AbstractApplicationContext` 类中定义的抽象方法
+
+  ![design-patterns-72.png](./image/design-patterns-72.png)
+
+  ![design-patterns-73.png](./image/design-patterns-73.png)
+
+4. 在 `AbstractApplicationContext` 类中定义了一些钩子方法： `postProcessBeanFactory(beanFactory)` 方法和 `onRefresh()` 方法，这些方法默认都是空实现
+
+  ![design-patterns-74.png](./image/design-patterns-74.png)
+
+> > **`AbstractRefreshableApplicationContext`**
+
+`AbstractRefreshableApplicationContext` 继承 `AbstractApplicationContext` 类，并实现了一些方法的具体逻辑，比如
+
+```java
+public abstract class AbstractRefreshableApplicationContext extends AbstractApplicationContext {
+    
+    // ...
+    
+    @Override
+	public final ConfigurableListableBeanFactory getBeanFactory() {
+		synchronized (this.beanFactoryMonitor) {
+			if (this.beanFactory == null) {
+				throw new IllegalStateException("BeanFactory not initialized or already closed - " +
+						"call 'refresh' before accessing beans via the ApplicationContext");
+			}
+			return this.beanFactory;
+		}
+	}
+    // ...
+```
+
+### 3.4.3. 命令模式（Command Pattern）
 
 #### 3.4.3.1. 说明
 
+- 概述
+  - 表现：
+    - 将一个请求封装成一个对象，从而可以用不同的请求对客户进行参数化。
+    - 在命令模式中， 会将一个请求封装为一个对象， 以便使用不同参数来表示不同的请求(即命令)， 同时命令模式也支持可撤销的操作
+  - 主要解决：
+    - 在软件系统中，行为请求者与行为实现者通常是一种紧耦合的关系，
+    - 但某些场合，比如需要对行为进行记录、撤销或重做、事务等处理时，这种无法抵御变化的紧耦合的设计就不太合适。
+    - 另外也有并不知道请求的接收者是谁， 也不知道被请求的操作是哪个的情况
+  - 如何解决：通过调用者调用接受者执行命令，顺序：调用者→命令→接受者。
+  - 关键代码：定义三个角色：
+    - 1、received 真正的命令执行对象 
+    - 2、Command 
+    - 3、invoker 使用命令对象的入口
+
+- 应用实例：
+  - struts 1 中的 action 核心控制器 ActionServlet 只有一个，相当于 Invoker，而模型层的类会随着不同的应用有不同的模型类，相当于具体的 Command。
+
+- 优缺点
+  - 优点：
+    - 1、降低了系统耦合度。
+      > 命令模式使得请求发送者与请求接收者消除彼此之间的耦合， 让对象之间的调用关系更加灵活， 实现解耦
+    - 2、新的命令可以很容易添加到系统中去。
+  - 缺点：
+    - 使用命令模式可能会导致某些系统有过多的具体命令类。
+
+- 使用场景：认为是命令的地方都可以使用命令模式，比如： 1、GUI 中每一个按钮都是一条命令。 2、模拟 CMD。
+
+- 注意事项：系统需要支持**命令的撤销(Undo)操作和恢复(Redo)操作**，也可以考虑使用命令模式，见命令模式的扩展。
+
+- 原理类图
+  - `Invoker`：是调用者角色，里面聚合了一个 `Command` 实现类的对象
+  - `Command`：是命令角色， 用于定义接口规范，需要执行的所有命令都在这里， 可以是接口或抽象类
+  - `Receiver`：接收者角色， 知道如何实施和执行一个请求相关的操作
+  - `ConcreteCommand`：具体的命令角色，实现(或继承) `Command`，将一个接收者对象与一个动作绑定， 调用接受者相应的操作
+  - 将 `Command` 的具体实现类与 `Invoker` 聚合，将 `Receiver` 与 `Command` 的具体实现类聚合，从而将 `Invoker`(命令调用者)和 `Receiver`(命令执行者)解耦
+
+  ![design-patterns-75.png](./image/design-patterns-75.png)
+  > 通俗易懂的理解： 将军发布命令， 士兵去执行。 其中有几个角色： 将军(命令发布者) 、 士兵(命令的具体执行者) 、 命令(连接将军和士兵) <br />
+  > `Invoker` 是调用者(将军) ， `Receiver` 是被调用者(士兵) ， `MyCommand` 是命令， 实现了 `Command` 接口， 持有接收对象
+
 #### 3.4.3.2. 情景介绍
+
+1. 我们买了一套智能家电， 有照明灯、 风扇、 冰箱、 洗衣机， 我们只要在手机上安装 `app` 就可以控制对这些家电工作。
+2. 这些智能家电来自不同的厂家， 我们不想针对每一种家电都安装一个 `App`， 分别控制， 我们希望只要一个 `app` 就可以控制全部智能家电。
+3. 要实现一个 `app` 控制所有智能家电的需要， 则每个智能家电厂家都要提供一个统一的接口给 `app` 调用， 这时 就可以考虑使用命令模式。
+4. 命令模式可将“动作的请求者”从“动作的执行者” 对象中解耦出来。
+5. 在我们的例子中，动作的请求者是手机 `app`，动作的执行者是每个厂商的一个家电产品。
+
+![design-patterns-76.png](./image/design-patterns-76.png)
 
 #### 3.4.3.3. 传统方式
 
 #### 3.4.3.4. 代码
 
-#### 3.4.3.5. 注意事项
+> **类图**
 
-### 3.4.4. 命令模式（Command Pattern）
+![design-patterns-77.png](./image/design-patterns-77.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `Command`：定义命令的规范
+
+   ```java
+   //创建命令接口
+   public interface Command {
+   
+   	// 执行动作(操作)
+   	public void execute();
+   
+   	// 撤销动作(操作)
+   	public void undo();
+   	
+   }
+   ```
+
+2. `LightOnCommand`：打开电灯的命令类，该类实现了 `Command` 接口，并且聚合了一个 `LightReceiver` 的实现类，用于操作电灯的开、关
+
+   ```java
+   public class LightOnCommand implements Command {
+   
+   	// 聚合LightReceiver
+   	LightReceiver light;
+   
+   	// 构造器
+   	public LightOnCommand(LightReceiver light) {
+   		this.light = light;
+   	}
+   
+   	@Override
+   	public void execute() {
+   		// 调用接收者的方法
+   		light.on();
+   	}
+   
+   	@Override
+   	public void undo() {
+   		// 调用接收者的方法
+   		light.off();
+   	}
+   
+   }
+   ```
+
+3. `LightOffCommand`：关闭电灯的命令类，该类实现了 `Command` 接口，并且聚合了一个 `LightReceiver` 的实现类，用于操作电灯的开、关
+
+   ```java
+   public class LightOffCommand implements Command {
+   
+   	// 聚合LightReceiver
+   	LightReceiver light;
+   
+   	// 构造器
+   	public LightOffCommand(LightReceiver light) {
+   		this.light = light;
+   	}
+   
+   	@Override
+   	public void execute() {
+   		// 调用接收者的方法
+   		light.off();
+   	}
+   
+   	@Override
+   	public void undo() {
+   		// 调用接收者的方法
+   		light.on();
+   	}
+   }
+   ```
+
+4. `LightReceiver`：命令执行者，用于操作电灯的开、关
+
+   ```java
+   public class LightReceiver {
+   
+   	public void on() {
+   		System.out.println(" 电灯打开了.. ");
+   	}
+   
+   	public void off() {
+   		System.out.println(" 电灯关闭了.. ");
+   	}
+   	
+   }
+   ```
+
+5. `TVOnCommand`：打开电视机的命令类，该类实现了 `Command` 接口，并且聚合了一个 `TVReceiver` 的实现类，用于操作电视机的开、关
+
+   ```java
+   public class TVOnCommand implements Command {
+   
+   	// 聚合TVReceiver
+   	TVReceiver tv;
+   
+   	// 构造器
+   	public TVOnCommand(TVReceiver tv) {
+   		this.tv = tv;
+   	}
+   
+   	@Override
+   	public void execute() {
+   		// 调用接收者的方法
+   		tv.on();
+   	}
+   
+   	@Override
+   	public void undo() {
+   		// 调用接收者的方法
+   		tv.off();
+   	}
+   }
+   ```
+
+6. `TVOffCommand`：关闭电视机的命令类，该类实现了 `Command` 接口，并且聚合了一个 `TVReceiver` 的实现类，用于操作电视机的开、关
+
+   ```java
+   public class TVOffCommand implements Command {
+   
+   	// 聚合TVReceiver
+   	TVReceiver tv;
+   
+   	// 构造器
+   	public TVOffCommand(TVReceiver tv) {
+   		this.tv = tv;
+   	}
+   
+   	@Override
+   	public void execute() {
+   		// 调用接收者的方法
+   		tv.off();
+   	}
+   
+   	@Override
+   	public void undo() {
+   		// 调用接收者的方法
+   		tv.on();
+   	}
+   }
+   ```
+
+7. `TVReceiver`：命令执行者，用于操作电视机的开、关
+
+   ```java
+   public class TVReceiver {
+   
+   	public void on() {
+   		System.out.println(" 电视机打开了.. ");
+   	}
+   
+   	public void off() {
+   		System.out.println(" 电视机关闭了.. ");
+   	}
+   	
+   }
+   ```
+
+8. `NoCommand`：空命令，该类在 `RemoteController` 中用于初始化命令按钮，这样就不用做空指针判断
+
+   ```java
+   // 没有任何命令，即空执行: 用于初始化每个按钮, 当调用空命令时，对象什么都不做
+   // 其实，这样是一种设计模式, 可以省掉对空判断
+   public class NoCommand implements Command {
+   
+   	@Override
+   	public void execute() {
+   
+   	}
+   
+   	@Override
+   	public void undo() {
+   
+   	}
+   
+   }
+   ```
+
+9. `RemoteController`：命令的发出者(`Invoker`)，聚合了 `Command` 的实现类，在 `RemoteController` 中调用 `Command` 实现类的方法控制设备的开、关
+
+   ```java
+   public class RemoteController {
+   
+   	// 开 按钮的命令数组
+   	Command[] onCommands;
+   	Command[] offCommands;
+   
+   	// 执行撤销的命令
+   	Command undoCommand;
+   
+   	// 构造器，完成对按钮初始化
+   	public RemoteController() {
+   		onCommands = new Command[5];
+   		offCommands = new Command[5];
+   
+   		for (int i = 0; i < 5; i++) {
+   			onCommands[i] = new NoCommand(); // 初始化时，设置为空操作，避免空指针判断
+   			offCommands[i] = new NoCommand(); // 初始化时，设置为空操作，避免空指针判断
+   		}
+   	}
+   
+   	// 给我们的按钮设置你需要的命令
+   	public void setCommand(int no, Command onCommand, Command offCommand) {
+   		onCommands[no] = onCommand;
+   		offCommands[no] = offCommand;
+   	}
+   
+   	// 按下开按钮
+   	public void onButtonWasPushed(int no) { // no 0
+   		// 找到你按下的开的按钮， 并调用对应方法
+   		onCommands[no].execute();
+   		// 记录这次的操作，用于撤销
+   		undoCommand = onCommands[no];
+   	}
+   
+   	// 按下关按钮
+   	public void offButtonWasPushed(int no) { // no 0
+   		// 找到你按下的关的按钮， 并调用对应方法
+   		offCommands[no].execute();
+   		// 记录这次的操作，用于撤销
+   		undoCommand = offCommands[no];
+   	}
+   
+   	// 按下撤销按钮
+   	public void undoButtonWasPushed() {
+   		undoCommand.undo();
+   	}
+   }
+   ```
+
+10. `Client`：测试代码
+
+    ```java
+    public class Client {
+    
+    	public static void main(String[] args) {
+    
+    		// 使用命令设计模式，完成通过遥控器，对电灯的操作
+    		// 创建电灯的对象(接受者)
+    		LightReceiver lightReceiver = new LightReceiver();
+    
+    		// 创建电灯相关的开关命令
+    		LightOnCommand lightOnCommand = new LightOnCommand(lightReceiver);
+    		LightOffCommand lightOffCommand = new LightOffCommand(lightReceiver);
+    
+    		// 需要一个遥控器
+    		RemoteController remoteController = new RemoteController();
+    
+    		// 给我们的遥控器设置命令, 比如 no = 0 是电灯的开和关的操作
+    		remoteController.setCommand(0, lightOnCommand, lightOffCommand);
+    
+    		System.out.println("--------按下灯的开按钮-----------");
+    		remoteController.onButtonWasPushed(0);
+    		System.out.println("--------按下灯的关按钮-----------");
+    		remoteController.offButtonWasPushed(0);
+    		System.out.println("--------按下撤销按钮-----------");
+    		remoteController.undoButtonWasPushed();
+    
+    		// 使用命令设计模式，完成通过遥控器，对电视机的操作
+    		System.out.println("=========使用遥控器操作电视机==========");
+    
+    		TVReceiver tvReceiver = new TVReceiver();
+    
+    		TVOffCommand tvOffCommand = new TVOffCommand(tvReceiver);
+    		TVOnCommand tvOnCommand = new TVOnCommand(tvReceiver);
+    
+    		// 给我们的遥控器设置命令, 比如 no = 1 是电视机的开和关的操作
+    		remoteController.setCommand(1, tvOnCommand, tvOffCommand);
+    
+    		System.out.println("--------按下电视机的开按钮-----------");
+    		remoteController.onButtonWasPushed(1);
+    		System.out.println("--------按下电视机的关按钮-----------");
+    		remoteController.offButtonWasPushed(1);
+    		System.out.println("--------按下撤销按钮-----------");
+    		remoteController.undoButtonWasPushed();
+    
+    	}
+    
+    }
+    ```
+
+</details>
+
+#### 3.4.3.5. Spring JdbcTemplate源码分析
+
+1. `StatementCallback` 接口类似与之前的 `Command` 接口，用于定义命令的规范
+
+   ```java
+   public interface StatementCallback<T> {
+   
+   	T doInStatement(Statement stmt) throws SQLException, DataAccessException;
+   
+   }
+   ```
+
+2. `QueryStatementCallback` 为匿名内部类，实现了 `StatementCallback` 接口，同时也充当了命令的接收者(`Receiver`)
+
+   ```java
+   public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
+   
+       // ...
+   
+   	@Override
+   	public <T> T query(final String sql, final ResultSetExtractor<T> rse) throws DataAccessException {
+   		Assert.notNull(sql, "SQL must not be null");
+   		Assert.notNull(rse, "ResultSetExtractor must not be null");
+   		if (logger.isDebugEnabled()) {
+   			logger.debug("Executing SQL query [" + sql + "]");
+   		}
+   		class QueryStatementCallback implements StatementCallback<T>, SqlProvider {
+   			@Override
+   			public T doInStatement(Statement stmt) throws SQLException {
+   				ResultSet rs = null;
+   				try {
+   					rs = stmt.executeQuery(sql);
+   					ResultSet rsToUse = rs;
+   					if (nativeJdbcExtractor != null) {
+   						rsToUse = nativeJdbcExtractor.getNativeResultSet(rs);
+   					}
+   					return rse.extractData(rsToUse);
+   				}
+   				finally {
+   					JdbcUtils.closeResultSet(rs);
+   				}
+   			}
+   			@Override
+   			public String getSql() {
+   				return sql;
+   			}
+   		}
+   		return execute(new QueryStatementCallback());
+   	}
+       
+       // ...
+   ```
+
+3. `JdbcTemplate` 为命令的调用者，在 `execute(StatementCallback<T> action)` 方法中，执行了命令： `T result = action.doInStatement(stmtToUse);`，不同的 `StatementCallback` 实现类，`doInStatement()` 方法的实现逻辑也不同
+
+   ```java
+   public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
+   
+       // ...
+       
+   	@Override
+   	public <T> T execute(StatementCallback<T> action) throws DataAccessException {
+   		Assert.notNull(action, "Callback object must not be null");
+   
+   		Connection con = DataSourceUtils.getConnection(getDataSource());
+   		Statement stmt = null;
+   		try {
+   			Connection conToUse = con;
+   			if (this.nativeJdbcExtractor != null &&
+   					this.nativeJdbcExtractor.isNativeConnectionNecessaryForNativeStatements()) {
+   				conToUse = this.nativeJdbcExtractor.getNativeConnection(con);
+   			}
+   			stmt = conToUse.createStatement();
+   			applyStatementSettings(stmt);
+   			Statement stmtToUse = stmt;
+   			if (this.nativeJdbcExtractor != null) {
+   				stmtToUse = this.nativeJdbcExtractor.getNativeStatement(stmt);
+   			}
+   			T result = action.doInStatement(stmtToUse);
+   			handleWarnings(stmt);
+   			return result;
+   		}
+   		catch (SQLException ex) {
+   			// Release Connection early, to avoid potential connection pool deadlock
+   			// in the case when the exception translator hasn't been initialized yet.
+   			JdbcUtils.closeStatement(stmt);
+   			stmt = null;
+   			DataSourceUtils.releaseConnection(con, getDataSource());
+   			con = null;
+   			throw getExceptionTranslator().translate("StatementCallback", getSql(action), ex);
+   		}
+   		finally {
+   			JdbcUtils.closeStatement(stmt);
+   			DataSourceUtils.releaseConnection(con, getDataSource());
+   		}
+   	}
+       
+       // ...
+   ```
+
+4. 另外实现 `StatementCallback` 命令接口的子类还有如下四个
+
+  ![design-patterns-78.png](./image/design-patterns-78.png)
+
+#### 3.4.3.6. 注意事项
+
+- 将发起请求的对象与执行请求的对象解耦。
+  - 发起请求的对象是调用者，调用者只要调用命令对象的`execute()`方法就可以让接收者工作，而不必知道具体的接收者对象是谁、是如何实现的，
+  - 命令对象会负责让接收者执行请求的动作， 也就是说： ”请求发起者”和“请求执行者”之间的解耦是通过命令对象实现的，命令对象起到了纽带桥梁的作用
+- 容易设计一个命令队列。
+  - 只要把命令对象放到列队，就可以多线程的执行命令容易实现对请求的撤销和重做
+- 命令模式不足：
+  - 可能导致某些系统有过多的具体命令类
+  - 增加了系统的复杂度， 这点在在使用的时候要注意
+- 空命令也是一种设计模式，
+  - 它为我们省去了判空的操作。在上面的实例中，如果没有用空命令，我们每按下一个按键都要判空，这给我们编码带来一定的麻烦
+- 命令模式经典的应用场景：
+  - 界面的一个按钮都是一条命令
+  - 模拟`CMD`（`DOS`命令）订单的撤销/恢复、触发-反馈机制
+
+### 3.4.4. 访问者模式（Visitor Pattern）
 
 #### 3.4.4.1. 说明
 
@@ -6676,7 +7473,7 @@ public class FlyWeight {
 
 #### 3.4.4.5. 注意事项
 
-### 3.4.5. 解释器模式（Interpreter Pattern）
+### 3.4.5. 责任链模式（Chain of Responsibility Pattern）
 
 #### 3.4.5.1. 说明
 
@@ -6688,7 +7485,7 @@ public class FlyWeight {
 
 #### 3.4.5.5. 注意事项
 
-### 3.4.6. 迭代器模式（Iterator Pattern）
+### 3.4.6. 解释器模式（Interpreter Pattern）
 
 #### 3.4.6.1. 说明
 
@@ -6700,7 +7497,7 @@ public class FlyWeight {
 
 #### 3.4.6.5. 注意事项
 
-### 3.4.7. 中介者模式（Mediator Pattern）
+### 3.4.7. 迭代器模式（Iterator Pattern）
 
 #### 3.4.7.1. 说明
 
@@ -6712,7 +7509,7 @@ public class FlyWeight {
 
 #### 3.4.7.5. 注意事项
 
-### 3.4.8. 备忘录模式（Memento Pattern）
+### 3.4.8. 中介者模式（Mediator Pattern）
 
 #### 3.4.8.1. 说明
 
@@ -6724,7 +7521,7 @@ public class FlyWeight {
 
 #### 3.4.8.5. 注意事项
 
-### 3.4.9. 观察者模式（Observer Pattern）
+### 3.4.9. 备忘录模式（Memento Pattern）
 
 #### 3.4.9.1. 说明
 
@@ -6736,7 +7533,7 @@ public class FlyWeight {
 
 #### 3.4.9.5. 注意事项
 
-### 3.4.10. 状态模式（State Pattern）
+### 3.4.10. 观察者模式（Observer Pattern）
 
 #### 3.4.10.1. 说明
 
@@ -6748,7 +7545,7 @@ public class FlyWeight {
 
 #### 3.4.10.5. 注意事项
 
-### 3.4.11. 空对象模式（Null Object Pattern）
+### 3.4.11. 状态模式（State Pattern）
 
 #### 3.4.11.1. 说明
 
@@ -6760,7 +7557,7 @@ public class FlyWeight {
 
 #### 3.4.11.5. 注意事项
 
-### 3.4.12. 策略模式（Strategy Pattern）
+### 3.4.12. 空对象模式（Null Object Pattern）
 
 #### 3.4.12.1. 说明
 
@@ -6772,7 +7569,7 @@ public class FlyWeight {
 
 #### 3.4.12.5. 注意事项
 
-### 3.4.13. 访问者模式（Visitor Pattern）
+### 3.4.13. 策略模式（Strategy Pattern）
 
 #### 3.4.13.1. 说明
 
