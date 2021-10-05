@@ -7465,51 +7465,1456 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
 #### 3.4.4.1. 说明
 
+- 概述
+  - 目的：主要将数据结构与数据操作分离。
+  - 主要解决：稳定的数据结构和易变的操作耦合问题。
+  - 何时使用：需要对一个对象结构中的对象进行很多不同的并且不相关的操作，而需要避免让这些操作"污染"这些对象的类，使用访问者模式将这些封装到类中。
+  - 如何解决：在被访问的类里面加一个对外提供接待访问者的接口。
+  - 实现：在数据基础类里面有一个方法接受访问者，将自身引用传入访问者。
+
+- 应用实例：您在朋友家做客，您是访问者，朋友接受您的访问，您通过朋友的描述，然后对朋友的描述做出一个判断，这就是访问者模式。
+
+- 优缺点
+  - 优点： 
+    - 1、符合单一职责原则。 
+    - 2、优秀的扩展性。 
+    - 3、灵活性。
+  - 缺点：
+    - 1、具体元素对访问者公布细节，违反了迪米特原则。
+    - 2、具体元素变更比较困难。 
+    - 3、违反了依赖倒置原则，依赖了具体类，没有依赖抽象。
+
+- 使用场景：
+  - 1、对象结构中对象对应的类很少改变，但经常需要在此对象结构上定义新的操作。 
+  - 2、需要对一个对象结构中的对象进行很多不同的并且不相关的操作，而需要避免让这些操作"污染"这些对象的类，也不希望在增加新操作时修改这些类。
+
+- 注意事项：访问者可以对功能进行统一，可以做报表、UI、拦截器与过滤器。
+
+- 原理类图
+ 
+  1. `Visitor` 是抽象访问者，定义访问者的行为规范
+  2. `ConcreteVisitor` ：是一个具体的访问者，继承(或实现) `Visitor`，实现 `Visitor` 中定义的每个方法，实现具体的行为逻辑
+  3. `Element` 定义一个`accept` 方法，用于接收一个访问者对象(`Visitor` 的具体实现类)
+  4. `ConcreteElement` 为具体元素， 实现了 `Element` 接口中 `accept` 方法
+  5. `ObjectStructure` 能枚举它里面所包含的元素(`Element`)， 可以提供一个高层的接口，目的是允许访问者访问指定的元素
+
+  ![design-patterns-79.png](./image/design-patterns-79.png)
+
+  > element接受visitor的访问 <br />
+  > 而访问者中的方法访问element(this传入)
+
 #### 3.4.4.2. 情景介绍
+
+完成测评系统需求
+
+将观众分为男人和女人，对歌手进行测评，当看完某个歌手表演后，得到他们对该歌手不同的评价(评价有不同的种类，比如成功、失败等)
 
 #### 3.4.4.3. 传统方式
 
+1. 如果系统比较小，还是`ok`的，但是考虑系统增加越来越多新的功能时，对代码改动较大，违反了`ocp`原则， 不利于维护
+2. 传统方式的扩展性不好，比如增加了新的人员类型，或者管理方法，都不好扩展
+3. 引出我们会使用新的设计模式 –-> 访问者模式
+
+![design-patterns-80.png](./image/design-patterns-80.png)
+
 #### 3.4.4.4. 代码
 
-#### 3.4.4.5. 注意事项
+> **类图**
 
-### 3.4.5. 责任链模式（Chain of Responsibility Pattern）
+![design-patterns-81.png](./image/design-patterns-81.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `Action`：定义 `Visitor` 的行为规范，`getResult()` 方法接收 `Person` 类型的参数，用于获取观众对歌手的评价
+
+   ```java
+   public abstract class Action {
+   
+   	// 得到观众的评价
+   	public abstract void getResult(Person person);
+   
+   }
+   ```
+
+2. `Success`：具体的 `Visitor` 实现类，`Success` 表示通过
+
+   ```java
+   public class Success extends Action {
+   
+   	@Override
+   	public void getResult(Person person) {
+   		System.out.println(person.gender + "给的评价该歌手很成功 !");
+   	}
+   
+   }
+   ```
+
+3. `Fail`：具体的 `Visitor` 实现类，`Fail` 表示失败
+
+   ```java
+   public class Fail extends Action {
+   
+   	@Override
+   	public void getResult(Person person) {
+   		System.out.println(person.gender + "给的评价该歌手失败 !");
+   	}
+   
+   }
+   ```
+
+4. `Wait`：具体的 `Visitor` 实现类，`Wait` 表示待定
+
+   ```java
+   public class Wait extends Action {
+   
+   	@Override
+   	public void getResult(Person person) {
+   		System.out.println(person.gender + "给的评价是该歌手待定 ..");
+   	}
+   
+   }
+   ```
+
+5. `Person`：观众类，该抽象类定义了抽象方法 `accept()`，可以接收一个 `Visitor` 实现类的实例，用于触发观众投票的动作
+
+   ```java
+   public abstract class Person {
+   	
+   	String gender;
+   
+   	// 提供一个方法，让访问者可以访问
+   	public abstract void accept(Action action);
+   
+   }
+   ```
+
+6. `Man`：男观众
+
+   ```java
+   //说明
+   //1. 这里我们使用到了双分派, 即首先在客户端程序中，将具体状态作为参数传递Man中(第一次分派)
+   //2. 然后Man 类调用作为参数的 "具体方法" 中方法getResult, 同时将自己(this)作为参数传入，完成第二次的分派
+   public class Man extends Person {
+   
+   	public Man() {
+   		gender = "男性";
+   	}
+   
+   	@Override
+   	public void accept(Action action) {
+   		action.getResult(this);
+   	}
+   
+   }
+   ```
+
+7. `Woman`：女观众
+
+   ```java
+   //说明
+   //1. 这里我们使用到了双分派, 即首先在客户端程序中，将具体状态作为参数传递Woman中(第一次分派)
+   //2. 然后Woman 类调用作为参数的 "具体方法" 中方法getResult, 同时将自己(this)作为参数传入，完成第二次的分派
+   public class Woman extends Person{
+   
+   	public Woman() {
+   		gender = "女性";
+   	}
+   	
+   	@Override
+   	public void accept(Action action) {
+   		action.getResult(this);
+   	}
+   
+   }
+   ```
+
+8. `ObjectStructure`：一个高层的封装接口，允许 `Visitor` 访问指定的元素
+
+   ```java
+   //数据结构，管理很多人（Man , Woman）
+   public class ObjectStructure {
+   
+   	// 维护了一个集合
+   	private List<Person> persons = new LinkedList<>();
+   
+   	// 增加到list
+   	public void attach(Person p) {
+   		persons.add(p);
+   	}
+   
+   	// 移除
+   	public void detach(Person p) {
+   		persons.remove(p);
+   	}
+   
+   	// 显示测评情况
+   	public void display(Action action) {
+   		for (Person p : persons) {
+   			p.accept(action);
+   		}
+   	}
+   }
+   ```
+
+9. `Client`：测试代码
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 创建ObjectStructure
+   		ObjectStructure objectStructure = new ObjectStructure();
+   
+   		objectStructure.attach(new Man());
+   		objectStructure.attach(new Woman());
+   
+   		// 成功
+   		Success success = new Success();
+   		objectStructure.display(success);
+   
+   		// 失败
+   		System.out.println("===============");
+   		Fail fail = new Fail();
+   		objectStructure.display(fail);
+   
+   		// 待定
+   		System.out.println("=======给的是待定的测评========");
+   		Wait wait = new Wait();
+   		objectStructure.display(wait);
+   	}
+   
+   }
+   ```
+
+</details>
+
+> **扩展性**
+
+- 访问者模式的扩展性很强
+- 假如我们现在想添加观众的类别(`Element`)，只需编写类继承 `Person` 抽象类即可，其他地方的代码无需改变
+- 如果我们想添加投票的类别(`Visitor`)，只需编写类实现 `Action` 接口即可
+
+> **双分派**
+
+1. 上面提到了双分派，所谓双分派是指不管类怎么变化，我们都能找到期望的方法运行。双分派意味着得到执行的操作取决于请求的种类和两个接收者的类型
+2. 以上述实例为例，假设我们要添加一个`Wait`的状态类， 统计`Man`类和`Woman`类的投票结果，由于使用了双分派， 只需增加一个`Action`子类即可在客户端调用即可， 不需要改动任何其他类的代码
+
+### 3.4.5. 迭代器模式（Iterator Pattern）
 
 #### 3.4.5.1. 说明
 
+- 概述
+  - 目的：提供一种方法顺序访问一个聚合对象中各个元素, 而又无须暴露该对象的内部表示。
+  - 主要解决：不同的方式来遍历整个整合对象。
+  - 何时使用：遍历一个聚合对象。
+  - 如何解决：把在元素之间游走的责任交给迭代器，而不是聚合对象。
+  - 关键代码：定义接口：hasNext, next。
+
+- 应用实例：JAVA 中的 iterator。
+
+- 优缺点
+  - 优点：
+    - 1、它支持以不同的方式遍历一个聚合对象。 
+    - 2、迭代器简化了聚合类。 
+    - 3、在同一个聚合上可以有多个遍历。 
+    - 4、在迭代器模式中，增加新的聚合类和迭代器类都很方便，无须修改原有代码。
+
+  - 缺点：由于迭代器模式将存储数据和遍历数据的职责分离，增加新的聚合类需要对应增加新的迭代器类，类的个数成对增加，这在一定程度上增加了系统的复杂性。
+
+- 使用场景： 
+  - 1、访问一个聚合对象的内容而无须暴露它的内部表示。 
+  - 2、需要为聚合对象提供多种遍历方式。
+  - 3、为遍历不同的聚合结构提供一个统一的接口。
+
+- 注意事项：迭代器模式就是分离了集合对象的遍历行为，抽象出一个迭代器类来负责，这样既可以做到不暴露集合的内部结构，又可让外部代码透明地访问集合内部的数据。
+
+- 原理类图
+  - `Iterator` ：迭代器接口，由 `JDK` 提供，该接口定义了三个用于遍历集合(数组)的方法：`hasNext()`、`next()`、`remove()`
+  - `ConcreteIterator`：具体的迭代器类，实现具体的迭代逻辑
+  - `Aggregate`：一个统一的聚合接口，将客户端和具体的 `Aggregate` 实现类解耦
+  - `ConcreteAggreage` ：具体的聚合实现类，该类持有对象集合(`Element`)，并提供一个方法，返回一个迭代器， 该迭代器可以正确遍历集合
+  - `Client`：客户端，通过 `Iterator` 和 `Aggregate` 依赖其对应的子类
+
+  ![design-patterns-83.png](./image/design-patterns-83.png)
+
 #### 3.4.5.2. 情景介绍
+
+1. 将学院看做是学校的子类，系是学院的子类，这样实际上是站在组织大小来进行分层次的
+2. 实际上我们的要求是 ： 在一个页面中展示出学校的院系组成，一个学校有多个学院，一个学院有多个系， 因此这种方案，不能很好实现的遍历的操作
+3. 假如计算机学院的院系存储在数组中，信息工程学院的院系存储在集合中，我们要怎么才能定义一个统一的规范，来遍历不同存储结构下的院系。解决方案： => 迭代器模式
+
+![design-patterns-82.png](./image/design-patterns-82.png)
 
 #### 3.4.5.3. 传统方式
 
+1. 将学院看做是学校的子类，系是学院的子类，这样实际上是站在组织大小来进行分层次的
+2. 实际上我们的要求是 ： 在一个页面中展示出学校的院系组成，一个学校有多个学院，一个学院有多个系， 因此这种方案，不能很好实现的遍历的操作
+3. 假如计算机学院的院系存储在数组中，信息工程学院的院系存储在集合中，我们要怎么才能定义一个统一的规范，来遍历不同存储结构下的院系。
+4. 解决方案： => 迭代器模式
+
+![design-patterns-84.png](./image/design-patterns-84.png)
+
 #### 3.4.5.4. 代码
 
-#### 3.4.5.5. 注意事项
+> **类图**
 
-### 3.4.6. 解释器模式（Interpreter Pattern）
+![design-patterns-85.png](./image/design-patterns-85.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `Department`：实体类，用于表示学院的系
+
+   ```java
+   //系
+   public class Department {
+   
+   	private String name;
+   	private String desc;
+   
+   	public Department(String name, String desc) {
+   		this.name = name;
+   		this.desc = desc;
+   	}
+   
+   	public String getName() {
+   		return name;
+   	}
+   
+   	public void setName(String name) {
+   		this.name = name;
+   	}
+   
+   	public String getDesc() {
+   		return desc;
+   	}
+   
+   	public void setDesc(String desc) {
+   		this.desc = desc;
+   	}
+   
+   }
+   ```
+
+2. `ComputerCollegeIterator`：计算机院系的迭代器，该类实现了 `Iterator` 接口，用于迭代计算机学院的系
+
+   ```java
+   public class ComputerCollegeIterator implements Iterator {
+   
+   	// 这里我们需要Department 是以怎样的方式存放=>数组
+   	Department[] departments;
+   	int position = 0; // 遍历的位置
+   
+   	public ComputerCollegeIterator(Department[] departments) {
+   		this.departments = departments;
+   	}
+   
+   	// 判断是否还有下一个元素
+   	@Override
+   	public boolean hasNext() {
+   		if (position >= departments.length || departments[position] == null) {
+   			return false;
+   		} else {
+   			return true;
+   		}
+   	}
+   
+   	@Override
+   	public Object next() {
+   		Department department = departments[position];
+   		position += 1;
+   		return department;
+   	}
+   
+   	// 删除的方法，默认空实现
+   	@Override
+   	public void remove() {
+   
+   	}
+   
+   }
+   ```
+
+3. `InfoColleageIterator`：信息院系的迭代器，该类实现了 `Iterator` 接口，用于迭代信息学院的系
+
+   ```java
+   public class InfoColleageIterator implements Iterator {
+   
+   	List<Department> departmentList; // 信息工程学院是以List方式存放系
+   	int index = -1;// 索引
+   
+   	public InfoColleageIterator(List<Department> departmentList) {
+   		this.departmentList = departmentList;
+   	}
+   
+   	// 判断list中还有没有下一个元素
+   	@Override
+   	public boolean hasNext() {
+   		if (index >= departmentList.size() - 1) {
+   			return false;
+   		} else {
+   			index += 1;
+   			return true;
+   		}
+   	}
+   
+   	@Override
+   	public Object next() {
+   		return departmentList.get(index);
+   	}
+   
+   	// 空实现remove
+   	@Override
+   	public void remove() {
+   
+   	}
+   
+   }
+   ```
+
+4. `College`：学院的聚合接口
+
+   ```java
+   public interface College {
+   
+   	public String getName();
+   
+   	// 增加系的方法
+   	public void addDepartment(String name, String desc);
+   
+   	// 返回一个迭代器,遍历
+   	public Iterator createIterator();
+   	
+   }
+   ```
+
+5. `ComputerCollege`：计算机学院的聚合接口实现类，该类聚合了 `Department[]` 数组，并提供访问 `Department[]` 数组的迭代器
+
+   ```java
+   public class ComputerCollege implements College {
+   
+   	Department[] departments;
+   	int numOfDepartment = 0;// 保存当前数组的对象个数
+   
+   	public ComputerCollege() {
+   		departments = new Department[5];
+   		addDepartment("Java专业", " Java专业 ");
+   		addDepartment("PHP专业", " PHP专业 ");
+   		addDepartment("大数据专业", " 大数据专业 ");
+   		numOfDepartment = 3;
+   	}
+   
+   	@Override
+   	public String getName() {
+   		return "计算机学院";
+   	}
+   
+   	@Override
+   	public void addDepartment(String name, String desc) {
+   		Department department = new Department(name, desc);
+   		departments[numOfDepartment] = department;
+   		numOfDepartment += 1;
+   	}
+   
+   	@Override
+   	public Iterator createIterator() {
+   		return new ComputerCollegeIterator(departments);
+   	}
+   
+   }
+   ```
+
+6. `InfoCollege`：信息学院的聚合接口实现类，该类聚合了 `List<Department>` 集合，并提供访问 `List<Department>` 集合的迭代器
+
+   ```java
+   public class InfoCollege implements College {
+   
+   	List<Department> departmentList;
+   
+   	public InfoCollege() {
+   		departmentList = new ArrayList<Department>();
+   		addDepartment("信息安全专业", " 信息安全专业 ");
+   		addDepartment("网络安全专业", " 网络安全专业 ");
+   		addDepartment("服务器安全专业", " 服务器安全专业 ");
+   	}
+   
+   	@Override
+   	public String getName() {
+   		return "信息工程学院";
+   	}
+   
+   	@Override
+   	public void addDepartment(String name, String desc) {
+   		Department department = new Department(name, desc);
+   		departmentList.add(department);
+   	}
+   
+   	@Override
+   	public Iterator createIterator() {
+   		return new InfoColleageIterator(departmentList);
+   	}
+   
+   }
+   ```
+
+7. `OutPutImpl`：为 `Client` 层提供遍历输出学院系的方法
+
+   ```java
+   public class OutPutImpl {
+   
+   	// 学院集合
+   	List<College> collegeList;
+   
+   	public OutPutImpl(List<College> collegeList) {
+   		this.collegeList = collegeList;
+   	}
+   
+   	// 遍历所有学院,然后调用printDepartment 输出各个学院的系
+   	public void printCollege() {
+   		// 从collegeList 取出所有学院, Java 中的 List 已经实现Iterator
+   		Iterator<College> iterator = collegeList.iterator();
+   
+   		while (iterator.hasNext()) {
+   			// 取出一个学院
+   			College college = iterator.next();
+   			System.out.println("=== " + college.getName() + "=====");
+   			printDepartment(college.createIterator()); // 得到对应迭代器
+   		}
+   	}
+   
+   	// 输出学院的系
+   	public void printDepartment(Iterator iterator) {
+   		while (iterator.hasNext()) {
+   			Department d = (Department) iterator.next();
+   			System.out.println(d.getName());
+   		}
+   	}
+   
+   }
+   ```
+
+8. `Client`：测试代码
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 创建学院
+   		List<College> collegeList = new ArrayList<College>();
+   
+   		ComputerCollege computerCollege = new ComputerCollege();
+   		InfoCollege infoCollege = new InfoCollege();
+   
+   		collegeList.add(computerCollege);
+   		collegeList.add(infoCollege);
+   
+   		OutPutImpl outPutImpl = new OutPutImpl(collegeList);
+   		outPutImpl.printCollege();
+   	}
+   
+   }
+   ```
+
+</details>
+
+#### 3.4.5.5. JDK ArrayList 源码分析
+
+> **原理类图分析**
+
+1. `ArrayList` 的内部类 `Itr` 充当了具体实现迭代器 `Iterator` 的类
+2. `List` 就是充当了聚合接口， 含有一个 `iterator()` 方法， 该方法返回一个迭代器对象
+3. `ArrayList` 是实现聚合接口 `List` 的子类， 实现了 `iterator()` 方法
+4. `Iterator` 接口系统(`JDK`)提供
+5. 迭代器模式解决了不同集合(`ArrayList`，`LinkedList`) 统一遍历问题
+
+![design-patterns-86.png](./image/design-patterns-86.png)
+
+> **源码追踪**
+
+1. `Iterator` 接口中定义的方法
+
+   ```java
+   public interface Iterator<E> {
+       
+       boolean hasNext();
+   
+       E next();
+   
+       default void remove() {
+           throw new UnsupportedOperationException("remove");
+       }
+   
+       default void forEachRemaining(Consumer<? super E> action) {
+           Objects.requireNonNull(action);
+           while (hasNext())
+               action.accept(next());
+       }
+       
+   }
+   ```
+
+2. 在 `List` 接口中定义了获取 `iterator` 的抽象方法，即 `List` 充当了聚合接口
+
+   ```java
+   public interface List<E> extends Collection<E> {
+       
+       // ...
+       
+       Iterator<E> iterator();
+       
+       // ...
+   ```
+
+3. 在 `ArrayList` 中实现了 `iterator` 方法
+
+   ```java
+   public class ArrayList<E> extends AbstractList<E>
+           implements List<E>, RandomAccess, Cloneable, java.io.Serializable
+       
+       // ...
+       
+       public Iterator<E> iterator() {
+           return new Itr();
+       }    
+      
+       // ...
+   ```
+
+4. `Itr` 实现了 `Iterator` 接口，为 `ArrayList` 的内部类，在 `Itr` 中，直接使用 `ArrayList` 中用于存放数据的 `Object[]` 数组，通过 `size` 属性标识集合元素个数
+
+   ```java
+   private class Itr implements Iterator<E> {
+       int cursor;       // index of next element to return
+       int lastRet = -1; // index of last element returned; -1 if no such
+       int expectedModCount = modCount;
+   
+       public boolean hasNext() {
+           return cursor != size;
+       }
+   
+       @SuppressWarnings("unchecked")
+       public E next() {
+           checkForComodification();
+           int i = cursor;
+           if (i >= size)
+               throw new NoSuchElementException();
+           Object[] elementData = ArrayList.this.elementData;
+           if (i >= elementData.length)
+               throw new ConcurrentModificationException();
+           cursor = i + 1;
+           return (E) elementData[lastRet = i];
+       }
+   
+       public void remove() {
+           if (lastRet < 0)
+               throw new IllegalStateException();
+           checkForComodification();
+   
+           try {
+               ArrayList.this.remove(lastRet);
+               cursor = lastRet;
+               lastRet = -1;
+               expectedModCount = modCount;
+           } catch (IndexOutOfBoundsException ex) {
+               throw new ConcurrentModificationException();
+           }
+       }
+   
+       @Override
+       @SuppressWarnings("unchecked")
+       public void forEachRemaining(Consumer<? super E> consumer) {
+           Objects.requireNonNull(consumer);
+           final int size = ArrayList.this.size;
+           int i = cursor;
+           if (i >= size) {
+               return;
+           }
+           final Object[] elementData = ArrayList.this.elementData;
+           if (i >= elementData.length) {
+               throw new ConcurrentModificationException();
+           }
+           while (i != size && modCount == expectedModCount) {
+               consumer.accept((E) elementData[i++]);
+           }
+           // update once at end of iteration to reduce heap write traffic
+           cursor = i;
+           lastRet = i - 1;
+           checkForComodification();
+       }
+   
+       final void checkForComodification() {
+           if (modCount != expectedModCount)
+               throw new ConcurrentModificationException();
+       }
+   }
+   ```
+
+### 3.4.6. 观察者模式（Observer Pattern）
 
 #### 3.4.6.1. 说明
 
+- 概述
+  - 目的：定义对象间的一种**一对多**的依赖关系，**当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并被自动更新**
+  - 主要解决：一个对象状态改变给其他对象通知的问题，而且要考虑到易用和低耦合，保证高度的协作。
+  - 何时使用：一个对象（目标对象）的状态发生改变，所有的依赖对象（观察者对象）都将得到通知，进行广播通知。
+  - 如何解决：使用面向对象技术，可以将这种依赖关系弱化。
+  - 关键代码：在抽象类里有一个 ArrayList 存放观察者们。
+
+- 优缺点
+  - 优点： 
+    - 1、观察者和被观察者是抽象耦合的。
+    - 2、建立一套触发机制。
+  - 缺点：
+    - 1、如果一个被观察者对象有很多的直接和间接的观察者的话，将所有的观察者都通知到会花费很多时间。 
+    - 2、如果在观察者和观察目标之间有循环依赖的话，观察目标会触发它们之间进行循环调用，可能导致系统崩溃。 
+    - 3、观察者模式没有相应的机制让观察者知道所观察的目标对象是怎么发生变化的，而仅仅只是知道观察目标发生了变化。
+
+- 使用场景：
+  - 一个抽象模型有两个方面，其中一个方面依赖于另一个方面。将这些方面封装在独立的对象中使它们可以各自独立地改变和复用。
+  - 一个对象的改变将导致其他一个或多个对象也发生改变，而不知道具体有多少对象将发生改变，可以降低对象之间的耦合度。
+  - 一个对象必须通知其他对象，而并不知道这些对象是谁。
+  - 需要在系统中创建一个触发链，A对象的行为将影响B对象，B对象的行为将影响C对象……，可以使用观察者模式创建一种链式触发机制。
+
+- 注意事项：
+  - 1、JAVA 中已经有了对观察者模式的支持类。
+  - 2、避免循环引用。 
+  - 3、如果顺序执行，某一观察者错误会导致系统卡壳，一般采用异步方式。
+
+- 原理说明
+  - 被依赖的对象为`Subject`，`Subject`进行登记注册、移除和通知
+    1. `registerObserver()`：注册
+    2. `removeObserver()`：移除
+    3. `notifyObservers()`：通知所有的注册的用户，根据不同需求，可以是更新数据，让用户来取，也可能是实施推送，看具体需求定
+
+    ![design-patterns-90.png](./image/design-patterns-90.png)
+
+  - 依赖的对象为`Observer`， `Observer`：接收输入
+
+    ![design-patterns-91.png](./image/design-patterns-91.png)
+
+  - `Subject`通知`Observer`变化
+
 #### 3.4.6.2. 情景介绍
+
+1. 气象站可以将每天测量到的温度，湿度，气压等等以公告的形式发布出去(比如发布到自己的网站或第三方)
+2. 需要设计开放型`API`，便于其他第三方也能接入气象站获取数据
+3. 提供温度、气压和湿度的接口
+4. 测量数据更新时，要能实时的通知给第三方
+
+![design-patterns-87.png](./image/design-patterns-87.png)
 
 #### 3.4.6.3. 传统方式
 
-#### 3.4.6.4. 代码
+> **类图**
 
-#### 3.4.6.5. 注意事项
+- `WeatherData`类
+  1. 通过对气象站项目的分析，我们可以初步设计出一个`WeatherData`类
+  2. 通过`getXxx()`方法，可以让第三方接入，并得到相关信息
+  3. 当数据有更新时，气象站通过调用`dataChange()`去更新数据，当第三方再次获取时，就能得到最新数据，当然也可以推送
 
-### 3.4.7. 迭代器模式（Iterator Pattern）
+  ![design-patterns-88.png](./image/design-patterns-88.png)
+
+- 推送的方式
+  - `CurrentConditions`(当前的天气情况)可以理解成是接入的第三方，
+  - 在 `WeatherData` 类中的 `dataChange()` 方法中，调用 `CurrentConditions` 的 `update()` 方法，来更新 `CurrentConditions`(第三方) 中的天气数据
+
+  ![design-patterns-89.png](./image/design-patterns-89.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `CurrentConditions`：当前天气情况
+
+   ```java
+   // 显示当前天气情况（可以理解成是气象站自己的网站）
+   public class CurrentConditions {
+   	// 温度，气压，湿度
+   	private float temperature;
+   	private float pressure;
+   	private float humidity;
+   
+   	// 更新 天气情况，是由 WeatherData 来调用，我使用推送模式
+   	public void update(float temperature, float pressure, float humidity) {
+   		this.temperature = temperature;
+   		this.pressure = pressure;
+   		this.humidity = humidity;
+   		display();
+   	}
+   
+   	// 显示
+   	public void display() {
+   		System.out.println("***Today mTemperature: " + temperature + "***");
+   		System.out.println("***Today mPressure: " + pressure + "***");
+   		System.out.println("***Today mHumidity: " + humidity + "***");
+   	}
+   }
+   ```
+
+2. `WeatherData`：包含最新的天气信息，调用 `setData()` 方法则将最新的天气信息推送至 `CurrentConditions`
+
+   ```java
+   /**
+    * 1. 包含最新的天气情况信息 
+    * 2. 含有 CurrentConditions 对象
+    * 3. 当数据有更新时，就主动的调用   CurrentConditions对象update方法(含 display), 这样他们（接入方）就看到最新的信息
+    *
+    */
+   public class WeatherData {
+   	private float temperatrue;
+   	private float pressure;
+   	private float humidity;
+   	private CurrentConditions currentConditions;
+   	
+   	public WeatherData(CurrentConditions currentConditions) {
+   		this.currentConditions = currentConditions;
+   	}
+   
+   	public float getTemperature() {
+   		return temperatrue;
+   	}
+   
+   	public float getPressure() {
+   		return pressure;
+   	}
+   
+   	public float getHumidity() {
+   		return humidity;
+   	}
+   
+   	public void dataChange() {
+   		// 调用 接入方的 update
+   		currentConditions.update(getTemperature(), getPressure(), getHumidity());
+   	}
+   
+   	// 当数据有更新时，就调用 setData
+   	public void setData(float temperature, float pressure, float humidity) {
+   		this.temperatrue = temperature;
+   		this.pressure = pressure;
+   		this.humidity = humidity;
+   		// 调用dataChange， 将最新的信息 推送给 接入方 currentConditions
+   		dataChange();
+   	}
+   }
+   ```
+
+3. `Client`：测试代码
+
+   ```java
+   public class Client {
+   	public static void main(String[] args) {
+   		// 创建接入方 currentConditions
+   		CurrentConditions currentConditions = new CurrentConditions();
+   		// 创建 WeatherData 并将 接入方 currentConditions 传递到 WeatherData中
+   		WeatherData weatherData = new WeatherData(currentConditions);
+   
+   		// 更新天气情况
+   		weatherData.setData(30, 150, 40);
+   
+   		// 天气情况变化
+   		System.out.println("============天气情况变化=============");
+   		weatherData.setData(40, 160, 20);
+   
+   	}
+   }
+   ```
+
+</details>
+
+> **传统方案问题分析**
+
+1. 其他第三方接入气象站获取数据的问题
+2. 无法在运行时动态的添加第三方 (新浪网站)
+3. 在添加新的第三方时，需要修改 `WeatherData` 类，违反`ocp`原则 --> 观察者模式
+
+#### 3.4.6.4. 观察者模式代码
+
+> **类图**
+
+![design-patterns-93.png](./image/design-patterns-93.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `Observer`：观察这的抽象接口，定义了更新天气信息的抽象方法
+
+   ```java
+   //观察者接口，有观察者来实现
+   public interface Observer {
+   
+   	public void update(float temperature, float pressure, float humidity);
+   
+   }
+   ```
+
+2. `CurrentConditions`：具体的观察者，实现了 `update()` 方法的业务逻辑
+
+   ```java
+   public class CurrentConditions implements Observer {
+   
+   	// 温度，气压，湿度
+   	private float temperature;
+   	private float pressure;
+   	private float humidity;
+   
+   	// 更新 天气情况，是由 WeatherData 来调用，我使用推送模式
+   	public void update(float temperature, float pressure, float humidity) {
+   		this.temperature = temperature;
+   		this.pressure = pressure;
+   		this.humidity = humidity;
+   		display();
+   	}
+   
+   	// 显示
+   	public void display() {
+   		System.out.println("***Today mTemperature: " + temperature + "***");
+   		System.out.println("***Today mPressure: " + pressure + "***");
+   		System.out.println("***Today mHumidity: " + humidity + "***");
+   	}
+   }
+   ```
+
+3. `BaiduSite`：具体的观察者，实现了 `update()` 方法的业务逻辑
+
+   ```java
+   public class BaiduSite implements Observer {
+   
+   	// 温度，气压，湿度
+   	private float temperature;
+   	private float pressure;
+   	private float humidity;
+   
+   	// 更新 天气情况，是由 WeatherData 来调用，我使用推送模式
+   	public void update(float temperature, float pressure, float humidity) {
+   		this.temperature = temperature;
+   		this.pressure = pressure;
+   		this.humidity = humidity;
+   		display();
+   	}
+   
+   	// 显示
+   	public void display() {
+   		System.out.println("===百度网站====");
+   		System.out.println("***百度网站 气温 : " + temperature + "***");
+   		System.out.println("***百度网站 气压: " + pressure + "***");
+   		System.out.println("***百度网站 湿度: " + humidity + "***");
+   	}
+   
+   }
+   ```
+
+4. `Subject`：主题的抽象类，定义了操作观察者的规范，有添加、移除、通知操作者，通过调用 `registerObserver()` 方法订阅该主题
+
+   ```java
+   //接口, 让WeatherData 来实现 
+   public interface Subject {
+   
+   	public void registerObserver(Observer o);
+   
+   	public void removeObserver(Observer o);
+   
+   	public void notifyObservers();
+   	
+   }
+   ```
+
+5. `WeatherData`：主题的具体实现类，聚合了一个 `ArrayList<Observer>` 对象，用于存储观察者集合，并实现了 `Subject` 接口中定义的抽象方法
+
+   ```java
+   /**
+    * 类是核心
+    * 1. 包含最新的天气情况信息 
+    * 2. 含有 观察者集合，使用ArrayList管理
+    * 3. 当数据有更新时，就主动通知所有的（接入方）就看到最新的信息
+    * @author Administrator
+    *
+    */
+   public class WeatherData implements Subject {
+   	private float temperatrue;
+   	private float pressure;
+   	private float humidity;
+   	// 观察者集合
+   	private ArrayList<Observer> observers;
+   
+   	public WeatherData() {
+   		observers = new ArrayList<Observer>();
+   	}
+   
+   	public float getTemperature() {
+   		return temperatrue;
+   	}
+   
+   	public float getPressure() {
+   		return pressure;
+   	}
+   
+   	public float getHumidity() {
+   		return humidity;
+   	}
+   
+   	// 当数据有更新时，就调用 setData
+   	public void setData(float temperature, float pressure, float humidity) {
+   		this.temperatrue = temperature;
+   		this.pressure = pressure;
+   		this.humidity = humidity;
+   		// 调用notifyObservers， 将最新的信息 推送给观察者
+   		notifyObservers();
+   	}
+   
+   	// 注册一个观察者
+   	@Override
+   	public void registerObserver(Observer o) {
+   		observers.add(o);
+   	}
+   
+   	// 移除一个观察者
+   	@Override
+   	public void removeObserver(Observer o) {
+   		if (observers.contains(o)) {
+   			observers.remove(o);
+   		}
+   	}
+   
+   	// 遍历所有的观察者，并通知
+   	@Override
+   	public void notifyObservers() {
+   		for (int i = 0; i < observers.size(); i++) {
+   			observers.get(i).update(this.temperatrue, this.pressure, this.humidity);
+   		}
+   	}
+   }
+   ```
+
+6. `Client`：测试代码
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// TODO Auto-generated method stub
+   		// 创建一个WeatherData
+   		WeatherData weatherData = new WeatherData();
+   
+   		// 创建观察者
+   		CurrentConditions currentConditions = new CurrentConditions();
+   		BaiduSite baiduSite = new BaiduSite();
+   
+   		// 注册到weatherData
+   		weatherData.registerObserver(currentConditions);
+   		weatherData.registerObserver(baiduSite);
+   
+   		// 测试
+   		System.out.println("通知各个注册的观察者, 看看信息");
+   		weatherData.setData(10f, 100f, 30.3f);
+   
+   		weatherData.removeObserver(currentConditions);
+   		// 测试
+   		System.out.println();
+   		System.out.println("通知各个注册的观察者, 看看信息");
+   		weatherData.setData(10f, 100f, 30.3f);
+   	}
+   
+   }
+   ```
+
+</details>
+
+> **观察者模式的好处**
+
+1. 观察者模式设计后， 会以集合的方式来管理用户(`Observer`)， 包括注册， 移除和通知。
+2. 这样， 我们增加观察者(这里可以理解成一个新的公告板)， 就不需要去修改核心类 `WeatherData`，遵守了 `ocp` 原则
+
+#### 3.4.6.5. Jdk Observable 源码分析
+
+> 注意：**jdk9中已弃用Observer和Observable**
+
+1. `Observable` 的作用和地位等价于 我们前面讲过 `Subject`
+2. `Observable` 是类，不是接口，类中已经实现了核心的方法，即管理`Observer`的方法 `add()`、`delete()`、`notify()`
+3. `Observer` 的作用和地位等价于我们前面讲过的 `Observer`，定义了抽象方法 `update()`
+4. `Observable` 和 `Observer` 的使用方法和前面讲过的一样，只是`Observable` 是类，通过继承来管理观察者，实现观察者模式
+
+> 源码追踪
+
+1. `Observable`：这个类有点老啊，观察者集合居然用 `Vector<Observer>` 存储
+
+   ```java
+   public class Observable {
+       private boolean changed = false;
+       private Vector<Observer> obs;
+   
+       public Observable() {
+           obs = new Vector<>();
+       }
+   
+       public synchronized void addObserver(Observer o) {
+           if (o == null)
+               throw new NullPointerException();
+           if (!obs.contains(o)) {
+               obs.addElement(o);
+           }
+       }
+       public synchronized void deleteObserver(Observer o) {
+           obs.removeElement(o);
+       }
+   
+       public void notifyObservers() {
+           notifyObservers(null);
+       }
+   
+       public void notifyObservers(Object arg) {
+           Object[] arrLocal;
+   
+           synchronized (this) {
+               if (!changed)
+                   return;
+               arrLocal = obs.toArray();
+               clearChanged();
+           }
+   
+           for (int i = arrLocal.length-1; i>=0; i--)
+               ((Observer)arrLocal[i]).update(this, arg);
+       }
+   
+       public synchronized void deleteObservers() {
+           obs.removeAllElements();
+       }
+   
+       protected synchronized void setChanged() {
+           changed = true;
+       }
+   
+       protected synchronized void clearChanged() {
+           changed = false;
+       }
+   
+       public synchronized boolean hasChanged() {
+           return changed;
+       }
+   
+       public synchronized int countObservers() {
+           return obs.size();
+       }
+   }
+   ```
+
+2. `Observer`：定义了抽象方法 `update()`，主题方法通过调用观察者的 `update()` 方法将主题推送至具体的观察者
+
+   ```java
+   public interface Observer {
+       void update(Observable o, Object arg);
+   }
+   ```
+
+### 3.4.7. 中介者模式（Mediator Pattern）
 
 #### 3.4.7.1. 说明
 
+- 概述
+  - 意图：**用一个中介对象来封装一系列的对象交互**，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。
+  - 主要解决：对象与对象之间存在大量的关联关系，这样势必会导致系统的结构变得很复杂，同时若一个对象发生改变，我们也需要跟踪与之相关联的对象，同时做出相应的处理。
+  - 何时使用：多个类相互耦合，形成了网状结构。
+  - 如何解决：将上述网状结构分离为星型结构。
+  - 关键代码：对象 Colleague 之间的通信封装到一个类中单独处理。
+  - 应用实例： 
+    - 1、机场调度系统。 
+    - 2、MVC 框架，其中C（控制器）就是 M（模型）和 V（视图）的中介者。
+
+- 优缺点
+  - 优点：
+    - 1、降低了类的复杂度，将一对多转化成了一对一。 
+    - 2、各个类之间的解耦。 
+    - 3、符合迪米特原则。
+  - 缺点：中介者会庞大，变得复杂难以维护。
+
+- 使用场景： 
+  - 1、系统中对象之间存在比较复杂的引用关系，导致它们之间的依赖关系结构混乱而且难以复用该对象。 
+  - 2、想通过一个中间类来封装多个类中的行为，而又不想生成太多的子类。
+
+- 注意事项：不应当在职责混乱的时候使用。
+
+- 原理类图
+  1. `Mediator` 就是抽象中介者，定义了中介者的行为规范
+  2. `Colleague` 是抽象的同事类，定义了同事类中抽象的行为规范
+  3. `ConcreteMediator` 具体的中介者对象，实现 `Mediator` 中的抽象方法，他需要知道所有具体的同事类，即以一个集合来管理所有的同事(`HashMap`)，并接收某个同事的消息，完成相应的任务
+  4. `ConcreteColleague` 具体的同事类，`Colleague` 的实现类会有很多，每个同事只知道自己的行为， 而不了解其他同事类的行为(方法)，但是他们都依赖中介者对象(通过构造器将中介者注入)
+  5. 原本同事之间复杂的调用关系和业务逻辑，都交给中介者去执行，这样具体的同事类之间耦合度就会降低
+
+  ![design-patterns-95.png](./image/design-patterns-95.png)
+
 #### 3.4.7.2. 情景介绍
+
+- 智能家庭项目：
+  1. 智能家庭包括各种设备，闹钟、咖啡机、电视机、窗帘 等
+  2. 主人要看电视时，各个设备可以协同工作，自动完成看电视的准备工作，比如流程为： 闹铃响起 --> 咖啡机开始做咖啡 --> 窗帘自动落下 --> 电视机开始播放
 
 #### 3.4.7.3. 传统方式
 
-#### 3.4.7.4. 代码
+  > **类图**
+
+![design-patterns-94.png](./image/design-patterns-94.png)
+
+> **传统的方式的问题分析**
+
+1. 当各电器对象有多种状态改变时，相互之间的调用关系会比较复杂
+2. 各个电器对象彼此联系， 你中有我，我中有你，不利于松耦合
+3. 各个电器对象之间所传递的消息(参数)，容易混乱
+4. 当系统增加一个新的电器对象时，或者执行流程改变时，代码的可维护性、扩展性都不理想 ==> 考虑中介者模式
+
+#### 3.4.7.4. 中介者模式代码
+
+> **类图**
+
+![design-patterns-96.png](./image/design-patterns-96.png)
+
+1. 创建 `ConcreteMediator` 对象，并使用 `Mediator` 类型接收
+2. 创建各个同事类对象，比如 `Alarm`、`CoffeeMachine`、`TV` 等
+3. 在创建同事类对象时，就直接通过构造器注入一个 `Mediator` 对象，同时将同事类对象添加至 `Mediator` 的同事类集合中去
+4. 在同事类对象中调用 `sendMessage()` 方法时，会去用 `Mediator` 对象中的 `getMessage()` 方法
+5. `getMessage()` 方法会根据会根据当前接收到的消息，去调用其他同事，协同完成其他任务，即 `getMessage()` 方法会处理很多的业务逻辑，是一个核心方法
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `Colleague`：同事类，即为各种家电的抽象父类，通过构造器将中介者对象注入，抽象父类中的 `SendMessage()` 由子类重写，该方法将调用中介者的 `GetMessage()` 方法触发执行动作
+
+   ```java
+   //同事抽象类
+   public abstract class Colleague {
+   	private Mediator mediator;
+   	public String name;
+   
+   	public Colleague(Mediator mediator, String name) {
+   		this.mediator = mediator;
+   		this.name = name;
+   
+   	}
+   
+   	public Mediator GetMediator() {
+   		return this.mediator;
+   	}
+   
+   	public abstract void SendMessage(int stateChange);
+   }
+   ```
+
+2. `Alarm`：
+
+   ```java
+   //具体的同事类
+   public class Alarm extends Colleague {
+   
+   	// 构造器
+   	public Alarm(Mediator mediator, String name) {
+   		super(mediator, name);
+   		// 在创建Alarm 同事对象时，将自己放入到ConcreteMediator 对象中[集合]
+   		mediator.Register(name, this);
+   	}
+   
+   	public void SendAlarm(int stateChange) {
+   		SendMessage(stateChange);
+   	}
+   
+   	@Override
+   	public void SendMessage(int stateChange) {
+   		// 调用的中介者对象的getMessage
+   		this.GetMediator().GetMessage(stateChange, this.name);
+   	}
+   
+   }
+   ```
+
+3. `CoffeeMachine`：
+
+   ```java
+   public class CoffeeMachine extends Colleague {
+   
+   	public CoffeeMachine(Mediator mediator, String name) {
+   		super(mediator, name);
+   		mediator.Register(name, this);
+   	}
+   
+   	@Override
+   	public void SendMessage(int stateChange) {
+   		this.GetMediator().GetMessage(stateChange, this.name);
+   	}
+   
+   	public void StartCoffee() {
+   		System.out.println("It's time to startcoffee!");
+   	}
+   
+   	public void FinishCoffee() {
+   		System.out.println("After 5 minutes!");
+   		System.out.println("Coffee is ok!");
+   		SendMessage(0);
+   	}
+   }
+   ```
+
+4. `TV`：
+
+   ```java
+   public class TV extends Colleague {
+   
+   	public TV(Mediator mediator, String name) {
+   		super(mediator, name);
+   		mediator.Register(name, this);
+   	}
+   
+   	@Override
+   	public void SendMessage(int stateChange) {
+   		this.GetMediator().GetMessage(stateChange, this.name);
+   	}
+   
+   	public void StartTv() {
+   		System.out.println("It's time to StartTv!");
+   	}
+   
+   	public void StopTv() {
+   		System.out.println("StopTv!");
+   	}
+   }
+   ```
+
+5. `Curtains`：
+
+   ```java
+   public class Curtains extends Colleague {
+   
+   	public Curtains(Mediator mediator, String name) {
+   		super(mediator, name);
+   		mediator.Register(name, this);
+   	}
+   
+   	@Override
+   	public void SendMessage(int stateChange) {
+   		this.GetMediator().GetMessage(stateChange, this.name);
+   	}
+   
+   	public void UpCurtains() {
+   		System.out.println("I am holding Up Curtains!");
+   	}
+   
+   }
+   ```
+
+6. `Mediator`：定义中介者的行为规范
+
+   ```java
+   public abstract class Mediator {
+   	
+   	// 将给中介者对象，加入到集合中
+   	public abstract void Register(String colleagueName, Colleague colleague);
+   
+   	// 接收消息, 消息由具体的同事对象发出
+   	public abstract void GetMessage(int stateChange, String colleagueName);
+   
+   	public abstract void SendMessage();
+   	
+   }
+   ```
+
+7. `ConcreteMediator`：继承了 `Mediator` 抽象父类，实现了其父类中的抽象方法，`Register()` 完成注册的功能，调用 `GetMessage()` 方法将执行目标任务
+
+   ```java
+   //具体的中介者类
+   public class ConcreteMediator extends Mediator {
+   	// 集合，放入所有的同事对象
+   	private HashMap<String, Colleague> colleagueMap;
+   	private HashMap<String, String> interMap;
+   
+   	public ConcreteMediator() {
+   		colleagueMap = new HashMap<String, Colleague>();
+   		interMap = new HashMap<String, String>();
+   	}
+   
+   	@Override
+   	public void Register(String colleagueName, Colleague colleague) {
+   		colleagueMap.put(colleagueName, colleague);
+   
+   		if (colleague instanceof Alarm) {
+   			interMap.put("Alarm", colleagueName);
+   		} else if (colleague instanceof CoffeeMachine) {
+   			interMap.put("CoffeeMachine", colleagueName);
+   		} else if (colleague instanceof TV) {
+   			interMap.put("TV", colleagueName);
+   		} else if (colleague instanceof Curtains) {
+   			interMap.put("Curtains", colleagueName);
+   		}
+   	}
+   
+   	// 具体中介者的核心方法
+   	// 1. 根据得到消息，完成对应任务
+   	// 2. 中介者在这个方法，协调各个具体的同事对象，完成任务
+   	@Override
+   	public void GetMessage(int stateChange, String colleagueName) {
+   		// 处理闹钟发出的消息
+   		if (colleagueMap.get(colleagueName) instanceof Alarm) {
+   			if (stateChange == 0) {
+   				((CoffeeMachine) (colleagueMap.get(interMap.get("CoffeeMachine")))).StartCoffee();
+   				((TV) (colleagueMap.get(interMap.get("TV")))).StartTv();
+   			} else if (stateChange == 1) {
+   				((TV) (colleagueMap.get(interMap.get("TV")))).StopTv();
+   			}
+   		} else if (colleagueMap.get(colleagueName) instanceof CoffeeMachine) {
+   			((Curtains) (colleagueMap.get(interMap.get("Curtains")))).UpCurtains();
+   		} else if (colleagueMap.get(colleagueName) instanceof TV) {
+   			// 如果TV发现消息
+   		} else if (colleagueMap.get(colleagueName) instanceof Curtains) {
+   			// 如果是以窗帘发出的消息，这里处理...
+   		}
+   	}
+   
+   	@Override
+   	public void SendMessage() {
+   
+   	}
+   
+   }
+   ```
+
+8. `ClientTest`：测试代码
+
+   ```java
+   public class ClientTest {
+   
+   	public static void main(String[] args) {
+   		// 创建一个中介者对象
+   		Mediator mediator = new ConcreteMediator();
+   
+   		// 创建Alarm 并且加入到 ConcreteMediator 对象的HashMap
+   		Alarm alarm = new Alarm(mediator, "alarm");
+   
+   		// 创建了CoffeeMachine 对象，并 且加入到 ConcreteMediator 对象的HashMap
+   		CoffeeMachine coffeeMachine = new CoffeeMachine(mediator, "coffeeMachine");
+   
+   		// 创建 Curtains , 并 且加入到 ConcreteMediator 对象的HashMap
+   		Curtains curtains = new Curtains(mediator, "curtains");
+   		TV tV = new TV(mediator, "TV");
+   
+   		// 让闹钟发出消息
+   		alarm.SendAlarm(0);
+   		coffeeMachine.FinishCoffee();
+   		alarm.SendAlarm(1);
+   	}
+   
+   }
+   ```
+
+</details>
 
 #### 3.4.7.5. 注意事项
 
-### 3.4.8. 中介者模式（Mediator Pattern）
+### 3.4.8. 责任链模式（Chain of Responsibility Pattern）
 
 #### 3.4.8.1. 说明
 
@@ -7521,7 +8926,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
 #### 3.4.8.5. 注意事项
 
-### 3.4.9. 备忘录模式（Memento Pattern）
+### 3.4.9. 解释器模式（Interpreter Pattern）
 
 #### 3.4.9.1. 说明
 
@@ -7533,7 +8938,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
 #### 3.4.9.5. 注意事项
 
-### 3.4.10. 观察者模式（Observer Pattern）
+### 3.4.10. 备忘录模式（Memento Pattern）
 
 #### 3.4.10.1. 说明
 
