@@ -452,6 +452,8 @@ set lazyredraw
 set synmaxcol=10000       " 高亮显示行数，小一点节省内存，但是可能对大文件出现渲染错误 默认3000
 syntax sync minlines=256
 
+" 提高限制
+set maxmempattern=5000
 
 "[输入法智能切换设置] 8.2以后不需要了
 "一些必要的设置,比如是什么按键切换中英文状态.如果加入"imcmdline"选项则命令模式下输入法默认为被开启.
@@ -595,6 +597,7 @@ let g:which_key_map.h.p = "preview"
 let g:which_key_map.h.s = "stage"
 let g:which_key_map.h.u = "undo"
 let g:which_key_map.h.h = "highLight"
+" let g:gitgutter_diff_args = ' --cached '
 
 " tagbar map
 nnoremap <leader>t :TagbarToggle<CR>
@@ -673,8 +676,25 @@ nnoremap <leader>zd :call SaveImageByUrl() <cr>
 let g:which_key_map.z.d = "downloadImageFile"
 
 " 压缩空行
-nnoremap <leader>zl :g/^$/,/./-j<cr> :/jj<cr>
+nnoremap <leader>zl :g/^$/,/./-j<cr> :/jjj<cr>
 let g:which_key_map.z.l = "compress empty line"
+
+" 打开光标下文件
+function! OpenUnderCurser(command)
+    let l:file_path = expand("<cfile>")
+    if l:file_path[0:3] == "http"
+      let l:relate_path = l:file_path 
+    else
+      let l:relate_path = expand("%:p")[0:strlen(expand("%:p"))-strlen(expand("%:t"))-2] . "/" . l:file_path
+      let l:relate_path = substitute(l:relate_path,"\\","/","")
+    endif
+    execute(":!" . a:command . " " . l:relate_path)
+endfunction
+nnoremap <silent><leader>ocb :call OpenUnderCurser("chrome") <cr> 
+nnoremap <silent><leader>ocv :call OpenUnderCurser("code")  <cr> 
+let g:which_key_map.o.c = { 'name' : '[file under curser]' }
+let g:which_key_map.o.c.b = "chrome"
+let g:which_key_map.o.c.v =  "vscode"
 
 "=================================================map end===================================================
 
