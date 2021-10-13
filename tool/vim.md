@@ -273,6 +273,31 @@
 
 - `:v/./.,/./-1join` 压缩空行(多行空行合并为一行)
 - `:g/^$/,/./-j`  压缩空行(多行空行合并为一行)
+- `vimgrep /content/ *.* | copen`
+  <details>
+  <summary style="color:red;">说明</summary>
+
+  ```
+  vim[grep][!] /{pattern}/[g][j] {file} ...
+  vim[grep][!] {pattern} {file} ...
+  ```
+
+  - vim 可作为 vimgrep 的缩写
+  - ! 可紧随 vimgrep 之后，表示强制执行该命令
+  - 索引的关键字 pattern 放在了两个 “/” 中间，并且支持正则表达式
+  - g, j 可选。 如果添加 g，将显示重复行， 如果添加 j，vim 将不会自动跳转到第一个匹配的行（可能是别的文件）
+  - file 可以是正则文件名，也可以是多个确定的文件名
+
+  ```
+  例：
+    1. 只搜索当前文件 vimgrep /main/ % | copen
+    2. 只搜索当前目录 vimgrep /main/ * | copen
+    3.  搜索上级目录下，并递归 vimgrep /main/ ../** | copen
+    4. 可以在多个路径中搜索  vimgrep // path1/** path2/** | copen
+    5. 所有指定类型文件中搜索 vimgrep // ./**/*.md | copen
+  ```
+  </details>
+
 
 # 3. vim配置文件
 

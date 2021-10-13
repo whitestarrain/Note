@@ -100,6 +100,7 @@ awk 'BEGIN{
   - [ ] JVM性能监控和调优
   - [ ] 各种加密算法
 - 待继续学习
+  - [ ] Undertow
   - [ ] Mysql XA
   - [ ] Mocikto框架
   - [ ] JOOQ框架
@@ -114,6 +115,9 @@ awk 'BEGIN{
   - [ ] **程序设计实践**
   - [ ] Redis设计与实现
   - [ ] Operating Systems:Three Easy Pieces
+- 大数据笔记整理完善
+  - Spark
+  - Flink
 - 短期小任务
   - [ ] Gossip 协议
   - [ ] SPEL

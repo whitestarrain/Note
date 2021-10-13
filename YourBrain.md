@@ -18,7 +18,7 @@
 
 #### J2EE型模式
 
-## 计算机网络
+## 计算机网络 <!-- fold -->
 
 ### 理论<br />(参考《计算机网络》谢希仁) <!-- fold -->
 
@@ -294,11 +294,13 @@
 
 ## 算法<!-- fold -->
 
-# Java 基础
+# Java知识栈
 
-## 基础 <!-- fold -->
+## Java 基础 <!-- fold -->
 
-### 基础中的基础
+### 基础 <!-- fold -->
+
+#### 基础中的基础
 
 - 基本概念
   - JRE与JDK
@@ -365,7 +367,7 @@
     - 使用 Apache Commons Collections
     - 使用 Java9 的 List.of()方法
 
-### [反射](https://www.cnblogs.com/yougewe/p/10125073.html)
+#### [反射](https://www.cnblogs.com/yougewe/p/10125073.html)
 
 - 说明
 - 原理
@@ -379,7 +381,7 @@
   - [重写private方法](https://www.cnblogs.com/lixinjie/p/combine-reflect-and-oo-in-java.html)
   - 框架编写
 
-### java泛型
+#### java泛型
 
 - 什么是泛型
 - 原理与类型擦除
@@ -391,7 +393,7 @@
   - T ,T extends xxx, ？,？extends xxx <br />和 ？super xxx 的区别？
   - 为何不能通过直接通过`T[] arr=new T[10]`的方式来创建数组<br />如何正确创建泛型数组。
 
-### String
+#### String
 
 - String,StringBuilder,StringBuffer 使用场景
 - AbstractStringBilder,建造者
@@ -402,7 +404,7 @@
 - 字符串常量池
 
 
-### SPI
+#### SPI
 
 - 原理
   - api
@@ -419,7 +421,7 @@
     - 自定义标签
 
 
-### java8新特性
+#### java8新特性
 
 - Stream
 - Function Interface
@@ -427,12 +429,12 @@
 - Optional
 - Data Time-api
 
-### 语法糖
+#### 语法糖
 
 - 双大括号初始化(不推荐)
 - try-with-resources(针对io资源，推荐)
 
-## 集合 <!-- fold -->
+### 集合 <!-- fold -->
 
 - 为什么要使用集合
 - HashMap
@@ -564,7 +566,7 @@
 
 - [其他重要问题](https://www.jianshu.com/p/8bc28d6b0a5e)
 
-## 多线程 <!-- fold -->
+### 多线程 <!-- fold -->
 
 - 并发基础
   - [创建线程的方式](https://segmentfault.com/a/1190000037589073)
@@ -934,11 +936,11 @@
 
 - **ThreadLocal(待做)**
 
-## IO/NIO/AIO <!-- fold -->
+### IO/NIO/AIO <!-- fold -->
 
-# JVM
+## JVM <!-- fold -->
 
-## 基础知识 <!-- fold -->
+### 基础知识 <!-- fold -->
 
 - jvm发展
 - 特点：
@@ -953,9 +955,9 @@
   - 执行
   - 退出
 
-## 内存与垃圾回收 <!-- fold -->
+### 内存与垃圾回收 <!-- fold -->
 
-### 上层
+#### 上层
 
 - 画出详细架构
 - 类加载过程
@@ -1014,7 +1016,7 @@
     - 类加载器引用哦作为类型信息存于方法区
     - 引用类型转换时，要保证两个类加载器相同
 
-### 中层
+#### 中层
 
 - **Java内存区域布局说明**
 - 程序计数器
@@ -1268,7 +1270,7 @@
     - java对象头里有什么
 - 直接内存
 
-### 下层
+#### 下层
 
 - 执行引擎
   - 作用
@@ -1594,15 +1596,15 @@
     - CMS和G1了解么，CMS解决什么问题，说一下回收的过程。
     - CMS回收停顿了几次，为什么要停顿两次。
 
-## 字节码与类加载子系统 <!-- fold -->
+### 字节码与类加载子系统 <!-- fold -->
 
-## jvm调优 <!-- fold -->
+### jvm调优 <!-- fold -->
 
-# 常用框架
+## 常用框架 <!-- fold -->
 
-## Spring<!-- fold -->
+### Spring<!-- fold -->
 
-### 基础
+#### 基础
 
 - 什么是Spring框架
 - Spring框架的重要模块
@@ -1612,7 +1614,7 @@
   - AOP
 - BeanFactory和ApplicationContextSpring
 
-### IOC
+#### IOC
 
 - 概念
 - [IOC容器初始化过程](https://javadoop.com/post/spring-ioc)
@@ -1653,7 +1655,7 @@
 
 - 注意：对于无法添加注解<br />如导入的第三方依赖<br />可以通过xml将其存入或者向其注入<br />或者使用下面的`@Bean`
 
-### 摆脱xml的注解
+#### 摆脱xml的注解
 
 - @Configuration
 - @ComponentScan
@@ -1664,7 +1666,7 @@
 - @Import
 - @PropertySource
 
-### AOP
+#### AOP
 
 - 说明
 - 相关概念
@@ -1713,7 +1715,7 @@
         - reference pointcut：表示引用其他命名切入点，只有@ApectJ风格支持，Schema风格不支持。
     - 参数传递
 
-### Bean
+#### Bean
 
 - 创建Bean的方式
   - 默认构造函数
@@ -1731,7 +1733,7 @@
 
 - 线程安全问题
 
-### 事务
+#### 事务
 
 - Spring对事务的支持
   - 取决于数据库
@@ -1780,7 +1782,7 @@
     - no-rollback-for
 
 
-### 设计模式
+#### 设计模式
 
 - 工厂设计模式
   - BeanFactory
@@ -1812,11 +1814,11 @@
   - spring MVC中的适配器模式
 - 装饰者模式
 
-## SpringMVC <!-- fold -->
+### SpringMVC <!-- fold -->
 
-## SpringBoot <!-- fold -->
+### SpringBoot <!-- fold -->
 
-## Mybatis <!-- fold -->
+### Mybatis <!-- fold -->
 
 - 基本使用
   - xml
@@ -1924,9 +1926,31 @@
 - 注意 <!-- fold -->
   - `jdbcType=date`会导致时间插入时丢失时分秒
 
-## Netty <!-- fold -->
+### Netty <!-- fold -->
 
-## quartz <!-- fold -->
+### quartz <!-- fold -->
+
+## JNI
+
+## 工具库 <!-- fold -->
+
+### excel处理
+
+#### poi
+
+#### easyExcel
+
+### hutool
+
+### lombok
+
+### jsoup
+
+### log4j
+
+### junit
+
+### [深度学习-djl](https://github.com/deepjavalibrary/djl)
 
 # 数据库
 
@@ -2394,7 +2418,7 @@
 
 ### MongoDB<!-- fold -->
 
-# 分布式相关
+# 分布式系统
 
 ## 分布式理论 <!-- fold -->
 
@@ -2462,7 +2486,19 @@
 
 ## RocketMQ<!-- fold -->
 
+# 大数据
+
+# 人工智能
+
+## 机器学习
+
+## 深度学习
+
 # 其他
 
 ## 鉴权
+
+## 加密算法
+
+## vimscript
 

@@ -696,6 +696,10 @@ let g:which_key_map.o.c = { 'name' : '[file under curser]' }
 let g:which_key_map.o.c.b = "chrome"
 let g:which_key_map.o.c.v =  "vscode"
 
+
+nnoremap <silent><leader>zp :!markmap %  <cr> 
+let g:which_key_map.z.p = "markmap"
+
 "=================================================map end===================================================
 
 " 不知道干啥的
