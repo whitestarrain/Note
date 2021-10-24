@@ -5221,6 +5221,10 @@ InnoDB引擎实现了标准的行级别锁，分别是共享锁和排他锁。
   - 很明显，这样做事务之间将会频发陷入**阻塞等待**，**插入的并发性**非常之差。
   - 这时如果我们再去回想我们刚刚讲过的`插入意向锁`，就不难发现它是如何优雅的解决了**并发插入**的问题。
 
+- 兼容矩阵
+
+  ![mysql-9-7](./image/mysql-9-7.png)
+
 > **总结**
 
 1. **MySql InnoDB** 在 `Repeatable-Read` 的事务隔离级别下，使用`插入意向锁`来控制和解决并发插入。
@@ -5934,3 +5938,4 @@ v
 - [搞懂MySQL分区](https://www.cnblogs.com/GrimMjx/p/10526821.html)
 - [使用mysql乐观锁解决并发问题](使用mysql乐观锁解决并发问题)
 - **[Mysql-基础篇(1)-一条更新SQL执行流程](https://www.jianshu.com/p/d4e6105ab4e5)**
+- [mysql insert锁机制](https://www.cnblogs.com/better-farther-world2099/articles/14722850.html)(待整理)
