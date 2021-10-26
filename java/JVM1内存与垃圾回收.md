@@ -973,6 +973,7 @@ public static void main(String[] args){
     > ![local-variables-2](./image/local-variables-2.png) 
   - 临时变量列表与作用范围：
     > ![local-variables-3](./image/local-variables-3.png) 
+    > 分别是 **开始行号** ， **作用长度**
     > 可以发现 开始行号+作用长度 相同，也就是临时变量都是到方法最后才销毁
 
 ##### 2.2.3.4.2. slot

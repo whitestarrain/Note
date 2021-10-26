@@ -1,3 +1,5 @@
+> ## 记住，有什么不懂得，查文档最有用
+
 [java8文档](https://docs.oracle.com/javase/specs/jvms/se8/html/index.html)
 
 # 1. 学习路线回顾
@@ -197,7 +199,9 @@ Son类的字节码：
     - Class的结构不像XML等描述语言
     - 由于它没有任何分隔符号，所以在其中的数据项,无论是字节顺序还是数量,都是被严格限定的
     - 哪个字节代表什么含义,长度是多少,先后顺序如何,都不允许改变
-  - 组成: Class文件格式采用一种类似于C语言结构体的方式进行数据存储,这种结构中只有两种数据类型:**无符号数**和**表**
+  - 组成:
+    > Class文件格式采用一种类似于C语言结构体的方式进行数据存储 <br />
+    > 这种结构中只有两种数据类型: **无符号数** 和 **表**
     - **无符号数**:
       - 属于基本的数据类型
       - 以u1、u2、u4、u8来分别代表1个字节、2个字节、4个字节和8个字节的无符号数
@@ -485,7 +489,7 @@ public class Demo {
     ```
   - 解读:
     - **tag**:0a是10，对应CONSTANT_Methodref_info，
-    - CONSTANT_Methodref_info 有两个长度为u2的index
+    - 查`常量类型详细说明表`可得：CONSTANT_Methodref_info 有两个长度为u2的index
       - 指向声明方法的类描述符
         - `00 04`，值是4
         - 也就是找常量池表中的第4项，是一个CONSTANT_Class_info，
@@ -528,15 +532,547 @@ public class Demo {
 
 #### 2.2.2.5. 访问标识(access_flag)
 
+![jvm2-15](./image/jvm2-15.png)
+
+- 位置：在常量池后
+- 作用：该标记使用两个字节表示，**用于识别一些类或者接口层次的访问信息**
+  - 包括：这个 Class 是类还是接口；
+  - 是否定义为 public 类型；
+  - 是否定义为 abstract 类型；
+  - 如果是类的话，是否被声明为 final 等
+
+- 访问表示表:
+  > 类的访问权限通常为 `ACC_` 开头的常量。
+
+  | 标志名称       | 标志值 | 含义                                                                                                                       |
+  | -------------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
+  | ACC_PUBLIC     | 0x0001 | 标志为 public 类型                                                                                                         |
+  | ACC_FINAL      | 0x0010 | 标志被声明为 final，只有类可以设置                                                                                         |
+  | ACC_SUPER      | 0x0020 | 标志允许使用 invokespecial 字节码指令的新语义，JDK1.0.2 之后编译出来的类的这个标志默认为真。（使用增强的方法调用父类方法） |
+  | ACC_INTERFACE  | 0x0200 | 标志这是一个接口                                                                                                           |
+  | ACC_ABSTRACT   | 0x0400 | 是否为 abstract 类型，对于接口或者抽象类来说，次标志值为真，其他类型为假                                                   |
+  | ACC_SYNTHETIC  | 0x1000 | 标志此类并非由用户代码产生（即：由编译器产生的类，没有源码对应）                                                           |
+  | ACC_ANNOTATION | 0x2000 | 标志这是一个注解                                                                                                           |
+  | ACC_ENUM       | 0x4000 | 标志这是一个枚举                                                                                                           |
+
+  - 概述
+    - 每一种类型的表示都是**通过设置访问标记的 32 位中的特定位**来实现的。
+    - 比如，若是 public final 的类，则该标记为 `ACC_PUBLIC | ACC_FINAL`。访问标识的值为`0x0031`
+      > `ACC_SUPER`为真，0x0001+0x0010+0x0020
+    - 使用 ACC_SUPER 可以让类更准确地定位到父类的方法 super.method()，现代编译器都会设置并且使用这个标记。
+
+- 注意：
+  - 带有 ACC_INTERFACE 标志的 class 文件表示的是接口而不是类，反之则表示的是类而不是接口。
+    - 如果一个 class 文件被设置了 ACC_INTERFACE 标志
+      - 那么 **同时也得设置 ACC_ABSTRACT 标志** 。
+      - **同时它不能再设置 ACC_FINAL、ACC_SUPER 或 ACC_ENUM 标志**。
+    - 如果没有设置 ACC_INTERFACE 标志
+      - 那么这个 class 文件可以具有上表中除 ACC_ANNOTATION 外的其他所有标志。
+      - 当然，ACC_FINAL 和 ACC_ABSTRACT 这类互斥的标志除外。这两个标志不得同时设置。
+  - ACC_SUPER 标志用于确定类或接口里面的 invokespecial 指令使用的是哪一种执行语义。
+    - 针对 Java 虚拟机指令集的编译器都应当设置这个标志。
+    - 对于 Java SE 8 及后续版本来说，无论 class 文件中这个标志的实际值是什么，也不管 class 文件的版本号是多少，Java 虚拟机都认为每个 class 文件均设置了 ACC_SUPER 标志。
+    - ACC_SUPER 标志是为了向后兼容由旧 Java 编译器所编译的代码而设计的。
+      - 目前的 ACC_SUPER 标志在由 JDK1.0.2 之前的编译器所生成的 access_flags 中是没有确定含义的，
+      - 如果设置了该标志，那么 oracle 的 Java 虚拟机实现会将其忽略。
+  - ACC_SYNTHETIC 标志意味着该类或接口是由编译器生成的，而不是由源代码生成的。
+  - 注解类型必须设置 ACC_ANNOTATION 标志。**如果设置了 ACC_ANNOTATION 标志，那么也必须设置 ACC_INTERFACE 标志**。
+    ```java
+    public @interface ...
+    ```
+  - ACC_ENUM 标志表明该类或其父类为枚举类型。
+
 #### 2.2.2.6. 类索引，父类索引，接口索引集合
+
+![jvm2-16](./image/jvm2-16.png)
+
+> #### 基本说明
+
+- 说明：在访问标记后，会指定该类的类别、父类类别以及实现的接口，格式如下：
+
+  | 长度 | 标志名称                     | 含义                                       |
+  | ---- | :--------------------------- | :----------------------------------------- |
+  | u2   | this_class                   | 类索引用于确定这个类的全限定名             |
+  | u2   | super_class                  | 父类索引用于确定这个类的父类的全限定名     |
+  | u2   | interfaces_count             | 实现的接口数量                             |
+  | u2   | interfaces[interfaces_count] | 接口索引集合就用来描述这个类实现了哪些接口 |
+
+  - 后三项数据来确定这个类的继承关系
+  - super_class:
+    - 由于 Java 语言不允许多重继承，所以父类索引只有一个，
+    - 除了 java.1ang.Object 之外，所有的 Java 类都有父类，
+    - 因此除了 java.lang.Object 外，所有 Java 类的父类索引都不为 0。
+  - interface[interfaces_couont]:
+    - 这些被实现的接口将按 implements 语句（如果这个类本身是一个接口，则应当是 extends 语句）后的接口顺序从左到右排列在接口索引集合中。
+
+> #### this_class（类索引）
+
+- 数据：
+  - 2字节无符号整数，指向常量池的索引。
+  - this_class 的值必须是对常量池表中某项的一个有效索引值。
+  - 常量池在这个索引处的成员必须为 CONSTANT_Class_info 类型结构体，该结构体表示这个 class 文件所定义的类或接口。
+- 作用：它提供了类的全限定名，如 `com/atguigu/java1/Demo`
+
+> #### super_class（父类索引）
+
+- 数据：
+  - 2 字节无符号整数，指向常量池的索引
+- 作用：
+  - 它提供了当前类的父类的全限定名。
+  - 如果我们没有继承任何类，其默认继承的是 java/lang/object 类。
+  - 同时，由于 Java 不支持多继承，所以其父类只有一个。
+
+- 注意：
+  - super_class 指向的父类不能是 final。
+  - Object类没有父类
+
+> #### interfaces
+
+- 数据与作用：
+  - 指向常量池索引集合，它提供了一个符号引用到所有已实现的接口
+  - 由于一个类可以实现多个接口，因此需要以数组形式保存多个接口的索引，
+  - 表示接口的每个索引也是一个指向常量池的 CONSTANT_Class（当然这里就必须是接口，而不是类）。
+
+- 组成：
+  - interfaces_count（接口计数器）:interfaces_count 项的值表示当前类或接口的直接超接口数量。
+  - interfaces[]（接口索引集合）
+    - interfaces[]中每个成员的值必须是对常量池表中某项的有效索引值，
+    - 它的长度为 interfaces_count。
+    - 每个成员 interfaces[i]必须为 CONSTANT_Class_info 结构，其中 `0 <= i < interfaces_count`。
+- 顺序：
+  - 在 interfaces[]中，各成员所表示的接口顺序和对应的源代码中给定的接口顺序（从左至右）一样
+  - 即 interfaces[0]对应的是源代码中最左边的接口。
 
 #### 2.2.2.7. 字段表集合
 
+![jvm2-17](./image/jvm2-17.png)
+
+##### 2.2.2.7.1. 基本说明
+
+- fields
+  - 作用：用于描述接口或类中声明的变量。
+  - 组成：
+    - 字段（field）包括**类级变量以及实例级变量**，
+    - 但是不包括方法内部、代码块内部声明的局部变量。
+    - 也不包括从父类或父接口继承的那些字段。
+  - 表示方法：
+    - 字段叫什么名字、字段被定义为什么数据类型，这些都是无法固定的，只能引用常量池中的常量来描述。
+    - 它指向常量池索引集合，它描述了每个字段的完整信息。
+    - 比如
+      - 字段的标识符
+      - 访问修饰符（public、private 或 protected）
+      - 是类变量还是实例变量（static 修饰符）
+      - 是否是常量（final 修饰符）等。
+
+- 注意事项：
+  - **字段表集合中不会列出从父类或者实现的接口中继承而来的字段**， **但有可能列出原本 Java 代码之中不存在的字段** 
+  - 譬如**在内部类中为了保持对外部类的访问性，会自动添加指向外部类实例的字段**。
+  - 在 Java 语言中**字段是无法重载**的。但是JVM字节码底层支持重载(了解)
+    - 编程时的合法性要求：两个字段的数据类型、修饰符不管是否相同，都必须使用不一样的名称，
+    - JVM字节码的合法性要求：如果两个字段的描述符不一致，那字段重名就是合法的。
+
+##### 2.2.2.7.2. 组成
+
+> ##### fields_count（字段计数器）
+
+- 作用：fields_count 的值表示当前 class 文件 fields 表的成员个数。
+- 长度：两个字节
+
+> ##### 字段表
+
+- fields 表组成：
+  - 每个成员都是一个 **field_info 结构**
+  - 用于表示该类或接口所声明的所有类字段或者实例字段
+  - field_info：包括如下这些信息。（具体看字段表结构即可）
+    > 这些信息中，**各个修饰符都是布尔值，要么有，要么没有**。
+
+    - 作用域（public、private、protected修饰符）
+    - 是实例变量还是类变量（static修饰符）
+    - 可变性（final)
+    - 并发可见性（volatile修饰符，是否强制从主内存读写）
+    - 可否序列化（transient修饰符）
+    - 字段数据类型（基本数据类型、对象、数组）
+    - 字段名称
+    - 字段表结构
+
+- 字段表作为一个表，同样有他自己的结构：
+
+  <details>
+  <summary style="color:red;">展开(一定要看)</summary>
+  
+  | 标志名称       | 标志值           | 含义       | 数量             |
+  | :------------- | :--------------- | :--------- | :--------------- |
+  | u2             | access_flags     | 访问标志   | 1                |
+  | u2             | name_index       | 字段名索引 | 1                |
+  | u2             | descriptor_index | 描述符索引 | 1                |
+  | u2             | attributes_count | 属性计数器 | 1                |
+  | attribute_info | attributes       | 属性集合   | attributes_count |
+  </details>
+
+  - 字段表访问标识
+    - 我们知道，一个字段可以被各种关键字去修饰
+    - 比如：作用域修饰符（public、private、protected）、static 修饰符、final 修饰符、volatile 修饰符等等
+    - 因此，其可像类的访问标志那样，使用一些标志来标记字段。**同时也可以加起来，表示多个标志共同修饰**
+    - 字段的访问标志有如下这些：
+
+    <details>
+    <summary style="color:red;">展开(一定要看)</summary>
+
+    | 标志名称        | 标志值 | 含义                       |
+    | :-------------- | :----- | :------------------------- |
+    | `ACC_PUBLIC`    | 0x0001 | 字段是否为 public          |
+    | `ACC_PRIVATE`   | 0x0002 | 字段是否为 private         |
+    | `ACC_PROTECTED` | 0x0004 | 字段是否为 protected       |
+    | `ACC_STATIC`    | 0x0008 | 字段是否为 static          |
+    | `ACC_FINAL`     | 0x0010 | 字段是否为 final           |
+    | `ACC_VOLATILE`  | 0x0040 | 字段是否为 volatile        |
+    | `ACC_TRANSTENT` | 0x0080 | 字段是否为 transient       |
+    | `ACC_SYNCHETIC` | 0x1000 | 字段是否为由编译器自动产生 |
+    | `ACC_ENUM`      | 0x4000 | 字段是否为 enum            |
+
+    </details>
+
+  - 字段名索引：
+    - 指向常量池中字段名的索引
+  - 描述符索引
+    - 描述符的作用是用来描述字段的数据类型、方法的参数列表（包括数量、类型以及顺序）和返回值
+      > 这里看字段就行
+    - 根据描述符规则，基本数据类型（byte，char，double，float，int，long，short，boolean）及代表无返回值的 void 类型都用一个大写字符来表示
+    - 而对象则用字符 L 加对象的全限定名来表示，如下所示：
+
+    > 前面就有这张表
+
+    <details>
+    <summary style="color:red;">展开(一定要看)</summary>
+    
+    | 标志符 | 含义                                                |
+    | :----- | :-------------------------------------------------- |
+    | B      | 基本数据类型 byte                                   |
+    | C      | 基本数据类型 char                                   |
+    | D      | 基本数据类型 double                                 |
+    | F      | 基本数据类型 float                                  |
+    | I      | 基本数据类型 int                                    |
+    | J      | 基本数据类型 long                                   |
+    | S      | 基本数据类型 short                                  |
+    | Z      | 基本数据类型 boolean                                |
+    | V      | 代表 void 类型                                      |
+    | L      | 对象类型，比如：`Ljava/lang/Object;`                |
+    | `[`      | 数组类型，代表一维数组。比如：`double[][][] is [[[D` |
+    </details>
+  - 属性计数器和属性集合
+    - 一个字段还可能拥有一些属性，用于存储更多的额外信息
+    - 比如常量的初始化值、一些注释信息等。
+    - 属性个数存放在 attribute_count 中，属性具体内容存放在 attributes 数组中。
+
+    ```java
+    // 以常量属性为例，结构为：
+    ConstantValue_attribute{
+      u2 attribute_name_index;
+      u4 attribute_length;
+      u2 constantvalue_index;
+    }
+    // 说明：对于常量属性而言，attribute_length 值恒为 2。
+    ```
+
 #### 2.2.2.8. 方法表集合
+
+![jvm2-18](./image/jvm2-18.png)
+
+##### 2.2.2.8.1. 基本说明
+
+- 说明：
+  - 指向常量池索引集合，它完整描述了每个方法的签名。
+  - 在字节码文件中，每一个 `method_info 项`都对应着一个类或者接口中的方法信息
+  - 比如方法的访问修饰符（public、private 或 protected），方法的返回值类型以及方法的参数信息等。
+  - 如果这个方法不是抽象的或者不是 native 的，那么字节码中会体现出来。
+- 组成：
+  - methods 表只描述当前类或接口中声明的方法
+  - 不包括从父类或父接口继承的方法。
+  - 另一方面，methods 表有可能会出现由编译器自动添加的方法，最典型的便是编译器产生的方法信息（比如：类（接口）初始化方法`<clinit>()`和实例初始化方法`<init>()`。
+
+- **使用注意事项：**
+  - 在 Java 语言中，要重载（Overload）一个方法
+    - 除了要与原方法具有相同的简单名称之外
+    - 还要求必须拥有一个与原方法不同的特征签名
+      - 特征签名就是一个方法中各个参数在常量池中的字段符号引用的集合
+      - 也就是因为返回值不会包含在特征签名之中，因此 Java 语言里无法仅仅依靠返回值的不同来对一个已有方法进行重载
+    - 但**在 Class 文件格式**中，**特征签名的范围更大一些，只要描述符不是完全一致的两个方法就可以共存**
+    - 也就是说，如果两个方法有相同的名称和特征签名，但返回值不同，那么也是可以合法共存于同一个 class 文件中。
+  - 也就是说，**Class字节码文件允许通过返回值不同进行重载**
+    - 尽管 Java 语法规范并不允许在一个类或者接口中声明多个方法签名相同的方法
+    - 但是和 Java 语法规范相反，字节码文件中却恰恰允许存放多个方法签名相同的方法
+      - 唯一的条件就是这些方法之间的返回值不能相同。
+
+##### 2.2.2.8.2. 组成
+
+> ##### methods_count（方法计数器）
+
+- methods_count 
+  - 表示当前 class 文件 methods 表的成员个数
+  - 使用两个字节来表示。
+
+> ##### methods[]（方法表）
+
+- 说明：
+  - 组成：methods 表中的每个成员都必须是一个 `method_info 结构`
+    - method_info作用：用于表示当前类或接口中某个方法的完整描述。
+    - method_info 表示范围(方法表组成)：结构可以表示类和接口中定义的所有方法，包括实例方法、类方法、实例初始化方法和类或接口初始化方法
+  - 如果某个 method_info 结构的 access_flags 项既没有设置 ACC_NATIVE 标志也没有设置 ACC_ABSTRACT 标志
+    - 那么该结构中也应包含实现这个方法所用的 Java 虚拟机指令。
+
+- 方法表的结构
+  > 实际跟字段表是一样的，方法表结构如下：
+
+  <details>
+  <summary style="color:red;">展开(一定要看)</summary>
+
+  | 标志名称       | 标志值           | 含义       | 数量             |
+  | :------------- | :--------------- | :--------- | :--------------- |
+  | u2             | access_flags     | 访问标志   | 1                |
+  | u2             | name_index       | 方法名索引 | 1                |
+  | u2             | descriptor_index | 描述符索引 | 1                |
+  | u2             | attributes_count | 属性计数器 | 1                |
+  | attribute_info | attributes       | 属性集合   | attributes_count |
+  </details>
+
+  - **方法表访问标志**
+    > 跟字段表一样，方法表也有访问标志，而且他们的标志有部分相同，部分则不同 <br />
+    > 方法表的具体访问标志如下：
+
+    <details>
+    <summary style="color:red;">展开(一定要看)</summary>
+
+    | 标志名称      | 标志值 | 含义                                |
+    | :------------ | :----- | :---------------------------------- |
+    | ACC_PUBLIC    | 0x0001 | public，方法可以从包外访问          |
+    | ACC_PRIVATE   | 0x0002 | private，方法只能本类访问           |
+    | ACC_PROTECTED | 0x0004 | protected，方法在自身和子类可以访问 |
+    | ACC_STATIC    | 0x0008 | static，静态方法                    |
+    </details>
+  - 其他和字段表集合一一类比即可
 
 #### 2.2.2.9. 属性表集合
 
-### 2.2.3. 面试题
+![jvm2-20](./image/jvm2-20.png)
+
+##### 2.2.2.9.1. 基本说明
+
+- 属性表组成：
+  - 字段表后跟有属性表
+  - 方法表后跟有属性表
+  - 附加的属性表集合
+    - 指的是 class 文件所携带的辅助信息
+    - 比如该 class 文件的源文件的名称，以及任何带有 RetentionPolicy.CLASS 或者 RetentionPolicy.RUNTIME 的注解。
+    - 这类信息通常被用于 Java 虚拟机的验证和运行，以及 Java 程序的调试
+    - 一般无须深入了解
+
+- 属性表集合的限制
+  - 没有那么严格
+  - 不再要求各个属性表具有严格的顺序
+  - 并且只要不与已有的属性名重复，任何人实现的编译器都可以向属性表中写入自己定义的属性信息
+  - **但 Java 虚拟机运行时会忽略掉它不认识的属性**
+
+##### 2.2.2.9.2. 组成
+
+> ##### attributes_count（属性计数器）
+
+  - attributes_count 的值表示当前 class 文件属性表的成员个数。
+  - 属性表中每一项都是一个 attribute_info 结构。
+
+> ##### attributes[]（属性表）
+
+- 组成：
+  - 属性表的每项的值都是一个 **attribute_info 结构**
+  - 属性表的结构比较灵活，各种不同的属性只要满足以下结构即可。
+
+    | 类型 | 名称                 | 数量             | 含义       |
+    | :--- | :------------------- | :--------------- | :--------- |
+    | u2   | attribute_name_index | 1                | 属性名索引 |
+    | u4   | attribute_length     | 1                | 属性长度   |
+    | u1   | info                 | attribute_length | 属性表     |
+
+- **属性类型** ： [官网](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7)
+  - 属性表实际上可以有很多类型，上面看到的 Code 属性只是其中一种
+  - Java8 里面定义了 23 种属性
+  - 下面这些是虚拟机中预定义的属性：
+
+  | 属性名称                            | 使用位置           | 含义                                                                                          |
+  | :---------------------------------- | :----------------- | :-------------------------------------------------------------------------------------------- |
+  | Code                                | 方法表             | Java 代码编译成的字节码指令                                                                   |
+  | ConstantValue                       | 字段表             | final 关键字定义的常量池                                                                      |
+  | Deprecated                          | 类，方法，字段表   | 被声明为 deprecated 的方法和字段                                                              |
+  | Exceptions                          | 方法表             | 方法抛出的异常                                                                                |
+  | EnclosingMethod                     | 类文件             | 仅当一个类为局部类或者匿名类时才能拥有这个属性，这个属性用于标识这个类所在的外围方法          |
+  | InnerClass                          | 类文件             | 内部类列表                                                                                    |
+  | LineNumberTable                     | Code 属性          | Java 源码的行号与字节码指令的对应关系                                                         |
+  | LocalVariableTable                  | Code 属性          | 方法的局部变量描述                                                                            |
+  | StackMapTable                       | Code 属性          | JDK1.6 中新增的属性，供新的类型检查检验器和处理目标方法的局部变量和操作数有所需要的类是否匹配 |
+  | Signature                           | 类，方法表，字段表 | 用于支持泛型情况下的方法签名                                                                  |
+  | SourceFile                          | 类文件             | 记录源文件名称                                                                                |
+  | SourceDebugExtension                | 类文件             | 用于存储额外的调试信息                                                                        |
+  | Synthetic                           | 类，方法表，字段表 | 标志方法或字段为编译器自动生成的                                                              |
+  | LocalVariableTypeTable              | 类                 | 是哟很难过特征签名代替描述符，是为了引入泛型语法之后能描述泛型参数化类型而添加                |
+  | RuntimeVisibleAnnotations           | 类，方法表，字段表 | 为动态注解提供支持                                                                            |
+  | RuntimeInvisibleAnnotations         | 类，方法表，字段表 | 用于指明哪些注解是运行时不可见的                                                              |
+  | RuntimeVisibleParameterAnnotation   | 方法表             | 作用与 RuntimeVisibleAnnotations 属性类似，只不过作用对象或方法                               |
+  | RuntimeInvisibleParameterAnnotation | 方法表             | 作用与 RuntimeInvisibleAnnotations 属性类似，只不过作用对象或方法                             |
+  | AnnotationDefault                   | 方法表             | 用于记录注解类元素的默认值                                                                    |
+  | BootstrapMethods                    | 类文件             | 用于保存 invokeddynamic 指令引用的引导方法限定符                                              |
+
+  - **部分属性详解**
+    - **① ConstantValue 属性** ConstantValue 属性表示一个常量字段的值。位于 field_info 结构的属性表中。
+
+      ```java
+      ConstantValue_attribute{
+        u2 attribute_name_index;
+        u4 attribute_length;
+        u2 constantvalue_index;//字段值在常量池中的索引，常量池在该索引处的项给出该属性表示的常量值。（例如，值是1ong型的，在常量池中便是CONSTANT_Long）
+      }
+      ```
+
+    - **② Deprecated 属性** Deprecated 属性是在 JDK1.1 为了支持注释中的关键词@deprecated 而引入的。
+
+      ```java
+      Deprecated_attribute{
+        u2 attribute_name_index;
+        u4 attribute_length;
+      }
+      ```
+
+    - **③ Code 属性**
+      - Code 属性就是存放方法体里面的代码。
+      - 但是，并非所有方法表都有 Code 属性。像接口或者抽象方法，他们没有具体的方法体，因此也就不会有 Code 属性了。
+      - Code属性中包括其他属性，如**LineNumberTable属性和LocalVariableTable属性**
+
+      | 类型             | 名称                     | 数量               | 含义                     |
+      | :--------------- | :----------------------- | :----------------- | :----------------------- |
+      | u2               | `attribute_name_index`   | 1                  | 属性名索引               |
+      | u4               | `attribute_length`       | 1                  | 属性长度                 |
+      | u2               | `max_stack`              | 1                  | 操作数栈深度的最大值     |
+      | u2               | `max_locals`             | 1                  | 局部变量表所需的存续空间 |
+      | u4               | `code_length`            | 1                  | 字节码指令的长度         |
+      | u1               | `code`                   | `code_lenth`       | 存储字节码指令           |
+      | u2               | `exception_table_length` | 1                  | 异常表长度               |
+      | `exception_info` | `exception_table`        | `exception_length` | 异常表                   |
+      | u2               | `attributes_count`       | 1                  | 属性集合计数器           |
+      | `attribute_info` | `attributes`             | `attributes_count` | 属性集合                 |
+
+      > 可以看到：Code 属性表的前两项跟属性表是一致的，即 Code 属性表遵循属性表的结构，后面那些则是他自定义的结构。
+
+    - **④ InnerClasses 属性**
+      - 为了方便说明特别定义一个表示类或接口的 Class 格式为 C。
+      - 如果 C 的常量池中包含某个 CONSTANT_Class_info 成员，且这个成员所表示的类或接口不属于任何一个包
+      - 那么 C 的 ClassFile 结构的属性表中就必须含有对应的 InnerClasses 属性。
+      - InnerClasses 属性是在 JDK1.1 中为了支持**内部类和内部接口**而引入的，位于 ClassFile 结构的属性表。
+
+    - **⑤ LineNumberTable 属性**
+      - LineNumberTable 属性是可选变长属性，**是位于 Code属性结构中 的属性表**。
+      - LineNumberTable 属性是用来描述 Java 源码行号与字节码行号之间的对应关系
+      - 这个属性可以用来在调试的时候定位代码执行的行数。
+      - 在 Code 属性的属性表中，LineNumberTable 属性可以按照任意顺序出现
+      - 此外，多个 LineNumberTable 属性可以共同表示一个行号在源文件中表示的内容，即 LineNumberTable 属性不需要与源文件的行一一对应。
+        > 因为一行代码可能会翻译成多个字节码
+
+      ```java
+      // LineNumberTable属性表结构：
+      LineNumberTable_attribute{
+          u2 attribute_name_index;
+          u4 attribute_length;
+          u2 line_number_table_length;
+          {
+              u2 start_pc; // start_pc，即字节码行号
+              u2 line_number; // 1ine_number，即 Java 源代码行号。
+          } line_number_table[line_number_table_length];
+      }
+      ```
+
+    - **⑥ LocalVariableTable 属性**
+      - LocalVariableTable 是可选变长属性，**位于 Code 属性的属性表中**。
+      - 它被调试器用于确定方法在执行过程中局部变量的信息。在 Code 属性的属性表中，LocalVariableTable 属性可以按照任意顺序出现。Code 属性中的每个局部变量最多只能有一个 LocalVariableTable 属性。
+
+      ```java
+      // LocalVariableTable属性表结构：
+      LocalVariableTable_attribute{
+          u2 attribute_name_index;
+          u4 attribute_length;
+          u2 local_variable_table_length;
+          {
+              u2 start_pc; // 变量所在的字节码字节码行号
+              u2 length; // 生命周期长度（字节码数量）
+              // start pc + length 表示这个变量在字节码中的生命周期起始和结束的偏移位置（this 生命周期从头 e 到结尾 10）
+              u2 name_index; // name 就是变量名。name_index指的是变量名在常量表的索引
+              u2 descriptor_index; // Descriptor 表示局部变量类型描述
+              u2 index; // index 就是这个变量在局部变量表中的槽(slot)位（槽位可复用）
+          } local_variable_table[local_variable_table_length];
+      }
+      ```
+
+    - **⑦ Signature 属性**
+      - Signature 属性是可选的定长属性，**位于 ClassFile，field_info 或 method_info 结构的属性表中**。
+      - 在 Java 语言中，任何类、接口、初始化方法或成员的泛型签名如果包含了类型变量（Type Variables）或参数化类型（Parameterized Types），则 Signature 属性会为它记录泛型签名信息。
+
+    - **⑧ SourceFile 属性**
+
+      | 类型 | 名称                 | 数量 | 含义                     |
+      | :--- | :------------------- | :--- | :----------------------- |
+      | u2   | attribute_name_index | 1    | 属性名索引               |
+      | u4   | attribute_length     | 1    | 属性长度，恒为 2         |
+      | u2   | sourcefile_index     | 1    | 源码文件素引，源文件名称 |
+
+      > 可以看到，其长度总是固定的 8 个字节。
+
+    - **⑨ 其他属性**
+
+> ##### `<init>`方法Code属性详细解读示例
+
+> ##### 附加属性详细解读示例
+
+### 2.2.3. javap命令
+
+#### 2.2.3.1. 说明
+
+- 说明
+  - 通过反编译生成的字节码文件，我们可以深入的了解java代码的工作机制。
+  - 但是，自己分析类文件结构太过于麻烦
+  - 除了使用第三方的jclasslib工具之外，oracle官方也提供了工具：javap。
+  - javap是jdk自带的反解析工具。它的作用就是根据class字节码文件
+  - 反解析出当前类对应的code区（字节码指令）、局部变量表、异常表和代码行偏移量映射表、常量池等信息。
+  - 但不显示类索引、父类索引、接口索引集合、`<clinit>()`、`<init>()`等结构
+  - 通过局部变量表，我们可以查看局部变量的作用域范围、所在槽位等信息，甚至可以看到槽位复用等信息。
+
+- 注意：
+  - 解析字节码文件得到的信息中，有些信息需要在使用javac编译成class文件时，指定参数才能输出。
+    >（如局部变量表、指令和代码行偏移量映射表、常量池中方法的参数名称等等）
+  - 比如，**直接javac xx.java,就不会在生成对应的局部变量表等信息**，
+  - 使用`javac-g xx.java`就可以生成所有相关信息了。
+  - 的eclipse或IDEA默认情况下，在编译时会帮你生成局部变量表、指令和代码行偏移量映射表等信息
+
+#### 2.2.3.2. 指令
+
+- 帮助指令： `javap --help`
+
+- 指令说明
+
+  ![jvm2-21](./image/jvm2-21.png)
+
+- 推荐：`javap -v -p`输出的内容最全，尽可能使用-v
+
+---
+
+- 通过对前面例子代码反汇编文件的简单分析，可以发现，一个方法的执行通常会涉及下面几块内存的操作：
+  - (1)java栈中：局部变量表、操作数栈。
+  - (2)java堆。通过对象的地址引用去操作。
+  - (3)常量池。
+  - (4)其他如帧数据区、方法区的剩余部分等情况，测试中没有显示出来，这里说明一下。
+
+
+#### 2.2.3.3. 输出结构
+
+[反编译文件解析(点击打开)](./external_file/javaptest.txt)
+
+> 上面文件与字节码一一对应解读看看
+
+### 2.2.4. 面试题
 
 ```
 类文件结构有几个部分
@@ -545,4 +1081,6 @@ public class Demo {
 ```
 知道字节码吗？字节码都有哪些？Integer x = 5;int y = 5;比较x==y要经过哪些步骤
 ```
+
+## 2.3. 字节码指令
 
