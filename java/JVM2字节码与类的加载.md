@@ -1025,7 +1025,19 @@ public class Demo {
 
 > ##### `<init>`方法Code属性详细解读示例
 
+<br />
+
+待做
+
+<br />
+
 > ##### 附加属性详细解读示例
+
+<br />
+
+待做
+
+<br />
 
 ### 2.2.3. javap命令
 
@@ -1065,14 +1077,452 @@ public class Demo {
   - (3)常量池。
   - (4)其他如帧数据区、方法区的剩余部分等情况，测试中没有显示出来，这里说明一下。
 
-
 #### 2.2.3.3. 输出结构
 
 [反编译文件解析(点击打开)](./external_file/javaptest.txt)
 
 > 上面文件与字节码一一对应解读看看
 
-### 2.2.4. 面试题
+# 3. 字节码指令
+
+> Code属性中的字节码指令解析
+
+[文档](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html)
+
+## 3.1. 概述
+
+- 说明：
+  - 属于基本执行指令。
+  - Java字节码--虚拟机 类比  汇编语言--计算机
+
+- Java虚拟机的指令
+  - 组成：
+    - 由一个字节长度的、代表着某种特定操作含义的数字（称为操作码，Opcode)
+    - 以及跟随其后的零至多个代表此操作所需参数（称为操作数，Operands)
+  - 注意：
+    - 由于Java虚拟机采用**面向操作数栈**而不是寄存器的结构，所以**大多数的指令都不包含操作数**，只有一个操作码。
+    - 由于限制了 Java 虚拟机操作码的长度为一个字节（即 0~255)，这意味着**指令集的操作码总数不可能超过256条**。
+
+### 3.1.1. 执行模型
+
+- 如果不考虑异常处理的话，那么Java虚拟机的解释器可以使用下面这个伪代码当做最基本的执行模型来理解
+  ```java
+  do{
+    自动计算PC寄存器的值加1;
+    根据PC寄存器的指示位置，从字节码流中取出操作码;
+    if(字节码存在操作数）{
+      从字节码流中取出操作数;
+    }
+    执行操作码所定义的操作;
+  }while(字节码长度>0);
+  ```
+
+- 在做值相关操作时：
+  - 入栈：
+    - 一个指令，可以**从局部变量表、常量池、堆中对象、方法调用、系统调用中等获得数据**，
+    - 这些数据（可能是值，可能是对象的引用）被压入操作数栈。
+  - 出栈：
+    - 一个指令，也可以**从操作数栈中取出一到多个值（pop多次）**，
+    - 完成赋值、加减乘除、方法传参、系统调用等操作。
+
+### 3.1.2. 字节码与数据类型
+
+- 数据类型：
+  > 对于大部分与数据类型相关的字节码指令， **它们的操作码助记符中都有特殊的字符来表明专门为哪种数据类型服务**
+  - i 代表对int类型数据操作
+  - l 代表 long
+  - s 代表 short
+  - b 代表 byte
+  - c 代表 char
+  - f 代表 float
+  - d 代表 double
+
+- 字节码类型
+  - 显式与数据类型相关
+    - 在Java虚拟机的指令集中，大多数的指令都包含了其操作所对应的数据类型信息。
+    - 例如，iload指令用于从局部变量表中加载int类型的数据到操作数栈中，而fload指令加载的则是float类型数据。
+  - 隐式与数据类型相关
+    - 也有一些指令的助记符中**没有明确地指明操作类型的字母**，
+    - 例如arraylength指令，它没有代表数据类型的特殊字符
+    - 但是操作数永远只能是一个数组类型的对象。
+  - 不与数据类型相关
+    - 如无条件跳转goto，**与数据类型无关的**。
+
+- 注意(类型扩展)：
+  - **大部分的指令都没有支持整数类型byte、char和short，甚至没有任何指令支持boolean类型**。
+  - 编译器会在编译期或运行期将byte和short类型的数据带符号扩展（Sign-Extend）为相应的int类型数据
+  - 将boolean和char类型数据零位扩展（Zero-Extend）为相应的int类型数据。
+  - 与之类似，在处理boolean、byte、short和char类型的数组时，也会转换为使用对应的int类型的字节码指令来处理。
+  - 因此，大多数对于boolean、byte、short和char类型数据的操作。
+
+### 3.1.3. 指令分类
+
+- 指令分类
+  - 加载与存储指令
+  - 算数指令
+  - 类型转换指令
+  - 对象的创建与访问指令
+  - 方法调用与返回指令
+  - 操作数栈管理指令
+  - 比较控制指令
+  - 异常处理指令
+  - 同步控制指令
+
+## 3.2. 加载与存储指令
+
+### 3.2.1. 整体说明
+
+- 作用：加载和存储指令用于将数据从栈帧的局部变量表和操作数栈之间来回传递。
+- 常用指令
+  - 局部变量表压栈指令：
+    - 将一个局部变量加载到操作数栈。有：
+    - `xload`、`xload_<n>`（其中 x 为 i、l、f、d、a，n 为 0 到 3）
+  - 常量入栈指令：
+    - 将一个常量加载到操作数栈
+    - 有：`bipush`、`sipush`、`ldc`、`ldc_w`、`ldc2_w`、`aconst_null`、`iconst_m1`、`iconst_<i>`、`lconst_<l>`、`fconst_<f>`、`dconst_<d>`
+  - 出栈装入局部变量表指令：
+    - 将一个数值从操作数栈存储到局部变量表， 有：
+    - `xstore`、`xstore_<n>`（其中 x 为 i、l、f、d、a，n 为 0 到 3）
+    - `xastore`（其中 x 为 i、l、f、d、a、b、c、s）
+  - 扩展局部变量表的访问索引的指令：`wide`
+
+- 补充说明：
+  - 上面所列举的指令助记符中，有一部分是以尖括号结尾的（例如 `iload_<n>`）
+  - 这些指令助记符实际上代表了一组指令（例如 `iload_<n>`代表了`iload_0`、`iload_1`、`iload_2`和`iload_3`这几个指令）
+  - 这几组指令都是某个带有一个操作数的通用指令（例如 iload）的特殊形式
+  - **对于这若干组指令来说，他们表面上没有操作数，不需要进行取操作数的动作，但操作数都隐含在指令中**。
+  - 除此之外，他们的语义与原生的通用指令完全一致（例如 iload_0的语义与操作数为 0 时的 iload 指令语义完全一致）。
+  - 在尖括号之间的字母制定了指令隐含操作数的数据类型
+    - `<n>`代表非负的整数，
+    - `<i>`代表是 int 类型的整数，
+    - `<l>`代表long类型，
+    - `<f>`代表float类型，
+    - `<d>`代表double类型。
+  - 操作byte、char、short和boolean类型的数据时，经常用 int 类型的指令来表示。
+
+### 3.2.2. 再谈操作数栈和局部变量表
+
+![jvm2-22.png](./image/jvm2-22.png)
+
+- 操作数栈
+  - 说明：Java字节码是Java虚拟机所使用的的指令集。因此，它与Java虚拟机**基于栈的计算模型**是密不可分的。
+  - 创建时机：
+    - 在解释执行过程中，每当**为Java方法分配栈帧**时
+    - Java虚拟机往往需要开辟一块额外的空间作为**操作数栈**
+    - **来存放计算操作数以及返回结果**。
+  - 具体流程：
+    - **执行每一条指令之前，Java虚拟机要求该指令的操作数已经被压入操作数栈中**。
+    - 在执行指令时，Java虚拟机会将该指令所需的操作数弹出，并且将指令的结果重新压入栈中。
+  - 示例：
+    - 以加法指令 iadd 为例
+    - 假设在执行该指令前，栈顶的两个元素分别为 int 值 1 和 int 值 2
+    - 那么 iadd 指令将弹出两个 int
+    - 并将求得的和 int 值 3 压入栈中。
+
+    ![jvm2-23.png](./image/jvm2-23.png)
+
+    ![jvm2-24.png](./image/jvm2-24.png)
+
+- 局部变量表（Local Variables）
+  - 说明：
+    - Java 方法栈帧的另外一个重要组成部分则是局部变量区，**字节码程序可以将计算的结果缓存到局部变量区之中**。
+    - 性能：在栈帧中，与性能调优最为密切的部分就是局部变量表。
+    - 垃圾回收相关：局部变量表中的变量也是很重要的垃圾回收根节点，只要被局部变量表中直接或者间接引用的对象都不会被回收。
+    - 方法传递：在方法执行时，虚拟机使用局部变量表完成方法参数的传递。
+  - 数据结构与存储数据：
+    - 实际上，可以Java 虚拟机将局部变量区**当成一个数组**
+    - 依次存放 this 指针（非静态方法），所传入的参数，以及字节码中的局部变量。
+  - slot：
+    > 可以复习一下
+    - 和操作数栈一样，long 类型以及 double 类型的值将占据两个单元，其余类型占据一个单元。
+
+      ![jvm2-25.png](./image/jvm2-25.png)
+
+    - slot也可以复用，举例：
+
+      ```java
+      public void foo(long l, float f) {
+          // i,s槽位共用
+          {
+              int i = 0;
+          }
+          {
+              String s = "Hello, World!"
+          }
+      }
+      ```
+
+      ![jvm2-26.png](./image/jvm2-26.png)
+
+### 3.2.3. 局部变量表压栈指令
+
+- 说明：
+  - **局部变量表压栈指令将给定的局部变量表中的数据压入操作数栈。**
+  - 这类指令大体可以分为：（这里，x 的取值表示数据类型）
+    - `xload_<n>`（x 为 i、l、f、d、a，n 为 0 到 3）
+      - 指令 xload_n 表示将**第 n 个**局部变量压入操作数栈，n指的是局部变量表中的索引，而不是具体值
+      - 比如iload_1、fload_0、aload_0等指令。其中aload_n 表示将一个对象引用压栈。
+    - `xload` （x 为 i、l、f、d、a）
+      - 指令xload 通过指定参数的形式，把局部变量压入操作栈
+      - 当使用这个命令时，表示局部变量可能超过了 4 个，比如指令 iload、fload等。
+  - 注意：
+    - 没有单独的出栈指令
+    - 执行具体指令时，会有出栈操作
+
+- 例：
+  - 代码
+      ```java
+      //1.局部变量压栈指令
+      public void load(int num, Object obj,long count,boolean flag,short[] arr) {
+          System.out.println(num);
+          System.out.println(obj);
+          System.out.println(count);
+          System.out.println(flag);
+          System.out.println(arr);
+      }
+      ```
+  - 对应字节码：
+      ```
+      0 getstatic #2 <java/lang/System.out>
+      3 iload_1
+      4 invokevirtual #3 <java/io/PrintStream.println>
+      7 getstatic #2 <java/lang/System.out>
+      10 aload_2
+      11 invokevirtual #4 <java/io/PrintStream.println>
+      14 getstatic #2 <java/lang/System.out>
+      17 lload_3
+      18 invokevirtual #5 <java/io/PrintStream.println>
+      21 getstatic #2 <java/lang/System.out>
+      24 iload 5
+      26 invokevirtual #6 <java/io/PrintStream.println>
+      29 getstatic #2 <java/lang/System.out>
+      32 aload 6
+      34 invokevirtual #4 <java/io/PrintStream.println>
+      37 return
+      ```
+
+  ![jvm2-27](./image/jvm2-27.png)
+
+### 3.2.4. 常量入栈指令
+
+> ### 基本说明
+
+- 说明
+  - 常量入栈指令的功能是将常数压入操作数栈，
+  - 根据数据类型和入栈内容的不同，又可以分为`const系列`、`push系列`和`ldc系列`。
+
+- 指令 const 系列：
+  - 对于特定的常量入栈，入栈的常量隐含在指令本身
+  - 指令有：
+    - `iconst_<i>`（i 从-1到5）
+    - `lconst_<l>`（l 从0到 1）
+    - `fconst_<f>`（f 从0到2）
+    - `dconst_<d>`（d 从0到 1）
+    - `aconst_null`
+
+    ```
+    // 示例
+    iconst_m1 将-1压入操作数栈；
+    iconst_x（x 为0到5） 将 x 压入栈；
+    lconst_0、lconst_1 分别将长整数 0 和 1 压入栈；
+    fconst_0、fconst_1、fconst_2 分别将浮点数0、1、2压入栈；
+    dconst_0、dconst_1 分别将double型 0 和 1 压入栈；
+    aconst_null 将 null 压入操作数栈；
+    ```
+
+  > 从指令的命名上不难找出规律，指令助记符的第一个字符总是喜欢表示数据类型 <br />
+  > i 代表整形，l 代表长整形，f 代表浮点数，d 代表双精度浮点，**习惯上用 a 表示对象引用** <br />
+  > **如果指令隐含操作的参数，会以下划线形式给出**。
+
+> ### 三个系列指令
+
+- 指令push系列：
+  - 主要包括 bipush 和 sipush。
+  - 他们的区别在于接收数据类型的不同
+    - bipush 接收**8位整数**作为参数
+    - sipush 接收**16位整数**
+
+- 指令ldc系列：如果以上指令都不能满足需求，可以使用该系列
+  - **ldc**指令：
+    > 注意，该指令的参数指向的是常量池索引
+    - 它可以接收一个8位的参数
+    - **该参数指向常量池中的 int、float或者String的索引**，将指定的内容压入堆栈。
+  - **ldc_w**
+    - 它接收两个8位参数
+    - 能支持的索引范围大于ldc。
+  - **ldc2_w**指令
+    - 压入long或者double类型元素
+
+> ### 整理
+
+| 类型                              | 常数指令 | 范围                          |
+| --------------------------------- | -------- | ----------------------------- |
+| int（boolean, byte, char, short） | iconst   | [-1, 5]                       |
+|                                   | bipush   | [-128, 127]                   |
+|                                   | sipush   | [-32768, 32767]               |
+|                                   | ldc      | any int value                 |
+| long                              | lconst   | 0, 1                          |
+|                                   | ldc      | any long value                |
+| float                             | fconst   | 0, 1, 2                       |
+|                                   | ldc      | any float value               |
+| double                            | dconst   | 0, 1                          |
+|                                   | ldc      | any double value              |
+| reference                         | aconst   | null                          |
+|                                   | ldc      | String literal, Class literal |
+
+> ### 示例
+
+- 示例1
+  ```java
+  //2.常量入栈指令
+  public void pushConstLdc() {
+      int i = -1;
+      int a = 5;
+      int b = 6;
+      int c = 127;
+      int d = 128;
+      int e = 32767;
+      int f = 32768;
+  }
+  ```
+  ```
+  // store指令在后面会说
+    0 iconst_m1
+    1 istore_1
+    2 iconst_5
+    3 istore_2
+    4 bipush 6
+    6 istore_3
+    7 bipush 127
+    9 istore 4
+  11 sipush 128
+  14 istore 5
+  16 sipush 32767
+  19 istore 6
+  21 ldc #7 <32768>
+  23 istore 7
+  25 return
+  ```
+
+- 示例2
+  ```java
+  public void constLdc() {
+      long a1 = 1;
+      long a2 = 2;
+      float b1 = 2;
+      float b2 = 3;
+      double c1 = 1;
+      double c2 = 2;
+      Date d = null;
+  }
+  ```
+  ```
+    0 lconst_1
+    1 lstore_1
+    2 ldc2_w #8 <2>
+    5 lstore_3
+    6 fconst_2
+    7 fstore 5
+    9 ldc #10 <3.0>
+  11 fstore 6
+  13 dconst_1
+  14 dstore 7
+  16 ldc2_w #11 <2.0>
+  19 dstore 9
+  21 aconst_null
+  22 astore 11
+  24 return
+  ```
+
+### 3.2.5. 出栈装入局部变量表指令
+
+- 说明：
+  - 用于将操作数栈中栈顶元素弹出后，装入局部变量表的指定位置，用于给局部变量表赋值。
+  - 这类指令主要以 store 的形式存在，比如
+    - `xstore_n（x 为 i、f、l、d、a，n 为 0到 3）`
+      - 如：指令 istore_n 将从操作数栈中弹出一个整数，并把它赋值给局部变量表索引 n的位置。
+    - `xstore （x 为 i、f、l、d、a）`
+      - 指令 xstore 由于没有隐含参数信息，故需要提供一个byte参数类型指令目标局部变量表的位置。
+  - 补充说明
+    - **一般来说，类似像store这样的命令需要带一个参数，用来指明将弹出的元素放在局部变量表的第几个位置**
+    - 但是，为了尽可能压缩指令大小，使用专门的 istore_1指令表示将弹出的元素放置在局部变量表的第一个位置
+      > 类似的还有 istore_0、istore_2、istore_3，它们分别表示从操作数栈弹出一个元素，存放在局部变量表的第0、2、3个位置。
+    - 由于局部变量表的前几个位置总是非常常用，因此**这种做法虽然增加了指令数量，但是可以大大压缩生成的字节码的体积**。
+    - 如果局部变量表非常大，需要存储的槽位大于 3，那么可以使用istore指令，另外一个参数，用来表示需要存放的槽位位置。
+
+> 例
+
+- 示例1
+  ```java
+  //3.出栈装入局部变量表指令
+  public void store(int k, double d) {
+      int m = k + 2;
+      long l = 12;
+      String str = "atguigu";
+      float f = 10.0F;
+      d = 10;
+  }
+  ```
+  ```
+    0 iload_1
+    1 iconst_2
+    2 iadd
+    3 istore 4
+    5 ldc2_w #13 <12>
+    8 lstore 5
+  10 ldc #15 <atguigu>
+  12 astore 7
+  14 ldc #16 <10.0>
+  16 fstore 8
+  18 ldc2_w #17 <10.0>
+  21 dstore_2
+  22 return
+  ```
+
+  ![jvm2-28](./image/jvm2-28.png)
+
+- 示例2
+  ```java
+  // 局部变量表最大长度为5
+  // this(1) + l(2) + f(1) + i/s(1，slot复用)
+  public void foo(long l, float f) {
+      {
+          int i = 0;
+      }
+      {
+          String s = "Hello, World";
+      }
+  }
+  ```
+  ```
+  0 iconst_0
+  1 istore 4 // 索引为4的位置复用
+  3 ldc #19 <Hello, World>
+  5 astore 4 // 索引为4的位置复用
+  7 return
+  ```
+
+## 3.3. 算术指令
+
+## 3.4. 类型转化指令
+
+## 3.5. 对象的创建与访问指令
+
+## 3.6. 方法调用与返回指令
+
+## 3.7. 操作数栈管理指令
+
+## 3.8. 控制转移指令
+
+## 3.9. 异常处理指令
+
+## 3.10. 同步控制指令
+
+# 4. 类的加载过程
+
+# 5. 再谈类的加载器
+
+## 5.1. 面试题
 
 ```
 类文件结构有几个部分
@@ -1082,5 +1532,5 @@ public class Demo {
 知道字节码吗？字节码都有哪些？Integer x = 5;int y = 5;比较x==y要经过哪些步骤
 ```
 
-## 2.3. 字节码指令
+
 
