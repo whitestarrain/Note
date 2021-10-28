@@ -6570,7 +6570,7 @@ Red Hat研发Shenandoah团队对外宣称，
   - 强项：低延迟时间
 - 工作过程：9个阶段，这里不再赘述
 
-##### 2.3.3.4.16. 其他垃圾回收期
+##### 2.3.3.4.16. 其他垃圾回收器
 
 AliGC
 
@@ -6585,7 +6585,7 @@ Zing (https://www.infoq.com/articles/azul_gc_in_detail),有兴
 ##### 2.3.3.4.17. 面试题
 
 ```
-java中常见的垃圾回收期有哪些? 
+java中常见的垃圾回收器有哪些? 
 有哪些不同。
 针对其中两款进行进行对比，比如CMS和G1进行对比
 
@@ -6648,4 +6648,9 @@ CMS回收停顿了几次，为什么要停顿两次。
 
 <!--https://www.163.com/dy/article/G7HPQ94L0531AT43.html-->
 
+# 参考资料
+
+- [聊一聊JAVA指针压缩的实现原理](https://blog.csdn.net/liujianyangbj/article/details/108049482)(待整理)
+- [来源](https://www.zhihu.com/question/30300585)
+- [尚硅谷宋红康](https://www.bilibili.com/video/BV1PJ411n7xZ)
 

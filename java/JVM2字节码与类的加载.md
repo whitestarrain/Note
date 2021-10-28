@@ -1504,7 +1504,449 @@ public class Demo {
 
 ## 3.3. 算术指令
 
+### 概述
+
+- 作用：
+  - 算数指令用于对两个操作数栈的数值进行某种特定的运算
+  - 并把结果重新压入操作数栈。
+
+- 分类：大体上算数指令可以分为两种：
+  - 对**整形数据**进行运算的指令
+  - 对**浮点类型数据**进行运算的指令
+
+- 执行过程：
+  - 将数据出栈
+  - 计算得到结果
+  - **将结果压入栈**
+
+- 算数指令中byte、short、char和boolean类型说明
+  - 在每一大类中，都有针对Java虚拟机具体数据类型的专用算数指令。
+  - 但是**没有直接支持byte、short、char和boolean类型的算数指令**
+  - **对于这些数据的运算，都是用 int 类型的指令来处理**
+  - 此外，在处理byte、short、char和boolean类型的数组时，也会转换为使用对应的 int 类型的字节码指令来处理。
+
+  ![jvm2-29.png](./image/jvm2-29.png)
+
+- 运算时的溢出
+  - 数据运算可能会导致溢出
+  - 例如两个很大的正整数相加，结果可能是一个负数。
+  - 其实Java虚拟机规范并无明确规定过整形数据溢出的具体结果，仅规定了在处理整形数据时，只有除法指令以及求余指令中当出现除数为 0 时导致虚拟机抛出异常 ArithmeticException。
+
+- 运算模式
+  - 向最近接数舍入模式：
+    - JVM要求在进行浮点数计算时，所有运算结果都必须舍入到适当的精度
+    - 非精确结果必须舍入为可被表示的最近接的精确值
+    - 如果有两种可表示的形式与该值一样接近，将优先选择最低有效位为零的；
+  - 向零舍入模式
+    - 将浮点数转化为整数时，采用该模式，该模式将在目标数值类型中选择一个最接近但是不大于原值的数字作为最精确的舍入结果。
+
+- NaN的使用
+  - 当一个操作产生溢出时，将会使用有符号数的无穷大表示
+  - 如果某个操作结果没有明确的数学定义的话，将会使用 NaN值来表示
+  - 而且所有使用NaN值作为操作数的算数操作，结果都会返回 NaN。
+
+    ```java
+    @Test
+    public void method1(){
+        int i = 10;
+        double j = i / 0.0;
+        System.out.println(j);  // Infinity 无穷大
+
+        double d1 = 0.0;
+        double d2 = d1 / 0.0;
+        System.out.println(d2);  // NaN: not a number
+        
+        System.out.println(10 / 0);  // java.lang.ArithmeticException: / by zero
+    }
+    ```
+
+### 算术指令与示例
+
+> ### 所有算术指令
+
+- 所有的算数指令包括：
+  - 加法指令：iadd、ladd、fadd、dadd
+  - 减法指令：isub、lsub、fsub、dsub
+  - 乘法指令：imul、lmul、fmul、dmul
+  - 除法指令：idiv、ldiv、fdiv、ddiv
+  - 求余指令：irem、lrem、frem、drem // remainder：余数
+  - 取反指令：ineg、lneg、fneg、dneg // negation：取反
+  - 自增指令：iinc（**直接在局部变量表中自增**）
+  - 位运算指令，又可分为：
+    - 位移指令：ishl、ishr、iushr、lshl、lshr、lushr
+    - 按位或指令：ior、lor
+    - 按位与指令：iand、land
+    - 按位异或指令：ixor、lxor
+  - 比较指令：dcmpg、dcmpl、fcmpg、fcmpl、lcmp
+
+> ### 示例
+
+- 例1
+  ```java
+  public void method2(){
+      float i = 10;
+      float j = -i;
+      i = -j;
+  }
+  ```
+  ```
+  0 ldc #5 <10.0> // 将常量池中的 10.0压入栈
+  2 fstore_1 // 将栈中的10.0出栈，存入局部变量表index为1的位置
+  3 fload_1 // 将局部变量表index为1位置的数(10.0)压入栈
+  4 fneg // 将栈中的数取负数 (10.0->-10.0)
+  5 fstore_2 // 将栈中的-10.0出栈，存入局部变量表index为2的位置
+  6 fload_2 // 将局部变量表index为2位置的数(-10.0)压入栈
+  7 fneg // 将栈中的数取负数 (-10.0->10.0)
+  8 fstore_1 // 将栈中的10.0出栈，存入局部变量表index为1的位置 
+  9 return
+  ```
+- 例2
+  ```java
+  public void method3(int j){
+      int i = 100;
+      // i = i + 10;
+      i += 10;
+  }
+  ```
+
+  ```
+  0 bipush 100
+  2 istore_2
+  3 iinc 2 by 10 // 该指令指的是局部变量表index为2的位置的值加10
+  6 return
+  ```
+- 例3
+  ```java
+  public void method3(int j){
+      int i = 100;
+      i = i + 10;
+      // i += 10;
+  }
+  ```
+  ```
+  0 bipush 100
+  2 istore_2
+  3 iload_2
+  4 bipush 10
+  6 iadd
+  7 istore_2
+  8 return
+  ```
+- 例4
+  ```java
+  public int method4(){
+          int a = 80;
+          int b = 7;
+          int c = 10;
+          return (a + b) * c;
+      }
+  ```
+
+  ```
+   0 bipush 80
+   2 istore_1
+   3 bipush 7
+   5 istore_2
+   6 bipush 10
+   8 istore_3
+   9 iload_1
+  10 iload_2
+  11 iadd
+  12 iload_3
+  13 imul
+  14 ireturn
+  ```
+- 例5
+  ```java
+  public int method5(int i ,int j){
+      return ((i + j - 1) & ~(j - 1));
+  }
+  ```
+  ```
+   0 iload_1
+   1 iload_2
+   2 iadd // i+j
+   3 iconst_1 
+   4 isub // (i+j-1)
+   5 iload_2
+   6 iconst_1
+   7 isub // j-1
+   8 iconst_m1
+   9 ixor // 与-1进行异或操作，等同于取反操作
+  10 iand // &操作
+  11 ireturn
+  ```
+- 例6
+  ```java
+  public static int bar(int i){
+    return ((i+1)-2)*3/4;
+  }
+  ```
+
+  ![jvm2-30](./image/jvm2-30.png)
+
+### 自增操作
+
+- 如果不涉及到赋值，**只是单纯的 i++ 和 ++i** ，从字节码的角度看，完全一样
+
+  ```java
+  //关于(前)++和(后)++
+  public void method6(){
+      int i = 10;
+      i++;
+      // ++i;
+  }
+  ```
+  ```java
+  //关于(前)++和(后)++
+  public void method6(){
+      int i = 10;
+      ++i;
+  }
+  ```
+  ```
+  0 bipush 10
+  2 istore_1
+  3 iinc 1 by 1
+  6 return
+  ```
+
+- 如果**涉及到赋值**， i++ 和 ++i ，从字节码角度看不一样。load和iinc前后位置不同
+
+  ```java
+  public void method7(){
+      int i = 10;
+      int a = i++;
+  
+      int j = 20;
+      int b = ++j;
+  }
+  ```
+
+  ```
+    0 bipush 10
+    2 istore_1
+    3 iload_1
+    4 iinc 1 by 1
+    7 istore_2
+    8 bipush 20
+  10 istore_3
+  11 iinc 3 by 1
+  14 iload_3
+  15 istore 4
+  17 return
+  ```
+
+- 如下操作
+
+  ```java
+  //思考
+  public void method8() {
+      int i = 10;
+      i = i++;
+      System.out.println(i);  // 10
+  }
+  ```
+
+  ```
+    0 bipush 10
+    2 istore_1
+    3 iload_1
+    4 iinc 1 by 1
+    7 istore_1
+    8 getstatic #2 <java/lang/System.out>
+  11 iload_1
+  12 invokevirtual #5 <java/io/PrintStream.println>
+  15 return
+  ```
+
+### 比较指令说明
+
+> 控制转移流程处再详细说明
+
+- 作用： **比较栈顶两个元素的大小，并将比较结果入栈**
+- 比较指令有：
+  > 与前面的指令类似，首字符d表示double类型，f表示float，l表示long。
+  - 指令：
+    - dcmpg
+    - dcmpl
+    - fcmpg
+    - fcmpl
+    - lcmp
+  - 说明：
+    - 对于double和float类型的数字，由于NaN的存在，各有两个版本的比较指令
+      - 以float为例，有fcmpg、fcmpl两个指令，他们的区别在于数字比较时，若遇到NaN值，处理结果不同。
+      - 指令dcmpg、dcmpl也是类似的，
+    - 指令lcmp针对long型整数，由于long型整数没有NaN值，故无需准备两套指令。
+
+- 流程说明：
+  - 指令fcmpg、fcmpl都从栈中弹出两个操作数，并将它们做比较
+  - 设栈顶的元素为 v2，栈顶顺位第2位元素为 v1，若 v1 == v2，则压入0；若`v1 > v2`，则压入1；若`v1 < v2`，则压入-1。
+  - 两个指令的区别之处在于，当遇到NaN值，fcmpg会压入 1， 而fcmpl 会压入 -1。
+
 ## 3.4. 类型转化指令
+
+### 基本说明
+
+- 说明:类型转化指令可以将两种不同的数值类型进行相互转换
+- 作用：
+  - 这些转换操作一般用于实现用户代码的**显式类型转换**
+  - 或者用来处理**字节码指令集中数据类型相关指令**无法与**数据类型**一一对应的问题。
+
+### 宽化类型转换（Widening Numeric Conversions）
+
+- 转换规则：
+  - Java虚拟机直接支持以下数值的宽化类型转化（Widening Numeric Conversions，小范围类型向大范围类型的安全转化）
+  - 也就是说，并不需要指令执行，包括：
+    > 简化为：`int —> long --> float --> double`
+    - 从 int 类型到 long、float或者 double类型。对应的指令为：`i2l`、`i2f`、`i2d`
+    - 从 long 类型到 float、double类型。对应的指令为：`l2f`、`l2d`
+    - 从float类型到 double 类型。对应指令为： `f2d`
+
+  ```java
+  //针对于宽化类型转换的基本测试
+  public void upCast1() {
+      int i = 10;
+      long l = i;  // i2l
+      float f = i;  // i2f
+      double d = i;  // i2d
+  
+      float f1 = l;  // l2f
+      double d1 = l;  // l2d
+  
+      double d2 = f1;  // f2d
+  }
+  ```
+
+- 精度损失问题
+  - 情况分类：
+    - 宽化类型转换是不会因为超过目标类型最大值而丢失信息的
+      - 例如，从 int 转换到 long，或者从 int 转换到 double
+      - 都不会丢失任何信息，转换前后的值是精确相等的。
+    - 从 int、long 类型数值转换到 float，或者long类型数值转换到 double时，将可能发生精度丢失
+      - 可能丢失掉几个最低有效位上的值，转换后的浮点数是根据IEEE754最接近舍入模式所得到的的正确整数值。
+  - 异常问题：尽管宽化类型转换实际上可能发生精度丢失的，**但是这种转换永远不会导致Java虚拟机抛出运行时异常**。
+
+  ```java
+  //举例：精度损失的问题
+  @Test
+  public void upCast2() {
+      int i = 123123123;
+      float f = i;
+      System.out.println(f);  // 123123120
+  
+      long l = 123123123123L;
+      l = 123123123123123123L;
+      double d = l;
+      System.out.println(d);  // 123123123123123120
+  }
+  ```
+
+- 补充说明: **从 byte、char和short类型到int类型的宽化类型转换实际上是不存在的。**
+  - 对于byte类型转为int，虚拟机并没有做实质性的转化处理，**只是简单地通过操作数栈交换了两个数据**
+  - 而将byte转为long时，使用的是`i2l`，可以看到在内部byte在这里已经等同于int类型处理，类似的还有short类型，这种处理方式有两个特点：
+    - 一方面可以减少实际的数据类型
+      - 如果为short和byte都准备一套指令，那么指令的数量就会大增
+      - 而**虚拟机目前的设计上，只愿意使用一个字节表示指令，因此指令总数不能超过256个**
+      - **为了节省指令资源**，将short和byte当做int处理也在情理之中。
+    - 另一方面，由于局部变量表中的槽位固定为32位，无论是byte或者short存入局部变量表，都会占用32位空间。从这个角度说，也没有必要特意区分这几种数据类型。
+
+  ```java
+  //针对于byte、short等转换为容量大的类型时，将此类型看做int类型处理。
+  public void upCast3(byte b) {
+      int i = b;
+      long l = b;  // i2l
+      double d = b;  // i2d
+  }
+  
+  public void upCast4(short s) {
+      int i = s;
+      long l = s;  // i2l
+      float f = s;  // i2f
+  }
+  ```
+
+### 窄化类型转换（Narrowing Numeric Conversion）
+
+- 转换规则:Java虚拟机也直接支持以下**窄化类型转换**：
+  - 从 int 类型至byte、short或者char类型。对应的指令有：`i2b`、`i2s`、`i2c`
+  - 从 long类型到 int类型。对应的指令有：`l2i`
+  - 从 float类型到 int或者long 类型。对应的指令有：`f2i`、`f2l`
+  - 从 double类型到 int、long或者float类型。对应的指令有：`d2i`、`d2l`、`d2f`
+
+  ```java
+  // 窄化类型转换
+  // 基本的使用
+  public void downCast1() {
+      int i = 10;
+      byte b = (byte) i;  // i2b
+      short s = (short) i;  // i2s
+      char c = (char) i;  // i2c
+  
+      long l = 10L;
+      int i1 = (int) l;  // l2i
+      byte b1 = (byte) l;  // l2i --> i2b
+  }
+  
+  public void downCast2() {
+      float f = 10;
+      long l = (long) f;  // f2l
+      int i = (int) f;  // f2i
+      byte b = (byte) f;  // f2i --> i2b
+  
+      double d = 10;
+      byte b1 = (byte) d;  // d2i --> i2b
+  
+  }
+  
+  public void downCast3() {
+      short s = 10;
+      byte b = (byte) s;  // i2b
+  }
+  ```
+
+- 精度损失问题
+  - 窄化类型转换可能会导致转换结果具有不同的正负号、不同的数量级，因此，转换过程很可能会导致数值丢失精度。
+  - 异常情况：
+    - 尽管数据类型窄化转换可能会发生上限溢出、下限溢出和精度丢失等情况
+    - **但是Java虚拟机规范中明确规定数值类型的窄化转换指令永远不可能导致虚拟机抛出运行时异常**。
+
+- 窄化转换规律
+  - 当将一个浮点数值窄化为整数类型T（T限于 int 或 long 类型之一）的时候，将遵循以下转换规则：
+    - 如果浮点值是NaN
+      - 那么转换结果就是int或long类型的0.
+    - 如果浮点值不是无穷大的话
+      - 浮点值使用IEEE 754的向零舍入模式取整，获得整数值v
+      - 如果v在目标类型T（int或long）的表示范围之内，那转换结果就是v
+      - 否则，将根据v的符号，转换为T所能表示的最大或者最小正数
+  - 当将一个 double 类型转换为 float 类型时，将遵循以下转换规则：
+    - 通过向最接近数舍入模式舍入一个可以使用float类型表示的数字。最后结果根据下面3条规则判断：
+      - 如果转换结果的绝对值太小而无法使用 float来表示，将返回 float类型的正负零。
+      - 如果转换结果的绝对值太大而无法使用 float来表示，将返回 float类型的正负无穷大。
+      - 对于 double 类型的 NaN 值将按规定转换为 float 类型的NaN值。
+
+  ```java
+  // 测试NaN,无穷大的情况
+  @Test
+  public void downCast5() {
+      double d1 = Double.NaN;  // 0.0 / 0.0
+      int i = (int) d1;
+      System.out.println(d1);  // NaN
+      System.out.println(i);  // 0
+  
+      double d2 = Double.POSITIVE_INFINITY;
+      long l = (long) d2;
+      int j = (int) d2;
+      System.out.println(l);  // Long.MAX_VALUE
+      System.out.println(j);  // Integer.MAX_VALUE
+  
+      float f = (float) d2;
+      System.out.println(f);  // Infinity
+  
+      float f1 = (float) d1;
+      System.out.println(f1);  // NaN
+  }
+  ```
 
 ## 3.5. 对象的创建与访问指令
 
@@ -1518,7 +1960,7 @@ public class Demo {
 
 ## 3.10. 同步控制指令
 
-# 4. 类的加载过程
+# 4. 类的加载过程详解
 
 # 5. 再谈类的加载器
 
