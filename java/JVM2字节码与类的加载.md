@@ -1504,7 +1504,7 @@ public class Demo {
 
 ## 3.3. 算术指令
 
-### 概述
+### 3.3.1. 概述
 
 - 作用：
   - 算数指令用于对两个操作数栈的数值进行某种特定的运算
@@ -1560,7 +1560,7 @@ public class Demo {
     }
     ```
 
-### 算术指令与示例
+### 3.3.2. 算术指令与示例
 
 > ### 所有算术指令
 
@@ -1685,7 +1685,7 @@ public class Demo {
 
   ![jvm2-30](./image/jvm2-30.png)
 
-### 自增操作
+### 3.3.3. 自增操作
 
 - 如果不涉及到赋值，**只是单纯的 i++ 和 ++i** ，从字节码的角度看，完全一样
 
@@ -1760,7 +1760,7 @@ public class Demo {
   15 return
   ```
 
-### 比较指令说明
+### 3.3.4. 比较指令说明
 
 > 控制转移流程处再详细说明
 
@@ -1786,14 +1786,27 @@ public class Demo {
 
 ## 3.4. 类型转化指令
 
-### 基本说明
+### 3.4.1. 基本说明
 
 - 说明:类型转化指令可以将两种不同的数值类型进行相互转换
 - 作用：
   - 这些转换操作一般用于实现用户代码的**显式类型转换**
   - 或者用来处理**字节码指令集中数据类型相关指令**无法与**数据类型**一一对应的问题。
 
-### 宽化类型转换（Widening Numeric Conversions）
+- 复习：基本数据类型取值范围
+
+  | 类型    | 字节长度 | 取值范围                                               |
+  | ------- | -------- | ------------------------------------------------------ |
+  | long    | 8 字节   | -9 223 372 036 854 775 808 ~ 9 223 372 036 854 775 807 |
+  | int     | 4 字节   | -2 147 483 648 ~ 2 147 483 647                         |
+  | short   | 2 字节   | -32 768 ~ 32 767                                       |
+  | char    | 2 字节   |                                                        |
+  | byte    | 1 字节   |                                                        |
+  | boolean | 1 字节   | 大约 ±1.797 693 134 862 315 70E+308(15 位有效数字)     |
+  | float   | 4 字节   | 大约 ±3.402 823 47E+38F(6~7 位有效数字)                |
+  | double  | 8 字节   | 大约 ±1.797 693 134 862 315 70E+308(15 位有效数字)     |
+
+### 3.4.2. 宽化类型转换（Widening Numeric Conversions）
 
 - 转换规则：
   - Java虚拟机直接支持以下数值的宽化类型转化（Widening Numeric Conversions，小范围类型向大范围类型的安全转化）
@@ -1866,7 +1879,7 @@ public class Demo {
   }
   ```
 
-### 窄化类型转换（Narrowing Numeric Conversion）
+### 3.4.3. 窄化类型转换（Narrowing Numeric Conversion）
 
 - 转换规则:Java虚拟机也直接支持以下**窄化类型转换**：
   - 从 int 类型至byte、short或者char类型。对应的指令有：`i2b`、`i2s`、`i2c`
@@ -1901,7 +1914,7 @@ public class Demo {
   
   public void downCast3() {
       short s = 10;
-      byte b = (byte) s;  // i2b
+      byte b = (byte) s;  // i2b,把s当成i
   }
   ```
 
@@ -1911,14 +1924,15 @@ public class Demo {
     - 尽管数据类型窄化转换可能会发生上限溢出、下限溢出和精度丢失等情况
     - **但是Java虚拟机规范中明确规定数值类型的窄化转换指令永远不可能导致虚拟机抛出运行时异常**。
 
-- 窄化转换规律
+- 补充说明：窄化转换规律
   - 当将一个浮点数值窄化为整数类型T（T限于 int 或 long 类型之一）的时候，将遵循以下转换规则：
     - 如果浮点值是NaN
       - 那么转换结果就是int或long类型的0.
     - 如果浮点值不是无穷大的话
       - 浮点值使用IEEE 754的向零舍入模式取整，获得整数值v
       - 如果v在目标类型T（int或long）的表示范围之内，那转换结果就是v
-      - 否则，将根据v的符号，转换为T所能表示的最大或者最小正数
+    - 如果浮点值是无穷大的话
+      - 将根据v的符号，转换为T所能表示的最大或者最小正数
   - 当将一个 double 类型转换为 float 类型时，将遵循以下转换规则：
     - 通过向最接近数舍入模式舍入一个可以使用float类型表示的数字。最后结果根据下面3条规则判断：
       - 如果转换结果的绝对值太小而无法使用 float来表示，将返回 float类型的正负零。
@@ -1934,7 +1948,7 @@ public class Demo {
       System.out.println(d1);  // NaN
       System.out.println(i);  // 0
   
-      double d2 = Double.POSITIVE_INFINITY;
+      double d2 = Double.POSITIVE_INFINITY; // Infinity
       long l = (long) d2;
       int j = (int) d2;
       System.out.println(l);  // Long.MAX_VALUE
@@ -1949,6 +1963,236 @@ public class Demo {
   ```
 
 ## 3.5. 对象的创建与访问指令
+
+### 3.5.1. 创建指令
+
+> 虽然类实例和数组都是对象，但Java虚拟机对类实例和数组的创建与操作使用了不同的字节码指令。
+
+- 创建类实例的指令：`new`
+  - 说明：它接收一个操作数，为指向常量池的索引，表示要创建的类型、执行完成后，将对象的引用压入栈。
+  - 示例
+    ```java
+    public void newInstance() {
+        Object obj = new Object();
+    
+        File file = new File("atguigu.avi");
+    }
+    ```
+
+  ![jvm2-31.png](./image/jvm2-31.png)
+
+  > dup是复制栈顶引用，因为之后调用`<init>`方法会消耗一个 <br />
+  > File的`<init>`方法有一个参数，因此除了对象引用出栈外，参数也要出栈
+
+- 创建数组指令：
+  - 指令
+    - newarray：创建基本类型数组
+    - anewarray：创建引用类型数组
+    - multianewarray：创建多维数组
+  - 示例
+    ```java
+    public void newArray() {
+        int[] intArray = new int[10];  // newarray 10 (int)
+        Object[] objArray = new Object[10];  // anewarray #2 <java/lang/Object>
+        int[][] mintArray = new int[10][10];  // multianewarray #6 <[[I> dim 2
+
+        String[][] strArray = new String[10][];  // anewarray #7 <[Ljava/lang/String;>
+    }
+    ```
+    ```
+      0 bipush 10
+      2 newarray 10 (int)
+      4 astore_1
+      5 bipush 10
+      7 anewarray #2 <java/lang/Object>
+    10 astore_2
+    11 bipush 10
+    13 bipush 10
+    15 multianewarray #6 <[[I> dim 2
+    19 astore_3
+    20 bipush 10
+    22 anewarray #7 <[Ljava/lang/String;> 
+      // 没有使用multianewarray，是因为数据内部数据没有初始化
+      // 当前创建的是一维
+    25 astore 4
+    27 return
+    ```
+
+### 3.5.2. 字段访问指令
+
+- 说明：
+  - 对象创建后，就可以通过对象访问指令获取对象实例或者数组实例中的字段或者数组元素。
+
+- 种类：
+  - 访问类字段（static字段，或者称为类变量）的指令：
+    - getstatic:包含一个操作数，为指向常量池的Fieldref索引
+      - 获取常量池中的值
+      - 入栈
+    - putstatic
+      - 要赋的值出栈
+      - static_field不需要入栈出栈，直接赋值
+  - 访问类实例字段（非static字段，或者称为实例变量）的指令
+    - getfield:包含一个操作数，为常量池中的 字段路径(字节码文件中是符号引用，运行时是具体引用)
+      - 要操作的对象出栈
+    - putfield:包含一个操作数，为常量池中的 字段路径(字节码文件中是符号引用，运行时是具体引用)
+      - 要赋的值出栈，要操作的对象出栈
+      - 执行putfield赋值
+
+- 示例1：
+  - 以getstatic指令为例，它包含一个操作数，为指向常量池的Fieldref索引
+  - 它的作用就是获取Fieldref指定的对象或者值，并将其压入操作数栈。
+
+  ```java
+  // 2.字段访问指令
+  public void sayHello() {
+      System.out.println("hello");
+  }
+  ```
+
+  ```
+  0 getstatic #8 <java/lang/System.out>
+  3 ldc #9 <hello>
+  5 invokevirtual #10 <java/io/PrintStream.println>
+  8 return
+  ```
+
+  ![jvm2-32.png](./image/jvm2-32.png)
+
+  ![jvm2-33.png](./image/jvm2-33.png)
+
+  ![jvm2-34.png](./image/jvm2-34.png)
+
+ - 示例2 
+
+  ```java
+  class Order {
+      int id;
+      static String name;
+  }
+  
+  public class NewTest {
+      public void setOrderId() {
+          Order order = new Order();
+          order.id = 1001;
+          System.out.println(order.id);
+  
+          Order.name = "ORDER";
+          System.out.println(Order.name);
+      }
+  }
+  ```
+  > putfield：使用栈顶的1001和对象引用，把值赋给指定filed
+
+  ![jvm2-35.png](./image/jvm2-35.png)
+
+------
+
+### 3.5.3. 数组操作指令
+
+- 数组操作指令主要有：
+  - xastore
+    - 说明：
+      - 把一个数组元素加载到操作数栈的指令
+      - 比如saload、caload分别表示压入short数组和char数组
+    - 具体有：
+      - baload
+      - caload
+      - saload
+      - iaload
+      - laload
+      - faload
+      - daload
+      - aaload
+    - 执行流程
+      - 指令xaload在执行时，**要求操作数中栈顶元素为数组索引i，栈顶顺位第二个元素为数组引用a**
+      - 该指令会弹出栈顶这两个元素，并将a[i] 重新压入栈。
+  - xaload
+    >这里的store修改的是**堆中**数组中的某个值，之前讲到的store修改的都是局部变量表中的内容
+    - 将一个操作数栈的值存储到数组元素中的指令，以iastore为例，它用于给一个 int 数组的给定索引赋值
+    - 具体有：
+      - bastore
+      - castore
+      - sastore
+      - iastore
+      - lastore
+      - fastore
+      - dastore
+      - aastore
+    - 执行流程
+      - 在iastore执行前，操作数栈顶需要以此准备 3 个元素：**值**、**索引**、**数组索引**(栈顶到栈底的顺序)
+      - iastore会弹出这 3 个值，并将值赋给数组中指定索引的位置。
+
+  ![jvm2-36.png](./image/jvm2-36.png)
+
+- 示例
+  ```java
+  // 3.数组操作指令
+  public void setArray() {
+      int[] intArray = new int[10];
+      intArray[3] = 20;
+      System.out.println(intArray[1]);
+  }
+  ```
+
+  ![jvm2-37.png](./image/jvm2-37.png)
+
+---
+
+- `arraylength`
+  - 说明：返回数组长度的指令
+  - 执行流程：该指令弹出栈顶的数组元素，获取数组的长度，将长度压入栈
+
+  ```java
+  public void arrLength() {
+  
+      double[] arr = new double[10];
+      System.out.println(arr.length);
+  }
+  ```
+  ```
+    0 bipush 10
+    2 newarray 7 (double)
+    4 astore_1
+    5 getstatic #8 <java/lang/System.out>
+    8 aload_1
+    9 arraylength
+  10 invokevirtual #14 <java/io/PrintStream.println>
+  13 return
+  ```
+
+### 3.5.4. 类型检查指令
+
+- 检查类实例或数组或数组类型的指令
+  - `checkcast`:
+    - 用于检查类型强制转换是否可以进行。
+    - 如果可以进行，那么checkcast指令不会改变操作数栈，否则它会抛出ClassCastException异常。
+  - `instancdof`:
+    - 用来判断给定对象是否是某一个类的实例
+    - 它会将判断结果压入操作数栈。
+
+- 示例
+  ```java
+  // 4.类型检查指令
+  public String checkCast(Object obj) {
+      if (obj instanceof String) {
+          return (String) obj;
+      } else {
+          return null;
+      }
+  }
+  ```
+
+  ```
+   0 aload_1
+   1 instanceof #17 <java/lang/String>
+   4 ifeq 12 (+8)
+   7 aload_1
+   8 checkcast #17 <java/lang/String>
+  11 areturn
+  12 aconst_null
+  13 areturn
+  ```
+
 
 ## 3.6. 方法调用与返回指令
 

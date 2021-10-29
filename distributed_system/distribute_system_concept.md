@@ -637,16 +637,8 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 - 解决方案: 就允许一个能提案 
 
-##### 应用
-
-- Mysql:5.7开始，支持group replication，采用Paxos
-- zookeeper的ZAB：[跳转](./zookeeper.md)
-
 #### 5.2.1.4. raft
 
-> **应用**
-
-- MongoDB:从3.4开始，支持类raft复制协议
 
 ### 5.2.2. 应用
 
@@ -680,7 +672,13 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 [Mysql笔记，XA章节](../database/mysql.md)
 
-#### 5.2.2.2. zookeeper的paxos
+#### 5.2.2.2. zookeeper 的ZAB使用paxos
+
+[跳转](./zookeeper.md)
+
+#### Mysql:5.7开始，支持group replication，采用Paxos
+
+#### MongoDB:从3.4开始，支持类raft复制协议
 
 ## 5.3. 分布式缓存算法
 
@@ -1012,3 +1010,7 @@ public class ConsistentHashingWithoutVirtualNode {
 # 10. 参考资料
 
 - [图解一致性哈希算法](https://segmentfault.com/a/1190000021199728)
+- [万字带你入门Zookeeper](https://juejin.cn/post/6844904045283377165)
+- [一文搞懂Raft算法](https://www.cnblogs.com/xybaby/p/10124083.html)
+- [The Secret Lives of Data](http://thesecretlivesofdata.com/raft/)
+- [「图解Raft」让一致性算法变得更简单](https://zinglix.xyz/2020/06/25/raft/)

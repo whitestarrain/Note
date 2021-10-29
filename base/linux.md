@@ -1,6 +1,45 @@
-# 1. 命令
+# 1. 开始
 
-## 1.1. 常用命令
+> 虚拟机集群的步骤看 ppt
+
+- type(类似 which)
+  - type 能指定磁盘位置的命令，也就是从 PATH 中查询的命令，被称为**外部命令**,外部命令执行时都会变为一个进程
+  - 外部命令都可以通过`man 命令名称`查看文档
+  - 可能是可执行程序，也可能是脚本（比如 python 脚本等）
+  - 如果 type 返回 shell builtin，则是内部命令。shell 内部的。比如 cd，echo
+- file
+  - `ELF` 类型为二进制可执行程序
+- echo 返回输入变量
+  > echo \$PATH
+- 环境变量
+  - windows 中用两个%取环境变量的值，用;分割
+  - linux 中用\$取值，用:分割
+  - %path% == \$PATH
+  - 修改 profile 可以修改环境变量，具体再学完 shell script 后就理解了
+- yum install man man-pages
+  > man 是帮助程序 man-pages 是扩充的帮助页,一定要装<br>
+  > 也可以 `man ascii` `man utf-8` `man gets`<br>
+- man 可以查的一共是：
+  - 1,用户命令(/bin,/usr/bin,/usr/local/bin)，
+  - 2.系统调用，`man 2 read`
+  - 3.库用户，
+  - 4.特殊文件(设备文件)
+  - 5.文件格式(配置文件的语法)
+  - 6.游戏，杂项(Miscellaneous)
+  - 7.管理命令(/sbin,/usr/sbin,/usr/local/sbin)
+- 外部命令用 man，内部命令用 help(help 也是内部命令)
+- whereis 定位命令位置,同时指出帮助文档位置
+- which 定位命令位置
+- file descriptor:文件描述符/文件句柄。linux 中数字代表进程中的某一个流，任何进程最基本的三个流：
+
+  - 0 输入流
+  - 1 正确的输出流
+  - 2 错误的输出流
+
+- `!serv` 执行最近的，以 serv 开头的，执行过的命令
+- jps ：jdk 中的一个可执行程序，查看 java 进程 id
+
+# 2. 常用命令
 
 |                |           |         |               |           |
 | :------------: | :-------: | :-----: | :-----------: | :-------: |
@@ -47,285 +86,6 @@
 - echo 输出
 - read 输入
 
-## 1.2. 网络命令
-
-<details>
-<summary style="color:red;">网络相关命令</summary>
-
-```
-首先,先了解传统的网络配置命令:
-　　1. 使用ifconfig命令配置并查看网络接口情况
-　　示例1: 配置eth0的IP，同时激活设备:
-　　# ifconfig eth0 192.168.4.1 netmask 255.255.255.0 up
-　　示例2: 配置eth0别名设备 eth0:1 的IP，并添加路由
-　　# ifconfig eth0:1 192.168.4.2
-　　# route add –host 192.168.4.2 dev eth0:1
-　　示例3:激活（禁用）设备
-　　# ifconfig eth0:1 up(down)
-　　示例4:查看所有（指定）网络接口配置
-　　# ifconfig (eth0)
-　　2. 使用route 命令配置路由表
-　　示例1:添加到主机路由
-　　# route add –host 192.168.4.2 dev eth0:1
-　　# route add –host 192.168.4.1 gw 192.168.4.250
-　　示例2:添加到网络的路由
-　　# route add –net IP netmask MASK eth0
-　　# route add –net IP netmask MASK gw IP
-　　# route add –net IP/24 eth1
-　　示例3:添加默认网关
-　　# route add default gw IP
-　　示例4:删除路由
-　　# route del –host 192.168.4.1 dev eth0:1
-　　示例5:查看路由信息
-　　# route 或 route -n (-n 表示不解析名字,列出速度会比route 快)
-　　3.ARP 管理命令
-　　示例1:查看ARP缓存
-　　# arp
-　　示例2: 添加
-　　# arp –s IP MAC
-　　示例3: 删除
-　　# arp –d IP
-　　4. ip是iproute2软件包里面的一个强大的网络配置工具，它能够替代一些传统的网络管理工具。例如：ifconfig、route等,
-　　上面的示例完全可以用下面的ip命令实现,而且ip命令可以实现更多的功能.下面介绍一些示例:
-　　4.0 ip命令的语法
-　　ip命令的用法如下：
-　　ip [OPTIONS] OBJECT [COMMAND [ARGUMENTS]]
-　　4.1 ip link set--改变设备的属性. 缩写：set、s
-　　示例1：up/down 起动／关闭设备。
-　　# ip link set dev eth0 up
-　　这个等于传统的 # ifconfig eth0 up(down)
-　　示例2：改变设备传输队列的长度。
-　　参数:txqueuelen NUMBER或者txqlen NUMBER
-　　# ip link set dev eth0 txqueuelen 100
-　　示例3：改变网络设备MTU(最大传输单元)的值。
-　　# ip link set dev eth0 mtu 1500
-　　示例4： 修改网络设备的MAC地址。
-　　参数: address LLADDRESS
-　　# ip link set dev eth0 address 00:01:4f:00:15:f1
-　　4.2 ip link show--显示设备属性. 缩写：show、list、lst、sh、ls、l
-　　-s选项出现两次或者更多次，ip会输出更为详细的错误信息统计。
-　　示例:
-　　# ip -s -s link ls eth0
-　　eth0: mtu 1500 qdisc cbq qlen 100
-　　link/ether 00:a0:cc:66:18:78 brd ff:ff:ff:ff:ff:ff
-　　RX: bytes packets errors dropped overrun mcast
-　　2449949362 2786187 0 0 0 0
-　　RX errors: length crc fifo missed
-　　0 0 0 0 0
-　　TX: bytes packets errors dropped carrier collsns
-　　178558497 1783946 332 0 332 35172
-　　TX errors: aborted fifo window heartbeat
-　　0 0 0 332
-　　这个命令等于传统的 ifconfig eth0
-　　5.1 ip address add--添加一个新的协议地址. 缩写：add、a
-　　示例1：为每个地址设置一个字符串作为标签。为了和Linux-2.0的网络别名兼容，这个字符串必须以设备名开头，接着一个冒号，
-　　# ip addr add local 192.168.4.1/28 brd + label eth0:1 dev eth0
-　　示例2: 在以太网接口eth0上增加一个地址192.168.20.0，掩码长度为24位(155.155.155.0)，标准广播地址，标签为eth0:Alias：
-　　# ip addr add 192.168.4.2/24 brd + dev eth1 label eth1:1
-　　这个命令等于传统的: ifconfig eth1:1 192.168.4.2
-　　5.2 ip address delete--删除一个协议地址. 缩写：delete、del、d
-　　# ip addr del 192.168.4.1/24 brd + dev eth0 label eth0:Alias1
-　　5.3 ip address show--显示协议地址. 缩写：show、list、lst、sh、ls、l
-　　# ip addr ls eth0
-　　5.4.ip address flush--清除协议地址. 缩写：flush、f
-　　示例1 : 删除属于私网10.0.0.0/8的所有地址：
-　　# ip -s -s a f to 10/8
-　　示例2 : 取消所有以太网卡的IP地址
-　　# ip -4 addr flush label "eth0"
-　　6. ip neighbour--neighbour/arp表管理命令
-　　缩写 neighbour、neighbor、neigh、n
-　　命令 add、change、replace、delete、fulsh、show(或者list)
-　　6.1 ip neighbour add -- 添加一个新的邻接条目
-　　ip neighbour change--修改一个现有的条目
-　　ip neighbour replace--替换一个已有的条目
-　　缩写：add、a；change、chg；replace、repl
-　　示例1: 在设备eth0上，为地址10.0.0.3添加一个permanent ARP条目：
-　　# ip neigh add 10.0.0.3 lladdr 0:0:0:0:0:1 dev eth0 nud perm
-　　示例2:把状态改为reachable
-　　# ip neigh chg 10.0.0.3 dev eth0 nud reachable
-　　6.2.ip neighbour delete--删除一个邻接条目
-　　示例1:删除设备eth0上的一个ARP条目10.0.0.3
-　　# ip neigh del 10.0.0.3 dev eth0
-　　6.3.ip neighbour show--显示网络邻居的信息. 缩写：show、list、sh、ls
-　　示例1: # ip -s n ls 193.233.7.254
-　　193.233.7.254. dev eth0 lladdr 00:00:0c:76:3f:85 ref 5 used 12/13/20 nud reachable
-　　6.4.ip neighbour flush--清除邻接条目. 缩写：flush、f
-　　示例1: (-s 可以显示详细信息)
-　　# ip -s -s n f 193.233.7.254
-　　7. 路由表管理
-　　7.1.缩写 route、ro、r
-　　7.2.路由表
-　　从Linux-2.2开始，内核把路由归纳到许多路由表中，这些表都进行了编号，编号数字的范围是1到255。另外，
-　　为了方便，还可以在/etc/iproute2/rt_tables中为路由表命名。
-　　默认情况下，所有的路由都会被插入到表main(编号254)中。在进行路由查询时，内核只使用路由表main。
-　　7.3.ip route add -- 添加新路由
-　　ip route change -- 修改路由
-　　ip route replace -- 替换已有的路由
-　　缩写：add、a；change、chg；replace、repl
-　　示例1: 设置到网络10.0.0/24的路由经过网关193.233.7.65
-　　# ip route add 10.0.0/24 via 193.233.7.65
-　　示例2: 修改到网络10.0.0/24的直接路由，使其经过设备dummy
-　　# ip route chg 10.0.0/24 dev dummy
-　　示例3: 实现链路负载平衡.加入缺省多路径路由，让ppp0和ppp1分担负载(注意：scope值并非必需，它只不过是告诉内核，
-　　这个路由要经过网关而不是直连的。实际上，如果你知道远程端点的地址，使用via参数来设置就更好了)。
-　　# ip route add default scope global nexthop dev ppp0 nexthop dev ppp1
-　　# ip route replace default scope global nexthop dev ppp0 nexthop dev ppp1
-　　示例4: 设置NAT路由。在转发来自192.203.80.144的数据包之前，先进行网络地址转换，把这个地址转换为193.233.7.83
-　　# ip route add nat 192.203.80.142 via 193.233.7.83
-　　示例5: 实现数据包级负载平衡,允许把数据包随机从多个路由发出。weight 可以设置权重.
-　　# ip route replace default equalize nexthop via 211.139.218.145 dev eth0 weight 1 nexthop via 211.139.218.145 dev eth1 weight 1
-　　7.4.ip route delete-- 删除路由
-　　缩写：delete、del、d
-　　示例1:删除上一节命令加入的多路径路由
-　　# ip route del default scope global nexthop dev ppp0 nexthop dev ppp1
-　　7.5.ip route show -- 列出路由
-　　缩写：show、list、sh、ls、l
-　　示例1: 计算使用gated/bgp协议的路由个数
-　　# ip route ls proto gated/bgp |wc
-　　1413 9891 79010
-　　示例2: 计算路由缓存里面的条数，由于被缓存路由的属性可能大于一行，以此需要使用-o选项
-　　# ip -o route ls cloned |wc
-　　159 2543 18707
-　　示例3: 列出路由表TABLEID里面的路由。缺省设置是table main。TABLEID或者是一个真正的路由表ID或者是/etc/iproute2/rt_tables文件定义的字符串，
-　　或者是以下的特殊值：
-　　all -- 列出所有表的路由；
-　　cache -- 列出路由缓存的内容。
-　　ip ro ls 193.233.7.82 tab cache
-　　示例4: 列出某个路由表的内容
-　　# ip route ls table fddi153
-　　示例5: 列出默认路由表的内容
-　　# ip route ls
-　　这个命令等于传统的: route
-　　7.6.ip route flush -- 擦除路由表
-　　示例1: 删除路由表main中的所有网关路由（示例：在路由监控程序挂掉之后）：
-　　# ip -4 ro flush scope global type unicast
-　　示例2:清除所有被克隆出来的IPv6路由：
-　　# ip -6 -s -s ro flush cache
-　　示例3: 在gated程序挂掉之后，清除所有的BGP路由：
-　　# ip -s ro f proto gated/bgp
-　　示例4: 清除所有ipv4路由cache
-　　# ip route flush cache
-　　*** IPv4 routing cache is flushed.
-　　7.7 ip route get -- 获得单个路由 .缩写：get、g
-　　使用这个命令可以获得到达目的地址的一个路由以及它的确切内容。
-　　ip route get命令和ip route show命令执行的操作是不同的。ip route show命令只是显示现有的路由，而ip route get命令在必要时会派生出新的路由。
-　　示例1: 搜索到193.233.7.82的路由
-　　# ip route get 193.233.7.82
-　　193.233.7.82 dev eth0 src 193.233.7.65 realms inr.ac cache mtu 1500 rtt 300
-　　示例2: 搜索目的地址是193.233.7.82，来自193.233.7.82，从eth0设备到达的路由（这条命令会产生一条非常有意思的路由，这是一条到193.233.7.82的回环路由）
-　　# ip r g 193.233.7.82 from 193.233.7.82 iif eth0
-　　193.233.7.82 from 193.233.7.82 dev eth0 src 193.233.7.65 realms inr.ac/inr.ac
-　　cache
- mtu 1500 rtt 300 iif eth0
-　　8. ip route -- 路由策略数据库管理命令
-　　命令
-　　add、delete、show(或者list)
-　　注意：策略路由(policy routing)不等于路由策略(rouing policy)。
-　　在某些情况下，我们不只是需要通过数据包的目的地址决定路由，可能还需要通过其他一些域：源地址、IP协议、传输层端口甚至数据包的负载。
-　　这就叫做：策略路由(policy routing)。
-　　8.1. ip rule add -- 插入新的规则
-　　ip rule delete -- 删除规则
-　　缩写：add、a；delete、del、d
-　　示例1: 通过路由表inr.ruhep路由来自源地址为192.203.80/24的数据包
-　　ip ru add from 192.203.80/24 table inr.ruhep prio 220
-　　示例2:把源地址为193.233.7.83的数据报的源地址转换为192.203.80.144，并通过表1进行路由
-　　ip ru add from 193.233.7.83 nat 192.203.80.144 table 1 prio 320
-　　示例3:删除无用的缺省规则
-　　ip ru del prio 32767
-　　8.2. ip rule show -- 列出路由规则
-　　缩写：show、list、sh、ls、l
-　　示例1: # ip ru ls
-　　0: from all lookup local
-　　32762: from 192.168.4.89 lookup fddi153
-　　32764: from 192.168.4.88 lookup fddi153
-　　32766: from all lookup main
-　　32767: from all lookup 253
-　　9. ip maddress -- 多播地址管理
-　　缩写：show、list、sh、ls、l
-　　9.1.ip maddress show -- 列出多播地址
-　　示例1: # ip maddr ls dummy
-　　9.2. ip maddress add -- 加入多播地址
-　　ip maddress delete -- 删除多播地址
-　　缩写：add、a；delete、del、d
-　　使用这两个命令，我们可以添加／删除在网络接口上监听的链路层多播地址。这个命令只能管理链路层地址。
-　　示例1: 增加 # ip maddr add 33:33:00:00:00:01 dev dummy
-　　示例2: 查看 # ip -O maddr ls dummy
-　　2: dummy
-　　link 33:33:00:00:00:01 users 2 static
-　　link 01:00:5e:00:00:01
-　　示例3: 删除 # ip maddr del 33:33:00:00:00:01 dev dummy
-　　10.ip mroute -- 多播路由缓存管理
-　　10.1. ip mroute show -- 列出多播路由缓存条目
-　　缩写：show、list、sh、ls、l
-　　示例1:查看 # ip mroute ls
-　　(193.232.127.6, 224.0.1.39) Iif: unresolved
-　　(193.232.244.34, 224.0.1.40) Iif: unresolved
-　　(193.233.7.65, 224.66.66.66) Iif: eth0 Oifs: pimreg
-　　示例2:查看 # ip -s mr ls 224.66/16
-　　(193.233.7.65, 224.66.66.66) Iif: eth0 Oifs: pimreg
-　　9383 packets, 300256 bytes
-　　11. ip tunnel -- 通道配置
-　　缩写
-　　tunnel、tunl
-　　11.1.ip tunnel add -- 添加新的通道
-　　ip tunnel change -- 修改现有的通道
-　　ip tunnel delete -- 删除一个通道
-　　缩写：add、a；change、chg；delete、del、d
-　　示例1:建立一个点对点通道，最大TTL是32
-　　# ip tunnel add Cisco mode sit remote 192.31.7.104 local 192.203.80.1 ttl 32
-　　11.2.ip tunnel show -- 列出现有的通道
-　　缩写：show、list、sh、ls、l
-　　示例1: # ip -s tunl ls Cisco
-　　12. ip monitor和rtmon -- 状态监视
-　　ip命令可以用于连续地监视设备、地址和路由的状态。这个命令选项的格式有点不同，命令选项的名字叫做monitor，接着是操作对象：
-　　ip monitor [ file FILE ] [ all | OBJECT-LIST ]
-　　示例1: # rtmon file /var/log/rtmon.log
-　　示例2: # ip monitor file /var/log/rtmon.log r
-```
-</details>
-
-# 2. 开始
-
-> 虚拟机集群的步骤看 ppt
-
-- type(类似 which)
-  - type 能指定磁盘位置的命令，也就是从 PATH 中查询的命令，被称为**外部命令**,外部命令执行时都会变为一个进程
-  - 外部命令都可以通过`man 命令名称`查看文档
-  - 可能是可执行程序，也可能是脚本（比如 python 脚本等）
-  - 如果 type 返回 shell builtin，则是内部命令。shell 内部的。比如 cd，echo
-- file
-  - `ELF` 类型为二进制可执行程序
-- echo 返回输入变量
-  > echo \$PATH
-- 环境变量
-  - windows 中用两个%取环境变量的值，用;分割
-  - linux 中用\$取值，用:分割
-  - %path% == \$PATH
-  - 修改 profile 可以修改环境变量，具体再学完 shell script 后就理解了
-- yum install man man-pages
-  > man 是帮助程序 man-pages 是扩充的帮助页,一定要装<br>
-  > 也可以 `man ascii` `man utf-8` `man gets`<br>
-- man 可以查的一共是：
-  - 1,用户命令(/bin,/usr/bin,/usr/local/bin)，
-  - 2.系统调用，`man 2 read`
-  - 3.库用户，
-  - 4.特殊文件(设备文件)
-  - 5.文件格式(配置文件的语法)
-  - 6.游戏，杂项(Miscellaneous)
-  - 7.管理命令(/sbin,/usr/sbin,/usr/local/sbin)
-- 外部命令用 man，内部命令用 help(help 也是内部命令)
-- whereis 定位命令位置,同时指出帮助文档位置
-- which 定位命令位置
-- file descriptor:文件描述符/文件句柄。linux 中数字代表进程中的某一个流，任何进程最基本的三个流：
-
-  - 0 输入流
-  - 1 正确的输出流
-  - 2 错误的输出流
-
-- `!serv` 执行最近的，以 serv 开头的，执行过的命令
-- jps ：jdk 中的一个可执行程序，查看 java 进程 id
-
----
 
 # 3. 目录相关
 
@@ -791,9 +551,251 @@
   - yum install man-pages-zh-CN
   - 看 man bash
 
-# 7. shell script
+# 7. 内存管理
 
-## 7.1. 开始
+# 8. 硬盘管理
+
+# 9. 网络管理
+
+<details>
+<summary style="color:red;">网络相关命令</summary>
+
+```
+首先,先了解传统的网络配置命令:
+　　1. 使用ifconfig命令配置并查看网络接口情况
+　　示例1: 配置eth0的IP，同时激活设备:
+　　# ifconfig eth0 192.168.4.1 netmask 255.255.255.0 up
+　　示例2: 配置eth0别名设备 eth0:1 的IP，并添加路由
+　　# ifconfig eth0:1 192.168.4.2
+　　# route add –host 192.168.4.2 dev eth0:1
+　　示例3:激活（禁用）设备
+　　# ifconfig eth0:1 up(down)
+　　示例4:查看所有（指定）网络接口配置
+　　# ifconfig (eth0)
+　　2. 使用route 命令配置路由表
+　　示例1:添加到主机路由
+　　# route add –host 192.168.4.2 dev eth0:1
+　　# route add –host 192.168.4.1 gw 192.168.4.250
+　　示例2:添加到网络的路由
+　　# route add –net IP netmask MASK eth0
+　　# route add –net IP netmask MASK gw IP
+　　# route add –net IP/24 eth1
+　　示例3:添加默认网关
+　　# route add default gw IP
+　　示例4:删除路由
+　　# route del –host 192.168.4.1 dev eth0:1
+　　示例5:查看路由信息
+　　# route 或 route -n (-n 表示不解析名字,列出速度会比route 快)
+　　3.ARP 管理命令
+　　示例1:查看ARP缓存
+　　# arp
+　　示例2: 添加
+　　# arp –s IP MAC
+　　示例3: 删除
+　　# arp –d IP
+　　4. ip是iproute2软件包里面的一个强大的网络配置工具，它能够替代一些传统的网络管理工具。例如：ifconfig、route等,
+　　上面的示例完全可以用下面的ip命令实现,而且ip命令可以实现更多的功能.下面介绍一些示例:
+　　4.0 ip命令的语法
+　　ip命令的用法如下：
+　　ip [OPTIONS] OBJECT [COMMAND [ARGUMENTS]]
+　　4.1 ip link set--改变设备的属性. 缩写：set、s
+　　示例1：up/down 起动／关闭设备。
+　　# ip link set dev eth0 up
+　　这个等于传统的 # ifconfig eth0 up(down)
+　　示例2：改变设备传输队列的长度。
+　　参数:txqueuelen NUMBER或者txqlen NUMBER
+　　# ip link set dev eth0 txqueuelen 100
+　　示例3：改变网络设备MTU(最大传输单元)的值。
+　　# ip link set dev eth0 mtu 1500
+　　示例4： 修改网络设备的MAC地址。
+　　参数: address LLADDRESS
+　　# ip link set dev eth0 address 00:01:4f:00:15:f1
+　　4.2 ip link show--显示设备属性. 缩写：show、list、lst、sh、ls、l
+　　-s选项出现两次或者更多次，ip会输出更为详细的错误信息统计。
+　　示例:
+　　# ip -s -s link ls eth0
+　　eth0: mtu 1500 qdisc cbq qlen 100
+　　link/ether 00:a0:cc:66:18:78 brd ff:ff:ff:ff:ff:ff
+　　RX: bytes packets errors dropped overrun mcast
+　　2449949362 2786187 0 0 0 0
+　　RX errors: length crc fifo missed
+　　0 0 0 0 0
+　　TX: bytes packets errors dropped carrier collsns
+　　178558497 1783946 332 0 332 35172
+　　TX errors: aborted fifo window heartbeat
+　　0 0 0 332
+　　这个命令等于传统的 ifconfig eth0
+　　5.1 ip address add--添加一个新的协议地址. 缩写：add、a
+　　示例1：为每个地址设置一个字符串作为标签。为了和Linux-2.0的网络别名兼容，这个字符串必须以设备名开头，接着一个冒号，
+　　# ip addr add local 192.168.4.1/28 brd + label eth0:1 dev eth0
+　　示例2: 在以太网接口eth0上增加一个地址192.168.20.0，掩码长度为24位(155.155.155.0)，标准广播地址，标签为eth0:Alias：
+　　# ip addr add 192.168.4.2/24 brd + dev eth1 label eth1:1
+　　这个命令等于传统的: ifconfig eth1:1 192.168.4.2
+　　5.2 ip address delete--删除一个协议地址. 缩写：delete、del、d
+　　# ip addr del 192.168.4.1/24 brd + dev eth0 label eth0:Alias1
+　　5.3 ip address show--显示协议地址. 缩写：show、list、lst、sh、ls、l
+　　# ip addr ls eth0
+　　5.4.ip address flush--清除协议地址. 缩写：flush、f
+　　示例1 : 删除属于私网10.0.0.0/8的所有地址：
+　　# ip -s -s a f to 10/8
+　　示例2 : 取消所有以太网卡的IP地址
+　　# ip -4 addr flush label "eth0"
+　　6. ip neighbour--neighbour/arp表管理命令
+　　缩写 neighbour、neighbor、neigh、n
+　　命令 add、change、replace、delete、fulsh、show(或者list)
+　　6.1 ip neighbour add -- 添加一个新的邻接条目
+　　ip neighbour change--修改一个现有的条目
+　　ip neighbour replace--替换一个已有的条目
+　　缩写：add、a；change、chg；replace、repl
+　　示例1: 在设备eth0上，为地址10.0.0.3添加一个permanent ARP条目：
+　　# ip neigh add 10.0.0.3 lladdr 0:0:0:0:0:1 dev eth0 nud perm
+　　示例2:把状态改为reachable
+　　# ip neigh chg 10.0.0.3 dev eth0 nud reachable
+　　6.2.ip neighbour delete--删除一个邻接条目
+　　示例1:删除设备eth0上的一个ARP条目10.0.0.3
+　　# ip neigh del 10.0.0.3 dev eth0
+　　6.3.ip neighbour show--显示网络邻居的信息. 缩写：show、list、sh、ls
+　　示例1: # ip -s n ls 193.233.7.254
+　　193.233.7.254. dev eth0 lladdr 00:00:0c:76:3f:85 ref 5 used 12/13/20 nud reachable
+　　6.4.ip neighbour flush--清除邻接条目. 缩写：flush、f
+　　示例1: (-s 可以显示详细信息)
+　　# ip -s -s n f 193.233.7.254
+　　7. 路由表管理
+　　7.1.缩写 route、ro、r
+　　7.2.路由表
+　　从Linux-2.2开始，内核把路由归纳到许多路由表中，这些表都进行了编号，编号数字的范围是1到255。另外，
+　　为了方便，还可以在/etc/iproute2/rt_tables中为路由表命名。
+　　默认情况下，所有的路由都会被插入到表main(编号254)中。在进行路由查询时，内核只使用路由表main。
+　　7.3.ip route add -- 添加新路由
+　　ip route change -- 修改路由
+　　ip route replace -- 替换已有的路由
+　　缩写：add、a；change、chg；replace、repl
+　　示例1: 设置到网络10.0.0/24的路由经过网关193.233.7.65
+　　# ip route add 10.0.0/24 via 193.233.7.65
+　　示例2: 修改到网络10.0.0/24的直接路由，使其经过设备dummy
+　　# ip route chg 10.0.0/24 dev dummy
+　　示例3: 实现链路负载平衡.加入缺省多路径路由，让ppp0和ppp1分担负载(注意：scope值并非必需，它只不过是告诉内核，
+　　这个路由要经过网关而不是直连的。实际上，如果你知道远程端点的地址，使用via参数来设置就更好了)。
+　　# ip route add default scope global nexthop dev ppp0 nexthop dev ppp1
+　　# ip route replace default scope global nexthop dev ppp0 nexthop dev ppp1
+　　示例4: 设置NAT路由。在转发来自192.203.80.144的数据包之前，先进行网络地址转换，把这个地址转换为193.233.7.83
+　　# ip route add nat 192.203.80.142 via 193.233.7.83
+　　示例5: 实现数据包级负载平衡,允许把数据包随机从多个路由发出。weight 可以设置权重.
+　　# ip route replace default equalize nexthop via 211.139.218.145 dev eth0 weight 1 nexthop via 211.139.218.145 dev eth1 weight 1
+　　7.4.ip route delete-- 删除路由
+　　缩写：delete、del、d
+　　示例1:删除上一节命令加入的多路径路由
+　　# ip route del default scope global nexthop dev ppp0 nexthop dev ppp1
+　　7.5.ip route show -- 列出路由
+　　缩写：show、list、sh、ls、l
+　　示例1: 计算使用gated/bgp协议的路由个数
+　　# ip route ls proto gated/bgp |wc
+　　1413 9891 79010
+　　示例2: 计算路由缓存里面的条数，由于被缓存路由的属性可能大于一行，以此需要使用-o选项
+　　# ip -o route ls cloned |wc
+　　159 2543 18707
+　　示例3: 列出路由表TABLEID里面的路由。缺省设置是table main。TABLEID或者是一个真正的路由表ID或者是/etc/iproute2/rt_tables文件定义的字符串，
+　　或者是以下的特殊值：
+　　all -- 列出所有表的路由；
+　　cache -- 列出路由缓存的内容。
+　　ip ro ls 193.233.7.82 tab cache
+　　示例4: 列出某个路由表的内容
+　　# ip route ls table fddi153
+　　示例5: 列出默认路由表的内容
+　　# ip route ls
+　　这个命令等于传统的: route
+　　7.6.ip route flush -- 擦除路由表
+　　示例1: 删除路由表main中的所有网关路由（示例：在路由监控程序挂掉之后）：
+　　# ip -4 ro flush scope global type unicast
+　　示例2:清除所有被克隆出来的IPv6路由：
+　　# ip -6 -s -s ro flush cache
+　　示例3: 在gated程序挂掉之后，清除所有的BGP路由：
+　　# ip -s ro f proto gated/bgp
+　　示例4: 清除所有ipv4路由cache
+　　# ip route flush cache
+　　*** IPv4 routing cache is flushed.
+　　7.7 ip route get -- 获得单个路由 .缩写：get、g
+　　使用这个命令可以获得到达目的地址的一个路由以及它的确切内容。
+　　ip route get命令和ip route show命令执行的操作是不同的。ip route show命令只是显示现有的路由，而ip route get命令在必要时会派生出新的路由。
+　　示例1: 搜索到193.233.7.82的路由
+　　# ip route get 193.233.7.82
+　　193.233.7.82 dev eth0 src 193.233.7.65 realms inr.ac cache mtu 1500 rtt 300
+　　示例2: 搜索目的地址是193.233.7.82，来自193.233.7.82，从eth0设备到达的路由（这条命令会产生一条非常有意思的路由，这是一条到193.233.7.82的回环路由）
+　　# ip r g 193.233.7.82 from 193.233.7.82 iif eth0
+　　193.233.7.82 from 193.233.7.82 dev eth0 src 193.233.7.65 realms inr.ac/inr.ac
+　　cache
+ mtu 1500 rtt 300 iif eth0
+　　8. ip route -- 路由策略数据库管理命令
+　　命令
+　　add、delete、show(或者list)
+　　注意：策略路由(policy routing)不等于路由策略(rouing policy)。
+　　在某些情况下，我们不只是需要通过数据包的目的地址决定路由，可能还需要通过其他一些域：源地址、IP协议、传输层端口甚至数据包的负载。
+　　这就叫做：策略路由(policy routing)。
+　　8.1. ip rule add -- 插入新的规则
+　　ip rule delete -- 删除规则
+　　缩写：add、a；delete、del、d
+　　示例1: 通过路由表inr.ruhep路由来自源地址为192.203.80/24的数据包
+　　ip ru add from 192.203.80/24 table inr.ruhep prio 220
+　　示例2:把源地址为193.233.7.83的数据报的源地址转换为192.203.80.144，并通过表1进行路由
+　　ip ru add from 193.233.7.83 nat 192.203.80.144 table 1 prio 320
+　　示例3:删除无用的缺省规则
+　　ip ru del prio 32767
+　　8.2. ip rule show -- 列出路由规则
+　　缩写：show、list、sh、ls、l
+　　示例1: # ip ru ls
+　　0: from all lookup local
+　　32762: from 192.168.4.89 lookup fddi153
+　　32764: from 192.168.4.88 lookup fddi153
+　　32766: from all lookup main
+　　32767: from all lookup 253
+　　9. ip maddress -- 多播地址管理
+　　缩写：show、list、sh、ls、l
+　　9.1.ip maddress show -- 列出多播地址
+　　示例1: # ip maddr ls dummy
+　　9.2. ip maddress add -- 加入多播地址
+　　ip maddress delete -- 删除多播地址
+　　缩写：add、a；delete、del、d
+　　使用这两个命令，我们可以添加／删除在网络接口上监听的链路层多播地址。这个命令只能管理链路层地址。
+　　示例1: 增加 # ip maddr add 33:33:00:00:00:01 dev dummy
+　　示例2: 查看 # ip -O maddr ls dummy
+　　2: dummy
+　　link 33:33:00:00:00:01 users 2 static
+　　link 01:00:5e:00:00:01
+　　示例3: 删除 # ip maddr del 33:33:00:00:00:01 dev dummy
+　　10.ip mroute -- 多播路由缓存管理
+　　10.1. ip mroute show -- 列出多播路由缓存条目
+　　缩写：show、list、sh、ls、l
+　　示例1:查看 # ip mroute ls
+　　(193.232.127.6, 224.0.1.39) Iif: unresolved
+　　(193.232.244.34, 224.0.1.40) Iif: unresolved
+　　(193.233.7.65, 224.66.66.66) Iif: eth0 Oifs: pimreg
+　　示例2:查看 # ip -s mr ls 224.66/16
+　　(193.233.7.65, 224.66.66.66) Iif: eth0 Oifs: pimreg
+　　9383 packets, 300256 bytes
+　　11. ip tunnel -- 通道配置
+　　缩写
+　　tunnel、tunl
+　　11.1.ip tunnel add -- 添加新的通道
+　　ip tunnel change -- 修改现有的通道
+　　ip tunnel delete -- 删除一个通道
+　　缩写：add、a；change、chg；delete、del、d
+　　示例1:建立一个点对点通道，最大TTL是32
+　　# ip tunnel add Cisco mode sit remote 192.31.7.104 local 192.203.80.1 ttl 32
+　　11.2.ip tunnel show -- 列出现有的通道
+　　缩写：show、list、sh、ls、l
+　　示例1: # ip -s tunl ls Cisco
+　　12. ip monitor和rtmon -- 状态监视
+　　ip命令可以用于连续地监视设备、地址和路由的状态。这个命令选项的格式有点不同，命令选项的名字叫做monitor，接着是操作对象：
+　　ip monitor [ file FILE ] [ all | OBJECT-LIST ]
+　　示例1: # rtmon file /var/log/rtmon.log
+　　示例2: # ip monitor file /var/log/rtmon.log r
+```
+</details>
+
+
+# 10. shell script
+
+## 10.1. 开始
 
 - /etc/profile 是 shell 打开时要读取的配置文件，里面有环境变量的定义等
 - pstree:展示进程树
@@ -841,7 +843,7 @@
   - 函数
   - 磁盘目录下的可执行文件
 
-## 7.2. 文本流，重定向
+## 10.2. 文本流，重定向
 
 - 预先知识
 
@@ -952,7 +954,7 @@
           cat 0<& 9  # 将输入重定向到0
           ```
 
-## 7.3. 变量
+## 10.3. 变量
 
 - 种类：
   - 本地
@@ -1004,7 +1006,7 @@
       - sleep 20 ：睡眠 20 秒
       - linux 中的 fork()函数
 
-## 7.4. 引用&命令替换
+## 10.4. 引用&命令替换
 
 > 三种引用机制查看 man bash
 
@@ -1059,7 +1061,7 @@
     lines=$(< scriptfile)
     ```
 
-## 7.5. 退出状态&逻辑判断
+## 10.5. 退出状态&逻辑判断
 
 - 退出状态：
   - echo \$?
@@ -1084,7 +1086,7 @@
     后执行的命令的返回状态。
   ```
 
-## 7.6. 表达式
+## 10.6. 表达式
 
 > man bash shell 语法>表达式
 
@@ -1115,7 +1117,7 @@
   # 因此中括号和表达式必须要用空格分开
   ```
 
-## 7.7. 流程控制
+## 10.7. 流程控制
 
 > **全部通过 help 进行学习**
 
@@ -1139,7 +1141,7 @@
 
   ```
 
-## 7.8. 练习
+## 10.8. 练习
 
 - shell 编程一切皆命令
 - 习惯通过 `$?` 进行逻辑判断
@@ -1147,111 +1149,111 @@
 - 命令扩展后，会将结果进行词的拆分。 `echo $IFS` 查看。默认是空格和换行符
 
 ```bash
-# 写一个脚本
-# 添加用户
-# 用户密码同用户名
-# 静默运行脚本，不要又各种输出
-# 避免捕获用户接口,一口气把参数给足
-# 程序自定义输出
-  # 成功或失败
+  # 写一个脚本
+  # 添加用户
+  # 用户密码同用户名
+  # 静默运行脚本，不要又各种输出
+  # 避免捕获用户接口,一口气把参数给足
+  # 程序自定义输出
+    # 成功或失败
 
-#!/bin/bash
-[ ! $# -eq 1 ] && echo 'param numbers error' && exit 3  # 0为正常退出，非0为错误退出
-# 不要逻辑或逻辑与混着用，否则容易混,出现歧义
+  #!/bin/bash
+  [ ! $# -eq 1 ] && echo 'param numbers error' && exit 3  # 0为正常退出，非0为错误退出
+  # 不要逻辑或逻辑与混着用，否则容易混,出现歧义
 
-id $1 &>/dev/null && echo 'user has exist' && exit 4
-# echo $? 可以发现 id 存在用户 返回0,即true
+  id $1 &>/dev/null && echo 'user has exist' && exit 4
+  # echo $? 可以发现 id 存在用户 返回0,即true
 
-useradd $1 &>/dev/null && echo $1 | passwd --stdin $1 &> /dev/null && echo `useradd ok` && exit 0
-# passwd  $1 0<<<$1 这是修改bash进程输入流，而不是passwd进程,所以不能用
-# 从标准输入流读取   man passwd查看
-# $> 全部输出到 /dev/null ，静默输出
-echo 'just root can add user'
-exit 5
+  useradd $1 &>/dev/null && echo $1 | passwd --stdin $1 &> /dev/null && echo `useradd ok` && exit 0
+  # passwd  $1 0<<<$1 这是修改bash进程输入流，而不是passwd进程,所以不能用
+  # 从标准输入流读取   man passwd查看
+  # $> 全部输出到 /dev/null ，静默输出
+  echo 'just root can add user'
+  exit 5
 ```
 
 ```bash
-# 用户给定路径
-# 递归遍历文件
-# 输出文件大小最大的文件
+  # 用户给定路径
+  # 递归遍历文件
+  # 输出文件大小最大的文件
 
-#!/bin/bash
-oldIFS=$IFS
-IFS=$'\n' # $'' 表示取字符在ascii码中的码值
-for i in `du -a $a | sort -nr`;do # 命令扩展后，会讲结果进行词的拆分。 echo $ifs 查看。默认是空格和换行符
-  filename=`echo $i | awk '{print $2}'`
-  if [ -f $filename ];then # help test 查看-f选项
-    echo $filename
-    exit 0
-  fi
-done
-$IFS=oldIFS
+  #!/bin/bash
+  oldIFS=$IFS
+  IFS=$'\n' # $'' 表示取字符在ascii码中的码值
+  for i in `du -a $a | sort -nr`;do # 命令扩展后，会讲结果进行词的拆分。 echo $ifs 查看。默认是空格和换行符
+    filename=`echo $i | awk '{print $2}'`
+    if [ -f $filename ];then # help test 查看-f选项
+      echo $filename
+      exit 0
+    fi
+  done
+  $IFS=oldIFS
 
-echo 'file not find'
-exit 2
+  echo 'file not find'
+  exit 2
 ```
 
 ```bash
-# 循环遍历文件每一行，定义一个计时器num，打印num正好是文件行数.
+  # 循环遍历文件每一行，定义一个计时器num，打印num正好是文件行数.
 
-# 方式一  高级for
-#!/bin/bash
-oldifs=$IFS
-IFS=${'\n'}
-num=0
-for i in  `cat test.txt`  ;do
-  echo $i
-  ((num++))
-done
-echo num:$num
-IFS=$oldifs
+  # 方式一  高级for
+  #!/bin/bash
+  oldifs=$IFS
+  IFS=${'\n'}
+  num=0
+  for i in  `cat test.txt`  ;do
+    echo $i
+    ((num++))
+  done
+  echo num:$num
+  IFS=$oldifs
 
-#方式二 for循环
-#!/bin/bash
-num=0
-lines=`cat test.txt|wc -l`
-for ((i=1;i<=lines;i++));do
-  head -$i test.txt|tail -1
-  ((num++))
-done
-echo num:$num
+  #方式二 for循环
+  #!/bin/bash
+  num=0
+  lines=`cat test.txt|wc -l`
+  for ((i=1;i<=lines;i++));do
+    head -$i test.txt|tail -1
+    ((num++))
+  done
+  echo num:$num
 
-# 方式三 重定向
-num=0
-exec 8<&0  # 备份bash进程输入流位置
-exec 0< test.txt
-# read命令是从标准输入流中读取数据。read对换行符敏感。读一次读一行
-while read line;do
-  echo $line
-  ((num++))
-done
-echo $num
-exec 0<&8  # 恢复输入流位置
+  # 方式三 重定向
+  num=0
+  exec 8<&0  # 备份bash进程输入流位置
+  exec 0< test.txt
+  # read命令是从标准输入流中读取数据。read对换行符敏感。读一次读一行
+  while read line;do
+    echo $line
+    ((num++))
+  done
+  echo $num
+  exec 0<&8  # 恢复输入流位置
 
-# 方式四：方式三的变种,方式三为方式四的本质
-num=0
-while read line;do
-  echo $lline
-  ((num++))
-done 0<test.txt  # 更改while命令进程的输入流，不过while是build in shell，所以也就是在更改shell的标准输入流
-                 # 不过while执行结束后，会自动将标准输入流复原
-echo num:$num
+  # 方式四：方式三的变种,方式三为方式四的本质
+  num=0
+  while read line;do
+    echo $lline
+    ((num++))
+  done 0<test.txt  # 更改while命令进程的输入流，不过while是build in shell，所以也就是在更改shell的标准输入流
+                  # 不过while执行结束后，会自动将标准输入流复原
+  echo num:$num
 
-# 方式五 管道
-#!/bin/bash
-# 进程间资源不共享
-# num=0  # 子进程不能修改父进程数据,所以num要定义在右边，又因为while是一个语句块，想要添加语句就要使用{}
-cat test.txt|{
-num=0
-while read line;do
-      echo $line
-      ((num++))  # 无法修改父进程的num
-done
-echo $num
-}
+  # 方式五 管道
+  #!/bin/bash
+  # 进程间资源不共享
+  # num=0  # 子进程不能修改父进程数据,所以num要定义在右边，又因为while是一个语句块，想要添加语句就要使用{}
+  cat test.txt|{
+  num=0
+  while read line;do
+        echo $line
+        ((num++))  # 无法修改父进程的num
+  done
+  echo $num
+  }
 ```
 
-## 7.9. 七个扩展
+## 10.9. 七个扩展
 
 > man bash 吧，所有都在 man bash
 
