@@ -627,6 +627,10 @@ noremap <C-l> <C-w>l
 noremap <M-h> :bf<cr>
 noremap <M-l> :bn<cr>
 
+" 设置tab跳转
+noremap <M-j> :tabnext <cr>
+noremap <M-k> :tabpre<cr>
+
 "设置路径为当前文件所在路径
 nnoremap <silent><leader>zp :cd %:h<cr>
 let g:which_key_map.z.p = "setPathNow"
@@ -664,7 +668,13 @@ let g:which_key_map.b.o = "deleteOthers"
 
 " 将链接下的文件下载到指定位置
 function! SaveImageByUrl()
-    let l:name = input('Image name: ') . ".png"
+    let l:name = input('Image name: ')
+    if(strlen(l:name)==0)
+      echo "\n"
+      echo "image name empty!"
+      return ""
+    endif
+    let l:name = l:name . ".png"
     echo "\n"
     let l:relate_path = expand("%")[0:strlen(expand("%"))-strlen(expand("%:t"))-2]
     let l:image_path = l:relate_path . g:mdip_imgdir[1:] . "/" . l:name
@@ -699,6 +709,20 @@ let g:which_key_map.o.c.v =  "vscode"
 
 nnoremap <silent><leader>zp :!markmap %  <cr> 
 let g:which_key_map.z.p = "markmap"
+
+nnoremap <silent><leader>fo :call FindFromAllFile()<cr>
+let g:which_key_map.f.o = "find and open"
+
+function! FindFromAllFile()
+    let l:find_str = input('what are you find:')
+    if(strlen(l:find_str)==0)
+      echo "\n"
+      echo "finded str is empty!"
+      return ""
+    endif
+    call tagbar#CloseWindow()
+    execute("vimgrep /" . l:find_str . "/ ./**/*.md ./**/*.txt ./**/*.java ./**/*.scala ./**/*.py | copen")
+endfunction
 
 "=================================================map end===================================================
 
