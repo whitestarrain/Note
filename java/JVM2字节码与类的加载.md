@@ -187,6 +187,8 @@ Son 类的字节码：
 
 ## 2.2. class 文件结构
 
+[Demo字节码解析的excel文件](./资料/Demo字节码的解析.xlsx)
+
 ### 2.2.1. 整体说明
 
 - Class 类的本质
@@ -345,6 +347,8 @@ public class Demo {
     > 在实际应用中,由于开发环境和生产环境的不同,可能会导致该问题的发生。因此,需要我们在开发时,特别注意开发编译的 JDK 版本和生产环境中的 DK 版本是否一致
 
 #### 2.2.2.4. 常量池
+
+![jvm2-48](./image/jvm2-48.png)
 
 ##### 2.2.2.4.1. 说明
 
@@ -671,7 +675,7 @@ public class Demo {
     - 编程时的合法性要求：两个字段的数据类型、修饰符不管是否相同，都必须使用不一样的名称，
     - JVM 字节码的合法性要求：如果两个字段的描述符不一致，那字段重名就是合法的。
 
-##### 2.2.2.7.2. 组成
+##### 2.2.2.7.2. 字段计数器和字段表
 
 > ##### fields_count（字段计数器）
 
@@ -697,9 +701,6 @@ public class Demo {
 
 - 字段表作为一个表，同样有他自己的结构：
 
-  <details>
-  <summary style="color:red;">展开(一定要看)</summary>
-
   | 标志名称       | 标志值           | 含义       | 数量             |
   | :------------- | :--------------- | :--------- | :--------------- |
   | u2             | access_flags     | 访问标志   | 1                |
@@ -708,16 +709,11 @@ public class Demo {
   | u2             | attributes_count | 属性计数器 | 1                |
   | attribute_info | attributes       | 属性集合   | attributes_count |
 
-  </details>
-
   - 字段表访问标识
     - 我们知道，一个字段可以被各种关键字去修饰
     - 比如：作用域修饰符（public、private、protected）、static 修饰符、final 修饰符、volatile 修饰符等等
     - 因此，其可像类的访问标志那样，使用一些标志来标记字段。**同时也可以加起来，表示多个标志共同修饰**
     - 字段的访问标志有如下这些：
-
-    <details>
-    <summary style="color:red;">展开(一定要看)</summary>
 
     | 标志名称        | 标志值 | 含义                       |
     | :-------------- | :----- | :------------------------- |
@@ -731,20 +727,17 @@ public class Demo {
     | `ACC_SYNCHETIC` | 0x1000 | 字段是否为由编译器自动产生 |
     | `ACC_ENUM`      | 0x4000 | 字段是否为 enum            |
 
-    </details>
-
   - 字段名索引：
     - 指向常量池中字段名的索引
   - 描述符索引
-    - 描述符的作用是用来描述字段的数据类型、方法的参数列表（包括数量、类型以及顺序）和返回值
-      > 这里看字段就行
-    - 根据描述符规则，基本数据类型（byte，char，double，float，int，long，short，boolean）及代表无返回值的 void 类型都用一个大写字符来表示
-    - 而对象则用字符 L 加对象的全限定名来表示，如下所示：
+    - 对于字段来说：
+      - 描述字段的数据类型
+    - 对于方法来说：
+      - 描述方法的参数列表（包括数量、类型以及顺序）
+      - 描述方法的返回值
+    - 根据描述符规则表示方法如下：
 
     > 前面就有这张表
-
-    <details>
-    <summary style="color:red;">展开(一定要看)</summary>
 
     | 标志符 | 含义                                                 |
     | :----- | :--------------------------------------------------- |
@@ -760,7 +753,6 @@ public class Demo {
     | L      | 对象类型，比如：`Ljava/lang/Object;`                 |
     | `[`    | 数组类型，代表一维数组。比如：`double[][][] is [[[D` |
 
-    </details>
   - 属性计数器和属性集合
     - 一个字段还可能拥有一些属性，用于存储更多的额外信息
     - 比如常量的初始化值、一些注释信息等。
@@ -783,29 +775,41 @@ public class Demo {
 ##### 2.2.2.8.1. 基本说明
 
 - 说明：
-  - 指向常量池索引集合，它完整描述了每个方法的签名。
-  - 在字节码文件中，每一个 `method_info 项`都对应着一个类或者接口中的方法信息
-  - 比如方法的访问修饰符（public、private 或 protected），方法的返回值类型以及方法的参数信息等。
-  - 如果这个方法不是抽象的或者不是 native 的，那么字节码中会体现出来。
+  - 作用：
+    - 指向常量池索引集合，它完整描述了每个方法的签名。
+    - 在字节码方法表中，每一个 `method_info 项`都对应着一个类或者接口中的方法信息，如：
+      - 方法的访问修饰符（public、private 或 protected）
+      - 方法的返回值类型
+      - 方法的参数信息
+      - ...
+  - 注意：
+    - 每个`method_info`都包含一个属性结合`attribute_info`
+    - 方法的具体执行字节码包含在`method_info`中的属性集合`attribute_info`中
+
 - 组成：
-  - methods 表只描述当前类或接口中声明的方法
-  - 不包括从父类或父接口继承的方法。
-  - 另一方面，methods 表有可能会出现由编译器自动添加的方法，最典型的便是编译器产生的方法信息（比如：类（接口）初始化方法`<clinit>()`和实例初始化方法`<init>()`。
+  - 包括：
+    - methods 表只描述当前类或接口中声明的方法
+    - methods 表有可能会出现由编译器自动添加的方法
+      > 最典型的便是编译器产生的方法信息（比如：类（接口）初始化方法`<clinit>()`和实例初始化方法`<init>()`。
+  - 不包括：
+    - 从父类或父接口继承的方法。
 
 - **使用注意事项：**
-  - 在 Java 语言中，要重载（Overload）一个方法
-    - 除了要与原方法具有相同的简单名称之外
-    - 还要求必须拥有一个与原方法不同的特征签名
-      - 特征签名就是一个方法中各个参数在常量池中的字段符号引用的集合
-      - 也就是因为返回值不会包含在特征签名之中，因此 Java 语言里无法仅仅依靠返回值的不同来对一个已有方法进行重载
+  - java语言中的重载：
+    - **除了要与原方法具有相同的简单名称之外，还要求必须拥有一个与原方法不同的特征签名**
+    - 特征签名 **是一个方法中各个参数在常量池中的字段符号引用的集合**
+      - **返回值不会包含在特征签名之中**
+      - 因此 Java 语言里无法仅仅依靠返回值的不同来对一个已有方法进行重载
+  - 字节码中的重载：
     - 但**在 Class 文件格式**中，**特征签名的范围更大一些，只要描述符不是完全一致的两个方法就可以共存**
     - 也就是说，如果两个方法有相同的名称和特征签名，但返回值不同，那么也是可以合法共存于同一个 class 文件中。
-  - 也就是说，**Class 字节码文件允许通过返回值不同进行重载**
+  - 结论：
+    - 重载方法在java语法和jvm中的区别: **Class 字节码文件允许通过返回值不同进行重载**
     - 尽管 Java 语法规范并不允许在一个类或者接口中声明多个方法签名相同的方法
     - 但是和 Java 语法规范相反，字节码文件中却恰恰允许存放多个方法签名相同的方法
       - 唯一的条件就是这些方法之间的返回值不能相同。
 
-##### 2.2.2.8.2. 组成
+##### 2.2.2.8.2. 方法计数器和方法表
 
 > ##### methods_count（方法计数器）
 
@@ -825,9 +829,6 @@ public class Demo {
 - 方法表的结构
   > 实际跟字段表是一样的，方法表结构如下：
 
-  <details>
-  <summary style="color:red;">展开(一定要看)</summary>
-
   | 标志名称       | 标志值           | 含义       | 数量             |
   | :------------- | :--------------- | :--------- | :--------------- |
   | u2             | access_flags     | 访问标志   | 1                |
@@ -836,25 +837,58 @@ public class Demo {
   | u2             | attributes_count | 属性计数器 | 1                |
   | attribute_info | attributes       | 属性集合   | attributes_count |
 
-  </details>
-
   - **方法表访问标志**
     > 跟字段表一样，方法表也有访问标志，而且他们的标志有部分相同，部分则不同 <br />
     > 方法表的具体访问标志如下：
 
-    <details>
-    <summary style="color:red;">展开(一定要看)</summary>
+    | 标志名称         | 标志值 | 含义                                |
+    | ---------------- | ------ | ----------------------------------- |
+    | ACC_PUBLIC       | 0x0001 | public，方法可以从包外访问          |
+    | ACC_PRIVATE      | 0x0002 | private，方法只能本类中方法         |
+    | ACC_PROTECTED    | 0x0004 | protected，方法在自身和子类可以访问 |
+    | ACC_STATIC       | 0x0008 | static，静态方法                    |
+    | ACC_FINAL        | 0x0010 | final，方法不能被重写（覆盖）       |
+    | ACC_SYNCHRONIZED | 0x0020 | synchronized，调用由监视器使用      |
+    | ACC_BRIDGE       | 0x0040 | 由编译器生成的方法                  |
+    | ACC_VARARGS      | 0x0080 | 可变数量的参数声明                  |
+    | ACC_NATIVE       | 0x0100 | native，非Java语言实现的代码        |
+    | ACC_ABSTRACT     | 0x0400 | abstract，抽象方法                  |
+    | ACC_STRICT       | 0x0800 | strictfp，浮点数模式为FP-strict     |
+    | ACC_SYNTHETIC    | 0x1000 | synthetic，源代码中不存在           |
 
-    | 标志名称      | 标志值 | 含义                                |
-    | :------------ | :----- | :---------------------------------- |
-    | ACC_PUBLIC    | 0x0001 | public，方法可以从包外访问          |
-    | ACC_PRIVATE   | 0x0002 | private，方法只能本类访问           |
-    | ACC_PROTECTED | 0x0004 | protected，方法在自身和子类可以访问 |
-    | ACC_STATIC    | 0x0008 | static，静态方法                    |
+  - 方法名索引
+    - 指向常量池中方法名的索引
+  - 描述符索引
+    - 对于字段来说：
+      - 描述字段的数据类型
+    - 对于方法来说：
+      - 描述方法的参数列表（包括数量、类型以及顺序）
+      - 描述方法的返回值
+    - 如：`()V`表示无参数，无返回值。`(Ljava/lang/String;)V`表示一个String参数无返回值
+    - 根据描述符规则表示方法如下：
 
-    </details>
+    > 前面就有这张表
 
-  - 其他和字段表集合一一类比即可
+    | 标志符 | 含义                                                 |
+    | :----- | :--------------------------------------------------- |
+    | B      | 基本数据类型 byte                                    |
+    | C      | 基本数据类型 char                                    |
+    | D      | 基本数据类型 double                                  |
+    | F      | 基本数据类型 float                                   |
+    | I      | 基本数据类型 int                                     |
+    | J      | 基本数据类型 long                                    |
+    | S      | 基本数据类型 short                                   |
+    | Z      | 基本数据类型 boolean                                 |
+    | V      | 代表 void 类型                                       |
+    | L      | 对象类型，比如：`Ljava/lang/Object;`                 |
+    | `[`    | 数组类型，代表一维数组。比如：`double[][][] is [[[D` |
+
+  - 属性计数器和属性表集合
+    > 具体属性看下一节
+    - 用来描述方法的具体执行逻辑和其他信息
+    - 比如方法对应执行字节码在`Code`属性中
+      - code属性中还有`Exception_table`属性
+    - throws信息在`Exception`属性中
 
 #### 2.2.2.9. 属性表集合
 
@@ -2161,7 +2195,6 @@ public class Demo {
 
   ![jvm2-37.png](./image/jvm2-37.png)
 
-
 > ### 数组长度指令
 
 - `arraylength`
@@ -2584,6 +2617,7 @@ public class Demo {
 - 多条件分支跳转指令
   - 针对 switch case 进行设计
 - 无条件跳转指令
+  - 直接跳转
 
 ### 3.8.2. 比较指令的说明
 
@@ -3306,69 +3340,90 @@ public class Demo {
 
 ## 3.10. 同步控制指令
 
-- **组成**
+### 3.10.1. 说明
+
+- 种类：
   - **方法级的同步**
   - **方法内部一段指令序列的同步**
 - 原理：
-  - Java 虚拟机支持两种同步结构，这两种同步都是使用 monitor 来支持的。
-- **方法级的同步**
-  - 实现：
-    - 方法级的同步是隐式的
-    - 即无需通过字节码指令来控制，它实现在方法调用和方法返回操作之中
-  - 声明方法：
-    - 虚拟机可以从方法常量池的方法表结构中的 `ACC_SYNCHRONIZED` 访问标志的值一个方法是否声明为同步方法；
-  - 流程说明：
-    - 当调用方法时，调用指令将会检查方法 ACC_SYNCHRONIZED 访问标志是否设置。
-    - 如果设置了，执行线程将先持有同步锁，然后执行方法。
-    - 在方法执行期间，执行线程持有同步锁，其他任何线程都无法再获得同一个锁。
-    - **最后** 在方法完成（无论是正常完成还是非正常完成）时 **释放同步锁** 。
+  - Java 虚拟机支持两种同步结构，这两种同步都是使用 `monitor` 来支持的。
+
+### 3.10.2. 方法级的同步
+
+- 实现：
+  - 方法级的同步是隐式的
+  - 即 **无需通过字节码指令来控制** ，它实现在方法调用和方法返回操作之中
+- 声明方法：
+  - 虚拟机可以从方法常量池的方法表结构中的 `ACC_SYNCHRONIZED` 访问标志的值一个方法是否声明为同步方法；
+- 流程说明：
+  - 当调用方法时，调用指令将会检查方法 ACC_SYNCHRONIZED 访问标志是否设置。
+  - 如果设置了，执行线程将先持有同步锁，然后执行方法。
+  - 在方法执行期间，执行线程持有同步锁，其他任何线程都无法再获得同一个锁。
+  - **最后** 在方法完成时 **释放同步锁** 。
+    - 正常完成
+      - 正常执行完，释放锁
+    - 非正常完成
       - 如果一个同步方法执行期间抛出了异常，并且在方法内部无法处理此异常
       - 那这个同步方法所持有的锁将在异常抛出的同步方法之外时自动释放。
 
-  - 示例：
-    ```java
-    private int i = 0;
+- 示例：
+  ```java
+  private int i = 0;
 
-    public synchronized void add() {
-        i++;
-    }
-    ```
-    ```
-    0 aload_0
-    1 dup
-    2 getfield #2 <com/atguigu/java1/SynchronizedTest.i>
-    5 iconst_1
-    6 iadd
-    7 putfield #2 <com/atguigu/java1/SynchronizedTest.i>
-    10 return
-    ```
+  public synchronized void add() {
+      i++;
+  }
+  ```
+  ```
+  0 aload_0
+  1 dup
+  2 getfield #2 <com/atguigu/java1/SynchronizedTest.i>
+  5 iconst_1
+  6 iadd
+  7 putfield #2 <com/atguigu/java1/SynchronizedTest.i>
+  10 return
+  ```
 
-  > 这段代码和普通的无同步操作的代码没有什么不同，没有使用 monitorenter 和 monitorexit 进行同步区控制 <br />
-  > 这是因为，对于同步方法而言，**当虚拟机通过方法的访问标识符判断一个同步方法时，会自动在方法调用前进行加锁** <br />
-  > 当同步方法执行完毕后，不管方法时正常结束还是有异常抛出，均会由虚拟机释放这个锁 <br />
-  > 因此，对于同步方法而言，monitorenter 和 monitorexit 指令是隐式存在的，并未直接出现在字节码中。
+  ![jvm2-49](./image/jvm2-49.png)
 
-- **方法内指定序列的同步**
-  - 实现：
-    - 同步一段指令序列：通常由 Java 中的 synchronized 语句块来表示的
-    - jvm 的指令集有 monitorenter 和 monitorexit 两条指令来支持 synchronized 关键字的语义。
-  - 同步执行流程
-    - 当一个线程进入同步代码块时，它使用 monitorenter 指令请求进入
-    - 如果当前对象的监视器为 0，则它会被允许进入
-    - 若为 1，则判断持有当前监视器的线程是否为自己
+  - 这段代码和普通的无同步操作的代码没有什么不同，没有使用 monitorenter 和 monitorexit 进行同步区控制
+  - 这是因为，对于同步方法而言，**当虚拟机通过方法的访问标识符判断一个同步方法时，会自动在方法调用前进行加锁**
+  - 当同步方法执行完毕后，不管方法时正常结束还是有异常抛出，均会由虚拟机释放这个锁
+  - 因此，对于同步方法而言，monitorenter 和 monitorexit 指令是隐式存在的，并未直接出现在字节码中。
+
+### 3.10.3. 方法内指定序列的同步
+
+- 实现：
+  - 同步一段指令序列：通常由 Java 中的 `synchronized` 语句块来表示的
+  - jvm 的指令集有两条指令来支持 synchronized 关键字的语义。
+    - monitorenter 
+    - monitorexit
+- 命令执行流程说明：
+  - 指令 monitorenter 和 monitorexit 在执行时，都需要**往操作数栈顶压入对象**
+  - 执行 monitorenter 和 monitorexit 时会弹出对象
+  - 之后 monitorenter 和 monitorexit 的锁定和释放都是**针对这个对象的监视器**进行的。
+- 同步执行流程
+  - 当一个线程进入同步代码块时，它使用 `monitorenter` 指令请求进入
+    - 如果当前对象的监视器为 `0`，则它会被允许进入
+    - 若为 `1`，则判断持有当前监视器的线程是否为自己
       - 如果是，则进入，否则进行等待，知道对象的监视器计数器为 0，才会被允许进入同步块。
-    - 当线程退出同步代码块时，需要使用 monitorexit 声明退出
-      - 在 Java 虚拟机中，任何对象都有一个监视器与之相关联，用来判断对象是否被锁定，当监视器被持有后，对象处于锁定状态。
-  - 命令执行流程说明：
-    - 指令 monitorenter 和 monitorexit 在执行时，都需要操作数栈顶压入对象，之后 monitorenter 和 monitorexit 的锁定和释放都是针对这个对象的监视器进行的。
-    - 下图展示了监视器如何保护临界区代码不同时被多个线程访问，只有当线程 4 离开临界区后，线程 1、2、3 才有可能进入。
+  - 当线程退出同步代码块时，需要使用 `monitorexit` 声明退出
+    - 在 Java 虚拟机中，任何对象都有一个监视器与之相关联，用来判断对象是否被锁定
+    - 当监视器被持有后，对象处于锁定状态。
 
-    ![jvm2-46.png](./image/jvm2-46.png)
+  ![jvm2-50](./image/jvm2-50.png)
 
-- 注意：
-  - 编译器必须确保无论方法通过何种方式完成，方法中调用过的每条 monitorenter 指令都必须执行其对应的 monitorexit 指令，而无论这个方法是正常结束还是异常结束。
-  - 为了保证在方法异常完成时 monitorenter 和 monitorexit 指令依然可以正确配对执行
-  - **编译器会自动产生一个异常处理器，这个异常处理器声明可处理所有的异常** ，它的目的就是用来执行 monitorexit 指令。
+  ![jvm2-46.png](./image/jvm2-46.png)
+  > 监视器保护临界区代码不同时被多个线程访问 <br />
+  > 只有当线程 4 离开临界区后，线程 1、2、3 才有可能进入。
+
+- 注意：同步代码块自动生成异常处理
+  - 目的：
+    - 无论这个方法是正常结束还是异常结束
+    - 编译器必须确保无论方法通过何种方式完成，方法中调用过的每条 monitorenter 指令都必须执行其对应的 monitorexit 指令
+  - 处理
+    - 为了保证在方法异常完成时 monitorenter 和 monitorexit 指令依然可以正确配对执行
+    - **编译器会自动产生一个异常处理器，这个异常处理器声明可处理所有的异常** ，它的目的就是用来执行 monitorexit 指令。
 
 - 举例：
 
@@ -3386,8 +3441,906 @@ public class Demo {
   ```
 
   ![jvm2-47.png](./image/jvm2-47.png)
+  > 蓝色部分为自动生成的异常处理
 
 # 4. 类的加载过程详解
+
+## 4.1. 概述
+
+- 概述：
+  - 在Java中数据类型分为基本数据类型和引用数据类型
+    - 基本数据类型由虚拟机预先定义
+    - 引用数据类型则需要进行类的加载
+  - 按照Java虚拟机规范，从class文件到加载到内存中的类，到类卸载出内存为止，它的整个生命周期包括7个阶段。
+
+- 引用数据类型的生命周期
+
+  ![jvm2-51.png](./image/jvm2-51.png)
+
+  > 其中，验证、准备、解析 3 个部分统称为链接（Linking）
+
+- 类加载使用流程
+
+  ![jvm2-52.png](./image/jvm2-52.png)
+
+## 4.2. Loading（加载）阶段
+
+### 4.2.1. 概述
+
+- **加载**
+  - 目的：
+    - **所谓加载，简而言之就是将Java类的字节码加载到机器内存中**
+    - **并在内存中构建出Java的原型-------类模板对象**
+  - 加载流程：
+    - 通过类的全名，获取类的二进制数据流。
+      > 对于类的二进制流数据，虚拟机可以通过多种途径产生或获得。（只要读取的字节码符合JVM规范即可）
+      - 虚拟机可能通过文件系统读入一个class后缀的文件（**最常见**）
+      - 读入jar、zip等归档数据包，提取类文件。
+      - 事先存放在数据库中的类的二进制数据
+      - 使用类似于HTTP之类的协议通过网络进行加载
+      - 在运行时生成一段Class的二进制信息等。
+    - 解析类的二进制数据流为**方法区内的数据结构**（Java类模型）
+      - 如果输入数据不是ClassFile的结构，则会抛出ClassFormatError。
+    - 创建java.lang.Class类的实例，表示该类型。 **作为方法区这个类的的各种数据的访问入口**
+
+### 4.2.2. 类模板与Class实例
+
+- **类模板**
+  - 位置：加载的类在JVM中创建相应的类结构，类结构会存储在**方法区**
+    > JDK1.8之前：永久代；JDK及以后：元空间
+  - 说明：
+    - 其实就是**Java类在JVM内存中的一个快照**
+    - JVM将字节码文件解析出的常量池、类字段、类方法等信息等信息存储到类模板中
+  - 作用：
+    - JVM在运行期**通过类模板**而获取Java类中的任意信息，能够对Java类的成员变量进行遍历，也能进行Java方法的调用。
+      > 而访问类模版则是通过Class实例这个接口，具体看下面
+    - 反射的机制即基于这一基础。如果JVM没有将Java类的声明信息存储起来，则JVM在运行期也无法反射。
+
+- **Class实例：**
+  - 位置： **堆中**
+  - 目的/作用：
+    - 用来封装位于方法区的数据结构
+    - java.lang.Class实例是**访问类型元数据的接口**，也是**实现反射的关键入口**
+    - 通过Class类提供的接口，可以获得目标类所关联的.class文件中具体的数据结构：方法、字段等信息。
+  - 创建时机：
+    - 类将`.class`文件**加载至元空间后**，会**在堆中**创建一个java.lang.Class对象，
+    - **该Class对象是在加载类的过程中创建**的
+    - 每个类都对应一个Class类型的对象
+  - 具体流程：（instanceKlass --> mirror: Class的实例）
+    > **细节待补充**
+  - 注意：Class类的构造方法是私有的，只有JVM能够创建。
+
+- **图示：**
+
+  ![jvm2-53.png](./image/jvm2-53.png)
+
+- **类模版和Class实例关系**：
+  - java.lang.Class实例是**访问类型元数据的接口**
+  - 也是 **实现反射的关键入口**
+  - 外部可以通过访问Class对象来获取对应的类数据结构。
+
+- 反射示例：通过Class对象获取类模版对象的数据结构
+  ```java
+  // 通过Class类，获得了java.lang.String类的所有方法信息，并打印方法访问标识符、描述符
+  public class LoadingTest {
+      public static void main(String[] args) {
+          try {
+              Class clazz = Class.forName("java.lang.String");
+              // 获取当前运行时类声明的所有方法
+              Method[] ms = clazz.getDeclaredMethods();
+              for (Method m : ms) {
+                  // 获取方法的修饰符
+                  String mod = Modifier.toString(m.getModifiers());
+                  System.out.print(mod + " ");
+                  // 获取方法的返回值类型
+                  String returnType = m.getReturnType().getSimpleName();
+                  System.out.print(returnType + " ");
+                  // 获取方法名
+                  System.out.print(m.getName() + "(");
+                  // 获取方法的参数列表
+                  Class<?>[] ps = m.getParameterTypes();
+                  if (ps.length == 0) System.out.print(')');
+                  for (int i = 0; i < ps.length; i++) {
+                      char end = (i == ps.length - 1) ? ')' : ',';
+                      // 获取参数的类型
+                      System.out.print(ps[i].getSimpleName() + end);
+                  }
+                  System.out.println();
+              }
+          } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+          }
+      }
+  }
+  ```
+
+### 4.2.3. 数组类的加载
+
+- 加载方式：
+  - **数组本身并不是由类加载器负责创建的**
+  - 而是**由JVM在运行时根据需要而直接创建**
+  - 但**数组的元素类型仍然需要依靠类加载器去创建**
+- 加载流程：
+  - 如果数组的元素类型是引用类型，那么就遵循定义的加载过程递归加载和创建数组元素对应的类；
+    > 比如 `String[]`需要先加载String
+  - 之后JVM使用**指定的元素类型**和**数组维度**来创建新的数组类。
+- 访问权限
+  - 如果数组的元素类型是引用类型，数组类的可访问性就由元素类型的可访问性决定
+  - 否则，如果是基本数据类型，数组类的可访问性被定义为public。
+
+## 4.3. Linking链接阶段
+
+### 4.3.1. Verification（验证）
+
+- 执行时机：当类加载到系统后，就开始链接操作，验证是链接操作的第一步
+- 提前检验的优点：链接阶段的验证虽然拖慢了加载速度，但是避免了在字节码运行时还需要进行各种检查。
+- 目的： **它的目的是保证加载的字节码是合法、合理并且符合规范的。**
+
+- 执行流程：
+  > 验证的步骤比较复杂，实际要验证的项目也很繁多，大体上java虚拟机需要做以下检查，如图所示：
+
+  ![jvm2-54.png](./image/jvm2-54.png)
+
+- **具体说明：**
+  - **格式验证**
+    - 目的：验证字节码格式
+    - 执行环节：和 **加载阶段** 一起执行
+    - 结果：会将二进制数据信息加载到方法区
+    - 执行位置：无，此时还未加载入JVM
+    - 验证项：
+      - 是否以魔数0xcafebabe开头
+      - 主版本和副版本号是否在当前Java虚拟机的支持范围
+      - 数据中的每一项是否都拥有正确的长度
+      - ...
+  - **语义检查** :
+    - 目的：判断在语义上是否不符合规范
+    - 执行环节：链接阶段执行
+    - 执行位置：方法区
+    - 验证项：
+      - 是否所有的类都有父类的存在（在Java里，除了Object外，其他类都应该有父类）
+      - 是否一些被定义为final的方法或者类被重写或继承了
+      - 非抽象类是否实心了所有抽象方法或接口方法
+      - 是否存在不兼容的方法
+        - 比如方法的签名除了返回值不同，其他都一样，这种方法会让虚拟机无从下手调度
+        - abstract情况下的方法，不能是final类型
+  - **字节码验证**:
+    - 目的：它试图通过字节码流的分析，判断字节码是否可以被正确的执行
+    - 执行环节：链接阶段执行
+    - 执行位置：方法区
+    - 验证项：
+      - 在字节码执行的过程中，是否会跳转到一条不存在的指令
+      - 函数的调用是否传递了正确类型的参数
+      - 变量的赋值是不是给了正确的数据类型等。
+      - 栈帧映射(StackMapTable)的检查
+        - 栈映射帧（StackMapTable）位置：Code属性中的属性
+        - 目的：用于检测在特定的字节码处，其局部变量表和操作数栈是否有着正确的数据类型
+        - 注意：
+          - 100%准确地判断一段字节码是否可以被安全执行是无法实现的
+          - 因此，该过程只是尽可能地检查出可以预知的明显的问题
+          - 如果在这个阶段无法通过检查，虚拟机也不会正确装在这个类
+          - 但是，如果通过了这个阶段的检查，也不能说明这个类是完全没有问题的。
+  - **符号引用的验证**
+    - 目的：
+      - Class文件在其常量池会通过字符串记录自己将要使用的其他类或者方法
+      - 因此，在验证阶段， **虚拟机就会检查这些类或者方法是否确实存在** ，**并且当前类是否有权限访问这些数据**
+    - 执行环节： **解析环节**
+    - 执行位置：方法区
+    - 表现：
+      - 如果一个需要使用类无法在系统中找到，则会抛出NoClassDefFoundError
+      - 如果一个方法无法被找到，则会抛出NoSuchMethodError。
+
+### 4.3.2. Preparation（准备）
+
+- 作用：
+  - **为类的静态变量分配内存，并将其初始化为默认值**
+
+  | 类型      | 默认初始值 |
+  | --------- | ---------- |
+  | byte      | (byte)0    |
+  | short     | (short)0   |
+  | int       | 0          |
+  | long      | 0L         |
+  | float     | 0.0f       |
+  | double    | 0.0        |
+  | char      | \u0000     |
+  | boolean   | false      |
+  | reference | null       |
+
+  > 注意：Java并不支持boolean类型，内部实现是int，由于int的默认值是0，故对应的，boolean的默认值就是false。
+
+- **注意**
+  - **这里不包含基本数据类型的字段用static final修饰的情况，因为final在编译的时候就会分配了，准备阶段会显式赋值。**
+    > 这里不会为实例变量初始化，类变量会分配在方法区中，而实例变量会在创建对象时随着对象一起分配到Java堆中。
+  - 在这个阶段并不会像初始化阶段中那样会有初始化或者代码执行
+
+  ```java
+  /**
+   * 过程二：链接阶段（以下都是针对static修饰的变量）
+   * 基本数据类型：非 final 修饰的变量，在准备环节进行默认初始化赋值。
+   *             final修饰以后，在准备环节直接进行显示赋值。
+   * 
+   * 拓展：如果使用字面量的方式定义一个字符串的常量的话，也是在准备环节直接进行显示赋值。
+   */
+  public class LinkingTest {
+      private static long id;  // 准备阶段，默认初始化赋值为0
+      private static final int num = 1; // 显示赋值，编译时就分配了
+                                        // 存到常量池表中
+                                        // 字段num下有ConstentValue属性
+  
+      public static final String constStr = "CONST";  // 显示赋值，编译时就分配了
+                                                      // 存到常量池表中
+                                                      // 字段constStr下有ConstentValue属性
+      public static final String constStr1 = new String("CONST"); // 在之后的初始化阶段
+                                                                  // <clinit>方法中赋值
+  }
+  ```
+
+### 4.3.3. Reslution（解析）
+
+- 执行时期： **初始化之后**
+- 目的： **将类、接口、字段和方法的符号引用转为直接引用。**
+- 说明
+  - 符号引用就是一些字面量的引用，和虚拟机的内部数据结构和内存布局无关
+  - 比较容易理解的就是在Class类文件中，通过常量池进行大量的符号引用
+  - 但是在程序实际运行时，只有符号引用时不够的
+  - 比如当如下println()方法被调用时，系统需要明确知道该方法的位置。
+
+  ```
+  举例：输出操作System.out.println()对应的字节码：
+
+  invokevirtual # 24 <java/io/PrintStrem.println>
+  ```
+
+  ![jvm2-55.png](./image/jvm2-55.png)
+  ![jvm2-56.png](./image/jvm2-55.png)
+
+
+- 符号引用与直接引用
+  - 对应关系
+    - 所谓解析就是将符号引用转为直接引用
+    - 也就得到类、字段、方法在内存中的指针或者偏移量
+    - 以方法为例，
+      - Java虚拟机为每个类都准备了一张方法表，将其所有的方法都列在表中
+      - 当需要调用一个类的方法的时候，只要知道这个方法在方法表中的偏移量就可以直接调用该方法
+      - **通过解析操作，符号引用就可以转变为目标方法在类中方法表中的位置，从而使得方法被成功调用。**
+  - 相对关系
+    - 因此，可以说，如果直接引用存在，那么可以肯定系统中存在该类、方法或者字段
+    - 但只存在符号引用，不能确定系统中一定存在存在该结构。
+
+- 字符串常量池与常量池项关系
+  - 字符串常量在常量池中的表现：
+    - **当在java代码中直接使用字符串常量时，就会在类中出现CONSTANT_String_info**
+    - 它表示字符串常量，并且会引用一个`CONSTANT_UTF8_info`的常量项
+  - 字符串常量在字符串常量池常量池中的表现：
+    - **在Java虚拟机内部运行的常量池中，会维护一张字符串常量表（intern）**
+    - **它会保存所有出现过的字符串常量，并且没有重复项**
+    - **因为该表中没有重复项，所以任何字面量相同的字符串的String.intern()方法返回总是相等的**
+  - 两者关系
+    - **只要以`CONSTANT_String_info`形式出现的字符串都会在这张表中**
+    - **使用String.intern()方法可以得到一个字符串在常量表中的引用**
+
+## 4.4. Initialzation（初始化）阶段
+
+### 4.4.1. 初始化阶段与clinit方法
+
+- 说明
+  - 类的初始化是类加载的最后一个阶段
+  - 如果前面的步骤都没有问题，那么便是类可以顺利装在到系统里
+  - 此时，类才会开始执行Java字节码。 **到了初始化阶段，才真正开始执行类中定义的Java程序代码**
+
+- 目的： **为类的静态变量赋予正确的初始值。**
+
+- 作用： **初始化阶段的重要工作是执行类的初始化方法：<clinit>方法。**
+
+- `<clinit>`方法
+  - 限制：
+    - 该方法仅能由Java编译器生成并由JVM调用
+    - 程序开发者无法自定义一个同名的方法
+    - 更无法直接在Java程序中调用该方法。虽然该方法是由字节码指令组成的。
+  - 组成
+    > 以下 **搜集合并** 产生
+    - **静态成员的赋值语句**
+    - **static语句块**
+  - 示例：基本示例
+    ```java
+    /**
+      * 过程三：初始化阶段
+      */
+    public class InitializationTest {
+        public static int id = 1;
+        public static int number;
+    
+        static {
+            number = 2;
+            System.out.println("father static{}");
+        }
+    }
+    ```
+    ```
+    // <clinit> 中的内容：
+
+      0 iconst_1
+      1 putstatic #2 <com/atguigu/java/InitializationTest.id>
+      4 iconst_2
+      5 putstatic #3 <com/atguigu/java/InitializationTest.number>
+      8 getstatic #4 <java/lang/System.out>
+    11 ldc #5 <father static{}>
+    13 invokevirtual #6 <java/io/PrintStream.println>
+    16 return
+    ```
+
+- 父类与子类`<clinit>`执行顺序
+  - 说明
+    - 在加载一个类之前，虚拟机总会试图加载该类的父类
+    - 因此父类的`<clinit>` 总是在子类 `<clinit>` 之前被调用
+    - 也就是说，父类的static块优先级高于子类。
+  - 示例2：父类与子类`<clinit>`执行顺序
+
+    ```java
+    public class InitializationTest {
+        public static int id = 1;
+        public static int number;
+    
+        static {
+            number = 2;
+            System.out.println("father static{}");
+        }
+    }
+    ```
+
+    ```java
+    public class SubInitialization extends InitializationTest {
+        static {
+            number = 4;  // number属性必须提前已经加载：一定会先加载父类。
+            System.out.println("son static{}");
+        }
+    
+        public static void main(String[] args) {
+            System.out.println(number);
+        }
+    }
+    ```
+
+    ```log
+    // 执行结果
+    father static{}
+
+    son static{}
+
+    4
+    ```
+
+- 没有`<clinit>的情况`
+  - 说明
+    - 一个类中并没有声明任何的类变量，也没有静态代码块时
+    - 一个类中声明类变量，但是没有明确使用类变量的初始化语句以及静态代码块来执行初始化操作时
+    - 一个类中包含static final修饰的基本数据类型的字段，这些类字段初始化语句采用编译时常量表达式
+  - 示例3：没有`<clinit>`方法的情况
+    ```java
+    /**
+    * 哪些场景下，java编译器就不会生成<clinit>()方法
+    */
+    public class InitializationTest1 {
+        // 场景1：对应非静态的字段，不管是否进行了显式赋值，都不会生成<clinit>()方法
+        public int num = 1;
+        // 场景2：静态的字段，没有显式的赋值，不会生成<clinit>()方法
+        public static int num1;
+        // 场景3：比如对于声明为static final的基本数据类型的字段，不管是否进行了显式赋值，都不会生成<clinit>()方法
+        public static final int num2 = 1;
+    }
+    ```
+
+### 4.4.2. 链接-准备阶段 和 初始化阶段
+
+  结论：**使用static + final修饰，且显示赋值中不涉及到方法或构造器调用的基本数据类型或String类型的显式赋值，是在链接阶段的准备环节进行。**
+
+  对于类变量来说，如果加了 final，才有可能在**链接的准备阶段** 被显式赋值；但是如果没加final，一定不可能在**链接的准备阶段** 被显式赋值，而是在**链接的准备阶段** 默认赋值，然后在初始化阶段显式赋值。
+
+  ```java
+  // 成员变量（非静态的）的赋值过程： ① 默认初始化 - ② 显式初始化 /代码块中初始化 - ③ 构造器中初始化 - ④ 有了对象之后，可以“对象.属性”或"对象.方法"
+  public class InitializationTest2 {
+      public static int a = 1;  // 在链接阶段的准备环节默认赋值，在初始化阶段`<clinit>`()中显式赋值
+      public static final int INT_CONSTANT = 10;  // 在链接阶段的准备环节显式赋值
+  
+      public static final Integer INTEGER_CONSTANT1 = Integer.valueOf(100);  // 在初始化阶段`<clinit>`()中显式赋值
+      public static Integer INTEGER_CONSTANT2 = Integer.valueOf(1000);  // 在初始化阶段`<clinit>`()中显式赋值
+  
+      public static final String s0 = "helloworld0";  // 在链接阶段的准备环节显式赋值
+      public static final String s1 = new String("helloworld1");  // 在初始化阶段`<clinit>`()中显式赋值
+  
+      public static String s2 = "helloworld2";  // 在链接阶段的准备环节默认赋值，在初始化阶段`<clinit>`()中显式赋值
+  
+      public static final int NUM1 = new Random().nextInt(10);  // 在初始化阶段`<clinit>`()中显式赋值
+  }
+  ```
+
+### 4.4.3. clinit方法的线程安全性
+
+  对于`<clinit>`() 方法的调用，也就是类的初始化，虚拟机会在内部确保其多线程环境中的安全性。
+
+  虚拟机会保证一个类的`<clinit>`() 方法在多线程中被正确地加锁、同步，如果多个线程去同时初始化一个类，那么只会有一个线程去执行这个类的`<clinit>`() 方法，其他线程都需要阻塞等待，直到活动线程执行`<clinit>`() 方法完毕。
+
+  正是**因为函数`<clinit>`() 带锁线程是安全的**，因此，如果在一个类中`<clinit>`() 方法中有耗时很长的操作，就可能造成多个线程阻塞，引发死锁。并且这种死锁是很难发现的，因为看起来它们并没有可用的锁信息。
+
+  如果之前的线程成功加载了类，则等在队列中的线程就没有机会执行`<clinit>`() 方法了。那么，当需要使用这个类时，虚拟机会直接返回给它已经准备好的信息。
+
+  **例子（相互等待，死锁）：**
+
+  ```java
+  class StaticA {
+      static {
+          try {
+              Thread.sleep(1000);
+          } catch (InterruptedException e) {
+          }
+          try {
+              Class.forName("com.atguigu.java1.StaticB");
+          } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+          }
+          System.out.println("StaticA init OK");
+      }
+  }
+  
+  class StaticB {
+      static {
+          try {
+              Thread.sleep(1000);
+          } catch (InterruptedException e) {
+          }
+          try {
+              Class.forName("com.atguigu.java1.StaticA");
+          } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+          }
+          System.out.println("StaticB init OK");
+      }
+  }
+  
+  public class StaticDeadLockMain extends Thread {
+      private char flag;
+  
+      public StaticDeadLockMain(char flag) {
+          this.flag = flag;
+          this.setName("Thread" + flag);
+      }
+  
+      @Override
+      public void run() {
+          try {
+              Class.forName("com.atguigu.java1.Static" + flag);
+          } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+          }
+          System.out.println(getName() + " over");
+      }
+  
+      public static void main(String[] args) throws InterruptedException {
+          StaticDeadLockMain loadA = new StaticDeadLockMain('A');
+          loadA.start();
+          StaticDeadLockMain loadB = new StaticDeadLockMain('B');
+          loadB.start();
+      }
+  }
+  ```
+
+### 4.4.4. 类的初始化情况：主动使用 VS. 被动使用
+
+  Java对类的使用分为两种：主动使用 和 被动使用
+
+  主动使用会调用`<clinit>`() 方法，被动使用不会
+
+  **一.主动使用**
+
+  Class只有在必须要首次使用的时候才会被装在，Java虚拟机不会无条件地装载Class类型。Java虚拟机规定，一个类或接口在初次使用前，必须进行初始化。这里的使用，是指主动使用，主动使用只有以下几种情况：（即：如果出现如下的情况，则会对类进行初始化操作。而初始化操作之前的加载、验证、准备已经完成。）
+
+  1. 当创建一个类的实例时，比如使用new关键字，或者通过反射、克隆、反序列化。
+  2. 当调用类的静态方法时，即当使用了字节码invokestatic指令。
+  3. 当使用类、接口的静态字段时（final修饰特殊考虑），比如，使用getstatic或者putstatic指令。（对应访问变量、赋值变量操作）
+  4. 当使用java.reflect包中的方法反射类的方法时。比如Class.forName(“com.atguigu.java.Test”)
+  5. 当初始化子类时，如果发现其父类还没有进行初始化，则需要先触发其父类的初始化。
+  6. 如果一个接口定义了default方法，那么直接实现或者间接实现该接口的类的初始化，该接口要在其之前被初始化。
+  7. 当虚拟机启动时，用户需要指定一个要执行的主类（包含main()方法的那个类），虚拟机会先初始化这个主类。
+  8. 当初次调用 MethodHandle 实例时，初始化该 MethodHandle 指向的方法所在的类。（涉及解析REF_getStatic、REF_putStatic、REF_invokeStatic方法句柄对应的类）
+
+  针对5，补充说明：
+
+  当Java虚拟机初始化一个类时，要求它的所有父类都已经被初始化，但是这条规则并不适用于接口。
+
+  - 当初始化一个类时，并不会先初始化它所实现的接口
+  - 在初始化一个接口时，并不会初始化它的负借口
+
+  因此，一个父接口并不会因为它的子接口或者实现类的初始化而初始化。只有当程序首次使用特定的静态字段时，才会导致该接口的初始化。
+
+  针对7，说明：
+
+  JVM启动的时候通过引导类加载器加载一个初始类。这个类在调用 public static void main(String[] args)方法之前被链接和初始化。这个方法的执行将依次导致所需的类的加载，链接和初始化。
+
+  **二.被动使用**
+
+  除了以上的情况属于主动使用，其他情况均属于被动使用。**被动使用不会引起类的初始化。**
+
+  也就是说：**并不是在代码中出现的类，就一定被加载挥着初始化。如果不符合主动使用的条件，类就不会初始化。**
+
+  1. 当访问一个静态字段时，只有真正声明这个字段的类才会被初始化
+     - 当通过子类引用父类的静态变量，不会导致子类的初始化
+  2. 通过数组定义引用类，不会触发此类的初始化
+  3. 引用常量不会触发此类或接口的初始化。因为常量在链接阶段就已经被显式赋值了。
+  4. 调用ClassLoader类的loadClass()方法加载一个类，并不是对类的主动使用，不会导致类的初始化。
+
+------
+
+- 主动使用
+
+  ```java
+  /**
+   * 测试类的主动使用：意味着会调用类的`<clinit>`()，即执行了类的初始化阶段
+   * <p>
+   * 1. 当创建一个类的实例时，比如使用new关键字，或者通过反射、克隆、反序列化。
+   * 2. 当调用类的静态方法时，即当使用了字节码invokestatic指令。
+   */
+  public class ActiveUse1 {
+      public static void main(String[] args) {
+          Order order = new Order();  // 1
+      }
+  
+      // 序列化的过程：
+      @Test
+      public void test1() {
+          ObjectOutputStream oos = null;
+          try {
+              oos = new ObjectOutputStream(new FileOutputStream("order.dat"));
+  
+              oos.writeObject(new Order());
+          } catch (IOException e) {
+              e.printStackTrace();
+          } finally {
+              try {
+                  if (oos != null)
+                      oos.close();
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
+          }
+      }
+  
+      // 反序列化的过程：（验证）  2
+      @Test
+      public void test2() {
+          ObjectInputStream ois = null;
+          try {
+              ois = new ObjectInputStream(new FileInputStream("order.dat"));
+  
+              Order order = (Order) ois.readObject();
+          } catch (Exception e) {
+              e.printStackTrace();
+          } finally {
+              try {
+                  if (ois != null)
+                      ois.close();
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
+          }
+      }
+  
+      @Test
+      public void test3() {
+          Order.method();
+      }
+  }
+  
+  class Order implements Serializable {
+      static {
+          System.out.println("Order类的初始化过程");
+      }
+  
+      public static void method() {
+          System.out.println("Order method()....");
+      }
+  }
+  ```
+
+  ```java
+  /**
+   * 3. 当使用类、接口的静态字段时(final修饰特殊考虑)，比如，使用getstatic或者putstatic指令。（对应访问变量、赋值变量操作）
+   */
+  public class ActiveUse2 {
+      @Test
+      public void test1() {
+  //        System.out.println(User.num);  // 会导致 初始化
+  //        System.out.println(User.num1);  // 不会导致 初始化，结合前面讲解的static final理解
+          System.out.println(User.num2);  // 会导致 初始化
+      }
+  
+      @Test
+      public void test2() {
+  //        System.out.println(CompareA.NUM1);  // 不会导致 初始化
+          System.out.println(CompareA.NUM2);  // 会导致 初始化
+      }
+  }
+  
+  class User {
+      static {
+          System.out.println("User类的初始化过程");
+      }
+  
+      public static int num = 1;
+      public static final int num1 = 1;
+      public static final int num2 = new Random().nextInt(10);
+  }
+  
+  interface CompareA {
+      public static final Thread t = new Thread() {
+          {
+              System.out.println("CompareA的初始化");
+          }
+      };
+  
+      public static final int NUM1 = 1;
+      public static final int NUM2 = new Random().nextInt(10);
+  }
+  ```
+
+  ```java
+  /**
+   * 4. 当使用java.lang.reflect包中的方法反射类的方法时。比如：Class.forName("com.atguigu.java.Test")
+   * 5. 当初始化子类时，如果发现其父类还没有进行过初始化，则需要先触发其父类的初始化。
+   * 6. 如果一个接口定义了default方法，那么直接实现或者间接实现该接口的类的初始化，该接口要在其之前被初始化。
+   * 7. 当虚拟机启动时，用户需要指定一个要执行的主类（包含main()方法的那个类），虚拟机会先初始化这个主类。
+   * 8. 当初次调用 MethodHandle 实例时，初始化该 MethodHandle 指向的方法所在的类。
+   * （涉及解析REF_getStatic、REF_putStatic、REF_invokeStatic方法句柄对应的类）
+   * <p>
+   * <p>
+   * 针对5，补充说明：
+   * 当Java虚拟机初始化一个类时，要求它的所有父类都已经被初始化，但是这条规则并不适用于接口。
+   * >在初始化一个类时，并不会先初始化它所实现的接口
+   * >在初始化一个接口时，并不会先初始化它的父接口
+   * 因此，一个父接口并不会因为它的子接口或者实现类的初始化而初始化。只有当程序首次使用特定接口的静态字段时，
+   * 才会导致该接口的初始化。
+   */
+  public class ActiveUse3 {
+      static {
+          System.out.println("ActiveUse3的初始化过程");
+      }
+  
+      @Test
+      public void test1() {  // 4.
+          try {
+              Class clazz = Class.forName("com.atguigu.java1.Order");
+          } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+          }
+      }
+  
+      @Test
+      public void test2() {  // 5.
+          System.out.println(Son.num);
+      }
+  
+      @Test
+      public void test3() {  // 5，补充说明
+          System.out.println(CompareC.NUM1);
+      }
+  
+      @Test
+      public void test4() {  // 6.
+          System.out.println(Son.num);
+      }
+  
+      public static void main(String[] args) {  // 7.
+          System.out.println("hello");
+      }
+  }
+  
+  class Father {
+      static {
+          System.out.println("Father类的初始化过程");
+      }
+  }
+  
+  class Son extends Father implements CompareB {
+      static {
+          System.out.println("Son类的初始化过程");
+      }
+  
+      public static int num = 1;
+  }
+  
+  interface CompareB {
+      public static final Thread t = new Thread() {
+          {
+              System.out.println("CompareB的初始化");
+          }
+      };
+  
+      public default void method1() {
+          System.out.println("你好！");
+      }
+  }
+  
+  interface CompareC extends CompareB {
+      public static final Thread t = new Thread() {
+          {
+              System.out.println("CompareC的初始化");
+          }
+      };
+  
+      public static final int NUM1 = new Random().nextInt();
+  }
+  ```
+
+------
+
+- 被动使用
+
+  ```java
+  /**
+   * 关于类的被动使用，即不会进行类的初始化操作，即不会调用`<clinit>`()
+   * 
+   * 1. 当访问一个静态字段时，只有真正声明这个字段的类才会被初始化。
+   *      > 当通过子类引用父类的静态变量，不会导致子类初始化
+   * 2. 通过数组定义类引用，不会触发此类的初始化
+   * 
+   * 说明：没有初始化的类，不意味着没有加载！
+   */
+  public class PassiveUse1 {
+      @Test
+      public void test1() {  // 1.
+          System.out.println(Child.num);  // 不会初始化 Child
+      }
+  
+      @Test
+      public void test2() {  // 2.
+          Parent[] parents = new Parent[10];
+          System.out.println(parents.getClass());  // 不会初始化 Parent
+          System.out.println(parents.getClass().getSuperclass());
+  
+          parents[0] = new Parent();
+          parents[1] = new Parent();
+      }
+  }
+  
+  class Parent {
+      static {
+          System.out.println("Parent的初始化过程");
+      }
+  
+      public static int num = 1;
+  }
+  
+  class Child extends Parent {
+      static {
+          System.out.println("Child的初始化过程");
+      }
+  }
+  ```
+
+  ```java
+  /**
+   * * 3. 引用常量不会触发此类或接口的初始化。因为常量在链接阶段就已经被显式赋值了。
+   * * 4. 调用ClassLoader类的loadClass()方法加载一个类，并不是对类的主动使用，不会导致类的初始化。
+   */
+  public class PassiveUse2 {
+      @Test
+      public void test1() {  // 3.
+  //        System.out.println(Person.NUM);  // 不会 初始化
+          System.out.println(Person.NUM1);  // 会 初始化
+      }
+  
+      @Test
+      public void test2() {  // 3.
+  //        System.out.println(SerialA.ID);  // 不会 初始化
+          System.out.println(SerialA.ID1);  // 会 初始化
+      }
+  
+      @Test
+      public void test3() {  // 4.
+          try {
+              Class clazz = ClassLoader.getSystemClassLoader().loadClass("com.atguigu.java1.Person");
+          } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+          }
+      }
+  }
+  
+  class Person {
+      static {
+          System.out.println("Person类的初始化");
+      }
+  
+      public static final int NUM = 1;  // 在链接过程的准备环节就被赋值为1了。
+      public static final int NUM1 = new Random().nextInt(10);  // 此时的赋值操作需要在`<clinit>`()中执行
+  }
+  
+  interface SerialA {
+      public static final Thread t = new Thread() {
+          {
+              System.out.println("SerialA的初始化");
+          }
+      };
+  
+      int ID = 1;
+      int ID1 = new Random().nextInt(10);  // 此时的赋值操作需要在`<clinit>`()中执行
+  }
+  ```
+
+## 4.5. Using（使用）
+
+- 任何一个类型在使用之前都必须经历完整的加载、链接和初始化3个类加载步骤。一旦一个类型成功经历过这3个步骤之后，便“万事俱备，只欠东风”，就等着开发者使用了。
+- 开发人员可以在程序中访问和调用它的静态类成员信息（比如：静态字段、静态方法），或者使用new关键字为其创建对象实例。
+
+## 4.6. Unloading（卸载）
+
+- 类、类的加载器、类的实例之间的引用关系
+
+  在类加载器的内部实现中，用一个Java集合来存放所加载类的引用。另一方面，一个Class对象总是会引用它的类加载器，调用Class对象的getClassLoader()方法，就能获得它的类加载器。由此可见，代表某个类的Class实例与其类的加载器之间为双向关联关系。
+
+  一个类的实例总是引用代表这个类的Class对象。在Object类中定义了getClass()方法。这个方法返回代表对象所属类的Class对象的引用。此外，所有的Java类都有一个人静态属性class，它代表这个类的Class对象
+
+- 类的生命周期
+
+  当Sample类被加载、连接和初始化后，它的生命周期就开始了。当代表Sample类的Class对象不再被引用，即不可触及时，Class对象就会结束生命周期，Sample类在方法区内的数据也会被卸载，从而结束Sample类的生命周期。
+
+  **一个类何时结束生命周期，取决于代表它的Class对象何时结束生命周期。**
+
+- 具体例子
+
+  ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210205155930162.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjYzODk0Ng==,size_16,color_FFFFFF,t_70#pic_center)
+
+  loader1变量和obj变量间接引用代表Sample类的Class对象，而objClass变量则直接引用它。
+
+  如果程序运行过程中，将上图左侧三个引用变量都置为null，此时Sample对象结束生命周期，MyClassLoader对象结束生命周期，代表Sample类的Class对象也结束生命周期，Sample类在方法区内的二进制数据被卸载。
+
+  当再次有需要时，会检查Sample类的Class对象是否存在，如果存在会直接使用，不会重新加载；如果不存在Sample类会被重新加载，在Java虚拟机的堆空间会生成代表Sample类的Class实例（可以通过哈希码查看是否存在同一个实例）。
+
+- 类的卸载
+
+  （1）启动类加载器（引导类加载器）加载的类型在整个运行期间是不可能被卸载的（jvm和jls规范）。
+
+  （2）被系统类加载器和扩展类加载器加载的类型在运行期间不太可能被卸载，因为系统类加载器实例或者扩展类加载器的实例基本上在整个运行期间总能直接或者间接访问的到，其达到unreachable的可能性极小。
+
+  （3）被开发者自定义的类加载器实例加载的类型只有在很简单的上下文环境中才可能被卸载，畏怯一般还要借助强制调用虚拟机的垃圾收集功能才可以做到。可以预想，稍微复杂点的应用场景（比如：很多时候用户在开发自定义类加载器实例的时候采用缓存以提高系统性能），被加载的类型在运行期间也是几乎不太可能被卸载的（至少卸载的时间是不确定的）。
+
+  总和以上三点，一个已经被加载的类型被卸载的几率很小至少被卸载的时间是不确定的。同时我们可以看得出来，开发者在开发代码的时候，不应该对虚拟机的类型卸载做任何价值社的前提，来实现系统特定功能。
+
+------
+
+- 方法区的垃圾回收
+
+  方法区的垃圾回收主要回收两部分内容：常量池中废弃的常量 和 不再使用的类型。
+
+  HotSpot虚拟机对常量池的回收策略是很明确的，只要常量池中的常量没有被人任何地方引用，就可以被回收。
+
+  判定一个常量是否“废弃”还是相对简单的，而要判定一个类型是否属于“不再被使用的类”的条件就比较苛刻了。需要同时满足下面三个条件：
+
+  - **该类所有的实例都已经被回收。也就是说Java堆中不存在该类及其任何子类的实例。**
+  - **加载该类的类加载器已经被回收。这个条件除非是经过精心设计的可替换类加载器的场景，如OSGi、JSP的重记载等，否则通常是很难达成的。**
+  - **该类对应的java.lang.Class对象没有任何地方被引用，无法在任何地方通过反射访问该类的方法。**
+
+  Java虚拟机被允许对满足上述三个条件的无用类进行回收，这里说的仅仅是“被允许”，而并不是和对象一样，没有引用了就必然回收。
+
+## 4.7. 面试题
+
+- 蚂蚁金服
+  - 描述一下 JVM 加载 Class 文件的原理机制？
+  - 一面：类加载过程
+- 百度
+  - 类加载的时机
+  - java类加载机制？
+  - 简述 Java 类加载机制
+- 腾讯
+  - JVM 中类的加载机制，类加载过程？
+- 滴滴
+  - JVM类加载机制
+- 美团
+  - Java类加载过程
+  - 描述一下jvm加载class文件的原理机制
+- 京东
+  - 什么是类的加载？
+  - 哪些情况会出发类的加载？
+  - 讲一下JVM加载一个类的过程
+  - JVM的类加载机制是什么？
 
 # 5. 再谈类的加载器
 
