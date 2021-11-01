@@ -3694,7 +3694,6 @@ public class Demo {
   ![jvm2-55.png](./image/jvm2-55.png)
   ![jvm2-56.png](./image/jvm2-55.png)
 
-
 - 符号引用与直接引用
   - 对应关系
     - 所谓解析就是将符号引用转为直接引用
@@ -3721,7 +3720,7 @@ public class Demo {
 
 ## 4.4. Initialzation（初始化）阶段
 
-### 4.4.1. 初始化阶段与clinit方法
+### 4.4.1. 初始化概述
 
 - 说明
   - 类的初始化是类加载的最后一个阶段
@@ -3730,13 +3729,14 @@ public class Demo {
 
 - 目的： **为类的静态变量赋予正确的初始值。**
 
-- 作用： **初始化阶段的重要工作是执行类的初始化方法：<clinit>方法。**
+- 作用： **初始化阶段的重要工作是执行类的初始化方法：`<clinit>`方法。**
 
 - `<clinit>`方法
   - 限制：
     - 该方法仅能由Java编译器生成并由JVM调用
     - 程序开发者无法自定义一个同名的方法
-    - 更无法直接在Java程序中调用该方法。虽然该方法是由字节码指令组成的。
+    - 更无法直接在Java程序中调用该方法
+      > 虽然该方法是由字节码指令组成的。
   - 组成
     > 以下 **搜集合并** 产生
     - **静态成员的赋值语句**
@@ -3826,47 +3826,72 @@ public class Demo {
         // 场景2：静态的字段，没有显式的赋值，不会生成<clinit>()方法
         public static int num1;
         // 场景3：比如对于声明为static final的基本数据类型的字段，不管是否进行了显式赋值，都不会生成<clinit>()方法
-        public static final int num2 = 1;
+        public static final int NUM2 = 1;
     }
     ```
 
-### 4.4.2. 链接-准备阶段 和 初始化阶段
+### 4.4.2. 链接-准备阶段 与 初始化阶段
 
-  结论：**使用static + final修饰，且显示赋值中不涉及到方法或构造器调用的基本数据类型或String类型的显式赋值，是在链接阶段的准备环节进行。**
+- 最终结论： **使用static + final修饰，且显示赋值中不涉及到方法或构造器调用的基本数据类型或String类型的显式赋值，是在链接阶段的准备环节进行。**
 
-  对于类变量来说，如果加了 final，才有可能在**链接的准备阶段** 被显式赋值；但是如果没加final，一定不可能在**链接的准备阶段** 被显式赋值，而是在**链接的准备阶段** 默认赋值，然后在初始化阶段显式赋值。
+- 赋值时机总结：
+  - 静态变量
+    - 加final
+      - 基本数据类型
+        - **链接的准备阶段** 被显式赋值
+      - String常量类型
+        - **链接的准备阶段** 被显式赋值
+      - 涉及方法和构造器调用
+        - **初始化阶段** 被显示赋值赋值
+    - 不加final
+      - 在 **链接的准备阶段** **默认赋值**
+      - 然后在 **初始化阶段** **显式赋值**
+  - 非静态变量
+    - 创建对象时初始化
 
+- 示例：各种情况，重要
   ```java
-  // 成员变量（非静态的）的赋值过程： ① 默认初始化 - ② 显式初始化 /代码块中初始化 - ③ 构造器中初始化 - ④ 有了对象之后，可以“对象.属性”或"对象.方法"
+  // 成员变量（非静态的）的赋值过程
+    // ① 默认初始化 
+    // ② 显式初始化 /代码块中初始化 
+    // 构造器中初始化 
+    // ④ 有了对象之后，可以“对象.属性”或"对象.方法"
   public class InitializationTest2 {
-      public static int a = 1;  // 在链接阶段的准备环节默认赋值，在初始化阶段`<clinit>`()中显式赋值
+      public static int a = 1;  // 在链接阶段的准备环节默认赋值，在初始化阶段`<clinit>()`中显式赋值
       public static final int INT_CONSTANT = 10;  // 在链接阶段的准备环节显式赋值
   
-      public static final Integer INTEGER_CONSTANT1 = Integer.valueOf(100);  // 在初始化阶段`<clinit>`()中显式赋值
-      public static Integer INTEGER_CONSTANT2 = Integer.valueOf(1000);  // 在初始化阶段`<clinit>`()中显式赋值
+      public static final Integer INTEGER_CONSTANT1 = Integer.valueOf(100);  // 在初始化阶段`<clinit>()`中显式赋值
+      public static Integer INTEGER_CONSTANT2 = Integer.valueOf(1000);  // 在初始化阶段`<clinit>()`中显式赋值
   
       public static final String s0 = "helloworld0";  // 在链接阶段的准备环节显式赋值
-      public static final String s1 = new String("helloworld1");  // 在初始化阶段`<clinit>`()中显式赋值
+      public static final String s1 = new String("helloworld1");  // 在初始化阶段`<clinit>()`中显式赋值
   
-      public static String s2 = "helloworld2";  // 在链接阶段的准备环节默认赋值，在初始化阶段`<clinit>`()中显式赋值
+      public static String s2 = "helloworld2";  // 在链接阶段的准备环节默认赋值，在初始化阶段`<clinit>()`中显式赋值
   
-      public static final int NUM1 = new Random().nextInt(10);  // 在初始化阶段`<clinit>`()中显式赋值
+      public static final int NUM1 = new Random().nextInt(10);  // 在初始化阶段`<clinit>()`中显式赋值
   }
   ```
 
-### 4.4.3. clinit方法的线程安全性
+### 4.4.3. clinit 方法的线程安全性与死锁
 
-  对于`<clinit>`() 方法的调用，也就是类的初始化，虚拟机会在内部确保其多线程环境中的安全性。
+- 安全性：对于`<clinit>()` 方法的调用，也就是类的初始化，虚拟机会在内部确保其多线程环境中的安全性。
 
-  虚拟机会保证一个类的`<clinit>`() 方法在多线程中被正确地加锁、同步，如果多个线程去同时初始化一个类，那么只会有一个线程去执行这个类的`<clinit>`() 方法，其他线程都需要阻塞等待，直到活动线程执行`<clinit>`() 方法完毕。
+- 加锁：
+  - 虚拟机会保证一个类的`<clinit>()` 方法在多线程中被正确地加锁、同步
+  - 如果多个线程去同时初始化一个类，那么只会有一个线程去执行这个类的`<clinit>()` 方法
+  - 其他线程都需要阻塞等待，直到活动线程执行`<clinit>()` 方法完毕。
+    - 如果之前的线程成功加载了类，则等在队列中的线程就没有机会执行`<clinit>()` 方法了
+    - 那么，当需要使用这个类时，虚拟机会直接返回给它已经准备好的信息。
 
-  正是**因为函数`<clinit>`() 带锁线程是安全的**，因此，如果在一个类中`<clinit>`() 方法中有耗时很长的操作，就可能造成多个线程阻塞，引发死锁。并且这种死锁是很难发现的，因为看起来它们并没有可用的锁信息。
+- `<clinit>()`方法导致的死锁
+  - **因为函数`<clinit>()` 带锁线程是安全的** 
+  - 因此，如果在一个类中`<clinit>()` 方法中有耗时很长的操作，就可能造成多个线程阻塞，引发死锁
+  - 并且这种死锁是很难发现的，因为看起来它们并没有可用的锁信息。
 
-  如果之前的线程成功加载了类，则等在队列中的线程就没有机会执行`<clinit>`() 方法了。那么，当需要使用这个类时，虚拟机会直接返回给它已经准备好的信息。
-
-  **例子（相互等待，死锁）：**
+- **示例：加载类相互等待，死锁**
 
   ```java
+  // A类加载需要先加载B类
   class StaticA {
       static {
           try {
@@ -3881,7 +3906,8 @@ public class Demo {
           System.out.println("StaticA init OK");
       }
   }
-  
+
+  // B类加载需要先加载A类
   class StaticB {
       static {
           try {
@@ -3896,15 +3922,15 @@ public class Demo {
           System.out.println("StaticB init OK");
       }
   }
-  
+
   public class StaticDeadLockMain extends Thread {
       private char flag;
-  
+
       public StaticDeadLockMain(char flag) {
           this.flag = flag;
           this.setName("Thread" + flag);
       }
-  
+
       @Override
       public void run() {
           try {
@@ -3914,7 +3940,7 @@ public class Demo {
           }
           System.out.println(getName() + " over");
       }
-  
+
       public static void main(String[] args) throws InterruptedException {
           StaticDeadLockMain loadA = new StaticDeadLockMain('A');
           loadA.start();
@@ -3924,73 +3950,72 @@ public class Demo {
   }
   ```
 
-### 4.4.4. 类的初始化情况：主动使用 VS. 被动使用
+### 4.4.4. 类的初始化情况
 
-  Java对类的使用分为两种：主动使用 和 被动使用
+#### 4.4.4.1. 说明
 
-  主动使用会调用`<clinit>`() 方法，被动使用不会
+- Java 对类的使用分为两种
+  - 主动使用
+    - 主动使用会调用`<clinit>()` 方法
+  - 被动使用
+    - 被动使用不会
 
-  **一.主动使用**
+- 查看类加载流程：
+  - 添加参数：`-XX:+TraceClassLoading`
+  - 或者加到junit上
 
-  Class只有在必须要首次使用的时候才会被装在，Java虚拟机不会无条件地装载Class类型。Java虚拟机规定，一个类或接口在初次使用前，必须进行初始化。这里的使用，是指主动使用，主动使用只有以下几种情况：（即：如果出现如下的情况，则会对类进行初始化操作。而初始化操作之前的加载、验证、准备已经完成。）
+    ![jvm2-58](./image/jvm2-58.png)-
 
-  1. 当创建一个类的实例时，比如使用new关键字，或者通过反射、克隆、反序列化。
-  2. 当调用类的静态方法时，即当使用了字节码invokestatic指令。
-  3. 当使用类、接口的静态字段时（final修饰特殊考虑），比如，使用getstatic或者putstatic指令。（对应访问变量、赋值变量操作）
-  4. 当使用java.reflect包中的方法反射类的方法时。比如Class.forName(“com.atguigu.java.Test”)
-  5. 当初始化子类时，如果发现其父类还没有进行初始化，则需要先触发其父类的初始化。
-  6. 如果一个接口定义了default方法，那么直接实现或者间接实现该接口的类的初始化，该接口要在其之前被初始化。
-  7. 当虚拟机启动时，用户需要指定一个要执行的主类（包含main()方法的那个类），虚拟机会先初始化这个主类。
-  8. 当初次调用 MethodHandle 实例时，初始化该 MethodHandle 指向的方法所在的类。（涉及解析REF_getStatic、REF_putStatic、REF_invokeStatic方法句柄对应的类）
+#### 4.4.4.2. 主动使用
 
-  针对5，补充说明：
+- 装载时机
+  - Class 只有在首次使用的时候才会被装载
+  - Java 虚拟机不会无条件地装载 Class 类型
+  - Java 虚拟机规定，一个类或接口在初次使用前，必须进行初始化，这里的使用，是指主动使用，主动使用只有以下几种情况
+- 主动使用情况
+  > （即：如果出现如下的情况，则会对类进行初始化操作。而初始化操作之前的加载、验证、准备已经完成。）
+  - （1） 当创建一个类的实例时，比如：
+    - 使用 new 关键字
+    - 反射
+    - 克隆
+    - 反序列化。
+  - （2）当调用类的静态方法时，即当使用了字节码 invokestatic 指令。
+  - （3）当使用类、接口的静态字段时（final 修饰特殊考虑）
+    - 比如，使用 getstatic 或者 putstatic 指令。
+      > 对应访问变量、赋值变量操作
+    - 也就是访问在初始化阶段显式赋值的静态变量时
+      > 具体看 **链接-准备阶段 和 初始化阶段** 一节
+  - （4）当使用 java.reflect 包中的方法反射类的方法时。比如 Class.forName(“com.atguigu.java.Test”)
+  - （5）当初始化子类时，如果发现其父类还没有进行初始化，则需要先触发其父类的初始化。
+    - 但是这条规则并不适用于接口。
+    - 当初始化一个类时，并不会先初始化它所实现的接口
+    - 在初始化一个接口时，并不会初始化它的父接口
+    - 因此，一个父接口并不会因为它的子接口或者实现类的初始化而初始化
+    - **只有当程序首次使用特定的静态字段时，才会导致该接口的初始化**
+  - （6）如果一个接口定义了 default 方法，那么直接实现或者间接实现该接口的类的初始化，该接口要在其之前被初始化。
+  - （7）当虚拟机启动时，用户需要指定一个要执行的主类（包含 main()方法的那个类），虚拟机会先初始化这个主类。
+    - JVM 启动的时候通过引导类加载器加载一个初始类
+    - 这个类在调用 `public static void main(String[] args)`方法之前被链接和初始化
+    - main方法的执行将依次导致所需的类的加载，链接和初始化。
+  - （8）当初次调用 MethodHandle 实例时，初始化该 MethodHandle 指向的方法所在的类
+    > jdk7时对动态性的支持 <br />
+    > 涉及解析 REF_getStatic、REF_putStatic、REF_invokeStatic 方法句柄对应的类
 
-  当Java虚拟机初始化一个类时，要求它的所有父类都已经被初始化，但是这条规则并不适用于接口。
-
-  - 当初始化一个类时，并不会先初始化它所实现的接口
-  - 在初始化一个接口时，并不会初始化它的负借口
-
-  因此，一个父接口并不会因为它的子接口或者实现类的初始化而初始化。只有当程序首次使用特定的静态字段时，才会导致该接口的初始化。
-
-  针对7，说明：
-
-  JVM启动的时候通过引导类加载器加载一个初始类。这个类在调用 public static void main(String[] args)方法之前被链接和初始化。这个方法的执行将依次导致所需的类的加载，链接和初始化。
-
-  **二.被动使用**
-
-  除了以上的情况属于主动使用，其他情况均属于被动使用。**被动使用不会引起类的初始化。**
-
-  也就是说：**并不是在代码中出现的类，就一定被加载挥着初始化。如果不符合主动使用的条件，类就不会初始化。**
-
-  1. 当访问一个静态字段时，只有真正声明这个字段的类才会被初始化
-     - 当通过子类引用父类的静态变量，不会导致子类的初始化
-  2. 通过数组定义引用类，不会触发此类的初始化
-  3. 引用常量不会触发此类或接口的初始化。因为常量在链接阶段就已经被显式赋值了。
-  4. 调用ClassLoader类的loadClass()方法加载一个类，并不是对类的主动使用，不会导致类的初始化。
-
-------
-
-- 主动使用
+- 示例1：（1）、（2）
 
   ```java
-  /**
-   * 测试类的主动使用：意味着会调用类的`<clinit>`()，即执行了类的初始化阶段
-   * <p>
-   * 1. 当创建一个类的实例时，比如使用new关键字，或者通过反射、克隆、反序列化。
-   * 2. 当调用类的静态方法时，即当使用了字节码invokestatic指令。
-   */
   public class ActiveUse1 {
       public static void main(String[] args) {
           Order order = new Order();  // 1
       }
-  
+
       // 序列化的过程：
       @Test
       public void test1() {
           ObjectOutputStream oos = null;
           try {
               oos = new ObjectOutputStream(new FileOutputStream("order.dat"));
-  
+
               oos.writeObject(new Order());
           } catch (IOException e) {
               e.printStackTrace();
@@ -4003,14 +4028,14 @@ public class Demo {
               }
           }
       }
-  
+
       // 反序列化的过程：（验证）  2
       @Test
       public void test2() {
           ObjectInputStream ois = null;
           try {
               ois = new ObjectInputStream(new FileInputStream("order.dat"));
-  
+
               Order order = (Order) ois.readObject();
           } catch (Exception e) {
               e.printStackTrace();
@@ -4023,87 +4048,72 @@ public class Demo {
               }
           }
       }
-  
+
       @Test
       public void test3() {
           Order.method();
       }
   }
-  
+
   class Order implements Serializable {
       static {
           System.out.println("Order类的初始化过程");
       }
-  
+
       public static void method() {
           System.out.println("Order method()....");
       }
   }
   ```
 
+- 示例2：（3）
+
   ```java
-  /**
-   * 3. 当使用类、接口的静态字段时(final修饰特殊考虑)，比如，使用getstatic或者putstatic指令。（对应访问变量、赋值变量操作）
-   */
   public class ActiveUse2 {
       @Test
       public void test1() {
-  //        System.out.println(User.num);  // 会导致 初始化
+  //        System.out.println(User.num);  // 会导致 初始化。没有使用final修饰，需要在初始化阶段进行初始化
   //        System.out.println(User.num1);  // 不会导致 初始化，结合前面讲解的static final理解
-          System.out.println(User.num2);  // 会导致 初始化
+          System.out.println(User.num2);  // 会导致 初始化。结合前面讲解的static final理解
       }
-  
+
       @Test
       public void test2() {
   //        System.out.println(CompareA.NUM1);  // 不会导致 初始化
           System.out.println(CompareA.NUM2);  // 会导致 初始化
       }
   }
-  
+
   class User {
       static {
           System.out.println("User类的初始化过程");
       }
-  
+
       public static int num = 1;
       public static final int num1 = 1;
       public static final int num2 = new Random().nextInt(10);
   }
-  
+
   interface CompareA {
       public static final Thread t = new Thread() {
           {
               System.out.println("CompareA的初始化");
           }
       };
-  
+
       public static final int NUM1 = 1;
       public static final int NUM2 = new Random().nextInt(10);
   }
   ```
 
+- 示例3： （4）、（5）、（6）、（7）
+
   ```java
-  /**
-   * 4. 当使用java.lang.reflect包中的方法反射类的方法时。比如：Class.forName("com.atguigu.java.Test")
-   * 5. 当初始化子类时，如果发现其父类还没有进行过初始化，则需要先触发其父类的初始化。
-   * 6. 如果一个接口定义了default方法，那么直接实现或者间接实现该接口的类的初始化，该接口要在其之前被初始化。
-   * 7. 当虚拟机启动时，用户需要指定一个要执行的主类（包含main()方法的那个类），虚拟机会先初始化这个主类。
-   * 8. 当初次调用 MethodHandle 实例时，初始化该 MethodHandle 指向的方法所在的类。
-   * （涉及解析REF_getStatic、REF_putStatic、REF_invokeStatic方法句柄对应的类）
-   * <p>
-   * <p>
-   * 针对5，补充说明：
-   * 当Java虚拟机初始化一个类时，要求它的所有父类都已经被初始化，但是这条规则并不适用于接口。
-   * >在初始化一个类时，并不会先初始化它所实现的接口
-   * >在初始化一个接口时，并不会先初始化它的父接口
-   * 因此，一个父接口并不会因为它的子接口或者实现类的初始化而初始化。只有当程序首次使用特定接口的静态字段时，
-   * 才会导致该接口的初始化。
-   */
   public class ActiveUse3 {
       static {
           System.out.println("ActiveUse3的初始化过程");
       }
-  
+
       @Test
       public void test1() {  // 4.
           try {
@@ -4112,128 +4122,137 @@ public class Demo {
               e.printStackTrace();
           }
       }
-  
+
       @Test
       public void test2() {  // 5.
           System.out.println(Son.num);
       }
-  
+
       @Test
       public void test3() {  // 5，补充说明
           System.out.println(CompareC.NUM1);
       }
-  
+
       @Test
       public void test4() {  // 6.
           System.out.println(Son.num);
       }
-  
+
       public static void main(String[] args) {  // 7.
           System.out.println("hello");
       }
   }
-  
+
   class Father {
       static {
           System.out.println("Father类的初始化过程");
       }
   }
-  
+
   class Son extends Father implements CompareB {
       static {
           System.out.println("Son类的初始化过程");
       }
-  
+
       public static int num = 1;
   }
-  
+
   interface CompareB {
       public static final Thread t = new Thread() {
           {
               System.out.println("CompareB的初始化");
           }
       };
-  
+
       public default void method1() {
           System.out.println("你好！");
       }
   }
-  
+
   interface CompareC extends CompareB {
       public static final Thread t = new Thread() {
           {
               System.out.println("CompareC的初始化");
           }
       };
-  
+
       public static final int NUM1 = new Random().nextInt();
   }
   ```
 
-------
+#### 4.4.4.3. 被动使用
 
-- 被动使用
+- 说明：
+  - **并不是在代码中出现的类，就一定被加载挥着初始化。如果不符合主动使用的条件，类就不会初始化。**
+  - 除了主动使用情况，其他情况均属于被动使用
+  - **被动使用不会引起类的初始化。**
+- 被动使用情况
+  - （1）当访问一个静态字段时，只有真正声明这个字段的类才会被初始化
+    - 当通过子类引用父类的静态变量，不会导致子类的初始化
+  - （2）通过数组定义引用类，不会触发此类的初始化
+  - （3）引用**常量**不会触发此类或接口的初始化
+    -  因为常量在链接阶段就已经被显式赋值了。
+  - （4）调用 `ClassLoader` 类的 `loadClass()` 方法加载一个类，并不是对类的主动使用，不会导致类的初始化。
+
+- 示例1：（1）、（2）
 
   ```java
   /**
-   * 关于类的被动使用，即不会进行类的初始化操作，即不会调用`<clinit>`()
-   * 
-   * 1. 当访问一个静态字段时，只有真正声明这个字段的类才会被初始化。
-   *      > 当通过子类引用父类的静态变量，不会导致子类初始化
-   * 2. 通过数组定义类引用，不会触发此类的初始化
-   * 
-   * 说明：没有初始化的类，不意味着没有加载！
-   */
+    * 关于类的被动使用，即不会进行类的初始化操作，即不会调用`<clinit>()`
+    *
+    * 说明：没有初始化的类，不意味着没有加载！
+    */
   public class PassiveUse1 {
       @Test
       public void test1() {  // 1.
           System.out.println(Child.num);  // 不会初始化 Child
       }
-  
+
       @Test
       public void test2() {  // 2.
           Parent[] parents = new Parent[10];
           System.out.println(parents.getClass());  // 不会初始化 Parent
           System.out.println(parents.getClass().getSuperclass());
-  
+
           parents[0] = new Parent();
           parents[1] = new Parent();
       }
   }
-  
+
   class Parent {
       static {
           System.out.println("Parent的初始化过程");
       }
-  
+
       public static int num = 1;
   }
-  
+
   class Child extends Parent {
       static {
           System.out.println("Child的初始化过程");
       }
   }
   ```
+- 示例2：（3）、（4）
 
   ```java
   /**
-   * * 3. 引用常量不会触发此类或接口的初始化。因为常量在链接阶段就已经被显式赋值了。
-   * * 4. 调用ClassLoader类的loadClass()方法加载一个类，并不是对类的主动使用，不会导致类的初始化。
-   */
+    * * 3. 引用常量不会触发此类或接口的初始化。因为常量在链接阶段就已经被显式赋值了。
+    * * 4. 调用ClassLoader类的loadClass()方法加载一个类，并不是对类的主动使用，不会导致类的初始化。
+    */
   public class PassiveUse2 {
       @Test
       public void test1() {  // 3.
   //        System.out.println(Person.NUM);  // 不会 初始化
           System.out.println(Person.NUM1);  // 会 初始化
       }
-  
+
       @Test
       public void test2() {  // 3.
   //        System.out.println(SerialA.ID);  // 不会 初始化
           System.out.println(SerialA.ID1);  // 会 初始化
       }
-  
+
       @Test
       public void test3() {  // 4.
           try {
@@ -4243,82 +4262,122 @@ public class Demo {
           }
       }
   }
-  
+
   class Person {
       static {
           System.out.println("Person类的初始化");
       }
-  
+
       public static final int NUM = 1;  // 在链接过程的准备环节就被赋值为1了。
-      public static final int NUM1 = new Random().nextInt(10);  // 此时的赋值操作需要在`<clinit>`()中执行
+      public static final int NUM1 = new Random().nextInt(10);  // 此时的赋值操作需要在`<clinit>()`中执行
   }
-  
+
   interface SerialA {
       public static final Thread t = new Thread() {
           {
               System.out.println("SerialA的初始化");
           }
       };
-  
+
       int ID = 1;
-      int ID1 = new Random().nextInt(10);  // 此时的赋值操作需要在`<clinit>`()中执行
+      int ID1 = new Random().nextInt(10);  // 此时的赋值操作需要在`<clinit>()`中执行
   }
   ```
 
 ## 4.5. Using（使用）
 
-- 任何一个类型在使用之前都必须经历完整的加载、链接和初始化3个类加载步骤。一旦一个类型成功经历过这3个步骤之后，便“万事俱备，只欠东风”，就等着开发者使用了。
-- 开发人员可以在程序中访问和调用它的静态类成员信息（比如：静态字段、静态方法），或者使用new关键字为其创建对象实例。
+开发人员可以在程序中访问和调用它的静态类成员信息（比如：静态字段、静态方法），或者使用 new 关键字为其创建对象实例。
 
 ## 4.6. Unloading（卸载）
 
-- 类、类的加载器、类的实例之间的引用关系
+### 4.6.1. 类、类的加载器、类的实例
 
-  在类加载器的内部实现中，用一个Java集合来存放所加载类的引用。另一方面，一个Class对象总是会引用它的类加载器，调用Class对象的getClassLoader()方法，就能获得它的类加载器。由此可见，代表某个类的Class实例与其类的加载器之间为双向关联关系。
+- 关系
+  - 类加载器-->类对象
+    - 在类加载器的内部实现中，用一个 Java 集合来存放所加载类的引用
+  - 类对象-->类加载器
+    - 一个 Class 对象总是会引用它的类加载器
+    - 调用 Class 对象的 getClassLoader()方法，就能获得它的类加载器
+  - 类示例-->类对象
+    - 在 Object 类中定义了 getClass()方法。这个方法返回代表对象所属类的 Class 对象的引用
+    - 此外，所有的 Java 类都有一个静态属性 class，它代表这个类的 Class 对象
 
-  一个类的实例总是引用代表这个类的Class对象。在Object类中定义了getClass()方法。这个方法返回代表对象所属类的Class对象的引用。此外，所有的Java类都有一个人静态属性class，它代表这个类的Class对象
+- 具体说明
 
-- 类的生命周期
+  ![jvm2-57.png](./image/jvm2-57.png)
 
-  当Sample类被加载、连接和初始化后，它的生命周期就开始了。当代表Sample类的Class对象不再被引用，即不可触及时，Class对象就会结束生命周期，Sample类在方法区内的数据也会被卸载，从而结束Sample类的生命周期。
+  - loader1 变量和 obj 变量间接引用代表 Sample 类的 Class 对象
+  - objClass 变量则直接引用它。
 
-  **一个类何时结束生命周期，取决于代表它的Class对象何时结束生命周期。**
+- 类的生命周期： 
+  > 以上图示例为例
+  - 开始时机：当 Sample 类被加载、连接和初始化后，它的生命周期就开始了
+  - 结束时机：
+    - **一个类何时结束生命周期，取决于代表它的 Class 对象何时结束生命周期。**
+    - 当代表 Sample 类的 Class 对象不再被引用，即不可触及时，Class 对象就会结束生命周期
+    - Sample 类**在方法区内的数据也会被卸载**，从而结束 Sample 类的生命周期。
+  - 生命周期结束导火索：
+    - 如果程序运行过程中，将上图左侧三个引用变量都置为 null，生命周期结束
+  - **声明周期结束时回收顺序**：
+    - Sample **对象**结束生命周期
+    - MyClassLoader **类加载器对象**结束生命周期
+    - 代表 Sample 类的 **Class 对象**也结束生命周期
+    - Sample 类在方法区内的**类模版信息**二进制数据被卸载。
 
-- 具体例子
+- 回收后再调用：
+  - 当再次有需要时，会检查 Sample 类的 Class 对象是否存在
+    > 可以通过哈希码查看是否存在同一个实例
+  - 如果存在会直接使用，不会重新加载
+  - 如果不存在 Sample 类会被重新加载
+    - 在 Java 虚拟机的堆空间会生成代表 Sample 类的 Class 实例
 
-  ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210205155930162.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjYzODk0Ng==,size_16,color_FFFFFF,t_70#pic_center)
+### 4.6.2. 方法区的垃圾回收
 
-  loader1变量和obj变量间接引用代表Sample类的Class对象，而objClass变量则直接引用它。
+> 可以稍微复习一下去
 
-  如果程序运行过程中，将上图左侧三个引用变量都置为null，此时Sample对象结束生命周期，MyClassLoader对象结束生命周期，代表Sample类的Class对象也结束生命周期，Sample类在方法区内的二进制数据被卸载。
+- 方法区的垃圾回收主要回收两部分内容
+  - 常量池中废弃的常量 
+    > 判定一个常量是否“废弃”还是相对简单的，
+    - HotSpot 虚拟机对常量池的回收策略是很明确的
+    - 只要常量池中的常量没有被人任何地方引用，就可以被回收。
+  - 不再使用的类型。
+    > 判定一个类型是否属于“不再被使用的类”的条件就比较苛刻了 <br />
+    > 也就是说明堆中的类加载器和方法区的类型数据很难被回收
+    - 三个条件
+      - **该类所有的实例都已经被回收。**
+        - **也就是说 Java 堆中不存在该类及其任何子类的实例。**
+      - **加载该类的类加载器已经被回收**
+        - **这个条件除非是经过精心设计的可替换类加载器的场景，如 OSGi、JSP 的重记载等**
+        - **否则通常是很难达成的。**
+      - **该类对应的 java.lang.Class 对象没有任何地方被引用，无法在任何地方通过反射访问该类的方法。**
+    - 注意：
+      - Java 虚拟机被允许对满足上述三个条件的无用类进行回收
+      - 这里说的仅仅是“被允许”，而并不是和对象一样，没有引用了就必然回收。
 
-  当再次有需要时，会检查Sample类的Class对象是否存在，如果存在会直接使用，不会重新加载；如果不存在Sample类会被重新加载，在Java虚拟机的堆空间会生成代表Sample类的Class实例（可以通过哈希码查看是否存在同一个实例）。
+### 4.6.3. 类的卸载
 
-- 类的卸载
+- 不同类加载器加载类型的卸载：
+  - 启动类加载器（引导类加载器）加载的类型：
+    - 在整个运行期间是**不可能被卸载的**（jvm 和 jls 规范）。
+  - 被系统类加载器和扩展类加载器加载的类型：
+    - 在运行期间**不太可能被卸载**
+    - 因为系统类加载器实例或者扩展类加载器的实例基本上在整个运行期间总能直接或者间接访问的到
+      - 系统类加载器和扩展类加载器加载的类型很多
+      - 就算有一个类不使用了，还有很多由系统类加载器和扩展类加载加载出的类
+      - 加载器就无法回收掉，那么类也无法回收掉
+    - 其达到 unreachable 的可能性极小。
 
-  （1）启动类加载器（引导类加载器）加载的类型在整个运行期间是不可能被卸载的（jvm和jls规范）。
+  - 被开发者自定义的类加载器实例加载的类型：
+    - 只有在很简单的上下文环境中才可能被卸载
+    - 而且一般还要借助强制调用虚拟机的垃圾收集功能才可以做到
+    - 可以预想，稍微复杂点的应用场景
+      - 比如：很多时候用户在开发自定义类加载器实例的时候采用缓存以提高系统性能
+      - 采用缓存就不会卸载自定义类加载器，那么自定义类加载器加载的对象也无法卸载
+    - 因此，被加载的类型在运行期间也是几乎不太可能被卸载的（至少卸载的时间是不确定的）。
 
-  （2）被系统类加载器和扩展类加载器加载的类型在运行期间不太可能被卸载，因为系统类加载器实例或者扩展类加载器的实例基本上在整个运行期间总能直接或者间接访问的到，其达到unreachable的可能性极小。
-
-  （3）被开发者自定义的类加载器实例加载的类型只有在很简单的上下文环境中才可能被卸载，畏怯一般还要借助强制调用虚拟机的垃圾收集功能才可以做到。可以预想，稍微复杂点的应用场景（比如：很多时候用户在开发自定义类加载器实例的时候采用缓存以提高系统性能），被加载的类型在运行期间也是几乎不太可能被卸载的（至少卸载的时间是不确定的）。
-
-  总和以上三点，一个已经被加载的类型被卸载的几率很小至少被卸载的时间是不确定的。同时我们可以看得出来，开发者在开发代码的时候，不应该对虚拟机的类型卸载做任何价值社的前提，来实现系统特定功能。
-
-------
-
-- 方法区的垃圾回收
-
-  方法区的垃圾回收主要回收两部分内容：常量池中废弃的常量 和 不再使用的类型。
-
-  HotSpot虚拟机对常量池的回收策略是很明确的，只要常量池中的常量没有被人任何地方引用，就可以被回收。
-
-  判定一个常量是否“废弃”还是相对简单的，而要判定一个类型是否属于“不再被使用的类”的条件就比较苛刻了。需要同时满足下面三个条件：
-
-  - **该类所有的实例都已经被回收。也就是说Java堆中不存在该类及其任何子类的实例。**
-  - **加载该类的类加载器已经被回收。这个条件除非是经过精心设计的可替换类加载器的场景，如OSGi、JSP的重记载等，否则通常是很难达成的。**
-  - **该类对应的java.lang.Class对象没有任何地方被引用，无法在任何地方通过反射访问该类的方法。**
-
-  Java虚拟机被允许对满足上述三个条件的无用类进行回收，这里说的仅仅是“被允许”，而并不是和对象一样，没有引用了就必然回收。
+- 结论
+  - **一个已经被加载的类型被卸载的几率很小至少被卸载的时间是不确定的**
+  - 同时我们可以看得出来，开发者在开发代码的时候， **不应该对虚拟机的类型卸载做任何价值社的前提，来实现系统特定功能**。
 
 ## 4.7. 面试题
 
@@ -4327,20 +4386,20 @@ public class Demo {
   - 一面：类加载过程
 - 百度
   - 类加载的时机
-  - java类加载机制？
+  - java 类加载机制？
   - 简述 Java 类加载机制
 - 腾讯
   - JVM 中类的加载机制，类加载过程？
 - 滴滴
-  - JVM类加载机制
+  - JVM 类加载机制
 - 美团
-  - Java类加载过程
-  - 描述一下jvm加载class文件的原理机制
+  - Java 类加载过程
+  - 描述一下 jvm 加载 class 文件的原理机制
 - 京东
   - 什么是类的加载？
   - 哪些情况会出发类的加载？
-  - 讲一下JVM加载一个类的过程
-  - JVM的类加载机制是什么？
+  - 讲一下 JVM 加载一个类的过程
+  - JVM 的类加载机制是什么？
 
 # 5. 再谈类的加载器
 
@@ -4355,4 +4414,3 @@ public class Demo {
 ```
 知道字节码吗？字节码都有哪些？Integer x = 5;int y = 5;比较x==y要经过哪些步骤
 ```
-
