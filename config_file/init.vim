@@ -624,7 +624,7 @@ noremap <C-k> <C-w>k
 noremap <C-l> <C-w>l
 
 " 设置缓冲区跳转
-noremap <M-h> :bf<cr>
+noremap <M-h> :bp<cr>
 noremap <M-l> :bn<cr>
 
 " 设置tab跳转
@@ -746,4 +746,5 @@ endfunction
 "=================================================end===================================================
 "
 endif
+
 

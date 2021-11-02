@@ -1,40 +1,61 @@
-# 算法说明
+# 1. 算法说明
 
-## 编码
+## 1.1. 编码
 
-### 字符集和字符编码
+### 1.1.1. 字符集和字符编码
 
 ![encryption-1](./image/encryption-1.png)
+
+- 码点与码元：
+  - 码点（Code Point）
+    - 有些地方翻译为**码值或内码**。是指在某个字符集中，根据某种编码规则将字符编码后得到的值
+    - 比如在ASCII字符集中，字母A经过ASCII编码得到的值是65，那么65就是字符A在ASCII字符集中的码点。
+  - 码元（Code Point）
+    > Code unit: The minimal bit combination that can represent a unit of encoded text for processing or interchange. <br />
+    > 为通信相关概念
+    - 是能用于处理或交换编码文本的**最小比特组合**
+    - 是一个包含一定信息量的**一个独立存在的单位**
+    - 通常计算机处理字符的码元为一字节，即8bit
+    - 同时因为计算机中char其实是一种整形，而整形的计算往往以计算机的字长作为一个基础单元，通常来讲，也就是4字节。
+    - UTF-8的码元为uint8, UTF-16的码元为uint16, UTF-32的码元为uint32。
+  - 关系：
+    > 简单理解就是码点是排序的数字，码元是比特流
+    - 码点 **编码** 得到码元
+    - 码元 **解码** 得到码点
 
 - 字符集和编码
   - 字符集(Character Set):是一个系统支持的所有抽象字符的集合。 **把字符直接编号为数(字符->码点)**
     - 定义系统能处理哪些字符。
     - 字符是各种文字和符号的总称，包括各国家文字、标点符号、图形符号、数字等。
       > 如unicode字符集中也包括Emoji字符，[emoji字符编码查询](https://apps.timwhitlock.info/emoji/tables/unicode#block-2-dingbats)
-    - 码点（Code Point）：有些地方翻译为码值或内码。是指在某个字符集中，根据某种编码规则将字符编码后得到的值
-      - 比如在ASCII字符集中，字母A经过ASCII编码得到的值是65，那么65就是字符A在ASCII字符集中的码点。
     - 常见字符集有：ASCII字符集、GB2312字符集、BIG5字符集、GB18030字符集、Unicode字符集等。
-  - 编码(Encoding):则规定这些字符在计算机内部的表示方式。 **把字符转换为数**。
-    - **是一套法则**，使用该法则能够对自然语言的字符的一个集合（如字母表或音节表），与其他东西的一个集合（如号码或电脉冲）进行配对。
+  - 编码(Encoding):则规定这些字符在计算机内部的表示方式。 **码点->码元**。
+    - **是一套法则**
+      - 使用该法则能够对自然语言的字符的一个集合（如字母表或音节表）
+      - 与其他东西的一个集合（如号码或电脉冲）进行配对
     - 即**在符号集合与数字系统之间建立对应关系**，它是信息处理的一项基本技术。
     - 通常人们用符号集合（一般情况下就是文字）来表达信息。
     - 而以计算机为基础的信息处理系统则是利用元件（硬件）不同状态的组合来存储和处理信息的。
     - 元件不同状态的组合能代表数字系统的数字，因此字符编码就是**将符号转换为**计算机可以接受的数字系统的**数**，称为数字代码。
   - 关系
-    - **每个字符集都有自己对应的字符编码**, ASCII字符集就有ASCII编码
+    - **一般一个字符集等同于一个编码方式**
+      - 如ASCII字符集有对应的ASCII编码
+      - ANSI 体系的字符集如 ASCII、ISO 8859-1、GB2312、 GBK 等等都是如此
+      > ANSI 是一种字符代码，为使计算机支持更多语言，通常使用 0x80~0xFF 范围的 2 个字节来表示 1 个字符
+    - 一个字符集上也可以有多种编码方式
+      - 例如 UCS 字符集(也是 Unicode 使用的字符集)上有 UTF-8、UTF-16、UTF-32 等编码方式。
 
       <details>
       <summary style="color:red;">ASCII编码表</summary>
 
       ![encryption-2](./image/encryption-2.png)
       </details>
-    - 但是每个字符集不止有一种字符编码。如unicode字符集有直译的UTF-32编码(4个字节)，也有变长字节编码utf-16(2或4个字节),utf-8(1-4个字节)等。
 
-### 流程说明（网页传输为例）
+### 1.1.2. 流程说明（网页传输为例）
 
 > 使用mysql的 `hex(convert("[字符串]",using [编码]))` 获取指定16进制
 
-#### 编码
+#### 1.1.2.1. 编码
 
 > java服务器为例
 
@@ -69,9 +90,11 @@
   - 在接收到IO字节流、向IO输出字节流的时候，都是**以Unicode为桥梁**，**IO输入会先转为Unicode，输出会从Unicode转为相应编码**。
   - 所以从外部接收的数据，想让JVM自身能正确存储、显示，实质就是先正确利用发送方的编码方式来解读bytes，存为Unicode的char stream过程。
 
-#### 识别
+#### 1.1.2.2. 识别
 
 - 检测文件头的字节顺序标识（Byte Order Mark，BOM）
+  > 不是标准，windows程序(如windows记事本)会携带 <br />
+  > Posix系统明确不建议使用字节序掩码EF BB BF
   ```
   EF BB BF UTF-8
   FE FF UTF-16/UCS-2, big endian
@@ -96,7 +119,7 @@
 
 - 缺省或者提示用户输入
 
-#### 解码
+#### 1.1.2.3. 解码
 
 - 浏览器拿到二进制的数据后，解码为码值。
   ```sql
@@ -104,9 +127,18 @@
   SELECT CONVERT(0xE7BC96E7A081 USING utf8);
   ```
 
-### unicode与utf-8
+### 编码发展历史
 
-#### UCS-2，UCS-4以及UTF
+<!-- 第一个阶段：ASCII 字符集和 ASCII 编码。 计算机刚开始只支持英语(即拉丁字符)，其它语言不能够在计算机上存储和显示。ASCII 用一个字节( Byte )的 7 位(bit)表示一个字符，第一位置 0。后来为了表示更多的欧洲常用字符又对 ASCII 进行了扩展，又有了 EASCII，EASCII 用 8 位表示一个字符，使它能多表示 128 个字符，支持了部分西欧字符。
+第二个阶段：ANSI 编码（本地化） 为使计算机支持更多语言，通常使用 0x80~0xFF 范围的 2 个字节来表示 1 个字符。比如：汉字 ‘中’ 在中文操作系统中，使用 [0xD6,0xD0] 这两个字节存储。 不同的国家和地区制定了不同的标准，由此产生了 GB2312, BIG5, JIS 等各自的编码标准。这些使用 2 个字节来代表一个字符的各种汉字延伸编码方式，称为 ANSI 编码。在简体中文系统下，ANSI 编码代表 GB2312 编码，在日文操作系统下，ANSI 编码代表 JIS 编码。 不同 ANSI 编码之间互不兼容，当信息在国际间交流时，无法将属于两种语言的文字，存储在同一段 ANSI 编码的文本中。
+第三个阶段：UNICODE（国际化） 为了使国际间信息交流更加方便，国际组织制定了 UNICODE 字符集，为各种语言中的每一个字符设定了统一并且唯一的数字编号，以满足跨语言、跨平台进行文本转换、处理的要求。UNICODE 常见的有三种编码方式:UTF-8、UTF-16、UTF-32。
+下面是用一个树状图表示的由ASCII发展而来的各个字符集和编码的分支： -->
+
+![encryption-8](./image/encryption-8.png)
+
+### 1.1.3. unicode与utf-8
+
+#### 1.1.3.1. UCS-2，UCS-4以及UTF
 
 - UCS-2
   - Unicode是为整合全世界的所有语言文字而诞生的。
@@ -124,7 +156,7 @@
   - 规定存储方式的称为UTF（Unicode Transformation Format），
   - 也就是我们上面提到的UTF8格式和下面将要提到的UTF16、UTF32格式。
 
-#### unicode->utf-8映射规则
+#### 1.1.3.2. unicode->utf-8映射规则
 
 - 对于单字节的符号
     ```
@@ -146,7 +178,7 @@
   所以它的格式为 110XXXXX 10XXXXXX 。
   ```
 
-#### utf-8出现的原因/作用
+#### 1.1.3.3. utf-8出现的原因/作用
 
 ```
 虽然unicode编码能做到将不同国家的字符进行统一，使得乱码问题得以解决，
@@ -162,7 +194,7 @@
 
 ![encryption-3](./image/encryption-3.png)
 
-#### unicode的大头小头
+#### 1.1.3.4. unicode的大头小头
 
 - 说明
   - 以汉字`严`为例，Unicode 码是`4E25`，需要用两个字节存储，一个字节是`4E`，另一个字节是`25`。
@@ -175,7 +207,7 @@
 
 ![encryption-4](./image/encryption-4.png)
 
-#### 文件头编码标识
+#### 1.1.3.5. 文件头编码标识
 
 ```
 EF BB BF UTF-8
@@ -185,9 +217,9 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 00 00 FE FF UTF-32/UCS-4, big-endian.
 ```
 
-### 现代编码模型（扩展）
+### 1.1.4. 现代编码模型（扩展）
 
-> ### 说明
+#### 1.1.4.1. 说明
 
 - 现代编码模型自底向上分为五个层次：
   - 第1层 抽象字符表ACR(Abstract Character Repertoire)：明确字符的范围(即确定支持哪些字符)
@@ -198,7 +230,7 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 
 - 来源：[Unicode Technical Report (UTR统一码技术报告)](http://www.unicode.org/reports/tr17/#Repertoire)
 
-> ### 抽象字符表 ACR (Abstract Character Repertoire)
+#### 1.1.4.2. 抽象字符表 ACR (Abstract Character Repertoire)
 
 - **抽象字符** (Abstract Character) [维基](https://zh.wikipedia.org/wiki/%E5%AD%97%E7%AC%A6_(%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6))
   - 字符是指字母、数字、标点、表意文字（如汉字）、符号、或者其他文本形式的书写“原子”。
@@ -227,7 +259,7 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
   haha_acr = { 'a', '吼', 'あ', ' α', 'Д' }
   ```
 
-> ### 编码字符集 CCS (Coded Character Set)
+#### 1.1.4.3. 编码字符集 CCS (Coded Character Set)
 
 - **编码字符集**
   - 是一个每个所属字符都分配了**码位**的抽象**字符集**。
@@ -268,21 +300,59 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
   haha_ccs = { 'a' : 0x0, '吼':0x1 , 'あ':0x2 , ' α':0x3 , 'Д':0x4  }
   ```
 
-> ### 字符编码表 CEF (Character Encoding Form)
+#### 1.1.4.4. 字符编码表 CEF (Character Encoding Form)
 
-> ### 字符编码方案 CES (Character Encoding Schema)
+- 问题：在讲抽象字符集ACR的时候曾经提起，UCS是一个**开放字符集**，未来可能有更多的符号加入到这个字符集中来
+  - 也就是说UCS需要的**码位**，理论上是**无限**的。
+  - 但计算机**整形**能表示的整数范围是有限的
+  - 所以说到底，对 **有限与无限的矛盾，必须通过一种方式进行调和** 
+  - 这个解决方案，就是**字符编码表(Character Encoding Form)**。
 
-> ### 传输编码语法 TES (Transfer Encoding Syntax)
+- 字符编码表
+  - 作用
+    - **码位(Code Point)**映射为**码元序列(Code Unit Sequences)。**
+    - 对于Unicode而言，字符编码表将**Unicode标量值(Unicode scalar value)**一一映射为**码元序列(Code Unit Sequences)**。
 
-## 编码算法
+- **码元**
+  > Code unit: The minimal bit combination that can represent a unit of encoded text for processing or interchange.
+  - 说明：
+    - 码元是能用于处理或交换编码文本的最小比特组合
+    - 通常计算机处理字符的码元为一字节，即8bit。
+    - 同时因为计算机中char其实是一种整形，而整形的计算往往以计算机的字长作为一个基础单元，通常来讲，也就是4字节。
+  - 示例：Unicode
+    - Unicode定义了三种不同的CEF，分别采用了1字节，2字节，4字节的码元，正好对应了计算机中最常见的三种整形长度：
+    - UTF-8的码元为uint8, UTF-16的码元为uint16, UTF-32的码元为uint32。
+    - 当然也有一些非标准的CEF，如UCS-2,UCS-4
+- 双向映射
+  - CEF将**码位**映射为**码元序列。**这个映射必须是**一一映射(双射)**。
+  - 因为当使用CEF进行**编码(Encode)**时，是将码位映射为码元序列。
+  - 而当使用CEF进行**解码(Decode)**时，是将码元序列还原为码位。
+  - 为了保证两个过程都不出现歧义，必须保证CEF是一个双射。
 
-#### URL 编码
+- 实现：
+  - 说明
+    - **变长编码**
+    - 无论是UTF-8还是UTF-16，本质思想都是**通过预留标记位来指示码元序列的长度，**从而实现变长编码。
+  - 示例：
 
-#### Base64 编码
+    ![encryption-6.png](./image/encryption-6.png)
 
-## 哈希(hash)算法/摘要(digest)算法
+    ![encryption-7.png](./image/encryption-7.png)
 
-### 算法说明
+
+#### 1.1.4.5. 字符编码方案 CES (Character Encoding Schema)
+
+#### 1.1.4.6. 传输编码语法 TES (Transfer Encoding Syntax)
+
+## 1.2. 编码算法
+
+#### 1.2.0.7. URL 编码
+
+#### 1.2.0.8. Base64 编码
+
+## 1.3. 哈希(hash)算法/摘要(digest)算法
+
+### 1.3.1. 算法说明
 
 | 算法       | 输出长度（位） | 输出长度（字节） |
 | :--------- | :------------- | :--------------- |
@@ -292,15 +362,15 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 | SHA-256    | 256 bits       | 32 bytes         |
 | SHA-512    | 512 bits       | 64 bytes         |
 
-### java 库-BouncyCastle
+### 1.3.2. java 库-BouncyCastle
 
-## Hmac 算法
+## 1.4. Hmac 算法
 
 > ak/sk
 
-## 对称加密算法
+## 1.5. 对称加密算法
 
-### 算法说明
+### 1.5.1. 算法说明
 
 | 算法 | 密钥长度    | 工作模式             | 填充模式                                |
 | :--- | :---------- | :------------------- | :-------------------------------------- |
@@ -308,33 +378,33 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 | AES  | 128/192/256 | ECB/CBC/PCBC/CTR/... | NoPadding/PKCS5Padding/PKCS7Padding/... |
 | IDEA | 128         | ECB                  | PKCS5Padding/PKCS7Padding/...           |
 
-### 示例
+### 1.5.2. 示例
 
-## 口令加密算法
+## 1.6. 口令加密算法
 
-### 说明
+### 1.6.1. 说明
 
-### 示例
+### 1.6.2. 示例
 
-## 密钥交换算法
+## 1.7. 密钥交换算法
 
-### 说明
+### 1.7.1. 说明
 
-### 实现
+### 1.7.2. 实现
 
-## 非对称加密算法
+## 1.8. 非对称加密算法
 
-## 签名算法
+## 1.9. 签名算法
 
-## 数字证书
+## 1.10. 数字证书
 
-# 应用与问题
+# 2. 应用与问题
 
-## mysql处理emoji
+## 2.1. mysql处理emoji
 
-## Https 的连接与中间人攻击
+## 2.2. Https 的连接与中间人攻击
 
-# 参考资料
+# 3. 参考资料
 
 - [廖雪峰-加密与安全](https://www.liaoxuefeng.com/wiki/1252599548343744/1255943717668160)
 - [字符集和字符编码（Charset & Encoding）](https://www.runoob.com/w3cnote/charset-encoding.html)
@@ -344,3 +414,4 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 - [十分钟搞清字符集和字符编码](http://cenalulu.github.io/linux/character-encoding/)
 - [Java中的编码问题：接收、转码、输出](https://blog.csdn.net/ts_dchs/article/details/73011259)
 - [字符编码掠影：现代编码模型](https://www.zhihu.com/question/31833164/answer/115069547?spm=a2c6h.12873639.0.0.50534cadpacQ2r)
+- [字符编码：Unicode、UTF-8、GBK](https://senitco.github.io/2017/06/06/character-encoding/)
