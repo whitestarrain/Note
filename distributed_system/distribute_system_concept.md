@@ -1014,3 +1014,4 @@ public class ConsistentHashingWithoutVirtualNode {
 - [一文搞懂Raft算法](https://www.cnblogs.com/xybaby/p/10124083.html)
 - [The Secret Lives of Data](http://thesecretlivesofdata.com/raft/)
 - [「图解Raft」让一致性算法变得更简单](https://zinglix.xyz/2020/06/25/raft/)
+- [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)

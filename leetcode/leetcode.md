@@ -1,10 +1,10 @@
-> 临时起意打算用vim手写算法题，因此就以笔记的形式进行记录。同时二刷一些题目
+> 临时起意打算用 vim 手写算法题，因此就以笔记的形式进行记录。大多数是二刷题目
 
 # 查找
 
 ```java
 public static void main(){
-  
+
 }
 ```
 
@@ -17,6 +17,7 @@ public static void main(){
 ```
 给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。
 ```
+
 ```java
 /**
  * Definition for singly-linked list.
@@ -53,7 +54,7 @@ class Solution {
 
 # 数据结构
 
-## 146.LRU缓存机制
+## 146.LRU 缓存机制
 
 ```
 运用你所掌握的数据结构，设计和实现一个  LRU (最近最少使用) 缓存机制 。
@@ -71,16 +72,25 @@ void put(int key, int value) 如果关键字已经存在，则变更其数据�
 // 通过java LinkedHashMap实现
 class LRUCache {
 
+    private int capacity;
+    private Map<Integer,Integer> map;
+
     public LRUCache(int capacity) {
-
+        this.capacity = capacity;
+        this.map = new LinkedHashMap(capacity,0.75f,true){
+            @Override
+            protected boolean removeEldestEntry(Map.Entry eldest){
+                return map.size()>capacity;
+            }
+        };
     }
-    
+
     public int get(int key) {
-
+        return map.getOrDefault(key,-1);
     }
-    
-    public void put(int key, int value) {
 
+    public void put(int key, int value) {
+        map.put(key,value);
     }
 }
 
@@ -95,18 +105,34 @@ class LRUCache {
 ```java
 // 手动实现
 class LRUCache {
-
-    public LRUCache(int capacity) {
-
+  // 双向链表节点
+  private static class Node<K,V>{
+    K k;
+    V v;
+    Node<K,V> prev;
+    Node<K,V> next;
+    public Node(K k,V v){
+      this.k = k;
+      this.v = v;
     }
+  }
+
+  // 双向链表
+  private static class DoubleLinkeList<K,V>(
     
-    public int get(int key) {
+  )
 
-    }
-    
-    public void put(int key, int value) {
+  public LRUCache(int capacity) {
 
-    }
+  }
+
+  public int get(int key) {
+
+  }
+
+  public void put(int key, int value) {
+
+  }
 }
 
 /**
