@@ -5355,9 +5355,269 @@ public class Demo {
 
 ## 5.5. 沙箱安全机制
 
+- 作用：
+  - 保护程序安全
+  - 保护Java原生的JDK代码
+
+- 说明： **Java安全模型的核心就是Java沙箱（sandbox）**
+  - 沙箱机制就是将Java代码 **限定在虚拟机（JVM）特定的运行范围中，并且严格限制代码对本地资源的访问**
+  - 通过这样的措施来保证对代码的有限隔离，防止对本地系统造成破坏
+  - 所有的Java程序都可以指定沙箱，可以指定安全策略。
+
+- 实现措施：沙箱主要限制系统资源访问
+  - CPU、内存、文件系统、网络等
+  - 不同级别的沙箱对这些资源访问的限制也可以不一样。
+
+
+- JDK1.0时期
+  - 在Java中将执行程序分成本地代码和远程代码两种
+    - 本地代码默认视为可信任的
+      - 对于授信的本地代码，可以访问一切本地资源
+    - 而远程代码则被看作是不受信的
+      - 而对于非授信的远程代码在早期的Java实现中，安全依赖于 **沙箱（Sandbox）机制**
+  - 如下图所示JDK1.0安全模型
+
+    ![jvm2-77.png](./image/jvm2-77.png)
+
+- JDK1.1时期
+  - 原因：
+    - JDK1.0中如此严格的安全机制也给程序的功能扩展带来障碍
+    - 比如当用户希望远程代码访问本地系统的文件时候，就无法实现。
+  - 改进：
+    - 因此在后续的Java1.1版本中，针对安全机制做了改进
+    - 增加了**安全策略**。允许用户指定代码对本地资源的访问权限。
+  - 如下图所示JDK1.1安全模型
+
+    ![jvm2-78.png](./image/jvm2-78.png)
+
+- JDK1.2时期
+  - 在Java1.2版本中，再次改进了安全机制，增加了 **代码签名**
+  - **不论本地代码或是远程代码，都会按照用户的安全策略设定**
+  - 由类加载器加载到虚拟机中权限不同的运行空间，来实现差异化的代码执行权限控制。
+  - 如下图所示JDK1.2安全模型：
+
+    ![jvm2-79.png](./image/jvm2-79.png)
+
+- JDK1.6时期
+  - 当前最新的安全机制实现，则引入了**域（Domain）**的概念。
+  - 虚拟机会把所有代码加载到不同的域中，有两种域：
+    - 系统域
+      - **系统域部分专门负责与关键资源进行交互**
+      - 而各个应用域部分则通过系统域的部分代理来对各种需要的资源进行访问
+    - 应用域
+  - 权限：
+    - 虚拟机中不同的受保护域（Protected Domain），对应不一样的权限（Permission）
+    - 存在于不同域中的类文件就具有了当前域的全部权限
+  - 如下图所示，最新的安全模型（jdk1.6）
+
+    ![jvm2-80.png](./image/jvm2-80.png)
+
 ## 5.6. 自定义类加载器
 
+### 5.6.1. 基本说明
+
+- 目的/作用
+  - **隔离加载类**
+    - 在某些框架内进行中间件与应用模块隔离，把类加载到不同的环境
+    - 比如：
+      - 阿里内某容器框架通过自定义类加载器确保 **应用中** 依赖的jar包不会影响到 **中间件** 运行时使用的jar包
+      - Tomcat这类Web应用服务器，内部自定义了好几种类加载器，用于隔离同一个Web应用服务器上不同应用程序。（类的仲裁---->类冲突）
+  - **修改类加载的方式**
+    - 类的加载模型并非强制
+    - 除Bootstrap外，其他的加载并非一定要引入，或者根据实际情况在某个时间点按需进行动态加载。
+  - **扩展加载源**
+    - 比如从数据库、网络、甚至是电视机顶盒进行加载
+  - **防止源码泄露**
+    - Java代码容易被编译和篡改，可以进行编译加密
+    - 那么类加载也需要自定义，还原加密的字节码。
+
+- **常见的场景**
+  - 实现类似进程内隔离，类加载实际上用作不同的命名空间，以提供类似容器、模块化的效果
+    - 例如，两个模块依赖于某个类库的不同版本，如果分别被不同的容器加载，就可以互不干扰
+    - 这方面的集大成者是Java EE和OSGi、JPMS等框架。
+  - 应用需要从不同的数据源获取类定义信息
+    - 例如网络数据源，而不是本地文件系统
+    - 或者是需要自己操纵字节码，动态修改或者生成类型。
+
+- **注意：类型转换陷阱**
+  - 在一般情况下，使用不同的类加载器去加载不同的功能模块，会提高应用程序的安全性
+  - 但是，如果涉及Java类型转换，则加载器反而容易产生不好的事情
+  - 在做Java类型转换时，只有两个类型都是由同一个加载器所加载，才能进行进行类型转换，否则转换时会发生异常。
+
+### 5.6.2. 实现
+
+> 用户通过定制自己的类加载器，这样可以重新定义类的加载规则，以便实现一些自定义的处理逻辑。
+
+- **说明**
+  - 自定义类加载器的父类加载器是系统类加载器
+    > 此处指的不是继承关系，是指`parent`成员
+  - JVM中的所有类加载都会使用`java.lang.ClassLoader.loadClass()`接口
+    > （自定义类加载器并重写java.lang.ClassLoader.loadClass()接口的除外）
+  - 连JDK的核心类库也不能例外。
+
+
+- **实现方式**
+  - 继承：
+    - Java提供了抽象类java.lang.ClassLoader，所有用户自定义的类加载器都应该继承ClassLoader类。
+    - 也可以直接继承`URLClassLoader`
+  - 重写：在自定义 ClassLoader 的子类的时候，我们常见的会有两种做法：
+    - 方式
+      - 方式一：重写loadClass()方法
+      - 方式二：重写findClass()方法 (**推荐**)
+    - **区别**
+      - 这两种方法本质上差不多，毕竟loadClass()也会调用findClass()
+      - 但是从逻辑上讲我们最好不要直接修改loadClass()的内部逻辑
+        - loadClass()这个方法是实现双亲委派模型逻辑的地方，擅自修改这个方法会导致模型结构被破坏，容易造成问题。
+        - **因此我们最好是在双亲委派模型框架内进行小范围改动，不破坏原有的稳定结构**
+        - 同时，也避免了自己重写loadClass()方法的过程中必须写双亲委派的重复代码
+        - 从代码的复用性来看，不直接修改这个方法始终是比较好的选择。
+      - 建议的做法是： **只在findClass()里重写自定义类的加载方法，根据参数指定类的名字，返回对应的Class对象的引用**
+  - 使用：当编写好自定义的类加载器后，便可以在程序中调用loadClass()方法来实现类加载操作。
+
+- 示例
+
+  ```java
+  /**
+    * 自定义ClassLoader
+    */
+  public class MyClassLoader extends ClassLoader {
+      private String byteCodePath;
+
+      public MyClassLoader(String byteCodePath) {
+          this.byteCodePath = byteCodePath;
+      }
+
+      public MyClassLoader(ClassLoader parent, String byteCodePath) {
+          super(parent);
+          this.byteCodePath = byteCodePath;
+      }
+
+      @Override
+      protected Class<?> findClass(String className) throws ClassNotFoundException {
+          BufferedInputStream bis = null;
+          ByteArrayOutputStream baos = null;
+          try {
+              // 获取字节码文件的完整路径
+              String fileName = byteCodePath + className + ".class";
+              // 获取一个输入流
+              bis = new BufferedInputStream(new FileInputStream(fileName));
+              // 获取一个输出流
+              baos = new ByteArrayOutputStream();
+              // 具体读入数据并写出的过程
+              int len;
+              byte[] data = new byte[1024];
+              while ((len = bis.read(data)) != -1) {
+                  baos.write(data, 0, len);
+              }
+              // 获取内存中的完整的字节数组的数据
+              byte[] byteCodes = baos.toByteArray();
+              // 调用defineClass()，将字节数组的数据转换为Class的实例。
+              Class clazz = defineClass(null, byteCodes, 0, byteCodes.length);
+              return clazz;
+          } catch (IOException e) {
+              e.printStackTrace();
+          } finally {
+              try {
+                  if (baos != null)
+                      baos.close();
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
+              try {
+                  if (bis != null)
+                      bis.close();
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
+          }
+          return null;
+      }
+  }
+  ```
+
+  ```java
+  public class MyClassLoaderTest {
+      public static void main(String[] args) {
+          MyClassLoader loader = new MyClassLoader("d:/");
+
+          try {
+              Class clazz = loader.loadClass("Demo1");
+              System.out.println("加载此类的类的加载器为：" + clazz.getClassLoader().getClass().getName());
+
+              System.out.println("加载当前Demo1类的类的加载器的父类加载器为：" + clazz.getClassLoader().getParent().getClass().getName());
+          } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+          }
+      }
+  }
+  ```
+
+  ```
+  加载此类的类的加载器为：com.atguigu.java2.MyClassLoader
+  加载当前Demo1类的类的加载器的父类加载器为：`sun.misc.Launcher$AppClassLoader`
+  ```
+
+
 ## 5.7. Java9新特性 
+
+> **为了保证兼容性，JDK9没有从根本上改变三层类加载器架构和双亲委派模型，但为了模块化系统的顺利运行，仍然发生了一些值得被注意的变动**
+
+- 扩展机制被移除
+  - 扩展类加载器由于向后兼容性的原因被保留，不过被重命名为平台类加载器(platform class loader)
+  - 可以通过classLoader的新方法getPlatformClassLoader()来获取。
+
+    ```
+    JDK9时基于模块化进行构建(原来的rt.jar和tools.jar被拆分成数十个JMOD文件)
+    其中的Java类库就已天然地满足了可扩展的需求，那自然无须再保留`<JAVA_HOME>\lib\ext`目录
+    此前使用这个目录或者java.ext.dirs系统变量来扩展JDK功能的机制已经没有继续存在的价值了。
+    ```
+
+- 平台类加载器和应用程序类加载器都不再继承自java.net.URLClassLoader。
+  - 现在启动类加载器、平台类加载器、应用程序类加载器全都继承于jdk.internal.loader.BuiltinClassLoader。
+  - 如果有程序直接依赖了这种继承关系，或者依赖了URLClassLoader类的特定方法，那代码很可能会在JDK9及更高版本的JDK中崩溃。
+
+  ![jvm2-81.png](./image/jvm2-81.png)
+
+- 在Java9中，类加载器有了名称。
+  - 该名称在构造方法中指定，可以通过getName()方法来获取。
+  - 平台类加载器的名称是platform，应用类加载器的名称是app。
+  - 类加载器的名称在调试与类加载器相关的问题时会非常有用。
+- 启动类加载器现在是在jvm内部和java类库共同协作实现的类加载器（以前是C++实现）
+  - 但为了与之前代码兼容，在获取启动类加载器的场景中仍然会返回null，而不会得到BootClassLoader实例。
+- 类加载的委派关系也发生了变动
+  - 当平台及应用程序类加载器收到类加载请求，在委派给父加载器加载前，要先判断该类是否能够归属到某一个系统模块中
+  - 如果可以找到这样的归属关系，就要优先委派给负责那个模块的加载器完成加载。
+
+  ![jvm2-82.png](./image/jvm2-82.png)
+
+> **三个类加载器各自加载模块**
+
+
+![jvm2-83.png](./image/jvm2-83.png)
+
+![jvm2-84.png](./image/jvm2-84.png)
+
+![jvm2-85.png](./image/jvm2-85.png)
+
+> **示例代码**
+
+```java
+public class ClassLoaderTest {
+    public static void main(String[] args) {
+        System.out.println(ClassLoaderTest.class.getClassLoader());
+        System.out.println(ClassLoaderTest.class.getClassLoader().getParent());
+        System.out.println(ClassLoaderTest.class.getClassLoader().getParent().getParent());
+
+        //获取系统类加载器
+        System.out.println(ClassLoader.getSystemClassLoader());
+        //获取平台类加载器
+        System.out.println(ClassLoader.getPlatformClassLoader());
+        //获取类的加载器的名称
+        System.out.println(ClassLoaderTest.class.getClassLoader().getName());
+    }
+}
+```
+
 
 ## 5.8. 面试题
 
