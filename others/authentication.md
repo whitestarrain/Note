@@ -972,6 +972,13 @@ http.createServer((req, res) => {
 
   > ![authen-9](./image/authen-9.png)
 
+- 说明
+  - access key:用来标识时哪个用户或者app
+    - 当有多个用户时，不同用户有不同的 access key
+    - access key给后端是为了知道当前用户的secret key
+  - secure key:用来加密解密
+  - message:实际传输的信息
+
 - 用途：
   - 一般用于后台程序执行API调用时的服务端认证；AK标识用户，SK作为对称加密通信的秘钥。
   - ak 是 key，sk 其实是 value 。调用者用 sk 加密数据，并把 ak 一起传过去。服务端用 ak 查询对应的 sk 解密数据。
@@ -980,10 +987,10 @@ http.createServer((req, res) => {
 - 基本流程：
   - 客户端：
     - 客户端需要在认证服务器中预先设置 **access key（AK 或叫 app ID）**  和 **secure key（SK）**
-    - 在调用 API 时，客户端需要对参数和 access key 进行自然排序后并使用 secure key 进行签名生成一个额外的参数 digest(摘要)
-    - **sk只作为加密算法的参数**，不会进行传输
+    - 在调用 API 时，客户端需要对**要传递的数据和 access key** 进行自然排序后并**使用 secure key 进行加密**生成一个额外的参数 digest(摘要)
+      > **sk只作为加密算法的参数**，**不会进行传输** ，传输的是使用sk加密得到的摘要
   - 服务端
-    - 服务器根据预先设置的 secure key 进行同样的摘要计算
+    - 服务器根据预先设置的 secure key 进行与上述同样的摘要计算
     - 要求结果完全一致，否则说明认证失败
   - 注意:
     - **secure key 不能在网络中传输，以及在不受信任的位置存放（浏览器等）**
