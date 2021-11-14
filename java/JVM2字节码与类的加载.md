@@ -5368,7 +5368,6 @@ public class Demo {
   - CPU、内存、文件系统、网络等
   - 不同级别的沙箱对这些资源访问的限制也可以不一样。
 
-
 - JDK1.0时期
   - 在Java中将执行程序分成本地代码和远程代码两种
     - 本地代码默认视为可信任的
@@ -5441,8 +5440,8 @@ public class Demo {
 
 - **注意：类型转换陷阱**
   - 在一般情况下，使用不同的类加载器去加载不同的功能模块，会提高应用程序的安全性
-  - 但是，如果涉及Java类型转换，则加载器反而容易产生不好的事情
-  - 在做Java类型转换时，只有两个类型都是由同一个加载器所加载，才能进行进行类型转换，否则转换时会发生异常。
+  - 但是，如果涉及Java类型转换，反而容易产生不好的事情
+  - **在做Java类型转换时，只有两个类型都是由同一个加载器所加载，才能进行进行类型转换** （命名空间） ，否则转换时会发生异常。
 
 ### 5.6.2. 实现
 
@@ -5455,7 +5454,6 @@ public class Demo {
     > （自定义类加载器并重写java.lang.ClassLoader.loadClass()接口的除外）
   - 连JDK的核心类库也不能例外。
 
-
 - **实现方式**
   - 继承：
     - Java提供了抽象类java.lang.ClassLoader，所有用户自定义的类加载器都应该继承ClassLoader类。
@@ -5463,7 +5461,7 @@ public class Demo {
   - 重写：在自定义 ClassLoader 的子类的时候，我们常见的会有两种做法：
     - 方式
       - 方式一：重写loadClass()方法
-      - 方式二：重写findClass()方法 (**推荐**)
+      - 方式二：重写findClass()方法 ( **推荐** )
     - **区别**
       - 这两种方法本质上差不多，毕竟loadClass()也会调用findClass()
       - 但是从逻辑上讲我们最好不要直接修改loadClass()的内部逻辑
@@ -5557,23 +5555,20 @@ public class Demo {
   加载当前Demo1类的类的加载器的父类加载器为：`sun.misc.Launcher$AppClassLoader`
   ```
 
-
 ## 5.7. Java9新特性 
 
 > **为了保证兼容性，JDK9没有从根本上改变三层类加载器架构和双亲委派模型，但为了模块化系统的顺利运行，仍然发生了一些值得被注意的变动**
 
 - 扩展机制被移除
-  - 扩展类加载器由于向后兼容性的原因被保留，不过被重命名为平台类加载器(platform class loader)
-  - 可以通过classLoader的新方法getPlatformClassLoader()来获取。
+  - 扩展类加载器：由于向后兼容性的原因被保留，不过被重命名为平台类加载器(platform class loader)
+    - 可以通过classLoader的新方法getPlatformClassLoader()来获取。
+  - 扩展类库：JDK9时，是 **基于模块化进行构建**
+    - 原来的rt.jar和tools.jar被拆分成数十个JMOD文件
+    - 其中的Java类库就已天然地满足了可扩展的需求，那自然无须再保留`<JAVA_HOME>\lib\ext`目录
+    - 此前使用这个目录或者java.ext.dirs系统变量来扩展JDK功能的机制已经没有继续存在的价值了。
 
-    ```
-    JDK9时基于模块化进行构建(原来的rt.jar和tools.jar被拆分成数十个JMOD文件)
-    其中的Java类库就已天然地满足了可扩展的需求，那自然无须再保留`<JAVA_HOME>\lib\ext`目录
-    此前使用这个目录或者java.ext.dirs系统变量来扩展JDK功能的机制已经没有继续存在的价值了。
-    ```
-
-- 平台类加载器和应用程序类加载器都不再继承自java.net.URLClassLoader。
-  - 现在启动类加载器、平台类加载器、应用程序类加载器全都继承于jdk.internal.loader.BuiltinClassLoader。
+- 平台类加载器和应用程序类加载器都不再继承自`java.net.URLClassLoader`
+  - 现在启动类加载器、平台类加载器、应用程序类加载器全都继承于`jdk.internal.loader.BuiltinClassLoader`。
   - 如果有程序直接依赖了这种继承关系，或者依赖了URLClassLoader类的特定方法，那代码很可能会在JDK9及更高版本的JDK中崩溃。
 
   ![jvm2-81.png](./image/jvm2-81.png)
@@ -5582,8 +5577,8 @@ public class Demo {
   - 该名称在构造方法中指定，可以通过getName()方法来获取。
   - 平台类加载器的名称是platform，应用类加载器的名称是app。
   - 类加载器的名称在调试与类加载器相关的问题时会非常有用。
-- 启动类加载器现在是在jvm内部和java类库共同协作实现的类加载器（以前是C++实现）
-  - 但为了与之前代码兼容，在获取启动类加载器的场景中仍然会返回null，而不会得到BootClassLoader实例。
+- 启动类加载器现在是在**jvm内部和java类库共同协作实现的类加载器**（以前是C++实现）
+  - 但为了与之前代码兼容，在获取启动类加载器的场景中**仍然会返回null，而不会得到BootClassLoader实例**
 - 类加载的委派关系也发生了变动
   - 当平台及应用程序类加载器收到类加载请求，在委派给父加载器加载前，要先判断该类是否能够归属到某一个系统模块中
   - 如果可以找到这样的归属关系，就要优先委派给负责那个模块的加载器完成加载。
@@ -5592,12 +5587,17 @@ public class Demo {
 
 > **三个类加载器各自加载模块**
 
+- 启动类加载器负责加载模块
 
-![jvm2-83.png](./image/jvm2-83.png)
+  ![jvm2-83.png](./image/jvm2-83.png)
 
-![jvm2-84.png](./image/jvm2-84.png)
+- 平台类加载器负责加载模块
 
-![jvm2-85.png](./image/jvm2-85.png)
+  ![jvm2-84.png](./image/jvm2-84.png)
+
+- 应用程序类加载器负责加载模块
+
+  ![jvm2-85.png](./image/jvm2-85.png)
 
 > **示例代码**
 
@@ -5617,7 +5617,6 @@ public class ClassLoaderTest {
     }
 }
 ```
-
 
 ## 5.8. 面试题
 

@@ -688,7 +688,7 @@ nnoremap <leader>zd :call SaveImageByUrl() <cr>
 let g:which_key_map.z.d = "downloadImageFile"
 
 " 压缩空行
-nnoremap <leader>zl :g/^$/,/./-j<cr> :/jjj<cr>
+nnoremap <leader>zl :g/^$/,/./-j<cr> :/jj<cr>
 let g:which_key_map.z.l = "compress empty line"
 
 " 打开光标下文件
@@ -748,3 +748,4 @@ endfunction
 "=================================================end===================================================
 "
 endif
+

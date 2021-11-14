@@ -41,6 +41,15 @@
 
 ## 关键字
 
+### final
+
+待做
+
+- [JVM对于声明为final的局部变量（local var）做了哪些性能优化？](https://www.zhihu.com/question/21762917)
+- [浅析Java中的final关键字](https://www.cnblogs.com/dolphin0520/p/3736238.html)
+- [用final修饰局部变量是否为良好的编码习惯？](https://segmentfault.com/q/1010000019193209)
+
+
 ## 异常体系
 
 ![java-basic-5](./image/java-basic-5.png)
@@ -405,9 +414,6 @@ spring里为我们提供了许多属性编辑器，这时我们如果想把sprin
 自定义好了属性编辑器后，ConfigurableBeanFactory里面有一个registerCustomEditor方法，此方法的作用就是注册自定义的编辑器，也是spi思想的体现
 
 ### HotSpot SPI
-
-
-
 
 # Java8新特性
 
