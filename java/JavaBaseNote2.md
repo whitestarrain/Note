@@ -3052,16 +3052,16 @@
   ```
 
 ```
-driverClassName=com.mysql.jdbc.Driver
-url=jdbc:mysql://127.0.0.1:3306/test
-username=root
-password=root
-# 初始话连接数量
-initialSize=5
-# 最大连接数量
-maxActive=10
-# 超时时间
-maxWait=3000
+  driverClassName=com.mysql.jdbc.Driver
+  url=jdbc:mysql://127.0.0.1:3306/test
+  username=root
+  password=root
+  # 初始话连接数量
+  initialSize=5
+  # 最大连接数量
+  maxActive=10
+  # 超时时间
+  maxWait=3000
 ```
 
 ```java

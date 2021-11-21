@@ -51,10 +51,10 @@ Plug 'yuttie/comfortable-motion.vim'
 "-----------------------------------格式化化插件--------------------------------------
 " prettier 格式化插件
 " post install (yarn install | npm install) then load plugin only for editing supported files
-" 安装依赖npm i -g prettier
+" 安装依赖npm install prettier@1.18.2
 Plug 'prettier/vim-prettier', {
   \ 'do': 'npm install',
-  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html', 'java', 'bash', 'c'] }
 "-----------------------------------格式化化插件--------------------------------------
 
 
@@ -326,7 +326,7 @@ let g:startify_session_savevars = [
 
 "------------------------------------nerdtree-------------------------------------
 "自动开启书签栏
-let NERDTreeShowBookmarks=1
+" let NERDTreeShowBookmarks=1
 " ignore file
 let NERDTreeIgnore=[
     \ '\.pyc$','\~$','\.swp','\.git$','\.pyo$','\.svn$','\.swp$','__pycache__'
@@ -354,6 +354,7 @@ let g:tagbar_type_markdown = {
         \ ],
     \ 'sort' : 0
 \ }
+" 位置调整
 "------------------------------------tagbar-------------------------------------
 
 "------------------------------------image paste-------------------------------------
@@ -470,7 +471,7 @@ set maxmempattern=5000
 " 设置字体大小
 " set guifont=Cousine_NF:h11
 " let g:Guifont="Consolas:h13""
-autocmd vimenter * GuiFont! Consolas:h13
+" autocmd vimenter * GuiFont! Consolas:h11
 
 " F2进入粘贴模式
 set pastetoggle=<F2>
@@ -561,6 +562,7 @@ nnoremap <silent><leader>ff :FZF<CR>
 let g:which_key_map.f.f = 'fzf-file'
 
 nnoremap <silent><leader>fb :Buffers<CR>
+nnoremap <silent><leader>/ :Buffers<CR>
 let g:which_key_map.f.b = 'fzf-buffer'
 
 " easymotion map
@@ -639,7 +641,7 @@ let g:which_key_map.z.p = "setPathNow"
 
 nnoremap <silent>o A<cr>
 
-nnoremap <silent><leader>d :bd<cr>
+nnoremap <silent><leader>d :bp\|bd # <cr>
 let g:which_key_map.d = "deleteNow"
 
 nnoremap < <<
@@ -709,8 +711,8 @@ let g:which_key_map.o.c.b = "chrome"
 let g:which_key_map.o.c.v =  "vscode"
 
 
-nnoremap <silent><leader>zp :!markmap %  <cr> 
-let g:which_key_map.z.p = "markmap"
+nnoremap <silent><leader>zk :!markmap %  <cr> 
+let g:which_key_map.z.k = "markmap"
 
 nnoremap <silent><leader>fo :call FindFromAllFile()<cr>
 let g:which_key_map.f.o = "find and open"
@@ -742,7 +744,6 @@ endfunction
 "  set shell=/bin/bash
 "endif
 "
-
 "=================================================end===================================================
 
 "=================================================end===================================================

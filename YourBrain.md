@@ -457,7 +457,7 @@
 
 # Java知识栈
 
-## Java 基础 <!-- fold -->
+## Java 基础
 
 ### 基础 <!-- fold -->
 
@@ -567,7 +567,6 @@
   - StringBuilder
 - 字符串常量池
 
-
 #### SPI
 
 - 原理
@@ -583,7 +582,6 @@
     - scan
     - 自定义scope
     - 自定义标签
-
 
 #### java8新特性
 
@@ -730,7 +728,137 @@
 
 - [其他重要问题](https://www.jianshu.com/p/8bc28d6b0a5e)
 
-### 多线程 <!-- fold -->
+### 并发编程 <!-- fold -->
+
+#### **体系结构** <!-- fold -->
+
+- 理论体系
+  - 为什么需要多线程
+  - 线程不安全案例
+  - 并发出现问题的根源
+    - 可见性
+    - 原子性
+    - 有序性
+  - Java并发问题解决方案
+    - 关键字
+      - volatile
+      - synchronized
+      - final
+    - Java内存模型: <br /> 共享内存并发模型
+  - 线程安全不是绝对的
+    - 不可变
+    - 绝对线程安全
+    - 相对线程安全
+    - 线程兼容
+    - 线程对立
+  - Java中线程安全的实现
+    - 互斥同步
+      - synchronized
+      - ReentrantLock
+    - 非阻塞同步
+      - CAS
+      - Atomic(CAS的具体实现)
+    - 无同步方案
+      - 栈封闭
+      - 线程本地存储-ThreadLocal
+      - 可重入代码(ReentrantLock)
+- 线程基础
+  - 线程状态转换
+    - new
+    - runalbe
+    - blocking
+    - waiting
+    - timed waiting
+    - terminated
+  - 线程使用方式
+    - 实现Runable接口
+    - 实现Funture接口
+    - 继承Thread类
+  - 基础线程机制
+    - Executor
+    - Daemon
+    - sleep
+    - yield
+  - 线程中断
+    - interrupteedException
+    - interrupt()
+    - Executor的中断操作
+  - ThreadGroup处理未捕获异常
+  - 线程互斥同步
+    - synchronized
+    - ReentrantLock
+  - 线程协作
+    - join
+    - wait,notify,notifyAll
+    - await,signal,signalAll
+- JUC工具类
+  - Locks
+    - Lock接口
+    - AQS
+    - Condition
+    - LockSupport
+    - 重入锁：ReentrantLock
+    - 读写锁：ReadWriteLock
+  - 并发容器
+  - Executors
+    - Executor
+    - ThreadPoolExecutor
+    - FutureTask
+  - Atomic
+    - 基本类型
+    - Array
+    - Reference
+    - FieldUpdator
+  - Tools
+    - CountDownLatch
+    - CyclicBarrier
+    - Semaphore
+    - Exchanger
+- 并发本质
+  - 协作
+    - 并发实现
+      - 管程
+        - Lock&Condition
+        - synchronized
+      - 信号量
+        - Semaphore
+      - CountDownLatch
+      - CyclicBarrier
+      - Phaser
+      - Exchanger
+  - 分工
+    - 并发实现
+      - Executor与线程池
+      - Fork/Join
+      - Future
+    - 并发模式
+      - Guarded Suspension模式
+      - ThreadPreMessage模式
+      - Balking模式
+      - Worker Thread模式
+      - 两阶段终止模式
+      - 生产消费模式
+  - 互斥
+    - 并发实现
+      - 无锁
+        - CAS
+        - Atomic
+        - 并发模式
+      - 互斥锁
+        - synchronized
+        - lock
+        - ReadWriteLock
+    - 并发模式
+      - Immutabliility模式
+      - CopyOnWrite模式
+      - 线程本地存储模式
+- 框架案例
+  - Guava RatelLimitor
+  - Netty
+  - Disruptor
+  - HiKariCP
+
+#### 详细讲解 <!-- fold -->
 
 - 并发基础
   - [创建线程的方式](https://segmentfault.com/a/1190000037589073)
@@ -892,7 +1020,8 @@
   - 乐观锁与悲观锁
   - 概念
   - 底层原理
-  - CAS的应用：UnSafe和Atomic
+  - CAS的实现：Unsafe
+  - CAS的应用：Atomic
   - 问题
     - ABA问题
       - AtomicStampedReference
@@ -1099,6 +1228,14 @@
     - shutdown() vs shutdownNow()
 
 - **ThreadLocal(待做)**
+
+#### JUC整理 <!-- fold -->
+
+#### 并发本质 <!-- fold -->
+
+#### 并发模式 <!-- fold -->
+
+#### 并发框架 <!-- fold -->
 
 ### IO/NIO/AIO <!-- fold -->
 
@@ -1945,7 +2082,6 @@
     - rollback-for
     - no-rollback-for
 
-
 #### 设计模式
 
 - 工厂设计模式
@@ -2373,7 +2509,6 @@
     - undo log
   - readview
 
-
 #### 主从复制
 
 - 主从复制
@@ -2578,7 +2713,6 @@
     - 异步缓存写入
   - 布隆过滤器
   - 布谷鸟过滤器
-
 
 ### MongoDB<!-- fold -->
 

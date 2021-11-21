@@ -128,6 +128,24 @@
 
 # JVM监控及诊断工具-命令行
 
+## 概述
+
+## jps
+
+## jstat
+
+## jinfo
+
+## jmap
+
+## jhat
+
+## jstack
+
+## jcmd
+
+# jstatd
+
 # JVM监控及诊断工具=GUI
 
 # JVM运行时参数

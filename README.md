@@ -127,6 +127,7 @@ awk 'BEGIN{
   - [ ] go语言入门
   - [ ] C++
   - [ ] JNI
+  - [ ] nvim配置模块化
 
 <!--
 - [ ] SpringBoot原理

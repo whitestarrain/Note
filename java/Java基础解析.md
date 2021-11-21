@@ -1,47 +1,138 @@
-> 部分参考java编程思想整理
+> <mark> 当前大多只整理了目录，尚在完善中 </mark>
 
-# 基础中的基础
-
-## 面向对象
+# 面向对象
 
 ## 继承
-
-- 为什么java不支持多继承
-  - 第一个原因
-    - 考虑有个类`A`有一个方法`foo()`
-    - 然后类 `B` 和 `C` 继承自`A`并拥有自己的`foo()`方法实现
-    - 现在类`D` 继承自`B`和`C`
-    - 现在我们引用方法`foo()`时编译器不知道该调用哪个`foo()`方法
-    - 这也称为**钻石问题**，因为这种继承情况下的结构类似于4边缘菱形
-    - 即使我们删除顶端的类`A`，并且允许多重继承，还是会遇到这个问题。
-
-    ```
-            A foo()
-            / \
-          /   \
-    foo() B     C foo()
-          \   /
-            \ /
-            D
-            foo()
-    ```
-  - 第二个原因
-    - 有些时候，如果你将这个原因给面试官，他就会问为什么C++可以支持多重继承而Java为什么不支持
-    - 在这种情况下，我会尝试给出他下面第二个原因：**Java不支持多重继承不是因为技术难度，考虑更多的是代码的可维护性和更清晰的设计**
-    - 但这只能是我们的推测，最终也只能由java的设计者们确认。 [维基百科](http://en.wikipedia.org/wiki/Diamond_problem)有一些很好的解释关于不同的语言在使用多重继承时导致的钻石问题。
-    - 第二个更令人信服的理由是
-      - 多重继承确实使设计复杂化，并在类型转换，构造函数调用链等过程中产生问题
-      - 并且由于没有很多场景需要多重继承，为了简单起见忽略它是明智决定
-      - 另外，java通过支持接口的多继承来避免这种歧义
-      - 因为接口只有方法声明并且不提供任何实现，所以特定的方法只有一个实现，因此不会有任何歧义。
 
 ## 多态
 
 ## 重载，重写
 
-## 关键字
+### 说明
 
-### final
+## hashcode与equals
+
+- Java 程序设计中一个重要原则：
+  - 如果两个对象是相等的
+    - 它们的 equals() 方法应该要返回 true
+    - 它们的 hashCode() 需要返回相同的结果。
+  - 因此：hashCode() 和 equals() 方法最好一起重写
+
+- 原因：
+  - 在用得到哈希表的情况下
+  - 如果不只重写equals，不重写hashCode
+    ```
+    比如person有id，name，age三个字段
+    equals通过id和name进行判断
+    hashCode通过id，name，age计算得到
+    ``` 
+  - 以该对象作为key时，可能会导致两个相同的key无法被放到一个哈希桶，出现错误
+
+## 其他问题
+
+### 静态内部类与非静态内部类
+
+[博客](https://blog.csdn.net/yaomingyang/article/details/79363631)
+
+- 非静态内部类不可以使用static，只有静态内部类才能够定义静态的成员变量与成员方法。
+
+- 在外部类的成员的访问上，有比较大的限制。
+  - 一般的非静态内部类，可以随意的访问外部类中的成员变量与成员方法。即使这些成员方法被修饰为private(私有的成员变量或者方法)。
+  - 静态内部类只能引用外部类中的静态的成员（变量或方法），而不能够访问非静态的变量。
+
+- 最大区别
+  - 通常情况下，在一个类中创建成员内部类的时候，有一个强制性的规定，即内部类的实例一定要绑定在外部类的实例中。非静态内部类在编译完成之后会隐含地保存着一个引用，该引用是指向创建它的外围类，
+  - 但是静态内部类没有指向外部类的引用,也就是说
+    - 它的创建是不需要依赖外围类的创建。
+    - 它不能使用任何外围类的非static成员变量和方法。
+  - example
+    <details>
+    <summary>代码</summary>
+
+    ```java
+    public class Singleton {
+
+        //声明为 private 避免调用默认构造方法创建对象
+        private Singleton() {
+        }
+
+      // 声明为 private 表明静态内部该类只能在该 Singleton 类中被访问
+        private static class SingletonHolder {
+            private static final Singleton INSTANCE = new Singleton();
+        }
+
+        public static Singleton getUniqueInstance() {
+            return SingletonHolder.INSTANCE;
+        }
+    }
+    ```
+    当 Singleton 类加载时，静态内部类 SingletonHolder 没有被加载进内存。只有当调用 getUniqueInstance() 方法从而触发 SingletonHolder.INSTANCE 时 SingletonHolder 才会被加载，此时初始化 INSTANCE 实例，并且 JVM 能确保 INSTANCE 只被实例化一次。
+
+    这种方式不仅具有延迟初始化的好处，而且由 JVM 提供了对线程安全的支持。
+    </details>
+
+```
+牢记两个差别：
+
+一、如是否可以创建静态的成员方法与成员变量(静态内部类可以创建静态的成员，而非静态的内部类不可以)
+
+二、对于访问外部类的成员的限制(静态内部类只可以访问外部类中的静态成员变量与成员方法，而非静态的内部类即可以访问所有的外部类成员方法与成员变量)。
+```
+
+### 为什么java不支持多继承
+
+- 第一个原因
+  - 考虑有个类`A`有一个方法`foo()`
+  - 然后类 `B` 和 `C` 继承自`A`并拥有自己的`foo()`方法实现
+  - 现在类`D` 继承自`B`和`C`
+  - 现在我们引用方法`foo()`时编译器不知道该调用哪个`foo()`方法
+  - 这也称为**钻石问题**，因为这种继承情况下的结构类似于4边缘菱形
+  - 即使我们删除顶端的类`A`，并且允许多重继承，还是会遇到这个问题。
+
+  ```
+          A foo()
+          / \
+        /   \
+  foo() B     C foo()
+        \   /
+          \ /
+          D
+          foo()
+  ```
+- 第二个原因
+  - 有些时候，如果你将这个原因给面试官，他就会问为什么C++可以支持多重继承而Java为什么不支持
+  - 在这种情况下，我会尝试给出他下面第二个原因：**Java不支持多重继承不是因为技术难度，考虑更多的是代码的可维护性和更清晰的设计**
+  - 但这只能是我们的推测，最终也只能由java的设计者们确认。 [维基百科](http://en.wikipedia.org/wiki/Diamond_problem)有一些很好的解释关于不同的语言在使用多重继承时导致的钻石问题。
+  - 第二个更令人信服的理由是
+    - 多重继承确实使设计复杂化，并在类型转换，构造函数调用链等过程中产生问题
+    - 并且由于没有很多场景需要多重继承，为了简单起见忽略它是明智决定
+    - 另外，java通过支持接口的多继承来避免这种歧义
+    - 因为接口只有方法声明并且不提供任何实现，所以特定的方法只有一个实现，因此不会有任何歧义。
+
+# 关键字
+
+## 一览表
+
+| 访问控制             | private  | protected  | public   |              |            |           |        |
+| -------------------- | -------- | ---------- | -------- | ------------ | ---------- | --------- | ------ |
+| 类，方法和变量修饰符 | abstract | class      | extends  | final        | implements | interface | native |
+|                      | new      | static     | strictfp | synchronized | transient  | volatile  |        |
+| 程序控制             | break    | continue   | return   | do           | while      | if        | else   |
+|                      | for      | instanceof | switch   | case         | default    |           |        |
+| 错误处理             | try      | catch      | throw    | throws       | finally    |           |        |
+| 包相关               | import   | package    |          |              |            |           |        |
+| 基本类型             | boolean  | byte       | char     | double       | float      | int       | long   |
+|                      | short    | null       | true     | false        |            |           |        |
+| 变量引用             | super    | this       | void     |              |            |           |        |
+| 保留字               | goto     | const      |          |              |            |           |        |
+
+## public,protected,private
+
+## this与super
+
+## static
+
+## final
 
 待做
 
@@ -49,8 +140,9 @@
 - [浅析Java中的final关键字](https://www.cnblogs.com/dolphin0520/p/3736238.html)
 - [用final修饰局部变量是否为良好的编码习惯？](https://segmentfault.com/q/1010000019193209)
 
+## volatile
 
-## 异常体系
+# 异常体系
 
 ![java-basic-5](./image/java-basic-5.png)
 
@@ -76,7 +168,6 @@
   - 对于任意一个类，都能够知道这个类的所有属性和方法；
   - 对于任意一个对象，都能够调用它的任意一个属性和方法；
 
-
 - 原理
   - 来源：
     - **每个类都会有一个与之对应的Class实例**
@@ -100,6 +191,92 @@
 基本使用：[JavaNote](./JavaNote.md)
 
 # 集合
+
+## set
+
+## list
+
+## map
+
+## fail-fast 机制
+
+[博客](https://juejin.cn/post/6879291161274482695)
+
+fail-fast机制是为了防止 **迭代** 过程中，集合 **结构** 发生变化。
+
+- 在创建迭代器的时候，迭代器中都会有一个expectedModCount，用来记录集合更改次数。
+- 如果集合此时进行了增删等结构变化，modCount就会加一，与expectedModCount不同，抛出异常
+  > 稍微想一下就知道，正在迭代遍历，不能乱改。
+- 如果调用迭代器的remove方法(内部就是调用ArrayList的方法)，modCount也会发生变化，但是此时会有一个`expectedModCount = modCount`，确保expectedModCount也更新。
+  > 如果是迭代器自己去改的话，改就改吧。
+
+## 其他问题
+
+### 常见集合区别
+
+- Arraylist 和 Vector 的区别?
+- Arraylist 与 LinkedList 区别?
+- ConcurrentHashMap 和 Hashtable 的区别
+- 比较 HashSet、LinkedHashSet 和 TreeSet 三者的异同
+- HashMap和HashTable区别
+- HashMap与HashSet区别（HashSet底层基于HashMap）
+- HashMap和TreeMap区别
+
+### 线程安全问题
+
+- ArrayList--vector
+- LinkedList--SynchronizedList
+- HashMap--ConcurrentHashMap/HashTable/Collections.synchronizedMap
+  <details>
+  <summary style="color:red;">说明</summary>
+
+  Hashtable 源码中是使用 synchronized 来保证线程安全的
+
+  ConcurrentHashMap沿用了与它同时期的HashMap版本的思想，底层依然由“数组”+链表+红黑树的方式思想，但是为了做到并发，又增加了很多辅助的类，例如TreeBin，Traverser等对象内部类。
+  且与hashtable不同的是：
+  ConcurrentHashMap没有对整个hash表进行锁定，而是采用了分离锁（segment）的方式进行局部锁定。具体体现在，它在代码中维护着一个segment数组。
+
+  SynchronizedMap是Collectionis的内部类。
+  在 SynchronizedMap 类中使用了 synchronized 同步关键字来保证对 Map 的操作是线程安全的。
+
+  ---
+
+  ConcurrentHashMap明显优于Hashtable和SynchronizedMap 。
+  </details>
+
+### 其他
+
+- HashMap拉链法，以及链表-->红黑树的条件
+- HashMap 的长度为什么是 2 的幂次方
+  - 高效
+  - 充分碰撞
+- HashMap 1.7多线程死循环问题
+
+# 枚举
+
+[java guide]()
+
+[菜鸟教程](https://www.runoob.com/java/java-enum.html)
+
+[Java 枚举(enum) 详解7种常见的用法](https://blog.csdn.net/qq_27093465/article/details/52180865)
+
+```java
+enum Color 
+{ 
+    RED, GREEN, BLUE; 
+} 
+```
+
+**等价于**
+
+```java
+class Color
+{
+     public static final Color RED = new Color();
+     public static final Color BLUE = new Color();
+     public static final Color GREEN = new Color();
+}
+```
 
 # 泛型
 
@@ -126,28 +303,41 @@ Java 编译器会将泛型代码中的类型完全擦除，使其变成原始类
 
 ## 泛型数组
 
-# 枚举
+# 数据类型
 
-# String
+## 包装类
+
+## String
 
 String,StringBilder,StringBuffer
 
+## BigXxx
 
-# 包装类
+## 业务类型命名
 
-# BigXxx
+POJO,VO
 
-# 类型
+# JavaIO模型
 
-POJO
+## 总览
 
-VO
+<mark> bio(jdk1.0) -> nio(jdk1.4) -> aio(jdk1.7) </mark>
 
-...
+![key_points-5](./image/key_points-5.png)
 
-# IO模型
+## bio
 
-# SPI机制
+> ![key_points-2](./image/key_points-2.png)
+> ![key_points-1](./image/key_points-1.png)
+
+## nio
+
+> ![key_points-3](./image/key_points-3.png)
+
+## aio
+
+> ![key_points-4](./image/key_points-4.png)
+# SPI机制与API
 
 ## 概念
 
@@ -364,7 +554,6 @@ VO
 
 不符合配置文件规则
 
-
 ## 其他案例
 
 ### Spring SPI
@@ -415,6 +604,29 @@ spring里为我们提供了许多属性编辑器，这时我们如果想把sprin
 
 ### HotSpot SPI
 
-# Java8新特性
+# 新特性
+
+## Java8
+
+## Java9
+
+## Java10
+
+## Java11
+
+## Java12
+
+## Java13
+
+## Java14
+
+# 语法糖
+
+## try-with-resource与AutoCloseable
+
+# 参考资料
+
+- ![浅谈 Java 中的 AutoCloseable 接口](https://zhuanlan.zhihu.com/p/269208361)
+- 《java编程思想》
 
 
