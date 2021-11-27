@@ -1,0 +1,238 @@
+1. `#!` 告诉系统脚本需要什么解释器来执行,一般的有 `#!/bin/ash` 和 `#!/bin/sh`；
+2. `./x.sh` 不能写成 `x.sh` ,后者代表到PATH中寻找x.sh文件并执行；
+3. 可以直接作为解释器的参数运行shell脚本： `/bin/sh sample.sh`;
+4. `#` 为单行注释标记；没有多行注释，可以用函数`{}`代替；一行可执行多条命令，使用引号分隔；
+5. 定义变量时不用`$`符号,等号和变量之间不能有空格；
+6. 使用变量时要使用`$`符号,同时可以加花括号以识别边界： `echo $name`, `echo ${name}`;
+7. `readonly`关键字定义只读变量；`unset`关键字删除变量(只读除外);
+8. 运行shell脚本时存在三种变量：局部变量、环境变量、shell变量;
+9. shell中的特殊变量：
+      $0	当前脚本的文件名
+      $n	传递给脚本或函数的参数。n 是一个数字，表示第几个参数。例如，第一个参数是$1，第二个参数是$2。
+      $#	传递给脚本或函数的参数个数。
+      $*	传递给脚本或函数的所有参数。
+      $@	传递给脚本或函数的所有参数。被双引号(" ")包含时，与 $* 稍有不同。
+      $?	上个命令的退出状态，或函数的返回值。
+      $$	当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。
+10. 当被双引号(" ")包含时，"$*" 会将所有的参数作为一个整体，以"$1 $2 … $n"的形式输出所有参数；
+    "$@" 会将各个参数分开，以"$1" "$2" … "$n" 的形式输出所有参数。
+11. 在使用表达式时添加 `-e` 参数进行特殊字符替换，不加则不替换。如： `echo -e "换行\n"`;
+    `-E` 参数为禁止替换(默认); `-n` 参数禁止插入换行符；
+12. 命令替换：使用反引号将命令执行结果存储起来。如： DATE=`date;uptime`;echo $DATE
+13. 变量替换(预先定义变量在条件下的值)：
+      ${var}		变量本来的值
+      ${var:-word}	如果变量 var 为空或已被删除(unset)，那么返回 word，但不改变 var 的值。
+      ${var:=word}	如果变量 var 为空或已被删除(unset)，那么返回 word，并将 var 的值设置为 word。
+      ${var:?message}	如果变量 var 为空或已被删除(unset)，那么将消息 message 送到标准错误输出，可以用来检测
+			变量 var 是否可以被正常赋值。若此替换出现在Shell脚本中，那么脚本将停止运行。
+      ${var:+word}	如果变量 var 被定义，那么返回 word，但不改变 var 的值。
+14. 使用expr进行算术运算，表达式和运算符之间必须有空格： a=10;b=20;echo "a+b=`expr $a + $b`";
+    乘法运算必须加反斜杠：`expr $a \* $b`;
+      +		加法
+      -		减法
+      *		乘法
+      /		除法
+      %		取余
+      =		赋值；相等
+      !=	不相等	[ $a != $b ] 返回 true。
+15. 除了赋值以外，其他算术运算表达式和运算符之间都必须空格；
+16. 整数比较：
+      -eq	==
+      -ne	！=
+      -gt	>
+      -lt	<
+      -ge	>=
+      -le	<=
+17. 布尔运算符：
+      !		非
+      -o	或
+      -a	且
+18. 字符串比较：
+      =		和 `==` 类似，但有差别
+      =~	前者包含后者(子字符串)
+      !=	不等于
+      <		ASCII小于
+      >		ASCII大于
+      -z	为空
+      -n	不为空
+19. 文件判定：
+      -e 	文件或目录存在
+      -r	可读
+      -w	可写
+      -x	可执行
+      -s	内容不为空
+      -d	目录
+      -f	普通文件
+      -g	设置了SGID位
+      -u	设置了SUID位
+      -k	设置了粘着位
+      -b	块设备文件
+      -c	字符设备文件
+20. 单引号字符串内不能使用单引号(转义也不行)，且不会被解析；双引号内可以使用转义字符和变量；
+21. 字符串拼接直接写到一起即可(不需要空格)：a="ab";b="cd";c=$a$b;echo "$c";
+22. 获取字符串长度：string="abcde";echo ${#string};
+23. 提取子字符串：string="abcdefghi";
+		  :	指定截取开始位置和截取位数
+		 
+	注：%%和##从左/右边开始匹配，获取左/右边字符串,%和#与之对应方向相反
+		  
+
+24. 查找字符串：string="abcdefghi";echo `expr index "$string" def`;
+25. 定义数组：array_name=(value0 value1 value2 ...)
+    或者      array_name=(
+	      value0
+	      value1
+	      value2
+	      ...
+	      )
+    或	      ARRAY_NAME[index]=value
+26. 读取数组元素：${array_name[index]}
+    读取所有数组元素：	${array_name[*]} 或者 ${array_name[@]}
+    获取数组长度：${#array_name[@]}
+		  ${#array_name[*]}
+		  ${#array_name[index]}
+27. 双引号可有可无，单引号主要用在原样输出中；
+28. echo的结果可以重定向至文件：echo "file contents" > file.txt;
+29. shell支持printf命令，用法与C语言有少许差异：printf "%9.3f\n%8.3s\n%9d\n" 1.3 abcdefg 123456;
+30. if...else语句：
+      if [ expression ]; then
+	statements
+      elif [ expression ]; then
+	statements
+      else
+	statements
+      fi
+      也可以写成一行：if test expression;then statements;elif[ expression ];then statements;else statements;fi;
+      if :是特殊的空条件，始终返回true;
+      注意条件表达式与方括号之间必须有空格，否则语法错误；
+31. 普通语句中可以使用 `||` 和 `&&` 符号，但条件表达式中不可以使用，只能用 `-o` 和 `-a`；
+32. test命令检查某个条件是否为真，与方括号[]作用相同;
+33. case...esac分支：
+      case 值 in
+      匹配1)
+	  command1
+	  command2
+	  command3
+	  ;;
+     匹配2)
+	  command1
+	  command2
+	  command3
+	  ;;
+      *)
+	  command1
+	  command2
+	  command3
+	  ;;
+      esac
+      这里的匹配模式可以使用正则表达式，支持的字符有
+		 *       任意字串
+                 ?       任意字元
+                 [abc]   a, b, 或c三字元其中之一
+                 [a-n]   从a到n的任一字元
+                 |       多重选择
+34. for...in循环：
+      for 变量 in 列表
+      do
+	  command1
+	  command2
+	  ...
+	  commandN
+      done
+      列表可以是一个字符串，也可以是一组值的序列(通过空格分隔),还可以是文件或目录的集合;
+      for FILE in $HOME/.bash*
+      do
+	echo $FILE
+      done
+35. while循环：
+      while [ expression ];do
+	  statements
+      done
+36. until循环(类似while循环，只不过条件是否定的)：      
+      until [ expression ];do 
+	  statements
+      done
+      简洁写法：
+	until((i>20));do echo $i;((i++));done
+37. 双括号语法：
+      语法：
+	((表达式1,表达式2...))
+      特点：
+	1、在双括号结构中，所有表达式可以像c语言一样，如：a++,b--等。
+	2、在双括号结构中，所有变量可以不加入：“$”符号前缀。
+	3、双括号可以进行逻辑运算，四则运算
+	4、双括号结构 扩展了for，while,if条件测试运算
+	5、支持多个表达式运算，各个表达式之间用“，”分开
+	6、双括号结构之间支持多个表达式，然后加减乘除等c语言常用运算符都支持。如果双括号带：$，将获得表达式值，赋值给左边变量
+	7、计算时 `(())` 语法比let、expr更有效率。
+      例： a=1;b=2;c=3;a=$((a+1,b++,c++));echo $a;  #结果为2,3,4
+38. seq生成序列：
+      seq LAST  =>  1 2 3 4 ... LAST
+      seq FIRST LAST  =>  FIRST FIRST+1 FIRST+2 ... LAST
+      seq FIRST STEP LAST  =>  FIRST FIRST+STEP FIRST+STEP+STEP ... LAST
+39. let命令省略引用变量的 `$` 符号并进行数学运算：let sum=sum+1;
+40. shell命令，可以按照分号分割，也可以按照换行符分割。如果想一行写入多个命令，可以通过“';”分割;
+41. break跳出循环：
+      break 默认跳出所有循环
+      break n 指定跳出第n层循环
+42. continue跳过循环：
+      continue 默认跳过当前(最里层)循环
+      continue n 指定跳出第n层循环
+43. shell函数： 
+      function func_name(){
+	statements
+	return value
+      }
+      function关键字可以不写，可以没有返回值；
+      调用函数只需要写函数名和参数，在函数内部获取参数：
+	$n      第n个参数
+	$*或$@  所有参数
+	$#	参数个数
+	$?	函数返回值，在调用函数后获得
+      删除函数也可以使用unset，不过要加参数：`unset .f func_name`;
+      在~/.profile文件中的函数可以从终端直接调用；
+44. 重定向：
+      输出重定向：
+	command > file   直接覆盖写入，文件不存在则创建
+	command >> file	 追加到文件末尾
+      输入重定向：
+	command < file	 
+      例：
+	cat > catfile < test.sh  #cat从test.sh 获得输入数据，然后输出给文件catfile
+	cat > catfile << eof	 #向cat输入文件结束符，cat输出到catfile，这时不用按ctrl+d即可退出
+    深入理解：
+      一般情况下，每个 Unix/Linux 命令运行时都会打开三个文件：
+	  标准输入文件(stdin)：stdin的文件描述符为0，Unix程序默认从stdin读取数据
+	  标准输出文件(stdout)：stdout 的文件描述符为1，Unix程序默认向stdout输出数据
+	  标准错误文件(stderr)：stderr的文件描述符为2，Unix程序会向stderr流中写入错误信息
+      可用的重定向命令：
+      command > file	将输出以覆盖的方式重定向到 file
+      command < file	将输入重定向到 file
+      command >> file	将输出以追加的方式重定向到 file
+      n > file		将文件描述符 n 重定向到 file
+      n >> file		将文件描述符 n 以追加的方式重定向到 file
+      n >& m		将输出 m 和 n 合并
+      n <& m		将输入 m 和 n 合并
+      &>file		将标准输出和标准错误输出都重定向file
+      << tag		将开始标记 tag 和结束标记 tag 之间的内容作为输入
+   注：/dev/null是一个"黑洞"，任何向他写入的内容都被丢弃，也无法从此文件读取到任何内容
+45. Here Document:
+	command << delimiter
+	    document        
+	delimiter
+    将两个定界符之间的内容作为输入传递给command,与php的定界符类似；
+    例：
+	vi t.txt <<EndOfCommands
+	i
+	This file was created automatically from
+	a shell script
+	^[
+	ZZ
+	EndOfCommands
+     通过vi编辑器将docunemt保存到t.txt文件中
+46. 包含文件：
+	通过
+	    . filename
+	或
+	    source filename
+	来在一个脚本文件中包含一个外部脚本，被包含脚本不必有可执行权限

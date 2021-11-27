@@ -2252,6 +2252,8 @@
 
 ### [深度学习-djl](https://github.com/deepjavalibrary/djl)
 
+### 函数式编程-vavr
+
 # 数据库
 
 ## 关系型数据库

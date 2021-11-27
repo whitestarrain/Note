@@ -39,7 +39,7 @@
 - `!serv` 执行最近的，以 serv 开头的，执行过的命令
 - jps ：jdk 中的一个可执行程序，查看 java 进程 id
 
-# 2. 常用命令
+# 2. 常用命令列表
 
 |                |           |         |               |           |
 | :------------: | :-------: | :-----: | :-----------: | :-------: |
@@ -85,7 +85,6 @@
 - env:查看环境变量
 - echo 输出
 - read 输入
-
 
 # 3. 目录相关
 
@@ -792,7 +791,6 @@
 ```
 </details>
 
-
 # 10. shell script
 
 ## 10.1. 开始
@@ -1266,3 +1264,10 @@
 - 7，路径 \*（零到多个任意字符）？
 - 8，引用删除 echo "hello"
 - \*，重定向 >
+
+# 参考文档
+
+- [Linux Command](https://github.com/jaywcjlove/linux-command)
+- [一文掌握 Linux 性能分析之内存篇](https://segmentfault.com/a/1190000018553950)
+- [Linux常用命令](https://github.com/arkingc/note/blob/master/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4.md)
+

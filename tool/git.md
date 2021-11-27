@@ -334,7 +334,30 @@
   doc/**/*.txt
 ```
 
-## 1.16. 常见问题
+## 1.16. 别名
+
+- `git config --global alias.st status` /*设置st为status的别名，git st即为git status*/
+- `git config --global alias.unstage 'reset HEAD'`
+- `git config --global alias.last 'log -1'` /*最后一次提交信息*/
+- `git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"`
+
+## 1.17. 工具
+
+- tig
+  - 使用
+    - tig         进入tig，显示提交记录
+    - tig fname   显示某个文件或文件夹的提交记录
+  - 进入tig后：
+    - H       查看所有分支
+    - S       查看工作区状态
+    - c       查看stage
+    - y       查看stash
+    - l       查看log
+    - d       查看diff
+
+- gitk:图形化工具
+
+## 1.18. 常见问题
 
 - git乱码：
   - 右键->option->text

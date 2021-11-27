@@ -447,9 +447,17 @@
 	- 安装：Plug 'tpope/vim-surround'
 	- 使用：
 		- ds：delete a surrounding
-		- cs:change a surrounding
-		- ys:you add a surrounding
-	- 使用示例：ys iw " 为当前单词添加双引号  ys就是指令
+		- cs: change a surrounding
+		- ys: you add a surrounding
+    - vS: add a surrounding for highlight
+	- 使用示例：
+    ```
+    "Hello *world!"           ds"         Hello world!
+    [123+4*56]/2              cs])        (123+456)/2
+    "Look ma, I'm *HTML!"     cs"<q>      <q>Look ma, I'm HTML!</q>
+    if *x>3 {                 ysW(        if ( x>3 ) {
+    my $str = *whee!;         vllllS'     my $str = 'whee!';
+    ```
 	- 配置：不用
 
 - 多个文件模糊搜索：
