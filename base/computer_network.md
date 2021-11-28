@@ -9,5 +9,3 @@
   </details>
 
 - 查看新版思维导图：[思维导图](https://whitestarrain.github.io/Note/YourBrain.html)
-
-# 2. 常见问题
