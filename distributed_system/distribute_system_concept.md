@@ -531,6 +531,8 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 <!--file:///D:/learn/githubRepo/JavaGuide/docs/system-design/coding-way/RESTfulAPI%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B.md-->
 
 
+## RPC和REST对比
+
 # 5. 分布式算法
 
 ## 5.1. 一致性问题
@@ -1015,3 +1017,5 @@ public class ConsistentHashingWithoutVirtualNode {
 - [The Secret Lives of Data](http://thesecretlivesofdata.com/raft/)
 - [「图解Raft」让一致性算法变得更简单](https://zinglix.xyz/2020/06/25/raft/)
 - [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)
+- [springcloud：RPC和HTTP ](https://www.cnblogs.com/flypig666/p/11699526.html)
+- [【RPC】SpringCloud简介 & RPC与Restful API关系（三）](https://blog.csdn.net/weixin_33724659/article/details/92518863)

@@ -1,10 +1,9 @@
-" enable plugin
+" =======================enable plugin=======================
 set easymotion
 set surround
+set NERDTree
 
-let mapleader=","
-
-" set clipboard=unnamed,autoselect
+" =======================set clipboard=unnamed,autoselect=======================
 set hlsearch
 set scrolloff=3
 set ignorecase
@@ -13,32 +12,100 @@ set showmode
 set incsearch
 set history=1000
 
-" 禁用铃声
+" =======================禁用铃声=======================
 set visualbell
 set noerrorbells
 
-" 映射idea常用快捷键
+""=======================handler设置=======================
 
-" 重命名
+sethandler <C-2> a:ide
+sethandler <C-S-2> a:ide
+sethandler <C-S-6> a:ide
+sethandler <C-A> a:vim
+sethandler <C-S-A> a:ide
+sethandler <C-B> a:vim
+sethandler <C-C> a:ide
+sethandler <C-D> a:vim
+sethandler <C-E> a:ide
+sethandler <C-F> a:vim
+sethandler <C-G> a:ide
+sethandler <C-H> a:vim
+sethandler <C-I> a:ide
+sethandler <C-J> a:ide
+sethandler <C-K> a:ide
+sethandler <C-L> a:ide
+sethandler <C-M> a:ide
+sethandler <C-N> a:ide
+sethandler <C-O> a:ide
+sethandler <C-P> a:ide
+sethandler <C-R> a:vim
+sethandler <C-S> a:ide
+sethandler <C-T> a:ide
+sethandler <C-U> a:vim
+sethandler <C-V> a:vim
+sethandler <C-W> a:ide
+sethandler <C-X> a:ide
+sethandler <C-Y> a:ide
+sethandler <C-[> a:vim
+sethandler <C-]> a:vim
+
+" ===================映射idea常用快捷键=======================
+let mapleader=","
+
+" 重命名 rename
 nnoremap <leader>r :action RenameElement<CR>
 
-" 格式化当前文件
+" 格式化当前文件 format
+"ctrl-alt-l
 nnoremap <leader>f :action ReformatCode<CR><esc>
 
-" quick java doc
-nnoremap <leader>d :action QuickJavaDoc<CR>
+" close tab/delete buffer
+nnoremap <leader>d :bd<CR>
+
+" preview code in a pop up window
+"ctrl-alt-i
+nnoremap <leader>p :action QuickImplementations<CR>
+
+" breakpoint
+" toggle line breakPoint
+nnoremap <leader>k :action ToggleLineBreakpoint<CR>
+
+" surround with
+"ctrl-alt-t
+nnoremap <leader>s :action SurroundWith<CR>
 
 " 设置一直留下的行数，向上时会有瞬间移动，所以取消使用
 " set scrolloff=10
 
-" 显示大纲
+" 显示大纲 list
+" ctrl-F12
  nnoremap <leader>l :action FileStructurePopup<CR>
 
- " 显示所有使用
- nnoremap <leader>use :action ShowUsages<CR>
+ " 显示所有使用 show use
+ " ctrl-alt-F7
+ " nnoremap <leader>u :action ShowUsages<CR>
+
+ " show navigation Bar
+ " alt-Home
+ nnoremap <leader>n :action ShowNavBar<CR>
+
+" TypeHierarchy
+" 显示继承结构
+ nnoremap <leader>h :action TypeHierarchy<CR>
+
+" 切到文件导航栏
+ nnoremap <C-H> :action ActivateProjectToolWindow<CR>
+
+" 切到父类方法
+ nnoremap <leader>s :action GotoSuperMethod<CR>
+
+" 切到父类方法
+ nnoremap <leader>a :action GotoAction<CR>
 
  " 向末尾添加；
  nnoremap <leader>; A;<Esc>
 
+" K 显示文档
 
-
+nnoremap < <<
+nnoremap > >>
