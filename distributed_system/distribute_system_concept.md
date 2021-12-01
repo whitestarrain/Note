@@ -639,7 +639,8 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 - 解决方案: 就允许一个能提案 
 
-#### 5.2.1.4. raft
+#### 5.2.1.4. Raft
+
 
 
 ### 5.2.2. 应用

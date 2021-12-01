@@ -177,8 +177,6 @@ Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 
-
-
 "=================================================plug end===================================================
 
 "=================================================plug config start===================================================
@@ -262,29 +260,50 @@ let g:vim_markdown_conceal_code_blocks = 0
 "------------------------------------markdown-------------------------------------
 
 "------------------------------------airline-------------------------------------
+
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#bufferline#enabled = 1
-let g:airline_theme='bubblegum'
 set laststatus=2  "永远显示状态栏
 
 " "取消显示warning部分
 let g:airline_section_warning = ''
-" "取消显示section_b
-" " let g:airline_section_b = ''
-" "section_c显示为tagbar检索出来的标题
-" let g:airline_section_c = airline#section#create(['tagbar'])
-" "section_x显示文件名
-" let g:airline_section_x = '%{expand("%")}'
-" "section_y显示时间
-""let g:airline_section_y = airline#section#create(['%{strftime("%D")}'])
-" "section_z显示日期
 let g:airline_section_y = airline#section#create(['%{strftime("%H:%M")}'])
-" "激活tagbar扩展
-" let g:airline#extensions#tagbar#enabled = 1
-" "不显示文件编码（Windows系统）
-" " let g:airline#parts#ffenc#skip_expected_string='utf-8[dos]'
-" "不显示文档总字数
 let g:airline#extensions#wordcount#enabled = 0
+
+" let g:lightline = {
+"   \ 'colorscheme': 'onedark',
+"   \ }
+" let g:airline_theme='onedark'
+
+" 设置状态栏
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#buffer_nr_show = 0
+let g:airline#extensions#tabline#formatter = 'default'
+let g:airline#extensions#keymap#enabled = 1
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline#extensions#tabline#buffer_idx_format = {
+       \ '0': '0 ',
+       \ '1': '1 ',
+       \ '2': '2 ',
+       \ '3': '3 ',
+       \ '4': '4 ',
+       \ '5': '5 ',
+       \ '6': '6 ',
+       \ '7': '7 ',
+       \ '8': '8 ',
+       \ '9': '9 '
+       \}
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+let g:airline_symbols.linenr = "CL" " current line
+let g:airline_symbols.whitespace = '|'
+let g:airline_symbols.maxlinenr = 'Ml' "maxline
+let g:airline_symbols.branch = 'BR'
+let g:airline_symbols.readonly = "RO"
+let g:airline_symbols.dirty = "DT"
+let g:airline_symbols.crypt = "CR" 
 
 "------------------------------------airline-------------------------------------
 
@@ -500,10 +519,6 @@ set expandtab
 " 主题
 " colorscheme hybrid
 colorscheme onedark
-let g:lightline = {
-  \ 'colorscheme': 'onedark',
-  \ }
-let g:airline_theme='onedark'
 
 " 行距
 set linespace=2
