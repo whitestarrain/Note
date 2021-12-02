@@ -47,6 +47,29 @@
   ```
 
 - SSM框架依赖
+
+  ```
+  maven工程要导入jar包的坐标，就必须要考虑解决jar包冲突。
+  解决jar包冲突的方式一：
+    第一声明优先原则：哪个jar包的坐标在靠上的位置，这个jar包就是先声明的。
+    先声明的jar包坐标下的依赖包，可以优先进入项目中。
+
+  maven导入jar包中的一些概念：
+    直接依赖：项目中直接导入的jar包，就是该项目的直接依赖包。
+    传递依赖：项目中没有直接导入的jar包，可以通过项目直接依赖jar包传递到项目中去。
+
+  解决jar包冲突的方式二：
+    路径近者优先原则。
+    直接依赖路径比传递依赖路径近，那么最终项目进入的jar包会是路径近的直接依赖包。
+
+  解决jar包冲突的方式三【推荐使用】：
+    直接排除法。
+    当我们要排除某个jar包下依赖包，在配置exclusions标签的时候，内部可以不写版本号。
+    因为此时依赖包使用的版本和默认和本jar包一样。
+  ```
+  <details>
+  <summary style="color:red;">展开</summary>
+
   ```xml
   <?xml version="1.0" encoding="UTF-8"?>
 
@@ -300,6 +323,7 @@
       </build>
   </project>
   ```
+  </details>
 
 # 2. maven进阶
 
@@ -427,3 +451,24 @@
     - 使用外部tomcat
   - 了解：
     > ![](image/2020-10-10-22-20-58.png)
+
+# 常见 maven 编译插件
+
+
+# 打包方式
+
+- pom是maven依赖文件
+  - pom打包方式可以作为其他项目的maven依赖，构建maven项目时可用在父级工程或者聚合工程中，用来做jar包的版本控制；
+  - **注意，pom打包方式会导致多环境配置失效**
+- jar是java普通项目打包文件
+  - jar包通常是开发时需要应用的类，当需要某些功能时就导入相应的jar包,在构建maven时作为子类；
+- war是javaweb项目打包文件
+  - war包用来发布服务，打成war包后部署到服务器访问。
+
+
+
+
+
+# 参考资料
+
+- [程序运行时，No active profile set, falling back to default profiles: default](https://www.imooc.com/qadetail/302046)

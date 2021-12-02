@@ -122,6 +122,7 @@ awk 'BEGIN{
   - [ ] Flink
 - 短期小任务
   - [ ] Gossip 协议
+  - [ ] Raft 协议
   - [ ] SPEL
 - 其他
   - [ ] go语言入门

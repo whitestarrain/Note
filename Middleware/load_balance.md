@@ -562,5 +562,7 @@ lvs和nginx都是现在很主流的负载均衡方式，他们各有优缺点，
 
 所以在很多情况下，nginx会作为lvs的节点进行负载均衡，这样，既可以避免nginx的性能造成很严重的带宽瓶颈，也可以利用nginx的错误重传避免lvs一锤子买卖，还能利用nginx的各种高级功能，包括https卸载，报文头修改等。
 
+# 参考资料
 
-
+- [2W 字总结 ！体系化带你全面认识 Nginx](https://blog.p2hp.com/archives/7982)
+- [nginx平台初探(100%)](http://tengine.taobao.org/book/chapter_02.html)

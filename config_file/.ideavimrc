@@ -1,3 +1,4 @@
+
 " =======================enable plugin=======================
 set easymotion
 set surround
@@ -32,12 +33,12 @@ sethandler <C-G> a:ide
 sethandler <C-H> a:vim
 sethandler <C-I> a:ide
 sethandler <C-J> a:ide
-sethandler <C-K> a:ide
+sethandler <C-K> a:vim
 sethandler <C-L> a:ide
 sethandler <C-M> a:ide
-sethandler <C-N> a:vim
+sethandler <C-N> a:ide
 sethandler <C-O> a:ide
-sethandler <C-P> a:vim
+sethandler <C-P> a:ide
 sethandler <C-R> a:vim
 sethandler <C-S> a:ide
 sethandler <C-T> a:ide
@@ -58,9 +59,6 @@ nnoremap <leader>r :action RenameElement<CR>
 " 格式化当前文件 format
 "ctrl-alt-l
 nnoremap <leader>f :action ReformatCode<CR><esc>
-
-" 查找类"
-nnoremap <leader>c :action GotoClass<CR><esc>
 
 " close tab/delete buffer
 nnoremap <leader>d :bd<CR>
@@ -100,16 +98,24 @@ nnoremap <leader>h :action TypeHierarchy<CR>
 nnoremap <C-H> :action ActivateProjectToolWindow<CR>
 
 " 补全 c-n
-noremap <C-N> :action HippieCompletion<CR>
-
+" noremap <C-N> :action HippieCompletion<CR>
+" nmap <C-N> <Action>(CodeCompletion)
+" imap <C-N> <Action>(CodeCompletion)
 " 补全 c-p
-noremap <C-P> :action HippieBackwardCompletion<CR>
+" noremap <C-P> :action HippieBackwardCompletion<CR>
 
 " 切到父类方法
 nnoremap <leader>s :action GotoSuperMethod<CR>
 
-" 切到父类方法
-nnoremap <leader>a :action GotoAction<CR>
+" 切到实现
+nnoremap <leader>i :action GotoImplementation<CR>
+
+" action查找 <C-S-A>
+" nnoremap <leader>a :action GotoAction<CR>
+
+" 查找类" <c-n>
+" nnoremap <leader>c :action GotoClass<CR><esc>
+
 
 " 向末尾添加；
 nnoremap <leader>; A;<Esc>

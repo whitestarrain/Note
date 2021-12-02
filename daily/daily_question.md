@@ -26,6 +26,8 @@
 
 <!-- https://blog.51cto.com/u_3631118/3119745 -->
 
+#### pom打包方式导致多环境配置失效
+
 ### SpringCloud
 
 ### Mybatis
