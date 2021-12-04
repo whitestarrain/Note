@@ -1,8 +1,12 @@
-
+" set <leader> to <space>
+let mapleader = " "
 " =======================enable plugin=======================
 set easymotion
 set surround
 set NERDTree
+set which-key
+" disable the timeout option
+set notimeout
 
 " =======================set clipboard=unnamed,autoselect=======================
 set hlsearch
@@ -51,29 +55,35 @@ sethandler <C-[> a:vim
 sethandler <C-]> a:vim
 
 " ===================映射idea常用快捷键=======================
-let mapleader=","
 
 " 重命名 rename
 nnoremap <leader>r :action RenameElement<CR>
+let g:WhichKeyDesc_rename = "<leader>r  rename"
 
 " 格式化当前文件 format
 "ctrl-alt-l
 nnoremap <leader>f :action ReformatCode<CR><esc>
+let g:WhichKeyDesc_reformatCode = "<leader>f reformatCode"
 
 " close tab/delete buffer
 nnoremap <leader>d :bd<CR>
+let g:WhichKeyDesc_deleteTab = "<leader>d deleteTab"
+
 
 " preview code in a pop up window
 "ctrl-alt-i
 nnoremap <leader>p :action QuickImplementations<CR>
+let g:WhichKeyDesc_previewCode = "<leader>p previewCode"
 
 " breakpoint
 " toggle line breakPoint
 nnoremap <leader>k :action ToggleLineBreakpoint<CR>
+let g:WhichKeyDesc_toggleLineBreakpoint = "<leader>k toggleLineBreakpoint"
 
 " surround with
 "ctrl-alt-t
-nnoremap <leader>s :action SurroundWith<CR>
+nnoremap <leader>t :action SurroundWith<CR>
+let g:WhichKeyDesc_surroundCodeAdd = "<leader>t surroundCodeAdd"
 
 " 设置一直留下的行数，向上时会有瞬间移动，所以取消使用
 " set scrolloff=10
@@ -81,6 +91,7 @@ nnoremap <leader>s :action SurroundWith<CR>
 " 显示大纲 list
 " ctrl-F12
 nnoremap <leader>l :action FileStructurePopup<CR>
+let g:WhichKeyDesc_listStructure = "<leader>l listStructure"
 
 " 显示所有使用 show use
 " ctrl-alt-F7
@@ -89,10 +100,12 @@ nnoremap <leader>l :action FileStructurePopup<CR>
 " show navigation Bar
 " alt-Home
 nnoremap <leader>n :action ShowNavBar<CR>
+let g:WhichKeyDesc_navBar = "<leader>n navBar"
 
 " TypeHierarchy
 " 显示继承结构
 nnoremap <leader>h :action TypeHierarchy<CR>
+let g:WhichKeyDesc_typeHierarchy = "<leader>h typeHierarchy"
 
 " 切到文件导航栏
 nnoremap <C-H> :action ActivateProjectToolWindow<CR>
@@ -106,9 +119,15 @@ nnoremap <C-H> :action ActivateProjectToolWindow<CR>
 
 " 切到父类方法
 nnoremap <leader>s :action GotoSuperMethod<CR>
-
+let g:WhichKeyDesc_gotoSuperMethod = "<leader>s GotoSuperMethod"
 " 切到实现
+
 nnoremap <leader>i :action GotoImplementation<CR>
+let g:WhichKeyDesc_gotoImplementation = "<leader>i GotoImplementation"
+
+" 切到父类方法
+nnoremap <leader>r :action RunClass<CR>
+let g:WhichKeyDesc_runClass = "<leader>r runClass"
 
 " action查找 <C-S-A>
 " nnoremap <leader>a :action GotoAction<CR>
@@ -116,11 +135,74 @@ nnoremap <leader>i :action GotoImplementation<CR>
 " 查找类" <c-n>
 " nnoremap <leader>c :action GotoClass<CR><esc>
 
-
-" 向末尾添加；
-nnoremap <leader>; A;<Esc>
-
 " K 显示文档
 
 nnoremap < <<
 nnoremap > >>
+
+" ==========其他常用idea快捷键=============
+
+" ctrl-shift-↑ 代码/代码块上移
+" ctrl-shift-↓ 代码/代码块下移
+" ctrl-shift-f12 打开/关闭所有工具窗口
+" ctrl+shift+y:翻译当前词汇
+" ctrl+shift+o:出现翻译面板，需要自己打单词
+" ctrl+alt+l:格式化代码
+" ctrl+alt+k:局部变量补全（原为ctrl+alt+v,和 commit and push做交换了）
+" ctrl+w:递进式选择代码块
+" ctrl+shift+{：选择代码块
+" Ctrl+Shift+F12：关闭所有工具窗口
+" Ctrl+Alt+/ ：提示建议的变量名以及文件路径，虚拟路径等提示（原本为ctrl+space）
+" ctrl+shift+c：复制当前文件绝对路径
+" f2/shift+f2：上下跳转到问题代码处
+" ctrl+shift+v：查看所有复制的内容
+" ctrl+alt+n：内联重构，可以把元素调用搞成一行
+" Ctrl+Alt+Shift+T，弹出重构菜单
+" alt+shift+c:查看最近修改记录
+" ctrl+shift+enter:快速完成
+" ctrl+shift+f：全部文件中字符查找
+" ctrl+shift+i：小窗口查看代码，甚至图片预览 (leader+p)
+" ctrl+alt+f7:显示类或者引用的使用位置
+" ctrl+d:选中两个文件再按，可以对比不同。再编辑时按，可以复制所在行
+" ctrl+alt+shift+-> 向右移动方法参数，与右侧参数交换位置
+" ctrl+shift+t    ！！！进行单元测试！！！
+
+" 跨文件的跳转
+" Alt + LEFT / Alt + RIGHT
+    " 切换到左侧/右侧的标签页。
+    " 需要在两三个标签页之间来回切换时，这是最高效的方式。
+" Ctrl + E
+    " 在弹窗中打开最近浏览的文件。
+    " 开发者下一个想要浏览的文件，通常最近刚刚浏览过。
+    " 如果你打开的标签页比较多，或者你想要打开的标签页刚刚关闭（用 Ctrl + F4 关闭标签页），那么 Ctrl + E 通常是你跳转到下个文件的最快方法。
+
+" 下面四个快捷键的使用频率极高，请一定熟练掌握。
+    " Ctrl + B 跳转到声明。(ctrl+])
+    " Ctrl + Alt + B 跳转到定义。 跳转到实现类 (leader+i)
+    " Ctrl + Shift + I 在弹窗中预览定义。(leader+p)
+    " Ctrl + U 跳转到父类/父类方法。(leader+s)
+
+" 搜索类或文件
+    " Ctrl + N 跳转到指定类。
+    " Ctrl + Shift + N 跳转到指定文件。
+    " Ctrl + Shift + Alt + N 跳转到指定符号。
+
+" 文件内的跳转
+" Ctrl + G 移动到指定行。
+" Ctrl + G 是一个在 debug 过程中非常有用的快捷键。Java 程序出现异常时，会打印 stack trace，这其中包含了出错的类名和抛出异常的行数。使用这个快捷键可以瞬间移动至那一行。
+" Ctrl + LEFT / Ctrl + RIGHT 光标向前/向后移动一个词。 " 相当于 vi 中 w 和 b 的意义。适合在同一行近距离编辑使用。
+" Alt + UP / Alt + DOWN 移动至上一个/下一个方法。 " 用这一对快捷键可以让你飞快地遍历整个文件！
+" Ctrl + F12 在弹窗中打开文件结构视图。
+    " 相当于 Alt + 7 显示文件结构视图的弹窗版本。作用与 Alt + UP / Alt + DOWN 大同小异，都可以快速定位至文件内感兴趣的内容。它的好处在于避免眼花缭乱的跳转过程。
+" F3 / Shift F3 查找下一个/上一个。 " 在搜索模式（Ctrl + F）下检索每一个找到的内容，相当于 vi 中 n 和 N 的意义。
+
+" 生成关系图
+    " Ctrl + H 显示继承关系树。
+    " Ctrl + Alt + H 显示调用关系树。
+
+" setting
+    " 在File->settings->Code Style->Java中，选中“Wrapping and Braces”选项卡，在“Keep when reformatting”中有一个“Ensure rigth margin is not exceeded”
+    " 在格式化Java代码时，确保代码没有超过宽度界线。
+
+
+

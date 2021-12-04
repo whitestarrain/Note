@@ -455,9 +455,17 @@
 
 ## 算法<!-- fold -->
 
+## Linux <!-- fold -->
+
+### 常用命令
+
+### shell
+
+## 编码与加密算法 <!-- fold -->
+
 # Java知识栈
 
-## Java 基础
+## Java 基础 <!-- fold -->
 
 ### 基础 <!-- fold -->
 
@@ -2230,7 +2238,13 @@
 
 ### quartz <!-- fold -->
 
-## JNI
+## 测试框架 <!-- fold -->
+
+### Junit
+
+### Mockito
+
+## JNI <!-- fold -->
 
 ## 工具库 <!-- fold -->
 
@@ -2256,7 +2270,7 @@
 
 # 数据库
 
-## 关系型数据库
+## 关系型数据库 <!-- fold -->
 
 ### Mysql<!-- fold -->
 
@@ -2526,7 +2540,7 @@
 
 ### oracle<!-- fold -->
 
-## nosql
+## nosql <!-- fold -->
 
 ### Redis<!-- fold -->
 
@@ -2758,9 +2772,9 @@
 
 #### raft
 
-## 高可用
+## 高可用 <!-- fold -->
 
-## 分布式锁
+## 分布式锁实现 <!-- fold -->
 
 ### 数据库
 
@@ -2770,11 +2784,11 @@
 
 ### etcd
 
-## 分布式协调框架
+## 分布式协调框架 <!-- fold -->
 
 ### zookeeper
 
-## RPC框架
+## RPC框架 <!-- fold -->
 
 ### SpringCloud
 
@@ -2788,6 +2802,56 @@
 
 # 大数据
 
+## 数据采集和传输层 <!-- fold -->
+
+### Flume
+
+### Sqoop
+
+### Kafka
+
+## 数据存储层 <!-- fold -->
+
+### HDFS
+
+### Hive
+
+### HBase
+
+## 数据分析层 <!-- fold -->
+
+### MapReduce
+
+### Tez
+
+### Storm
+
+### Spark
+
+### Flink
+
+### Mahout
+
+## OLAP引擎 <!-- fold -->
+
+### Druid(?)
+
+### Kylin(?)
+
+### Impala(?)
+
+### Presto(?)
+
+## 资源管理 <!-- fold -->
+
+### Yarn
+
+### Mesos
+
+### Kubernetes
+
+## 其他 <!-- fold -->
+
 # 人工智能
 
 ## 机器学习
@@ -2796,9 +2860,12 @@
 
 # 其他
 
-## 鉴权
-
-## 加密算法
+## 鉴权 <!-- fold -->
 
 ## vimscript
+
+## Lisp
+
+## bat
+
 
