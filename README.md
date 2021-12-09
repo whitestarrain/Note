@@ -104,7 +104,7 @@ awk 'BEGIN{
 - 待继续学习
   - [ ] Undertow
   - [ ] Mysql XA
-  - [ ] Mocikto框架
+  - [x] Mocikto框架
   - [ ] JOOQ框架
   - [ ] jersey框架
   - [ ] SpringBatch

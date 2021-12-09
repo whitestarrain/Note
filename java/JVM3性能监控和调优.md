@@ -647,6 +647,8 @@
 
 ## 2.6. jhat:JDK自带堆分析工具
 
+> 基本不会使用
+
 ### 2.6.1. 基本说明
 
 - jhat（JVM Heap Analysis Tool）：
@@ -901,7 +903,762 @@ public class ThreadDeadLock {
 
 # 3. JVM监控及诊断工具=GUI
 
+> **吃透一两款就行**
+
+## 3.1. 概述
+
+- 命令行工具的局限性
+  - 无法获取方法级别的分析数据，如方法间的调用关系、各方法的调用次数和调用时间（这对定位应用性能瓶颈至关重要）。
+  - 要求用户登录到目标Java应用所在的宿主机上，使用起来不方便。
+  - 分析数据通过终端输出，结果展示不够直观。
+
+- **图形化综合诊断工具**
+  - **JDK自带的工具**
+    - jconsole：
+      - JDK自带的可视化监视工具。查看Java应用程序的运行概况、监控堆信息、永久代（元空间）使用情况、类加载情况等。
+      - 位置：jdk\bin\jconsole.exe
+    - Visual VM：
+      - Visual VM是一个工具，它提供了一个可视化界面，用于查看Java虚拟机上运行的基于Java技术的应用程序的详细信息。
+      - 位置：jdk\bin\jvisualvm.exe，也可以单独安装
+    - JMC：
+      - Java Mission Control，内置Java Flight Recorder
+      - 能够以极低的性能开销收集Java虚拟机的性能数据。
+      - HotSpot合并JRocket时带过来的，一部分功能也放到了jcmd中
+  - **第三方工具**
+    - MAT：
+      - MAT（Memory Analyzer Tool）是基于Eclipse的内存分析工具，是一个快速、功能丰富的Java heap分析工具，它可以帮助我们查找内存泄露和减少内存消耗。
+      - 可以以Eclipse的插件形式安装，也可以单独安装
+      - 老牌工具
+    - JProfiler：
+      - 商业软件，需要付费，功能强大。
+      - 可以单独安装，然后集成到IDEA中
+    - Arthas：
+      - Alibaba开源的Java诊断工具。深受开发者喜爱。
+    - Btrace：
+      - Java运行时追踪工具。可以在不停机的情况下，跟踪执行的方法调用、构造函数和系统内存等信息。
+
+## 3.2. JConsole
+
+### 3.2.1. 基本概述
+
+- 从Java5开始，是JDK中自带的java监控和管理控制台。
+- 用于对JVM中内存、线程和类等的监控，是一个基于JMX（java management extensions）的GUI性能监控工具。
+- [官方教程](https://docs.oracle.com/javase/7/docs/technotes/guides/management/jconsole.html)
+
+### 3.2.2. 启动
+
+- 执行jdk/bin下的 jconsole.exe 即可
+- 也可以配置到环境变量中
+
+- 启动页面
+
+  ![jvm3-37.png](./image/jvm3-37.png)
+
+### 3.2.3. 三种连接方式
+
+- Local
+  - 使用 jConsole连接一个正在本地系统运行的JVM，并且执行程序和运行 jConsole的需要时同一个用户。
+  - jConsole使用文件系统的授权通过RMI连接器连接到平台的MBean服务器上。
+  - 这种从本地连接的监控能力只有Sun的JDK具有。
+
+- Remote 
+  - 使用下面的URL通过RMI连接器连接到一个JMX代理：`service:jmx:rmi:///jndi/rmi://hostName:portNum/jmsrmi`
+  - jConsole为建立连接，需要在环境变量中设置mx.remote.credentials来指定用户名和密码，从而进行授权。
+
+- Advanced
+  - 使用一个特殊的URL链接JMX代理。
+  - 一般情况使用自己定制的连接器而不是RMI提供的连接器来连接JMX代理，或者是一个使用JDK1.4的实现了JMX和JMX Remote的应用。
+
+### 3.2.4. 主要作用
+
+- 监控内存、监控线程、监控死锁、类加载与虚拟机信息
+
+-  示例
+
+  ```java
+  /**
+  * -Xms600m -Xmx600m -XX:SurvivorRatio=8
+  */
+  public class HeapInstanceTest {
+      byte[] buffer = new byte[new Random().nextInt(1024 * 100)];
+
+      public static void main(String[] args) {
+          try {
+              Thread.sleep(3000);
+          } catch (InterruptedException e) {
+              e.printStackTrace();
+          }
+          ArrayList<HeapInstanceTest> list = new ArrayList<HeapInstanceTest>();
+          while (true) {
+              list.add(new HeapInstanceTest());
+              try {
+                  Thread.sleep(10);
+              } catch (InterruptedException e) {
+                  e.printStackTrace();
+              }
+          }
+      }
+  }
+  ```
+
+  <details>
+  <summary style="color:red;">查看图片(去自己跑一下最好)</summary>
+
+  ![jvm3-38.png](./image/jvm3-38.png)
+
+  ![jvm3-39.png](./image/jvm3-39.png)
+
+  > 内存区域会根据垃圾回收器的不同而改变
+
+  ![jvm3-40.png](./image/jvm3-40.png)
+
+  > 可检测死锁
+
+  ![jvm3-41.png](./image/jvm3-41.png)
+
+  ![jvm3-42.png](./image/jvm3-42.png)
+  </details>
+
+## 3.3. Visual VM(jvisualvm)
+
+> 取代 JConsole，必须学习
+
+### 3.3.1. 基本概述
+
+- Visual VM是一个功能强大的多合一故障诊断和性能监控的可视化工具。
+- 它集成了多个JDK命令行工具
+  - 使用Visual VM可用于显示虚拟机进程及进程的配置和环境信息（jps，jinfo）
+  - 监视应用程序的CPU、GC、堆、方法区及线程的信息（jstat、jstack）
+  - 可以取代jConsole。
+- 在JDK 6 Update 7之后，Visual VM便作为JDK的一部分发布（VIsualVM在JDK/bin目录下，jvisualvm）
+  - Visual VM 和 JDK/bin目录下的 jvisualvm是一个东西。
+  - 此外，Visual VM也可以作为独立的软件安装。
+
+- [Visual VM网址](https://visualvm.github.io/index.html)
+
+### 3.3.2. Visual VM 插件
+
+- 说明:Visual VM的一大特点是支持插件扩展，并且插件安装非常方便
+
+- Visual VM 功能扩展插件
+  - 既可以通过离线下载文件*.nbm，然后再Plugin对话框的已下载页面下，添加已下载的插件
+  - 也可以在可用插件页面下，在线安装插件
+  - **（这里建议安装上：VisualGC）**
+  - [插件地址](https://visualvm.github.io/pluginscenters.html)
+
+- IDEA集成VisualVM Launcher插件
+
+  <details>
+  <summary style="color:red;">展开</summary>
+
+  ![jvm3-43.png](./image/jvm3-43.png)
+
+  > 重启后还需要做如下设置：
+
+  ![jvm3-44.png](./image/jvm3-44.png)
+  </details>
+
+### 3.3.3. 连接方式
+
+- 本地连接
+- 远程连接
+  - 确定远程服务器的ip地址
+  - 添加JMX(通过JMX技术具体监控远端服务器哪个Java进程)
+  - 修改bin/catalina.sh文件，连接远程的tomcat
+  - 在.../conf中添加jmxremote.access和jmxremote.password文件
+  - 将服务器地址改为公网ip地址
+  - 设置阿里云安全策略和防火墙策略
+  - 启动tomcat,查看tomcat启动日志和端口监听
+  - JMX中输入端口号、用户名、密码登录
+
+### 3.3.4. 主要功能
+
+#### 3.3.4.1. 说明
+
+- 生成/读取堆内存快照
+- 查看JVM参数和系统属性
+- 查看运行中的虚拟机进程
+- 生成/读取线程快照
+- 程序资源的实时监控
+- 其他功能：JMX代理连接、远程环境监控、CPU分析和内存分析
+
+#### 3.3.4.2. 示例
+
+- 演示代码
+
+  ```java
+  /**
+   * -Xms600m -Xmx600m -XX:SurvivorRatio=8
+   */
+  public class OOMTest {
+      public static void main(String[] args) {
+          ArrayList<Picture> list = new ArrayList<>();
+          while (true) {
+              try {
+                  Thread.sleep(5);
+              } catch (InterruptedException e) {
+                  e.printStackTrace();
+              }
+              list.add(new Picture(new Random().nextInt(100 * 50)));
+          }
+      }
+  }
+  
+  class Picture {
+      private byte[] pixels;
+  
+      public Picture(int length) {
+          this.pixels = new byte[length];
+      }
+  }
+  ```
+
+- **概览**
+
+  <details>
+  <summary style="color:red;">展开</summary>
+
+  ![jvm3-46.png](./image/jvm3-46.png)
+
+  ![jvm3-47.png](./image/jvm3-47.png)
+
+  ![jvm3-48.png](./image/jvm3-48.png)
+
+  ![jvm3-49.png](./image/jvm3-49.png)
+  </details>
+
+- **生成和查看堆dump文件**
+
+  <details>
+  <summary style="color:red;">展开</summary>
+
+  ![jvm3-50.png](./image/jvm3-50.png)
+
+  > 然后在快照上右键即可将快照（.hprof文件）保存到磁盘：
+
+  ![jvm3-51.png](./image/jvm3-51.png)
+
+  > 通过选择：文件---->装入，可以导入刚才保存的.hprof文件：
+
+  ![jvm3-52.png](./image/jvm3-52.png)
+
+  > 分析堆dump文件
+
+  ![jvm3-53.png](./image/jvm3-53.png)
+  </details>
+
+- **生成和查看线程dump文件**
+
+  <details>
+  <summary style="color:red;">死锁示例代码与检测</summary>
+
+  ```java
+  /**
+   * 演示线程的死锁问题
+   */
+  public class ThreadDeadLock {
+  
+      public static void main(String[] args) {
+  
+          StringBuilder s1 = new StringBuilder();
+          StringBuilder s2 = new StringBuilder();
+  
+          new Thread() {
+              @Override
+              public void run() {
+  
+                  synchronized (s1) {
+                      s1.append("a");
+                      s2.append("1");
+                      try {
+                          Thread.sleep(100);
+                      } catch (InterruptedException e) {
+                          e.printStackTrace();
+                      }
+                      synchronized (s2) {
+                          s1.append("b");
+                          s2.append("2");
+                          System.out.println(s1);
+                          System.out.println(s2);
+                      }
+                  }
+              }
+          }.start();
+  
+          new Thread(new Runnable() {
+              @Override
+              public void run() {
+  
+                  synchronized (s2) {
+                      s1.append("c");
+                      s2.append("3");
+                      try {
+                          Thread.sleep(100);
+                      } catch (InterruptedException e) {
+                          e.printStackTrace();
+                      }
+                      synchronized (s1) {
+                          s1.append("d");
+                          s2.append("4");
+                          System.out.println(s1);
+                          System.out.println(s2);
+                      }
+                  }
+              }
+          }).start();
+  
+          try {
+              Thread.sleep(1000);
+          } catch (InterruptedException e) {
+              e.printStackTrace();
+          }
+      }
+  }
+  ```
+
+  ![jvm3-54.png](./image/jvm3-54.png)
+  </details>
+
+- **CPU抽样和内存抽样**
+
+  <details>
+  <summary style="color:red;">展开</summary>
+
+  ![jvm3-55.png](./image/jvm3-55.png)
+
+  ![jvm3-56.png](./image/jvm3-56.png)
+  </details>
+
+## 3.4. eclipse MAT
+
+> **dump文件分析，就用这个**
+
+### 3.4.1. 概述
+
+### 3.4.2. 获取dump文件(小结)
+
+### 3.4.3. 概念补充
+
+#### 3.4.3.1. 深堆,浅堆,对象实际大小
+
+#### 3.4.3.2. 支配树
+
+### 3.4.4. 分析dump文件
+
+#### 3.4.4.1. histogram
+
+#### 3.4.4.2. thread overview
+
+#### 3.4.4.3. 获取对象引用关系
+
+### 3.4.5. 案例解析
+
+#### 3.4.5.1. 深堆和浅堆
+
+#### 3.4.5.2. 支配树分析
+
+- **注意：** 
+  - thread overview中显示的才是引用关系
+  - 支配树中显示的是支配关系
+
+<p style="color:red;">
+软，弱，虚引用表现？
+</p>
+
+#### 3.4.5.3. tomcat堆溢出分析
+
+### 3.4.6. 补充：内存泄漏
+
+#### 3.4.6.1. 概述
+
+> **基本说明**
+
+- 何为内存泄露（memory leak）
+  - 可达性分析算法来判断对象是否是不再使用的对象，本质上是判断一个对象是否还被引用
+  - 那么对于这种情况，由于代码的实现不同就会出现很多内存泄露问题（让JVM误认为此对象还在引用中，无法回收，造成内存泄露）。
+
+  ![jvm3-57.png](./image/jvm3-57.png)
+
+- 内存泄露（memory leak）的理解
+
+  - **严格来说** ， 
+    - **只有对象不会再被程序用到了，但是GC用不能回收它们的情况，才叫内存泄露。**
+  - **宽泛意义上** ，
+    - **但实际情况很多时候一些不太好的实践（或疏忽）会导致对象的生命周期变得很长甚至导致OOM**
+    - 也可以叫做内存泄露
+
+> **示例说明**
+
+- 对象X引用对象Y，X的生命周期比Y的生命周期长
+- 那么当Y生命周期结束的时候，X依然引用着Y，这时候，垃圾回收是不会回收对象Y的
+- 如果对象X还引用着生命周期比较短的A、B、C，对象A又引用着对象a、b、c
+- 这样就可能造成大量无用的对象不能被回收，进而占据了内存资源，造成内存泄露，直至内存溢出。
+
+![jvm3-58.png](./image/jvm3-58.png)
+
+> **内存泄露与内存溢出的关系**
+
+- 内存泄露（memory leak） 申请了内存用完了不释放
+- 内存溢出（out of memory） 申请内存时，没有足够的内存可以使用；
+- 内存泄露和内存溢出的关系：内存泄露的增多，最终导致内存溢出。
+
+
+> **泄露的分类**
+
+- **经常发生**：发生内存泄露的代码会被多次执行，每次执行，泄露一块内存；
+- **偶然发生**：在某些特定情况下才会发生；(比如finally)
+- **一次性**：内存泄露的方法只会被执行一次；
+- **隐式泄露**：一直占着内存不释放，知道执行结束；严格的说这个不算内存泄露，因为最终释放掉了，但是如果执行时间特别长，也可能导致内存耗尽。
+
+#### 3.4.6.2. 内存泄漏8种情况
+
+> **1.静态集合类**
+
+- 说明
+  - 静态集合类，如HashMap、LinkedList等等
+  - 如果这些容器为静态的，那么他们的生命周期与JVM程序一直，则容器中的对象在程序结束之前不会被释放，从而造成内存泄露
+  - 简单而言，长生命周期的对象持有短生命周期对象的引用，尽管短生命周期的对象不再被使用，但是因为长生命周期对象持有它的引用而导致不能被回收。
+
+- 示例代码
+
+  <details>
+  <summary style="color:red;">展开</summary>
+
+   ```java
+   public class MemeoryLeak {
+       static List list = new ArrayList<>();
+       
+       public void oomTest() {
+           Object obj = new Object();  // 局部变量
+           list.add(obj);
+       }
+   }
+   ```
+  </details>
+
+> **2.单例模式**
+
+- 说明：
+  - 单例模式，和静态集合导致内存泄露的原因类似，因为单例的静态特性，它的生命周期和JVM的生命周期一样长
+  - 所以如果单例对象如果持有外部对象的引用，那么这个外部对象也不会被回收，那么就会造成内存泄露。
+
+> **3.内部类持有外部类**
+
+- 说明：
+  - 如果一个外部类的实例对象的方法返回了一个内部类的实例对象，这个内部类对象被长期引用了
+  - 即使那个外部类实例不再被使用，但是由于内部类持有外部类的实例对象，这个外部类对象将不会被垃圾回收，这也造成内存泄露。
+
+> **4.各种连接，如数据库连接、网络连接和IO连接等**
+
+- 说明：
+  - 在对数据库进行操作的过程中，首先需要建立数据库的链接，当不再使用时，需要调用close方法来释放与数据库的连接
+  - 只有连接被关闭后，垃圾回收器才会回收对应的对象。
+  - 否则，如果在访问数据库的过程中，对Connection、Statement或ResultSet不显性地关闭，将会造成大量对象无法被回收，从而引起内存泄露。
+- 示例代码
+
+  <details>
+  <summary style="color:red;">展开</summary>
+   ```java
+   public static void main(String[] args) {
+       try {
+           Connection conn = null;
+           Class.forName("com.mysql.jdbc.Driver");
+           conn = DriverManager.getConnection("url", "", "");
+           Statement stmt = conn.createStatement();
+           ResultSet rs = stmt.executeQuery("...");
+       } catch (Exception e) {  // 异常日志
+           
+       } finally {
+           // 1.关闭结果集
+           // 2.关闭声明的对象
+           // 3.关闭连接
+       }
+   }
+   ```
+  </details>
+
+> **5.变量不合理的作用域**
+
+- 说明：
+  - 一般而言，一个变量的定义的作用范围大于其使用范围，很有可能造成内存泄露
+  - 另一方面没有及时地把对象设置为null，很有可能导致内存泄露的发生。
+
+- 示例代码
+  <details>
+  <summary style="color:red;">展开</summary>
+
+   ```java
+   public class UsingRandom {
+       private String msg;
+       public void receiveMsg() {
+           readFromNet();  // 从网络上接收数据保存到msg中
+           saveDB();  // 把msg保存到数据库中
+       }
+   }
+   // 如上面这个伪代码，通过readReomNet方法把接收的消息保存在变量msg中，然后调用saveDB方法把msg的内容保存到数据库中，此时msg已经就没有用了
+   // 由于msg的生命周期与对象的生命周期相同，此时msg还不能被回收，因此造成了内存泄露。
+   // 实际上这个msg变量可以放在receiveMsg方法内部，当方法使用完，那么msg的生命周期也就结束，此时就可以回收了
+   // 还有另一种方法，在使用完msg后，把msg设置为null，这样垃圾回收也会回收msg的内存空间。
+   ```
+  </details>
+
+
+> **6.改变哈希值**
+
+- 说明：
+  - 当一个对象被存储进HashSet集合以后，就不能修改这个对象中那些参与计算的哈希值字段了
+  - 否则，对象修改后的哈希值与最初存储进HashSet集合中的哈希值就不同了
+  - 在这种情况下，即使contains方法使用该对象的当前引用作为参数去HashSet集合中检索对象，也将返回找不到对象结果
+  - 这也会导致无法从HashSet集合中单独删除当前对象，造成内存泄露。
+  - 这也是String为什么被设置为了不可变类型，我们可以放心地把String存入HashSet，或者把String当做HashMap的key值。
+
+- 示例代码
+
+  <details>
+  <summary style="color:red;">展开</summary>
+
+   ```java
+   /**
+    * 演示内存泄漏
+    */
+   public class ChangeHashCode {
+       public static void main(String[] args) {
+           HashSet set = new HashSet();
+           Person p1 = new Person(1001, "AA");
+           Person p2 = new Person(1002, "BB");
+   
+           set.add(p1);
+           set.add(p2);
+   
+           p1.name = "CC";  // 导致了内存的泄漏
+           set.remove(p1);  // 删除失败
+           // [Person{id=1002, name='BB'}, Person{id=1001, name='CC'}]
+           System.out.println(set);  
+   
+           set.add(new Person(1001, "CC"));
+           // [Person{id=1002, name='BB'}, Person{id=1001, name='CC'}, Person{id=1001, name='CC'}]
+           System.out.println(set);
+   
+           set.add(new Person(1001, "AA"));
+           // [Person{id=1002, name='BB'}, Person{id=1001, name='CC'}, Person{id=1001, name='CC'}, Person{id=1001, name='AA'}]
+           System.out.println(set);
+       }
+   }
+   
+   class Person {
+       int id;
+       String name;
+   
+       public Person(int id, String name) {
+           this.id = id;
+           this.name = name;
+       }
+   
+       @Override
+       public boolean equals(Object o) {
+           if (this == o) return true;
+           if (!(o instanceof Person)) return false;
+           Person person = (Person) o;
+           if (id != person.id) return false;
+           return name != null ? name.equals(person.name) : person.name == null;
+       }
+   
+       @Override
+       public int hashCode() {
+           int result = id;
+           result = 31 * result + (name != null ? name.hashCode() : 0);
+           return result;
+       }
+   
+       @Override
+       public String toString() {
+           return "Person{" + "id=" + id + ", name='" + name + '\'' + '}';
+       }
+   }
+   ```
+  </details>
+
+  <details>
+  <summary style="color:red;">展开</summary>
+
+   ```java
+   /**
+    * 演示内存泄漏
+    *
+    * @author shkstart
+    * @create 14:47
+    */
+   public class ChangeHashCode1 {
+       public static void main(String[] args) {
+           HashSet<Point> hs = new HashSet<Point>();
+           Point cc = new Point();
+           cc.setX(10);  // hashCode = 41
+           hs.add(cc);
+   
+           cc.setX(20);  // hashCode = 51  此行为导致了内存的泄漏
+   
+           System.out.println("hs.remove = " + hs.remove(cc));  // false
+           hs.add(cc);
+           System.out.println("hs.size = " + hs.size());  // size = 2
+   
+           System.out.println(hs);  // [Point{x=20}, Point{x=20}]
+       }
+   
+   }
+   
+   class Point {
+       int x;
+   
+       public int getX() {
+           return x;
+       }
+   
+       public void setX(int x) {
+           this.x = x;
+       }
+   
+       @Override
+       public int hashCode() {
+           final int prime = 31;
+           int result = 1;
+           result = prime * result + x;
+           return result;
+       }
+   
+       @Override
+       public boolean equals(Object obj) {
+           if (this == obj) return true;
+           if (obj == null) return false;
+           if (getClass() != obj.getClass()) return false;
+           Point other = (Point) obj;
+           if (x != other.x) return false;
+           return true;
+       }
+   
+       @Override
+       public String toString() {
+           return "Point{" + "x=" + x + '}';
+       }
+   }
+   ```
+  </details>
+
+> **7.缓存泄露**
+
+- 说明：
+  - 内存泄露的另一个常见来源是缓存，一旦你把对象放入到缓存中，他就容易遗忘
+    > 比如：之前项目在一次上线的时候，应用启动奇慢直到夯死
+    > 就是因为代码中会加载一个表中的数据到缓存（内存）中，测试环境只有几百条数据，但是生产环境有几百万的数据。
+  - 对于此问题，可以使用WeakHashMap代表缓存，此种Map的特点是，当除了自己有对key的引用外，此key没有其他引用那么此map会自动丢弃此值。
+
+- 示例代码
+
+  <details>
+  <summary style="color:red;"></summary>
+
+   ```java
+   /**
+    * 演示内存泄漏
+    */
+   public class MapTest {
+       static Map wMap = new WeakHashMap();
+       static Map map = new HashMap();
+   
+       public static void main(String[] args) throws Exception {
+           init();
+           System.out.println("---------------------------");
+           testWeakHashMap();
+           System.out.println("---------------------------");
+           testHashMap();
+       }
+   
+       public static void init() {
+           String ref1 = new String("obejct1");
+           String ref2 = new String("obejct2");
+           String ref3 = new String("obejct3");
+           String ref4 = new String("obejct4");
+           wMap.put(ref1, "cacheObject1");
+           wMap.put(ref2, "cacheObject2");
+           map.put(ref3, "cacheObject3");
+           map.put(ref4, "cacheObject4");
+           System.out.println("String引用ref1，ref2，ref3，ref4 消失");
+   
+       }
+   
+       public static void testWeakHashMap() throws InterruptedException {
+           System.out.println("WeakHashMap GC之前");
+           for (Object o : wMap.entrySet()) System.out.println(o);
+           System.gc();
+           TimeUnit.SECONDS.sleep(2);
+           System.out.println("WeakHashMap GC之后");
+           for (Object o : wMap.entrySet()) System.out.println(o);
+       }
+   
+       public static void testHashMap() throws InterruptedException {
+           System.out.println("HashMap GC之前");
+           for (Object o : map.entrySet()) System.out.println(o);
+           System.gc();
+           TimeUnit.SECONDS.sleep(2);
+           System.out.println("HashMap GC之后");
+           for (Object o : map.entrySet()) System.out.println(o);
+       }
+   
+   }
+   /**
+    * 结果
+    * String引用ref1，ref2，ref3，ref4 消失
+    * ---------------------------
+    * WeakHashMap GC之前
+    * obejct2=cacheObject2
+    * obejct1=cacheObject1
+    * WeakHashMap GC之后
+    * ---------------------------
+    * HashMap GC之前
+    * obejct4=cacheObject4
+    * obejct3=cacheObject3
+    * HashMap GC之后
+    * obejct4=cacheObject4
+    * obejct3=cacheObject3
+    **/
+   ```
+
+  ![jvm3-59.png](./image/jvm3-59.png)
+
+  - 上面代码和图示主要演示了WeakHashMap如何自动释放缓存对象
+  - 当init函数执行完成后，局部变量字符串引用obejct1，obejct2，obejct3，obejct4都会消失
+  - 此时只有静态map中保存了对字符串对象的引用，可以看到，调用gc之后，HashMap没有被回收，而WeakHashMap里面的缓存被回收了。
+  </details>
+
+> **8.监听器和回调**
+
+- 说明
+  - 内存泄露的另一个常见来源是监听器和其他回调
+  - 如果客户端在你实现的API中注册回调，却没有显式的取消，那么就会聚集
+  - 需要确保回调立即被当做垃圾回收的最佳方法是只保存它的弱引用，例如将它们保存成为WeakHashMap中的键。
+
+#### 3.4.6.3. 内存泄漏分析案例
+
+> **1. 案例分析**
+
+> **2. 代码**
+
+> **3. 分析**
+
+### 3.4.7. 补充：QQL
+
+## 3.5. JProfiler
+
+## 3.6. Arthas
+
+## 3.7. Java Mission Control
+
+## 3.8. 其他工具
+
 # 4. JVM运行时参数
+
+## 4.1. JVM参数类型
+
+## 4.2. 常用JVM参数
 
 # 5. GC日志分析
 
@@ -928,3 +1685,4 @@ public class ThreadDeadLock {
   - 日均百万级交易系统如何优化 JVM？
   - 线上生产系统 OOM 如何监控及定位与解决？
   - 高并发系统如何基于 G1 垃圾回收器优化性能？
+

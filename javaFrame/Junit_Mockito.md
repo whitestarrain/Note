@@ -1133,4 +1133,5 @@ public void testVerify()  {
 - [Unit Testing with JUnit 4 - Tutorial](https://www.vogella.com/tutorials/JUnit4/article.html)
 - [mockito doc](https://javadoc.io/static/org.mockito/mockito-core/4.1.0/org/mockito/Mockito.html)
 - [AndroidUT](https://github.com/simplezhli/AndroidUT)
+- [JUnit高级用法之@RunWith](https://blog.csdn.net/weixin_33742618/article/details/91799240)
 

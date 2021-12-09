@@ -175,6 +175,11 @@ Plug 'ferrine/md-img-paste.vim'
 Plug 'jiangmiao/auto-pairs'
 "------------------------------------auto-pairs-------------------------------------
 
+"------------------------------------latex-------------------------------------
+" latex支持
+Plug 'lervag/vimtex'
+"------------------------------------latex-------------------------------------
+
 call plug#end()
 
 "=================================================plug end===================================================
@@ -247,8 +252,6 @@ let g:vim_markdown_no_default_key_mappings = 1
   " ]c: 跳转到当前文本所属的 header
   " ]u: 跳转到"父"header
  
-" 语法隐藏相关，不进行语法隐藏
-set conceallevel=2
 let g:vim_markdown_conceal=0
 " 开启math公式高亮
 let g:vim_markdown_math = 1
@@ -256,6 +259,7 @@ let g:vim_markdown_math = 1
 let g:vim_markdown_list_item_indent = 2
 " 代码块不隐藏``
 let g:vim_markdown_conceal_code_blocks = 0
+let g:indentLine_conceallevel=0
 
 "------------------------------------markdown-------------------------------------
 
@@ -328,6 +332,7 @@ let g:startify_session_persistence = 1
 " session保存前执行，防止因为懒加载而出现冲突
 let g:startify_session_before_save = [
     \ 'echo "Cleaning up before saving.."',
+    \ 'silent! tabonly',
     \ 'silent! NERDTreeClose',
     \ 'silent! TagbarClose',
     \ ''
@@ -515,7 +520,6 @@ set shiftwidth=2
 "当设置成 expandtab 时，缩进用空格来表示，noexpandtab 则是用制表符表示一个缩进。
 set expandtab
 
-
 " 主题
 " colorscheme hybrid
 colorscheme onedark
@@ -542,6 +546,9 @@ set foldlevelstart=99       " 打开文件是默认不折叠代码
 
 set vb t_vb=
 au GuiEnter * set t_vb=
+
+" 语法隐藏相关，不进行语法隐藏
+set conceallevel=0
 
 "=================================================config end===================================================
 
@@ -742,6 +749,13 @@ function! FindFromAllFile()
     call tagbar#CloseWindow()
     execute("vimgrep /" . l:find_str . "/ ./**/*.md ./**/*.txt ./**/*.java ./**/*.scala ./**/*.py | copen")
 endfunction
+
+function! GoogleSearch(searchUrl)
+     let l:searchterm = getreg("s")
+     silent! exec "silent! !chrome " . a:searchUrl . l:searchterm
+endfunction
+vnoremap <silent>g "sy<Esc>:call GoogleSearch("https://www.google.com/search?q=")<CR>
+vnoremap <silent>b "sy<Esc>:call GoogleSearch("https://www.baidu.com/s?wd=")<CR>
 
 "=================================================map end===================================================
 

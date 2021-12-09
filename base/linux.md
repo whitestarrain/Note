@@ -1265,6 +1265,13 @@
 - 8，引用删除 echo "hello"
 - \*，重定向 >
 
+
+# 常见情景
+
+## 大文件阅读
+
+<!-- less more gre sed awk-->
+
 # 参考文档
 
 - [Linux Command](https://github.com/jaywcjlove/linux-command)
