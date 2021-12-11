@@ -1,4 +1,130 @@
-# 1. maven 基础
+# 1. Maven(Java)
+
+## 1.1. 概述
+
+## 1.2. 基本说明
+
+- Maven是基于项目对象模型(POM project object model)，可以通过一小段描述信息（配置）来管理项目的构建，报告和文档的软件项目管理工具
+- 简单来说，就是通过一个pom文件，合理叙述项目间的依赖关系，获取jar包
+
+## 1.3. java编译指令
+
+- 基本使用
+  ```bash
+  # java 执行必须有和包名相同层级的目录
+  # javac 不需要package和目录层级相同
+  $ ls com/compile/test/
+  JavaCompileTest.java
+  # ----------
+  $ cat com/compile/test/JavaCompileTest.java
+  class JavaCompileTest{
+          public static void main(String[] args){
+                  System.out.println("hello world");
+          }
+  }
+  # ----------
+  $ javac com/compile/test/JavaCompileTest.java
+  # ----------
+  $ ls com/compile/test/
+  JavaCompileTest.class  JavaCompileTest.java
+  # ----------
+  $ java com/compile/test/JavaCompileTest
+  错误: 找不到或无法加载主类 com.compile.test.JavaCompileTest
+  # ----------
+  $ sed -i "1i\package com.compile.test;" com/compile/test/JavaCompileTest.java
+  # ----------
+  $ javac com/compile/test/JavaCompileTest.java
+  # ----------
+  $ java com/compile/test/JavaCompileTest
+  hello world
+  ```
+
+- `javac -help`：
+  ```
+  用法: javac <options> <source files>
+  其中, 可能的选项包括:
+    -g                         生成所有调试信息
+    -g:none                    不生成任何调试信息
+    -g:{lines,vars,source}     只生成某些调试信息
+    -nowarn                    不生成任何警告
+    -verbose                   输出有关编译器正在执行的操作的消息
+    -deprecation               输出使用已过时的 API 的源位置
+    -classpath <路径>            指定查找用户类文件和注释处理程序的位置
+    -cp <路径>                   指定查找用户类文件和注释处理程序的位置
+    -sourcepath <路径>           指定查找输入源文件的位置
+    -bootclasspath <路径>        覆盖引导类文件的位置
+    -extdirs <目录>              覆盖所安装扩展的位置
+    -endorseddirs <目录>         覆盖签名的标准路径的位置
+    -proc:{none,only}          控制是否执行注释处理和/或编译。
+    -processor <class1>[,<class2>,<class3>...] 要运行的注释处理程序的名称; 绕过默认的搜索进程
+    -processorpath <路径>        指定查找注释处理程序的位置
+    -parameters                生成元数据以用于方法参数的反射
+    -d <目录>                    指定放置生成的类文件的位置
+    -s <目录>                    指定放置生成的源文件的位置
+    -h <目录>                    指定放置生成的本机标头文件的位置
+    -implicit:{none,class}     指定是否为隐式引用文件生成类文件
+    -encoding <编码>             指定源文件使用的字符编码
+    -source <发行版>              提供与指定发行版的源兼容性
+    -target <发行版>              生成特定 VM 版本的类文件
+    -profile <配置文件>            请确保使用的 API 在指定的配置文件中可用
+    -version                   版本信息
+    -help                      输出标准选项的提要
+    -A关键字[=值]                  传递给注释处理程序的选项
+    -X                         输出非标准选项的提要
+    -J<标记>                     直接将 <标记> 传递给运行时系统
+    -Werror                    出现警告时终止编译
+    @<文件名>                     从文件读取选项和文件名
+  ```
+
+- 指定编译依赖jar包和输出位置
+
+  ```bash
+  # 不指定依赖位置，编译失败
+  $ ls
+  com  lib
+
+  # ----------
+  $ ls lib
+  commons-logging-1.2.jar
+
+  # ----------
+  $ vim com/compile/test/JavaCompileTest.java
+
+  # ----------
+  $ sed -i "1a\import org.apache.commons.logging.Log;" com/compile/test/JavaCompileTest.java
+
+  # ----------
+  $ cat com/compile/test/JavaCompileTest.java
+  package com.compile.test;
+  import org.apache.commons.logging.Log;
+  class JavaCompileTest{
+          public static void main(String[] args){
+                  System.out.println("hello world");
+          }
+  }
+
+  # ----------
+  $ javac com/compile/test/JavaCompileTest.java
+  com\compile\test\JavaCompileTest.java:2: 错误: 程序包org.apache.commons.logging不存在
+  import org.apache.commons.logging.Log;
+                                  ^
+  1 个错误
+  ```
+  ```bash
+
+  ```
+
+## 1.4. 编译示例情景
+
+> **不使用maven**
+
+> **使用maven**
+
+## 1.5. Maven 仓库
+
+## 1.6. Maven
+
+## 1.7. Maven POM
 
 - maven 常用命令
   - clean
@@ -325,9 +451,9 @@
   ```
   </details>
 
-# 2. maven进阶
+## 1.8. maven进阶
 
-## 2.1. 多模块开发
+### 1.8.1. 多模块开发
 
 ```
 情景：
@@ -452,10 +578,10 @@
   - 了解：
     > ![](image/2020-10-10-22-20-58.png)
 
-# 常见 maven 编译插件
+## 1.9. 常见 maven 编译插件
 
 
-# 打包方式
+## 1.10. 打包方式
 
 - pom是maven依赖文件
   - pom打包方式可以作为其他项目的maven依赖，构建maven项目时可用在父级工程或者聚合工程中，用来做jar包的版本控制；
@@ -466,9 +592,8 @@
   - war包用来发布服务，打成war包后部署到服务器访问。
 
 
+# 2. Gradle(java)
 
-
-
-# 参考资料
+# 3. 参考资料
 
 - [程序运行时，No active profile set, falling back to default profiles: default](https://www.imooc.com/qadetail/302046)
