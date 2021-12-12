@@ -1,14 +1,3 @@
-# # PSReadLine
-# Set-PSReadLineOption -EditMode Emacs
-# Set-PSReadLineOption -BellStyle None
-# Set-PSReadLineKeyHandler -Chord 'Ctrl+d' -Function DeleteChar
-# Set-PSReadLineOption -PredictionSource History
-
- 
-# # Fzf
-# Import-Module PSFzf
-# Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
-
 # Env
 $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
 
@@ -24,7 +13,7 @@ function nvimWithoutConfig() {
   nvim -u NONE $args[0]
 }
 function nvimWithOriginConfig() {
-  nvim -u d:\Note\config_file\vim\nvimConfig\init.vim
+  nvim -u d:\Note\config_file\vim\nvimConfig\init.vim $args[0]
 }
 
 # oh-my-posh
@@ -66,3 +55,21 @@ function nvimWithOriginConfig() {
 }
 Set-Item -Path Function:prompt -Value $Prompt -Force
 
+
+# powershell module import for pwsh
+# other installed module: z
+if ($PSVersionTable.PSVersion.Major -eq 7){
+  Import-Module posh-git
+  Import-Module Terminal-Icons
+  Import-Module -Name Terminal-Icons
+  
+  # PSReadLine
+  Set-PSReadLineOption -EditMode Emacs
+  Set-PSReadLineOption -BellStyle None
+  Set-PSReadLineKeyHandler -Chord 'Ctrl+d' -Function DeleteChar
+  Set-PSReadLineOption -PredictionSource History
+  # Set-PSReadLineOption -PredictionViewStyle ListView
+
+  # Import-Module PSFzf
+  # Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
+}
