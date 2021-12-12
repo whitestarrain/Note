@@ -71,8 +71,8 @@ set cursorline             "  光标所在行高亮
 set wrapscan               " Searches wrap around end-of-file.
 set report      =0         " Always report changed lines.
 " Set cursor line color on visual mode
-highlight Visual cterm=NONE ctermbg=236 ctermfg=NONE guibg=Grey40
-highlight LineNr cterm=none ctermfg=240 guifg=#2b506e guibg=#000000
+" highlight Visual cterm=NONE ctermbg=236 ctermfg=NONE guibg=Grey40
+" highlight LineNr cterm=none ctermfg=240 guifg=#2b506e guibg=#000000
 augroup BgHighlight
   autocmd!
   autocmd WinEnter * set cul

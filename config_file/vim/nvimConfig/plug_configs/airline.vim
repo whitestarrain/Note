@@ -36,10 +36,10 @@ let g:airline#extensions#tabline#buffer_idx_format = {
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
+" let g:airline_symbols.branch = 'BR'
 let g:airline_symbols.linenr = "CL" " current line
 let g:airline_symbols.whitespace = '|'
 let g:airline_symbols.maxlinenr = 'Ml' "maxline
-let g:airline_symbols.branch = 'BR'
 let g:airline_symbols.readonly = "RO"
 let g:airline_symbols.dirty = "DT"
 let g:airline_symbols.crypt = "CR" 

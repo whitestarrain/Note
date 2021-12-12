@@ -1,7 +1,7 @@
 " Specify a directory for plugins
 " - For Neovim: stdpath('data') . '/plugged'  "即 C:\Users\稀落的星\AppData\Local\nvim-data\plugs
 " - Avoid using standard Vim directory names like 'plugin'
-call plug#begin('D:\learn\neovim0.5\Neovim\share\autoload')
+call plug#begin(get(g:,"plug_install_path"))
 
 "-----------------------------------snippt插件--------------------------------------
 "
@@ -146,5 +146,14 @@ Plug 'jiangmiao/auto-pairs'
 " latex支持
 Plug 'lervag/vimtex'
 "------------------------------------latex-------------------------------------
+
+"------------------------------------theme-------------------------------------
+" Using Vim-Plug
+Plug 'navarasu/onedark.nvim'
+"------------------------------------theme-------------------------------------
+
+" "------------------------------------icon-------------------------------------
+"   Plug 'ryanoasis/vim-devicons'
+" "------------------------------------icon-------------------------------------
 
 call plug#end()

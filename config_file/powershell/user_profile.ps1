@@ -1,12 +1,14 @@
 # Env
 $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
+$env:LESSCHARSET="utf-8"  # for git less
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8  # 解决findstr,grep等命令中文乱码
 
 # Alias
 Set-Alias vi nvimWithoutConfig
 Set-Alias vim  nvimWithOriginConfig
 Set-Alias ll ls
-Set-Alias grep findstr
 Set-Alias tig 'D:\learn\Git\usr\bin\tig.exe'
+# Set-Alias grep findstr
 
 # function
 function nvimWithoutConfig() {
@@ -60,7 +62,6 @@ Set-Item -Path Function:prompt -Value $Prompt -Force
 # other installed module: z
 if ($PSVersionTable.PSVersion.Major -eq 7){
   Import-Module posh-git
-  Import-Module Terminal-Icons
   Import-Module -Name Terminal-Icons
   
   # PSReadLine
@@ -70,6 +71,7 @@ if ($PSVersionTable.PSVersion.Major -eq 7){
   Set-PSReadLineOption -PredictionSource History
   # Set-PSReadLineOption -PredictionViewStyle ListView
 
-  # Import-Module PSFzf
-  # Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
+  # Fzf
+  Import-Module PSFzf
+  Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
 }
