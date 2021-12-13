@@ -13,11 +13,12 @@ if strlen($term)==0
   " nvim-qt
   let g:set_termguicolors=1
   let g:load_theme="onedark"
+  " let g:load_theme="NeoSolarized"
+  autocmd vimenter * GuiFont! MesloLGS NF:h11
 elseif $term=="alacritty"
   " alacritty
   let g:neosolarized_termtrans=1
-  let g:set_termguicolors=0
-  let g:load_theme="ownTheme"
+  let g:set_termguicolors=1
 else
   " nvim in terminal
   let g:set_termguicolors=0
@@ -40,7 +41,7 @@ if exists("g:plug_install_path")
 endif
 
 " python 环境
-let g:python3_host_prog='D:\ProgramFiles\scoop\apps\python\current\python.exe'
+let g:python3_host_prog='D:\\learn\\anaconda3\\envs\\learn\\python.exe'
 
 " 定义载入配置命令
 " let g:absolute_config_path = expand("%:p")[0:strlen(expand("%:p"))-strlen(expand("%:t"))-1]

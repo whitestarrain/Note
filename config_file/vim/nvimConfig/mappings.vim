@@ -1,5 +1,3 @@
-let mapleader="\<space>"
-
 "map syntax sync fromstart，大文件渲染
 nnoremap <leader>p :syntax sync fromstart<cr>
 let g:which_key_map.p = "syntax"
