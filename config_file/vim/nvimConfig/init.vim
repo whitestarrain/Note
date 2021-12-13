@@ -19,6 +19,10 @@ elseif $term=="alacritty"
   " alacritty
   let g:neosolarized_termtrans=1
   let g:set_termguicolors=1
+  let g:load_theme="ownTheme"
+elseif exists("$WEZTERM")
+  let g:set_termguicolors=1
+  let g:load_theme="ownTheme"
 else
   " nvim in terminal
   let g:set_termguicolors=0
