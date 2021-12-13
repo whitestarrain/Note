@@ -149,7 +149,8 @@ Plug 'lervag/vimtex'
 
 "------------------------------------theme-------------------------------------
 " Using Vim-Plug
-Plug 'navarasu/onedark.nvim'
+Plug 'joshdick/onedark.vim'
+Plug 'overcache/NeoSolarized'
 "------------------------------------theme-------------------------------------
 
 " "------------------------------------icon-------------------------------------

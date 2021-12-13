@@ -47,7 +47,7 @@ set shiftround             " >> indents to next multiple of 'shiftwidth'.
 set backspace=indent,eol,start  " Make backspace work as you would expect.
 set hidden                 " Switch between buffers without having to save first.
 set laststatus=2         " Always show statusline.
-set display     =lastline  " Show as much as possible of the last line.
+set display=lastline  " Show as much as possible of the last line.
 set nowrap                 " No Wrap lines
 set scrolloff=3
 set linespace=2            " 行距

@@ -5,7 +5,26 @@
 " 如果按键相关有什么问题可以查一下。比如auto-pairs占了<C-r>
 
 "=================================================leader start===================================================
+if !exists('g:skip_plugs') && !exists('g:vscode')
+    let g:plug_install_path="D:\\learn\\neovim0.5\\Neovim\\share\\autoload"
+endif
+" 配置项设置,g:plug_install_path 可通过 -c 参数传入
+if strlen($term)==0
+  " nvim-qt
+  let g:set_termguicolors=1
+  let g:load_theme="onedark"
+elseif $term=="alacritty"
+  " alacritty
+  let g:neosolarized_termtrans=1
+  let g:set_termguicolors=0
+  let g:load_theme="ownTheme"
+else
+  " nvim in terminal
+  let g:set_termguicolors=0
+  let g:load_theme="ownTheme"
+endif
 
+" 配置项说明
 " 配置加载相关变量
 if exists("g:load_theme")
   " ownTheme,plugTheme,默认不加载
@@ -79,24 +98,23 @@ set synmaxcol=5000       " 高亮显示行数，小一点节省内存，但是�
 syntax sync minlines=256
 syntax enable
 
+if exists("&termguicolors") && exists("&winblend") && g:set_termguicolors 
+  set termguicolors " make nvim slow in fluent terminal
+  set background=dark
+endif
+
 if exists("g:load_theme") && strlen(g:load_theme)>0
-  if exists("&termguicolors") && exists("&winblend") && g:set_termguicolors 
-    set termguicolors " make nvim slow in fluent terminal
-    set winblend=0
-    set wildoptions=pum
-    set pumblend=5
-    set background=dark
-  endif
+  set winblend=0
+  set wildoptions=pum
+  set pumblend=5
 
   if g:load_theme=="ownTheme"
     " Use own theme
-    let g:neosolarized_termtrans=1
     LoadScript .\colors\theme.vim
-  elseif g:load_theme=="plugTheme"
-    " use onedark
-    colorscheme onedark
+  elseif strlen(g:load_theme)>0
+    " use plugTheme
+    exe 'colorscheme' . " " . g:load_theme
   endif
- 
 endif
 "=================================================theme===================================================
 

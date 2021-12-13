@@ -5,7 +5,7 @@ $env:LESSCHARSET="utf-8"  # for git less
 
 # Alias
 Set-Alias vi nvimWithoutConfig
-Set-Alias vim  nvimWithOriginConfig
+Set-Alias vim vimFunction
 Set-Alias ll ls
 Set-Alias tig 'D:\learn\Git\usr\bin\tig.exe'
 # Set-Alias grep findstr
@@ -14,8 +14,8 @@ Set-Alias tig 'D:\learn\Git\usr\bin\tig.exe'
 function nvimWithoutConfig() {
   nvim -u NONE $args[0]
 }
-function nvimWithOriginConfig() {
-  nvim -u d:\Note\config_file\vim\nvimConfig\init.vim $args[0]
+function vimFunction() {
+  nvim --cmd "let g:skip_plugs=1" -u d:\Note\config_file\vim\nvimConfig\init.vim $args[0]
 }
 
 # oh-my-posh
@@ -35,7 +35,7 @@ function nvimWithOriginConfig() {
     $startInfo = New-Object System.Diagnostics.ProcessStartInfo
     $startInfo.FileName = "$env:SCOOP_GLOBAL\apps\oh-my-posh\current\bin\oh-my-posh.exe"
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $startInfo.Arguments = "-config=""$env:USERPROFILE\.config\powershell\white_star_rain.omp.json"" -error=$errorCode -pwd=""$cleanPWD"""
+    $startInfo.Arguments = "-config=""D:\Note\config_file\powershell\white_star_rain.omp.json"" -error=$errorCode -pwd=""$cleanPWD"""
     $startInfo.Environment["TERM"] = "xterm-256color"
     $startInfo.CreateNoWindow = $true
     $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8

@@ -1,3 +1,5 @@
+let g:neosolarized_termtrans=1
+
 " Name:     NeoSolarized: Colorscheme for truecolor vim
 " Author:   iCyMind <icyminnd@gmail.com>
 " URL:      https://github.com/iCyMind/NeoSolarized
