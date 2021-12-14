@@ -15,7 +15,7 @@ language messages zh_CN.utf-8
 "设置中文帮助
 set helplang=cn
 "设置为双字宽显示，否则无法完整显示如:☆
-set ambiwidth=double
+" set ambiwidth=double
 
 set nocompatible
 

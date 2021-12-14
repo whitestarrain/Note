@@ -95,6 +95,11 @@
 - `git remote rename old_repo_name new_repo_name` 注意，对远程仓库的重命名，也会使对应的远程分支名称发生变化，原来的 pb/master 分支现在成了 paul/master。
 - `git remote rm reponame` 删除指定仓库名的仓库。对应分支也会被删除
 
+- github使用https上传代码，需要配置token
+  ```
+  https://<token>@github.com/<user_name>/<repo_name>.git/
+  ```
+
 ## 1.6. 分支
 
 ### 1.6.1. 本地分支

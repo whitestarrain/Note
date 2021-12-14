@@ -415,3 +415,4 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 - [Java中的编码问题：接收、转码、输出](https://blog.csdn.net/ts_dchs/article/details/73011259)
 - [字符编码掠影：现代编码模型](https://www.zhihu.com/question/31833164/answer/115069547?spm=a2c6h.12873639.0.0.50534cadpacQ2r)
 - [字符编码：Unicode、UTF-8、GBK](https://senitco.github.io/2017/06/06/character-encoding/)
+- [ ] [深入浅出了解Java程序中的乱码](https://blog.csdn.net/weixin_43465312/article/details/106124420)

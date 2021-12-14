@@ -1,7 +1,7 @@
 # Env
 $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
 $env:LESSCHARSET="utf-8"  # for git less
-$env:FZF_DEFAULT_OPTS='--height 40% --reverse --border'
+# $env:JAVA_TOOL_OPTIONS=' -Dfile.encoding=UTF-8'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8  # fix Unrecognizable Code for `findstr` and `grep`
 
 # Alias
@@ -17,6 +17,10 @@ function nvimWithoutConfig() {
 }
 function vimFunction() {
   nvim --cmd "let g:skip_plugs=1" -u d:\Note\config_file\vim\nvimConfig\init.vim $args[0]
+}
+function which ($command) {
+  Get-Command -Name $command -ErrorAction SilentlyContinue |
+    Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
 
 # oh-my-posh
@@ -34,8 +38,24 @@ if ($PSVersionTable.PSVersion.Major -eq 7){
   Set-PSReadLineKeyHandler -Chord 'Ctrl+d' -Function DeleteChar
   Set-PSReadLineOption -PredictionSource History
   Set-PSReadLineOption -PredictionViewStyle ListView
+  Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+  Set-PSReadLineOption -Colors @{
+    Command            = 'Magenta'
+    Variable           = 'DarkGreen'
+    Parameter          = '#48644d'
+    Operator           = '#ddfff2'
+    Default            = '#ebdbb2'
+    # Number             = 'DarkGray'
+    # Member             = 'DarkGray'
+    # Type               = 'DarkGray'
+    # ContinuationPrompt = 'DarkGray'
+  }
+  # clean command history for PSReadLine
+  # Remove-Item (Get-PSReadlineOption).HistorySavePath
 
   # Fzf
   Import-Module PSFzf
+  $env:FZF_DEFAULT_OPTS='--height 40% --reverse --border'
   Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
+
 }

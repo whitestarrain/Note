@@ -948,3 +948,7 @@ autocmd GUIEnter * if (has('gui_running')) | exe "colorscheme " . g:colors_name 
 "
 " vim: set foldmethod=marker foldlevel=0:
 "}}}
+"
+
+highlight htmlBold gui=bold guifg=#D19A66 ctermfg=173
+highlight htmlItalic gui=italic guifg=#C678DD ctermfg=170
