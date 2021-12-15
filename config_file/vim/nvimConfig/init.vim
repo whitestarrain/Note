@@ -19,14 +19,14 @@ elseif $term=="alacritty"
   " alacritty
   let g:neosolarized_termtrans=1
   let g:set_termguicolors=1
-  let g:load_theme="ownTheme"
+  let g:load_theme="onedark"
 elseif exists("$WEZTERM")
   let g:set_termguicolors=1
   let g:load_theme="onedark"
 else
   " nvim in terminal
   let g:set_termguicolors=0
-  let g:load_theme="ownTheme"
+  let g:load_theme="onedark"
 endif
 
 " 配置项说明
@@ -130,11 +130,6 @@ set synmaxcol=5000       " 高亮显示行数，小一点节省内存，但是�
 syntax sync minlines=256
 syntax enable
 
-if exists("&termguicolors") && exists("&winblend") && g:set_termguicolors 
-  set termguicolors " make nvim slow in fluent terminal
-  set background=dark
-endif
-
 if exists("g:load_theme") && strlen(g:load_theme)>0
   set winblend=0
   set wildoptions=pum
@@ -146,11 +141,20 @@ if exists("g:load_theme") && strlen(g:load_theme)>0
   elseif strlen(g:load_theme)>0
     " use plugTheme
     exe 'colorscheme' . " " . g:load_theme
+
     if strlen($term)>0
       " for opacity in terminal
-      hi Normal guibg=NONE ctermbg=NONE 
+      autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
     endif
   endif
 endif
+
+if exists("&termguicolors") && exists("&winblend") && g:set_termguicolors 
+  set termguicolors " make nvim slow in fluent terminal
+  set background=dark
+else
+  set notermguicolors 
+endif
+
 "=================================================theme===================================================
 
