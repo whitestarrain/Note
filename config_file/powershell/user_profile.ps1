@@ -1,6 +1,9 @@
+chcp 65001
 # Env
 $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
 $env:LESSCHARSET="utf-8"  # for git less
+# env reload
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User") 
 # $env:JAVA_TOOL_OPTIONS=' -Dfile.encoding=UTF-8'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8  # fix Unrecognizable Code for `findstr` and `grep`
 
@@ -9,7 +12,7 @@ Set-Alias vi nvimWithoutConfig
 Set-Alias vim vimFunction
 Set-Alias ll ls
 Set-Alias tig 'D:\learn\Git\usr\bin\tig.exe'
-# Set-Alias grep findstr
+Set-Alias grep findstr
 
 # function
 function nvimWithoutConfig() {
@@ -42,7 +45,7 @@ if ($PSVersionTable.PSVersion.Major -eq 7){
   Set-PSReadLineOption -Colors @{
     Command            = 'Magenta'
     Variable           = 'DarkGreen'
-    Parameter          = '#48644d'
+    Parameter          = '#636363'
     Operator           = '#ddfff2'
     Default            = '#ebdbb2'
     # Number             = 'DarkGray'
@@ -59,3 +62,5 @@ if ($PSVersionTable.PSVersion.Major -eq 7){
   Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
 
 }
+
+clear

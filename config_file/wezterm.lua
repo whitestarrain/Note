@@ -3,7 +3,7 @@ local wezterm = require 'wezterm';
 return {
   -- set env for nvim
 
-  font = wezterm.font("MesloLGS NF"),
+  font = wezterm.font("Hack NF"),
   -- You can specify some parameters to influence the font selection;
   -- for example, this selects a Bold, Italic font variant.
   -- font = wezterm.font("JetBrains Mono", {weight="Bold", italic=true})
@@ -11,7 +11,7 @@ return {
   -- Spawn a fish shell in login mode
   default_prog = {"pwsh"},
 
-  window_background_opacity = 0.90,
+  window_background_opacity = 0.85,
   text_background_opacity = 0.90,
 
   -- set to false to disable the tab bar completely

@@ -5,7 +5,7 @@
 " 如果按键相关有什么问题可以查一下。比如auto-pairs占了<C-r>
 
 "=================================================leader start===================================================
-if !exists('g:skip_plugs') && !exists('g:vscode')
+if !exists('g:vscode')
     let g:plug_install_path="D:\\learn\\neovim0.5\\Neovim\\share\\autoload"
 endif
 " 配置项设置,g:plug_install_path 可通过 -c 参数传入
@@ -22,7 +22,7 @@ elseif $term=="alacritty"
   let g:load_theme="ownTheme"
 elseif exists("$WEZTERM")
   let g:set_termguicolors=1
-  let g:load_theme="ownTheme"
+  let g:load_theme="onedark"
 else
   " nvim in terminal
   let g:set_termguicolors=0
@@ -60,31 +60,58 @@ let g:which_key_map.o = { 'name' : '[open in]' }
 let g:which_key_map.h = { 'name' : '[hunk]' }
 let g:which_key_map.f = { 'name' : '[find]' }
 let g:which_key_map.b = { 'name' : '[buffer]' }
+let g:which_key_map.c = { 'name' : '[comment]' }
 "=================================================leader end===================================================
 
 
 "=================================================plug config end===================================================
 if exists("g:plug_install_path") && strlen(g:plug_install_path)>0
-  LoadScript plugs.vim
 
-  LoadScript plug_configs\airline.vim
-  if !g:set_termguicolors
-    let g:airline_theme='dark'
+  " Specify a directory for plugins
+  " - For Neovim: stdpath('data') . '/plugged'  "即 C:\Users\稀落的星\AppData\Local\nvim-data\plugs
+  " - Avoid using standard Vim directory names like 'plugin'
+  call plug#begin(get(g:,"plug_install_path"))
+
+  LoadScript ./plug_configs/theme.vim
+  LoadScript ./plug_configs/vim_surround.vim
+  LoadScript ./plug_configs/tagbar.vim
+  LoadScript ./plug_configs/rainrow.vim
+  LoadScript ./plug_configs/auto_pair.vim
+  LoadScript ./plug_configs/indentline.vim
+
+  if strlen($term)>0
+    " nvim-qt
+    " LoadScript ./plug_configs/vim_devicons.vim
   endif
 
-  LoadScript plug_configs\auto-pair.vim
-  LoadScript plug_configs\coc.vim
-  LoadScript plug_configs\easy_motion.vim
-  LoadScript plug_configs\fzf.vim
-  LoadScript plug_configs\markdown.vim
-  LoadScript plug_configs\md-img-paste.vim
-  LoadScript plug_configs\nerdtree.vim
-  LoadScript plug_configs\prettier.vim
-  LoadScript plug_configs\starify.vim
-  LoadScript plug_configs\tagbar.vim
-  LoadScript plug_configs\UltiSnips.vim
-  LoadScript plug_configs\vim-gitgutter.vim
-  LoadScript plug_configs\vim-which-key.vim
+  "load selected plugins
+  if !exists('g:skip_plugs')
+
+    LoadScript plug_configs\airline.vim
+    if !g:set_termguicolors
+      let g:airline_theme='dark'
+    endif
+
+    " LoadScript plug_configs\coc.vim
+    " LoadScript ./plug_configs/far.vim
+    " LoadScript ./plug_configs/python.vim
+    LoadScript ./plug_configs/nerdtree.vim
+    LoadScript ./plug_configs/git.vim
+    LoadScript ./plug_configs/vim_which_key.vim
+    LoadScript ./plug_configs/fzf.vim
+    LoadScript ./plug_configs/latex.vim
+    LoadScript ./plug_configs/starify.vim
+    LoadScript ./plug_configs/markdown.vim
+    LoadScript ./plug_configs/easy_motion.vim
+    LoadScript ./plug_configs/prettier.vim
+    LoadScript ./plug_configs/nerdcommenter.vim
+    LoadScript ./plug_configs/UltiSnips.vim
+    LoadScript ./plug_configs/md_img_paste.vim
+    LoadScript ./plug_configs/comfortable_motion.vim
+  endif
+
+  call plug#end()
+
 endif
 "=================================================plug config end===================================================
 
@@ -119,6 +146,10 @@ if exists("g:load_theme") && strlen(g:load_theme)>0
   elseif strlen(g:load_theme)>0
     " use plugTheme
     exe 'colorscheme' . " " . g:load_theme
+    if strlen($term)>0
+      " for opacity in terminal
+      hi Normal guibg=NONE ctermbg=NONE 
+    endif
   endif
 endif
 "=================================================theme===================================================
