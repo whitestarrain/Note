@@ -10,6 +10,8 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 # Alias
 Set-Alias vi nvimWithoutConfig
 Set-Alias vim vimFunction
+Set-Alias nvimRu  nvimForRust
+Set-Alias nvimPy nvimForPython
 Set-Alias ll ls
 Set-Alias tig 'D:\learn\Git\usr\bin\tig.exe'
 Set-Alias grep findstr
@@ -20,6 +22,12 @@ function nvimWithoutConfig() {
 }
 function vimFunction() {
   nvim --cmd "let g:skip_plugs=1" -u d:\Note\config_file\vim\nvimConfig\init.vim $args[0]
+}
+function nvimForRust(){
+  nvim --cmd "let g:rust=1" $args[0]
+}
+function nvimForPython(){
+  nvim --cmd "let g:python=1" $args[0]
 }
 function which ($command) {
   Get-Command -Name $command -ErrorAction SilentlyContinue |
@@ -32,7 +40,7 @@ D:\ProgramFiles\scoop\apps\oh-my-posh\current\bin\oh-my-posh.exe --init --shell 
 # powershell module import for pwsh
 # other installed module: z
 if ($PSVersionTable.PSVersion.Major -eq 7){
-  Import-Module posh-git
+  # Import-Module posh-git
   Import-Module -Name Terminal-Icons
   
   # PSReadLine

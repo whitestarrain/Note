@@ -28,5 +28,12 @@ function! PlugConfigCoc()
   augroup END
   " markmap
   command! -range=% Markmap CocCommand markmap.create <line1> <line2>
+
+  " help <Plug>(coc 查看更多
+  nmap <silent> gd <Plug>(coc-definition) 
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> gr <Plug>(coc-references)
+  nnoremap <silent> <leader>ch :call CocActionAsync('doHover')<CR>
 endfunction
 "------------------------------------coc-------------------------------------

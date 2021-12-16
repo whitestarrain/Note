@@ -92,9 +92,10 @@ if exists("g:plug_install_path") && strlen(g:plug_install_path)>0
       let g:airline_theme='dark'
     endif
 
-    " LoadScript plug_configs\coc.vim
     " LoadScript ./plug_configs/far.vim
-    " LoadScript ./plug_configs/python.vim
+    " LoadScript ./plug_configs/comfortable_motion.vim
+    " LoadScript ./plug_configs/nerdcommenter.vim
+    LoadScript ./plug_configs/easy_motion.vim
     LoadScript ./plug_configs/nerdtree.vim
     LoadScript ./plug_configs/git.vim
     LoadScript ./plug_configs/vim_which_key.vim
@@ -102,12 +103,24 @@ if exists("g:plug_install_path") && strlen(g:plug_install_path)>0
     LoadScript ./plug_configs/latex.vim
     LoadScript ./plug_configs/starify.vim
     LoadScript ./plug_configs/markdown.vim
-    LoadScript ./plug_configs/easy_motion.vim
     LoadScript ./plug_configs/prettier.vim
-    LoadScript ./plug_configs/nerdcommenter.vim
     LoadScript ./plug_configs/UltiSnips.vim
     LoadScript ./plug_configs/md_img_paste.vim
-    LoadScript ./plug_configs/comfortable_motion.vim
+  endif
+
+  let g:load_coc = 0
+  if exists("g:rust")
+    LoadScript ./plug_configs/rust.vim
+    let g:load_coc = 1
+  endif
+
+  if exists("g:python")
+    LoadScript ./plug_configs/python.vim
+    let g:load_coc = 1
+  endif
+
+  if g:load_coc
+    LoadScript plug_configs\coc.vim
   endif
 
   call plug#end()

@@ -48,6 +48,40 @@ class Solution {
 
 # 双指针
 
+## 面试题 02.08. 环路检测
+
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。
+为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 
+如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
+
+```java
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+public class Solution {
+    public ListNode detectCycle(ListNode head) {
+      if(null==head){
+        return null;
+      }
+      ListNode slow = head;
+      ListNode fast = head;
+      while(fast!=null&&fast.next!=null){
+        fast = fast.next.next;
+      }
+    }
+}
+
+```
+
+
 # 数据结构
 
 ## 146.LRU 缓存机制
