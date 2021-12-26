@@ -126,11 +126,14 @@ awk 'BEGIN{
   - [ ] Gossip 协议
   - [ ] Raft 协议
   - [ ] SPEL
-- 其他
-  - [ ] go语言入门
+- lang
   - [ ] C++
+  - [ ] go
+  - [x] lua
+  - [ ] rust
+- 其他
   - [ ] JNI
-  - [ ] nvim配置模块化
+  - [x] nvim配置模块化(迁移到其他项目)
 
 <!--
 - [ ] SpringBoot原理

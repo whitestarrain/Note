@@ -187,9 +187,9 @@
 - 企图用技术解决所有问题
   > 一定要清楚业务，也可以通过业务解决
 
-## 1.2. 分布式
+## 1.2. 分布式基本概念
 
-## 1.3. 分布式和集群
+### 1.2.1. 分布式和集群
 
 简单说，分布式是以缩短单个任务的执行时间来提升效率的，而集群则是通过提高单位时间内执行的任务数来提升效率。
 
@@ -216,14 +216,15 @@
   - 加机器更加适用于构建集群，因为它真是只有加机器。
   - 而对于分布式来说，你首先需要将业务进行拆分，然后再加机器（不仅仅是加机器那么简单），同时你还要去解决分布式带来的一系列问题。
 
-## 1.4. 微服务
+### 1.2.2. 微服务
 
 - 概念：
-  - 微服务化的核心就是将传统的一站式应用，根据业务拆分成一个一个的服务，彻底地去耦合
+  - 微服务 (Microservices) 是一种软件架构风格
+- 核心：
+  - 传统的一站式应用，根据业务拆分成一个一个的服务
   - 每一个微服务提供单个业务功能的服务，一个服务做一件事
-  - 从技术角度看就是一种小而独立的处理过程
-  - 类似进程概念，能够自行单独启动或销毁
-
+  - 各功能区块使用与**语言无关** (Language-Independent/Language agnostic) 的 API 集相互通信。
+  - 再利用模块化的方式组合出复杂的大型应用程序，
 - 优点：
   - 针对特定服务发布，影响小，风险小，成本低
   - 频繁发布版本，快速交付需求
@@ -259,6 +260,131 @@
   | 事件消息总线                           | Spring Cloud Bus                                                |
 
   </details>
+
+## 1.3. 微服务演进与Service Mesh
+
+**首先概括性说明：Service Mesh 是微服务时代的 TCP/IP 协议。**
+
+> **时代0**
+
+- 开发人员想象中，不同服务间通信的方式，抽象表示如下：
+
+  ![distribute_system-35.png](./image/distribute_system-35.png)
+
+> **时代1：原始通信时代**
+
+![distribute_system-36.png](./image/distribute_system-36.png)
+
+- 现实远比想象的复杂
+- 在实际情况中，通信需要底层能够传输字节码和电子信号的物理层来完成
+- 在TCP协议出现之前，服务需要自己处理网络通信所面临的丢包、乱序、重试等一系列流控问题
+- 因此服务实现中，除了业务逻辑外，还夹杂着对网络传输问题的处理逻辑。
+
+
+> **时代2：TCP时代**
+
+![distribute_system-37.png](./image/distribute_system-37.png)
+
+- 为了避免每个服务都需要自己实现一套相似的网络传输处理逻辑，TCP协议出现了
+- 它解决了网络传输中通用的流量控制问题，将技术栈下移，从服务的实现中抽离出来，成为操作系统网络层的一部分。
+
+> **时代3：第一代微服务**
+
+![distribute_system-38.png](./image/distribute_system-38.png)
+
+- 在TCP出现之后，机器之间的网络通信不再是一个难题，以GFS/BigTable/MapReduce为代表的分布式系统得以蓬勃发展
+- 这时，分布式系统特有的通信语义又出现了，如：
+  - 熔断策略
+  - 负载均衡
+  - 服务发现
+  - 认证和授权
+  - quota限制
+  - trace和监控等等
+- 于是服务根据业务需求来实现一部分所需的通信语义。
+
+> **时代4：第二代微服务**
+
+![distribute_system-39.png](./image/distribute_system-39.png)
+
+- 为了避免每个服务都需要自己实现一套分布式系统通信的语义功能，随着技术的发展，一些面向微服务架构的开发框架出现了，如
+  - Twitter的[Finagle](https://link.zhihu.com/?target=https%3A//finagle.github.io/)、
+  - Facebook的[Proxygen](https://link.zhihu.com/?target=https%3A//code.facebook.com/posts/1503205539947302)
+  - Spring Cloud
+- 这些框架实现了分布式系统通信需要的各种通用语义功能
+  - 如负载均衡和服务发现等
+  - 因此一定程度上屏蔽了这些通信细节，使得开发人员使用较少的框架代码就能开发出健壮的分布式系统。
+
+> **时代5：第一代Service Mesh**
+
+- 第二代微服务模式(如Spring Cloud)看似完美，但开发人员很快又发现，它也存在一些本质问题：
+  - 其一，虽然框架本身屏蔽了分布式系统通信的一些通用功能实现细节，但开发者却要花更多精力去掌握和管理复杂的框架本身，在实际应用中，去追踪和解决框架出现的问题也绝非易事；
+  - 其二，开发框架通常只支持一种或几种特定的语言，回过头来看文章最开始对微服务的定义，一个重要的特性就是语言无关，但那些没有框架支持的语言编写的服务，很难融入面向微服务的架构体系，想因地制宜的用多种语言实现架构体系中的不同模块也很难做到；
+  - 其三，框架以lib库的形式和服务联编，复杂项目依赖时的库版本兼容问题非常棘手，同时，框架库的升级也无法对服务透明，服务会因为和业务无关的lib库升级而被迫升级；
+
+- 因此出现了第一代Service Mesh，代理模式（边车模式）,如：
+  - Linkerd
+  - Envoy
+  - NginxMesh
+- 它将分布式服务的通信抽象为单独一层
+  - 实现分布协调功能：在这一层中实现负载均衡、服务发现、认证授权、监控追踪、流量控制等分布式系统所需要的功能
+  - 代理服务：
+    - 作为一个和服务对等的代理服务，和服务部署在一起，接管服务的流量
+    - 通过代理之间的通信间接完成服务之间的通信请求，这样上边所说的三个问题也迎刃而解。
+
+- 示例图
+  - 如果我们从一个全局视角来看，就会得到如下部署图
+
+    > ![distribute_system-40.png](./image/distribute_system-40.png)
+
+  - 如果我们暂时略去服务，只看Service Mesh的单机组件组成的网络：
+
+    > ![distribute_system-41.png](./image/distribute_system-41.png)
+
+  - Service Mesh，也就是服务网格了。就像是一个由若干服务代理所组成的错综复杂的网格。
+
+    > ![distribute_system-42.png](./image/distribute_system-42.png)
+
+> **时代6：第二代Service Mesh**
+
+- 演进目的：
+  - 为了提供统一的上层运维入口，演化出了集中式的控制面板
+  - 所有的单机代理组件通过和控制面板交互进行网络拓扑策略的更新和单机数据的汇报
+
+- 架构图
+  - 整体
+
+  > ![distribute_system-43.png](./image/distribute_system-43.png)
+
+  - 只看单机代理组件(数据面板)和控制面板的Service Mesh全局部署视图如下：
+
+    > ![distribute_system-44.png](./image/distribute_system-44.png)
+
+> **总结说明**
+
+- 定义：
+  - 服务网格是一个**基础设施层**，用于处理服务间通信。
+  - 云原生应用有着复杂的服务拓扑，服务网格保证**请求在这些拓扑中可靠地穿梭**。
+  - 在实际应用当中，服务网格通常是由一系列轻量级的**网络代理**组成的
+  - 它们与应用程序部署在一起，但**对应用程序透明**。
+
+- 四个关键词：
+  - **基础设施层** + **请求在这些拓扑中可靠穿梭**
+    - 这两个词加起来描述了Service Mesh的定位和功能
+    - 与TCP的定位类似
+  - **网络代理**：
+    - 这描述了Service Mesh的实现形态；
+  - **对应用透明**：
+    - 这描述了Service Mesh的关键特点
+    - 正是由于这个特点，Service Mesh能够解决以Spring Cloud为代表的第二代微服务框架所面临的三个本质问题；
+
+- 优点总结：
+  - 屏蔽分布式系统通信的复杂性(负载均衡、服务发现、认证授权、监控追踪、流量控制等等)，服务只用关注业务逻辑；
+  - 真正的语言无关，服务可以用任何语言编写，只需和Service Mesh通信即可；
+  - 对应用透明，Service Mesh组件可以单独升级；
+
+- 面临挑战
+  - Service Mesh组件以代理模式计算并转发请求，一定程度上会降低通信系统性能，并增加系统资源开销；
+  - Service Mesh组件接管了网络流量，因此服务的整体稳定性依赖于Service Mesh，同时额外引入的大量Service Mesh服务实例的运维和管理也是一个挑战；
 
 # 2. 深入前后端分离
 
@@ -531,7 +657,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 <!--file:///D:/learn/githubRepo/JavaGuide/docs/system-design/coding-way/RESTfulAPI%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B.md-->
 
 
-## RPC和REST对比
+## 4.3. RPC和REST对比
 
 # 5. 分布式算法
 
@@ -679,9 +805,9 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 [跳转](./zookeeper.md)
 
-#### Mysql:5.7开始，支持group replication，采用Paxos
+#### 5.2.2.3. Mysql:5.7开始，支持group replication，采用Paxos
 
-#### MongoDB:从3.4开始，支持类raft复制协议
+#### 5.2.2.4. MongoDB:从3.4开始，支持类raft复制协议
 
 ## 5.3. 分布式缓存算法
 
@@ -1020,3 +1146,6 @@ public class ConsistentHashingWithoutVirtualNode {
 - [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)
 - [springcloud：RPC和HTTP ](https://www.cnblogs.com/flypig666/p/11699526.html)
 - [【RPC】SpringCloud简介 & RPC与Restful API关系（三）](https://blog.csdn.net/weixin_33724659/article/details/92518863)
+- [ ] [微服务架构设计](https://gudaoxuri.gitbook.io/microservices-architecture/)
+- [ ] [什么是 Service Mesh](https://zhuanlan.zhihu.com/p/61901608)
+

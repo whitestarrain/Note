@@ -1235,37 +1235,308 @@ public class ThreadDeadLock {
 
 ### 3.4.1. 概述
 
+- MAT（Memory Analyzer Tool）工具是一款功能强大的Java堆内存分析工具。可以用于查找内存泄露以及查看内存消耗情况。
+- MAT是基于Eclipse开发的，不仅可以单独使用，还可以作为插件的形式嵌入在Eclipse中使用。
+- [下载地址](https://www.eclipse.org/mat/downloads.php)，下载之后解压可以直接使用，不用安装
+- 两点说明
+  - 说明1：
+    - MAT不是一个万能工具，它并不能处理所有类型的堆转储文件。
+    - 但是比较主流的厂家和格式，例如Sun，HP，SAP所采用的HPROF二进制堆转储文件，以及IBM的PHD堆转储文件等都能被很好的解析。
+  - 说明2：
+    - MAT最吸引人的还是能够快速地为开发人员生成**内存泄露报表**，方便定位问题和分析问题。
+    - 虽然MAT有如此强大的功能，但是内存分析也没有简单到一键完成的程度，很多内存问题还是需要我们从MAT展现给我们的信息中通过经验和直觉来判断才能发现。
+
 ### 3.4.2. 获取dump文件(小结)
+
+- dump文件内容
+
+  ```
+  MAT可以分析heap dump文件。
+  进行内存分析时，只要获得了反应当前设备内存映像的hprof文件，通过MAT打开就可以直观的看到当前的内存信息。
+  一般来说，这些内存信息包含：
+  ```
+
+  - 所有的对象信息，包括对象实例、成员变量、存储于栈中的基本数据类型值和存储于堆中的其他对象的引用值。
+  - 所有的类信息，包括classloader、类名称、父类、静态变量等。
+  - GCRoot到所有的这些对象的引用路径
+  - 线程信息，包括线程的调用栈以及此线程的线程局部变量（TLS）
+
+- 如何获取dump文件
+  - 方法一：jmap工具生成，可以生成任意一个java进程的dump文件；
+  - 方法二：通过配置JVM参数生成。
+    - 选项`-XX:+HeapDumpOnOutOfMemoryError`或`-XX:+HeapDumpBeforeFullGC`
+    - 选项`-XX:HeapDumpPath`所代表的含义就是当程序出现OutofMemory时，将会在相应的目录下生成一份dump文件。如果不指定选项`-XX:HeapDumpPath`则在当前目录下生成dump文件。
+  - 方法三：使用VisualVM可以导出堆dump文件
+  - 方法四：
+    - 使用MAT既可以打开一个已有的快照，也可以通过MAT直接从活动Java程序中导出堆快照
+    - 该功能将借助jps列出当前正在运行的Java进程，以供选择并获取快照。
 
 ### 3.4.3. 概念补充
 
 #### 3.4.3.1. 深堆,浅堆,对象实际大小
 
+>  **浅堆：**
+
+- 浅堆（Shallow Heap）是指一个对象所消耗的内存。
+- 在32位系统中，一个对象引用会占据4个字节，一个int类型会占据4个字节，long型变量占据8个字节。
+- 根据堆快照格式不同，对象的大小可能会向8字节进行对齐。
+- 以String为例：
+  - 2个int值共占8个字节
+  - 对象引用占用4字节，对象头占8字节
+  - 合计20字节，向8字节对齐，故占24字节。（jdk7中）
+  - 这24字节为String对象的浅堆大小。
+  - 它与String的value实际取值无关，无论字符串长度如何，**浅堆大小始终是24字节**。
+
+  | int  | hash32 | 0     |
+  | ---- | ------ | ----- |
+  | int  | hash   | 0     |
+  | ref  | value  | hello |
+
+> **深堆：**
+
+- 保留集（Retained Set）：
+  - 对象A的保留集指当对象A被垃圾回收后，可以被释放的所有对象集合（包括对象A本身）
+  - 即对象A的保留集可以被认为是**只能通过**对象A被直接或者间接访问到的所有对象的集合。
+  - 通俗的说，就是指仅被对象A所持有的对象的集合。
+
+- 深堆（Retained Heap）：
+  - 深堆是指对象的保留集中所有的对象的浅堆大小之和。
+  - 注意：浅堆是指对象本身占用的内存，不包括其内部引用对象的大小。
+  - 一个对象的深堆指**只能通过该对象**访问到的（直接或者间接）所有对象的浅堆之和
+  - **即对象被回收后，可以释放的真实空间**
+
+> **补充：对象的实际大小**
+
+- 对象的实际大小定义为一个对象**所能触及的**所有对象的浅堆大小之和
+- 也就是通常意义上我们所说的对象的大小。
+- 与深堆相比，似乎这个在日常开发中更为直观和被人接收
+- **但实际上，这个概念和垃圾回收无关**。
+
+> **示例图**
+
+![jvm3-60.png](./image/jvm3-60.png)
+
+- 那么对象**A的浅堆大小**只是A本身，不包含C和D
+- 而**A的实际大小**为A、C、D三者之和
+- 而**A的深堆大小**为A和D之和
+  > 这是因为由于对象C还可以通过对象B访问到，因此不再对象A的深堆范围内。
+
+> **图例2**
+
+- GC Roots直接引用了A和B两个对象。
+
+  ![jvm3-61.png](./image/jvm3-61.png)
+
+  - A对象的深堆大小 = A对象的浅堆大小
+  - B对象的深堆大小 = B对象的浅堆大小 + C对象的浅堆大小
+
+- 如果不包括GC Roots指向D对象的引用
+
+  ![jvm3-62.png](./image/jvm3-62.png)
+
+  - B对象的深堆大小 = B对象的浅堆大小 + C对象的浅堆大小 + D对象的浅堆大小
+
+> **通过案例分析深堆和浅堆的大小**
+
+- 代码：
+  ```java
+  /**
+  * 有一个学生浏览网页的记录程序，它将记录 每个学生访问过的网站地址。
+  * 它由三个部分组成：Student、WebPage和StudentTrace三个类
+  * -XX:+HeapDumpBeforeFullGC -XX:HeapDumpPath=d:\student.hprof
+  */
+  public class StudentTrace {
+      
+      static List<WebPage> webpages = new ArrayList<>();
+      
+      public static void createWebPages() {
+          for (int i = 0; i < 100; i++) {
+              WebPage wp = new WebPage();
+              wp.setUrl("http://www." + Integer.toString(i) + ".com");
+              wp.setContent(Integer.toString(i));
+              webpages.add(wp);
+          }
+      }
+  
+      public static void main(String[] args) {
+          
+          createWebPages();  // 创建了100个网页
+          // 创建3个学生对象
+          Student st3 = new Student(3, "Tom");
+          Student st5 = new Student(5, "Jerry");
+          Student st7 = new Student(7, "Lily");
+  
+          for (int i = 0; i < webpages.size(); i++) {
+              if (i % st3.getId() == 0) st3.visit(webpages.get(i));
+              if (i % st5.getId() == 0) st5.visit(webpages.get(i));
+              if (i % st7.getId() == 0) st7.visit(webpages.get(i));
+          }
+          webpages.clear();
+          System.gc();
+      }
+  }
+  
+  // Student浅堆大小：4B(id) + 4B(name) + 4B(history) + 8B(对象头) = 20B --> 填充4B --> 24B
+  class Student {
+      private int id;
+      private String name;
+      private List<WebPage> history = new ArrayList<>();
+  
+      public Student(int id, String name) {
+          super();
+          this.id = id;
+          this.name = name;
+      }
+  
+      public int getId() { return id; }
+      public void setId(int id) { this.id = id; }
+      public String getName() { return name; }
+      public void setName(String name) { this.name = name; }
+      public List<WebPage> getHistory() { return history; }
+      public void setHistory(List<WebPage> history) { this.history = history; }
+      public void visit(WebPage wp) { if (wp != null) history.add(wp); }
+  }
+  
+  class WebPage {
+      private String url;
+      private String content;
+  
+      public String getUrl() { return url; }
+      public void setUrl(String url) { this.url = url; }
+      public String getContent() { return content; }
+      public void setContent(String content) { this.content = content; }
+  }
+  ```
+
+- 深堆示例：
+  ![jvm3-63.png](./image/jvm3-63.png)
+
+- 下面以Lily为例分析深堆的大小是如何计算出来的
+
+  ![jvm3-64.png](./image/jvm3-64.png)
+
+  ![jvm3-65.png](./image/jvm3-65.png)
+
 #### 3.4.3.2. 支配树
+
+> 支配树的概念来自于图论
+
+- MAT提供了一个称为支配树（Dominator Tree）的对象图
+  - 支配树体现了对象实例间的支配关系
+  - 在对象引用图中，所有指向对象B的路径都经过对象A，则认为**对象A支配对象B**
+  - 如果对象A是离对象B最近的一个支配对象，则认为对象A为对象B的**直接支配者**
+  - 支配树是基于对象间的引用图所建立的，它有以下基本性质：
+    - 对象A的子树（所有被对象A支配的对象的集合）表示对象A的保留集（retained set），即深堆。
+    - 如果对象A支配对象B，那么对象A的直接支配者也支配对象B。
+    - 支配树的边与对象引用图的边不直接对应。
+
+- 示例
+  - 左图表示对象引用图，右图表示左图所对应的支配树
+
+    ![jvm3-66.png](./image/jvm3-66.png)
+
+  - 对象A和B由根对象直接支配
+  - 由于在到对象C的路径中，可以经过A，也可以经过B，因此对象C的直接支配者也是根对象。
+  - 对象F和对象D相互引用，因为到对象F的所有路径必然经过对象D，因此，对象D是对象F的直接支配者
+  - 而到对象D的所有路径中，必然经过对象C，即使是从对象F到对象D的引用，从根节点出发，也是经过对象C的，所以，对象D的直接支配者为对象C
+  - 同理，对象E支配对象G。
+  - 到达对象H可以通过对象D，也可以通过对象E，因此对象D和E都不能支配对象H，而经过对象C既可以到达对象D也可以到达E，因此对象C为对象H的直接支配者。
+
+- 在MAT中，单击工具栏上的对象支配按钮，可以打开对象支配树视图。
+
+  ![jvm3-67.png](./image/jvm3-67.png)
+
+  - 该截图显示上面代码示例中部分学生Lily的history队列的直接支配对象
+  - 即当Lily对象被回收，也会一并回收的所有对象
+  - 显然能被3或者5整除的网页不会出现在该列表中，因为他们同时被另外两名学生对象所引用。
+
+  ![jvm3-68.png](./image/jvm3-68.png)
+
+- 问题: <p style="color:red;"> 软，弱，虚引用表现？ </p>
 
 ### 3.4.4. 分析dump文件
 
+#### 示例代码
+
+```java
+/**
+  * -Xms600m -Xmx600m -XX:SurvivorRatio=8
+  */
+public class OOMTest {
+    public static void main(String[] args) {
+        ArrayList<Picture> list = new ArrayList<>();
+        while (true) {
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            list.add(new Picture(new Random().nextInt(100 * 50)));
+        }
+    }
+}
+
+class Picture {
+    private byte[] pixels;
+
+    public Picture(int length) {
+        this.pixels = new byte[length];
+    }
+}
+```
+
 #### 3.4.4.1. histogram
+
+- 展示了各个类的实例数目以及这些实例的Shallow heap或Retainedheap的总和，
+- 在这个界面可以进行：分组，排序，写正则表达式，两个.hprof的对比，查看对象被谁引用，…
 
 #### 3.4.4.2. thread overview
 
-#### 3.4.4.3. 获取对象引用关系
-
-### 3.4.5. 案例解析
-
-#### 3.4.5.1. 深堆和浅堆
-
-#### 3.4.5.2. 支配树分析
+- 查看系统中的Java线程、查看局部变量的信息。获取对象相互引用关系
 
 - **注意：** 
   - thread overview中显示的才是引用关系
   - 支配树中显示的是支配关系
 
-<p style="color:red;">
-软，弱，虚引用表现？
-</p>
+#### 3.4.4.3. 获取对象引用关系
 
-#### 3.4.5.3. tomcat堆溢出分析
+### 3.4.5. 案例解析-tomcat堆溢出分析
+
+- 查看报告
+
+  ![jvm3-69.png](./image/jvm3-69.png)
+
+  ![jvm3-70.png](./image/jvm3-70.png)
+
+- session对象，它占用了17MB空间
+
+  ![jvm3-71.png](./image/jvm3-71.png)
+
+- 可以看到sessions对象为ConcurrentHashMap，其内部分为16个Segment。从深堆大小看，每个Segment都比较平均，大约为1MB，合计17MB。
+
+  ![jvm3-72.png](./image/jvm3-72.png)
+
+- 内部value，都是Session
+
+  ![jvm3-73.png](./image/jvm3-73.png)
+
+- 当前堆中含有9941个session，并且每一个session的深堆为1592字节，合计越15MB，达到当前堆大小的50%。
+
+- QQL查询
+
+  ![jvm3-74.png](./image/jvm3-74.png)
+
+- 查看属性：创建和结束时间
+
+  ![jvm3-75.png](./image/jvm3-75.png)
+
+- 根据当前的session综述，可以计算每秒的平均压力：9941/((1403324677648-1403324645728)/1000) = 311次/秒。
+
+  ![jvm3-76.png](./image/jvm3-76.png)
+
+- 由此推断
+  - 在发生Tomcat堆溢出时，Tomcat在连续的30秒的时间内，平均接收了约311次不同客户端的请求
+  - 创建了合计9941个session。导致出现堆溢出
 
 ### 3.4.6. 补充：内存泄漏
 
@@ -1301,7 +1572,6 @@ public class ThreadDeadLock {
 - 内存泄露（memory leak） 申请了内存用完了不释放
 - 内存溢出（out of memory） 申请内存时，没有足够的内存可以使用；
 - 内存泄露和内存溢出的关系：内存泄露的增多，最终导致内存溢出。
-
 
 > **泄露的分类**
 
@@ -1401,7 +1671,6 @@ public class ThreadDeadLock {
    // 还有另一种方法，在使用完msg后，把msg设置为null，这样垃圾回收也会回收msg的内存空间。
    ```
   </details>
-
 
 > **6.改变哈希值**
 
@@ -1636,15 +1905,212 @@ public class ThreadDeadLock {
   - 如果客户端在你实现的API中注册回调，却没有显式的取消，那么就会聚集
   - 需要确保回调立即被当做垃圾回收的最佳方法是只保存它的弱引用，例如将它们保存成为WeakHashMap中的键。
 
-#### 3.4.6.3. 内存泄漏分析案例
+#### 3.4.6.3. 案例1-过期引用
 
-> **1. 案例分析**
+> **1. 代码**
 
-> **2. 代码**
+```java
+public class Stack {
+    private Object[] elements;
+    private int size = 0;
+    private static final int DEFAULT_INITIAL_CAPACITY = 16;
 
-> **3. 分析**
+    public Stack() {
+        elements = new Object[DEFAULT_INITIAL_CAPACITY];
+    }
+
+    public void push(Object e) {  // 入栈
+        ensureCapacity();
+        elements[size++] = e;
+    }
+    // 存在内存泄漏
+    public Object pop() {  // 出栈
+        if (size == 0) throw new EmptyStackException();
+        return elements[--size];
+    }
+
+    /*public Object pop() {
+        if (size == 0) throw new EmptyStackException();
+        Object result = elements[--size];
+        elements[size] = null;
+        return result;
+    }*/
+
+    private void ensureCapacity() {
+        if (elements.length == size) elements = Arrays.copyOf(elements, 2 * size + 1);
+    }
+}
+```
+
+> **2. 分析**
+
+- 假设这个栈一致增长，增长后如下图所示：
+
+  ![jvm3-77.png](./image/jvm3-77.png)
+
+- 当进行大量的pop操作时，由于引用未进行置空，gc是不会释放的
+
+  ![jvm3-78.png](./image/jvm3-78.png)
+
+- 如果栈先增长，后收缩，那么从栈中弹出的对象将不会被当做垃圾被回收，即使程序不再使用栈中的这些对象，我们也不会回收
+- 因为栈中仍然保存这些对象的引用，俗称**引用过期**，这个内存泄露相对较难发现。
+
+> **3.解决办法**
+
+- 将pop()这个函数改成如下函数即可：
+
+  ```java
+  public Object pop() {
+      if (size == 0) throw new EmptyStackException();
+      Object result = elements[--size];
+      elements[size] = null;
+      return result;
+  }
+  ```
+
+#### 案例2
+
+> **1.代码与说明**
+
+- Android开发中的一个界面，当退出这个界面时，因为TestActivity中中存在未结束的线程，导致无法回收该类，造成内存泄露。
+
+  ```java
+  public class TestActivity extends Activity {
+      private static final Object key = new Object();
+      
+      @Override
+      protected void onCreate(Bundle savedInstanceState) {
+          super.onCreate(savedInstanceState);
+          setContentView(R.layout.activity_main);
+          
+          new Thread() {  // 匿名线程，退出页面是导致内存泄露
+              public void run() {
+                  synchronized (key) {
+                      try {
+                          key.wait();
+                      } catch (InterruptedException e) {
+                          e.printStackTrace();
+                      }
+                  }
+              }
+          }.start();
+      }
+  }
+  ```
+
+> **2.解决办法：**
+
+- 使用线程时，一定要确保线程在周期性对象（如Activity）销毁时能正常结束
+  - 如能正常结束，但是Activity销毁后还需要执行一段时间，也可能造成内存泄露
+  - 此时可采用WeakReference方法来解决，另外在使用Hanlder的时候，如存在Delay操作，也可采用WeakReference；
+- 使用Handler+HandlerThread时，记住在周期性对象销毁时调用looper.quit()方法。
 
 ### 3.4.7. 补充：QQL
+
+> MAT支持一种类似于SQL的查询语言OQL（Object Query Language）。OQL使用类SQL语法，可以在堆中进行对象的查找和筛选。
+
+- SELECT子句 在MAT中，Select子句的格式与SQL基本一致，用于指定要显示的列
+  - Select子句中可以使用"*"，查看结果对象的引用实例（相当于outgoing references）。
+
+    ```sql
+    SELECT * FROM java.util.Vector v
+    ```
+
+  - 使用"OBJECTS"关键字，可以将返回结果集中的项以对象的形式显示。
+
+    ```sql
+    SELECT objects v.elementData FROM java.util.Vector v
+    SELECT OBJECTS s.value FROM java.util.String s
+    ```
+
+  - 在Select子句中，使用"AS RETAINED SET"关键字可以得到所得对象的保留集。
+
+    ```sql
+    SELECT AS RETAINED SET * FROM com.atguigu.mat.Student
+    ```
+
+  - "DISTINCT"关键字用于在结果集中去除重复对象。
+
+    ```sql
+    SELECT DISTINCT OBJECTS classof(s) FROM java.lang.String s
+    ```
+
+- FROM子句
+  - From子句用于指定查询范围，它可以指定类名、正则表达式或者对象地址。
+
+    ```sql
+    SELECT * FROM java.lang.String s
+    ```
+
+  - 下列使用正则表达式，限定搜索范围，输出所有com.atguigu包下所有类的实例
+
+    ```sql
+    SELECT * FROM "com\.atguigu\..*"
+    ```
+
+  - 也可以直接使用类的地址进行搜索。使用类的地址的好处是可以区分被不同ClassLoader加载的同一种类型。
+
+    ```sql
+    select * from 0x37a0b4d
+    ```
+
+- WHERE子句: Where子句用于指定OQL的查询条件。OQL查询将只返回满足Where子句指定条件的对象。 Where子句的格式和传统的SQL极为相似。
+
+  - 下例返回长度大于10的char数组。
+
+    ```sql
+    SELECT * FROM char[] s WHERE s.@length>10
+    ```
+
+  - 下例返回包含"java"子字符串的所有字符串，使用"LIKE"操作符，"LIKE"操作符的操作参数为正则表达式。
+
+    ```sql
+    SELECT * FROM java.lang.String s WHERE toString(s) LIKE ".*java.*"
+    ```
+
+  - 下例返回所有value域不为null的字符串，使用"="操作符
+
+    ```sql
+    SELECT * FROM java.lang.String s where s.value!=null
+    ```
+
+  - Where子句支持多个条件的AND、OR运算。下例返回数组长度大于15，并且深堆大于1000字节的所有Vector对象
+
+    ```sql
+    SELECT * FROM java.util.Vector v WHERE v.elementData.@length>15 AND v.@retainedHeapSize>1000
+    ```
+
+- 内置对象和方法
+  - OQL中可以访问堆内对象的属性，也可以访问堆内代理对象的属性。访问堆内对象的属性时，格式如下：
+
+    ```sql
+    # alias为对象名称
+    [ <alias>. ] <field> . <field> . <field>
+    ```
+
+  - 访问`java.io.File`对象的path属性，并进一步访问path的value属性：
+
+    ```sql
+    SELECT toString(f.path.value) FROM java.io.File f
+    ```
+
+  - 下例显示了String对象的内容、objectid和objectAddress。
+
+    ```sql
+    SELECT s.toString(), s.@objectId, s.@objectAddress FROM java.lang.String s
+    ```
+
+  - 下例显示`java.util.Vector`内部数组的长度
+
+    ```sql
+    SELECT v.elementData.@length FROM java.util.Vector v
+    ```
+
+  - 下例显示了所有的`java.util.Vector`对象及其子类型
+
+    ```sql
+    select * from INSTANCEOF java.util.Vector
+    ```
 
 ## 3.5. JProfiler
 

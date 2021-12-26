@@ -156,6 +156,13 @@
 	- tab:容纳一系列窗口的容器。类似工作区。用起来比较少
 		- 这里不多说了，看后面的插件
 
+- 窗口跳转
+  - `CTRL-W w` 在各个窗口之间来回切换。每输入一次，切换一个窗口。不停输入，可以遍历所有窗口。在只有两个窗口时很方便来回切换。
+  - `CTRL-W j` 光标切换到下一个窗口。
+  - `CTRL-W k` 光标切换到上一个窗口。
+  - `CTRL-W h` 光标切换到左边窗口。如果左边没有窗口，保持在当前窗口不变。
+  - `CTRL-W l` 光标切换到右边窗口。
+
 - 区域选择 `<action>a<object>` 或 `<action>i<object>`
 	> action可以是任何的命令，如 d (删除), y (拷贝), v (可以视模式选择)。c(修改)，s(替代)<br>
 	> object 可能是： w 一个单词， W 一个以空格为分隔的单词， s 一个句字， p 一个段落。也可以是一个特别的字符："、 '、 )、 }、 ]。<br>
@@ -372,6 +379,7 @@
   </details>
 
 - `g<c-a>`编号，`sort`排序
+  > help v_g_CTRL-A 查看帮助
   ```
   原始：
     aaa
@@ -390,6 +398,7 @@
   
   sort sort默认使用字典序，数字排序的话，使用 sort n
   ```
+- `<c-a>`:increase number
 
 # 3. vim配置文件
 
@@ -436,7 +445,7 @@
 
 ## 4.1. 插件
 
-## 4.2. 插件安装示例：
+## 4.2. 插件安装示例
 
 - 插件管理器：vim-plug
 	> 更多其实看github上的文档就行
@@ -456,7 +465,7 @@
 		- 将插件文件夹下的文件夹（仅文件夹）和vimfiles下的文件夹 合并 
 		- 不要替换tag，把所有插件的tag放到一个文件夹中
 
-## 4.3. 寻找插件：
+## 4.3. 寻找插件
 
 - 大多数插件都托管在github上，google关键词搜索
 - 使用网站： http://vimawesome.com/ (十分推荐)
@@ -714,7 +723,7 @@
 			"vim.easymotionDimBackground": false,
 			"vim.easymotionMarkerBackgroundColor": "#FF4826",
 			"vim.easymotionMarkerForegroundColorOneChar": "#FFFFFF",
-			"vim.easymotionMarkerForegroundColorTwoChar": "#FFFFFF"
+			"vim.easymotionMarkerForegroundColorTwoChar": "#FFFFFF",
 			"vim.hlsearch": true,
 			"vim.incsearch": true,
 			"vim.autoindent": true
