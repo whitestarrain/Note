@@ -100,7 +100,10 @@ awk 'BEGIN{
   - [x] 分布式缓存算法整理
   - [x] JVM字节码与类的加载
   - [ ] JVM性能监控和调优（进行中）
-  - [ ] 各种加密算法
+  - [ ] 各种加密算法（进行中）
+  - [ ] regex系统整理（进行中）
+  - [ ] html,css,js 历史笔记+资料整理（有时间再整）
+  - [ ] latex 基本语法（vim-latex&texlab环境搭建时有练习，有时间再整）
 - 待继续学习
   - [ ] Undertow
   - [ ] Mysql XA
@@ -108,10 +111,12 @@ awk 'BEGIN{
   - [ ] JOOQ框架
   - [ ] jersey框架
   - [ ] SpringBatch
+  - [ ] SpringData
   - [ ] Cassandra
   - [ ] xdb
   - [ ] elasticsearch
   - [ ] ELK
+  - [ ] TensorRT
 - 阅读书目
   > 个人习惯使用 知之阅读 做一些读书笔记。markdown版笔记仅抽空整理
   - [x] 代码整洁之道
@@ -119,7 +124,7 @@ awk 'BEGIN{
   - [ ] **程序设计实践**
   - [ ] Redis设计与实现
   - [ ] Operating Systems:Three Easy Pieces
-- 大数据笔记整理完善
+- 大数据笔记整理完善（抽时间零碎）
   - [ ] Spark
   - [ ] Flink
 - 短期小任务
@@ -127,13 +132,16 @@ awk 'BEGIN{
   - [ ] Raft 协议
   - [ ] SPEL
 - lang
-  - [ ] C++
+  - [ ] C++（待做）
   - [ ] go
   - [x] lua
-  - [ ] rust
+  - [ ] rust（进行中）
+- 机器学习&深度学习
+  - [ ] opencv 系统整理（进行中）
+  - [ ] 深度学习笔记系统整理（暂时抽不出时间）
 - 其他
-  - [ ] JNI
-  - [x] nvim配置模块化(迁移到其他项目)
+  - [ ] JNI（c++之后）
+  - [x] nvim配置模块化(迁移到dotfiles)
 
 <!--
 - [ ] SpringBoot原理

@@ -1,35 +1,14 @@
-# 安装配置
+# 相关概念
 
-## 常用 Window 命令
+## Node.js是什么
 
-- 打开应用
-	- notepade 记事本
-	- mspaint 画图
-	- calc 计算机
-	- write 写字板
-	- sysdm.cpl 环境变量设置窗口
+## npm 是什么
 
-- 文件操作
-	- cd 切换目录
-	- ls 列出文件
-	- md 创建文件夹
-	- rmdir(rd) 删除文件夹（不加参数只能删除空目录）
-		- rd /s/q 递归删除所有
-			- /s 子目录 子目录
-			- /q quite，表示不显示日志
-	- echo on > a.txt 创建文件
-	- echo 内容 > a.txt 覆盖写内容
-	- echo 内容 >> a.txt 追加写内容
-	- cat a.txt 展示内容
-	- rm a.txt 删除文件
-	- cat > a.txt 覆盖式阻塞写内容，ctrl+c输入完成
-	- cat >> a.txt 追加式阻塞写内容，ctrl+c输入完成
+## webpack是什么
 
-- 其他
-	- cls 清空控制台
-	- start 同目录下打开一个cmd
+## 三者关系是什么
 
-## nvm
+# nvm
 
 - 概念：Node.js 版本管理工具
 
@@ -106,6 +85,9 @@
 
 # 模块化
 
+- 引用全局模块
+  - 设置系统变量，新建 NODE_PATH，指向全局node_modules
+
 - global，全局变量，可以省略。**详情先了解模块系统**
 	> 所有模块都提供这些对象。 global中的对象变量虽然看起来是全局的，但其实并不是。 它们仅存在于模块范围内。
 
@@ -135,7 +117,7 @@
 		- 系统自带模块
 	- 模块成员的导出和引入
 		- 一个模块一个方法
-			```js
+			```javascript
 			//demo.js文件
 
 			var sum = function ( a , b ) {
@@ -145,14 +127,14 @@
 			//整个模块就只能导出一个方法，相当于整个模块就是一个方法
 			module.exports=sum;
 			```
-			```js
+			```javascript
 			// 引入其他模块（其实可以去掉 .js）
 			var module = require("./demo.js")
 			//调用
 			module(1,1);
 			```
 		- 一个模块多个方法
-			```js
+			```javascript
 			//demo.js文件
 
 			var sum = function ( a , b ) {
@@ -162,8 +144,7 @@
 			//导出（或者说暴露）模块成员，不导出没法儿给别的模块用
 			exports.sum=sum;
 			```
-
-			```js
+			```javascript
 			// 引入其他模块，
 			var module = require("./demo.js")
 
@@ -172,12 +153,12 @@
 			```
 		- 不常用方法
 			> global就只有一个还常用，不要乱加东西
-			```js
+			```javascript
 			//demo.js
 			var flag =123;
 			global.flag=flag;
 			```
-			```js
+			```javascript
 			require('./demo.js')
 			console.log(global.flag);
 			```
@@ -189,52 +170,10 @@
 
 # es6常用语法
 
-## 变量声明
+[ECMAScript6](./ECMAScript6.md
 
-- 变量声明
-	- let
-		- 不会进行预解析，只能先声明再使用
-		- 不允许在同一个作用域内重复声明
-		- 会受到块级作用域限制
-			```js
-			// i只在循环体中有效，推荐这样写
-			for(let i=0;i<=3;i++){
-				console.log(i);
-			}
-			```
-	- const
-		- 声明常量，声明时就要初始化，不允许重新赋值
 
-## 变量赋值
+# 参考资料
 
-- 数组的解构赋值
-	```js
-	// 按照顺序赋值
-	//默认值			赋值
-	var [a=1,b,c]=[,2,];
-	let [c,e,f]=[4,5,'f']
-	```
-- 对象的解构赋值
-	> 从右侧对象中取出左侧列出的属性值
-	```js
-	//根据对象名称赋值，与顺序无关。
-	let {name,value}={'name':'name1','value':'value1'}
-	let {name,value}={'value':'value1','name':'name1'}
-	
-	console.log(name,value)
-
-	// 属性起别名、此时只能用别名访问
-	let {name:nameName,value}={'name':'name1','value':'value1'}
-	
-	//例
-	let {con,sin,random}=Math;
-	```
-- 字符串的解构赋值
-	```js
-	//一个变量对应一个字符
-	let [a,b,c,d,e]="hello";
-	console.log(a,b,c,d,e);//hello
-	
-	let [f,g]="hello";
-	console.log(f,g)//he
-	```
+- [ ] [躺下来聊聊前端自动化](https://zhuanlan.zhihu.com/p/28483358)
+- [ ] [前端模块化开发中webpack、npm、node、nodejs之间的关系](https://blog.csdn.net/AngelLover2017/article/details/84801673)

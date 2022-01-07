@@ -1456,7 +1456,7 @@ public class ThreadDeadLock {
 
 ### 3.4.4. 分析dump文件
 
-#### 示例代码
+#### 3.4.4.1. 示例代码
 
 ```java
 /**
@@ -1485,12 +1485,12 @@ class Picture {
 }
 ```
 
-#### 3.4.4.1. histogram
+#### 3.4.4.2. histogram
 
 - 展示了各个类的实例数目以及这些实例的Shallow heap或Retainedheap的总和，
 - 在这个界面可以进行：分组，排序，写正则表达式，两个.hprof的对比，查看对象被谁引用，…
 
-#### 3.4.4.2. thread overview
+#### 3.4.4.3. thread overview
 
 - 查看系统中的Java线程、查看局部变量的信息。获取对象相互引用关系
 
@@ -1498,7 +1498,7 @@ class Picture {
   - thread overview中显示的才是引用关系
   - 支配树中显示的是支配关系
 
-#### 3.4.4.3. 获取对象引用关系
+#### 3.4.4.4. 获取对象引用关系
 
 ### 3.4.5. 案例解析-tomcat堆溢出分析
 
@@ -1968,7 +1968,7 @@ public class Stack {
   }
   ```
 
-#### 案例2
+#### 3.4.6.4. 案例2-匿名线程引用成员变量
 
 > **1.代码与说明**
 
@@ -2114,7 +2114,148 @@ public class Stack {
 
 ## 3.5. JProfiler
 
+### 3.5.1. 基本概述
+
+- 目的： 在运行Java的时候测试运行时占用内存情况
+  - 在eclipse里面有Eclipse Memory Analyer tool（MAT）插件可以测试
+  - 而在IDEA中可以使用JProfiler
+  - JProfiler是由ej-technologies公司开发的一款Java应用性能诊断工具。功能强大，但是收费。
+  - [官方下载地址](https://www.ej-technologies.com/products/jprofiler/overview.html)
+
+- 特点
+  - 使用方便、界面操作友好（简单且强大）
+  - 对被分析的应用影响小（提供模板）
+  - CPU，Thread，Memory分析功能尤其强大
+  - 支持对jdbc，noSql，jsp，servlet，socket等进行分析
+  - 支持多种模式（离线，在线）的分析
+  - 支持监控本地、远程的JVM
+  - 跨平台，拥有多种操作系统的安装版本
+
+- 主要功能
+  - **方法调用**：对方法调用的分析可以帮助您了解应用程序正在做什么，并找到提高其性能的方法
+  - **内存分配**：通过分析堆上对象、引用链和垃圾收集能帮你修复内存泄露问题，优化内存使用
+  - **线程和锁**：JProfiler提供多种针对线程和锁的分析视图助您发现多线程问题
+  - **高级子系统**：许多性能问题都发生在更高的语义级别上。例如，对JDBC调用，您可能希望找出执行最慢的SQL语句。JProfiler支持对这些子系统进行集成分析
+
+### 3.5.2. 具体使用
+
+#### 3.5.2.1. 测试代码
+
+```java
+/**
+ * -Xms600m -Xmx600m -XX:SurvivorRatio=8
+ */
+public class OOMTest {
+    public static void main(String[] args) {
+        ArrayList<Picture> list = new ArrayList<>();
+        while (true) {
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            list.add(new Picture(new Random().nextInt(100 * 50)));
+        }
+    }
+}
+
+class Picture {
+    private byte[] pixels;
+
+    public Picture(int length) {
+        this.pixels = new byte[length];
+    }
+}
+```
+
+#### 3.5.2.2. 数据采集方式
+
+#### 3.5.2.3. 遥感检测Telemetries
+
+#### 3.5.2.4. 内存视图Live Memory
+
+#### 3.5.2.5. 堆遍历heap walker
+
+#### 3.5.2.6. cpu视图 cpu views
+
+#### 3.5.2.7. 线程视图threads
+
+#### 3.5.2.8. 监视器&锁 Monitors&locks
+
+### 3.5.3. 案例分析
+
+#### 3.5.3.1. 案例1
+
+```java
+/**
+  * 功能演示测试
+  * 不存在内存泄露的程序
+  */
+public class JProfilerTest {
+    public static void main(String[] args) {
+        while (true) {
+            ArrayList list = new ArrayList();
+            for (int i = 0; i < 500; i++) {
+                Data data = new Data();
+                list.add(data);
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+class Data {
+    private int size = 10;
+    private byte[] buffer = new byte[1024 * 1024];//1mb
+    private String info = "hello,atguigu";
+}
+```
+
+#### 3.5.3.2. 案例2
+
+```java
+/**
+  * 存在内存泄露
+  */
+public class MemoryLeak {
+
+    public static void main(String[] args) {
+        while (true) {
+            ArrayList beanList = new ArrayList();
+            for (int i = 0; i < 500; i++) {
+                Bean data = new Bean();
+                data.list.add(new byte[1024 * 10]);//10kb
+                beanList.add(data);
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+}
+
+class Bean {
+    int size = 10;
+    String info = "hello,atguigu";
+    // ArrayList list = new ArrayList();
+    static ArrayList list = new ArrayList();  // 会存在内存泄露问题
+}
+```
+
 ## 3.6. Arthas
+
+### 3.6.1. 基本概述
+
+### 3.6.2. 安装与使用
+
+### 3.6.3. 相关诊断命令
 
 ## 3.7. Java Mission Control
 
