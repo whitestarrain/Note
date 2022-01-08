@@ -1,18 +1,17 @@
-# Gui Features in OpenCV
+# 1. Gui Features in OpenCV
 
 > Here you will learn how to display and save images and videos, control mouse events and create trackbar.
 
-## Getting Started with Images
+## 1.1. Getting Started with Images
 
 > Learn to load an image, display it, and save it back
 
-
-### example code
+### 1.1.1. example code
 
 ```python
   import cv2 as cv
   import sys
-  # load an image，cv::Mat object
+  # load an image
   img = cv.imread(cv.samples.findFile("./temp/image/temp.png"))
   if img is None:
       sys.exit("Could not read the image.")
@@ -25,7 +24,7 @@
       cv.imwrite("starry_night.png", img)
 ```
 
-### function
+### 1.1.2. function
 
 - imread(image_path,format)
   - image path
@@ -43,16 +42,16 @@
 
 - imrite(image_name,img)
 
-## Getting Started with Videos
+## 1.2. Getting Started with Videos
 
 > Learn to play videos, capture videos from a camera, and write videos
 
-### expample code
+### 1.2.1. expample code
 
 > **Make sure a proper version of ffmpeg or gstreamer is installed.**
 > **Sometimes it is a headache to work with video capture, mostly due to wrong installation of ffmpeg/gstreamer.** 
 
-#### Capture Video from Camera
+#### 1.2.1.1. Capture Video from Camera
 
 ```python
   import numpy as np
@@ -80,7 +79,7 @@
   cv.destroyAllWindows()
 ```
 
-#### Playing Video from file
+#### 1.2.1.2. Playing Video from file
 
 ```python
   import numpy as np
@@ -100,7 +99,7 @@
   cv.destroyAllWindows()
 ```
 
-#### saving a video
+#### 1.2.1.3. saving a video
 
 ```python
   # capture a video and process it frame-by-frame, and we want to save that video
@@ -127,7 +126,7 @@
   cv.destroyAllWindows()
 ```
 
-### function
+### 1.2.2. function
 
 - VideoCapture(deviceIndex_or_videoFile)
   - device index 
@@ -136,6 +135,9 @@
     - just simply pass 0 (or -1). 
     - can select the second camera by passing 1 and so on
   - the name of a video file
+
+- cap.read()
+  - retunr (is_read_correctly,frame_img)
 
 - cap.isopen()
   - check whether capture is initialized or not
@@ -155,6 +157,7 @@
 
  - cv.cvtColor(frame, ColorConversionCodes)
   - Converts an image from one color space to another.
+  - **can convert BGR to RGB**
   - [ColorConversionCodes](https://docs.opencv.org/4.x/d8/d01/group__imgproc__color__conversions.html#ga4e0972be5de079fed4e3a10e24ef5ef0)
 
 - cv.VideoWriter(file_name,fourcc,number_of_frames_per_second(fps),frame_size)
@@ -166,14 +169,13 @@
 
 - cv.destroyAllWindows()
 
-## Drawing Functions in OpenCV
+## 1.3. Drawing Functions in OpenCV
 
 > Learn to draw lines, rectangles, ellipses, circles, etc with OpenCV
 
+### 1.3.1. example code
 
-### example code
-
-#### Drawing Line
+#### 1.3.1.1. Drawing Line
 
 To draw a line, you need to pass starting and ending coordinates of line. 
 
@@ -188,7 +190,7 @@ We will create a black image and draw a blue line on it from top-left to bottom-
   cv.line(img,(0,0),(511,511),(255,0,0),5)
 ```
 
-#### Drawing Rectangle
+#### 1.3.1.2. Drawing Rectangle
 
 To draw a rectangle, you need top-left corner and bottom-right corner of rectangle.
 
@@ -198,7 +200,7 @@ This time we will draw a green rectangle at the top-right corner of image.
 cv.rectangle(img,(384,0),(510,128),(0,255,0),3)
 ```
 
-#### Drawing Circle
+#### 1.3.1.3. Drawing Circle
 
 To draw a circle, you need its center coordinates and radius. We will draw a circle inside the rectangle drawn above.
 
@@ -206,7 +208,7 @@ To draw a circle, you need its center coordinates and radius. We will draw a cir
 cv.circle(img,(447,63), 63, (0,0,255), -1)
 ```
 
-#### Drawing Ellipse
+#### 1.3.1.4. Drawing Ellipse
 
 To draw the ellipse, we need to pass several arguments.
 
@@ -220,7 +222,7 @@ For more details, check the documentation of `cv.ellipse()`. Below example draws
 ```python
 cv.ellipse(img,(256,256),(100,50),0,0,180,255,-1)
 ```
-#### Drawing Polygon
+#### 1.3.1.5. Drawing Polygon
 
 To draw a polygon, first you need coordinates of vertices.
 
@@ -234,7 +236,7 @@ pts = pts.reshape((-1,1,2))
 cv.polylines(img,[pts],True,(0,255,255))
 ```
 
-#### Adding Text to Images:
+#### 1.3.1.6. Adding Text to Images:
 
 To put texts in images, you need specify following things.
 
@@ -250,13 +252,13 @@ To put texts in images, you need specify following things.
   cv.putText(img,'OpenCV',(10,500), font, 4,(255,255,255),2,cv.LINE_AA)
 ```
 
-#### result
+#### 1.3.1.7. result
 
 ![opencv-1](./image/opencv-1.png)
 
-### function
+### 1.3.2. function
 
-#### common
+#### 1.3.2.1. common
 
 - function
   - cv.line()
@@ -272,7 +274,7 @@ To put texts in images, you need specify following things.
     - Type of line, whether 8-connected, anti-aliased line etc. By default, it is 8-connected
     - cv.LINE_AA gives anti-aliased line which looks great for curves.
 
-#### others
+#### 1.3.2.2. others
 
 - cv.polygon(img,points,is_closed,color)
   - If third argument is False, you will get a polylines joining all the points, not a closed shape.
@@ -286,13 +288,13 @@ To put texts in images, you need specify following things.
 - cv.text()
   > cv.putText(	img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]]	) ->	img
 
-## Get Start With Event
+## 1.4. Get Start With Event
 
 > Mouse as a Paint-Brush: Draw stuff with your mouse
 
-### example code
+### 1.4.1. example code
 
-#### Simple Demo
+#### 1.4.1.1. Simple Demo
 
 **Here, we create a simple application which draws a circle on an image wherever we double-click on it.**
 
@@ -332,7 +334,7 @@ To put texts in images, you need specify following things.
   cv.destroyAllWindows()
   ```
 
-#### More Advanced Demo
+#### 1.4.1.2. More Advanced Demo
 
 **draw either rectangles or circles (depending on the mode we select) by dragging the mouse like we do in Paint application**
 
@@ -384,16 +386,16 @@ To put texts in images, you need specify following things.
     cv.destroyAllWindows()
   ```
 
-### function
+### 1.4.2. function
 
 - cv.namedWindow(window_name)
 - cv.setMouseCallback(window_name,fun)
 
-## Exercise:Trackbar as the Color Palette
+## 1.5. Exercise:Trackbar as the Color Palette
 
 > Create trackbar to control certain parameters
 
-### example code
+### 1.5.1. example code
 
 ```python
   import numpy as np
@@ -427,61 +429,528 @@ To put texts in images, you need specify following things.
   cv.destroyAllWindows()
 ```
 
-### function
+### 1.5.2. function
 
-- cv.getTrackbarPos()
 - cv.createTrackbar() 
+- cv.getTrackbarPos()
 
-# Core Operations
+# 2. Core Operations
 
 > In this section you will learn basic operations on image like pixel editing, geometric transformations, code optimization, some mathematical tools etc.
 
-## Basic Operations on Images
+## 2.1. Basic Operations on Images(numpy operations)
 
 > Learn to read and edit pixel values, working with image ROI and other basic operations.
+>
+> - Access pixel values and modify them
+> - Access image properties
+> - Set a Region of Interest (ROI)
+> - Split and merge images
 
-## Arithmetic Operations on Images
+### 2.1.1. expample code
+
+#### 2.1.1.1. Image ROI(Region Of Interest)
+
+```python
+import numpy as np
+import cv2 as cv
+
+img = cv.imread('messi5.jpg')
+ball = img[280:340, 330:390]
+img[273:333, 100:160] = ball
+```
+
+![opencv-2](./image/opencv-2.png)
+
+#### 2.1.1.2. Splitting and Merging Image Channels
+
+```python
+  b,g,r = cv.split(img) # don't use split
+  img = cv.merge((b,g,r))
+  # or
+  b = img[:,:,0]
+  g = img[:,:,1]
+  r = img[:,:,2]
+```
+
+- Notice:
+  - cv.split() is a costly operation (in terms of time).
+  - So use it only if necessary. Otherwise go for Numpy indexing.
+
+#### 2.1.1.3. Making Borders for Images (Padding)
+
+If you want to create a border around an image, something like a photo frame, you can use `cv.copyMakeBorder()`
+
+But it has more applications for convolution operation, zero padding etc. This function takes following arguments:
+
+```python
+  import cv2 as cv
+  import numpy as np
+  from matplotlib import pyplot as plt
+  BLUE = [255,0,0]
+  img1 = cv.imread('opencv-logo.png')
+  replicate = cv.copyMakeBorder(img1,10,10,10,10,cv.BORDER_REPLICATE)
+  reflect = cv.copyMakeBorder(img1,10,10,10,10,cv.BORDER_REFLECT)
+  reflect101 = cv.copyMakeBorder(img1,10,10,10,10,cv.BORDER_REFLECT_101)
+  wrap = cv.copyMakeBorder(img1,10,10,10,10,cv.BORDER_WRAP)
+  constant= cv.copyMakeBorder(img1,10,10,10,10,cv.BORDER_CONSTANT,value=BLUE)
+  plt.subplot(231),plt.imshow(img1,'gray'),plt.title('ORIGINAL')
+  plt.subplot(232),plt.imshow(replicate,'gray'),plt.title('REPLICATE')
+  plt.subplot(233),plt.imshow(reflect,'gray'),plt.title('REFLECT')
+  plt.subplot(234),plt.imshow(reflect101,'gray'),plt.title('REFLECT_101')
+  plt.subplot(235),plt.imshow(wrap,'gray'),plt.title('WRAP')
+  plt.subplot(236),plt.imshow(constant,'gray'),plt.title('CONSTANT')
+  plt.show()
+```
+
+See the result below. (Image is displayed with matplotlib. So RED and BLUE channels will be interchanged):
+
+![opencv-3](./image/opencv-3.png)
+
+### 2.1.2. function
+
+- cv.split()
+  > don't use
+
+- cv.copyMakeBorder()
+  - src - input image
+  - top, bottom, left, right - border width in number of pixels in corresponding directions
+  - borderType - Flag defining what kind of border to be added. It can be following types:
+    - cv.BORDER_CONSTANT - Adds a constant colored border. The value should be given as next argument.
+    - cv.BORDER_REFLECT - Border will be mirror reflection of the border elements, like this : fedcba|abcdefgh|hgfedcb
+    - cv.BORDER_REFLECT_101 or cv.BORDER_DEFAULT - Same as above, but with a slight change, like this : gfedcb|abcdefgh|gfedcba
+    - cv.BORDER_REPLICATE - Last element is replicated throughout, like this: aaaaaa|abcdefgh|hhhhhhh
+    - cv.BORDER_WRAP - Can't explain, it will look like this : cdefgh|abcdefgh|abcdefg
+  - value - Color of border if border type is cv.BORDER_CONSTANT
+
+## 2.2. Arithmetic Operations on Images
 
 > Perform arithmetic operations on images
+>
+> - Learn several arithmetic operations on images, like addition, subtraction, bitwise operations, and etc.
+> - Learn these functions: cv.add(), cv.addWeighted(), etc.
 
-## Performance Measurement and Improvement Techniques
+### 2.2.1. expample code
+
+#### 2.2.1.1. Image Addition
+
+- There is a difference between **OpenCV addition** and **Numpy addition**
+  - OpenCV addition is a saturated operation 
+  - Numpy addition is a modulo operation.
+
+  ```python
+  >>> x = np.uint8([250])
+  >>> y = np.uint8([10])
+  >>> print( cv.add(x,y) ) # 250+10 = 260 => 255
+  [[255]]
+  >>> print( x+y )          # 250+10 = 260 % 256 = 4
+  [4]
+  ```
+
+- Stick with OpenCV functions
+  - because they will provide a better result.
+  - This will be more visible when you add two images.
+
+#### 2.2.1.2. Image Blending
+
+This is also image addition, but different weights are given to images in order to give a feeling of blending or transparency.
+
+- Images are added as per the equation below:
+  - $g(x)=(1−α)f_{0}(x)+αf_{1}(x)$ 
+  - By varying α from 0→1, you can perform a cool transition between one image to another.
+
+  ```python
+  img1 = cv.imread('ml.png')
+  img2 = cv.imread('opencv-logo.png')
+  # The first image is given a weight of 0.7 and the second image is given 0.3.
+  dst = cv.addWeighted(img1,0.7,img2,0.3,0)
+  cv.imshow('dst',dst)
+  cv.waitKey(0)
+  cv.destroyAllWindows()
+  Check the result below:
+  ```
+
+- result
+  ![opencv-4](./image/opencv-4.png)
+
+#### 2.2.1.3. Bitwise Operations
+
+- explain
+  - This includes the bitwise AND, OR, NOT, and XOR operations
+  - They will be highly useful while extracting any part of the image (as we will see in coming chapters), defining and working with non-rectangular ROI's, and etc.
+  - Below we will see an example of how to change a particular region of an image.
+
+- put the OpenCV logo above an image
+  - If I add two images, it will change the color. 
+  - If I blend them, I get a transparent effect. But I want it to be opaque(不透明的). 
+  - If it was a rectangular region, I could use ROI as we did in the last chapter. But the OpenCV logo is a not a rectangular shape. 
+  - So you can do it with bitwise operations as shown below:
+
+  ```python
+  # Load two images
+  img1 = cv.imread('messi5.jpg')
+  img2 = cv.imread('opencv-logo-white.png')
+  # I want to put logo on top-left corner, So I create a ROI
+  rows,cols,channels = img2.shape
+  roi = img1[0:rows, 0:cols]
+  # Now create a mask of logo and create its inverse mask also
+  img2gray = cv.cvtColor(img2,cv.COLOR_BGR2GRAY)
+  ret, mask = cv.threshold(img2gray, 10, 255, cv.THRESH_BINARY) # Later chapters will explain 'threshold' 
+  mask_inv = cv.bitwise_not(mask) # 0->255,255->0
+  # Now black-out the area of logo in ROI
+  img1_bg = cv.bitwise_and(roi,roi,mask = mask_inv)
+  # Take only region of logo from logo image.
+  img2_fg = cv.bitwise_and(img2,img2,mask = mask)
+  # Put logo in ROI and modify the main image
+  dst = cv.add(img1_bg,img2_fg)
+
+  plt.figure(figsize = (10,10))
+  def plt_bgr(img):
+      plt.imshow(cv.cvtColor(img, cv.COLOR_BGR2RGB))
+  plt.subplot(331),plt_bgr(img1),plt.title("img1")
+  plt.subplot(332),plt_bgr(img2),plt.title("img2")
+  plt.subplot(333),plt_bgr(roi),plt.title("roi")
+  plt.subplot(334),plt_bgr(img2gray),plt.title("img2gray")
+  plt.subplot(335),plt_bgr(mask),plt.title("mask")
+  plt.subplot(336),plt_bgr(mask_inv),plt.title("mask_inv")
+  plt.subplot(337),plt_bgr(img1_bg),plt.title("img1_bg")
+  plt.subplot(338),plt_bgr(img2_fg),plt.title("img2_fg")
+  plt.subplot(339),plt_bgr(dst),plt.title("dst")
+
+  img1[0:rows, 0:cols ] = dst
+  cv.imshow('res',img1)
+  cv.waitKey(0)
+  cv.destroyAllWindows()
+  ```
+  ![opencv-6](./image/opencv-6.png)
+
+  ![opencv-5](./image/opencv-5.png)
+
+  > See the result above. Left image shows the mask we created. Right image shows the final result.
+  >
+  > For more understanding, display all the intermediate images in the above code, especially img1_bg and img2_fg.
+
+### 2.2.2. function
+
+- cv.add(arg1,arg2)
+  > better than numpy add <br/>
+  > `cv.add(	src1, src2[, dst[, mask[, dtype]]]	) ->	dst`
+- cv.addWeighted(img1,weight1,img2,weight2,offset) 
+  - applies the following equation to the image: $dst=α⋅img1+β⋅img2+γ$
+- cv.threshold()
+  > explain in later chapter
+- cv.bitwise_not
+- cv.bitwise_and
+- cv.bitwise_xor
+- cv.bitwise_or
+
+## 2.3. Performance Measurement and Improvement Techniques
 
 > Getting a solution is important. But getting it in the fastest way is more important. Learn to check the speed of your code, optimize the code etc.
+>
+> - Measure the performance of your code.
+> - Some tips to improve the performance of your code.
 
-# Image Processing in OpenCV
+### 2.3.1. expample code
+
+#### 2.3.1.1. Measuring Performance with OpenCV
+
+- `cv.getTickCount`: 
+  - returns the number of clock-cycles after a reference event (like the moment the machine was switched ON) to the moment this function is called. 
+  - So if you call it before and after the function execution, you get the number of clock-cycles used to execute a function.
+- `cv.getTickFrequency`:
+  - returns the cpu's frequency of clock-cycles, or the number of clock-cycles per second.
+  - So to find the time of execution in seconds, you can do following:
+
+  ```python
+  e1 = cv.getTickCount()
+  # your code execution
+  e2 = cv.getTickCount()
+  time = (e2 - e1)/ cv.getTickFrequency()
+  ```
+
+We will demonstrate with following example. The following example applies median filtering with kernels of odd sizes ranging from 5 to 49. (Don't worry about what the result will look like - that is not our goal):
+
+  ```python
+  img1 = cv.imread('messi5.jpg')
+  e1 = cv.getTickCount()
+  for i in range(5,49,2):
+      img1 = cv.medianBlur(img1,i)
+  e2 = cv.getTickCount()
+  t = (e2 - e1)/cv.getTickFrequency()
+  print( t )
+  # Result I got is 0.521107655 seconds
+  ```
+
+- notice:
+  - You can do the same thing with the `time` module. 
+  - Instead of `cv.getTickCount`, use the time.time() function. Then take the difference of the two times.
+
+#### 2.3.1.2. Default Optimization in OpenCV
+
+- explain
+  - Many of the OpenCV functions are optimized using SSE2, AVX, etc
+  - It contains the unoptimized code also.
+  - So if our system support these features, we should exploit them (almost all modern day processors support them). 
+  - It is enabled by default while compiling.
+  - So OpenCV runs the optimized code if it is enabled, otherwise it runs the unoptimized code.
+  - You can use `cv.useOptimized()` to check if it is enabled/disabled 
+  - use `cv.setUseOptimized()` to enable/disable it
+
+- example
+
+  ```python
+  # check if optimization is enabled
+  In [5]: cv.useOptimized()
+  Out[5]: True
+  In [6]: %timeit res = cv.medianBlur(img,49)
+  10 loops, best of 3: 34.9 ms per loop
+  # Disable it
+  In [7]: cv.setUseOptimized(False)
+  In [8]: cv.useOptimized()
+  Out[8]: False
+  In [9]: %timeit res = cv.medianBlur(img,49)
+  10 loops, best of 3: 64.1 ms per loop
+  ```
+
+  - As you can see, optimized median filtering is 2x faster than the unoptimized version.
+  - If you check its source, you can see that median filtering is SIMD optimized.
+  - So you can use this to enable optimization at the top of your code (remember it is enabled by default).
+
+#### 2.3.1.3. Measuring Performance in IPython
+
+Sometimes you may need to compare the performance of two similar operations. IPython gives you a magic command timeit to perform this.
+
+It runs the code several times to get more accurate results. Once again, it is suitable to measuring single lines of code.
+
+- example(python vs numpy)
+  - do you know which of the following addition operations is better,
+  - `x = 5; y = x**2, x = 5; y = x*x, x = np.uint8([5]); y = x*x, or y = np.square(x)`?
+  - We will find out with timeit in the IPython shell.
+
+  ```python
+  In [10]: x = 5
+  In [11]: %timeit y=x**2
+  10000000 loops, best of 3: 73 ns per loop
+  In [12]: %timeit y=x*x
+  10000000 loops, best of 3: 58.3 ns per loop
+  In [15]: z = np.uint8([5])
+  In [17]: %timeit y=z*z
+  1000000 loops, best of 3: 1.25 us per loop
+  In [19]: %timeit y=np.square(z)
+  1000000 loops, best of 3: 1.16 us per loop
+  ```
+
+  - You can see that, `x = 5 ; y = x*x` is fastest and it is around 20x faster compared to Numpy.
+  - If you consider the array creation also, it may reach up to 100x faster. 
+
+  - Notice
+    - Python scalar operations are faster than Numpy scalar operations.
+    - So for operations including one or two elements, Python scalar is better than Numpy arrays.
+    - **Numpy has the advantage when the size of the array is a little bit bigger**.
+
+- example2(numpy vs open-cv)
+
+  - compare the performance of cv.countNonZero() and np.count_nonzero() for the same image.
+
+  ```python
+  In [35]: %timeit z = cv.countNonZero(img)
+  100000 loops, best of 3: 15.8 us per loop
+  In [36]: %timeit z = np.count_nonzero(img)
+  1000 loops, best of 3: 370 us per loop
+  ```
+
+  - the OpenCV function is nearly 25x faster than the Numpy function.
+  - notice:
+    - **Normally, OpenCV functions are faster than Numpy functions**. So for same operation, OpenCV functions are preferred.
+    - But, there can be exceptions, **especially when Numpy works with views instead of copies**.
+
+#### 2.3.1.4. Performance Optimization Techniques
+
+There are several techniques and coding methods to exploit maximum performance of Python and Numpy.
+Only relevant ones are noted here and links are given to important sources.
+
+- [Python Optimization Techniques](https://wiki.python.org/moin/PythonSpeed/PerformanceTips)
+- [Scipy Lecture Notes - Advanced Numpy](https://scipy-lectures.github.io/advanced/advanced_numpy/index.html#advanced-numpy)
+
+The main thing to be noted here is, first try to implement the algorithm in a simple manner.
+Once it is working, profile it, find the bottlenecks, and optimize them.
+
+- Avoid using loops in Python as much as possible, especially double/triple loops etc. They are inherently slow.
+- Vectorize the algorithm/code to the maximum extent possible, because Numpy and OpenCV are optimized for vector operations.
+- Exploit the cache coherence.
+- Never make copies of an array unless it is necessary. Try to use views instead. Array copying is a costly operation.
+
+If your code is still slow after doing all of these operations, or if the use of large loops is inevitable, use additional libraries like Cython to make it faster.
+
+### 2.3.2. function
+
+- cv.useOptimized()
+- cv.setUseOptimized()
+
+# 3. Image Processing in OpenCV
 
 In this section you will learn different image processing functions inside OpenCV.
 
-# Feature Detection and Description
+## 3.1. Changing Colorspaces
+
+Learn to change images between different color spaces. Plus learn to track a colored object in a video.
+
+### 3.1.1. example code
+
+### 3.1.2. function
+
+## 3.2. Geometric Transformations of Images
+
+Learn to apply different geometric transformations to images like rotation, translation etc.
+
+### 3.2.1. example code
+
+### 3.2.2. function
+
+## 3.3. Image Thresholding
+
+Learn to convert images to binary images using global thresholding, Adaptive thresholding, Otsu's binarization etc
+
+### 3.3.1. example code
+
+### 3.3.2. function
+
+## 3.4. Smoothing Images
+
+Learn to blur the images, filter the images with custom kernels etc.
+
+### 3.4.1. example code
+
+### 3.4.2. function
+
+## 3.5. Morphological Transformations
+
+Learn about morphological transformations like Erosion, Dilation, Opening, Closing etc
+
+### 3.5.1. example code
+
+### 3.5.2. function
+
+## 3.6. Image Gradients
+
+Learn to find image gradients, edges etc.
+
+### 3.6.1. example code
+
+### 3.6.2. function
+
+## 3.7. Canny Edge Detection
+
+Learn to find edges with Canny Edge Detection
+
+### 3.7.1. example code
+
+### 3.7.2. function
+
+## 3.8. Image Pyramids
+
+Learn about image pyramids and how to use them for image blending
+
+### 3.8.1. example code
+
+### 3.8.2. function
+
+## 3.9. Contours in OpenCV
+
+All about Contours in OpenCV
+
+### 3.9.1. example code
+
+### 3.9.2. function
+
+## 3.10. Histograms in OpenCV
+
+All about histograms in OpenCV
+
+### 3.10.1. example code
+
+### 3.10.2. function
+
+## 3.11. Image Transforms in OpenCV
+
+Meet different Image Transforms in OpenCV like Fourier Transform, Cosine Transform etc.
+
+### 3.11.1. example code
+
+### 3.11.2. function
+
+## 3.12. Template Matching
+
+Learn to search for an object in an image using Template Matching
+
+### 3.12.1. example code
+
+### 3.12.2. function
+
+## 3.13. Hough Line Transform
+
+Learn to detect lines in an image
+
+### 3.13.1. example code
+
+### 3.13.2. function
+
+## 3.14. Hough Circle Transform
+
+Learn to detect circles in an image
+
+### 3.14.1. example code
+
+### 3.14.2. function
+
+## 3.15. Image Segmentation with Watershed Algorithm
+
+Learn to segment images with watershed segmentation
+
+### 3.15.1. example code
+
+### 3.15.2. function
+
+## 3.16. Interactive Foreground Extraction using GrabCut Algorithm
+
+Learn to extract foreground with GrabCut algorithm
+
+### 3.16.1. example code
+
+### 3.16.2. function
+
+# 4. Feature Detection and Description
 
 In this section you will learn about feature detectors and descriptors
 
-# Video analysis (video module)
+# 5. Video analysis (video module)
 
 In this section you will learn different techniques to work with videos like object tracking etc.
 
-# Camera Calibration and 3D Reconstruction
+# 6. Camera Calibration and 3D Reconstruction
 
 In this section we will learn about camera calibration, stereo imaging etc.
 
-# Machine Learning
+# 7. Machine Learning
 
 In this section you will learn different image processing functions inside OpenCV.
 
-# Computational Photography
+# 8. Computational Photography
 
 In this section you will learn different computational photography techniques like image denoising etc.
 
-# Object Detection (objdetect module)
+# 9. Object Detection (objdetect module)
 
 In this section you will learn object detection techniques like face detection etc.
 
-# OpenCV-Python Bindings
+# 10. OpenCV-Python Bindings
 
 In this section, we will see how OpenCV-Python bindings are generated
 
-# refs
+# 11. refs
 
 - [OpenCV-Python Tutorials](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html)
 - [OpenCV Image Processing doc](https://docs.opencv.org/4.x/d7/dbd/group__imgproc.html)
 - [如何理解图像深度- 8bit、16bit、24bit、32bi](https://blog.csdn.net/qq_41498261/article/details/104898045)
+- [2.2. Advanced NumPy](http://scipy-lectures.org/advanced/advanced_numpy/index.html#advanced-numpy)
