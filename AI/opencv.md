@@ -26,21 +26,21 @@
 
 ### 1.1.2. function
 
-- imread(image_path,format)
+- `cv.imread(image_path,format)`
   - image path
   - format way
     - cv2.IMREAD_COLOR loads the image in the **BGR 8-bit format**(not RGB!!). This is the default that is used here.
     - cv2.IMREAD_UNCHANGED loads the image as is (including the alpha channel if present)
     - cv2.IMREAD_GRAYSCALE loads the image as an intensity one
 
-- imshow(title_of_window,img)
+- `cv.imshow(title_of_window,img)`
 
-- cv.waitKey(wait_time)
+- `cv.waitKey(wait_time)`
   - how long should it wait for a user input
   - if `0`:displayed until the user presses a key 
   - return pressed key
 
-- imrite(image_name,img)
+- `cv.imrite(image_name,img)`
 
 ## 1.2. Getting Started with Videos
 
@@ -128,7 +128,7 @@
 
 ### 1.2.2. function
 
-- VideoCapture(deviceIndex_or_videoFile)
+- `cv.VideoCapture(deviceIndex_or_videoFile)`
   - device index 
     - the number to specify which camera
     - Normally one camera will be connected
@@ -136,38 +136,38 @@
     - can select the second camera by passing 1 and so on
   - the name of a video file
 
-- cap.read()
+- `cap.read()`
   - retunr (is_read_correctly,frame_img)
 
-- cap.isopen()
+- `cap.isopen()`
   - check whether capture is initialized or not
   - if not,use 'cap.open()'
 
-- cap.get(video_property_id)
+- `cap.get(video_property_id)`
   - For example, 
     - width : `cap.get(cv.CAP_PROP_FRAME_WIDTH)` 
     - height :`cap.get(cv.CAP_PROP_FRAME_HEIGHT)`
   - [cv::VideoCapture::get()](https://docs.opencv.org/4.x/d8/dfe/classcv_1_1VideoCapture.html#aa6480e6972ef4c00d74814ec841a2939)
   - [18 properties](https://docs.opencv.org/4.x/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d)
 
-- cap.read()
+- `cap.read()`
   - returns a bool (True/False)
   - If the frame is read correctly, it will be True.
   - So you can check for the end of the video by checking this returned value. 
 
- - cv.cvtColor(frame, ColorConversionCodes)
+ - `cv.cvtColor(frame, ColorConversionCodes)`
   - Converts an image from one color space to another.
   - **can convert BGR to RGB**
   - [ColorConversionCodes](https://docs.opencv.org/4.x/d8/d01/group__imgproc__color__conversions.html#ga4e0972be5de079fed4e3a10e24ef5ef0)
 
-- cv.VideoWriter(file_name,fourcc,number_of_frames_per_second(fps),frame_size)
+- `cv.VideoWriter(file_name,fourcc,number_of_frames_per_second(fps),frame_size)`
   - fourcc code example:
     - In Fedora: DIVX, XVID, MJPG, X264, WMV1, WMV2. (XVID is more preferable. MJPG results in high size video. X264 gives very small size video)
     - In Windows: DIVX (More to be tested and added)
     - In OSX: MJPG (.mp4), DIVX (.avi), X264 (.mkv).
   - [The list of available fourcc codes](fourcc.org)
 
-- cv.destroyAllWindows()
+- `cv.destroyAllWindows()`
 
 ## 1.3. Drawing Functions in OpenCV
 
@@ -261,11 +261,11 @@ To put texts in images, you need specify following things.
 #### 1.3.2.1. common
 
 - function
-  - cv.line()
-  - cv.circle() 
-  - cv.rectangle()
-  - cv.ellipse()
-  - cv.putText() 
+  - `cv.line()`
+  - `cv.circle()`
+  - `cv.rectangle()`
+  - `cv.ellipse()`
+  - `cv.putText()`
 - args:
   - img : The image where you want to draw the shapes
   - color : Color of the shape. for BGR, pass it as a tuple, eg: (255,0,0) for blue. For grayscale, just pass the scalar value.
@@ -276,7 +276,7 @@ To put texts in images, you need specify following things.
 
 #### 1.3.2.2. others
 
-- cv.polygon(img,points,is_closed,color)
+- `cv.polygon(img,points,is_closed,color)`
   - If third argument is False, you will get a polylines joining all the points, not a closed shape.
   - cv.polylines() can be used to draw multiple lines. 
     > - cv.ellipse(	img, center, axes, angle, startAngle, endAngle, color[, thickness[, lineType[, shift]]]	) ->	img
@@ -285,7 +285,7 @@ To put texts in images, you need specify following things.
     - All lines will be drawn individually.
     - It is a much better and faster way to draw a group of lines than calling cv.line() for each line.
 
-- cv.text()
+- `cv.text()`
   > cv.putText(	img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]]	) ->	img
 
 ## 1.4. Get Start With Event
@@ -388,8 +388,8 @@ To put texts in images, you need specify following things.
 
 ### 1.4.2. function
 
-- cv.namedWindow(window_name)
-- cv.setMouseCallback(window_name,fun)
+- `cv.namedWindow(window_name)`
+- `cv.setMouseCallback(window_name,fun)`
 
 ## 1.5. Exercise:Trackbar as the Color Palette
 
@@ -509,10 +509,10 @@ See the result below. (Image is displayed with matplotlib. So RED and BLUE chann
 
 ### 2.1.2. function
 
-- cv.split()
+- `cv.split()`
   > don't use
 
-- cv.copyMakeBorder()
+- `cv.copyMakeBorder()`
   - src - input image
   - top, bottom, left, right - border width in number of pixels in corresponding directions
   - borderType - Flag defining what kind of border to be added. It can be following types:
@@ -632,17 +632,17 @@ This is also image addition, but different weights are given to images in order 
 
 ### 2.2.2. function
 
-- cv.add(arg1,arg2)
+- `cv.add(arg1,arg2)`
   > better than numpy add <br/>
   > `cv.add(	src1, src2[, dst[, mask[, dtype]]]	) ->	dst`
-- cv.addWeighted(img1,weight1,img2,weight2,offset) 
+- `cv.addWeighted(img1,weight1,img2,weight2,offset) `
   - applies the following equation to the image: $dst=α⋅img1+β⋅img2+γ$
-- cv.threshold()
+- `cv.threshold()`
   > explain in later chapter
-- cv.bitwise_not
-- cv.bitwise_and
-- cv.bitwise_xor
-- cv.bitwise_or
+- `cv.bitwise_not`
+- `cv.bitwise_and`
+- `cv.bitwise_xor`
+-` cv.bitwise_or`
 
 ## 2.3. Performance Measurement and Improvement Techniques
 
@@ -785,44 +785,627 @@ If your code is still slow after doing all of these operations, or if the use of
 
 ### 2.3.2. function
 
-- cv.useOptimized()
-- cv.setUseOptimized()
+- `cv.useOptimized()`
+- `cv.setUseOptimized()`
 
 # 3. Image Processing in OpenCV
 
-In this section you will learn different image processing functions inside OpenCV.
+> In this section you will learn different image processing functions inside OpenCV.
 
 ## 3.1. Changing Colorspaces
 
-Learn to change images between different color spaces. Plus learn to track a colored object in a video.
+> Learn to change images between different color spaces. Plus learn to track a colored object in a video.
+>
+> - learn how to convert images from one color-space to another, like BGR ↔ Gray, BGR ↔ HSV, etc.
+> - In addition to that, we will create an application to extract a colored object in a video
 
 ### 3.1.1. example code
 
+#### 3.1.1.1. Changing Color-space
+
+- explain
+  - There are more than 150 color-space conversion methods available in OpenCV. 
+  - But we will look into only two, which are most widely used ones: BGR ↔ Gray and BGR ↔ HSV.
+  - For color conversion, we use the function `cv.cvtColor(input_image, flag)` where flag determines the type of conversion.
+  - For BGR → Gray conversion, we use the flag cv.COLOR_BGR2GRAY.
+  - Similarly for BGR → HSV, we use the flag cv.COLOR_BGR2HSV. To get other flags, just run following commands in your Python terminal:
+
+  ```python
+  >>> import cv2 as cv
+  >>> flags = [i for i in dir(cv) if i.startswith('COLOR_')]
+  >>> print( flags )
+  ```
+
+- notice
+  - For HSV, hue range is [0,179], saturation range is [0,255], and value range is [0,255].
+  - Different software use different scales. 
+  - So if you are comparing OpenCV values with them, you need to normalize these ranges.
+
+#### 3.1.1.2. Object Tracking By HSV
+
+- explain
+  - Now that we know how to convert a BGR image to HSV, we can use this to extract a colored object.
+  - In HSV, it is easier to represent a color than in BGR color-space.
+  - In our application, we will try to extract a blue colored object. So here is the method:
+
+- code
+  ```python
+  import cv2 as cv
+  import numpy as np
+  cap = cv.VideoCapture(0)
+  while(1):
+      # Take each frame
+      _, frame = cap.read()
+      # Convert BGR to HSV
+      hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+      # define range of blue color in HSV
+      lower_blue = np.array([110,50,50])
+      upper_blue = np.array([130,255,255])
+      # Threshold the HSV image to get only blue colors
+      mask = cv.inRange(hsv, lower_blue, upper_blue)
+      # Bitwise-AND mask and original image
+      res = cv.bitwise_and(frame,frame, mask= mask)
+      cv.imshow('frame',frame)
+      cv.imshow('mask',mask)
+      cv.imshow('res',res)
+      k = cv.waitKey(5) & 0xFF
+      if k == 27:
+          break
+  cap.release()
+  cv.destroyAllWindows()
+  ```
+
+  ![opencv-7](./image/opencv-7.png)
+
+- notice
+  - There is some noise in the image. We will see how to remove it in later chapters.
+  - This is the simplest method in object tracking.
+  - Once you learn functions of contours, you can do plenty of things like find the centroid of an object and use it to track the object, draw diagrams just by moving your hand in front of a camera, and other fun stuff.
+
+#### 3.1.1.3. How to find HSV values to track?
+
+- Instead of passing an image, you just pass the BGR values you want.
+  - For example, to find the HSV value of Green, try the following commands in a Python terminal:
+
+  ```python
+  >>> green = np.uint8([[[0,255,0 ]]])
+  >>> hsv_green = cv.cvtColor(green,cv.COLOR_BGR2HSV)
+  >>> print( hsv_green )
+  >>> [[[ 60 255 255]]]
+  # Now you take [H-10, 100,100] and [H+10, 255, 255] as the lower bound and upper bound respectively. 
+  # Apart from this method, you can use any image editing tools like GIMP or any online converters to find these values, but don't forget to adjust the HSV ranges.
+  ```
+
 ### 3.1.2. function
+
+- `cv.cvtColor(img,code)`
+  - [all ColorConversionCodes](https://docs.opencv.org/4.x/d8/d01/group__imgproc__color__conversions.html#gga4e0972be5de079fed4e3a10e24ef5ef0a353a4b8db9040165db4dacb5bcefb6ea)
+- `cv.inRange`
+  > cv.inRange(	src, lowerb, upperb[, dst]	) ->	dst
+  - get a mask
+  - For every element of a single-channel input array:
+
+    $dst(I)=lowerb(I)_{0}≤src(I)_{0}≤upperb(I)_{0}$
+
+  - For two-channel arrays:
+
+    $dst(I)=lowerb(I)_{0}≤src(I)_{0}≤upperb(I)_{0}∧lowerb(I)_{1}≤src(I)_{1}≤upperb(I)_{1}$
+
+  - and so forth.
 
 ## 3.2. Geometric Transformations of Images
 
-Learn to apply different geometric transformations to images like rotation, translation etc.
+> Learn to apply different geometric transformations to images like rotation, translation etc.
 
 ### 3.2.1. example code
 
+#### 3.2.1.1. Scaling(resize)
+
+- explain
+  - Scaling is just resizing of the image.
+  - OpenCV comes with a function cv.resize() for this purpose.
+  - The size of the image can be specified manually, or you can specify the scaling factor.
+  - Different interpolation methods are used.
+    - Preferable interpolation methods are cv.INTER_AREA for shrinking 
+    - and cv.INTER_CUBIC (slow) & cv.INTER_LINEAR for zooming.
+    - By default, the interpolation method cv.INTER_LINEAR is used for all resizing purposes.
+    - You can resize an input image with either of following methods:
+
+```python
+  import numpy as np
+  import cv2 as cv
+  img = cv.imread('messi5.jpg')
+  res = cv.resize(img,None,fx=2, fy=2, interpolation = cv.INTER_CUBIC)
+  #OR
+  height, width = img.shape[:2]
+  res = cv.resize(img,(2*width, 2*height), interpolation = cv.INTER_CUBIC)
+```
+
+#### 3.2.1.2. Translation
+
+- explain
+  - Translation is the shifting of an object's location.
+  - If you know the shift in the (x,y) direction and let it be (tx,ty),
+  - you can create the transformation matrix M as follows:
+
+    $ M =  \begin{bmatrix} 1&0&t_{x} \\ 0&1&t_{y} \end{bmatrix} $
+
+- You can take make it into a Numpy array of type np.float32 and pass it into the cv.warpAffine() function. See the below example for a shift of (100,50):
+
+  ```python
+  import numpy as np
+  import cv2 as cv
+  img = cv.imread('messi5.jpg',0)
+  rows,cols = img.shape
+  M = np.float32([[1,0,100],[0,1,50]])
+  dst = cv.warpAffine(img,M,(cols,rows))
+  cv.imshow('img',dst)
+  cv.waitKey(0)
+  cv.destroyAllWindows()
+  ```
+
+  ![opencv-8](./image/opencv-8.png)
+
+- warning
+  - The third argument of the cv.warpAffine() function is the size of the output image, which should be in the form of **(width, height)**.
+  - Remember width = number of columns, and height = number of rows.
+  - **different with (img.shape)**
+
+#### 3.2.1.3. Rotation
+
+- Rotation of an image for an angle θ is achieved by the transformation matrix of the form
+
+  $M = \begin{bmatrix}cosθ & -sinθ \\ sinθ & cosθ \end{bmatrix}$
+
+- But OpenCV provides scaled rotation with adjustable center of rotation so that you can rotate at any location you prefer. The modified transformation matrix is given by
+
+  $\begin{bmatrix}α & β & (1−α)⋅center.x−β⋅center.y\\ -β & α & β⋅center.x+(1−α)⋅center.y \end{bmatrix}$
+
+  where:
+
+  $α=scale⋅cosθ$,
+
+  $β=scale⋅sinθ$
+
+- To find this transformation matrix, OpenCV provides a function, `cv.getRotationMatrix2D`.
+
+- rotate the image by 90 degree with respect to center without any scaling.
+
+  ```python
+    img = cv.imread('messi5.jpg',0)
+    rows,cols = img.shape
+    # cols-1 and rows-1 are the coordinate limits.
+    M = cv.getRotationMatrix2D(((cols-1)/2.0,(rows-1)/2.0),90,1)
+    dst = cv.warpAffine(img,M,(cols,rows))
+  ```
+
+  ![opencv-9](./image/opencv-9.png)
+
+#### 3.2.1.4. Affine Transformation
+
+- explain
+  - In affine transformation, all parallel lines in the original image will still be parallel in the output image.
+  - To find the transformation matrix, we need three points from the input image and their corresponding locations in the output image.
+    > (2d图像，不再共条直线上的三个点可以确定基向量)
+  - Then `cv.getAffineTransform` will create a 2x3 matrix which is to be passed to cv.warpAffine.
+
+- example
+  ```python
+  img = cv.imread('drawing.png')
+  rows,cols,ch = img.shape
+  pts1 = np.float32([[50,50],[200,50],[50,200]])
+  pts2 = np.float32([[10,100],[200,50],[100,250]])
+  M = cv.getAffineTransform(pts1,pts2)
+  dst = cv.warpAffine(img,M,(cols,rows))
+  plt.subplot(121),plt.imshow(img),plt.title('Input')
+  plt.subplot(122),plt.imshow(dst),plt.title('Output')
+  plt.show()
+  ```
+
+  ![opencv-10](./image/opencv-10.png) 
+
+#### 3.2.1.5. Perspective Transformation
+
+- explain
+  - For perspective transformation, you need a 3x3 transformation matrix.
+  - Straight lines will remain straight even after the transformation.
+  - To find this transformation matrix
+    - you need **4 points on the input image and corresponding points on the output image**
+    - Among these 4 points, 3 of them should not be collinear.
+  - Then the transformation matrix can be found by the function `cv.getPerspectiveTransform`
+  - Then apply cv.warpPerspective with this 3x3 transformation matrix.
+
+- example
+
+  ```python
+  img = cv.imread('sudoku.png')
+  rows,cols,ch = img.shape
+  pts1 = np.float32([[56,65],[368,52],[28,387],[389,390]])
+  pts2 = np.float32([[0,0],[300,0],[0,300],[300,300]])
+  M = cv.getPerspectiveTransform(pts1,pts2)
+  dst = cv.warpPerspective(img,M,(300,300))
+  plt.subplot(121),plt.imshow(img),plt.title('Input')
+  plt.subplot(122),plt.imshow(dst),plt.title('Output')
+  plt.show()
+  ```
+
+  ![opencv-11](./image/opencv-11.png)
+
 ### 3.2.2. function
+
+- scaling
+  - `cv.resize()`
+    > [all InterpolationFlags](https://docs.opencv.org/4.x/da/d54/group__imgproc__transform.html#ga5bb5a1fea74ea38e1a5445ca803ff121)
+- Affine wTransformations
+  - `cv.warpAffine`
+  - `cv.getAffineTransform`
+    > cv.getAffineTransform(	src, dst	) ->	retval
+  - `cv.getRotationMatrix2D`
+    > cv.getRotationMatrix2D(	center, angle, scale	) ->	retval
+- Perspective Transform
+  - `cv.warpPerspective()`
+  - `cv.getPerspectiveTransform`
+    > cv.getPerspectiveTransform(	src, dst[, solveMethod]	) ->	retval
 
 ## 3.3. Image Thresholding
 
-Learn to convert images to binary images using global thresholding, Adaptive thresholding, Otsu's binarization etc
+> Learn to convert images to binary images using global thresholding, Adaptive thresholding, Otsu's binarization etc
 
 ### 3.3.1. example code
 
+#### 3.3.1.1. Simple/Global Thresholding
+
+- explain 
+  - For every pixel, the same threshold value is applied.
+  - If the pixel value is smaller than the threshold, it is set to 0,
+  - otherwise it is set to a maximum value.
+  - The function `cv.threshold` is used to apply the thresholding.
+- arg
+  - The first argument is the source image, which should be a grayscale image.
+  - The second argument is the threshold value which is used to classify the pixel values.
+  - The third argument is the maximum value which is assigned to pixel values exceeding the threshold.
+
+- thresholding types
+  - cv.THRESH_BINARY
+  - cv.THRESH_BINARY_INV
+  - cv.THRESH_TRUNC
+  - cv.THRESH_TOZERO
+  - cv.THRESH_TOZERO_INV
+
+  ![opencv-15](./image/opencv-15.png)
+
+- return
+  - The first is the threshold that was used 
+  - the second output is the thresholded image.
+
+- code
+
+  ```python
+  import cv2 as cv
+  import numpy as np
+  from matplotlib import pyplot as plt
+  img = cv.imread('gradient.png',0)
+  ret,thresh1 = cv.threshold(img,127,255,cv.THRESH_BINARY)
+  ret,thresh2 = cv.threshold(img,127,255,cv.THRESH_BINARY_INV)
+  ret,thresh3 = cv.threshold(img,127,255,cv.THRESH_TRUNC)
+  ret,thresh4 = cv.threshold(img,127,255,cv.THRESH_TOZERO)
+  ret,thresh5 = cv.threshold(img,127,255,cv.THRESH_TOZERO_INV)
+  titles = ['Original Image','BINARY','BINARY_INV','TRUNC','TOZERO','TOZERO_INV']
+  images = [img, thresh1, thresh2, thresh3, thresh4, thresh5]
+  for i in range(6):
+      plt.subplot(2,3,i+1),plt.imshow(images[i],'gray',vmin=0,vmax=255)
+      plt.title(titles[i])
+  plt.show()
+  ```
+
+  ![opencv-13](./image/opencv-13.png)
+
+#### 3.3.1.2. Adaptive Thresholding
+
+- why use adaptive Thresholding
+  - In the previous section, we used one global value as a threshold.
+  - But this might not be good in all cases, e.g. 
+  - if an image has different lighting conditions in different areas.
+  - In that case, adaptive thresholding can help.
+
+- what is Adaptive Thresholding
+  - Here, the algorithm determines the threshold for a pixel based on a small region around it.
+  - So we get different thresholds for different regions of the same image which gives better results for images with varying illumination.
+
+- arg
+	- src
+  - maxValue
+  - adaptiveMethod
+    > decides how the threshold value is calculated:
+    - [cv.ADAPTIVE_THRESH_MEAN_C](https://docs.opencv.org/4.x/d7/d1b/group__imgproc__misc.html#ggaa42a3e6ef26247da787bf34030ed772cad0c5199ae8637a6b195062fea4789fa9): The threshold value is the mean of the neighbourhood area minus the constant C.
+    - [cv.ADAPTIVE_THRESH_GAUSSIAN_C](https://docs.opencv.org/4.x/d7/d1b/group__imgproc__misc.html#ggaa42a3e6ef26247da787bf34030ed772caf262a01e7a3f112bbab4e8d8e28182dd): The threshold value is a gaussian-weighted sum of the neighbourhood values minus the constant C.
+  - thresholdType
+  - blockSize
+    > The blockSize determines the size of the neighbourhood area 
+  - C: offset
+    > C is a constant that is subtracted from the mean or weighted sum of the neighbourhood pixels.
+
+- code:
+  > The code below compares global thresholding and adaptive thresholding for an image with varying illumination:
+
+  ```python
+  import cv2 as cv
+  import numpy as np
+  from matplotlib import pyplot as plt
+  img = cv.imread('sudoku.png',0)
+  img = cv.medianBlur(img,5)
+  ret,th1 = cv.threshold(img,127,255,cv.THRESH_BINARY)
+  th2 = cv.adaptiveThreshold(img,255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,11,2)
+  th3 = cv.adaptiveThreshold(img,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY,11,2)
+  titles = ['Original Image', 'Global Thresholding (v = 127)',
+              'Adaptive Mean Thresholding', 'Adaptive Gaussian Thresholding']
+  images = [img, th1, th2, th3]
+  for i in range(4):
+      plt.subplot(2,2,i+1),plt.imshow(images[i],'gray')
+      plt.title(titles[i])
+      plt.xticks([]),plt.yticks([])
+  plt.show()
+  ```
+
+  ![opencv-12](./image/opencv-12.png)
+
+#### 3.3.1.3. Otsu's Binarization
+
+- why use Otsu's Binarization
+  - In global thresholding, we used an arbitrary chosen value as a threshold.
+  - In contrast, Otsu's method avoids having to choose a value and determines it automatically.
+
+- how Otsu's Binarization work
+  - Consider an image with only two distinct image values (bimodal image), where the histogram would only consist of two peaks.
+  - A good threshold would be in the middle of those two values
+  - Similarly, **Otsu's method determines an optimal global threshold value from the image histogram**
+
+- how to use
+  - `cv.threshold(img,thresh,maxval,cv.THRESH_OTSU)`
+  - The threshold value can be chosen arbitrary.
+  - The algorithm then finds the optimal threshold value which is returned as the first output.
+
+- example code
+  - Check out the example below.
+  - The input image is a noisy image.
+    - In the first case, global thresholding with a value of 127 is applied.
+    - In the second case, Otsu's thresholding is applied directly.
+    - In the third case, 
+      - the image is first filtered with a 5x5 gaussian kernel to remove the noise
+      - then Otsu thresholding is applied. See how noise filtering improves the result.
+
+  ```python
+    import cv2 as cv
+    import numpy as np
+    from matplotlib import pyplot as plt
+    img = cv.imread('noisy2.png',0)
+    # global thresholding
+    ret1,th1 = cv.threshold(img,127,255,cv.THRESH_BINARY)
+    # Otsu's thresholding
+    ret2,th2 = cv.threshold(img,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
+    # Otsu's thresholding after Gaussian filtering
+    blur = cv.GaussianBlur(img,(5,5),0)
+    ret3,th3 = cv.threshold(blur,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
+    # plot all the images and their histograms
+    images = [img, 0, th1,
+              img, 0, th2,
+              blur, 0, th3]
+    titles = ['Original Noisy Image','Histogram','Global Thresholding (v=127)',
+              'Original Noisy Image','Histogram',"Otsu's Thresholding",
+              'Gaussian filtered Image','Histogram',"Otsu's Thresholding"]
+    for i in range(3):
+        plt.subplot(3,3,i*3+1),plt.imshow(images[i*3],'gray')
+        plt.title(titles[i*3]), plt.xticks([]), plt.yticks([])
+        plt.subplot(3,3,i*3+2),plt.hist(images[i*3].ravel(),256)
+        plt.title(titles[i*3+1]), plt.xticks([]), plt.yticks([])
+        plt.subplot(3,3,i*3+3),plt.imshow(images[i*3+2],'gray')
+        plt.title(titles[i*3+2]), plt.xticks([]), plt.yticks([])
+    plt.show()
+  ```
+
+  ![opencv-14](./image/opencv-14.png)
+
+#### 3.3.1.4. How does Otsu's Binarization work?
+
+This section demonstrates a Python implementation of Otsu's binarization to show how it actually works.
+
+If you are not interested, you can skip this.
+
+Since we are working with bimodal images, Otsu's algorithm tries to find a threshold value (t) which minimizes the weighted within-class variance given by the relation:
+
+![opencv-16](./image/opencv-16.png)
+
+It actually finds a value of t which lies in between two peaks such that variances to both classes are minimal. It can be simply implemented in Python as follows:
+
+```python
+  img = cv.imread('noisy2.png',0)
+  blur = cv.GaussianBlur(img,(5,5),0)
+  # find normalized_histogram, and its cumulative distribution function
+  hist = cv.calcHist([blur],[0],None,[256],[0,256])
+  hist_norm = hist.ravel()/hist.sum()
+  Q = hist_norm.cumsum()
+  bins = np.arange(256)
+  fn_min = np.inf
+  thresh = -1
+  for i in range(1,256):
+      p1,p2 = np.hsplit(hist_norm,[i]) # probabilities
+      q1,q2 = Q[i],Q[255]-Q[i] # cum sum of classes
+      if q1 < 1.e-6 or q2 < 1.e-6:
+          continue
+      b1,b2 = np.hsplit(bins,[i]) # weights
+      # finding means and variances
+      m1,m2 = np.sum(p1*b1)/q1, np.sum(p2*b2)/q2
+      v1,v2 = np.sum(((b1-m1)**2)*p1)/q1,np.sum(((b2-m2)**2)*p2)/q2
+      # calculates the minimization function
+      fn = v1*q1 + v2*q2
+      if fn < fn_min:
+          fn_min = fn
+          thresh = i
+  # find otsu's threshold value with OpenCV function
+  ret, otsu = cv.threshold(blur,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
+  print( "{} {}".format(thresh,ret) )
+```
+
 ### 3.3.2. function
+
+- `cv.threshold`
+  - [ThresholdTypes](https://docs.opencv.org/4.x/d7/d1b/group__imgproc__misc.html#gaa9e58d2860d4afa658ef70a9b1115576)
+- `cv.adaptiveThreshold`
+- `cv.threshold(img,thresh,maxval,cv.THRESH_OTSU)`
 
 ## 3.4. Smoothing Images
 
-Learn to blur the images, filter the images with custom kernels etc.
+> Learn to blur the images, filter the images with custom kernels etc.
+>
+> - Blur images with various low pass filters
+> - Apply custom-made filters to images (2D convolution)
 
 ### 3.4.1. example code
 
+#### 3.4.1.1. 2D Convolution ( Image Filtering )
+
+- explain
+  - As in one-dimensional signals, images also can be filtered with various low-pass filters (LPF), high-pass filters (HPF), etc.
+  - use: LPF helps in removing noise, blurring images, etc. HPF filters help in finding edges in images.
+  - OpenCV provides a function cv.filter2D() to convolve a kernel with an image.
+  - As an example, we will try an averaging filter on an image. A 5x5 averaging filter kernel will look like the below:
+
+    $ K = \frac{1}{25} \begin{bmatrix} 1&1&1&1&1\\1&1&1&1&1\\1&1&1&1&1\\1&1&1&1&1\\1&1&1&1&1\\ \end{bmatrix} $
+
+- 5*5 mean
+
+  ```python
+    import numpy as np
+    import cv2 as cv
+    from matplotlib import pyplot as plt
+    img = cv.imread('opencv_logo.png')
+    kernel = np.ones((5,5),np.float32)/25
+    dst = cv.filter2D(img,-1,kernel)
+    plt.subplot(121),plt.imshow(img),plt.title('Original')
+    plt.xticks([]), plt.yticks([])
+    plt.subplot(122),plt.imshow(dst),plt.title('Averaging')
+    plt.xticks([]), plt.yticks([])
+    plt.show()
+  ```
+
+  > The operation works like this: keep this kernel above a pixel, add all the 25 pixels below this kernel, take the average, 
+  > and replace the central pixel with the new average value.
+  > This operation is continued for all the pixels in the image.
+
+  ![opencv-17](./image/opencv-17.png)
+
+#### 3.4.1.2. Image Blurring (Image Smoothing)
+
+- Image blurring is achieved by convolving the image with a **low-pass filter kernel**.
+- It is useful for removing noise.
+- It actually removes high frequency content (eg: noise, edges) from the image. 
+- So edges are blurred a little bit in this operation (there are also blurring techniques which don't blur the edges).
+- OpenCV provides four main types of blurring techniques.
+
+##### 3.4.1.2.1. Averaging
+
+- explain
+  - This is done by convolving an image with a normalized box filter.
+  - It simply takes the average of all the pixels under the kernel area and replaces the central element.
+  - This is done by the function `cv.blur()` or `cv.boxFilter()`.
+    > The call blur(src, dst, ksize, anchor, borderType) is equivalent to boxFilter(src, dst, src.type(), ksize, anchor, true, borderType). <br />
+    > Check the docs for more details about the kernel.
+  - We should specify the width and height of the kernel.
+  - A 3x3 normalized box filter would look like the below:
+
+  $ K = \frac{1}{9} \begin{bmatrix} 1&1&1\\1&1&1\\1&1&1 \end{bmatrix} $
+
+- notice
+  - If you don't want to use a normalized box filter, use cv.boxFilter().
+  - Pass an argument normalize=False to the function.
+
+- demo
+  ```python
+  import cv2 as cv
+  import numpy as np
+  from matplotlib import pyplot as plt
+  img = cv.imread('opencv-logo-white.png')
+  blur = cv.blur(img,(5,5))
+  plt.subplot(121),plt.imshow(img),plt.title('Original')
+  plt.xticks([]), plt.yticks([])
+  plt.subplot(122),plt.imshow(blur),plt.title('Blurred')
+  plt.xticks([]), plt.yticks([])
+  plt.show()
+  ```
+
+  ![opencv-18](./image/opencv-18.png)
+
+##### 3.4.1.2.2. Gaussian Blurring
+
+- explain
+  - In this method, instead of a box filter, a Gaussian kernel is used.
+  - It is done with the function, `cv.GaussianBlur()`.
+  - We should specify the width and height of the kernel which should be positive and odd. 
+  - We also should specify the standard deviation in the X and Y directions, sigmaX and sigmaY respectively.
+    - If only sigmaX is specified, sigmaY is taken as the same as sigmaX.
+    - If both are given as zeros, they are calculated from the kernel size.
+  - Gaussian blurring is highly effective in removing Gaussian noise from an image.
+  - If you want, you can create a Gaussian kernel with the function, `cv.getGaussianKernel()`.
+
+- The above code can be modified for Gaussian blurring:
+
+  ```python
+  blur = cv.GaussianBlur(img,(5,5),0)
+  ```
+
+  ![opencv-19](./image/opencv-19.png)
+
+##### 3.4.1.2.3. Median Blurring
+
+- explain
+  - The function `cv.medianBlur()` **takes the median of all the pixels under the kernel area** and **the central element is replaced with this median value**.
+  - This is highly effective against salt-and-pepper noise in an image.
+  - Interestingly, in the above filters, the central element is a newly calculated value which may be a pixel value in the image or a new value.
+  - But in median blurring, the central element is always replaced by some pixel value in the image.
+  - It reduces the noise effectively. 
+  - Its kernel size should be a positive odd integer.
+
+- demo
+
+  ```python
+  median = cv.medianBlur(img,5)
+  ```
+
+  ![opencv-20](./image/opencv-20.png) 
+
+##### 3.4.1.2.4. Bilateral Filtering
+
+- explain
+  - `cv.bilateralFilter()` is highly effective in noise removal **while keeping edges sharp**.
+  - But the operation is **slower** compared to other filters.
+  - Showcomming of Gaussian filter
+    - We already saw that a Gaussian filter takes the neighbourhood around the pixel and finds its Gaussian weighted average.
+    - This Gaussian filter is a function of space alone, that is, nearby pixels are considered while filtering.
+    - It doesn't consider whether pixels have almost the same intensity.
+    - It doesn't consider whether a pixel is an edge pixel or not.
+    - So it blurs the edges also, which we don't want to do.
+  - Improvement of Bilateral filtering 
+    - Bilateral filtering also takes a Gaussian filter in space, but **one more Gaussian filter which is a function of pixel difference**.
+    - The Gaussian function of space makes sure that **only nearby pixels are considered for blurring**,
+    - So it preserves the edges since pixels at edges will have large intensity variation.
+
+- The below sample shows use of a bilateral filter (For details on arguments, visit docs).
+
+  ```python
+  blur = cv.bilateralFilter(img,9,75,75)
+  ```
+
+  ![opencv-21](./image/opencv-21.png)
+ 
 ### 3.4.2. function
+
+- `cv.filter2D()`
+- `cv.blur()`
+- `cv.boxFilter()`
+- `cv.GaussianBlur()`
+- `cv.getGaussianKernel()`
+- `cv.medianBlur()`
+- `cv.bilateralFilter()`
 
 ## 3.5. Morphological Transformations
 
@@ -924,6 +1507,86 @@ Learn to extract foreground with GrabCut algorithm
 
 In this section you will learn about feature detectors and descriptors
 
+## 4.1. Understanding Features
+
+What are the main features in an image? How can finding those features be useful to us?
+
+### 4.1.1. example code
+
+### 4.1.2. function
+
+## 4.2. Harris Corner Detection
+
+Okay, Corners are good features? But how do we find them?
+
+### 4.2.1. example code
+
+### 4.2.2. function
+
+## 4.3. Shi-Tomasi Corner Detector & Good Features to Track
+
+We will look into Shi-Tomasi corner detection
+
+### 4.3.1. example code
+
+### 4.3.2. function
+
+## 4.4. Introduction to SIFT (Scale-Invariant Feature Transform)
+
+Harris corner detector is not good enough when scale of image changes. Lowe developed a breakthrough method to find scale-invariant features and it is called SIFT
+
+### 4.4.1. example code
+
+### 4.4.2. function
+
+## 4.5. Introduction to SURF (Speeded-Up Robust Features)
+
+SIFT is really good, but not fast enough, so people came up with a speeded-up version called SURF.
+
+### 4.5.1. example code
+
+### 4.5.2. function
+
+## 4.6. FAST Algorithm for Corner Detection
+
+All the above feature detection methods are good in some way. But they are not fast enough to work in real-time applications like SLAM. There comes the FAST algorithm, which is really "FAST".
+
+### 4.6.1. example code
+
+### 4.6.2. function
+
+## 4.7. BRIEF (Binary Robust Independent Elementary Features)
+
+SIFT uses a feature descriptor with 128 floating point numbers. Consider thousands of such features. It takes lots of memory and more time for matching. We can compress it to make it faster. But still we have to calculate it first. There comes BRIEF which gives the shortcut to find binary descriptors with less memory, faster matching, still higher recognition rate.
+
+### 4.7.1. example code
+
+### 4.7.2. function
+
+## 4.8. ORB (Oriented FAST and Rotated BRIEF)
+
+SIFT and SURF are good in what they do, but what if you have to pay a few dollars every year to use them in your applications? Yeah, they are patented!!! To solve that problem, OpenCV devs came up with a new "FREE" alternative to SIFT & SURF, and that is ORB.
+
+### 4.8.1. example code
+
+### 4.8.2. function
+
+## 4.9. Feature Matching
+
+We know a great deal about feature detectors and descriptors. It is time to learn how to match different descriptors. OpenCV provides two techniques, Brute-Force matcher and FLANN based matcher.
+
+### 4.9.1. example code
+
+### 4.9.2. function
+
+## 4.10. Feature Matching + Homography to find Objects
+
+Now we know about feature matching. Let's mix it up with calib3d module to find objects in a complex image.
+
+### 4.10.1. example code
+
+### 4.10.2. function
+
 # 5. Video analysis (video module)
 
 In this section you will learn different techniques to work with videos like object tracking etc.
@@ -954,3 +1617,5 @@ In this section, we will see how OpenCV-Python bindings are generated
 - [OpenCV Image Processing doc](https://docs.opencv.org/4.x/d7/dbd/group__imgproc.html)
 - [如何理解图像深度- 8bit、16bit、24bit、32bi](https://blog.csdn.net/qq_41498261/article/details/104898045)
 - [2.2. Advanced NumPy](http://scipy-lectures.org/advanced/advanced_numpy/index.html#advanced-numpy)
+- [HSV颜色模型](https://zhuanlan.zhihu.com/p/67930839)
+- [线性变换与仿射变换](https://www.zhihu.com/question/20666664)
