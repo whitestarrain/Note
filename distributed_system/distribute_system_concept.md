@@ -1148,4 +1148,7 @@ public class ConsistentHashingWithoutVirtualNode {
 - [【RPC】SpringCloud简介 & RPC与Restful API关系（三）](https://blog.csdn.net/weixin_33724659/article/details/92518863)
 - [ ] [微服务架构设计](https://gudaoxuri.gitbook.io/microservices-architecture/)
 - [ ] [什么是 Service Mesh](https://zhuanlan.zhihu.com/p/61901608)
+- []()
+- [ ] [缓存一致性最佳实践](https://mp.weixin.qq.com/s/vuqFtP1NWR2wi4VgtoLT9A)
+
 

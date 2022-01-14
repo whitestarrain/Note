@@ -18,21 +18,23 @@
 
 ### Spring
 
-#### 事务失效
+#### 事务失效场景
+
+<!-- https://z.itpub.net/article/detail/18A4D9564A61EC7AF8EAA66FCA251444 -->
 
 #### 异步+事务
 
-#### 循环嵌套+try-catch
+#### 事务嵌套+try-catch
 
 <!-- https://blog.51cto.com/u_3631118/3119745 -->
 
-#### pom打包方式导致多环境配置失效
+#### maven pom打包方式导致多环境配置失效
 
 ### SpringCloud
 
 ### Mybatis
 
-### null值更新问题
+#### null值更新问题
 
 > 通过if可以设置null值不更新，
 >

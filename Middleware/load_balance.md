@@ -552,8 +552,6 @@ lvs和nginx都是现在很主流的负载均衡方式，他们各有优缺点，
 | 转发方式       | 同步转发lvs服务器接收到请求之后，立即redirect到一个后端服务器，由客户端直接和后端服务器建立连接。 | 异步转发在保持客户端连接的同时，发起一个相同内容的新请求到后端，等后端返回结果后，由nginx返回给客户端 |
 | 其他           |                                                              | 支持rewrite重写规则：能够根据域名、url的不同，将http请求分到不同的后端服务器群组。节省带宽：支持gzip压缩，可以添加浏览器本地缓存的header头。 |
 
-
-
 > **【两者配合】**
 
 在使用上，一般最前端所采取的的策略应是lvs，也就是dns的指向应为lvs均衡器，主要原因在于nginx虽然功能强大，但是当作为后端的服务器规模庞大时，nginx的网络带宽就成了一个巨大的瓶颈。
@@ -566,3 +564,4 @@ lvs和nginx都是现在很主流的负载均衡方式，他们各有优缺点，
 
 - [2W 字总结 ！体系化带你全面认识 Nginx](https://blog.p2hp.com/archives/7982)
 - [nginx平台初探(100%)](http://tengine.taobao.org/book/chapter_02.html)
+- [四层和七层负载均衡的区别](https://mp.weixin.qq.com/s/MoLGPsgrx91pFBqwm9ondw)

@@ -1,7 +1,7 @@
 - **`git <command> -h`** 查看简单帮助
 - **`git help <command>`** 查看详细帮助
 
-# 1. 基本整理
+# 1. 基本命令整理
 
 > 说明：此文件只是 git 常用指令，如果想要了解原理及指令的话去看 git 官方用户文档。十分推荐 <br />
 > [文档地址](https://git-scm.com/book) <br />
@@ -246,7 +246,6 @@
 
 ## 1.12. 重置
 
-
 - 三棵树：
   > ![git-tree](./image/git-tree.png)
   - HARD指针
@@ -320,7 +319,6 @@
 - `git am --signoff < patch_path` 打补丁
   > (使用-s或--signoff选项，可以commit信息中加入Signed-off-by信息)
 
-
 ## 1.15. gitignore
 
 ```
@@ -392,3 +390,232 @@
 
   Port 443 /*修改端口为443*/
   ```
+
+# 2. git提交规范-Angular
+
+## 2.1. git 规范作用
+
+- 提供更多的历史信息，方便快速浏览。
+  - 下面的命令显示上次发布后的变动，每个commit占据一行
+  - 只看行首，就知道某次 commit 的目的。
+
+  ```bash
+  $ git log <last tag> HEAD --pretty=format:%s
+  ```
+
+  ![git-14.png](./image/git-14.png)
+
+- 可以过滤某些commit（比如文档改动），便于快速查找信息
+  - 比如，下面的命令仅仅显示本次发布新增加的功能。
+
+  ```bash
+  $ git log <last release> HEAD --grep feature
+  ```
+
+- 可以直接从commit生成Change log
+  > Change Log 是发布新版本时，用来说明与上一个版本差异的文档
+
+  ![git-15.png](./image/git-15.png)
+
+## 2.2. 普通提交格式
+
+### 2.2.1. 格式
+
+- 格式
+  ```
+  <type>(<scope>): <subject>
+  // 空一行
+  <body>
+  // 空一行
+  <footer>
+  ```
+- 要求
+  - 其中，Header 是必需的，Body 和 Footer 可以省略。
+  - 不管是哪一个部分，任何一行都不得超过72个字符（或100个字符）。这是为了避免自动换行影响美观。
+
+### 2.2.2. Header
+
+- type:
+  - 作用：用于说明 commit 的类别
+  - 类别：只允许使用下面7个标识。
+    - feat：新功能（feature）
+    - fix：修补bug
+    - docs：文档（documentation）
+    - style： 格式（不影响代码运行的变动）
+    - refactor：重构（即不是新增功能，也不是修改bug的代码变动）
+    - test：增加测试
+    - chore：构建过程或辅助工具的变动
+  - 与change log关系
+    - 如果`type`为`feat`和`fix`，则该 commit 将肯定出现在 Change log 之中
+    - 其他情况（`docs`、`chore`、`style`、`refactor`、`test`）由自己决定要不要放入 Change log，建议是不要。
+- scope
+  - `scope`用于说明 commit 影响的范围
+  - 比如数据层、控制层、视图层等等，视项目不同而不同。
+- subject
+  - 说明：是 commit 目的的简短描述，不超过50个字符
+  - 规范：
+    - 以动词开头，使用第一人称现在时，比如`change`，而不是`changed`或`changes`
+    - 第一个字母小写
+    - 结尾不加句号（`.`）
+
+### 2.2.3. Body
+
+- 说明：Body 部分是对本次 commit 的详细描述，可以分成多行
+- 规范：
+  - 使用第一人称现在时，比如使用`change`而不是`changed`或`changes`。
+  - 应该说明代码变动的动机，以及与以前行为的对比。
+- 范例
+
+  ```bash
+  More detailed explanatory text, if necessary.  Wrap it to 
+  about 72 characters or so. 
+
+  Further paragraphs come after blank lines.
+
+  - Bullet points are okay, too
+  - Use a hanging indent
+  ```
+
+### 2.2.4. Footer
+
+> **说明**
+
+- Footer 部分只用于两种情况
+  - 不兼容变动
+  - 关闭Issue
+
+> **情况1：不兼容变动** 
+
+- 说明 
+  - 如果当前代码与上一个版本不兼容，则 Footer 部分以`BREAKING CHANGE`开头，后面是对变动的描述、以及变动理由和迁移方法。
+
+- 示例
+
+  ```bash
+  BREAKING CHANGE: isolate scope bindings definition has changed.
+
+      To migrate the code follow the example below:
+
+      Before:
+
+      scope: {
+        myAttr: 'attribute',
+      }
+
+      After:
+
+      scope: {
+        myAttr: '@',
+      }
+
+      The removed `inject` wasn't generaly useful for directives so there should be no code using it.
+  ```
+
+> **情况2：关闭Issue** 
+
+- 说明：如果当前 commit 针对某个issue，那么可以在 Footer 部分关闭这个 issue 。
+
+- 示例
+  - 关闭一个
+    ```bash
+    Closes #234
+    ```
+  - 关闭多个
+
+    ```bash
+    Closes #123, #245, #992
+    ```
+
+## 2.3. 特殊提交：Revert
+
+- 说明：有一种特殊情况，如果当前 commit 用于撤销以前的 commit
+
+- 规范：
+  - 则必须以`revert:`开头，后面跟着被撤销 Commit 的 Header。
+  - Body部分的格式是固定的，必须写成`This reverts commit &lt;hash>.`，其中的`hash`是被撤销 commit 的 SHA 标识符。
+
+- 示例
+
+  ```bash
+  revert: feat(pencil): add 'graphiteWidth' option
+
+  This reverts commit 667ecc1654a317a13331b17617d973392f415f02.
+  ```
+
+- change log 关系
+  - 如果当前 commit 与被撤销的 commit，在同一个发布（release）里面，那么它们都不会出现在 Change log 里面
+  - 如果两者在不同的发布，那么当前 commit，会出现在 Change log 的`Reverts`小标题下面。
+
+## 2.4. 提交生成工具:commitizen
+
+- [Commitizen](https://github.com/commitizen/cz-cli)是一个撰写合格 Commit message 的工具。
+
+- 安装：
+
+  ```bash
+  $ npm install -g commitizen
+  ```
+
+- 配置:然后，在项目目录里，运行下面的命令，使其支持 Angular 的 Commit message 格式。
+
+  ```bash
+  $ commitizen init cz-conventional-changelog --save --save-exact
+  ```
+
+- 使用
+  - 以后，凡是用到`git commit`命令，一律改为使用`git cz`
+  - 这时，就会出现选项，用来生成符合格式的 Commit message。
+
+  ![git-16.png](./image/git-16.png)
+
+## 2.5. 生成 Change log
+
+- 说明
+  - 如果你的所有 Commit 都符合 Angular 格式
+  - 那么发布新版本时， Change log 就可以用脚本自动生成（[例1](https://github.com/ajoslin/conventional-changelog/blob/master/CHANGELOG.md)，[例2](https://github.com/karma-runner/karma/blob/master/CHANGELOG.md)，[例3](https://github.com/btford/grunt-conventional-changelog/blob/master/CHANGELOG.md)）。
+- 生成的文档包括以下三个部分
+  - New features
+  - Bug fixes
+  - Breaking changes.
+- 每个部分都会罗列相关的 commit ，并且有指向这些 commit 的链接
+  > 当然，生成的文档允许手动修改，所以发布前，你还可以添加其他内容。
+
+
+- 工具
+  - 说明：[conventional-changelog](https://github.com/ajoslin/conventional-changelog) 就是生成 Change log 的工具，运行下面的命令即可。
+  - 安装
+    ```bash
+    $ npm install -g conventional-changelog
+    ```
+  - 使用
+    - 不覆盖以前的 Change log，只会在`CHANGELOG.md`的头部加上自从上次发布以来的变动。
+
+      ```bash
+      $ cd my-project
+      $ conventional-changelog -p angular -i CHANGELOG.md -w
+      ```
+    - 生成所有发布的 Change log
+
+      ```bash
+      $ conventional-changelog -p angular -i CHANGELOG.md -w -r 0
+      ```
+
+- 为了方便使用
+  - 可以将其写入`package.json`的`scripts`字段。
+
+    ```javascript
+    {
+      "scripts": {
+        "changelog": "conventional-changelog -p angular -i CHANGELOG.md -w -r 0"
+      }
+    }
+    ```
+  - 以后，直接运行下面的命令即可。
+
+    ```bash
+    $ npm run changelog
+    ```
+
+# 3. 参考资料
+
+- [ ] [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)

@@ -2432,5 +2432,7 @@ public class JdbcConfig {
 
 # 7. SPEL
 
-待做
+# 参考资料
 
+- [ ][Spring事务失效的12个场景](https://z.itpub.net/article/detail/18A4D9564A61EC7AF8EAA66FCA251444)
+- [ ][@Transactional提交时间点的分析](https://mp.weixin.qq.com/s/how7s_dxWGmmDja14WIAXw)

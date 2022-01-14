@@ -2293,3 +2293,6 @@ class Bean {
   - 线上生产系统 OOM 如何监控及定位与解决？
   - 高并发系统如何基于 G1 垃圾回收器优化性能？
 
+# 参考资料
+
+- [ ][JVM调优的几种场景](https://mp.weixin.qq.com/s/VAvqirv2c22viJNZ92WiNg)

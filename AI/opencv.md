@@ -1262,7 +1262,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
 
 ### 3.4.1. example code
 
-#### 3.4.1.1. 2D Convolution ( Image Filtering )
+#### 3.4.1.1. 2D Convolution (Image Filtering)
 
 - explain
   - As in one-dimensional signals, images also can be filtered with various low-pass filters (LPF), high-pass filters (HPF), etc.
@@ -1409,33 +1409,488 @@ It actually finds a value of t which lies in between two peaks such that varianc
 
 ## 3.5. Morphological Transformations
 
-Learn about morphological transformations like Erosion, Dilation, Opening, Closing etc
+> Learn about morphological transformations like Erosion, Dilation, Opening, Closing etc
+> 
+> - Morphological transformations are some simple operations based on the image shape.
+> - It is normally performed on **binary images**.
+> - It needs two inputs
+>   - one is our original image
+>   - second one is called structuring element or kernel which decides the nature of operation.
+> - Two basic morphological operators
+>   - Erosion 
+>   - Dilation.
+> - its variant forms
+>   - Opening
+>   - Closing
+>   - Gradient 
+>   - etc...
+
+![opencv-22](./image/opencv-22.png)
 
 ### 3.5.1. example code
 
+#### 3.5.1.1. Erosion
+
+- explain
+  - The basic idea of erosion is just like soil erosion only
+  - it erodes away the boundaries of foreground object (Always try to keep foreground in white)
+  - what it does
+    - The kernel slides through the image (as in 2D convolution).
+    - A pixel in the original image (either 1 or 0) will be considered 1 **only if all the pixels under the kernel is 1** 
+    - otherwise it is eroded (made to zero).
+  - what happends is that
+    - all the pixels near boundary will be discarded depending upon the size of kernel.
+    - So the thickness or size of the foreground object decreases or simply white region decreases in the image.
+    - It is useful for removing small white noises (as we have seen in colorspace chapter), detach two connected objects etc.
+
+
+- demo
+
+  ```python
+  import cv2 as cv
+  import numpy as np
+  img = cv.imread('j.png',0)
+  kernel = np.ones((5,5),np.uint8)
+  erosion = cv.erode(img,kernel,iterations = 1)
+  ```
+
+  ![opencv-23](./image/opencv-23.png)
+
+#### 3.5.1.2. Dilation
+
+- explain
+  - It is just **opposite of erosion**.
+    - Here, a pixel element is '1' if **at least one pixel under the kernel is '1'**.
+    - So it increases the white region in the image or size of foreground object increases.
+  - use in nosie remove
+    - **erosion is followed by dilation**(opening).
+    - Because, erosion removes white noises, but it also shrinks our object.
+    - So we dilate it. Since noise is gone, they won't come back, but our object area increases.
+  - It is also useful in joining broken parts of an object.
+
+- demo
+  ```python
+  dilation = cv.dilate(img,kernel,iterations = 1)
+  ```
+
+  ![opencv-24](./image/opencv-24.png)
+
+#### 3.5.1.3. Opening
+
+- explained
+  - Opening is just another name of **erosion followed by dilation**
+  - It is useful in removing noise, as we explained above. Here we use the function, cv.morphologyEx()
+
+- demo
+
+  ```python
+  opening = cv.morphologyEx(img, cv.MORPH_OPEN, kernel)
+  ```
+
+  ![opencv-25](./image/opencv-25.png)
+
+#### 3.5.1.4. Closing
+
+- explain
+  - Closing is reverse of Opening, Dilation followed by Erosion.
+  - It is useful in closing small holes inside the foreground objects, or small black points on the object.
+
+- demo
+
+  ```python
+  closing = cv.morphologyEx(img, cv.MORPH_CLOSE, kernel)
+  ```
+
+  ![opencv-26](./image/opencv-26.png)
+
+#### 3.5.1.5. Morphological Gradient
+
+- explain
+  - It is the difference between dilation and erosion of an image.
+  - The result will look like the outline of the object.
+
+- demo
+
+  ```python
+  gradient = cv.morphologyEx(img, cv.MORPH_GRADIENT, kernel)
+  ```
+
+  ![opencv-27](./image/opencv-27.png)
+
+#### 3.5.1.6. Top Hat
+
+- explain
+  - It is **the difference between input image and Opening of the image**.
+
+- demo: Below example is done for a 9x9 kernel.
+
+  ```python
+  tophat = cv.morphologyEx(img, cv.MORPH_TOPHAT, kernel)
+  ```
+
+  ![opencv-28](./image/opencv-28.png)
+
+#### 3.5.1.7. Black Hat
+
+- explain
+  - It is the **difference between the closing of the input image and input image**.
+- demo
+
+  ```python
+  blackhat = cv.morphologyEx(img, cv.MORPH_BLACKHAT, kernel)
+  ```
+
+  ![opencv-29](./image/opencv-29.png)
+
+#### 3.5.1.8. Get Shaped Kernel
+
+- explain
+  - We manually created a structuring elements in the previous examples with help of Numpy. It is rectangular shape.
+  - But in some cases, you may need elliptical/circular shaped kernels. 
+  - So for this purpose, OpenCV has a function, `cv.getStructuringElement()`.
+  - You just pass the shape and size of the kernel, you get the desired kernel.
+
+- demo
+
+  ```python
+  # Rectangular Kernel
+  >>> cv.getStructuringElement(cv.MORPH_RECT,(5,5))
+  array([[1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1]], dtype=uint8)
+  # Elliptical Kernel
+  >>> cv.getStructuringElement(cv.MORPH_ELLIPSE,(5,5))
+  array([[0, 0, 1, 0, 0],
+         [1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1],
+         [0, 0, 1, 0, 0]], dtype=uint8)
+  # Cross-shaped Kernel
+  >>> cv.getStructuringElement(cv.MORPH_CROSS,(5,5))
+  array([[0, 0, 1, 0, 0],
+         [0, 0, 1, 0, 0],
+         [1, 1, 1, 1, 1],
+         [0, 0, 1, 0, 0],
+         [0, 0, 1, 0, 0]], dtype=uint8)
+  ```
+
 ### 3.5.2. function
+
+- `cv.erode()`
+- `cv.dilation()`
+- `cv.morphologyEx()`
+  - [All MorphTypes](https://docs.opencv.org/4.x/d4/d86/group__imgproc__filter.html#ga7be549266bad7b2e6a04db49827f9f32)
+- `cv.getStructuringElement()`
+  - [all shape](https://docs.opencv.org/4.x/d4/d86/group__imgproc__filter.html#gac2db39b56866583a95a5680313c314ad)
 
 ## 3.6. Image Gradients
 
-Learn to find image gradients, edges etc.
+> Learn to find image gradients, edges etc.
 
 ### 3.6.1. example code
 
+#### 3.6.1.1. Sobel and Scharr Derivatives
+
+- Sobel operators is a joint Gausssian smoothing plus differentiation operation, so it is more resistant to noise.
+- **specify the direction of derivatives**
+  - vertical or horizontal
+  - by the arguments, yorder and xorder respectively
+
+  $ G_{x} = \begin{bmatrix} -1&0&1 \\ -2&0&2 \\ -1&0&1  \end{bmatrix} $
+
+  $ G_{y} = \begin{bmatrix} -1&-2&-1 \\ 0&0&0 \\ 1&2&1  \end{bmatrix} $
+
+- **specify the size of kernel**
+  - by the argument ksize.
+  - If ksize = -1, a 3x3 Scharr filter is used which gives better results than 3x3 Sobel filter.
+    > for the x-derivative
+    >
+    > $\begin{bmatrix} -3&0&3\\ -10&0&10& \\ -3&0&3 \end{bmatrix}$
+    >
+    > and transposed for the y-derivative.
+
+#### 3.6.1.2. Laplacian Derivatives
+
+- It calculates the Laplacian of the image given by the relation, $Δsrc=\frac{∂^{2}src}{∂x^{2}}+\frac{∂^{2}src}{∂y^{2}}$ where each derivative is found using Sobel derivatives.
+- If ksize = 1, then following kernel is used for filtering:
+
+  $kernel = \begin{bmatrix} 0&1&0\\ 1&-1&4& \\ 0&1&0 \end{bmatrix}$
+
+
+#### 3.6.1.3. Demo
+
+```python
+import numpy as np
+import cv2 as cv
+from matplotlib import pyplot as plt
+img = cv.imread('dave.jpg',0)
+laplacian = cv.Laplacian(img,cv.CV_64F)
+sobelx = cv.Sobel(img,cv.CV_64F,1,0,ksize=5)
+sobely = cv.Sobel(img,cv.CV_64F,0,1,ksize=5)
+plt.subplot(2,2,1),plt.imshow(img,cmap = 'gray')
+plt.title('Original'), plt.xticks([]), plt.yticks([])
+plt.subplot(2,2,2),plt.imshow(laplacian,cmap = 'gray')
+plt.title('Laplacian'), plt.xticks([]), plt.yticks([])
+plt.subplot(2,2,3),plt.imshow(sobelx,cmap = 'gray')
+plt.title('Sobel X'), plt.xticks([]), plt.yticks([])
+plt.subplot(2,2,4),plt.imshow(sobely,cmap = 'gray')
+plt.title('Sobel Y'), plt.xticks([]), plt.yticks([])
+plt.show()
+```
+
+![opencv-30](./image/opencv-30.png)
+
+#### 3.6.1.4. Notice:One Important Matter!
+
+- explain
+  - In our last example, output datatype is cv.CV_8U or np.uint8. 
+  - But there is a slight problem with that.
+  - Black-to-White transition is taken as **Positive slope** (it has a positive value),
+  - while White-to-Black transition is taken as a **Negative slope** (It has negative value).
+  - So when you convert data to np.uint8, **all negative slopes are made zero** 
+  - In simple words, **you miss that edge**.
+  - If you want to detect both edges, better option is to keep the output datatype to some higher forms
+    - like cv.CV_16S, cv.CV_64F etc,
+    - take its absolute value and then convert back to cv.CV_8U.
+    - Below code demonstrates this procedure for a horizontal Sobel filter and difference in results.
+
+- demo:
+  ```python
+  import numpy as np
+  import cv2 as cv
+  from matplotlib import pyplot as plt
+  img = cv.imread('box.png',0)
+  # Output dtype/ddepth = cv.CV_8U
+  sobelx8u = cv.Sobel(img,cv.CV_8U,1,0,ksize=5)
+  # Output dtype = cv.CV_64F. Then take its absolute and convert to cv.CV_8U
+  sobelx64f = cv.Sobel(img,cv.CV_64F,1,0,ksize=5)
+  abs_sobel64f = np.absolute(sobelx64f) # or cv.convertScaleAbs(img)
+  sobel_8u = np.uint8(abs_sobel64f)
+  plt.subplot(1,3,1),plt.imshow(img,cmap = 'gray')
+  plt.title('Original'), plt.xticks([]), plt.yticks([])
+  plt.subplot(1,3,2),plt.imshow(sobelx8u,cmap = 'gray')
+  plt.title('Sobel CV_8U'), plt.xticks([]), plt.yticks([])
+  plt.subplot(1,3,3),plt.imshow(sobel_8u,cmap = 'gray')
+  plt.title('Sobel abs(CV_64F)'), plt.xticks([]), plt.yticks([])
+  plt.show()
+  ```
+
+  ![opencv-31](./image/opencv-31.png)
+
 ### 3.6.2. function
+
+- `cv.Sobel()`
+- `cv.Scharr()`
+- `cv.laplacian()`
+- `cv.convertScaleAbs()`
 
 ## 3.7. Canny Edge Detection
 
-Learn to find edges with Canny Edge Detection
+> Learn to find edges with Canny Edge Detection
 
-### 3.7.1. example code
+### 3.7.1. Theory(procedure)
 
-### 3.7.2. function
+#### 3.7.1.1. Noise Reduction
+
+- first step is to **remove the noise in the image** with a **5x5 Gaussian filter**.
+- We have already seen this in previous chapters.
+
+#### 3.7.1.2. Finding Intensity Gradient of the Image
+
+- Smoothened image is then filtered with a Sobel kernel in both horizontal and vertical direction to get first derivative in horizontal direction ( Gx) and vertical direction ( Gy). 
+- From these two images, we can find edge gradient and direction for each pixel as follows:
+
+  $Edge_Gradient(G)=\sqrt{G^{2}_{x}+G^{2}_{y}}$
+
+  $Angle(θ)=tan^{−1}(\frac{G_{y}}{G_{x}})$
+
+- Gradient direction is always perpendicular to edges.
+- It is rounded to one of four angles **representing vertical, horizontal and two diagonal directions**.
+
+#### 3.7.1.3. Non-maximum Suppression
+
+- After getting gradient magnitude and direction, a full scan of image is done to remove any unwanted pixels which may not constitute the edge.
+- at every pixel
+  - **for every direction (vertical, horizontal and two diagonal directions)**
+  - pixel is checked if it is a local maximum in its neighborhood in the direction of gradient.
+
+- example
+
+  ![opencv-32](./image/opencv-32.png)
+
+  - Point A is on the edge ( in vertical direction).
+  - Point B and C are in gradient directions. 
+  - So point A is checked with point B and C to see if it forms a local maximum.
+  - If so, it is considered for next stage, otherwise, it is suppressed (put to zero).
+
+- In short, the result you get is a binary image with "thin edges".
+
+#### 3.7.1.4. Hysteresis Thresholding
+
+- This stage decides which are all edges are really edges and which are not.
+- For this, we need two threshold values, minVal and maxVal.
+  - Any edges with intensity gradient more than maxVal are sure to be edges 
+  - and those below minVal are sure to be non-edges, so discarded.
+  - Those who lie between these two thresholds are classified edges or non-edges based on their connectivity.
+    - If they are connected to "sure-edge" pixels, they are considered to be part of edges.
+    - Otherwise, they are also discarded. See the image below:
+
+- example
+
+  ![opencv-33](./image/opencv-33.png)
+
+  - A: The edge A is above the maxVal, so considered as "sure-edge".
+  - C: Although edge C is below maxVal, it is connected to edge A, so that also considered as valid edge and we get that full curve.
+  - B: But edge B, although it is above minVal and is in same region as that of edge C, it is not connected to any "sure-edge", so that is discarded.
+  - So it is very important that we have to select minVal and maxVal accordingly to get the correct result.
+
+- This stage **also removes small pixels noises** on the assumption that edges are long lines.
+
+### 3.7.2. Canny Edge Detection in OpenCV
+
+- OpenCV **puts all the above in single function**, `cv.Canny()`.
+- We will see how to use it
+  - First argument is our input image
+  - Second and third arguments are our minVal and maxVal respectively. 
+  - Fourth argument is aperture_size
+    - It is the size of Sobel kernel used for find image gradients.
+    - By default it is 3.
+  - Last argument is L2gradient which specifies the equation for finding gradient magnitude. 
+    - If it is True, it uses the equation mentioned above which is more accurate
+    - otherwise it uses this function: $Edge_Gradient(G)=|G_{x}|+|G_{y}|$.
+    - By default, it is False.
+
+- example
+
+  ```python
+  import numpy as np
+  import cv2 as cv
+  from matplotlib import pyplot as plt
+  img = cv.imread('messi5.jpg',0)
+  edges = cv.Canny(img,100,200)
+  plt.subplot(121),plt.imshow(img,cmap = 'gray')
+  plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+  plt.subplot(122),plt.imshow(edges,cmap = 'gray')
+  plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+  plt.show()
+  ```
+
+  ![opencv-34](./image/opencv-34.png)
+
+### 3.7.3. function
+
+- `cv.Canny()`
 
 ## 3.8. Image Pyramids
 
-Learn about image pyramids and how to use them for image blending
+> Learn about image pyramids and how to use them for image blending
+>
+> - learn about Image Pyramids
+> - use Image pyramids to blend image
 
 ### 3.8.1. example code
+
+#### 3.8.1.1. Theory
+
+- Normally, we used to work with an image of constant size.
+- But on some occasions, we need to **work with (the same) images in different resolution**
+  - For example, while searching for something in an image, like face, we are not sure at what size the object will be present in said image.
+  - In that case, we will need to create a set of the same image with different resolutions and search for object in all of them.
+  - These set of images with different resolutions are called Image Pyramids 
+    > because when they are kept in a stack with the highest resolution image at the bottom and the lowest resolution image at top, it looks like a pyramid
+- There are two kinds of Image Pyramids
+  - 1) **Gaussian Pyramid**
+    - Higher level (Low resolution) in a Gaussian Pyramid is formed by removing consecutive rows and columns in Lower level (higher resolution) image. 
+    - Then each pixel in higher level is formed by the contribution from 5 pixels in underlying level with gaussian weights.
+    - By doing so, a M×N image becomes M/2×N/2 image. So area reduces to one-fourth of original area. It is called an Octave.
+    - The same pattern continues as we go upper in pyramid (ie, resolution decreases).
+    - Similarly while expanding, area becomes 4 times in each level.
+    - We can find Gaussian pyramids using cv.pyrDown() and cv.pyrUp() functions.
+
+    ```python
+    img = cv.imread('messi5.jpg')
+    lower_reso = cv.pyrDown(higher_reso)
+    ```
+
+    ![opencv-36](./image/opencv-36.png)
+
+    ```python
+    higher_reso2 = cv.pyrUp(lower_reso)
+    ```
+
+    ![opencv-37](./image/opencv-37.png)
+
+  - 2) **Laplacian Pyramids**
+    - Laplacian Pyramids are formed from the Gaussian Pyramids. **There is no exclusive function for that**.
+    - Laplacian pyramid images are like **edge images only**. Most of its elements are zeros.
+    - They are **used in image compression**.
+    - A level in Laplacian Pyramid is formed by **the difference between that level in Gaussian Pyramid and expanded version of its upper level in Gaussian Pyramid**.
+    - The three levels of a Laplacian level will look like below (contrast is adjusted to enhance the contents):
+
+    ![opencv-35](./image/opencv-35.png)
+
+#### 3.8.1.2. Image Blending using Pyramids
+
+- One application of Pyramids is Image Blending.
+- For example, in image stitching, you will need to stack two images together, but it may not look good due to discontinuities between images.
+- In that case, image blending with Pyramids gives you seamless blending without leaving much data in the images.
+- One classical example of this is the blending of two fruits, Orange and Apple:
+
+  - Load the two images of apple and orange
+  - Find the Gaussian Pyramids for apple and orange (in this particular example, number of levels is 6)
+  - From Gaussian Pyramids, find their Laplacian Pyramids
+  - Now join the left half of apple and right half of orange in each levels of Laplacian Pyramids
+  - Finally from this joint image pyramids, reconstruct the original image.
+
+  ```python
+  import cv2 as cv
+  import numpy as np,sys
+  A = cv.imread('apple.jpg')
+  B = cv.imread('orange.jpg')
+  # generate Gaussian pyramid for A
+  G = A.copy()
+  gpA = [G]
+  for i in range(6):
+      G = cv.pyrDown(G)
+      gpA.append(G)
+  # generate Gaussian pyramid for B
+  G = B.copy()
+  gpB = [G]
+  for i in range(6):
+      G = cv.pyrDown(G)
+      gpB.append(G)
+  # generate Laplacian Pyramid for A
+  lpA = [gpA[5]]
+  for i in range(5,0,-1):
+      GE = cv.pyrUp(gpA[i])
+      L = cv.subtract(gpA[i-1],GE)
+      lpA.append(L)
+  # generate Laplacian Pyramid for B
+  lpB = [gpB[5]]
+  for i in range(5,0,-1):
+      GE = cv.pyrUp(gpB[i])
+      L = cv.subtract(gpB[i-1],GE)
+      lpB.append(L)
+  # Now add left and right halves of images in each level
+  LS = []
+  for la,lb in zip(lpA,lpB):
+      rows,cols,dpt = la.shape
+      ls = np.hstack((la[:,0:cols//2], lb[:,cols//2:]))
+      LS.append(ls)
+  # now reconstruct
+  ls_ = LS[0]
+  for i in range(1,6):
+      ls_ = cv.pyrUp(ls_)
+      ls_ = cv.add(ls_, LS[i])
+  # image with direct connecting each half
+  real = np.hstack((A[:,:cols//2],B[:,cols//2:]))
+  cv.imwrite('Pyramid_blending2.jpg',ls_)
+  cv.imwrite('Direct_blending.jpg',real)
+  ```
+
+  ![opencv-38](./image/opencv-38.png)
 
 ### 3.8.2. function
 
@@ -1443,9 +1898,305 @@ Learn about image pyramids and how to use them for image blending
 
 All about Contours in OpenCV
 
-### 3.9.1. example code
+### 3.9.1. Contours:Getting Started
 
-### 3.9.2. function
+Learn to find and draw Contours
+
+#### 3.9.1.1. What are contours?
+
+- explain
+  - Contours can be explained simply as a curve joining all the continuous points (along the boundary), having same color or intensity.
+  - The contours are a useful tool for shape analysis and object detection and recognition.
+- opencv's finding contours
+  - For better accuracy, use binary images. So before finding contours, apply threshold or canny edge detection.
+  - Since OpenCV 3.2, `findContours()` no longer modifies the source image.
+  - In OpenCV, **finding contours is like finding white object from black background**.
+  - So remember, object to be found should be white and background should be black.
+
+- `findContours()`
+  - args:
+    - first one is source image, 
+    - second is contour retrieval mode,
+    - third is contour approximation method
+  - return
+    - contours 
+      - Contours is a **Python list** of **all the contours** in the image. 
+        ```
+        [
+          [[x1,y1],[x2,y2],...], // one contour
+          [[x1,y1],[x2,y2],...],
+          [[x1,y1],[x2,y2],...],
+        ]
+        ```
+      - Each individual contour is a Numpy array of (x,y) coordinates of boundary points of the object.
+    - hierarchy
+      > will discuss second and third arguments and about hierarchy in details later.
+      > Until then, the values given to them in code sample will work fine for all images.
+
+- demo
+
+  ```python
+  import numpy as np
+  import cv2 as cv
+  im = cv.imread('test.jpg')
+  imgray = cv.cvtColor(im, cv.COLOR_BGR2GRAY)
+  ret, thresh = cv.threshold(imgray, 127, 255, 0)
+  contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+  ```
+
+#### 3.9.1.2. How to draw the contours?
+
+To draw the contours, `cv.drawContours` function is used. It can also be used to draw any shape provided you have its boundary points.
+
+- `cv.drawContours` args:
+  - Its first argument is source image
+  - second argument is the contours which should be passed as a Python list
+  - third argument is index of contours (useful when drawing individual contour. To draw all contours, pass -1) 
+  - remaining arguments are color, thickness etc.
+
+- demo
+  - To draw all the contours in an image:
+
+    ```python
+    cv.drawContours(img, contours, -1, (0,255,0), 3)
+    ```
+  - To draw an individual contour, say 4th contour:
+
+    ```python
+    cv.drawContours(img, contours, 3, (0,255,0), 3)
+    ```
+  - But most of the time, below method will be useful:
+
+    ```python
+    cnt = contours[4]
+    cv.drawContours(img, [cnt], 0, (0,255,0), 3)
+    ```
+
+    > **same with above, but when you go forward, you will see last one is more useful**
+
+#### 3.9.1.3. Contour Approximation Method
+
+> This is the third argument in cv.findContours function. 
+
+- what does Contour Approximation Method do
+  - Above, we told that contours are the boundaries of a shape with same intensity.
+  - It stores the (x,y) coordinates of the boundary of a shape.
+  - But **does it store all the coordinates** ? That is **specified by this contour approximation method**.
+
+- Contour Approximation Method
+  - `cv.CHAIN_APPROX_NONE`
+    - **all the boundary points are stored**.
+    - But actually do we need all the points?
+    - For eg, you found the contour of a straight line. Do you need all the points on the line to represent that line? No, we need just two end points of that line.
+  - `cv.CHAIN_APPROX_SIMPLE` does. 
+    - It removes all redundant points and compresses the contour, thereby saving memory.
+
+- demo
+  - Below image of a rectangle demonstrate this technique.
+  - Just draw a circle on all the coordinates in the contour array (drawn in blue color).
+  - First image shows points I got with `cv.CHAIN_APPROX_NONE` (734 points) and second image shows the one with `cv.CHAIN_APPROX_SIMPLE` (only 4 points).
+
+  ![opencv-39](./image/opencv-39.png)
+
+### 3.9.2. Contour Features
+
+> Learn to find different features of contours like area, perimeter, bounding rectangle etc.
+>
+> - To find the different features of contours, like area, perimeter, centroid, bounding box etc
+> - You will see plenty of functions related to contours.
+
+#### 3.9.2.1. Moments
+
+- Image moments help you to calculate some features like center of mass of the object, area of the object etc.
+- The function cv.moments() gives a dictionary of all moment values calculated. See below:
+
+  ```python
+  import numpy as np
+  import cv2 as cv
+  img = cv.imread('star.jpg',0)
+  ret,thresh = cv.threshold(img,127,255,0)
+  contours,hierarchy = cv.findContours(thresh, 1, 2)
+  cnt = contours[0]
+  M = cv.moments(cnt)
+  print( M )
+  ```
+- From this moments, you can extract useful data like area, centroid etc.
+- Centroid is given by the relations: $C_{x}=M_{10}M_{00} and C_{y}=M_{01}M_{00}$. This can be done as follows:
+
+  ```python
+  cx = int(M['m10']/M['m00'])
+  cy = int(M['m01']/M['m00'])
+  ```
+
+#### 3.9.2.2. Contour Area
+
+- Contour area is given by the function `cv.contourArea()` or from moments, M['m00'].
+
+  ```python
+  area = cv.contourArea(cnt)
+  # or
+  M = cv.moments(cnt)['m00']
+  ```
+
+#### 3.9.2.3. Contour Perimeter
+
+- It is also called arc length. It can be found out using `cv.arcLength()` function.
+- Second argument specify whether shape is a closed contour (if passed True), or just a curve.
+
+  ```python
+  perimeter = cv.arcLength(cnt,True)
+  ```
+
+#### 3.9.2.4. Contour Approximation
+
+- define
+  - It approximates a contour shape to another shape with less number of vertices depending upon the precision we specify.
+  - It is an implementation of `Douglas-Peucker algorithm`.
+    > Check the wikipedia page for algorithm and demonstration.
+
+- explain
+  - To understand this, suppose you are trying to find a square in an image, 
+  - but due to some problems in the image, you didn't get a perfect square, but a "bad shape" (As shown in first image below).
+  - Now you can use this function to approximate the shape.
+  - In this, second argument is called epsilon, which is **maximum distance from contour to approximated contour**.
+  - It is an accuracy parameter. A wise selection of epsilon is needed to get the correct output.
+
+- demo
+
+  ```
+  epsilon = 0.1*cv.arcLength(cnt,True)
+  approx = cv.approxPolyDP(cnt,epsilon,True)
+  ```
+
+  ![opencv-40](./image/opencv-40.png)
+
+  - in second image, green line shows the approximated curve for epsilon = 10% of arc length.
+  - Third image shows the same for epsilon = 1% of the arc length.
+  - Third argument specifies whether curve is closed or not.
+
+#### 3.9.2.5. Convex Hull
+
+- explain
+  - Convex Hull will look similar to contour approximation, but it is not
+  - **Both may provide same results in some cases**.
+  - Here, `cv.convexHull()` function checks a curve for convexity defects and corrects it.
+  - Generally speaking, 
+    - **convex curves** are the curves which are always bulged out, or at-least flat
+    - And if it is bulged inside, it is called **convexity defects**
+
+- Arguments details:
+  > hull = cv.convexHull(points[, hull[, clockwise[, returnPoints]]])
+  - `points` are the contours we pass into.
+  - `hull` is the output, normally we avoid it.
+  - `clockwise` : Orientation flag. If it is True, the output convex hull is oriented clockwise. Otherwise, it is oriented counter-clockwise.
+  - `returnPoints` : 
+    - By default, True. Then it returns the coordinates of the hull points.
+    - If False, it returns the indices of contour points corresponding to the hull points.
+
+- For example, check the below image of hand.
+  - Red line shows the convex hull of hand.
+  - The double-sided arrow marks shows the convexity defects, which are the local maximum deviations of hull from contours.
+
+  ![opencv-41](./image/opencv-41.png)
+
+  ```
+  hull = cv.convexHull(cnt)
+  ```
+
+But if you want to find convexity defects, you need to pass returnPoints = False.
+To understand it, we will take the rectangle image above.
+First I found its contour as cnt.
+Now I found its convex hull with returnPoints = True, I got following values: [[[234 202]], [[ 51 202]], [[ 51 79]], [[234 79]]] which are the four corner points of rectangle. 
+Now if do the same with returnPoints = False, I get following result: [[129],[ 67],[ 0],[142]]. These are the indices of corresponding points in contours.
+For eg, check the first value: cnt[129] = [[234, 202]] which is same as first result (and so on for others).
+
+#### 3.9.2.6. Checking Convexity
+
+- check if a curve is convex or not. It just return whether True or False. Not a big deal.
+
+  ```python
+  k = cv.isContourConvex(cnt)
+  ```
+
+### 3.9.3. Contour Bounding
+
+#### 3.9.3.1. Bounding Rectangle
+
+- Straight Bounding Rectangle
+  - It is a straight rectangle, it **doesn't consider the rotation of the object**.
+  - So area of the bounding rectangle won't be minimum. It is found by the function `cv.boundingRect()`.
+  - Let (x,y) be the top-left coordinate of the rectangle and (w,h) be its width and height.
+- Rotated Rectangle
+  - Here, bounding rectangle is drawn with **minimum area**, so it considers the rotation also.
+  - The function used is `cv.minAreaRect()`.
+  - It returns a Box2D structure which contains following details - ( center (x,y), (width, height), angle of rotation )
+  - But to draw this rectangle, we need 4 corners of the rectangle. It is obtained by the function cv.boxPoints()
+
+- demo
+  ```python
+  x,y,w,h = cv.boundingRect(cnt)
+  cv.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+  ```
+  ```python
+  rect = cv.minAreaRect(cnt)
+  box = cv.boxPoints(rect)
+  box = np.int0(box)
+  cv.drawContours(img,[box],0,(0,0,255),2) # draw bounding box by `drawContours`
+  ```
+
+  ![opencv-42](./image/opencv-42.png) 
+
+  > Green rectangle shows the normal bounding rect.<br />
+  > Red rectangle is the rotated rect.
+
+#### 3.9.3.2. Minimum Enclosing Circle
+
+Next we find the circumcircle of an object using the function cv.minEnclosingCircle(). It is a circle which completely covers the object with minimum area.
+
+```python
+(x,y),radius = cv.minEnclosingCircle(cnt)
+center = (int(x),int(y))
+radius = int(radius)
+cv.circle(img,center,radius,(0,255,0),2)
+```
+
+![opencv-43](./image/opencv-43.png)
+
+#### 3.9.3.3. Fitting an Ellipse
+
+Next one is to fit an ellipse to an object. It returns the rotated rectangle in which the ellipse is inscribed.
+
+```python
+ellipse = cv.fitEllipse(cnt)
+cv.ellipse(img,ellipse,(0,255,0),2)
+```
+
+![opencv-44](./image/opencv-44.png)
+
+#### 3.9.3.4. Fitting a Line
+
+Similarly we can fit a line to a set of points. Below image contains a set of white points. We can approximate a straight line to it.
+
+```python
+rows,cols = img.shape[:2]
+[vx,vy,x,y] = cv.fitLine(cnt, cv.DIST_L2,0,0.01,0.01)
+lefty = int((-x*vy/vx) + y)
+righty = int(((cols-x)*vy/vx)+y)
+cv.line(img,(cols-1,righty),(0,lefty),(0,255,0),2)
+```
+
+
+### 3.9.4. Contour Properties
+
+Learn to find different properties of contours like Solidity, Mean Intensity etc.
+
+### 3.9.5. Contours:More Functions
+
+Learn to find convexity defects, pointPolygonTest, match different shapes etc.
+
+### 3.9.6. Contours Hierarchy
+
+Learn about Contour Hierarchy
 
 ## 3.10. Histograms in OpenCV
 

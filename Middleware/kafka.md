@@ -134,3 +134,6 @@
 待做
 <!--file:///D:/learn/githubRepo/JavaGuide/docs/system-design/distributed-system/message-queue/Kafka%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93.md-->
 
+# 参考资料
+
+- [ ] [kafka知识点总结](https://mp.weixin.qq.com/s/PjlSNftjafIA3cnlZAcUaA)
