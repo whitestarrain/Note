@@ -24,11 +24,11 @@
 
 #### 创建型模式
 
-####  结构型模式
+#### 结构型模式
 
 #### 行为型模式
 
-#### J2EE型模式
+#### J2EE 型模式
 
 ## 计算机网络 <!-- fold -->
 
@@ -39,8 +39,8 @@
     - 结点
     - 链路
     - 主机
-    - internet和Internet
-    - ISP和IXP
+    - internet 和 Internet
+    - ISP 和 IXP
   - 因特网组成
     - 边缘部分
       - client-server
@@ -50,10 +50,10 @@
       - 报文交换
       - 分组交换
   - 计算机网络类别
-    - 广域网WAN
-    - 区域网MAN
-    - 城域网LAN
-    - 个人区域网PAN
+    - 广域网 WAN
+    - 区域网 MAN
+    - 城域网 LAN
+    - 个人区域网 PAN
   - 计算机网络性能指标
     - 速率
     - 管带
@@ -64,11 +64,11 @@
       - 传播
       - 排队
     - 时延带宽积
-    - 往返时间RRT
+    - 往返时间 RRT
     - 利用率
   - 计算机网络体系结构
-    - OSI七层
-    - TCP/IP四层
+    - OSI 七层
+    - TCP/IP 四层
     - 课本按照五层
 - 物理层
 - 链路层
@@ -81,36 +81,36 @@
       - 封装成帧:帧格式
       - 透明传输:原理
       - 差错检测
-        - 循环冗余检验CRC
-        - 帧检验序列FCS
-    - ppp协议
+        - 循环冗余检验 CRC
+        - 帧检验序列 FCS
+    - ppp 协议
       - 协议特点
       - 协议组成
-      - PPP帧格式
+      - PPP 帧格式
       - 透明传输
         - 异步传输：字节填充
         - 同步传输：零比特填充
       - 确保边界：零比特填充
-      - PPP工作状态
+      - PPP 工作状态
   - 广播信道
     - 适配器作用
     - 三个基本问题
       - 封装成帧:帧格式
       - 透明传输:不需要
       - 差错检测
-        - 循环冗余检验CRC
-        - 帧检验序列FCS
+        - 循环冗余检验 CRC
+        - 帧检验序列 FCS
     - 协议
-      - **CSMA/CD碰撞检测**
+      - **CSMA/CD 碰撞检测**
       - TDMA
       - FDMA
       - slotted ALOHA
       - ALOHA
-    - MAC地址
+    - MAC 地址
       - 概念
       - 作用
       - 地址格式
-      - MAC帧格式
+      - MAC 帧格式
   - 扩展以太网
     - 物理层
       - 集线器
@@ -120,25 +120,26 @@
         - 生成树算法
       - 交换机(多接口网桥)
 - 网络层
+
   - 网络层提供的两种服务
     - 面向连接：VC(虚电路)
     - 无连接：数据报
-  - ip协议
-    - ip配套协议(作用+说明)
+  - ip 协议
+    - ip 配套协议(作用+说明)
       - ARP(链路层协议)(p123)
       - ICMP(p146)
       - IGMP(p171)
     - 虚拟互联网络
-    - ip地址种类
-      - 分类的ip地址
+    - ip 地址种类
+      - 分类的 ip 地址
       - 划分子网
-      - 构成超网CIDR
-    - ip地址与硬件地址
-    - ip数据报
-      - ip数据报格式
+      - 构成超网 CIDR
+    - ip 地址与硬件地址
+    - ip 数据报
+      - ip 数据报格式
       - 分片
       - 首部检验和
-    - 网际控制报文协议ICMP(P146)
+    - 网际控制报文协议 ICMP(P146)
       - 种类
         - 差错报告报文 <!-- fold -->
           - 终点不可达
@@ -151,31 +152,31 @@
           - 时间戳请求和回答
       - 示例：ping
         - 说明：
-          - 应用层直接使用ICMP
+          - 应用层直接使用 ICMP
           - 没有通过运输层(TCP/UDP)
         - 流程
   - 路由协议与算法
     - 协议分类
-      - 内部网关协议IGP
+      - 内部网关协议 IGP
         - RIP
           - 工作原理 <!-- fold -->
-            -  相邻路由表的交换
+            - 相邻路由表的交换
           - 算法：距离向量算法(p135)
-          - RIP报文格式 <!-- fold -->
+          - RIP 报文格式 <!-- fold -->
             - 在**运输层**进行路由信息的交换
-            - 因为是运输层所以有UDP首部
+            - 因为是运输层所以有 UDP 首部
           - 特点 <!-- fold -->
             - 快消息传得慢
           - 优缺点
         - OSPF
           - 工作原理
             - 洪泛法
-          - 算法：Dijkstra最短路径算法
-          - 报文格式 <br /> 直接用**ip数据报**传送OSPF分组
-            - 5种分组类型
+          - 算法：Dijkstra 最短路径算法
+          - 报文格式 <br /> 直接用**ip 数据报**传送 OSPF 分组
+            - 5 种分组类型
             - 其他
           - 其他特点
-      - 外部网关协议EGP
+      - 外部网关协议 EGP
         - BGP
     - 算法种类
       - 不分层
@@ -185,38 +186,39 @@
         - 自治系统内路由算法
         - 自治系统间路由算法
   - 路由器组成
-  - ip多播(了解) <!-- fold -->
+  - ip 多播(了解) <!-- fold -->
     - 多播路由器
     - 基本原理
     - 协议
-      - 网际组管理协议IGMP
+      - 网际组管理协议 IGMP
       - 多播路由协议
 
 - 运输层
+
   - 概述
     - 进程通信
     - 运输层的分用和复用
     - 两个主要协议概述
   - UDP
     - 特点
-    - UDP首部格式
+    - UDP 首部格式
     - 检验和计算
   - TCP
     - 特点 <!-- fold -->
       - 面向连接
-      - 每一条TCP链接只能有两个端点
-      - TCP提供可交付的服务
-      - TCP提供全双工通信
+      - 每一条 TCP 链接只能有两个端点
+      - TCP 提供可交付的服务
+      - TCP 提供全双工通信
       - 面向字节流
     - 连接原理:socket
     - 报文段首部格式
     - 可靠传输
       - 工作原理 <br /> **ARQ**
-        - 停止等待<br /> 自动重传ARQ
+        - 停止等待<br /> 自动重传 ARQ
           - 无差错情况
           - 出现差错
           - 确认丢失和确认迟到
-        - 连续等待ARQ
+        - 连续等待 ARQ
           - 滑动窗口
           - 按序到达的最后一个分组发送确认
           - go-back-n
@@ -233,34 +235,34 @@
             - 窗口
             - 三个指针
           - 缓存与窗口关系
-            - tcp发送缓存
+            - tcp 发送缓存
               - 存放内容 <!-- fold -->
-                - 发送应用程序传送给发送方TCP准备发送的数据
-                - TCP已发送但尚未收到确认的数据
-            - tcp接收缓存
+                - 发送应用程序传送给发送方 TCP 准备发送的数据
+                - TCP 已发送但尚未收到确认的数据
+            - tcp 接收缓存
               - 存放内容 <!-- fold -->
                 - 按序到达的、但尚未被接收应用程序读取的数据
                 - 未按序到达的数据
               - 窗口与缓存对应 <!-- fold -->
-                - 接收缓存填满，接收窗口为0
+                - 接收缓存填满，接收窗口为 0
             - 缓存特点
               - 环形缓存，循环使用
             - **注意点**
               - 发送窗口和接收窗口并不总是一样大的（时间滞后）
               - 不按序到达数据的处理
-              - tcp接收方必须要有累积确认的功能
+              - tcp 接收方必须要有累积确认的功能
         - 超时重传时间的选择 <!-- fold -->
           - 自适应算法
-        - 选择确认SACK <!-- fold -->
+        - 选择确认 SACK <!-- fold -->
           - 目的 <!-- fold -->
             - 只重传缺少的数据
             - 不重传已经正确到达的数据
           - 原理与开启
-          - 实际：大多数不使用SACK
-    - TCP的流量控制
+          - 实际：大多数不使用 SACK
+    - TCP 的流量控制
       - 利用滑动窗口
       - 传输效率的考虑 <br /> 报文段的发送时机
-    - TCP的拥塞控制
+    - TCP 的拥塞控制
       - 一般原理
         - 开环控制
         - 闭环控制
@@ -270,7 +272,7 @@
         - 快重传
         - 快恢复
       - 随机早期检测
-    - TCP的连接管理
+    - TCP 的连接管理
       - 三次挥手
       - 四次握手
 
@@ -284,8 +286,8 @@
 - 链路层：ARP
   - 网桥的自学习过程
     - 拓展：生成树算法了解吗
-  - MAC帧中的地址会变化吗
-- 传输层：TCP和UDP
+  - MAC 帧中的地址会变化吗
+- 传输层：TCP 和 UDP
   - 什么是三次握手？
     - TCP 建立连接可以两次握手吗？为什么?
     - 可以采用四次握手吗？为什么？
@@ -296,58 +298,58 @@
     - 为什么不能把服务器发送的 ACK 和 FIN 合并起来<br />变成三次挥手（CLOSE_WAIT 状态意义是什么）？
     - 如果第二次挥手时服务器的 ACK 没有送达客户端，会怎样？
     - 客户端 TIME_WAIT 状态的意义是什么？
-    - 服务器出现了大量CLOSE_WAIT状态如何解决
-  - TCP如何实现流量控制？
+    - 服务器出现了大量 CLOSE_WAIT 状态如何解决
+  - TCP 如何实现流量控制？
     - 什么是零窗口（接收窗口为 0 时会怎样）？
-    - 什么是go-back-n
-  - TCP的拥塞控制是怎么实现的？
-  - TCP如何最大利用带宽？
-  - TCP与UDP的区别
+    - 什么是 go-back-n
+  - TCP 的拥塞控制是怎么实现的？
+  - TCP 如何最大利用带宽？
+  - TCP 与 UDP 的区别
     - 什么时候选择 TCP，什么时候选 UDP？
     - HTTP 可以使用 UDP 吗？
     - 面向连接和无连接的区别(端到端和点对点)
-  - TCP如何保证传输的可靠性
-  - 什么是TCP粘包？
+  - TCP 如何保证传输的可靠性
+  - 什么是 TCP 粘包？
   - 传输层网络攻击有哪些？解决策略有哪些 <!-- fold -->
-    - syn超时
+    - syn 超时
     - 洪泛攻击
-- 应用层：HTTP和HTTPS
-  - HTTP和HTTPS有什么区别？
+- 应用层：HTTP 和 HTTPS
+  - HTTP 和 HTTPS 有什么区别？
     - Https 的连接过程？
     - HTTPS 连接的时候，怎么确定收到的包是服务器发来的（中间人攻击）？
-    - https如何保证连接的安全性？(连接过程说明)
-    - SSL，HTTPS，TLS三者的区别
+    - https 如何保证连接的安全性？(连接过程说明)
+    - SSL，HTTPS，TLS 三者的区别
     - 输入 www.baidu.com，怎么变成 `https://www.baidu.com` 的 <br/> 怎么确定用 HTTP 还是 HTTPS？
     - 什么是对称加密、非对称加密？区别是什么？
     - 数字签名、报文摘要的原理
     - 其他加密算法
-  - HTTP1.0、1.1、2.0之间的区别
-    - HTTP2.0的多路复用和HTTP1.X中的长连接复用有什么区别？
+  - HTTP1.0、1.1、2.0 之间的区别
+    - HTTP2.0 的多路复用和 HTTP1.X 中的长连接复用有什么区别？
     - 为什么需要头部压缩？
-    - HTTP2.0多路复用有多好？
+    - HTTP2.0 多路复用有多好？
   - HTTP 请求有哪些常见状态码？
   - 请求行、请求头、请求体、响应行、响应头、响应体都包括什么
   - **从输入网址到获得页面的过程 (越详细越好)**？
-    - DNS使用的是什么协议
-    - ARP协议了解吗
-  - GET与POST的区别？
-  - 什么是cookie和session
+    - DNS 使用的是什么协议
+    - ARP 协议了解吗
+  - GET 与 POST 的区别？
+  - 什么是 cookie 和 session
     - Session 与 Cookie 的区别？
-    - session和cookie的攻击方式有哪些
-    - 如何解决分布式session问题
+    - session 和 cookie 的攻击方式有哪些
+    - 如何解决分布式 session 问题
     - 如果禁用浏览器 cookie，如何实现用户追踪和认证
   - 从输入网址到获得页面的过程 (越详细越好)？
-  - HTTP请求有哪些常见状态码？
-  - 什么是RIP (距离矢量路由协议)?
-- 网络层协议IP
-  - IP地址的分类？
+  - HTTP 请求有哪些常见状态码？
+  - 什么是 RIP (距离矢量路由协议)?
+- 网络层协议 IP
+  - IP 地址的分类？
   - 什么叫划分子网？
-  - 什么是ARP协议？
+  - 什么是 ARP 协议？
     - 它位于哪层
-  - 什么是ICMP协议？
+  - 什么是 ICMP 协议？
     - 报文种类
-    - ping的流程是什么
-  - 什么是NAT (网络地址转换)？
+    - ping 的流程是什么
+  - 什么是 NAT (网络地址转换)？
 
 ## 操作系统<!-- fold -->
 
@@ -463,7 +465,7 @@
 
 ## 编码与加密算法 <!-- fold -->
 
-# Java知识栈
+# Java 知识栈
 
 ## Java 基础 <!-- fold -->
 
@@ -472,15 +474,15 @@
 #### 基础中的基础
 
 - 基本概念
-  - JRE与JDK
+  - JRE 与 JDK
   - Java 7 和 Java SE 7
-  - JDK1.8和Java8
+  - JDK1.8 和 Java8
 
-- Object的11个方法
+- Object 的 11 个方法
   - equals
     - `常量.equals`
     - `Objects.equals` **推荐**
-    - [hashcode和equals(重要)](https://www.cnblogs.com/skywang12345/p/3324958.html)
+    - [hashcode 和 equals(重要)](https://www.cnblogs.com/skywang12345/p/3324958.html)
 
 - 面向对象
   - 封装
@@ -490,31 +492,32 @@
       - 可维护性和设计
   - 多态
     - 上转下转
-    - 深入(JVM内容)
+    - 深入(JVM 内容)
       - 动态链接
       - 非虚方法和虚方法
       - 方法重写本质
       - 虚方法表
 
-- Java异常体系
+- Java 异常体系
 
 - 常用关键字
 
 - [静/非静态内部类](https://juejin.cn/post/6844903791863529480)
-    - 是否懒加载
-    - 是否可以创建静态成员
-    - 能否调用调用外部类静态成员
-    - 有没有指向外部类的引用<br />`外部类类名.this`
-    - 创建方式
+  - 是否懒加载
+  - 是否可以创建静态成员
+  - 能否调用调用外部类静态成员
+  - 有没有指向外部类的引用<br />`外部类类名.this`
+  - 创建方式
 
 - 枚举
   - 本质
   - 常见用法
 
 - 包装类
+
   - 缓存机制
-    - Integer当数值在-128 ~127时，会将创建的 Integer 对象缓存起来
-    - Character当数值在0-~127时，会将创建的Character对象缓存起来
+    - Integer 当数值在-128 ~127 时，会将创建的 Integer 对象缓存起来
+    - Character 当数值在 0-~127 时，会将创建的 Character 对象缓存起来
     - 因此，整型包装类对象之间值的比较，全部使用 equals 方法比较
   - BigDecimal
     - 浮点数之间的等值判断
@@ -522,7 +525,7 @@
       - 包装数据类型不能用 equals 来判断
       - **使用 BigDecimal 来定义浮点数的值，再进行浮点数的运算操作**
     - 使用 BigDecimal 来定义浮点数的值，再进行浮点数的运算操作。
-    - 推荐使用String作为参数传入BigDecimal构造方法
+    - 推荐使用 String 作为参数传入 BigDecimal 构造方法
   - 使用标准
     - 所有的 POJO 类属性必须使用包装数据类型。
     - RPC 方法的返回值和参数必须使用包装数据类型。
@@ -532,9 +535,9 @@
   - Arrays.asList()将数组转换为集合后,底层其实还是数组
   - 传递的数组必须是对象数组，而不是基本类型。<br />**当传入一个原生数据类型数组时，Arrays.asList() 的真正得到的参数就不是数组中的元素，而是数组对象本身**
   - 使用集合的修改方法:`add()、remove()、clear()`会抛出异常。<br />Arrays.asList() 方法返回的并不是 java.util.ArrayList ，而是 java.util.Arrays 的一个内部类,
-  - 如何正确的将数组转换为ArrayList?
+  - 如何正确的将数组转换为 ArrayList?
     - `new ArrayList<>(Arrays.asList("a", "b", "c"))`(推荐)
-    - 使用 Java8 的Stream(推荐)
+    - 使用 Java8 的 Stream(推荐)
     - 使用 Guava(推荐)
     - 使用 Apache Commons Collections
     - 使用 Java9 的 List.of()方法
@@ -550,10 +553,10 @@
   - 数据隔离
   - 方法执行
 - 应用
-  - [重写private方法](https://www.cnblogs.com/lixinjie/p/combine-reflect-and-oo-in-java.html)
+  - [重写 private 方法](https://www.cnblogs.com/lixinjie/p/combine-reflect-and-oo-in-java.html)
   - 框架编写
 
-#### java泛型
+#### java 泛型
 
 - 什么是泛型
 - 原理与类型擦除
@@ -582,16 +585,16 @@
   - spi
 - 示例
   - java spi
-    - 提供的api及使用
+    - 提供的 api 及使用
     - DriverManager
-      - mysql自动加载
-      - oracle必须手动加载
-  - Spring spi思想
+      - mysql 自动加载
+      - oracle 必须手动加载
+  - Spring spi 思想
     - scan
-    - 自定义scope
+    - 自定义 scope
     - 自定义标签
 
-#### java8新特性
+#### java8 新特性
 
 - Stream
 - Function Interface
@@ -602,7 +605,7 @@
 #### 语法糖
 
 - 双大括号初始化(不推荐)
-- try-with-resources(针对io资源，推荐)
+- try-with-resources(针对 io 资源，推荐)
 
 ### 集合 <!-- fold -->
 
@@ -616,46 +619,46 @@
         - 使用头插可能与缓存的时间局部性原则有关
         - 最近访问过的数据下次大概率会再次访问
         - 把刚访问过的元素放在链表最前面可以直接被查询到，减少查找次数
-      - [resize死循环](https://juejin.cn/post/6844903554264596487)
-      - resize重新计算hash
+      - [resize 死循环](https://juejin.cn/post/6844903554264596487)
+      - resize 重新计算 hash
   - 1.8
     - 存储结构
       - 数组+链表+红黑树
       - 红黑树结构转换条件
-        - 数组长度64
-        - [树化阀值8来源](https://juejin.cn/post/6921914880559677447])
-        - 退化阀值6
-    - 插曲：[红黑树由来：2-3树](https://blog.csdn.net/zhichaosong/article/details/88844371)
+        - 数组长度 64
+        - [树化阀值 8 来源](https://juejin.cn/post/6921914880559677447])
+        - 退化阀值 6
+    - 插曲：[红黑树由来：2-3 树](https://blog.csdn.net/zhichaosong/article/details/88844371)
     - 扩容机制
       - 创建新的数组
       - 尾插
-      - [如何解决的resize死循环](https://www.fangzhipeng.com/javainterview/2019/03/11/hashmap-dead-cycle.html) <!-- fold -->
-        - transfer调用 <!-- fold -->
-          - 直接将原来transfer()方法中的代码写在自己方法体内，不再调用
+      - [如何解决的 resize 死循环](https://www.fangzhipeng.com/javainterview/2019/03/11/hashmap-dead-cycle.html) <!-- fold -->
+        - transfer 调用 <!-- fold -->
+          - 直接将原来 transfer()方法中的代码写在自己方法体内，不再调用
         - 使用尾插 <!-- fold -->
           - **扩容后，新数组中的链表顺序依然与旧数组中的链表顺序保持一致**
-      - [resize不重新计算hash](https://juejin.cn/post/6844903682664824845) <!-- fold -->
-        - 1.7扩容时需要重新计算哈希值和索引位置
-        - 1.8并不重新计算哈希值，巧妙地采用和扩容后容量进行&操作来计算新的索引位置。
+      - [resize 不重新计算 hash](https://juejin.cn/post/6844903682664824845) <!-- fold -->
+        - 1.7 扩容时需要重新计算哈希值和索引位置
+        - 1.8 并不重新计算哈希值，巧妙地采用和扩容后容量进行&操作来计算新的索引位置。
   - 线程不安全
-    - put的时候导致的多线程数据不一致
+    - put 的时候导致的多线程数据不一致
   - 初始化大小
   - 扩容时机
-    - threshold = capacity * loadFactor
+    - threshold = capacity \* loadFactor
     - Size>=threshold
-    - [loadFactor 0.75来源](https://www.cnblogs.com/aspirant/p/11470928.html)
-  - put流程
-  - 容量为什么要2的幂
+    - [loadFactor 0.75 来源](https://www.cnblogs.com/aspirant/p/11470928.html)
+  - put 流程
+  - 容量为什么要 2 的幂
   - [遍历方法及性能](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
   - 有什么同步容器/并发容器
-  - HashMap漏洞导致变慢 <!-- fold -->
-    - 中间对计算hashcode的成员变量做了修改，内存泄漏
-    - hashcode设计不标准，元素落到一个桶中
-  - 如何为key设计hashcode <!-- fold -->
-    - 计算hashCode依赖的值是不可变
-    - hashCode必须基于对象的内容生成
-    - hashCode产生的散列码最好能均匀分布
-  - HashMap,HashTable,ConcurrentHashMap区别
+  - HashMap 漏洞导致变慢 <!-- fold -->
+    - 中间对计算 hashcode 的成员变量做了修改，内存泄漏
+    - hashcode 设计不标准，元素落到一个桶中
+  - 如何为 key 设计 hashcode <!-- fold -->
+    - 计算 hashCode 依赖的值是不可变
+    - hashCode 必须基于对象的内容生成
+    - hashCode 产生的散列码最好能均匀分布
+  - HashMap,HashTable,ConcurrentHashMap 区别
     - 1.7
       - 三者数据结构
       - 同步机制/锁
@@ -666,15 +669,15 @@
       - `put(null)`
 - TreeMap
   - 底层结构：红黑树
-  - 红黑树由来：[2-3树](https://blog.csdn.net/zhichaosong/article/details/88844371)
+  - 红黑树由来：[2-3 树](https://blog.csdn.net/zhichaosong/article/details/88844371)
     - 2-节点,3-节点
     - 4-节点分解
     - 不平衡时融合
 - ConcurrentHashMap
   - [1.7](https://www.cnblogs.com/ITtangtang/p/3948786.html)
     - 数据结构:分段锁+数组+链表
-    - 同步机制: 
-      - **segment分段锁** 粒度为一段(几个hash槽)<br />分段锁继承了ReentrantLock
+    - 同步机制:
+      - **segment 分段锁** 粒度为一段(几个 hash 槽)<br />分段锁继承了 ReentrantLock
       - 尝试获取锁存在并发，竞争，阻塞
     - 键值对:HashEntry
     - 操作
@@ -684,14 +687,14 @@
   - [1.8](https://blog.csdn.net/programmer_at/article/details/79715177)
     - 数据结构:数组+链表/红黑树
     - 同步机制
-      - hash槽。减小了加锁粒度
+      - hash 槽。减小了加锁粒度
       - CAS+synchronized <!-- fold -->
-        - CAS失败自旋保证成功
-        - 再失败就synchronized
-      - [使用synchronized原因](https://www.cnblogs.com/aspirant/p/8623864.html) <!-- fold -->
-        - 锁粒度降低了，synchronized并不比ReentrantLock差
-        - synchronized优化空间大
-        - 大量数据操作，ReentrantLock开销较多内存
+        - CAS 失败自旋保证成功
+        - 再失败就 synchronized
+      - [使用 synchronized 原因](https://www.cnblogs.com/aspirant/p/8623864.html) <!-- fold -->
+        - 锁粒度降低了，synchronized 并不比 ReentrantLock 差
+        - synchronized 优化空间大
+        - 大量数据操作，ReentrantLock 开销较多内存
     - 键值对：node
     - 操作
       - size
@@ -699,15 +702,15 @@
       - get
 - [LinkedHashMap](https://www.jianshu.com/p/8f4f58b4b8ab)
   - 结构：HashMap+双向链表
-  - 两种模式(accessOrder变量)
+  - 两种模式(accessOrder 变量)
     - 插入顺序模式(false)
     - 访问顺序模式(true)
       - `get`
       - 重排序
   - 扩容:遍历链表
-  - 实现LRU
-    - 构造器:传入capacity
-    - removeEldestEntry:`return size() > capacity; `
+  - 实现 LRU
+    - 构造器:传入 capacity
+    - removeEldestEntry:`return size() > capacity;`
 
 - ArrayList
   - 底层结构：数组
@@ -715,24 +718,24 @@
   - RandomAccess 接口
   - `System.arraycopy()` 和 `Arrays.copyOf()`方法
   - 有什么同步容器/并发容器
-  - **[fail-fast、fail-safe机制](https://juejin.cn/post/6879291161274482695)**
+  - **[fail-fast、fail-safe 机制](https://juejin.cn/post/6879291161274482695)**
 - LinkedList
   - 底层结构：双向链表
 - Set
   - comparable 和 Comparator 的区别
   - 无序性和不可重复性的含义是什么
   - 有什么同步容器/并发容器
-  - HashMap和HashSet
-  - TreeMap和TreeSet
+  - HashMap 和 HashSet
+  - TreeMap 和 TreeSet
 - 集合比较问题
   - List,Set,Map 三者的区别？
   - Arraylist 和 Vector 的区别?
   - Arraylist 与 LinkedList 区别?
   - ConcurrentHashMap 和 Hashtable 的区别
   - 比较 HashSet、LinkedHashSet 和 TreeSet 三者的异同
-  - HashMap和HashTable区别
-  - HashMap与HashSet区别（HashSet底层基于HashMap）
-  - HashMap和TreeMap区别
+  - HashMap 和 HashTable 区别
+  - HashMap 与 HashSet 区别（HashSet 底层基于 HashMap）
+  - HashMap 和 TreeMap 区别
 
 - [其他重要问题](https://www.jianshu.com/p/8bc28d6b0a5e)
 
@@ -747,25 +750,25 @@
     - 可见性
     - 原子性
     - 有序性
-  - Java并发问题解决方案
+  - Java 并发问题解决方案
     - 关键字
       - volatile
       - synchronized
       - final
-    - Java内存模型: <br /> 共享内存并发模型
+    - Java 内存模型: <br /> 共享内存并发模型
   - 线程安全不是绝对的
     - 不可变
     - 绝对线程安全
     - 相对线程安全
     - 线程兼容
     - 线程对立
-  - Java中线程安全的实现
+  - Java 中线程安全的实现
     - 互斥同步
       - synchronized
       - ReentrantLock
     - 非阻塞同步
       - CAS
-      - Atomic(CAS的具体实现)
+      - Atomic(CAS 的具体实现)
     - 无同步方案
       - 栈封闭
       - 线程本地存储-ThreadLocal
@@ -779,9 +782,9 @@
     - timed waiting
     - terminated
   - 线程使用方式
-    - 实现Runable接口
-    - 实现Funture接口
-    - 继承Thread类
+    - 实现 Runable 接口
+    - 实现 Funture 接口
+    - 继承 Thread 类
   - 基础线程机制
     - Executor
     - Daemon
@@ -790,8 +793,8 @@
   - 线程中断
     - interrupteedException
     - interrupt()
-    - Executor的中断操作
-  - ThreadGroup处理未捕获异常
+    - Executor 的中断操作
+  - ThreadGroup 处理未捕获异常
   - 线程互斥同步
     - synchronized
     - ReentrantLock
@@ -799,9 +802,9 @@
     - join
     - wait,notify,notifyAll
     - await,signal,signalAll
-- JUC工具类
+- JUC 工具类
   - Locks
-    - Lock接口
+    - Lock 接口
     - AQS
     - Condition
     - LockSupport
@@ -836,14 +839,14 @@
       - Exchanger
   - 分工
     - 并发实现
-      - Executor与线程池
+      - Executor 与线程池
       - Fork/Join
       - Future
     - 并发模式
-      - Guarded Suspension模式
-      - ThreadPreMessage模式
-      - Balking模式
-      - Worker Thread模式
+      - Guarded Suspension 模式
+      - ThreadPreMessage 模式
+      - Balking 模式
+      - Worker Thread 模式
       - 两阶段终止模式
       - 生产消费模式
   - 互斥
@@ -857,8 +860,8 @@
         - lock
         - ReadWriteLock
     - 并发模式
-      - Immutabliility模式
-      - CopyOnWrite模式
+      - Immutabliility 模式
+      - CopyOnWrite 模式
       - 线程本地存储模式
 - 框架案例
   - Guava RatelLimitor
@@ -869,16 +872,17 @@
 #### 详细讲解 <!-- fold -->
 
 - 并发基础
+
   - [创建线程的方式](https://segmentfault.com/a/1190000037589073)
   - 调用`start()`和`run()`方法区别
   - 停止线程：interrupt
     - 原理
     - 正确的停止方式
     - 错误的停止方式
-      - 被弃用的stop,suspend和resume方法
-      - 用volatile设置标记位
+      - 被弃用的 stop,suspend 和 resume 方法
+      - 用 volatile 设置标记位
   - 重要方法
-    - Object(三个方法都要在synchronized内)
+    - Object(三个方法都要在 synchronized 内)
       - wait
       - notify
       - notifyAll
@@ -886,14 +890,14 @@
       - sleep
       - join
       - yield
-  - yield和sleep区别
-  - java线程状态的切换<br /> 延伸：操作系统进程状态的切换
+  - yield 和 sleep 区别
+  - java 线程状态的切换<br /> 延伸：操作系统进程状态的切换
   - 线程属性
   - 线程的未捕获异常处理
   - 线程组
     - 结构
       - 线程组是一个树状的结构，每个线程组下面可以有多个线程或者线程组
-      - 默认将父线程（当前执行new Thread的线程）线程组设置为自己的线程组。
+      - 默认将父线程（当前执行 new Thread 的线程）线程组设置为自己的线程组。
     - 线程组的优先级会限制线程的优先级
     - 作用
       - 统一控制线程的优先级
@@ -911,14 +915,14 @@
 
 - JMM
   - 基础结构
-  - JMM与Java内存区域划分的区别与联系
-  - JMM原子操作 <!-- fold -->
+  - JMM 与 Java 内存区域划分的区别与联系
+  - JMM 原子操作 <!-- fold -->
     - read(读取）:从主内存读取数据
     - load(载入）:将主内存读取到的数据写入工作内存
     - use(使用）:从工作内存读取数据来计算
     - assign(赋值）:将计算好的值重新赋值到工作内存中
     - store(存储）:将工作内存数据写入主内存
-    - write(写入）:将store过去的变量值赋值给主内存中的变量
+    - write(写入）:将 store 过去的变量值赋值给主内存中的变量
     - lock(锁定）:将主内存变量加锁，标识为线程独占状态。其他线程将无法读或写
     - unlock(解锁）:将主内存变量解锁，解锁后其他线程可以锁定该变量
   - 重排序
@@ -926,7 +930,7 @@
       - 编译器优化重排
       - 指令并行重排
       - 内存系统重排
-    - 编程规则 
+    - 编程规则
       - as-if-serial
       - happens-before
 
@@ -934,8 +938,8 @@
   - 保证内存可见性
     - 说明
     - 原理
-      - MESI缓存一致性协议
-      - cpu总线嗅探机制
+      - MESI 缓存一致性协议
+      - cpu 总线嗅探机制
       - lock
     - 总线风暴
     - [修饰引用变量的陷阱](https://blog.csdn.net/u010454030/article/details/80800098)
@@ -943,12 +947,12 @@
   - 禁止重排序
     - 说明
     - 原理(内存屏障) <!-- fold -->
-      - volatile写
+      - volatile 写
         - 前面:storestore
         - 后面:sotreload
-      - volatile写
-        - 后面1:loadload
-        - 后面2:loadstore
+      - volatile 写
+        - 后面 1:loadload
+        - 后面 2:loadstore
   - 不保证原子性：
     - 原因
     - 解决
@@ -956,11 +960,11 @@
       - Atomic(CAS)
 
 - 锁的变迁
-  - jdk1.5之前:synchronized重量锁
+  - jdk1.5 之前:synchronized 重量锁
   - jdk1.5
     - 原因
     - 变化:增加
-      - Lock锁
+      - Lock 锁
       - 并发容器
       - 线程池
     - 依据原理
@@ -969,12 +973,12 @@
       - LockSupport
       - volatile
   - jdk1.6
-    - 变化:synchronized锁的升级
+    - 变化:synchronized 锁的升级
     - 原因
-  - jdk1.8:增加StampedLock
+  - jdk1.8:增加 StampedLock
 
 - synchronized
-  - 3种使用方法
+  - 3 种使用方法
     - 代码块
       - 自己指定对象锁
       - **底层原理**：
@@ -982,12 +986,12 @@
         - monitorexit
         - 程序计数器
     - 成员方法
-      - this对象锁
+      - this 对象锁
       - **底层原理**：ACC_SYNCHRONIZED
     - 静态方法
-      - .class类锁
+      - .class 类锁
       - **底层原理**：ACC_SYNCHRONIZED，ACC_STATIC
-    - 注意：构造方法本身就属于线程安全的，不存在同步的构造方法一说。<br />不能加synchronized
+    - 注意：构造方法本身就属于线程安全的，不存在同步的构造方法一说。<br />不能加 synchronized
   - 锁的升级(不可逆)
     - 无锁(CAS)
     - 偏向锁
@@ -1018,7 +1022,7 @@
       - as-if-serial
       - happends-before
   - synchronized 和 ReentrantLock 的区别 <!-- fold -->
-    - jvm-api层面
+    - jvm-api 层面
     - 是否可中断
     - 公平非公平
     - 锁绑定多个条件
@@ -1028,24 +1032,24 @@
   - 乐观锁与悲观锁
   - 概念
   - 底层原理
-  - CAS的实现：Unsafe
-  - CAS的应用：Atomic
+  - CAS 的实现：Unsafe
+  - CAS 的应用：Atomic
   - 问题
-    - ABA问题
+    - ABA 问题
       - AtomicStampedReference
       - AtomicMarkableReference
     - 循环时间长开销大
-      - 解决思路是让JVM支持处理器提供的pause指令
+      - 解决思路是让 JVM 支持处理器提供的 pause 指令
     - 只能保证一个共享变量的原子操作
-      - 使用JDK 1.5开始就提供的AtomicReference类保证对象之间的原子性，<br />把多个变量放到一个对象里面进行CAS操作；
+      - 使用 JDK 1.5 开始就提供的 AtomicReference 类保证对象之间的原子性，<br />把多个变量放到一个对象里面进行 CAS 操作；
       - 使用锁。锁内的临界区代码可以保证只有当前线程能操作。
 
 - AQS
   - 概念
   - 底层
-    - Unsafe(提供CAS操作)
-    - LockSupport(提供park/unpark操作)
-  - CLH数据结构
+    - Unsafe(提供 CAS 操作)
+    - LockSupport(提供 park/unpark 操作)
+  - CLH 数据结构
   - 资源共享模式/同步方式
   - **模版设计模式**
   - 源码分析
@@ -1056,22 +1060,22 @@
       - release
       - releaseShared
   - 两个队列
-    - CLH队列
+    - CLH 队列
     - 条件队列
-  - AQS组件
-    - AQS实现的锁(实现Lock接口)
+  - AQS 组件
+    - AQS 实现的锁(实现 Lock 接口)
       - ReentrantLock
-        - 内部类Sync继承AQS
-        - Condition底层使用LockSupport
+        - 内部类 Sync 继承 AQS
+        - Condition 底层使用 LockSupport
       - ReentrantReadWriteLock
-        - 读锁和写锁都有继承AQS的内部类Sync
-    - AQS通信工具类
+        - 读锁和写锁都有继承 AQS 的内部类 Sync
+    - AQS 通信工具类
       - Semaphore
-        - 内部有一个继承了AQS的同步器Sync
+        - 内部有一个继承了 AQS 的同步器 Sync
       - CountDownLatch
-        - 内部有一个继承了AQS的同步器Sync
+        - 内部有一个继承了 AQS 的同步器 Sync
       - CyclicBarrier
-        - 内部使用ReentrantLock
+        - 内部使用 ReentrantLock
   - 其他
     - AOS
     - AQLS
@@ -1082,7 +1086,7 @@
     - 数组类型
     - 引用类型
     - 对象的属性修改类型
-  - AtomicInteger 
+  - AtomicInteger
     - 示例
     - 基本原理
 
@@ -1091,39 +1095,39 @@
   - 使用原理
   - [底层原理](https://blog.csdn.net/saintyyu/article/details/107426428)
   - [常见问题](https://www.pdai.tech/md/java/thread/java-thread-x-lock-LockSupport.html)
-    - park底层使用的是`UNSAFE.park`
-    - 为什么LockSupport也是核心基础类? AQS框架借助于两个类：Unsafe(提供CAS操作)和LockSupport(提供park/unpark操作)
-    - 写出分别通过wait/notify和LockSupport的park/unpark实现同步?
-    - LockSupport.park()会释放锁资源吗? 那么Condition.await()呢? 
+    - park 底层使用的是`UNSAFE.park`
+    - 为什么 LockSupport 也是核心基础类? AQS 框架借助于两个类：Unsafe(提供 CAS 操作)和 LockSupport(提供 park/unpark 操作)
+    - 写出分别通过 wait/notify 和 LockSupport 的 park/unpark 实现同步?
+    - LockSupport.park()会释放锁资源吗? 那么 Condition.await()呢?
     - Thread.sleep()、Object.wait()、Condition.await()、LockSupport.park()的区别? **重点**
-    - 如果在wait()之前执行了notify()会怎样? 如果在park()之前执行了unpark()会怎样? 
+    - 如果在 wait()之前执行了 notify()会怎样? 如果在 park()之前执行了 unpark()会怎样?
 
 - 锁、通信工具类<br />和底层使用
-  - AQS实现的锁(实现Lock接口)
+  - AQS 实现的锁(实现 Lock 接口)
     - ReentrantLock
-      - 内部类Sync继承AQS
-      - Condition底层使用LockSupport
+      - 内部类 Sync 继承 AQS
+      - Condition 底层使用 LockSupport
     - ReentrantReadWriteLock
-      - 读锁和写锁都有继承AQS的内部类Sync
-  - AQS通信工具类
+      - 读锁和写锁都有继承 AQS 的内部类 Sync
+  - AQS 通信工具类
     - Semaphore
-      - 内部有一个继承了AQS的同步器Sync
+      - 内部有一个继承了 AQS 的同步器 Sync
     - CountDownLatch
-      - 内部有一个继承了AQS的同步器Sync
+      - 内部有一个继承了 AQS 的同步器 Sync
     - CyclicBarrier
-      - 内部使用ReentrantLock
-  - 非AQS的通信工具类
+      - 内部使用 ReentrantLock
+  - 非 AQS 的通信工具类
     - Exchanger
       - LockSupport
       - CAS(Atomic)
     - Phaser
-      - 有使用LockSupport
+      - 有使用 LockSupport
 
 - 锁的种类
   - 锁的有无
     - 乐观锁
     - 悲观锁
-  - synchronized的锁
+  - synchronized 的锁
     - 无锁
     - 偏向锁
     - 轻量锁
@@ -1153,11 +1157,11 @@
 - 并发集合容器
   - [什么是同步容器和并发容器](https://juejin.cn/post/6844903954719965192)
     - 同步容器：synchronized
-    - 并发容器：AQS锁、CAS、COW、分段锁
+    - 并发容器：AQS 锁、CAS、COW、分段锁
   - 同步容器
     - vector:在面对多线程下的复合操作的时候也是需要通过客户端加锁的方式保证原子性
     - HashTable
-    - Collections下的各种 SynchronizedXXX
+    - Collections 下的各种 SynchronizedXXX
   - 并发容器
     - Queue
       - BlockingQueue
@@ -1170,42 +1174,42 @@
         - LinkedTransferQueue
       - ConcurrenLinkedQueue
         - Unsafe:CAS
-        - [LinkedBlockingQueue与ConcurrentLinkedQueue的区别](https://blog.csdn.net/lzxlfly/article/details/86710382)
+        - [LinkedBlockingQueue 与 ConcurrentLinkedQueue 的区别](https://blog.csdn.net/lzxlfly/article/details/86710382)
     - ConcurrentMap
       - ConcurrentHashMap
-        - 看HashMap那里
+        - 看 HashMap 那里
       - ConcurrentNavigableMap
       - ConcurrentSkipListMap
     - CopyOnWrite
       - CopyOnWriteArrayList
-        - ReentrantLock加锁
+        - ReentrantLock 加锁
       - CopyOnWriteArrayMap
       - CopyOnWriteArraySet
 
 - 线程池
   - 结构
-    - 任务(Runnable /Callable) 
+    - 任务(Runnable /Callable)
     - 任务的执行(Executor)
     - 异步计算的结果(Future)
   - 创建
-    - ThreadPoolExecutor构造方法参数及含义 <!-- fold -->
+    - ThreadPoolExecutor 构造方法参数及含义 <!-- fold -->
       - int corePoolSize：该线程池中核心线程数最大值
       - int maximumPoolSize：该线程池中线程总数最大值 。
       - long keepAliveTime：非核心线程闲置超时时长。
-      - TimeUnit unit：keepAliveTime的单位。
-      - BlockingQueue workQueue：阻塞队列，维护着等待执行的Runnable任务对象。
+      - TimeUnit unit：keepAliveTime 的单位。
+      - BlockingQueue workQueue：阻塞队列，维护着等待执行的 Runnable 任务对象。
       - ThreadFactory threadFactory：<br />创建线程的工厂 ，用于批量创建线程，统一在创建线程时设置一些参数，<br/>如是否守护线程、线程的优先级等。<br />如果不指定，会新建一个默认的线程工厂。
       - RejectedExecutionHandler handler 拒绝策略
-        - AbortPolicy：默认拒绝处理策略，丢弃任务并抛出RejectedExecutionException异常。
+        - AbortPolicy：默认拒绝处理策略，丢弃任务并抛出 RejectedExecutionException 异常。
         - DiscardPolicy：丢弃新来的任务，但是不抛出异常。
         - DiscardOldestPolicy：丢弃队列头部（最旧的）的任务，然后重新尝试执行程序（如果再次失败，重复此过程）。
         - CallerRunsPolicy：由调用线程处理该任务。
-    - Executors默认实现(底层使用ThreadPoolExecutor) <!-- fold -->
+    - Executors 默认实现(底层使用 ThreadPoolExecutor) <!-- fold -->
       - FixedThreadPool
         - 参数设置
         - 执行过程
         - 弊端
-      - CachedThreadPool 
+      - CachedThreadPool
         - 参数设置
         - 执行过程
         - 弊端
@@ -1214,14 +1218,14 @@
         - 执行过程
         - 弊端
   - **线程池工作流程**
-  - ThreadPool状态转换 <!-- fold -->
+  - ThreadPool 状态转换 <!-- fold -->
     - RUNNING
     - SHUTDOWN
     - STOP
     - TIDYING
     - TERMINATED
   - ScheduledThreadPool <!-- fold -->
-    - 继承了ThreadPoolExecutor
+    - 继承了 ThreadPoolExecutor
     - 主要用来在给定的延迟后运行任务，或者定期执行任务
     - 实际项目中会使`用quartz`
   - **为什么不要用默认实现** <br/> (上面的默认实现有什么弊端)
@@ -1237,7 +1241,7 @@
 
 - **ThreadLocal(待做)**
 
-#### JUC整理 <!-- fold -->
+#### JUC 整理 <!-- fold -->
 
 #### 并发本质 <!-- fold -->
 
@@ -1251,7 +1255,7 @@
 
 ### 基础知识 <!-- fold -->
 
-- jvm发展
+- jvm 发展
 - 特点：
   - 一次编译，到处运行
   - 自动内存管理
@@ -1259,7 +1263,7 @@
 - 架构模型
   - 基于栈式架构
   - 基于寄存器架构
-- JVM生命周期
+- JVM 生命周期
   - 启动
   - 执行
   - 退出
@@ -1290,7 +1294,7 @@
   - 分清关系
     - 继承关系
     - 上下层关系<br />(涉及双亲委派)
-    - 包含关系<br />(自定义类加载器包含其他java编写类加载器)
+    - 包含关系<br />(自定义类加载器包含其他 java 编写类加载器)
   - 通常分类
     - BootStrap ClassLoader
       - 目的
@@ -1306,38 +1310,38 @@
       - 加载库
   - 按照规范
     - 引导类加载器（Bootstrap ClassLoader） c/c++编写
-    - 自定义类加载器（User-Defined ClassLoader） java编写
+    - 自定义类加载器（User-Defined ClassLoader） java 编写
       - 为何要自定义类加载器
-  - 抽象类ClassLoader
+  - 抽象类 ClassLoader
     - 继承结构
     - 虚拟机的入口应用:`sun.misc.Launcher`
-    - 获取classloader的方式
+    - 获取 classloader 的方式
   - **双亲委派机制**
     - **原理**
-    - 自定义java.lang.String是否会加载
+    - 自定义 java.lang.String 是否会加载
     - 优势
       - 避免类的重复加载
-      - 保护程序安全，防止核心api被随意篡改
+      - 保护程序安全，防止核心 api 被随意篡改
     - 例外案例
   - 沙箱安全机制
   - 其他
-    - jvm 中判断两个class对象是否为同一个类2个判断条件
+    - jvm 中判断两个 class 对象是否为同一个类 2 个判断条件
     - 类加载器引用哦作为类型信息存于方法区
     - 引用类型转换时，要保证两个类加载器相同
 
 #### 中层
 
-- **Java内存区域布局说明**
+- **Java 内存区域布局说明**
 - 程序计数器
   - 是什么
     - 线程私有
     - 取值
     - 作用
-    - 没有OOM
+    - 没有 OOM
     - 生命周期
   - 问题
-    - 为什么使用PC寄存字器记录当当前线程的执行地址
-    - pc寄存器为什么被设定为线程私有
+    - 为什么使用 PC 寄存字器记录当当前线程的执行地址
+    - pc 寄存器为什么被设定为线程私有
 - 虚拟机栈
   - 是什么
     - 线程私有
@@ -1349,8 +1353,8 @@
     - `-Xss`
   - 栈帧
     - 是什么
-      - Java虚拟机栈（Java Virtual Machine Stack),早期也叫Java栈。
-      - 每个线程在创建时都会创建一个虚拟机栈，<br />其内部保存一个个的栈帧 (Stack Frame),对应着一次次的Java方法调用。
+      - Java 虚拟机栈（Java Virtual Machine Stack),早期也叫 Java 栈。
+      - 每个线程在创建时都会创建一个虚拟机栈，<br />其内部保存一个个的栈帧 (Stack Frame),对应着一次次的 Java 方法调用。
       - 是线程私有的
     - 运行原理-栈帧弹出
     - 内部组成
@@ -1359,7 +1363,7 @@
         - 生命周期
         - slot
           - 概念/作用
-          - 32位,64位占用
+          - 32 位,64 位占用
           - 存储数据类型
           - 存储内容与顺序
           - 槽的重用
@@ -1384,9 +1388,9 @@
               - 什么是非虚方法 <!-- fold -->
                 - 静态方法
                 - 私有方法
-                - final方法
+                - final 方法
                 - 构造器
-                - 父类方法(使用super显式调用)
+                - 父类方法(使用 super 显式调用)
               - 什么是虚方法 <!-- fold -->
                 - 非虚方法之外的方法
               - 无个调用指令 <!-- fold -->
@@ -1411,22 +1415,22 @@
         - 一些附加信息
   - 问题 <!-- fold -->
     - 栈中可能出现的异常
-    - i++和++i的区别。<br />从字节码，局部变量表，操作数栈层面解释
+    - i++和++i 的区别。<br />从字节码，局部变量表，操作数栈层面解释
     - 举例栈溢出的情况？(StackOverflowError)
     - 调整栈大小，就能保证不出现溢出吗？
     - 分配的栈内存越大越好吗？
     - 垃圾回收是否会涉及到虚拟机栈？
     - 方法中定义的局部变量是否线程安全？
 - 本地方法接口+库(非运行时数据区结构)
-  - 定义:一个Native Method就是一个Java调用非Java代码的接口。
-  - 特点:该方法的实现由非Java语言实现，比如 C。
+  - 定义:一个 Native Method 就是一个 Java 调用非 Java 代码的接口。
+  - 特点:该方法的实现由非 Java 语言实现，比如 C。
   - 目的:
-    - 与java环境外交互
+    - 与 java 环境外交互
     - 与操作系统交互
     - Sun's java
 - 本地方法栈
   - 目的
-  - 在Hotspot JVM中，直接将本地方法栈和虚拟机栈合二为一。
+  - 在 Hotspot JVM 中，直接将本地方法栈和虚拟机栈合二为一。
 
 - 堆
   - 空间划分与比例`1:2` `6:1:1`
@@ -1436,19 +1440,19 @@
   - 对象分配
     - 一般过程
     - 特殊情况
-  - 四种GC
+  - 四种 GC
     - Minor GC
       - 回收区域
       - 触发机制
       - 耗时代价
-      - Survivor的被动收集
+      - Survivor 的被动收集
     - Major GC
       - 回收区域
       - 触发机制
       - 耗时代价
     - Mixed GC
       - 回收区域
-      - 只有G1回收器有该GC
+      - 只有 G1 回收器有该 GC
     - Full GC
       - 回收区域
       - 触发机制
@@ -1456,10 +1460,10 @@
   - TLAB:快速分配策略。
     - 作用
     - 分配流程：
-      - JVM确实是将TLAB作为内存分配的首选
-      - 失败后，JVM就会尝试着通过使用加锁机制确保数据操作的原子性，<br />从而直接在Eden空间中分配内存。
-    - 大小：默认整个Eden空间的1%<br /> `-XX:TLABWasteTargetPercent`设置
-  - 逃逸分析<br />( **十分不成熟，Hotspot也没用** )
+      - JVM 确实是将 TLAB 作为内存分配的首选
+      - 失败后，JVM 就会尝试着通过使用加锁机制确保数据操作的原子性，<br />从而直接在 Eden 空间中分配内存。
+    - 大小：默认整个 Eden 空间的 1%<br /> `-XX:TLABWasteTargetPercent`设置
+  - 逃逸分析<br />( **十分不成熟，Hotspot 也没用** )
     - 种类：
       - 方法逃逸
       - 线程逃逸
@@ -1488,7 +1492,7 @@
   - 为何要移除永久代
   - **什么是符号引用**<br />
     - 说明：
-      - 以元祖JVM:Sun JDK 1.0.2的32位x86为例
+      - 以元祖 JVM:Sun JDK 1.0.2 的 32 位 x86 为例
       - 整体原理类似
     - 符号引用
       - 说明 <!-- fold -->
@@ -1496,7 +1500,7 @@
         - 实际使用时可以藉此找到相应的位置
     - 直接引用
       - 表现形式 <!-- fold -->
-        - 指向methodblock的指针
+        - 指向 methodblock 的指针
         - 虚方法表下标
       - 说明
     - 解析时机
@@ -1515,22 +1519,22 @@
           - 该类所有的实例都已经被回收
           - 加载该类的类加载器已经被回收
 - 问题 <!-- fold -->
-  - 说一下JVM内存模型吧，有哪些区？分别干什么的？
-  - Java8的内存分代改进
-  - JVM内存分哪几个区，每个区的作用是什么？
-  - JVM内存分布/内存结构？栈和堆的区别？堆的结构？为什么两个survivor区？
-  - Eden和Survior的比例分配
-  - jvm内存分区，为什么要有新生代和老年代
-  - Java的内存分区
-  - 讲讲jvm运行时数据库区
+  - 说一下 JVM 内存模型吧，有哪些区？分别干什么的？
+  - Java8 的内存分代改进
+  - JVM 内存分哪几个区，每个区的作用是什么？
+  - JVM 内存分布/内存结构？栈和堆的区别？堆的结构？为什么两个 survivor 区？
+  - Eden 和 Survior 的比例分配
+  - jvm 内存分区，为什么要有新生代和老年代
+  - Java 的内存分区
+  - 讲讲 jvm 运行时数据库区
   - 什么时候对象会进入老年代？
-  - JVM内存为什么要分成新生代，老年代，持久代。<br />新生代中为什么要分为Eden和Survivor。
-  - Jvm内存模型以及分区，需要详细到每个区放什么。
-  - JVM的内存模型，Java8做了什么修改
-  - JVM内存分哪几个区，每个区的作用是什么？
-  - java内存分配
-  - jvm的永久代中会发生垃圾回收吗？
-  - jvm内存分区，为什么要有新生代和老年代？
+  - JVM 内存为什么要分成新生代，老年代，持久代。<br />新生代中为什么要分为 Eden 和 Survivor。
+  - Jvm 内存模型以及分区，需要详细到每个区放什么。
+  - JVM 的内存模型，Java8 做了什么修改
+  - JVM 内存分哪几个区，每个区的作用是什么？
+  - java 内存分配
+  - jvm 的永久代中会发生垃圾回收吗？
+  - jvm 内存分区，为什么要有新生代和老年代？
 
 - **对象的实例化内存布局和访问定位**
   - 创建对象的方式
@@ -1548,17 +1552,17 @@
       - TLAB
     - 初始化分配到的空间
     - 设置对象的对象头
-    - 执行init方法进行初始化
+    - 执行 init 方法进行初始化
       - 属性初始化方式
         - 1.默认初始化
         - 2.显式初始化
         - 3.代码块中初始化
         - 4.构造器中初始化
         - 5.对象.属性 初始化
-      - init中包括2,3,4
+      - init 中包括 2,3,4
   - 内部布局
-    - 对象头(下面3项都是一字宽)
-      - Mark Word--存储对象的hashCode或锁信息等
+    - 对象头(下面 3 项都是一字宽)
+      - Mark Word--存储对象的 hashCode 或锁信息等
         - 不同锁状态内容不同
       - Class Metadata Address--存储到对象类型数据的指针
       - Array length--数组的长度（如果是数组）
@@ -1574,9 +1578,9 @@
       - 优点
       - 缺点
   - 问题 <!-- fold -->
-    - 对象在JVM中是怎么存储的？
+    - 对象在 JVM 中是怎么存储的？
     - 对象头信息里面有哪些东西？
-    - java对象头里有什么
+    - java 对象头里有什么
 - 直接内存
 
 #### 下层
@@ -1594,17 +1598,17 @@
     - 前端编译器<br />java-->.class
     - 后端运行期编译器：JIT<br /> .class-->机器码
     - 静态提前编译器：AOT(Ahead of Time Compiler)编译器，<br /> .java-->机器码
-  - Java代码执行方式分类
+  - Java 代码执行方式分类
     - 种类
       - 源代码编译成字节码文件，<br />然后在运行时通过解释器将字节码文件转为机器码执行
       - 直接编译成机器码
-    - HotSpot执行方式
+    - HotSpot 执行方式
       - `-Xint`:完全采用解释器模式执行程序；
       - `-Xcomp`:完全采用即时编译器模式执行程序。如果即时编译出现问题，解释器会介入执行。
       - `-Xmixed`(默认):采用解释器+即时编译器的混合模式共同执行程序。
-  - Java执行引擎组成
+  - Java 执行引擎组成
     - 解释器
-      - 为什么java源码到机器语言中间要有个字节码
+      - 为什么 java 源码到机器语言中间要有个字节码
       - 工作机制
       - 种类
         - 字节码解释器
@@ -1627,41 +1631,41 @@
           - 回边计数器
             - 工作机制
             - 栈上替换(OSR)
-      - Java内置JIT编译器
+      - Java 内置 JIT 编译器
         - C1
-          - client模式下运行
+          - client 模式下运行
           - 简单和可靠的优化，耗时短
           - 优化策略 <!-- fold -->
             - 方法内联：将引用的函数代码编译到引用点处，<br />这样可以减少栈帧的生成，减少参数传递以及跳转过程
             - 去虚拟化：对唯一的实现类进行内联
             - 沉余消除：在运行期间把一些不会执行的代码折叠掉
         - C2
-          - server模式下运行
+          - server 模式下运行
           - 耗时较长的优化，以及激进优化
           - 优化策略 <!-- fold -->
             - 标量替换：用标量值代替聚合对象的属性值
             - 栈上分配：对于未逃逸的对象分配对象在栈而不是堆
-            - 同步消除：清除同步操作，通常指synchronized
-      - java中的实际优化策略：[分层编译(1.7引入,1.8默认开启)](http://zhongmingmao.me/2019/01/02/jvm-advanced-jit/)
+            - 同步消除：清除同步操作，通常指 synchronized
+      - java 中的实际优化策略：[分层编译(1.7 引入,1.8 默认开启)](http://zhongmingmao.me/2019/01/02/jvm-advanced-jit/)
   - 其他编译器：
     - Graa1
     - AOT
 
-- String与StringTable(中间插曲)
-  - 创建String
+- String 与 StringTable(中间插曲)
+  - 创建 String
     - 字面量
       - 一个对象
       - 返回的索引指向
     - new
       - 两个对象
       - 返回的索引指向
-    - **StringBuilder和StringBuffer的toString**
+    - **StringBuilder 和 StringBuffer 的 toString**
     - (本质同上)new String("a")+new String("b")
-  - String的不可变性
-  - String底层存储结构
+  - String 的不可变性
+  - String 底层存储结构
     - jdk8:final char[]
     - jdk9:final byte[]
-  - String Table相关
+  - String Table 相关
     - 特点
     - 长度
       - 默认长度
@@ -1674,10 +1678,10 @@
       - jdk7
       - jdk8
   - **inter()的使用**
-    - 1.7之前
-    - 1.7及之后
-  - StringTable垃圾回收:<br />GC时也会对StringTable进行垃圾回收
-  - G1中的String去重操作(了解)
+    - 1.7 之前
+    - 1.7 及之后
+  - StringTable 垃圾回收:<br />GC 时也会对 StringTable 进行垃圾回收
+  - G1 中的 String 去重操作(了解)
   - **面试题**
 
 - 垃圾回收器
@@ -1697,7 +1701,7 @@
           - 标记-压缩算法（Mark-Compact )
         - 增量收集算法
         - 分区算法(G1)
-    - 对象的finalization机制
+    - 对象的 finalization 机制
     - 对象的三种状态
   - 垃圾回收相关概念
     - `System.gc()`
@@ -1706,7 +1710,7 @@
     - Stop the world
     - 垃圾回收的串行，并发与并行
     - 安全点与安全区域
-    - **java中的引用**
+    - **java 中的引用**
       - 强引用
       - 软引用
       - 弱引用
@@ -1739,91 +1743,91 @@
         - 快速
       - 吞吐量，暂停时间的相互限制
     - 为什么要有多种垃圾回收器
-    - 7中经典垃圾回收器
+    - 7 中经典垃圾回收器
       - 时间顺序：
-        - serial<br />parNew(是serial多线程版本)
+        - serial<br />parNew(是 serial 多线程版本)
         - Parallel<br />CMS
         - G1
       - **组合关系**
       - **详细说明** <br />
         - Serial
           - 说明
-            - 分类 
+            - 分类
             - 作用位置
-            - 使用算法 
+            - 使用算法
             - 吞吐/响应 优先
             - 适用场景
           - 工作流程
           - 触发:见中层的堆
         - Serial Old
           - 说明
-            - 分类 
-            - 作用位置 
-            - 使用算法 
+            - 分类
+            - 作用位置
+            - 使用算法
             - 吞吐/响应 优先
             - 适用场景
           - 工作流程
           - 触发:见中层的堆
-        - ParNew 
+        - ParNew
           - 说明
-            - 分类 
-            - 作用位置 
-            - 使用算法 
+            - 分类
+            - 作用位置
+            - 使用算法
             - 吞吐/响应 优先
             - 适用场景
           - 工作流程
           - 触发:见中层的堆
-          - 背景：Serial多线程版本
+          - 背景：Serial 多线程版本
           - `单核/多核` `serial/parnew`
         - Parallel Scavenge
           - 说明
-            - 分类 
-            - 作用位置 
-            - 使用算法 
+            - 分类
+            - 作用位置
+            - 使用算法
             - 吞吐/响应 优先
             - 适用场景
           - 工作流程
           - 触发:见中层的堆
-          - 与parNew区别
+          - 与 parNew 区别
         - Parallel Old
           - 说明
-            - 分类 
-            - 作用位置 
-            - 使用算法 
+            - 分类
+            - 作用位置
+            - 使用算法
             - 吞吐/响应 优先
             - 适用场景
           - 工作流程
           - 触发:见中层的堆
         - CMS
           - 概述
-            - 分类 
-            - 作用位置 
-            - 使用算法 
+            - 分类
+            - 作用位置
+            - 使用算法
             - 吞吐/响应 优先
             - 适用场景
           - 触发(特殊)
-              - **达到阀值，而不是满了**
+            - **达到阀值，而不是满了**
           - 垃圾回收机制
             - 回收流程 <!-- fold -->
-              - 初始标记(STW):仅仅只是标记出GC Roots能直接关联到的对象。
-              - 并发标记(不STW):从GC Roots的直接关联对象开始遍历整个对象图的过程
+              - 初始标记(STW):仅仅只是标记出 GC Roots 能直接关联到的对象。
+              - 并发标记(不 STW):从 GC Roots 的直接关联对象开始遍历整个对象图的过程
               - 重新标记(STW):为了修正并发标记期间，因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录
-              - 并发清除(不STW):此阶段清理删除掉标记阶段判断的已经死亡的对象，释放内存空间
+              - 并发清除(不 STW):此阶段清理删除掉标记阶段判断的已经死亡的对象，释放内存空间
             - 后备方案
               - 情况：比如大对象导致空间不足
               - 错误：Concurrent Mode Failure
               - 解决：serial old fullGC
           - 搭配问题 <!-- fold -->
-            - 无法与Parallel Scavenge搭配
+            - 无法与 Parallel Scavenge 搭配
           - 废弃原因 <!-- fold -->
             - 内存碎片，大对象无法分配
-            - 后备serial old效率过低
+            - 后备 serial old 效率过低
             - 并发导致程序变慢
             - 浮动垃圾无法处理
         - G1
           - 概述
-            - 分类 
-            - 作用位置 
+            - 分类
+            - 作用位置
             - 吞吐/响应 优先
             - 使用算法 <!-- fold -->
               - 局部复制
@@ -1833,15 +1837,15 @@
           - 缺点 <!-- fold -->
             - 额外内存占用:Remember Set
           - 分区算法，分代收集
-            - region组成
-            - region角色变换
+            - region 组成
+            - region 角色变换
             - Humongous region
-            - region分段(默认8)
+            - region 分段(默认 8)
           - 参数调优
           - 垃圾回收机制
             - 预备知识
               - dirty card queue <!-- fold -->
-                - 作用：用来更新Rset，避免线程同步开销
+                - 作用：用来更新 Rset，避免线程同步开销
               - Remember Set <!-- fold -->
                 - 作用：准确的反映老年代对所在的内存分段中对象的引用
             - 回收种类
@@ -1850,8 +1854,8 @@
                 - 回收区域
                 - 详细过程 <!-- fold -->
                   - 第一阶段，扫描根。
-                  - 第二阶段，更新RSet。
-                  - 第三阶段，处理RSet。
+                  - 第二阶段，更新 RSet。
+                  - 第三阶段，处理 RSet。
                   - 第四阶段，复制对象。
                   - 第五阶段，处理引用。
               - 老年代并发标记过程
@@ -1883,31 +1887,31 @@
   - 问题 <!-- fold -->
     - 垃圾收集的算法有哪些？如何判断一个对象是否可以回收？
     - 垃圾收集器工作的基本流程。
-    - JVMGC算法有哪些，目前的JDK版本采用什么回收算法
-    - G1回收器讲下回收过程
-    - GC是什么？为什么要有GC?
-    - GC的两种判定方法？CMS收集器与G1收集器的特点。
-    - 说一下GC算法，分代回收说下
+    - JVMGC 算法有哪些，目前的 JDK 版本采用什么回收算法
+    - G1 回收器讲下回收过程
+    - GC 是什么？为什么要有 GC?
+    - GC 的两种判定方法？CMS 收集器与 G1 收集器的特点。
+    - 说一下 GC 算法，分代回收说下
     - 垃圾收集策略和算法
-    - jvm GC原理，JVM怎么回收内存
-    - CMS特点，垃圾回收算法有哪些？各自的优缺点，他们共同的缺点是什么？
-    - java的垃圾回收器都有哪些，说下g1的应用场景，平时你是如何搭配使用垃圾回收器的
-    - 你知道哪几种垃圾收集器，各自的优缺点，重点讲下cms和G1,包括原理，流程，优缺点。
+    - jvm GC 原理，JVM 怎么回收内存
+    - CMS 特点，垃圾回收算法有哪些？各自的优缺点，他们共同的缺点是什么？
+    - java 的垃圾回收器都有哪些，说下 g1 的应用场景，平时你是如何搭配使用垃圾回收器的
+    - 你知道哪几种垃圾收集器，各自的优缺点，重点讲下 cms 和 G1,包括原理，流程，优缺点。
     - 垃圾回收算法的实现原理。
     - 讲一讲垃圾回收算法。
     - 什么情况下触发垃圾回收？
     - 如何选择合适的垃圾收集算法？
-    - JVM有哪三种垃圾回收器？
+    - JVM 有哪三种垃圾回收器？
     - 常见的垃圾回收器算法有哪些，各有什么优劣？
-    - system.gc()和runtime.gc()会做什么事情？
-    - Java GC机制？GC Roots有哪些？
-    - Java对象的回收方式，回收算法。
-    - CMS和G1了解么，CMS解决什么问题，说一下回收的过程。
-    - CMS回收停顿了几次，为什么要停顿两次。
+    - system.gc()和 runtime.gc()会做什么事情？
+    - Java GC 机制？GC Roots 有哪些？
+    - Java 对象的回收方式，回收算法。
+    - CMS 和 G1 了解么，CMS 解决什么问题，说一下回收的过程。
+    - CMS 回收停顿了几次，为什么要停顿两次。
 
 ### 字节码与类加载子系统 <!-- fold -->
 
-### jvm调优 <!-- fold -->
+### jvm 调优 <!-- fold -->
 
 ## 常用框架 <!-- fold -->
 
@@ -1915,42 +1919,44 @@
 
 #### 基础
 
-- 什么是Spring框架
-- Spring框架的重要模块
-- 为什么要使用Spring框架
-- Spring框架的两大核心
+- 什么是 Spring 框架
+- Spring 框架的重要模块
+- 为什么要使用 Spring 框架
+- Spring 框架的两大核心
   - IOC
   - AOP
-- BeanFactory和ApplicationContextSpring
+- BeanFactory 和 ApplicationContextSpring
 
 #### IOC
 
 - 概念
-- [IOC容器初始化过程](https://javadoop.com/post/spring-ioc)
+- [IOC 容器初始化过程](https://javadoop.com/post/spring-ioc)
 
-- 基于xml的IOC
+- 基于 xml 的 IOC
+
   - 存入容器方式
-    - Bean标签
+    - Bean 标签
       - 默认构造函数
       - 工厂类
       - 静态工厂方法
   - 依赖注入方式
-    - 注入Bean类型
+    - 注入 Bean 类型
       - 使用构造函数(一般不用)
-      - 使用set方法(常用)
+      - 使用 set 方法(常用)
       - 使用注解
     - 注入基本类型和集合类型
-      - 通过xml
-  - 生命周期，类型等都通过bean标签属性
+      - 通过 xml
+  - 生命周期，类型等都通过 bean 标签属性
 
-- 基于注解的IOC
+- 基于注解的 IOC
+
   - 存入容器的注解
     - @Component
     - @Controller
     - @Service
     - @Repository
   - 依赖注入的注解
-    - 注入Bean类型
+    - 注入 Bean 类型
       - @AutoWired
       - @Qualifier
       - @Reasource
@@ -1962,16 +1968,16 @@
   - 改变作用范围<br />(和存入容器的注解搭配使用<br />上面四四个或@bean)
     - @Scope
 
-- 注意：对于无法添加注解<br />如导入的第三方依赖<br />可以通过xml将其存入或者向其注入<br />或者使用下面的`@Bean`
+- 注意：对于无法添加注解<br />如导入的第三方依赖<br />可以通过 xml 将其存入或者向其注入<br />或者使用下面的`@Bean`
 
-#### 摆脱xml的注解
+#### 摆脱 xml 的注解
 
 - @Configuration
 - @ComponentScan
   - 对应`component:scan`
 - @Bean
-  - 对应xml中的工厂方法
-  - 通常配置在Config类<br />返回指定对象的上方
+  - 对应 xml 中的工厂方法
+  - 通常配置在 Config 类<br />返回指定对象的上方
 - @Import
 - @PropertySource
 
@@ -1994,7 +2000,7 @@
   - Aspect
 
 - 实现原理
-  - 静态代理AspectJ
+  - 静态代理 AspectJ
   - 动态代理
     - JDK
     - GBLib
@@ -2011,32 +2017,32 @@
       - 注解：`@EnableAspectJAutoProxy`
     - 配置步骤
     - 切入点表达式 <!-- fold -->
-        - execution：用于匹配方法执行的连接点；
-        - within：用于匹配指定类型内的方法执行；
-        - this：用于匹配当前AOP代理对象类型的执行方法；注意是AOP代理对象的类型匹配，这样就可能包括引入接口也类型匹配；
-        - target：用于匹配当前目标对象类型的执行方法；注意是目标对象的类型匹配，这样就不包括引入接口也类型匹配；
-        - args：用于匹配当前执行的方法传入的参数为指定类型的执行方法；
-        - @within：用于匹配所以持有指定注解类型内的方法；
-        - @target：用于匹配当前目标对象类型的执行方法，其中目标对象持有指定的注解；
-        - @args：用于匹配当前执行的方法传入的参数持有指定注解的执行；
-        - @annotation：用于匹配当前执行方法持有指定注解的方法；
-        - bean：Spring AOP扩展的，AspectJ没有对于指示符，用于匹配特定名称的Bean对象的执行方法；
-        - reference pointcut：表示引用其他命名切入点，只有@ApectJ风格支持，Schema风格不支持。
+      - execution：用于匹配方法执行的连接点；
+      - within：用于匹配指定类型内的方法执行；
+      - this：用于匹配当前 AOP 代理对象类型的执行方法；注意是 AOP 代理对象的类型匹配，这样就可能包括引入接口也类型匹配；
+      - target：用于匹配当前目标对象类型的执行方法；注意是目标对象的类型匹配，这样就不包括引入接口也类型匹配；
+      - args：用于匹配当前执行的方法传入的参数为指定类型的执行方法；
+      - @within：用于匹配所以持有指定注解类型内的方法；
+      - @target：用于匹配当前目标对象类型的执行方法，其中目标对象持有指定的注解；
+      - @args：用于匹配当前执行的方法传入的参数持有指定注解的执行；
+      - @annotation：用于匹配当前执行方法持有指定注解的方法；
+      - bean：Spring AOP 扩展的，AspectJ 没有对于指示符，用于匹配特定名称的 Bean 对象的执行方法；
+      - reference pointcut：表示引用其他命名切入点，只有@ApectJ 风格支持，Schema 风格不支持。
     - 参数传递
 
 #### Bean
 
-- 创建Bean的方式
+- 创建 Bean 的方式
   - 默认构造函数
   - 工厂类
   - 静态工厂
 
-- Scope作用范围
+- Scope 作用范围
   - singleton：单例的（默认值）
   - prototype：多例的
-  - request：作用于web应用的请求范围
-  - session：作用于web应用的会话范围
-  - global-session：Spring5中已经没有了
+  - request：作用于 web 应用的请求范围
+  - session：作用于 web 应用的会话范围
+  - global-session：Spring5 中已经没有了
 
 - 生命周期
 
@@ -2044,25 +2050,25 @@
 
 #### 事务
 
-- Spring对事务的支持
+- Spring 对事务的支持
   - 取决于数据库
 
-- Spring事务相关API
+- Spring 事务相关 API
   - PlatformTransactionManager
   - TransactionDefinition
   - TransactionStatus
 
 - 事务管理方式
   - 编程式（基本不用，仅仅为了了解原理）
-  - 声明式（基于AOP）
-    - 基于xml
+  - 声明式（基于 AOP）
+    - 基于 xml
       - 配置流程
-    - xml开启支持+注解配置
+    - xml 开启支持+注解配置
       - 配置流程
     - 纯注解配置
       - 配置流程
 
-- **事务属性**<br />tx:advice标签内部可以配置<br />也可以使用注解配置
+- **事务属性**<br />tx:advice 标签内部可以配置<br />也可以使用注解配置
   - propagation(传播行为):(7)
     - 支持当前事务的情况(3)
       - required(默认)
@@ -2085,7 +2091,7 @@
     - 默认值是-1
   - read-only(只读属性)
     - 用于指定事务是否只读
-    - 默认false
+    - 默认 false
   - 回滚规则
     - rollback-for
     - no-rollback-for
@@ -2096,12 +2102,12 @@
   - BeanFactory
   - ApplicationContext
 - 单例设计模式
-  - bean默认作用域
+  - bean 默认作用域
   - 实现：ConcurrentHashMap 实现单例注册表的特殊方式
 - 代理设计模式
   - 代理模式在 AOP 中的应用
   - 代理模式的实现
-    - 静态代理AspectJ
+    - 静态代理 AspectJ
     - 动态代理
       - JDK
       - GBLib
@@ -2118,8 +2124,8 @@
     - 事件发布者角色
   - Spring 的事件流程总结
 - 适配器模式
-  - spring AOP中的适配器模式
-  - spring MVC中的适配器模式
+  - spring AOP 中的适配器模式
+  - spring MVC 中的适配器模式
 - 装饰者模式
 
 ### SpringMVC <!-- fold -->
@@ -2140,14 +2146,14 @@
       - typeAliases
         - package<br />(指定**实体类**包，用于起别名)
       - mapper
-        - package<br />(指定**dao类**包，避免往SqlConfig文件中的<br />mappers中添加mapper标签)
+        - package<br />(指定**dao 类**包，避免往 SqlConfig 文件中的<br />mappers 中添加 mapper 标签)
     - 其他标签
       - resultMap
       - parameterMap
       - include
       - sql
       - selectKey
-    - 动态sql标签
+    - 动态 sql 标签
       - trim
       - where
       - set
@@ -2178,13 +2184,10 @@
   - `<select>/<update>/<insert>/<delet>`---MappedStatement
 
 - **执行流程**
-
-- dao接口到MappedStatement的映射
-
-- 动态sql
+- dao 接口到 MappedStatement 的映射
+- 动态 sql
   - 原理
-  - 应用:dao方法重载
-
+  - 应用:dao 方法重载
 - 多表查询
   - 一对一(多对一)
   - 一对多
@@ -2223,7 +2226,7 @@
     - 内存分页
     - 返回结果集的子集
   - 分页插件 <!-- fold -->
-    - 拦截sql,物理分页
+    - 拦截 sql,物理分页
     - `select _ from student`
     - 拦截 sql 后重写为：<br /> `select t._ from （select \* from student）t limit 0，10`
 
@@ -2248,7 +2251,7 @@
 
 ## 工具库 <!-- fold -->
 
-### excel处理
+### excel 处理
 
 #### poi
 
@@ -2283,20 +2286,20 @@
 #### 事务
 
 - 四大特征
-  - A原子性
+  - A 原子性
     - 概述
     - 原理
       - undo log
       - 回滚
-  - C持久性
+  - C 持久性
     - 概述
     - 原理:其他三个
-  - I隔离性
+  - I 隔离性
     - 概述
     - 原理
       - MVCC
       - 锁
-  - D一致性
+  - D 一致性
     - 概述
     - 原理(双写缓冲)
       - buffer pool
@@ -2366,7 +2369,7 @@
   - 删除
   - 查看
 
-- 索引添加与Cardinality
+- 索引添加与 Cardinality
   - fast index creation
   - Cardinality
 
@@ -2380,20 +2383,20 @@
   - 索引树结构
   - 二级索引检索过程
 - 常见问题
-  - M和I两者区别 <!-- fold -->
+  - M 和 I 两者区别 <!-- fold -->
     - 事务
     - 主键
     - 外键
     - 锁
     - 索引
-    - count(*)
-  - 为什么使用B+树，不使用：
-    - B树
+    - count(\*)
+  - 为什么使用 B+树，不使用：
+    - B 树
     - 红黑树
 
 #### 调优
 
-- explain使用与分析
+- explain 使用与分析
   - **id**
   - select_type
   - table
@@ -2423,9 +2426,9 @@
 - 索引失效原因
   - 不遵循最左前缀
   - 索引列上的任何操作
-    -  计算
-    -  函数
-    -  （自动or手动）类型转换
+    - 计算
+    - 函数
+    - （自动 or 手动）类型转换
   - 范围查询
     - `between and;in`
     - `or`
@@ -2442,32 +2445,32 @@
     - in
 
 - 排序优化
-  - mysql排序方式
+  - mysql 排序方式
     - index sort
     - file sort
       - 单路
-        - io次数:2
-        - 第二次随机io
+        - io 次数:2
+        - 第二次随机 io
       - 双路
-        - io次数:1
-        - 一次顺序io
-        - buffer不够：多次io
+        - io 次数:1
+        - 一次顺序 io
+        - buffer 不够：多次 io
       - **参数优化策略**
-  - order by优化
+  - order by 优化
     - 遵循最左前缀进行排序
       - order
       - where(const)+order
     - 不让索引失效
     - 不能一升一降
-  - group by优化
+  - group by 优化
     - 实质是先排序后进行分组
-    - 能写在where限定的条件就不要去having限定了
+    - 能写在 where 限定的条件就不要去 having 限定了
 
 - 慢查询日志
 
 #### 锁
 
-- [Mysql锁底层](https://i6448038.github.io/2019/02/23/mysql-lock/)
+- [Mysql 锁底层](https://i6448038.github.io/2019/02/23/mysql-lock/)
   - latch
   - lock
 
@@ -2477,10 +2480,10 @@
     - 版本号
     - 条件限制
   - 悲观锁
-    - Myisam表锁
+    - Myisam 表锁
       - 读锁
       - 写锁
-    - Innodb锁
+    - Innodb 锁
       - 意向表锁
         - 意向共享锁
         - 意向排他锁
@@ -2497,8 +2500,8 @@
 - **[加锁流程](https://blog.csdn.net/geekjoker/article/details/79444076)**
   - 需要了解
     - 聚集索引和二级索引
-    - innodb二级索引查询流程
-    - innodb的锁算法
+    - innodb 二级索引查询流程
+    - innodb 的锁算法
   - 不同情景 <br />(**下列条件相互组合**)
     - 查询方式
       - 等值查询
@@ -2508,7 +2511,7 @@
       - RR
       - serializable
     - 操作
-      - `select`(只用在serializable下考虑)
+      - `select`(只用在 serializable 下考虑)
       - `delete`/`select...for update`
     - 使用索引
       - 主键索引<br />(注意临键锁会不会加在主键)
@@ -2566,8 +2569,8 @@
     - 说明
     - 应用场景
     - 数据结构 <!-- fold -->
-      - 默认使用IntSet
-      - 一定情况下IntSet转换为HashTable
+      - 默认使用 IntSet
+      - 一定情况下 IntSet 转换为 HashTable
 
   - ZSet
     - 说明
@@ -2611,8 +2614,8 @@
       - 自动
         - 默认的三个
         - 原理
-      - 手动(4种)
-    - check检查
+      - 手动(4 种)
+    - check 检查
     - 优缺点
   - AOF
     - 持久化原理/过程
@@ -2620,17 +2623,17 @@
     - 触发
       - 开启后自动
       - 手动`bgrewriteaof`
-    - check检查
-    - AOF重写
+    - check 检查
+    - AOF 重写
       - 原理
-        - 读取服务器现有KV
-        - fork子**进程**
+        - 读取服务器现有 KV
+        - fork 子**进程**
       - 触发
       - 重写数据不一致问题
       - 重写数据不一致问题解决
     - 优缺点
-    - (总结)AOF的两个缓冲区
-  - AOF+RDB混合
+    - (总结)AOF 的两个缓冲区
+  - AOF+RDB 混合
 
 - 事务
   - 基本命令
@@ -2651,22 +2654,22 @@
   - 主从复制
     - 说明
     - 配置
-    - master宕机
+    - master 宕机
   - 哨兵模式
     - 说明
     - 配置
-    - master宕机
-  - 分片cluster
+    - master 宕机
+  - 分片 cluster
     - 说明
       - 两个端口
       - 集群总线
       - 数据存取 <!-- fold -->
         - CRC16
-        - hash槽
+        - hash 槽
         - 重定向
       - 主从复制模型
     - 配置
-    - master宕机
+    - master 宕机
 
 - 缓存失效/更新问题
   - 缓存雪崩
@@ -2695,31 +2698,31 @@
   - 为什么使用单线程 <!-- fold -->
     - 可维护性，方便开发和调试
     - 单线程也能处理并发请求(多路复用)
-    - 性能瓶颈不是cpu，而是内存和网络
+    - 性能瓶颈不是 cpu，而是内存和网络
   - 为什么能单线程处理那么多客户端 <!-- fold -->
     - 纯内存
     - 单线程，无锁
     - 多路复用
     - 高效底层数据结构优化
-  - 为什么6.0前不使用多线程
-  - Redis 6.0为什么使用多线程 <!-- fold -->
-    - 提高网络io读写性能
+  - 为什么 6.0 前不使用多线程
+  - Redis 6.0 为什么使用多线程 <!-- fold -->
+    - 提高网络 io 读写性能
     - `默认禁用`
 
-- redis应用
-  - redis分布式锁
+- redis 应用
+  - redis 分布式锁
     - 高效分布式锁条件
       - 互斥
       - 防止死锁
       - 性能
       - 可重入
     - 两个问题及解决思路
-      - setnx,expire原子性
+      - setnx,expire 原子性
       - 锁提前失效
-    - redisson锁
+    - redisson 锁
       - 流程/原理
       - 看门狗机制
-      - lua脚本
+      - lua 脚本
       - 实现可重入:Hash
       - 缺陷
   - 缓存
@@ -2752,13 +2755,13 @@
 
 ### 分布式缓存算法
 
-#### 传统hash算法
+#### 传统 hash 算法
 
-#### 一致性hash算法
+#### 一致性 hash 算法
 
 #### 集群算法
 
-#### 分块hash算法
+#### 分块 hash 算法
 
 ### 分布式事务算法
 
@@ -2788,7 +2791,7 @@
 
 ### zookeeper
 
-## RPC框架 <!-- fold -->
+## RPC 框架 <!-- fold -->
 
 ### SpringCloud
 
@@ -2832,7 +2835,7 @@
 
 ### Mahout
 
-## OLAP引擎 <!-- fold -->
+## OLAP 引擎 <!-- fold -->
 
 ### Druid(?)
 
@@ -2854,9 +2857,36 @@
 
 # 人工智能
 
-## 机器学习
+## 机器学习 <!-- fold -->
 
-## 深度学习
+### sklearn
+
+#### 数据处理
+
+#### 数据预处理
+
+#### 特征工程
+
+- 特征选择
+- 特征降维
+
+#### 转换器与估计器
+
+### 基本算法
+
+- 监督学习
+  - 分类
+  - 回归
+  - 标注
+- 无监督学习
+
+### 模型评估
+
+### XGBoost
+
+## 深度学习 <!-- fold -->
+
+## opencv
 
 # 前端
 
@@ -2890,11 +2920,25 @@
 
 ## 前端开发的组件化-webpack
 
-## 组件化框架 <!-- fold -->
+## 框架 <!-- fold -->
 
-### Vue
+### 组件化-Vue
 
-### React
+- vue 
+- 状态管理器-vuex
+
+### 组件化-React
+
+- React
+- 状态管理器-redux
+
+### 其他
+
+#### 简单，可扩展的状态管理-Mobx
+
+#### 数据处理-Lodash
+
+### UI
 
 # 其他
 
@@ -2905,5 +2949,3 @@
 ## Lisp
 
 ## bat
-
-

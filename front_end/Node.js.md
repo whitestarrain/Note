@@ -2904,7 +2904,40 @@ function validateFiles(pathnames, callback) {
 		- nvm list
 		- nvm use
 
-## 8.2. Nodejs,nvm,webpack 关系
+## 8.2. Nodejs,npm,webpack 关系
+
+> 什么是nodejs
+
+简单的说 Node.js 就是运行在服务端的 JavaScript。  
+Node.js是一个事件驱动I/O服务端JavaScript环境，基于Google的V8引擎，V8引擎执行Javascript的速度非常快，性能非常好。  
+node环境基于V8引擎提供了一种可以让JS代码跑在后端的能力，这就是node。  
+其实这里的node本身和**前端模块化**没啥关系。但是因为npm是产生与node社区，node中也是通过npm来加载模块的，所以有必要说一下他们之间的关系。  
+npm 是 Node.js 官方提供的包管理工具，他已经成了 Node.js 包的标准发布平台，用于 Node.js 包的发布、传播、依赖控制  
+
+> 什么是npm
+
+介绍了webpack，我们可能会疑问，我的JS，CSS，HTML文件分开写，挺好的呀，为什么要使用webpack工具，进行复杂的各项配置。  
+在传统前端开发模式下，我们确实是按照JS/CSS/HTML文件分开写的模式就可以，  
+但是随着前端的发展，社区的壮大，各种前端的库和框架层出不穷，我们项目中可能会使用很多额外的库，如何有效管理这些引入的库文件是一个大问题  
+而且我们知道基于在HTML中使用`<script>`引入的方式，有两个弊端，一个是会重复引入，二是当库文件数量很多时管理成为一个大难题。  
+面对这样的局面，为了简化开发的复杂度，前端社区涌现了很多实践方法。模块化就是其中一项成功实践，而npm就是这样在node社区中产生的。  
+
+npm 由三个独立的部分组成：
+
+- 网站:是开发者查找包（package）、设置参数以及管理 npm 使用体验的主要途径。
+- 注册表（registry）:是一个巨大的数据库，保存了每个包（package）的信息。
+- 命令行工具 (CLI): CLI 通过命令行或终端运行。开发者通过 CLI 与 npm 打交道。
+
+> 什么是webpack
+
+![nodejs-1](./image/nodejs-1.png)
+
+Webpack 是一个前端资源加载/打包工具。它将根据模块的依赖关系进行静态分析，然后将这些模块按照指定的规则生成对应的静态资源。  
+Webpack可以帮你处理好各个包/模块之间的依赖关系（modules with dependencies），并将这些复杂依赖关系的静态文件打包成一个或很少的静态文件，提供给浏览器访问使用；  
+除此之外，webpack因为可以提高兼容性，可以将一些浏览器尚不支持的新特性转换为可以支持格式，进而减少由新特性带来的浏览器的兼容性问题  
+
+这里需要注意的是，webpack只是一个前端的打包工具，打包的是静态资源，和后台没有关系，虽然webpack依赖于node环境。
+
 
 ## 8.3. node.js 高性能原理
 
@@ -3264,10 +3297,9 @@ vscode 和 vim都有对应使用方法
 
 # 9. 参考资料
 
-- [ ] [躺下来聊聊前端自动化](https://zhuanlan.zhihu.com/p/28483358)
-- [ ] [前端模块化开发中webpack、npm、node、nodejs之间的关系](https://blog.csdn.net/AngelLover2017/article/details/84801673)
+- [x] [前端模块化开发中webpack、npm、node、nodejs之间的关系](https://blog.csdn.net/AngelLover2017/article/details/84801673)
 - [x] [七天学会NodeJS](https://nqdeng.github.io/7-days-nodejs)
 - [ ] [前端模块化（CommonJs,AMD和CMD）](https://www.jianshu.com/p/d67bc79976e6)
 - [ ] [require，import区别](https://www.zhihu.com/question/56820346)
-- [ ] [eslint规则在项目中的整合](https://www.panyanbin.com/article/b679027e.html)
+- [x] [eslint规则在项目中的整合](https://www.panyanbin.com/article/b679027e.html)
 

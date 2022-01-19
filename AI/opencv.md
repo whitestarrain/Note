@@ -2185,7 +2185,6 @@ righty = int(((cols-x)*vy/vx)+y)
 cv.line(img,(cols-1,righty),(0,lefty),(0,255,0),2)
 ```
 
-
 ### 3.9.4. Contour Properties
 
 Learn to find different properties of contours like Solidity, Mean Intensity etc.
@@ -2210,9 +2209,21 @@ All about histograms in OpenCV
 
 Meet different Image Transforms in OpenCV like Fourier Transform, Cosine Transform etc.
 
-### 3.11.1. example code
+### Find, Plot, Analyze !!!
 
-### 3.11.2. function
+Learn the basics of histograms
+
+### Histogram Equalization
+
+Learn to Equalize Histograms to get better contrast for images
+
+### 2D Histograms
+
+Learn to find and plot 2D Histograms
+
+### Histogram Backprojection
+
+Learn histogram backprojection to segment colored objects
 
 ## 3.12. Template Matching
 
@@ -2220,7 +2231,63 @@ Learn to search for an object in an image using Template Matching
 
 ### 3.12.1. example code
 
+### Template Matching in OpenCV
+
+```python
+  import cv2 as cv
+  import numpy as np
+  from matplotlib import pyplot as plt
+  img = cv.imread('messi5.jpg',0)
+  img2 = img.copy()
+  template = cv.imread('template.jpg',0)
+  w, h = template.shape[::-1]
+  # All the 6 methods for comparison in a list
+  methods = ['cv.TM_CCOEFF', 'cv.TM_CCOEFF_NORMED', 'cv.TM_CCORR',
+              'cv.TM_CCORR_NORMED', 'cv.TM_SQDIFF', 'cv.TM_SQDIFF_NORMED']
+  for meth in methods:
+      img = img2.copy()
+      method = eval(meth)
+      # Apply template Matching
+      res = cv.matchTemplate(img,template,method)
+      min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
+      # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
+      if method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:
+          top_left = min_loc
+      else:
+          top_left = max_loc
+      bottom_right = (top_left[0] + w, top_left[1] + h)
+      cv.rectangle(img,top_left, bottom_right, 255, 2)
+      plt.subplot(121),plt.imshow(res,cmap = 'gray')
+      plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
+      plt.subplot(122),plt.imshow(img,cmap = 'gray')
+      plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
+      plt.suptitle(meth)
+      plt.show()
+```
+
+#### Template Matching with Multiple Objects
+
+```python
+  import cv2 as cv
+  import numpy as np
+  from matplotlib import pyplot as plt
+  img_rgb = cv.imread('mario.png')
+  img_gray = cv.cvtColor(img_rgb, cv.COLOR_BGR2GRAY)
+  template = cv.imread('mario_coin.png',0)
+  w, h = template.shape[::-1]
+  res = cv.matchTemplate(img_gray,template,cv.TM_CCOEFF_NORMED)
+  threshold = 0.8
+  loc = np.where( res >= threshold)
+  for pt in zip(*loc[::-1]):
+      cv.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
+  cv.imwrite('res.png',img_rgb)
+```
+
 ### 3.12.2. function
+
+- `cv2.matchTemplate()`
+  - [TemplateMatchModes](https://docs.opencv.org/4.x/df/dfb/group__imgproc__object.html#ga3a7850640f1fe1f58fe91a2d7583695d)
+
 
 ## 3.13. Hough Line Transform
 

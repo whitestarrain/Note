@@ -796,8 +796,8 @@ SVD使用奇异值分解来找出空间V，其中Σ也是一个对角矩阵，�
 |  naive_bayes.ComplementNB  |                       补集朴素贝叶斯(推荐)                       |
 | linear_model.BayesianRidge | 贝叶斯岭回归，在参数估计过程中使用贝叶斯回归技术来包括正则化参数 |
 
-```py
-# 四个朴素贝叶斯使用基本差不多。这里只演示一个
+```python
+  # 四个朴素贝叶斯使用基本差不多。这里只演示一个
 import numpy as np
 import pandas as pd
 from sklearn.datasets import fetch_20newsgroups
