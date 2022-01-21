@@ -2906,6 +2906,8 @@
 
 ### ES6
 
+### Babel
+
 ### Promise
 
 ### scss、less

@@ -847,12 +847,12 @@ Array.prototype.getSum = function () {
 放一个容器盛放游戏场景 div#map，设置样式
 
 ```css
-#map {
-  width: 800px;
-  height: 600px;
-  background-color: #ccc;
-  position: relative;
-}
+  #map {
+    width: 800px;
+    height: 600px;
+    background-color: #ccc;
+    position: relative;
+  }
 ```
 
 #### 1.3.3.2. 分析对象
@@ -1455,7 +1455,7 @@ if (true) {
 ### 1.5.3. 函数内 `this` 指向的不同场景
 
 以前的this情景
-[跳转](../00/01-JavaScript基础.md#1218this详解)
+[跳转](./JavaScript基础.md#1218this详解)
 
 **函数内部的this，在函数调用时才确定指向**
 函数的调用方式决定了 `this` 指向的不同：
