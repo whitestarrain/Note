@@ -1,6 +1,6 @@
-# 基本概念
+# 1. 基本概念
 
-## 说明
+## 1.1. 说明
 
 - 说明
   - Babel是一个**工具集**，主要用于将ES6版本的JavaScript代码转为ES5等向后兼容的JS代码
@@ -27,7 +27,7 @@
 
 - 注意： 使用Babel进行ES6转ES5时，转化之后默认是严格模式。
 
-## 基本原理
+## 1.2. 基本原理
 
 - 原理很简单，核心就是 AST (抽象语法树)
   - 首先将源码转成抽象语法树
@@ -41,11 +41,11 @@
   - Babel 只负责编译新标准引入的新语法，比如 Arrow function、Class、ES Module 等
   - 它不会编译原生对象新引入的方法和 API，比如 Array.includes，Map，Set 等， 这些需要通过 Polyfill 来解决
 
-# 快速入门
+# 2. 快速入门
 
 > 配置一个最简单的Babel转码工程，来学习整个流程
 
-## Babel的安装，配置与转码
+## 2.1. Babel的安装，配置与转码
 
 - 在本地新建一个文件夹babel01，在该文件夹下新建一个js文件，文件命名为babel.config.js。
   > 该文件是 Babel配置文件 ，我们在该文件里输入如下内容：
@@ -85,7 +85,7 @@
   };
   ```
 
-## Babel转码说明
+## 2.2. Babel转码说明
 
 - `babel.config.js`
   - 是Babel执行时会默认在当前目录寻找的Babel配置文件。
@@ -101,7 +101,7 @@
   - @babel/preset-env这个npm包提供了ES6转换ES5的语法转换规则，我们在Babel配置文件里指定使用它。
     - 如果不使用的话，也可以完成转码，但转码后的代码仍然是ES6的，相当于没有转码。
 
-## 小结
+## 2.3. 小结
 
 1.一个完整的Babel转码工程通常包括如下：
 
@@ -111,11 +111,13 @@
 
 2.我们通过以下命令对单个JS文件进行转码：
 
+  ```bash
   npx babel main.js -o compiled.js
+  ```
 
-# 引入 polyfill
+# 3. 引入 polyfill
 
-## 说明
+## 3.1. 说明
 
 - 总体来说，Babel的主要工作有两部分：
   - 语法转换
@@ -124,12 +126,9 @@
   - 补齐API
     - 补齐API就是，通过 Polyfill 的方式在目标环境中添加缺失的特性
 
-## 问题示例
+## 3.2. 问题示例
 
-
-我们按照上一节的操作对var promise = Promise.resolve('ok')进行转换，会发现转换后的代码并没有改变，过程如下。
-
-
+我们按照上一节的操作对`var promise = Promise.resolve('ok')`进行转换，会发现转换后的代码并没有改变，过程如下。
 
 - 新建babel02文件夹，新建babel配置文件 `babel.config.js` ,内容如下
 
@@ -179,7 +178,7 @@
   - 我们通过一个index.html文件引用转码后的 compiled.js 
   - 在比较老的浏览器（ 例如火狐27 ）里打开HTML文件后后控制台报错：Promise is not defined。
 
-## 解释
+## 3.3. 解释
 
 - 为何 Babel没有对ES6的Promise进行转换 ？
   - 因为Babel默认只转换新的JavaScript语法（syntax），而不转换新的 API。
@@ -188,12 +187,14 @@
       > 例如Object.assign，Promise.resolve；
     - 另一类是新的实例方法，例如数组实例方法`[1, 4, -5, 10].find((item) => item < 0)`
 
-## 修复
+## 3.4. 修复
 
 - 如果想让ES6新的API在低版本浏览器正常运行，我们就不能只做语法转换。
 
 - 修复方式
   - 在前端web工程里，最常规的做法是使用polyfill，为当前环境提供一个垫片。
+
+- 原理
   - 所谓垫片，是指垫平不同浏览器之间差异的东西。
   - polyfill提供了全局的ES6对象以及通过修改原型链Array.prototype等实现对实例的实现。
 
@@ -220,9 +221,9 @@
   - 通过在构建工具入口文件（例如webapck）引入
   - babel配置文件引入
 
-# Babel深入
+# 4. Babel深入
 
-## 关于 Babel 版本
+## 4.1. 关于 Babel 版本
 
 - 主要版本：目前，前端开发领域使用的Babel版本主要的Babel6和Babel7这两个版本。
 
@@ -245,11 +246,11 @@
 
   > 对于这两个版本更细微的变化，都会再接下来的各小节里讲到。
 
-## Babel 配置文件
+## 4.2. Babel 配置文件
 
 > 在前面几小节，我们已经简单使用过Babel的配置文件了。现在我们来深入学习它。
 
-### 配置文件
+### 4.2.1. 配置文件
 
 - 说明：
   - 无论是通过命令行工具babel-cli来进行编译，还是webpack这类的构建工具
@@ -324,21 +325,21 @@
   - 除了plugins和presets这两个配置项，还有minified、ignore等
     > 但平时都用不到，把精力放在plugins和presets上就行
 
-### 插件与预设
+### 4.2.2. 插件与预设
 
-#### 基本说明
+#### 4.2.2.1. 基本说明
 
 - 配置项说明
-  - plugin代表插件
-  - preset代表预设
+  - 配置文件中的plugins项用来配置插件列表
+  - 配置文件中的presets项用来配置预设列表
   - 它们分别放在plugins和presets，每个插件或预设都是一个npm包。
 
-- 编译规则
+- 插件和预设 决定 编译规则
   - 通过Babel配置文件来指定编译的规则
   - 所谓编译的规则，就是在配置文件里列出的编译过程中会用到的Babel插件或预设
   - 这些插件和预设会在编译过程中把我们的ES6代码转换成ES5。
 
-- Babel插件的数量非常多
+- Babel示例
   - 处理ES2015的有
     - `@babel/plugin-transform-arrow-functions`
     - `@babel/plugin-transform-block-scoped-functions`
@@ -351,12 +352,12 @@
 
   > 所有的插件都需要先安装npm包到node_modules后才可以使用。
 
-- preset出现原因
+- preset作用
   - Babel插件实在太多，假如只配置插件数组，那我们前端工程要把ES2015,ES2016,ES2017…下的所有插件都写到配置项里
   - Babel配置文件会非常臃肿。
   - preset预设就是帮我们解决这个问题的
   - 预设是一组Babel插件的集合，用大白话说就是插件包，
-  - 例如babel-preset-es2015就是所有处理es2015的二十多个Babel插件的集合
+  - 例如`babel-preset-es2015`就是所有处理es2015的二十多个Babel插件的集合
   - 这样我们就不用写一大堆插件配置项了,只需要用一个预设代替就可以了
 
 - perset的使用
@@ -370,7 +371,7 @@
     - …
   - 所有的预设也都需要先安装npm包到node_modules。
 
-#### plugin与preset的短名称
+#### 4.2.2.2. plugin与preset的短名称
 
 > 插件短名称
 
@@ -412,7 +413,7 @@
   - 但babel官方并没有给出明确的说明，例如，@babel/preset-env的短名称就是@babel/env
   - 所以还是 **推荐用全称**
 
-#### 配置顺序
+#### 4.2.2.3. 执行顺序
 
 - plugins插件数组和presets预设数组是有顺序要求的
 - 如果两个插件或预设都要处理同一个代码片段
@@ -422,7 +423,7 @@
   - 插件执行顺序是插件数组从前向后执行
   - 预设执行顺序是预设数组从后向前执行
 
-#### Babel插件和预设的参数
+#### 4.2.2.4. Babel插件和预设的参数
 
 - 每个插件是插件数组的一成员项，每个预设是预设数组的一成员项
 - **默认情况下，成员项都是用字符串来表示的**，
@@ -444,14 +445,19 @@
   }
   ```
 
-## babel-polyfill
+## 4.3. babel-polyfill
 
-### 说明
+### 4.3.1. 说明
 
 - 什么是polyfill
   - `babel-polyfill`在Babel7以后名字是`@babel/polyfill`
   - polyfill广义上讲是为环境提供不支持的特性的一类文件或库， **既有Babel官方的库，也有第三方的**
   - babel-polyfill指的是Babel官方的polyfill，一般使用babel-polyfill
+
+- 作用
+  - 所谓垫片，是指垫平不同浏览器之间差异的东西。
+  - 让ES6新的**API**在低版本浏览器正常运行
+  - polyfill提供了全局的ES6对象以及通过修改原型链Array.prototype等实现对实例的实现。
 
 - 分类
   - polyfill传统上分两类
@@ -459,7 +465,7 @@
     - 另一类是未构建的需要安装npm包`@babel/polyfill`
   - 细分
     - 因为`@babel/polyfill`本质是由两个npm包`core-js`与`regenerator-runtime`组合而成的
-    - 所以在使用层面上还可以再细分为是引入**`@babel/polyfill`本身**还是 **其组合子包**
+    - 所以在使用层面上还可以再细分为是引入 **`@babel/polyfill`本身** 还是 **其组合子包**
 
 - 总体来说，Babel官方的polyfill使用方法主要有如下几种：
   - 直接在html文件引入Babel官方的polyfill.js脚本文件；
@@ -481,15 +487,13 @@
   - 报错信息为：ReferenceError: Promise is not defined
   - 需要做的就是让火狐27.0可以正常运行我们的代码，下面对上文提到的7种方法进行讲解。
 
-### 使用方式说明
-
+### 4.3.2. 使用方式说明
 
 > **1. 直接在html文件引入Babel官方的polyfill.js脚本文件**
 
 - 该方法在分类上属于使用已构建成JS文件polyfill.js的一类，该方法在引入polyfill一节已经讲过，本节不再重复讲解。
 
 > **2. 在前端工程的入口文件里引入polyfill.js** [示例代码](./src/babel-tutorial/babel03)
-
 
 - 该方法在分类上属于使用已构建成JS文件polyfill.js的一类，以webpack打包工具为例，讲述该方法。
 
@@ -671,7 +675,7 @@
   ```
 - 现在再执行`npm run dev`进行打包，然后index.html就可以正常在火狐27.0运行了。
 
-### 注意
+### 4.3.3. 注意
 
 - 依赖使用注意：(**也就是使用方法4和方法7**)
   - 从babel7.4开始，**官方不推荐再使用@babel/polyfill了**，
@@ -691,13 +695,14 @@
 > Babel预设或插件不光可以进行补齐API，还可以对API进行转换。
 > 这些使用方法在后面再进行说明，部分引入也放到后面
 
-## @babel/preset-env
+## 4.4. 预设：@babel/preset-env
 
-### 说明
+### 4.4.1. 说明
 
 - 名称
   - 在Babel6时代，这个预设名字是 babel-preset-env
   - 在Babel7之后，改成@babel/preset-env
+
 - 内容
   - 本节单独讲解@babel/preset-env，不涉及transform-runtime的内容
   - 二者结合使用的内容会在讲解了transform-runtime之后进行。
@@ -710,7 +715,7 @@
 
 - 作用
   - `@babel/preset-env`可以通过`browserslist`针对目标环境不支持的语法进行语法转换
-  - 也可以对目标环境不支持的特性API进行部分引用。**但是需要使用参数进行设置**
+  - 也可以对目标环境不支持的特性API进行**部分引用**。**但是需要使用参数进行设置**
 
 - 安装
 
@@ -718,7 +723,7 @@
   npm install --save-dev @babel/preset-env
   ```
 
-### 参数配置
+### 4.4.2. 参数配置说明
 
 - 说明
   - 在Babel快速入门一节，我们简单使用过@babel/preset-env的语法转换功能。
@@ -764,9 +769,9 @@
     }
     ```
 
-### browserslist实现es6特性部分转换
+### 4.4.3. browserslist实现部分补齐es6-API
 
-#### 说明
+#### 4.4.3.1. 说明
 
 - 如果你使用过vue或react的官方脚手架cli工具，你一定会在其package.json里看到browserslist项
   ```javascript
@@ -790,12 +795,11 @@
   - 如果@babel/preset-env不设置任何参数，Babel就会完全根据browserslist的配置来做语法转换。
   - 如果没有browserslist，那么Babel就会把所有ES6的语法转换成ES5版本。
 
-#### 示例
+#### 4.4.3.2. 示例
 
 ES6箭头函数语法被转换成了ES5的函数定义语法。
 
 > **不设置browserslist，并且@babel/preset-env的参数项是空的**
-
 
 - 转换前
 
@@ -852,15 +856,15 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
   - 是ES5的函数定义语法
   - 因为Chrome38不支持箭头函数语法。
 
-#### 注意
+#### 4.4.3.3. 注意
 
 - 使用注意
   - Babel使用browserslist的配置功能依赖于@babel/preset-env
   - 如果Babel没有配置任何预设或插件，那么Babel对转换的代码会不做任何处理，原封不动生成和转换前一样代码。
 
-### 参数项
+### 4.4.4. 参数项
 
-#### targets
+#### 4.4.4.1. targets(可实现browserslist配置)
 
 - 取值
   - 字符串
@@ -873,7 +877,8 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
   - 如果对@babel/preset-env的targets参数项进行了设置，那么就不使用browserslist的配置，而是使用targets的配置
   - 如不设置targets，那么就使用browserslist的配置。
   - 如果targets不配置，browserslist也没有配置，那么@babel/preset-env就对所有ES6语法转换成ES5的。
-  - 正常情况下，**推荐使用browserslist的配置而很少单独配置@babel/preset-env的targets**。
+
+- 注意： **推荐使用browserslist的配置而很少单独配置@babel/preset-env的targets**
 
 - 示例
   > 写法与browserslist是一样的
@@ -889,7 +894,7 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
   }
   ```
 
-#### useBuiltIns
+#### 4.4.4.2. useBuiltIns
 
 > **说明**
 
@@ -909,9 +914,7 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
   - useBuiltIns取值为"entry"或"usage"的时候
     - 会根据配置的目标环境找出需要的polyfill进行部分引入
 
-
 > **useBuiltIns:"entry"** [示例代码](./src/babel-tutorial/babel11)
-
 
 - 在入口文件用import语法引入polyfill（也可以在webpack的entry入口项）。此时的Babel配置文件如下：
 
@@ -1021,7 +1024,7 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
 
 需要注意的是，使用'entry'这种方式的时候，只能import polyfill一次，一般都是在入口文件。如果进行多次import，会发生错误。
 
-#### corejs
+#### 4.4.4.3. corejs
 
 - 取值:
   - 可以是2或3
@@ -1042,7 +1045,7 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
     `@babel/polyfill` is deprecated. Please, use required parts of `core-js` and `regenerator-runtime/runtime` separately
     ```
 
-#### modules
+#### 4.4.4.4. modules
 
 - 取值
   - "amd"
@@ -1065,22 +1068,676 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
   - 如果我们将参数项改成false，那么就不会对ES6模块化进行更改，还是使用import引入模块。
   - 使用ES6模块化语法有什么好处呢。在使用Webpack一类的打包工具，可以进行静态分析，从而可以做tree shaking 等优化措施。
 
-## @babel/plugin-transform-runtime
+## 4.5. 插件之一：@babel/plugin-transform-runtime
 
-## Babel 工具
+### 4.5.1. 三大作用
 
-## @babel/core
+#### 4.5.1.1. 作用一(语法转换)
 
-## @babel/cli
+> **作用说明**
 
-## @babel/node
+- 自动移除语法转换后内联的辅助函数（inline Babel helpers）
+- 使用@babel/runtime/helpers里的辅助函数来替代；
 
-## @babel/register
+> **问题引入** 
 
-## babel-loader
+- [代码示例](./src/babel-tutorial/babel13)
 
-# 参考资料
+- 在用Babel做语法转换的时候，需要Babel在转换后的代码里注入一些函数才能正常工作
+  > 注意，这里是单纯的做语法转换，暂时不使用polyfill补齐API
+- Babel配置文件如下，用@babel/preset-env做语法转换：
+  ```json
+  {
+    "presets": [
+      "@babel/env"
+    ],
+    "plugins": [
+    ]
+  }
+  ```
 
-- [ ] [Babel 教程]https://www.jiangruitao.com/babel/
-- [ ] [前端工程师的自我修养-关于 Babel 那些事儿]https://juejin.cn/post/6844904079118827533#heading-14
-- [ ] [babel中文文档]https://www.babeljs.cn/
+- 转换前的代码使用了ES6的class类语法：
+  ```javascript
+  class Person {
+    sayname() {
+      return 'name'
+    }
+  }
+  var john = new Person()
+  console.log(john)
+  ```
+
+- Babel转码后生成的代码如下：
+  ```javascript
+  "use strict";
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+  function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+  var Person = /*#__PURE__*/function () {
+    function Person() {
+      _classCallCheck(this, Person);
+    }
+    _createClass(Person, [{
+      key: "sayname",
+      value: function sayname() {
+        return 'name';
+      }
+    }]);
+    return Person;
+  }();
+  var john = new Person();
+  console.log(john);
+  ```
+
+- 可以看到转换后的代码上面增加了好几个函数声明，这就是注入的函数，我们称之为**辅助函数**
+- @babel/preset-env在做语法转换的时候，注入了这些函数声明，以便语法转换后使用。
+
+> **辅助函数冗余及解决**
+
+- [代码示例](./src/babel-tutorial/babel13a)
+
+- 这样做存在一个问题
+  - 在正常的前端工程开发的时候，少则几十个js文件，多则上千个
+  - 如果每个文件里都使用了class类语法，那会导致每个转换后的文件上部都会注入这些相同的函数声明
+  - 这会导致用构建工具打包出来的包非常大
+
+- 解决思路
+  - 把这些函数声明都放在一个npm包里，需要使用的时候直接从这个包里引入到我们的文件里
+  - 这样即使上千个文件，也会从相同的包里引用这些函数。
+  - 通过webpack这一类的构建工具打包的时候，只会把使用到的npm包里的函数引入一次，这样就做到了复用，减少了体积。
+
+- 实际解决方式：
+  - @babel/runtime就是上面说的这个npm包
+  - @babel/runtime把所有语法转换会用到的辅助函数都集成在了一起。
+
+- 依赖安装
+
+  ```bash
+  npm install --save @babel/runtime
+  npm install --save-dev @babel/cli @babel/core  @babel/preset-env
+  ```
+
+- 然后到node_modules目录下看一下这个包结构
+
+  ![babel-2](./image/babel-2.png)
+
+  - `_classCallCheck`, `_defineProperties`与 `_createClass`这个三个辅助函数就在图片所示的位置
+  - 直接引入即可。
+
+- 手动把辅助函数替换掉函数声明，之前文件的代码就变成如下所示：
+  ```javascript
+  "use strict";
+  var _classCallCheck = require("@babel/runtime/helpers/classCallCheck");
+  var _defineProperties = require("@babel/runtime/helpers/defineProperties");
+  var _createClass = require("@babel/runtime/helpers/createClass");
+  var Person = /*#__PURE__*/function () {
+    function Person() {
+      _classCallCheck(this, Person);
+    }
+    _createClass(Person, [{
+      key: "sayname",
+      value: function sayname() {
+        return 'name';
+      }
+    }]);
+    return Person;
+  }();
+  var john = new Person();
+  console.log(john);
+  ```
+
+> **手动引入问题及解决**
+
+- [代码示例](./src/babel-tutorial/babel13b)
+
+- 手动引入问题
+  - 这样就解决了代码复用和最终文件体积大的问题
+  - 不过，这么多辅助函数要一个个记住并手动引入，平常人是做不到的
+
+- 手动引入问题解决
+  - 这个时候，Babel插件@babel/plugin-transform-runtime就来帮解决这个问题。
+  - @babel/plugin-transform-runtime有三大作用，其中之一就是自动移除语法转换后内联的辅助函数（inline Babel helpers）
+  - 使用@babel/runtime/helpers里的辅助函数来替代。这样就减少了我们手动引入的麻烦。
+
+- 除了安装`@babel/runtime`包提供辅助函数模块，还要安装Babel插件`@babel/plugin-transform-runtime`来自动替换辅助函数：
+
+  ```javascript
+  npm install --save @babel/runtime
+  npm install --save-dev @babel/cli @babel/core  @babel/preset-env @babel/plugin-transform-runtime
+  ```
+
+- 现在，Babel配置文件如下：
+  ```json
+  {
+    "presets": [
+      "@babel/env"
+    ],
+    "plugins": [
+      "@babel/plugin-transform-runtime"
+    ]
+  }
+  ```
+
+- 转换前a.js代码：
+  ```javascript
+  class Person {
+    sayname() {
+      return 'name'
+    }
+  }
+  var john = new Person()
+  console.log(john)
+  ```
+
+- 执行`npx babel a.js -o b.js`命令后，转换生成的b.js里代码如下：
+  ```javascript
+  "use strict";
+  var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+  var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+  var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
+  var Person = /*#__PURE__*/function () {
+    function Person() {
+      (0, _classCallCheck2["default"])(this, Person);
+    }
+    (0, _createClass2["default"])(Person, [{
+      key: "sayname",
+      value: function sayname() {
+        return 'name';
+      }
+    }]);
+    return Person;
+  }();
+  var john = new Person();
+  console.log(john);
+  ```
+
+- 可以看到，它生成的代码比我们完全手动引入@babel/runtime里的辅助函数更加优雅。
+- 实际前端开发的时候，除了安装@babel/runtime这个包外，一定会安装@babel/plugin-transform-runtime这个Babel插件包的。
+
+> **其他**
+
+- 每个转换后的文件上部都会注入这些相同的函数声明，那为何不用webpack一类的打包工具去掉重复的函数声明，而是要单独再引一个辅助函数包？
+  - webpack在构建的时候，是基于模块来做去重工作的
+  - 每一个函数声明都是引用类型，在堆内存不同的空间存放，缺少唯一的地址来找到他们
+  - 所以webpack本身是做不到把每个文件的相同函数声明去重的。
+  - 因此我们需要单独的辅助函数包，这样webpack打包的时候会基于模块来做去重工作。
+
+#### 4.5.1.2. 作用二和作用三(api转换)
+
+- [示例代码](./src/babel-tutorial/babel14)
+
+> **作用说明**
+
+- 作用二
+  - 当代码里使用了core-js的API
+  - 自动引入@babel/runtime-corejs3/core-js-stable/
+  - 以此来替代全局引入的core-js/stable;
+- 作用三
+  - 当代码里使用了Generator/async函数
+  - 自动引入@babel/runtime/regenerator
+  - 以此来替代全局引入的regenerator-runtime/runtime；
+
+- 目的:做API转换，对内置对象进行重命名，以防止污染全局环境。
+
+> **问题引入-引入babel-polyfill带来的问题**
+
+- 通过引入`babel-polyfill`或`core-js/stable`与`regenerator-runtime/runtime`来做全局的API补齐
+- 但这样可能有一个问题，那就是对运行环境产生了污染。
+- 例如Promise，我们的polyfill是对浏览器的全局对象进行了重新赋值，我们重写了Promise及其原型链。
+- 有时候我们不想改变或补齐浏览器的window.Promise，
+  - 那么我们就不能使用'babel-polyfill'或'core-js/stable与regenerator-runtime/runtime'
+  - 因为其会对浏览器环境产生污染（即修改了浏览器的window.Promise）。
+
+> **问题解决**
+
+- 解决方式
+  - 这个时候就可以使用@babel/plugin-transform-runtime
+  - 它可以**对代码里ES6的API进行转换**。
+
+> **解决示例：以Promise举例子**
+
+- Babel转换前的代码
+
+  ```javascript
+  var obj = Promise.resolve();
+  ```
+
+- 若使用了'babel-polyfill'或'core-js/stable与regenerator-runtime/runtime'来做全局的API补齐，那么Babel转换后的代码仍然是
+
+  ```javascript
+  var obj = Promise.resolve();
+  ```
+
+  polyfill只是补齐了浏览器的window.Promise对象。
+
+- 若我们不使用polyfill，而开启@babel/plugin-transform-runtime的API转换功能。那么Babel转换后的代码将是
+
+  ```javascript
+  var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault");
+  var _promise = _interopRequireDefault(require("@babel/runtime-corejs3/core-js-stable/promise"));
+  var obj = _promise["default"].resolve();
+  ```
+
+  - @babel/plugin-transform-runtime **把代码里的`Promise`变成了`_promise["default"]`**
+    > 这就是api转换
+  - 而_promise["default"]拥有ES标准里Promise所有的功能。
+  - 现在，即使浏览器没有Promise，我们的代码也能正常运行。
+
+- 开启core-js相关API转换功能的Babel配置与安装的npm包如下
+
+  ```javascript
+  // babel.config.js
+  module.exports = {
+    presets: ["@babel/env"],
+    plugins: [
+      ["@babel/plugin-transform-runtime", {
+        "corejs": 3
+      }]
+    ]
+  }
+  ```
+  ```json
+  // package.json
+  {
+    "name": "babel14",
+    "version": "1.0.0",
+    "description": "https://www.jiangruitao.com/babel/",
+    "main": "index.js",
+    "keywords": [
+      "babel-tutorial"
+    ],
+    "scripts": {
+      "dev": "npx babel a.js -o b.js"
+    },
+    "author": "jruit",
+    "license": "ISC",
+    "devDependencies": {
+      "@babel/cli": "^7.8.4",
+      "@babel/core": "^7.9.6",
+      "@babel/plugin-transform-runtime": "^7.9.6",
+      "@babel/preset-env": "^7.9.6"
+    },
+    "dependencies": {
+      "@babel/runtime-corejs3": "^7.10.4"
+    }
+  }
+  ```
+  ```bash
+  # 插件
+  npm install --save @babel/runtime-corejs3
+  npm install --save-dev @babel/cli @babel/core  @babel/preset-env @babel/plugin-transform-runtime
+  ```
+
+> **使用情景**
+
+- 说明
+  - 通过polyfill补齐API的方式也可以使代码在浏览器正常运行
+  - 上面讲的API转换主要是给开发JS库或npm包等的人用的
+  - **前端工程一般仍然使用polyfill补齐API**
+
+- 原因
+  - 可以想象，如果开发JS库的人使用polyfill补齐API，前端工程也使用polyfill补齐API
+  - 但JS库的polyfill版本或内容与我们前端工程的不一致
+  - 那么前端工程中引入该JS库后很可能会导致我们的前端工程出问题
+  - 所以，开发JS库或npm包等的人会用到API转换功能。
+
+- 注意
+  - 当然，前端工程开发的时候也是可以使用@babel/plugin-transform-runtime的API转换功能
+  - 毕竟没有污染全局环境，不会有任何冲突
+  - @babel/plugin-transform-runtime的默认设置下，就是对generators/async开启了API转换功能。
+
+> **@babel/runtime-corejs3和@babel/runtime**
+
+- 问题
+  - 安装npm包的时候，
+  - 这里安装的是@babel/runtime-corejs3
+  - 而之前安装的是@babel/runtime
+  - 有什么区别
+
+- 使用场景
+  - 在我们不需要开启core-js相关API转换功能的时候
+    - 只需要安装@babel/runtime就可以了
+    - @babel/runtime里存放的是Babel做语法转换的辅助函数。
+  - 在我们需要开启core-js相关API转换功能的时候
+    - 就需要安装@babel/runtime的进化版@babel/runtime-corejs3
+    - **这个npm包里除了包含Babel做语法转换的辅助函数，也包含了core-js的API转换函数**。
+
+- 除了这两个包，还有一个@babel/runtime-corejs2的包
+  - 它和@babel/runtime-corejs3的功能是一样的
+  - 只是里面的函数是针对core-js2版本的。
+
+> **作用3说明**
+
+上面的例子主要是拿Promise来讲的，它属于作用2，即对core-js的API进行转换。  
+其实理解了作用2，也就理解了作用3。
+
+- 作用3
+  - 若转码前代码里有Generator函数或async函数，转码后需要引入'regenerator-runtime/runtime'做全局API补齐。
+  - 全局API补齐必然会对浏览器的window对象进行修改
+  - 如果不想要污染window，那么就不能引入'regenerator-runtime/runtime'了。
+  - 这个时候，可以开启@babel/plugin-transform-runtime的作用3，对Generator/async进行API转换。
+
+- 注意：
+  - 需要注意的是，@babel/plugin-transform-runtime对Generator/async进行API转换功能，**默认是开启的，不需要我们设置**。
+  - 如何开启或关闭@babel/plugin-transform-runtime的某个功能
+    - 除了与安装的npm包有关，也与Babel配置文件的配置有关
+    - 下一节配置项说明的时候会讲解
+
+### 4.5.2. 配置项
+
+#### 基本说明
+
+- 说明
+  - @babel/plugin-transform-runtime是否要开启某功能，都是在配置项里设置的
+  - 某些配置项的设置是需要安装npm包的
+
+- 默认配置项
+  - @babel/plugin-transform-runtime在没有设置配置项的时候，其配置项参数取默认值
+  - 下面的两个配置作用是等效的。
+
+  ```json
+  {
+    "plugins": [
+      "@babel/plugin-transform-runtime"
+    ]
+  }
+  ```
+  ```json
+  // 是上方的默认值
+  { 
+    "plugins": [
+      [
+        "@babel/plugin-transform-runtime",
+        {
+          "helpers": true,
+          "corejs": false,
+          "regenerator": true,
+          "useESModules": false,
+          "absoluteRuntime": false,
+          "version": "7.0.0-beta.0"
+        }
+      ]
+    ]
+  }
+  ```
+
+#### 配置项讲解
+
+- helpers
+  - 作用:
+    - 该项是用来设置是否要自动引入辅助函数包
+    - 这是@babel/plugin-transform-runtime的核心用途
+  - 取值：
+    - 该项取值是布尔值
+  - 一般取值
+    - 设置为true
+    - 其默认值也是true，所以也可以省略不填。
+
+- corejs和regenerator
+  - 作用：
+    - 这两项是用来设置是否做API转换以避免污染全局环境
+  - 取值：
+    - regenerator取值是布尔值
+    - corejs取值是false、2和3
+  - 一般取值：
+    - 在前端业务项目里，一般对corejs取false，即不对Promise这一类的API进行转换
+    - 而在开发JS库的时候设置为2或3
+    - regenerator取默认的true就可以
+
+- useESModules
+  - 作用：
+    - 该项用来设置是否使用ES6的模块化用法
+  - 取值：
+    - 取值是布尔值
+    - 默认是fasle
+  - 一般取值
+    - 在用webpack一类的打包工具的时候，可以设置为true，以便做静态分析
+
+- absoluteRuntime
+  - 作用：
+    - 该项用来自定义@`babel/plugin-transform-runtime`引入`@babel/runtime`/模块的路径规则
+  - 取值
+    - 是布尔值或字符串
+  - 一般取值
+    - 没有特殊需求，一般不需要修改，保持默认false即可。
+
+- version
+  - 作用：
+    - 该项主要是和`@babel/runtime`及其进化版`@babel/runtime-corejs2`、`@babel/runtime-corejs3`的版本号有关系
+    - 这三个包只需要根据需要安装一个
+    - 把安装的npm包的版本号设置给version即可
+    - 例如，在上节的子里，安装的`@babel/runtime-corejs3`版本是`^7.10.4`，那么配置项version也取`^7.10.4`。
+  - 取值：
+    - 字符串
+  - 一般取值：
+    - 其实该项不填取默认值就行，**目前填写版本号主要是可以减少打包体积**
+
+- 已移除配置项：
+  - 另外，在Babel6版本，该插件还有两个配置选项polyfill和useBuiltIns
+  - 在v7版本已经移除了，不要再继续使用。
+
+小结：
+1.要使用@babel/plugin-transform-runtime插件，其实只有一个npm包是必须要装的，那就是它自己@babel/plugin-transform-runtime。
+对于@babel/runtime及其进化版@babel/runtime-corejs2、@babel/runtime-corejs3，我们只需要根据自己的需要安装一个。
+
+如果你不需要对core-js做API转换，那就安装@babel/runtime并把corejs配置项设置为false即可。
+
+如果你需要用core-js2做API转换，那就安装@babel/runtime-corejs2并把corejs配置项设置为2即可。
+
+如果你需要用core-js3做API转换，那就安装@babel/runtime-corejs3并把corejs配置项设置为3即可。
+
+注：
+1.那regenerator为何默认值是true？我的理解是，实现Generator与async转换API代码较少，而且也需要一些语法转换，所以默认值取了true。我们也可以设为false，不过没必要。
+2.在安装@babel/preset-env的时候，其实已经自动安装了@babel/runtime，不过在项目开发的时候，我们一般都会再单独npm install一遍@babel/runtime。
+
+## 4.6. Babel 工具
+
+### 4.6.1. @babel/core
+
+#### 说明
+
+- 说明
+  - @babel/core是使用Bable进行转码时的核心npm包
+  - babel-cli、babel-node都依赖这个包
+  - 因此在前端开发的时候，都需要安装这个包
+
+- 安装
+
+  ```bash
+  npm install --save-dev @babel/core
+  ```
+
+- 转码原理
+  - 无论是通过命令行转码，还是通过webpack进行转码
+  - 底层都是通过Node来调用@babel/core相关功能API来进行的
+
+#### api调用示例
+
+- [示例代码](./src/babel-tutorial/babel16)
+
+- 先新建一个index.js文件，这个文件在写完后直接用Node来执行。
+
+  ```javascript
+  // 第1行我们引入了@babel/core模块，并将模块输出赋值给了变量babelCore
+  var babelCore = require("@babel/core");
+  // 第2行变量es6Code是一个字符串，字符串内容是一个箭头函数，该字符串内容是我们需要转译的代码
+  // 这个变量传递给了接下来transform方法的第1个参数。
+  var es6Code = 'var fn = (num) => num + 2';
+  // 第3行options是一个对象，这个对象传递给了接下来transform方法的第2个参数
+  var options = {
+    presets: ["@babel/env"]
+  };
+  //最后，我们调用babelCore的transform方法，我们把结果打印在Node的控制台上。为了方便看输出结果，中间用'------'隔开
+  var result = babelCore.transform(es6Code, options);
+  console.log(result);
+  console.log('--------------');
+  console.log('--------------');
+  console.log(result.code);
+  ```
+
+- 结果
+
+  ![babel-3](./image/babel-3.png)
+
+- 可以看到，transform后的结果是个对象，该对象的code就是我们转码后的结果。
+- 这就是@babel/core底层的一个调用过程。
+- transform也可以有第3个参数
+  - 第3个参数是一个回调函数，用来对转码后的对象进行进一步处理
+  - @babel/core除了transform这个API，还有transformSync、transformAsync和transformFile等同步异步以及对文件进行转码的API
+
+### 4.6.2. @babel/cli
+
+- 说明
+  - @babel/cli是一个npm包
+  - 安装了它之后，就可以在命令行里使用命令进行转码了
+
+- 安装
+
+  ```bash
+  # 本地安装
+  # babel XXX
+  npm install --global @babel/cli
+  ```
+  ```bash
+  # 全局安装
+  # npx babel XXX
+  npm install --save-dev @babel/cli
+  ```
+- 示例:把a.js文件转码为b.js。
+  > 提醒：转码前不要忘记写Babel配置文件，以及安装@babel/core。
+
+  ```bash
+  # @babel/cli如果是全局安装的
+  babel a.js -o b.js
+  # @babel/cli如果是本地安装的
+  npx babel a.js -o b.js
+  ```
+
+  - 两种方法是等效的，正常情况下 **推荐项目本地安装**
+
+- @babel/cli的其它命令。
+  - 将转译后的代码输出到Node.js的标准输出流
+    ```bash
+    npx babel a.js
+    ```
+  - 将转译后的代码写入到一个文件（上方刚使用过）
+    ```bash
+    npx babel a.js -o b.js
+    ```
+    或
+
+    ```bash
+    npx babel a.js --out-file b.js
+    # -o是--out-file的简写
+    ```
+  - 转译整个文件夹目录
+
+    ```bash
+    npx babel input -d output
+    ```
+    或
+
+    ```bash
+    npx babel input --out-dir output
+    -d是--out-dir的简写
+    ```
+
+### 4.6.3. @babel/node
+
+- 说明
+  - @babel/node在真正做前端项目开发的时候，是用不到的
+  - 该工具执行的时候需要占用大量内存空间，Babel官方不建议在生产环境使用该工具
+
+- 作用
+  - @babel/node其实和node的功能非常接近
+  - @babel/node的优点是在执行命令的时候可以配置Babel的编译配置项
+  - 如果遇到node.js不支持的ES6语法，我们通过@babel/node就可以完成。
+
+- 安装
+  - 在Babel6版本的时候
+    - @babel/node这个工具是 @babel/cli附带的
+    - 所以只要安装了@babel/cli ，就可以直接使用 babel/node
+  - 但Babel7里，我们需要单独安装。
+
+    ```bash
+    npm install --save-dev @babel/node
+    ```
+
+- 执行
+  - 然后我们就可以用@babel/node的babel-node命令来运行js文件。
+  - 注意： 不要忘记写Babel配置文件，以及安装core。
+
+  ```javascript
+  var promise = Promise.resolve('ok')
+  console.log(promise)
+  ```
+
+  > 然后执行
+
+  ```bash
+  npx babel-node a.js
+  ```
+
+  > 可以看到命令行输出了promise实例。
+
+- REPL环境
+  - @babel/node也可以像node那样进入REPL环境。在命令行下执行下面的命令进入REPL环境
+
+    ```bash
+    npx babel-node
+    ```
+
+  - 然后在REPL交互环境输入下面的内容
+    ```repl
+    > (x => x + 10)(5)
+    ```
+  - 可以看到输出结果15。
+
+### 4.6.4. @babel/register
+
+- @babel/register这个工具在平时的前端工程开发过程中也是用不到的。但若是想开发某些特殊的包，你可能会需要它。
+- @babel/register只有一个功能，就是重写node的require方法。
+- @babel/register在底层改写了node的require方法
+  - 在代码里引入@babel/register模块后
+  - 所有通过require引入并且以.es6, .es, .jsx 和 .js为后缀名的模块都会经过babel的转译。
+
+### 4.6.5. babel-loader
+
+- 说明
+  - babel-loader是用于webpack的一个loader，以便webpack在构建的时候用Babel对JS代码进行转译
+  - 这样就不用再通过命令行手动转译了
+
+- 安装：在配置该loader的时候需要先安装它：
+
+  ```javascript
+  npm install babel-loader
+  ```
+
+- 配置在webpack配置文件中，需要把babel-loader添加到module的loaders列表中：
+  ```javascript
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      }
+    ]
+  }
+  ```
+
+  - 在这里，通过options属性给babel-loader传递预设和插件等Babel配置项
+  - 也可以省略这个options，这个时候babel-loader会去读取默认的Babel配置文件
+    > 也就是.babelrc，.babelrc.js，babel.config.js等
+  - 在现在的前端开发中，建议通过配置文件来传递这些配置项。
+
+# 5. 参考资料
+
+- [ ] [Babel 教程](https://www.jiangruitao.com/babel/)
+- [ ] [前端工程师的自我修养-关于 Babel 那些事儿](https://juejin.cn/post/6844904079118827533#heading-14)
+- [ ] [babel中文文档](https://www.babeljs.cn/)

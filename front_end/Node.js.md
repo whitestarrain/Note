@@ -3295,6 +3295,10 @@ vscode 和 vim都有对应使用方法
   - 比如若需要lint并且自动修复错误的文件有ts文件，vue文件
   - 则命令脚本为`eslint --ext .ts,.vue src`
 
+### 8.4.6 git提交规范-Angular
+
+- [跳转](../tool/git.md)
+
 # 9. 参考资料
 
 - [x] [前端模块化开发中webpack、npm、node、nodejs之间的关系](https://blog.csdn.net/AngelLover2017/article/details/84801673)
