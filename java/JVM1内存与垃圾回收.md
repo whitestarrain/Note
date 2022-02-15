@@ -6651,6 +6651,6 @@ CMS回收停顿了几次，为什么要停顿两次。
 # 参考资料
 
 - [聊一聊JAVA指针压缩的实现原理](https://blog.csdn.net/liujianyangbj/article/details/108049482)(待整理)
-- [来源](https://www.zhihu.com/question/30300585)
+- [JVM的符号饮用](https://www.zhihu.com/question/30300585)
 - [尚硅谷宋红康](https://www.bilibili.com/video/BV1PJ411n7xZ)
 

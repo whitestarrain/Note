@@ -3002,7 +3002,7 @@ mysql> EXPLAIN SELECT * FROM staffs WHERE name like 'July%';
 
 > **解决【like ‘%str%’ 】索引失效的问题：覆盖索引**
 
-**创建表**
+创建表:
 
 - 建表 SQL
 
@@ -3036,8 +3036,6 @@ mysql> select * from tbl_user;
 4 rows in set (0.00 sec)
 ```
 
-------
-
 创建索引
 
 - 创建索引的 SQL 指令
@@ -3064,9 +3062,7 @@ mysql> SHOW INDEX FROM tbl_user;
 3 rows in set (0.00 sec)
 ```
 
-------
-
-**测试覆盖索引**
+测试覆盖索引
 
 - 如下 SQL 的索引均不会失效：
   - 只要查询的字段能和覆盖索引扯得上关系，并且没有多余字段，覆盖索引就不会失效

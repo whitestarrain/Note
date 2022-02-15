@@ -421,8 +421,11 @@
 
 # 14. Symbol
 
-- 它的值是 **唯一的，不可变的**
-- 如果它被用作一个对象的属性，那么这个**属性会是不可枚举的**：
+- ES6 数据类型除了 Number 、 String 、 Boolean 、 Object、 null 和 undefined ，还新增了 Symbol 。
+- 注意，Symbol 是原始数据类型，不是对象，因此不能用new
+- Symbol的值是 **唯一的，不可变的** ，最大的用法是用来定义对象的唯一属性名。
+- 如果它被用作一个对象的属性，那么这个 **属性会是不可枚举的** ：
+- 可以接受一个字符串作为参数，为新创建的 Symbol 提供描述，用来显示在控制台或者作为字符串的时候使用，便于区分。
   ```javascript
   var o = {
       val: 10,
@@ -431,7 +434,6 @@
 
   console.log(Object.getOwnPropertyNames(o)); // val
   ```
-- 注意，Symbol 前面不能使用 new 操作符。
 - ES6 中提出 symbol 的目的是为了生成一个唯一的标识符，不过你访问不到这个标识符：
 
   ```javascript
@@ -450,7 +452,7 @@
 - 数组默认就是一个迭代器：
 
   ```javascript
-  var arr = [11,12,13];
+  var arr = [12,12,13];
   var itr = arr[Symbol.iterator]();
   
   itr.next(); // { value: 11, done: false }
@@ -511,5 +513,8 @@
   p.then((val) => console.log("Promise Resolved", val),
         (err) => console.log("Promise Rejected", err));
   ```
+# 参考资料
 
+- [x] 菜鸟教程
+- [x] [es6-Symbol类型](https://juejin.cn/post/6844903958104768526)
 
