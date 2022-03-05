@@ -1,45 +1,6 @@
-# 1. 开始
+> 注：命令的具体使用推荐使用man或者**[linux-comand](https://github.com/jaywcjlove/linux-command#web-%E7%89%88%E6%9C%AC)**查询
 
-> 虚拟机集群的步骤看 ppt
-
-- type(类似 which)
-  - type 能指定磁盘位置的命令，也就是从 PATH 中查询的命令，被称为**外部命令**,外部命令执行时都会变为一个进程
-  - 外部命令都可以通过`man 命令名称`查看文档
-  - 可能是可执行程序，也可能是脚本（比如 python 脚本等）
-  - 如果 type 返回 shell builtin，则是内部命令。shell 内部的。比如 cd，echo
-- file
-  - `ELF` 类型为二进制可执行程序
-- echo 返回输入变量
-  > echo \$PATH
-- 环境变量
-  - windows 中用两个%取环境变量的值，用;分割
-  - linux 中用\$取值，用:分割
-  - %path% == \$PATH
-  - 修改 profile 可以修改环境变量，具体再学完 shell script 后就理解了
-- yum install man man-pages
-  > man 是帮助程序 man-pages 是扩充的帮助页,一定要装<br>
-  > 也可以 `man ascii` `man utf-8` `man gets`<br>
-- man 可以查的一共是：
-  - 1,用户命令(/bin,/usr/bin,/usr/local/bin)，
-  - 2.系统调用，`man 2 read`
-  - 3.库用户，
-  - 4.特殊文件(设备文件)
-  - 5.文件格式(配置文件的语法)
-  - 6.游戏，杂项(Miscellaneous)
-  - 7.管理命令(/sbin,/usr/sbin,/usr/local/sbin)
-- 外部命令用 man，内部命令用 help(help 也是内部命令)
-- whereis 定位命令位置,同时指出帮助文档位置
-- which 定位命令位置
-- file descriptor:文件描述符/文件句柄。linux 中数字代表进程中的某一个流，任何进程最基本的三个流：
-
-  - 0 输入流
-  - 1 正确的输出流
-  - 2 错误的输出流
-
-- `!serv` 执行最近的，以 serv 开头的，执行过的命令
-- jps ：jdk 中的一个可执行程序，查看 java 进程 id
-
-# 2. 常用命令列表
+# 1. 常用命令列表
 
 |                |           |         |               |           |
 | :------------: | :-------: | :-----: | :-----------: | :-------: |
@@ -79,42 +40,169 @@
 |      echo      |   hash    |  grep   |     head      |   tail    |
 
 - ss -nal：查看所欲 socket 监听接口
-
 - set:显示所有变量，包含环境变量等所有
 - unset:清除变量，包括环境变量
 - env:查看环境变量
 - echo 输出
 - read 输入
+- hash:存储执行过的命令，提高下一次命令查找速度
+  - hash -r 清除
 
-# 3. 目录相关
+# 2. linux 基础
 
-- 目录
+## 2.1. 帮助命令
 
-  - /boot:系统启动相关文件
-  - /etc:配置文件
-  - /home:存放除 root 用户外的用户目录
-  - /root:root 用户目录
-  - /media:挂载点目录，移动设备
-  - /mnt:挂载点目录，额外的临时文件系统
-  - /proc:伪文件系统，内核映射文件
-  - /sys:伪文件系统，跟硬件设备有关的属性映射文件
-  - /tmp:临时文件，/var/tmp 也是
-  - /var:可变化文件，存储数据库表数据等
-  - /bin:二进制可执行文件，用户命令
-  - /sbin:管理员命令
-  - /lib:库文件，linux 中的 so，windows 中的 lib
-  - /dev:设备文件，linux，一切皆文件
-  - /opt:额外安装的可选应用程序包所放置的位置。一般情况下，我们可以把 tomcat 等都安装到这里。
-  - /usr:是 Unix Software Resource 的缩写,用于存放系统应用程序，比较重要的目录/usr/local 本地系统管理员软件安装目录（安装系统级的应用）。这是最庞大的目录，要用到的应用程序和文件几乎都在这个目录。
+### 2.1.1. 概述
 
-- 磁盘信息：
-  - df:显示硬盘分区。
-    - linux 中没有盘符概念，只有一棵虚拟的目录树，所有分区中的目录都会放在根目录/下的某文件夹(不一定是子级)。比如/boot 目录就是一个分区。
-    - 有啥问题时，先 df，看看磁盘满没
-  - du -sh ./\*:统计此文件夹下每个目录大小
-  - 清楚数据前一定要备份
-- 文件类型：
+> 在linux终端，面对命令不知道怎么用，或不记得命令的拼写及参数时，我们需要求助于系统的帮助文档； linux系统内置的帮助文档很详细，通常能解决我们的问题，我们需要掌握如何正确的去使用它们；
+
+- 需要知道某个命令的简要说明，可以使用whatis；而更详细的介绍，则可用info命令；
+- 查看命令在哪个位置，需要使用which；
+- 而对于命令的具体参数及使用方法，我们需要用到强大的man；
+  - 在只记得部分命令关键字的场合，我们可通过man -k来搜索；
+
+### 2.1.2. 命令使用
+
+#### 2.1.2.1. 查看命令的简要说明(whatis,info)
+
+- 简要说明命令的作用（显示命令所处的man分类页面）:
+
+  ```
+  $whatis command
+  ```
+
+- 正则匹配:
+
+  ```
+  $whatis -w "loca*"
+  ```
+
+- 更加详细的说明文档:
+
+  ```
+  $info command
+  ```
+
+#### 2.1.2.2. 使用man
+
+- 查询命令command的说明文档:
+
+  ```
+  $man command
+  eg：man date
+  ```
+
+- man页面所属的分类标识(常用的是分类1和分类3)
+
+  ```
+  (1)、用户可以操作的命令或者是可执行文件
+  (2)、系统核心可调用的函数与工具等
+  (3)、一些常用的函数与数据库
+  (4)、设备文件的说明
+  (5)、设置文件或者某些文件的格式
+  (6)、游戏
+  (7)、惯例与协议等。例如Linux标准文件系统、网络协议、ASCⅡ，码等说明内容
+  (8)、系统管理员可用的管理条令
+  (9)、与内核有关的文件
+  ```
+
+  - 在man的帮助手册中，将帮助文档分为了9个类别
+  - 对于有的关键字可能存在多个类别中， 我们就需要指定特定的类别来查看
+  - （一般我们查询bash命令，归类在1类中）
+
+- 前面说到使用whatis会显示命令所在的具体的文档类别，我们学习如何使用它
+
+  ```
+  eg:
+  $whatis printf
+  printf               (1)  - format and print data
+  printf               (1p)  - write formatted output
+  printf               (3)  - formatted output conversion
+  printf               (3p)  - print formatted output
+  printf [builtins]    (1)  - bash built-in commands, see bash(1)
+  ```
+
+  - 我们看到printf在分类1和分类3中都有
+  - 分类1中的页面是命令操作及可执行文件的帮助
+  - 而3是常用函数库说明
+  - 如果我们想看的是C语言中printf的用法，可以指定查看分类3的帮助：
+  - 其中`man -f` 和`whatis`功能相同
+
+  ```
+  $man 3 printf
+
+  $man -k keyword
+  ```
+
+- 在`whatis`数据库中查找字符串:`man -k`或`apropos`
+  - 根据命令中部分关键字来查询命令，适用于只记住部分命令的场合；
+
+  ```
+  # eg：查找GNOME的config配置工具命令:
+  $man -k GNOME config| grep 1
+  ```
+
+#### 2.1.2.3. 查看路径
+
+- 查看程序的binary文件所在路径:
+
+  ```
+  $which command
+  # eg:查找make程序安装路径:
+  $which make
+  /opt/app/openav/soft/bin/make install
+  ```
+
+- 查看程序的搜索路径:
+
+  ```
+  $whereis command
+  ```
+
+  - 当系统中安装了同一软件的多个版本时，不确定使用的是哪个版本时，这个命令就能派上用场；
+
+- 查看外部命令路径：type
+  - type 能指定磁盘位置的命令，也就是从 PATH 中查询的命令，被称为**外部命令**,外部命令执行时都会变为一个进程
+  - 外部命令都可以通过`man 命令名称`查看文档
+  - 可能是可执行程序，也可能是脚本（比如 python 脚本等）
+  - 如果 type 返回 shell builtin，则是内部命令。shell 内部的。比如 cd，echo
+
+#### 2.1.2.4. 总结
+
+- whatis
+- info
+- man
+  - man -f (whatis)
+  - man -k (apropos)
+- which
+- whereis
+
+## 2.2. 文件及目录管理
+
+### 2.2.1. 文件系统目录
+
+- /boot:系统启动相关文件
+- /etc:配置文件
+- /home:存放除 root 用户外的用户目录
+- /root:root 用户目录
+- /media:挂载点目录，移动设备
+- /mnt:挂载点目录，额外的临时文件系统
+- /proc:伪文件系统，内核映射文件
+- /sys:伪文件系统，跟硬件设备有关的属性映射文件
+- /tmp:临时文件，/var/tmp 也是
+- /var:可变化文件，存储数据库表数据等
+- /bin:二进制可执行文件，用户命令
+- /sbin:管理员命令
+- /lib:库文件，linux 中的 so，windows 中的 lib
+- /dev:设备文件，linux，一切皆文件
+- /opt:额外安装的可选应用程序包所放置的位置。一般情况下，我们可以把 tomcat 等都安装到这里。
+- /usr:是 Unix Software Resource 的缩写,用于存放系统应用程序，比较重要的目录/usr/local 本地系统管理员软件安装目录（安装系统级的应用）。这是最庞大的目录，要用到的应用程序和文件几乎都在这个目录。
+
+### 2.2.2. 文件类型与信息
+
+- 文件类型
   > 扩展名只在图形化界面上有用
+
   - `-`:普通文件：文本文件，excel 文件，MP4 文件等
   - `d`:文件夹
   - `c`或`b` 设备文件。
@@ -123,97 +211,525 @@
   - `l`:快捷方式
   - `p`:pipe,管道
   - `s`:socket
-- `命令的七步扩展`，有兴趣查查
-- hash:存储执行过的命令，提高下一次命令查找速度
-  - hash -r 清除
-- 文件系统命令：
 
-  - df
-  - du
-  - ls
-    - ls -lha
-    - ls -i 显示文件所在磁盘的索引
-  - cd
-    - cd ~
-    - cd ~普通用户用户名（只有 root 用户用到）
-    - cd
-    - cd path
-    - cd -
-  - pwd
-  - mkdir
-    - mkdir -p parent，有需要的话创建父级目录
-    - mkdir ./abc/{x,y,z}dir 水平创建，./abc/xdir,./abc/ydir,./abc/zdir
-  - rm
-    > 千万别 rm -fr / <br>
-    > 能 mv 移动 别删
-    - rm -f file
-    - rm -r folder
-  - mv 移动或重命名
-  - cp
-    - cp -r 递归拷贝
-  - ln
-    - ln 硬链接　会指向硬盘同一位置。类型：`-`
-    - ln -s 　软链接，只是指向一个目录。就是 windows 上的快捷方式　类型：`l`
-  - stat:元数据，相当于 window 的文件属性
-    - Change 描述元数据发生变化的时间，比如权限
-    - Modify 文件内容修改时间
-    - Access 访问时间
-    - IO Block 一次 io 读写多少
-    - Inode 磁盘位置索引
-  - touch
-    - 更新指定已有文件元数据的三个时间
-      - 可以
-    - 创建新文件
+  ![base-linux-1](./image/base-linux-1.png)
 
-- cat
+- stat:元数据，相当于 window 的文件属性
+  - Change 描述元数据发生变化的时间，比如权限
+  - Modify 文件内容修改时间
+  - Access 访问时间
+  - IO Block 一次 io 读写多少
+  - Inode 磁盘位置索引
+
+  > 注：touch:除了可以创建空文件，也可以更新元数据中的三个时间
+
+- file
+  - `ELF` 类型为二进制可执行程序
+
+### 2.2.3. 创建和删除
+
+- 命令
+  - 创建：mkdir
+  - 删除：rm
+  - 删除非空目录：rm -rf file目录
+  - 删除日志 rm *log (等价: find ./ -name “*log” -exec rm {} ;)
+  - 移动：mv
+  - 复制：cp (复制目录：cp -r )
+
+- 示例
+  - 查看当前目录下文件个数:
+    ```bash
+    $ find ./ | wc -l
+    ```
+  - 复制目录:
+    ```bash
+    $ cp -r source_dir  dest_dir
+    ```
+
+### 2.2.4. 目录切换
+
+- 找到文件/目录位置：cd
+- 切换到上一个工作目录： cd -
+- 切换到home目录： cd or cd ~
+- 显示当前路径: pwd
+- 更改当前工作路径为path: cd path
+
+### 2.2.5. 列出目录项
+
+- 显示当前目录下的文件 ls
+- 按时间排序，以列表的方式显示目录项 ls -lrt
+  - 以上这个命令用到的频率如此之高，以至于我们需要为它建立一个快捷命令方式:
+  - 在.bashrc 中设置命令别名:
+
+    ```bash
+    alias lsl='ls -lrt'
+    alias lm='ls -al|more'
+    ```
+  - 这样，使用lsl，就可以显示目录中的文件按照修改时间排序；以列表方式显示；
+
+- 给每项文件前面增加一个id编号(看上去更加整洁):
+
+  ```bash
+  ls | cat -n
+  1  a
+  2  a.out
+  3  app
+  4  b
+  5  bin
+  6  config
+  ```
+
+> 注：.bashrc 在/home/你的用户名/ 文件夹下，以隐藏文件的方式存储；可使用 ls -a 查看；
+
+### 2.2.6. 查找目录及文件 find/locate
+
+> **find**
+
+- 搜寻文件或目录:
+
+  ```bash
+  $ find ./ -name "core*" | xargs file
+  ```
+
+- 查找目标文件夹中是否有obj文件:
+
+  ```bash
+  $ find ./ -name '*.o'
+  ```
+
+- 递归当前目录及子目录删除所有.o文件:
+
+  ```bash
+  $ find ./ -name "*.o" -exec rm {} \;
+  ```
+
+> **locate**
+
+- find是实时查找，如果需要更快的查询，可试试locate；locate会为文件系统建立索引数据库，如果有文件更新，需要定期执行更新命令来更新索引库:
+
+  ```bash
+  # 寻找包含有string的路径:
+  $ locate string
+  ```
+
+- 与find不同，locate并不是实时查找。你需要更新数据库，以获得最新的文件索引信息。
+  ```bash
+  $ updatedb
+  ```
+
+### 2.2.7. 查看文件内容
+
+- cat 
+  - 显示时同时显示行号:
+
+  ```bash
+  $ cat -n
+  ```
+- vi
+- head
+- tail
+  - 动态显示文本最新信息:
+
+    ```bash
+    tailf -f
+    ```
 - more
-- less
-- head 显示最前面的内容，-4 表示显示四行
-- tail 显示最后面的内容，-4 表示显示四行
-  > head -4 file | tail -1 显示第四行
-  - tail -f file 阻塞显示文件
-- 管道：
+  - 按页显示列表内容:
 
-  - cat file | more 可以分屏显示内容
-  - echo "/" | ls -l **不会显示根目录文件夹**
-    > 每个程序都有输入流，但不一定会用到。比如 ls，只会判定传入的参数，而并没有读取输入流
-  - echo "/" | xargs ls -l 可以显示根目录文件夹
-    - 管道前命令是 echo
-    - 管道后命令是 xargs
-    - "/"通过管道，流入 xargs 命令中
-    - xargs 后接的第一个参数会被识别为命令，剩下的参数识别为命令的选项参数，再将输入流中的信息作为命令的参数，再把命令执行
+    ```bash
+    $ ls -al | more
+    ```
+- less(推荐)
+- diff
 
-- ppt 中，红色的为扩展正则表达式，黑色的为基本正则表达式
-  > ![](./image/linux-regex-1.jpg) > ![](./image/linux-regex-2.jpg)
+### 2.2.8. 查找文件内容
 
-* grep 匹配输出
-
+- grep 匹配输出
   - `-v` 反显
   - `-e` 使用扩展正则表达式
   - **grep 和 vim 中默认()为字符，如果要分组就要使用`\(word\)`**※
   - **python 中()默认为分组，通过\进行转义为字符**
   - 另外括号嵌套是，比如(())，数左括号，左边第一个是第一组，第二个是第二组
-  - 正则表达式单词边界匹配(grep 独有,python 中为\b)：
-    - `\<abc` 以 abc 开头的单词
-    - `def\>` 以 def 结尾的单词
-    - `\<word\>` word 单词。注意，这样查到的`$word` `word.`也是符合的
+
+  ```
+  Grep正则表达式
+  正则表达式或正则表达式是与一组字符串匹配的模式。 
+  模式由运算符，文字字符和元字符组成，它们具有特殊的含义。
+  GNU grep支持三种正则表达式语法Basic，Extended和Perl-compatible。
+
+  当没有给出正则表达式类型时，grep以Basic的形式调用，grep将搜索模式解释为基本Basic正则表达式。
+  要将模式解释为扩展Extended的正则表达式，请使用-E（或--extended-regexp）选项。
+
+  在GNU grep的实现中，基本正则表达式和扩展正则表达式语法之间在功能上没有区别。 
+  唯一的区别是，在基本正则表达式中，元字符?，+，{，|，(和)被解释为文字字符。
+  为了在使用基本正则表达式时保持元字符的特殊含义，必须使用反斜杠（\）对字符进行转义。
+  ```
+  - 具体规则这里就不列了
+
+- egrep
+
+### 2.2.9. 文件与目录权限修改
+
+- 改变文件的拥有者 chown
+- 改变文件读、写、执行等属性 chmod
+- 递归子目录修改： chown -R tuxapp source/
+- 增加脚本可执行权限： chmod a+x myscript
+
+### 2.2.10. 软链接，硬链接
+
+- 创建符号链接/硬链接:
+
+  ```bash
+  ln cc ccAgain # 硬连接；删除一个，将仍能找到；
+  ln -s cc ccTo # 符号链接(软链接)；删除源，另一个无法使用；（后面一个ccTo 为新建的文件）
+  ```
+
+### 2.2.11. 管道和重定向
+
+- 批处理命令连接执行，使用 `|`
+- 串联: 使用分号 `;`
+- 前面成功，则执行后面一条，否则，不执行:`&&`
+- 前面失败，则后一条执行: `||`
 
 ---
 
-# 4. 文本处理
+- xargs与管道简单使用
 
-- cut：切割行。比如查看数据库表数据时
+  ```bash
+  echo "/" | ls -l # 不会显示根目录文件夹
+  echo "/" | xargs ls -l ## 可以显示根目录文件夹
+  ```
+  - 原因：
+    - 每个程序都有输入流，但不一定会用到。
+    - 比如 ls，只会判定传入的参数，而并没有读取输入流
+  - "/"通过管道，流入 xargs 命令中
+  - xargs 后接的第一个参数会被识别为命令，剩下的参数识别为命令的选项参数，再将输入流中的信息作为命令的参数，再把命令执行
 
-  - f:选择显示的列
-  - s:不显示没有分隔符的行
-  - d:自定义分隔符
-  - 例：
-    - `cut -d' ' -f1 file` 以空格为分隔符切割后显示第一列
-    - `cut -d' ' -f1,3 file` 以空格为分隔符切割后显示第一和三列
-    - `cut -d' ' -f1-3 file` 以空格为分隔符切割后显示第一列到第三列
+- 能够提示命名是否执行成功or失败；
+
+  ```bash
+  ls /proc && echo  suss! || echo failed.
+  ```
+
+  ```bash
+  # 与上述相同效果的是:
+  if ls /proc; then echo suss; else echo fail; fi
+  ```
+
+- 重定向:
+
+  ```bash
+  # 将标准输出和标准错误重定向到同一文件；
+  ls  proc/*.c > list 2> &l 
+  ```
+
+  ```bash
+  # 等价的是:
+  ls  proc/*.c &> list
+  ```
+
+- 清空文件:
+
+  ```
+  :> a.txt
+  ```
+
+- 重定向:
+
+  ```
+  echo aa >> a.txt
+  ```
+
+### 2.2.12. 设置环境变量
+
+- 启动帐号后自动执行的是 文件为 .profile，然后通过这个文件可设置自己的环境变量；
+- 安装的软件路径一般需要加入到path中:
+
+  ```
+  PATH=$APPDIR:/opt/app/soft/bin:$PATH:/usr/local/bin:$TUXDIR/bin:$ORACLE_HOME/bin;export PATH
+  ```
+
+## 2.3. 文本处理
+
+### 2.3.1. find 文件查找
+
+#### 2.3.1.1. 基本使用
+
+- 查找txt和pdf文件:
+
+  ```bash
+  find . \( -name "*.txt" -o -name "*.pdf" \) -print
+  # 或 find . -name "*.txt" -o -name "*.pdf"
+  # -o 为 "或"
+  ```
+
+- 正则方式查找.txt和pdf:
+
+  ```bash
+  find . -regex  ".*\(\.txt|\.pdf\)$"
+  # -iregex： 忽略大小写的正则
+  ```
+
+- 否定参数 ,查找所有非txt文本:
+
+  ```bash
+  find . ! -name "*.txt" -print
+  ```
+
+- 指定搜索深度,打印出当前目录的文件（深度为1）:
+
+  ```bash
+  find . -maxdepth 1 -type f
+  ```
+
+#### 2.3.1.2. 定制搜索
+
+> **按类型搜索**
+
+- 说明
+  ```bash
+  find . -type d -print  # 只列出所有目录
+  ```
+  - -type
+    - f 普通文件
+    - l 符号连接
+    - d 目录
+    - c 字符设备
+    - b 块设备
+    - s 套接字
+    - p Fifo
+
+- 注意：
+  - 说明
+    - find支持的文件检索类型可以区分普通文件和符号链接、目录等
+    - 但是**二进制文件和文本文件**无法直接通过find的类型区分出来；
+
+  - 解决：file命令可以检查文件具体类型（二进制或文本）:
+
+    ```bash
+    $ file redis-cli  # 二进制文件
+    redis-cli: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.9, not stripped
+    $ file redis.pid  # 文本文件
+    redis.pid: ASCII text
+    ```
+  - 实例：所以,可以用以下命令组合来实现查找本地目录下的所有二进制文件:
+
+    ```bash
+    ls -lrt | awk '{print $9}'|xargs file|grep  ELF| awk '{print $1}'|tr -d ':'
+    ```
+
+> **按时间搜索**
+
+- 说明
+  - -atime 访问时间 (单位是天，分钟单位则是-amin，以下类似）
+  - -mtime 修改时间 （内容被修改）
+  - -ctime 变化时间 （元数据或权限变化）
+
+- 实例
+  - 最近第7天被访问过的所有文件:
+
+    ```bash
+    find . -atime 7 -type f -print
+    ```
+  - 最近7天内被访问过的所有文件:
+
+    ```bash
+    find . -atime -7 -type f -print
+    ```
+  - 查询7天前被访问过的所有文件:
+
+    ```bash
+    find . -atime +7 type f -print
+    ```
+
+> **按大小搜索**
+
+- 寻找大于2k的文件:
+
+  ```bash
+  find . -type f -size +2k
+  ```
+
+> **按权限查找**
+
+  ```bash
+  find . -type f -perm 644 -print # 找具有可执行权限的所有文件
+  ```
+
+> **按用户查找**
+
+  ```bash
+  find . -type f -user weber -print # 找用户weber所拥有的文件
+  ```
+
+#### 2.3.1.3. 找到后的后续动作
+
+> **删除**
+
+- 删除当前目录下所有的swp文件:
+
+  ```bash
+  find . -type f -name "*.swp" -delete
+  ```
+
+- 另一种语法:
+
+  ```bash
+  find . type f -name "*.swp" | xargs rm
+  ```
+
+> **执行动作（强大的exec）**
+
+- 将当前目录下的所有权变更为weber:
+
+  ```bash
+  find . -type f -user root -exec chown weber {} \;
+  ```
+
+  > 注：{}是一个特殊的字符串，对于每一个匹配的文件，{}会被替换成相应的文件名
+  >
+  > 将找到的文件全都copy到另一个目录:
+
+  ```bash
+  find . -type f -mtime +10 -name "*.txt" -exec cp {} OLD \;
+  ```
+
+> **结合多个命令**
+
+- 如果需要后续执行多个命令，可以将多个命令写成一个脚本。然后 -exec 调用时执行脚本即可:
+
+  ```bash
+  -exec ./commands.sh {} \;
+  ```
+
+#### 2.3.1.4. "-print"的定界符
+
+- 默认使用’\n’作为文件的定界符；
+- -print0 使用’\0’作为文件的定界符，这样就可以搜索包含空格的文件；
+
+### 2.3.2. grep 文本搜索
+
+> **说明**
+
+- 基本使用
+  ```bash
+  grep match_patten file # 默认访问匹配行
+  cat file | grep match _pattern
+  ```
+
+- 常用参数
+  - -o 只输出匹配的文本行
+  - -v 只输出没有匹配的文本行
+  - -c 统计文件中包含文本的次数: `grep -c "text" filename`
+  - -n 打印匹配的行号
+  - -i 搜索时忽略大小写
+  - -l 只打印文件名
+  - -e --regexp
+  - -r/-R 递归搜索
+
+> **应用示例**
+
+- 在多级目录中对文本递归搜索(程序员搜代码的最爱）:
+
+  ```
+  grep "class" . -R -n
+  ```
+- 匹配多个模式
+
+  ```bash
+  grep -e "class" -e "vitural" file
+  # 每个模式前都要有一个 -e
+  ```
+- 删除不包括指定字符的文件
+
+  ```bash
+  # 测试文件：
+  echo "aaa" > file1
+  echo "bbb" > file2
+  echo "aaa" > file3
+
+  grep "aaa" file* -lZ | xargs -0 rm
+
+  # 执行后会删除file1和file3
+  # grep输出用-Z选项来指定以0值字节作为终结符文件名（\0）
+  # xargs -0 读取输入并用0值字节终结符分隔文件名，然后删除匹配文件
+  # -Z通常和-l结合使用。
+  ```
+- 综合应用：
+  - 将日志中的所有带where条件的sql查找查找出来:
+
+    ```bash
+    cat LOG.* | tr a-z A-Z | grep "FROM " | grep "WHERE" > b
+    ```
+
+  - 查找中文示例：工程目录中utf-8格式和gb2312格式两种文件，要查找字的是中文；
+    - 1. 查找到它的utf-8编码和gb2312编码分别是``”xE4xB8xADxE6x96x87”`` 和 `"\xD6\xD0\xCE\xC4"`
+    - 2. `-r` 递归查询、`-n` 显示行号、`-e` 表示使用正则表达式查询；
+
+    ```bash
+    grep -rne "\xE4\xB8\xAD\xE6\x96\x87|\xD6\xD0\xCE\xC4" *
+    ```
+
+### 2.3.3. xargs 命令行参数转换
+
+> **说明**
+
+- xargs
+  - 作用：
+    - xargs 能够处理管道或者 stdin 并将其转换成特定命令的命令参数。
+    - xargs 也可以将单行或多行文本输入转换为其他格式，例如多行变单行，单行变多行
+  - 基本说明
+    - 每个程序都有输入流，但不一定会用到。
+    - xargs 后接的第一个参数会被识别为命令，剩下的参数识别为命令的选项参数，再将输入流中的信息作为命令的参数，再执行命令
+
+- xargs参数说明
+  - -d 定义定界符 （默认为空格 多行的定界符为 n）
+  - -n 指定输出为多行
+  - -I {} 指定替换字符串，这个字符串在xargs扩展时会被替换掉,用于待执行的命令需要多个参数时
+  - -0：指定0为输入定界符
+
+> **应用示例**
+
+- 将多行输出转化为单行输出:
+
+  ```bash
+  cat file.txt| xargs
+  ```
+
+- 将单行转化为多行输出
+
+  ```
+  cat single.txt | xargs -n 3
+  ```
+- 使用 -d 分割输入
+
+  ```bash
+  echo "nameXnameXnameXname" | xargs -dX
+
+  name name name name
+  ```
+
+- 综合应用
+
+  ```bash
+  cat file.txt | xargs -I {} ./command.sh -p {} -1
+  # -I {} ，指定‘{}'会被替换掉
+
+  ls *.jpg | xargs -n1 -I cp {} /data/images
+  # 复制所有图片文件到 /data/images 目录下：
+
+  #统计程序行数
+  find source_dir/ -type f -name "*.cpp" -print0 |xargs -0 wc -l
+
+  #redis通过string存储数据，通过set存储索引，需要通过索引来查询出所有的值：
+  ./redis-cli smembers $1  | awk '{print $1}'|xargs -I {} ./redis-cli get {}
+  ```
+
+### 2.3.4. sort 排序
+
+> **说明**
 
 - sort:排序文件的行后输出。字典序或数值序
-
   - n:按数值排序。默认字典序。（从第一个字符进行排序）
   - 自定义排序方式:
     > sort -t' ' -k2 以空格为分隔符，通过第二列字典序进行排序
@@ -223,48 +739,163 @@
   - u:合并相同行
   - f:忽略大小写
 
-- wc:统计。linw，word，bytes
+> **应用示例**
 
-  - l:只统计行数
-  - 通常统计后面会有文件名，通过 cat file | wc -l 可以统计行数而不带文件名
-  - 其他统计用 man 查一下吧
+```bash
+sort -nrk 1 data.txt
+sort -bd data # 忽略像空格之类的前导空白字符
+```
 
-- sed :行编辑器
+### 2.3.5. uniq 消除重复行
 
-  > 类似 vi 的末行模式,只会显示修改后的内容，要加 i 选项才能保存到文件中
+> **注意**
 
-  - 选项
-    - sed [options] `AddressCommand` file
-    - n 静默模式，处理而不打印出
-    - i 直接修改一个文件，直接作用到文件
-    - `-e script -e script` 可以执行多个脚本，一个-e 后一个脚本
-    - f /path/to/sed_script 读取文件中的命令
-    - r 使用扩展正则表达式
-  - Command:
-    - d 删除符合条件的行；
-    - p:显示符合条件的行；
-    - a\string:在指定的行后面追加新行，内容为 string
-    - \n:可以用于换行
-    - i\string:在指定的行前面添加新行，内容为 string
-    - r FILE:将指定的文件的内容添加至符合条件的行处
-    - w FILE:将地址指定的范围内的行另存至指定的文件中；
-    - s/pattern/string/修饰符：查找并替换，默认只替换每行中第一次被模式匹配到的字符串
-      - g:行内全局替换
-      - i:忽略字符大小写
-      - s///: s###, s@@@
-      - \Q),\1,\2
-  - Address
-    - 可以没有
-    - 给定范围
-    - 查找有指定内容的行/str/
-  - 演示：
-    - `sed "1a\hello world" test.txt` 在第一行后追加新行，内容为 hello world
-    - `sed "/hello/d" test.txt` 删除有 hello 的行
-    - `sed -n "/[0-9]/p" test.txt` 显示包含数字的行 可以由 `grep "[0-9] test.txt"代替`
-    - `sed "s/3333/11111/g"` 替换
+- uniq去重功能，只能针对连续的多行进行去重，只剩下唯一的一条
+- 因此一般都会和sort一起使用
+
+> **应用示例**
+
+- 消除重复行
+  ```bash
+  sort unsort.txt | uniq
+  ```
+- 统计各行在文件中出现的次数
+  ```bash
+  sort unsort.txt | uniq -c
+  ```
+- 找出重复行
+  ```bash
+  sort unsort.txt | uniq -d
+  ```
+- 只显示单一行：
+  ```bash
+  uniq -u file.txt
+  sort file.txt | uniq -u
+  ```
+- 可指定每行中需要比较的重复内容：-s 开始位置 -w 比较字符数
+
+### 2.3.6. 用 tr 进行转换
+
+> **说明**
+
+- 选项
+  - -c或——complerment：取代所有不属于第一字符集的字符；
+  - -d或——delete：删除所有属于第一字符集的字符；
+  - -s或--squeeze-repeats：把连续重复的字符以单独一个字符表示；
+  - -t或--truncate-set1：先删除第一字符集较第二字符集多出的字符。
+
+- 参数
+  - 字符集1：
+    - 指定要转换或删除的原字符集。
+    - 当执行转换操作时，必须使用参数“字符集2”指定转换的目标字符集。
+    - 但执行删除操作时，不需要参数“字符集2”；
+  - 字符集2：
+    - 指定要转换成的目标字符集。
+
+> **应用示例**
+
+- 通用用法
+
+  ```bash
+
+  echo "HELLO WORLD" | tr 'A-Z' 'a-z' # 将输入字符由大写转换为小写：
+  echo 12345 | tr '0-9' '9876543210' #加解密转换，替换对应字符
+  cat text| tr '\t' ' '  #制表符转空格
+  ```
+
+- tr删除字符
+
+  ```bash
+  cat file | tr -d '0-9' # 删除所有数字
+  ```
+
+- -c 求补集:
+
+  ```bash
+  cat file | tr -c '0-9' #获取文件中所有数字
+  cat file | tr -d -c '0-9 \n'  #删除非数字数据
+  ```
+
+- tr压缩字符
+
+  ```bash
+  # tr -s 压缩文本中出现的重复字符；最常用于压缩多余的空格:
+  cat file | tr -s ' '
+  ```
+
+- 字符类
+  - 种类
+    - [:alnum:]：字母和数字
+    - [:alpha:]：字母
+    - [:cntrl:]：控制（非打印）字符
+    - [:digit:]：数字
+    - [:graph:]：图形字符
+    - [:lower:]：小写字母
+    - [:print:]：可打印字符
+    - [:punct:]：标点符号
+    - [:space:]：空白字符
+    - [:upper:]：大写字母
+    - [:xdigit:]：十六进制字符  
+  - 使用方法：tr [:class:] [:class:]
+
+```
+tr '[:lower:]' '[:upper:]'
+```
+
+### 2.3.7. cut 按列切分文本
+
+- cut：切割行。比如查看数据库表数据时
+  - f:选择显示的列
+  - s:不显示没有分隔符的行
+  - d:自定义分隔符
+  - 例：
+    - `cut -d' ' -f1 file` 以空格为分隔符切割后显示第一列
+    - `cut -d' ' -f1,3 file` 以空格为分隔符切割后显示第一和三列
+    - `cut -d' ' -f1-3 file` 以空格为分隔符切割后显示第一列到第三列
+
+### 2.3.8. paste 按列拼接文本
+
+- 将两个文本按列拼接到一起;
+
+  ```bash
+  cat file1
+  1
+  2
+
+  cat file2
+  colin
+  book
+
+  paste file1 file2
+  1 colin
+  2 book
+  ```
+
+- 默认的定界符是制表符，可以用-d指明定界符
+
+  ```bash
+  paste file1 file2 -d ","
+  1,colin
+  2,book
+  ```
+
+### 2.3.9. wc 统计行和字符的工具
+
+```bash
+$ wc -l file # 统计行数
+$ wc -w file # 统计单词数
+$ wc -c file # 统计字符数
+```
+
+### 2.3.10. sed 文本替换利器
+
+[References](./References/sed.md)
+
+### 2.3.11. awk 数据流处理工具(重要)
+
+[References](./References/awk.md)
 
 - awk
-
   - 说明:
     - awk 是一个强大的文本分析工具。
     - 相对于 grep 的查找，sed 的编辑，awk 在其对数据分析并生成报告时， 显得尤为强大。
@@ -304,16 +935,16 @@
     - `awk -F':' '{print NR"\t"NF"\t"$0}'`打印每行行号，列数，完成内容，为一个表格
     - 计算合计工资
 
-      ```
-      统计报表：合计每人1月的工资，0：manager，1：worker
+      ```bash
+      # 统计报表：合计每人1月的工资，0：manager，1：worker
 
-      Tom	 0   2012-12-11      car     3000
-      John	 1   2013-01-13      bike    1000
-      vivi	 1   2013-01-18      car     2800
-      Tom	 0   2013-01-20      car     2500
-      John	 1   2013-01-28      bike    3500
+      # Tom	 0   2012-12-11      car     3000
+      # John	 1   2013-01-13      bike    1000
+      # vivi	 1   2013-01-18      car     2800
+      # Tom	 0   2013-01-20      car     2500
+      # John	 1   2013-01-28      bike    3500
 
-      结果比如: tom worker 2500
+      # 结果比如: tom worker 2500
 
       awk '{
         split($3,date,"-");
@@ -333,28 +964,98 @@
       }' wagetable.txt
       ```
 
-- 计算机开机-->计算机内核进内存-->加载根目录分区进内存-->引导 sbin 目录下 init 程序作为第一个进程-->该进程读取/etc/inittab 中的开机设置
+- 练习
+  - print 打印当前行
+  - 特殊变量： `NR NF $0 $1 $2`
+  - 传递外部变量
+  - 用样式对 awk 处理的行进行过滤
+  - 设置定界符
+  - 读取命令输出
+  - 在 awk 中使用循环
+  - awk 结合 grep 找到指定的服务，然后将其 kill 掉
+  - awk 实现 head、tail 命令
+  - 打印指定列
+  - 打印指定文本区域
+  - awk 常用内建函数
 
-  > 小知识
+### 2.3.12. 迭代文件中的行、单词和字符
 
-  - 3 是命令行模式，
-  - 5 是图形界面模式，
-  - 0 是直接关机无法开机，
-  - 6 是立刻重启死循环，
-  - 1 是单用户模式（物理服务器身边，重启时可以设置，不需要密码登录，修改密码时用）
-  - 不过 linux 中图形界面并没有在内核代码中，需要安装后台程序
+#### 2.3.12.1. 迭代文件中的每一行
 
-- /etc/passwd 文件
-  - `root:x:0:0:root:/root:/bin/bash`
-  - 冒号分隔符
-  - 一行是一个用户的信息
-  - `用户名:x:用户` id 号:组 id 号:用户描述信息:用户家目录:用户以交互模式登录时的 shell 外壳程序
-    > 原本加密后的密码是保存在 x 那里的，但因为不安全，所以移除了，x 用来占位
-    > 密码数据移到了 shadow 下
+- while 循环法
 
----
+  ```bash
+  while read line;
+  do
+  echo $line;
+  done < file.txt
 
-# 5. 用户和权限
+  # 改成子shell:
+  cat file.txt | (while read line;do echo $line;done)
+  ```
+
+- awk法
+
+  ```bash
+  cat file.txt| awk '{print}'
+  ```
+
+#### 2.3.12.2. 迭代一行中的每一个单词
+
+```bash
+for word in $line;
+do
+echo $word;
+done
+```
+
+#### 2.3.12.3. 迭代每一个字符
+
+- 语法
+  - `${string:start_pos:num_of_chars}` ：从字符串中提取一个字符；(bash文本切片）
+  - `${#word}` :返回变量word的长度
+
+- 示例
+
+  ```bash
+  for((i=0;i<${#word};i++))
+  do
+  echo ${word:i:1);
+  done
+  ```
+
+- 以ASCII字符显示文件:
+
+  ```bash
+  $ od -c filename
+  ```
+
+## 2.4. 磁盘管理
+
+### 磁盘信息
+
+- 磁盘信息：
+  - df:显示硬盘分区。
+    - linux 中没有盘符概念，只有一棵虚拟的目录树，所有分区中的目录都会放在根目录/下的某文件夹(不一定是子级)。比如/boot 目录就是一个分区。
+    - 有啥问题时，先 df，看看磁盘满没
+  - du -sh ./\*:统计此文件夹下每个目录大小
+  - 清楚数据前一定要备份
+
+### 解压缩
+
+### 挂载
+
+## 2.5. 进程管理工具
+
+## 2.6. 性能监控
+
+## 2.7. 网络工具
+
+## 2.8. 用户管理工具
+
+## 2.9. 系统管理及 IPC 资源管理
+
+## 2.10. 用户和权限
 
 > 了解逻辑，以后工作后要知道自己想要什么权限的用户。或者哪个程序的管理员，哪个程序的普通用户
 
@@ -400,7 +1101,7 @@
 
 ---
 
-# 6. 软件安装
+## 2.11. 软件安装
 
 - 编译安装(自己编译安装)
   - 说明：
@@ -550,250 +1251,104 @@
   - yum install man-pages-zh-CN
   - 看 man bash
 
-# 7. 内存管理
+## 2.12. 网络管理
 
-# 8. 硬盘管理
+# 3. Linux工具参考
 
-# 9. 网络管理
+## 3.1. Linux Crontab 定时任务
 
-<details>
-<summary style="color:red;">网络相关命令</summary>
+### 3.1.1. 介绍
 
-```
-首先,先了解传统的网络配置命令:
-　　1. 使用ifconfig命令配置并查看网络接口情况
-　　示例1: 配置eth0的IP，同时激活设备:
-　　# ifconfig eth0 192.168.4.1 netmask 255.255.255.0 up
-　　示例2: 配置eth0别名设备 eth0:1 的IP，并添加路由
-　　# ifconfig eth0:1 192.168.4.2
-　　# route add –host 192.168.4.2 dev eth0:1
-　　示例3:激活（禁用）设备
-　　# ifconfig eth0:1 up(down)
-　　示例4:查看所有（指定）网络接口配置
-　　# ifconfig (eth0)
-　　2. 使用route 命令配置路由表
-　　示例1:添加到主机路由
-　　# route add –host 192.168.4.2 dev eth0:1
-　　# route add –host 192.168.4.1 gw 192.168.4.250
-　　示例2:添加到网络的路由
-　　# route add –net IP netmask MASK eth0
-　　# route add –net IP netmask MASK gw IP
-　　# route add –net IP/24 eth1
-　　示例3:添加默认网关
-　　# route add default gw IP
-　　示例4:删除路由
-　　# route del –host 192.168.4.1 dev eth0:1
-　　示例5:查看路由信息
-　　# route 或 route -n (-n 表示不解析名字,列出速度会比route 快)
-　　3.ARP 管理命令
-　　示例1:查看ARP缓存
-　　# arp
-　　示例2: 添加
-　　# arp –s IP MAC
-　　示例3: 删除
-　　# arp –d IP
-　　4. ip是iproute2软件包里面的一个强大的网络配置工具，它能够替代一些传统的网络管理工具。例如：ifconfig、route等,
-　　上面的示例完全可以用下面的ip命令实现,而且ip命令可以实现更多的功能.下面介绍一些示例:
-　　4.0 ip命令的语法
-　　ip命令的用法如下：
-　　ip [OPTIONS] OBJECT [COMMAND [ARGUMENTS]]
-　　4.1 ip link set--改变设备的属性. 缩写：set、s
-　　示例1：up/down 起动／关闭设备。
-　　# ip link set dev eth0 up
-　　这个等于传统的 # ifconfig eth0 up(down)
-　　示例2：改变设备传输队列的长度。
-　　参数:txqueuelen NUMBER或者txqlen NUMBER
-　　# ip link set dev eth0 txqueuelen 100
-　　示例3：改变网络设备MTU(最大传输单元)的值。
-　　# ip link set dev eth0 mtu 1500
-　　示例4： 修改网络设备的MAC地址。
-　　参数: address LLADDRESS
-　　# ip link set dev eth0 address 00:01:4f:00:15:f1
-　　4.2 ip link show--显示设备属性. 缩写：show、list、lst、sh、ls、l
-　　-s选项出现两次或者更多次，ip会输出更为详细的错误信息统计。
-　　示例:
-　　# ip -s -s link ls eth0
-　　eth0: mtu 1500 qdisc cbq qlen 100
-　　link/ether 00:a0:cc:66:18:78 brd ff:ff:ff:ff:ff:ff
-　　RX: bytes packets errors dropped overrun mcast
-　　2449949362 2786187 0 0 0 0
-　　RX errors: length crc fifo missed
-　　0 0 0 0 0
-　　TX: bytes packets errors dropped carrier collsns
-　　178558497 1783946 332 0 332 35172
-　　TX errors: aborted fifo window heartbeat
-　　0 0 0 332
-　　这个命令等于传统的 ifconfig eth0
-　　5.1 ip address add--添加一个新的协议地址. 缩写：add、a
-　　示例1：为每个地址设置一个字符串作为标签。为了和Linux-2.0的网络别名兼容，这个字符串必须以设备名开头，接着一个冒号，
-　　# ip addr add local 192.168.4.1/28 brd + label eth0:1 dev eth0
-　　示例2: 在以太网接口eth0上增加一个地址192.168.20.0，掩码长度为24位(155.155.155.0)，标准广播地址，标签为eth0:Alias：
-　　# ip addr add 192.168.4.2/24 brd + dev eth1 label eth1:1
-　　这个命令等于传统的: ifconfig eth1:1 192.168.4.2
-　　5.2 ip address delete--删除一个协议地址. 缩写：delete、del、d
-　　# ip addr del 192.168.4.1/24 brd + dev eth0 label eth0:Alias1
-　　5.3 ip address show--显示协议地址. 缩写：show、list、lst、sh、ls、l
-　　# ip addr ls eth0
-　　5.4.ip address flush--清除协议地址. 缩写：flush、f
-　　示例1 : 删除属于私网10.0.0.0/8的所有地址：
-　　# ip -s -s a f to 10/8
-　　示例2 : 取消所有以太网卡的IP地址
-　　# ip -4 addr flush label "eth0"
-　　6. ip neighbour--neighbour/arp表管理命令
-　　缩写 neighbour、neighbor、neigh、n
-　　命令 add、change、replace、delete、fulsh、show(或者list)
-　　6.1 ip neighbour add -- 添加一个新的邻接条目
-　　ip neighbour change--修改一个现有的条目
-　　ip neighbour replace--替换一个已有的条目
-　　缩写：add、a；change、chg；replace、repl
-　　示例1: 在设备eth0上，为地址10.0.0.3添加一个permanent ARP条目：
-　　# ip neigh add 10.0.0.3 lladdr 0:0:0:0:0:1 dev eth0 nud perm
-　　示例2:把状态改为reachable
-　　# ip neigh chg 10.0.0.3 dev eth0 nud reachable
-　　6.2.ip neighbour delete--删除一个邻接条目
-　　示例1:删除设备eth0上的一个ARP条目10.0.0.3
-　　# ip neigh del 10.0.0.3 dev eth0
-　　6.3.ip neighbour show--显示网络邻居的信息. 缩写：show、list、sh、ls
-　　示例1: # ip -s n ls 193.233.7.254
-　　193.233.7.254. dev eth0 lladdr 00:00:0c:76:3f:85 ref 5 used 12/13/20 nud reachable
-　　6.4.ip neighbour flush--清除邻接条目. 缩写：flush、f
-　　示例1: (-s 可以显示详细信息)
-　　# ip -s -s n f 193.233.7.254
-　　7. 路由表管理
-　　7.1.缩写 route、ro、r
-　　7.2.路由表
-　　从Linux-2.2开始，内核把路由归纳到许多路由表中，这些表都进行了编号，编号数字的范围是1到255。另外，
-　　为了方便，还可以在/etc/iproute2/rt_tables中为路由表命名。
-　　默认情况下，所有的路由都会被插入到表main(编号254)中。在进行路由查询时，内核只使用路由表main。
-　　7.3.ip route add -- 添加新路由
-　　ip route change -- 修改路由
-　　ip route replace -- 替换已有的路由
-　　缩写：add、a；change、chg；replace、repl
-　　示例1: 设置到网络10.0.0/24的路由经过网关193.233.7.65
-　　# ip route add 10.0.0/24 via 193.233.7.65
-　　示例2: 修改到网络10.0.0/24的直接路由，使其经过设备dummy
-　　# ip route chg 10.0.0/24 dev dummy
-　　示例3: 实现链路负载平衡.加入缺省多路径路由，让ppp0和ppp1分担负载(注意：scope值并非必需，它只不过是告诉内核，
-　　这个路由要经过网关而不是直连的。实际上，如果你知道远程端点的地址，使用via参数来设置就更好了)。
-　　# ip route add default scope global nexthop dev ppp0 nexthop dev ppp1
-　　# ip route replace default scope global nexthop dev ppp0 nexthop dev ppp1
-　　示例4: 设置NAT路由。在转发来自192.203.80.144的数据包之前，先进行网络地址转换，把这个地址转换为193.233.7.83
-　　# ip route add nat 192.203.80.142 via 193.233.7.83
-　　示例5: 实现数据包级负载平衡,允许把数据包随机从多个路由发出。weight 可以设置权重.
-　　# ip route replace default equalize nexthop via 211.139.218.145 dev eth0 weight 1 nexthop via 211.139.218.145 dev eth1 weight 1
-　　7.4.ip route delete-- 删除路由
-　　缩写：delete、del、d
-　　示例1:删除上一节命令加入的多路径路由
-　　# ip route del default scope global nexthop dev ppp0 nexthop dev ppp1
-　　7.5.ip route show -- 列出路由
-　　缩写：show、list、sh、ls、l
-　　示例1: 计算使用gated/bgp协议的路由个数
-　　# ip route ls proto gated/bgp |wc
-　　1413 9891 79010
-　　示例2: 计算路由缓存里面的条数，由于被缓存路由的属性可能大于一行，以此需要使用-o选项
-　　# ip -o route ls cloned |wc
-　　159 2543 18707
-　　示例3: 列出路由表TABLEID里面的路由。缺省设置是table main。TABLEID或者是一个真正的路由表ID或者是/etc/iproute2/rt_tables文件定义的字符串，
-　　或者是以下的特殊值：
-　　all -- 列出所有表的路由；
-　　cache -- 列出路由缓存的内容。
-　　ip ro ls 193.233.7.82 tab cache
-　　示例4: 列出某个路由表的内容
-　　# ip route ls table fddi153
-　　示例5: 列出默认路由表的内容
-　　# ip route ls
-　　这个命令等于传统的: route
-　　7.6.ip route flush -- 擦除路由表
-　　示例1: 删除路由表main中的所有网关路由（示例：在路由监控程序挂掉之后）：
-　　# ip -4 ro flush scope global type unicast
-　　示例2:清除所有被克隆出来的IPv6路由：
-　　# ip -6 -s -s ro flush cache
-　　示例3: 在gated程序挂掉之后，清除所有的BGP路由：
-　　# ip -s ro f proto gated/bgp
-　　示例4: 清除所有ipv4路由cache
-　　# ip route flush cache
-　　*** IPv4 routing cache is flushed.
-　　7.7 ip route get -- 获得单个路由 .缩写：get、g
-　　使用这个命令可以获得到达目的地址的一个路由以及它的确切内容。
-　　ip route get命令和ip route show命令执行的操作是不同的。ip route show命令只是显示现有的路由，而ip route get命令在必要时会派生出新的路由。
-　　示例1: 搜索到193.233.7.82的路由
-　　# ip route get 193.233.7.82
-　　193.233.7.82 dev eth0 src 193.233.7.65 realms inr.ac cache mtu 1500 rtt 300
-　　示例2: 搜索目的地址是193.233.7.82，来自193.233.7.82，从eth0设备到达的路由（这条命令会产生一条非常有意思的路由，这是一条到193.233.7.82的回环路由）
-　　# ip r g 193.233.7.82 from 193.233.7.82 iif eth0
-　　193.233.7.82 from 193.233.7.82 dev eth0 src 193.233.7.65 realms inr.ac/inr.ac
-　　cache
- mtu 1500 rtt 300 iif eth0
-　　8. ip route -- 路由策略数据库管理命令
-　　命令
-　　add、delete、show(或者list)
-　　注意：策略路由(policy routing)不等于路由策略(rouing policy)。
-　　在某些情况下，我们不只是需要通过数据包的目的地址决定路由，可能还需要通过其他一些域：源地址、IP协议、传输层端口甚至数据包的负载。
-　　这就叫做：策略路由(policy routing)。
-　　8.1. ip rule add -- 插入新的规则
-　　ip rule delete -- 删除规则
-　　缩写：add、a；delete、del、d
-　　示例1: 通过路由表inr.ruhep路由来自源地址为192.203.80/24的数据包
-　　ip ru add from 192.203.80/24 table inr.ruhep prio 220
-　　示例2:把源地址为193.233.7.83的数据报的源地址转换为192.203.80.144，并通过表1进行路由
-　　ip ru add from 193.233.7.83 nat 192.203.80.144 table 1 prio 320
-　　示例3:删除无用的缺省规则
-　　ip ru del prio 32767
-　　8.2. ip rule show -- 列出路由规则
-　　缩写：show、list、sh、ls、l
-　　示例1: # ip ru ls
-　　0: from all lookup local
-　　32762: from 192.168.4.89 lookup fddi153
-　　32764: from 192.168.4.88 lookup fddi153
-　　32766: from all lookup main
-　　32767: from all lookup 253
-　　9. ip maddress -- 多播地址管理
-　　缩写：show、list、sh、ls、l
-　　9.1.ip maddress show -- 列出多播地址
-　　示例1: # ip maddr ls dummy
-　　9.2. ip maddress add -- 加入多播地址
-　　ip maddress delete -- 删除多播地址
-　　缩写：add、a；delete、del、d
-　　使用这两个命令，我们可以添加／删除在网络接口上监听的链路层多播地址。这个命令只能管理链路层地址。
-　　示例1: 增加 # ip maddr add 33:33:00:00:00:01 dev dummy
-　　示例2: 查看 # ip -O maddr ls dummy
-　　2: dummy
-　　link 33:33:00:00:00:01 users 2 static
-　　link 01:00:5e:00:00:01
-　　示例3: 删除 # ip maddr del 33:33:00:00:00:01 dev dummy
-　　10.ip mroute -- 多播路由缓存管理
-　　10.1. ip mroute show -- 列出多播路由缓存条目
-　　缩写：show、list、sh、ls、l
-　　示例1:查看 # ip mroute ls
-　　(193.232.127.6, 224.0.1.39) Iif: unresolved
-　　(193.232.244.34, 224.0.1.40) Iif: unresolved
-　　(193.233.7.65, 224.66.66.66) Iif: eth0 Oifs: pimreg
-　　示例2:查看 # ip -s mr ls 224.66/16
-　　(193.233.7.65, 224.66.66.66) Iif: eth0 Oifs: pimreg
-　　9383 packets, 300256 bytes
-　　11. ip tunnel -- 通道配置
-　　缩写
-　　tunnel、tunl
-　　11.1.ip tunnel add -- 添加新的通道
-　　ip tunnel change -- 修改现有的通道
-　　ip tunnel delete -- 删除一个通道
-　　缩写：add、a；change、chg；delete、del、d
-　　示例1:建立一个点对点通道，最大TTL是32
-　　# ip tunnel add Cisco mode sit remote 192.31.7.104 local 192.203.80.1 ttl 32
-　　11.2.ip tunnel show -- 列出现有的通道
-　　缩写：show、list、sh、ls、l
-　　示例1: # ip -s tunl ls Cisco
-　　12. ip monitor和rtmon -- 状态监视
-　　ip命令可以用于连续地监视设备、地址和路由的状态。这个命令选项的格式有点不同，命令选项的名字叫做monitor，接着是操作对象：
-　　ip monitor [ file FILE ] [ all | OBJECT-LIST ]
-　　示例1: # rtmon file /var/log/rtmon.log
-　　示例2: # ip monitor file /var/log/rtmon.log r
-```
-</details>
+- crontab命令
+  - 是cron table的简写
+  - corn table是cron的配置文件，也可以叫它作业列表
+  - 可以在以下文件夹内找到相关配置文件。
+    - /var/spool/cron/ 目录下存放的是每个用户包括root的crontab任务，每个任务以创建者的名字命名
+    - /etc/crontab 这个文件负责调度各种管理和维护任务。
+    - /etc/cron.d/ 这个目录用来存放任何要执行的crontab文件或脚本。
+  - 还可以把脚本放在一下目录，让它每小时/天/星期、月执行一次。
+    - /etc/cron.hourly
+    - /etc/cron.daily
+    - /etc/cron.weekly
+    - /etc/cron.monthly
 
-# 10. shell script
+### 3.1.2. 使用
 
-## 10.1. 开始
+- 语法
+  ```bash
+  crontab [-u username]　　　　# 省略用户表表示操作当前用户的crontab
+      -e      # 编辑工作表
+      -l      # 列出工作表里的命令
+      -r      # 删除工作作
+  ```
+
+- crontab -e进入当前用户的工作表编辑
+  - 是常见的vim界面
+  - 每行是一条命令。
+
+- cron 命令格式
+  - crontab的命令构成为 时间+动作
+  - 时间有
+    - 分、时、日、月、周五种
+  - 操作符有
+    - * 取值范围内的所有数字
+    - / 每过多少个数字
+    - - 从X到Z
+    - ，散列数字
+
+### 3.1.3. 实例
+
+- 实例 1：每 1 分钟执行一次 myCommand
+  ```bash
+  * * * * * myCommand
+  ```
+- 实例 2：每小时的第 3 和第 15 分钟执行
+  ```
+  3,15 * * * * myCommand
+  ```
+- 实例 3：在上午 8 点到 11 点的第 3 和第 15 分钟执行
+  ```
+  3,15 8-11 * * * myCommand
+  ```
+- 实例 4：每隔两天的上午 8 点到 11 点的第 3 和第 15 分钟执行
+  ```
+  3,15 8-11 */2  *  * myCommand
+  ```
+- 实例 5：每周一上午 8 点到 11 点的第 3 和第 15 分钟执行
+  ```
+  3,15 8-11 * * 1 myCommand
+  ```
+- 实例 6：每晚的 21:30 重启 smb
+  ```
+  30 21 * * * /etc/init.d/smb restart
+  ```
+- 实例 7：每月 1、10、22 日的 4 : 45 重启 smb
+  ```
+  45 4 1,10,22 * * /etc/init.d/smb restart
+  ```
+- 实例 8：每周六、周日的 1 : 10 重启 smb
+  ```
+  10 1 * * 6,0 /etc/init.d/smb restart
+  ```
+- 实例 9：每天 18 : 00 至 23 : 00 之间每隔 30 分钟重启 smb
+  ```
+  0,30 18-23 * * * /etc/init.d/smb restart
+  ```
+- 实例 10：每星期六的晚上 11 : 00 pm 重启 smb
+  ```
+  0 23 * * 6 /etc/init.d/smb restart
+  ```
+- 实例 11：每一小时重启 smb
+  ```
+  0 */1 * * * /etc/init.d/smb restart
+  ```
+- 实例 12：晚上 11 点到早上 7 点之间，每隔一小时重启 smb
+  ```
+  0 23-7/1 * * * /etc/init.d/smb restart
+  ```
+# 4. shell script
+
+## 4.1. 开始
 
 - /etc/profile 是 shell 打开时要读取的配置文件，里面有环境变量的定义等
 - pstree:展示进程树
@@ -841,7 +1396,7 @@
   - 函数
   - 磁盘目录下的可执行文件
 
-## 10.2. 文本流，重定向
+## 4.2. 文本流，重定向
 
 - 预先知识
 
@@ -952,7 +1507,7 @@
           cat 0<& 9  # 将输入重定向到0
           ```
 
-## 10.3. 变量
+## 4.3. 变量
 
 - 种类：
   - 本地
@@ -1004,7 +1559,7 @@
       - sleep 20 ：睡眠 20 秒
       - linux 中的 fork()函数
 
-## 10.4. 引用&命令替换
+## 4.4. 引用&命令替换
 
 > 三种引用机制查看 man bash
 
@@ -1059,7 +1614,7 @@
     lines=$(< scriptfile)
     ```
 
-## 10.5. 退出状态&逻辑判断
+## 4.5. 退出状态&逻辑判断
 
 - 退出状态：
   - echo \$?
@@ -1084,7 +1639,7 @@
     后执行的命令的返回状态。
   ```
 
-## 10.6. 表达式
+## 4.6. 表达式
 
 > man bash shell 语法>表达式
 
@@ -1115,7 +1670,7 @@
   # 因此中括号和表达式必须要用空格分开
   ```
 
-## 10.7. 流程控制
+## 4.7. 流程控制
 
 > **全部通过 help 进行学习**
 
@@ -1139,7 +1694,7 @@
 
   ```
 
-## 10.8. 练习
+## 4.8. 练习
 
 - shell 编程一切皆命令
 - 习惯通过 `$?` 进行逻辑判断
@@ -1251,7 +1806,7 @@
   }
 ```
 
-## 10.9. 七个扩展
+## 4.9. 七个扩展
 
 > man bash 吧，所有都在 man bash
 
@@ -1265,15 +1820,72 @@
 - 8，引用删除 echo "hello"
 - \*，重定向 >
 
+# 5. 常见情景与使用
 
-# 常见情景
+- 大文件阅读
 
-## 大文件阅读
+  <!-- less more gre sed awk-->
 
-<!-- less more gre sed awk-->
+- 查找record.log中包含AAA，但不包含BBB的记录的总数:
 
-# 参考文档
+  ```
+  cat -v record.log | grep AAA | grep -v BBB | wc -l
+  ```
 
+# 6. 其他
+
+## 6.1. 其他命令
+
+- 环境变量
+  - windows 中用两个%取环境变量的值，用;分割
+  - linux 中用\$取值，用:分割
+  - %path% == \$PATH
+  - 修改 profile 可以修改环境变量，具体再学完 shell script 后就理解了
+- yum install man man-pages
+  > man 是帮助程序 man-pages 是扩充的帮助页,一定要装<br>
+  > 也可以 `man ascii` `man utf-8` `man gets`<br>
+- man 可以查的一共是：
+  - 1,用户命令(/bin,/usr/bin,/usr/local/bin)，
+  - 2.系统调用，`man 2 read`
+  - 3.库用户，
+  - 4.特殊文件(设备文件)
+  - 5.文件格式(配置文件的语法)
+  - 6.游戏，杂项(Miscellaneous)
+  - 7.管理命令(/sbin,/usr/sbin,/usr/local/sbin)
+- 外部命令用 man，内部命令用 help(help 也是内部命令)
+- whereis 定位命令位置,同时指出帮助文档位置
+- which 定位命令位置
+- file descriptor:文件描述符/文件句柄。linux 中数字代表进程中的某一个流，任何进程最基本的三个流：
+
+  - 0 输入流
+  - 1 正确的输出流
+  - 2 错误的输出流
+
+- `!serv` 执行最近的，以 serv 开头的，执行过的命令
+- jps ：jdk 中的一个可执行程序，查看 java 进程 id
+
+## 6.2. 系统文件
+
+- 计算机开机-->计算机内核进内存-->加载根目录分区进内存-->引导 sbin 目录下 init 程序作为第一个进程-->该进程读取/etc/inittab 中的开机设置
+  > 小知识
+  - 3 是命令行模式，
+  - 5 是图形界面模式，
+  - 0 是直接关机无法开机，
+  - 6 是立刻重启死循环，
+  - 1 是单用户模式（物理服务器身边，重启时可以设置，不需要密码登录，修改密码时用）
+  - 不过 linux 中图形界面并没有在内核代码中，需要安装后台程序
+
+- /etc/passwd 文件
+  - `root:x:0:0:root:/root:/bin/bash`
+  - 冒号分隔符
+  - 一行是一个用户的信息
+  - `用户名:x:用户` id 号:组 id 号:用户描述信息:用户家目录:用户以交互模式登录时的 shell 外壳程序
+    > 原本加密后的密码是保存在 x 那里的，但因为不安全，所以移除了，x 用来占位
+    > 密码数据移到了 shadow 下
+
+# 7. 参考文档
+
+- [ ] [linux常用命令](https://tkstorm.com/linux-doc/)
 - [Linux Command](https://github.com/jaywcjlove/linux-command)
 - [一文掌握 Linux 性能分析之内存篇](https://segmentfault.com/a/1190000018553950)
 - [Linux常用命令](https://github.com/arkingc/note/blob/master/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4.md)

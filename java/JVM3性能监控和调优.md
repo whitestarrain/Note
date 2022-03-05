@@ -2743,6 +2743,8 @@ java -Xms50m -Xmx50m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -jar demo.jar
 
 > [命令参数官方网址](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html)
 
+> 笔记为上述网址中参数的梳理
+
 ### 4.3.1. 打印设置的XX选项及值
 
 - -XX:+PrintCommandLineFlags:可以让在程序运行前打印出用户手动设置或者JVM自动设置的XX选项
@@ -3152,7 +3154,7 @@ public class MemoryMonitor {
 
 ### 5.2.3. GC日志结构剖析
 
-#### 垃圾收集器
+#### 5.2.3.1. 垃圾收集器
 
 - 使用Serial收集器在新生代的名字是Default New Generation，因此显示的是"[DefNew"
 - 使用ParNew收集器在新生代的名字会变成"[ParNew"，意思是：“Parallel New Generation”
@@ -3164,7 +3166,7 @@ public class MemoryMonitor {
 
 **Allocation Failure**：表明本次引起GC的原因是因为在**新生代中没有足够的空间能够存储新的数据了**
 
-#### GC前后情况
+#### 5.2.3.2. GC前后情况
 
 - 通过图示，我们可以发现GC日志的规律一般都是：GC前内存占用---->GC后内存占用（该区域内存总大小）
 
@@ -3176,7 +3178,7 @@ public class MemoryMonitor {
 
   中括号外：GC回收前新生代和老年代占用内存大小，回收后大小（新生代和老年代总大小）
 
-#### GC时间
+#### 5.2.3.3. GC时间
 
 > GC日志中有三个时间：user，sys和real
 
@@ -3217,7 +3219,7 @@ public class MemoryMonitor {
 
 ## 5.3. GC日志分析工具
 
-### 存储到文件
+### 5.3.1. 存储到文件
 
 - 如果想把GC日志存到文件的话，是下面这个参数：
 
@@ -3225,7 +3227,7 @@ public class MemoryMonitor {
   -Xloggc:/path/to/gc.log
   ```
 
-### 5.3.1. GCEasy
+### 5.3.2. GCEasy
 
 - GCEasy-------一款超好用的在线分析GC日志的网站
 - GCEasy可以通过GC日志分析进行内存泄露检测、GC展厅原因分析、JVM配置建议优化等功能，而且是可以免费使用的（有一些服务是收费的）
@@ -3233,7 +3235,7 @@ public class MemoryMonitor {
 
   ![jvm3-100.png](./image/jvm3-100.png)
 
-### 5.3.2. GCViewer
+### 5.3.3. GCViewer
 
 - 这是一款离线版的GC日志分析工具
 - GCViewer是一个免费的、开源的分析小工具，可用于可视化查看由SUN/Oracle，IBM，HP和BEA Java虚拟机产生的垃圾收集器的日志。
@@ -3244,7 +3246,7 @@ public class MemoryMonitor {
 - 启动：运行`java -jar gcviewer-1.3x.jar`
   > 需要java 1.8
 
-### 5.3.3. 其他工具
+### 5.3.4. 其他工具
 
 ![jvm3-101.png](./image/jvm3-101.png)
 
