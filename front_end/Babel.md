@@ -1516,19 +1516,20 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
   - 另外，在Babel6版本，该插件还有两个配置选项polyfill和useBuiltIns
   - 在v7版本已经移除了，不要再继续使用。
 
-小结：
-1.要使用@babel/plugin-transform-runtime插件，其实只有一个npm包是必须要装的，那就是它自己@babel/plugin-transform-runtime。
-对于@babel/runtime及其进化版@babel/runtime-corejs2、@babel/runtime-corejs3，我们只需要根据自己的需要安装一个。
+### 小结：
 
-如果你不需要对core-js做API转换，那就安装@babel/runtime并把corejs配置项设置为false即可。
+- 要使用@babel/plugin-transform-runtime插件，其实只有一个npm包是必须要装的，那就是它自己@babel/plugin-transform-runtime。
+- 对于@babel/runtime及其进化版@babel/runtime-corejs2、@babel/runtime-corejs3，我们只需要根据自己的需要安装一个。
+  - 如果你不需要对core-js做API转换，那就安装@babel/runtime并把corejs配置项设置为false即可。
+  - 如果你需要用core-js2做API转换，那就安装@babel/runtime-corejs2并把corejs配置项设置为2即可。
+  - 如果你需要用core-js3做API转换，那就安装@babel/runtime-corejs3并把corejs配置项设置为3即可。
 
-如果你需要用core-js2做API转换，那就安装@babel/runtime-corejs2并把corejs配置项设置为2即可。
-
-如果你需要用core-js3做API转换，那就安装@babel/runtime-corejs3并把corejs配置项设置为3即可。
-
-注：
-1.那regenerator为何默认值是true？我的理解是，实现Generator与async转换API代码较少，而且也需要一些语法转换，所以默认值取了true。我们也可以设为false，不过没必要。
-2.在安装@babel/preset-env的时候，其实已经自动安装了@babel/runtime，不过在项目开发的时候，我们一般都会再单独npm install一遍@babel/runtime。
+- 注：
+  - 那regenerator为何默认值是true？
+    - 我的理解是，实现Generator与async转换API代码较少，而且也需要一些语法转换，所以默认值取了true。
+    - 我们也可以设为false，不过没必要。
+  - 在安装@babel/preset-env的时候，其实已经自动安装了@babel/runtime，
+    - 不过在项目开发的时候，我们一般都会再单独npm install一遍@babel/runtime。
 
 ## 4.6. Babel 工具
 

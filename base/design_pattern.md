@@ -7505,9 +7505,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
 #### 3.4.4.2. 情景介绍
 
-完成测评系统需求
-
-将观众分为男人和女人，对歌手进行测评，当看完某个歌手表演后，得到他们对该歌手不同的评价(评价有不同的种类，比如成功、失败等)
+- 完成测评系统需求
+- 将观众分为男人和女人，对歌手进行测评，
+- 当看完某个歌手表演后，得到他们对该歌手不同的评价(评价有不同的种类，比如成功、失败等)
 
 #### 3.4.4.3. 传统方式
 
@@ -8918,183 +8918,2380 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
 #### 3.4.8.1. 说明
 
+- 基本概念
+  - 职责链模式(`Chain of Responsibility Pattern`)，又叫责任链模式， 为请求创建了一个接收者对象的链
+  - 这种模式对请求的发送者和接收者进行解耦
+- 原理
+  - 职责链模式通常每个接收者都包含对另一个接收者的引用。
+  - 如果一个对象不能处理该请求， 那么它会把相同的请求传给下一个接收者，依此类推
+  - 责任链模式使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系。
+  - 将这个对象连成一条链，并沿着这条链传递该请求，直到有一个对象处理它为止
+
+  ![design-patterns-99.png](./image/design-patterns-99.png)
+
+- 原理类图
+  - `Handler`：抽象的处理者，定义了一个处理请求的接口，同时该类中聚合了另外一个 `Handler` 对象
+  - `ConcreteHandlerA` 、`ConcreteHandlerB` 是具体的处理者，处理它自己负责的请求， 可以访问它的后继者(即下一个处理者)，如果可以处理当前请求， 则处理， 否则就将该请求交个后继者去处理， 从而形成一个职责链
+  - `Request` ：含义很多属性， 表示一个请求
+
+  ![design-patterns-98.png](./image/design-patterns-98.png)
+
 #### 3.4.8.2. 情景介绍
+
+学校 OA 系统的采购审批项目： 需求是采购员采购教学器材
+
+1. 如果金额 小于等于 `5000`，由教学主任审批 (`0<=x<=5000`)
+2. 如果金额 小于等于 `10000`, 由院长审批 (`5000<x<=10000`)
+3. 如果金额 小于等于 `30000`，由副校长审批 (`10000<x<=30000`)
+4. 如果金额 超过 `30000` 以上，由校长审批 ( `30000<x`)
 
 #### 3.4.8.3. 传统方式
 
-#### 3.4.8.4. 代码
+> **类图**
 
-#### 3.4.8.5. 注意事项
+- 传统方式是： 接收到一个采购请求后， 根据采购金额来调用对应的 `Approver` (审批人)完成审批。
+
+  ![design-patterns-97.png](./image/design-patterns-97.png)
+
+> **传统方案问题分析**
+
+- 传统方式的问题分析 : 客户端这里会使用到 分支判断，比如`switch`来对不同的采购请求处理，这样就存在如下问题
+  - 如果各个级别的人员审批金额发生变化， 在客户端的也需要变化
+  - 客户端必须明确的知道有多少个审批级别和访问
+- 这样 对一个采购请求进行处理和 `Approver` (审批人) 就存在强耦合关系， 不利于代码的扩展和维护
+- 解决方案 ==> 职责链模式
+
+#### 3.4.8.4. 责任链模式代码
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `PurchaseRequest`：实体类，表示购买请求
+
+   ```java
+   //请求类
+   public class PurchaseRequest {
+   
+   	private int type = 0; // 请求类型
+   	private float price = 0.0f; // 请求金额
+   	private int id = 0;
+   
+   	// 构造器
+   	public PurchaseRequest(int type, float price, int id) {
+   		this.type = type;
+   		this.price = price;
+   		this.id = id;
+   	}
+   
+   	public int getType() {
+   		return type;
+   	}
+   
+   	public float getPrice() {
+   		return price;
+   	}
+   
+   	public int getId() {
+   		return id;
+   	}
+   
+   }
+   ```
+
+2. `Approver`：审批者的抽象父类，里面聚合了一个 `Approver` 对象，构成一条责任链
+
+   ```java
+   public abstract class Approver {
+   
+   	Approver approver; // 下一个处理者
+   	String name; // 名字
+   
+   	public Approver(String name) {
+   		this.name = name;
+   	}
+   
+   	// 下一个处理者
+   	public void setApprover(Approver approver) {
+   		this.approver = approver;
+   	}
+   
+   	// 处理审批请求的方法，得到一个请求, 处理是子类完成，因此该方法做成抽象
+   	public abstract void processRequest(PurchaseRequest purchaseRequest);
+   
+   }
+   ```
+
+3. `DepartmentApprover`：系主任(具体的处理者)
+
+   ```java
+   public class DepartmentApprover extends Approver {
+   
+   	public DepartmentApprover(String name) {
+   		super(name);
+   	}
+   
+   	@Override
+   	public void processRequest(PurchaseRequest purchaseRequest) {
+   		if (purchaseRequest.getPrice() <= 5000) {
+   			System.out.println(" 请求编号 id= " + purchaseRequest.getId() + " 被 " + this.name + " 处理");
+   		} else {
+   			approver.processRequest(purchaseRequest);
+   		}
+   	}
+   
+   }
+   ```
+
+4. `CollegeApprover`：院长(具体的处理者)
+
+   ```java
+   public class CollegeApprover extends Approver {
+   
+   	public CollegeApprover(String name) {
+   		super(name);
+   	}
+   
+   	@Override
+   	public void processRequest(PurchaseRequest purchaseRequest) {
+   		if (purchaseRequest.getPrice() < 5000 && purchaseRequest.getPrice() <= 10000) {
+   			System.out.println(" 请求编号 id= " + purchaseRequest.getId() + " 被 " + this.name + " 处理");
+   		} else {
+   			approver.processRequest(purchaseRequest);
+   		}
+   	}
+   }
+   ```
+
+5. `ViceSchoolMasterApprover`：副校长(具体的处理者)
+
+   ```java
+   public class ViceSchoolMasterApprover extends Approver {
+   
+   	public ViceSchoolMasterApprover(String name) {
+   		super(name);
+   	}
+   
+   	@Override
+   	public void processRequest(PurchaseRequest purchaseRequest) {
+   		if (purchaseRequest.getPrice() < 10000 && purchaseRequest.getPrice() <= 30000) {
+   			System.out.println(" 请求编号 id= " + purchaseRequest.getId() + " 被 " + this.name + " 处理");
+   		} else {
+   			approver.processRequest(purchaseRequest);
+   		}
+   	}
+   }
+   ```
+
+6. `SchoolMasterApprover`：校长(具体的处理者)
+
+   ```java
+   public class SchoolMasterApprover extends Approver {
+   
+   	public SchoolMasterApprover(String name) {
+   		super(name);
+   	}
+   
+   	@Override
+   	public void processRequest(PurchaseRequest purchaseRequest) {
+   		if (purchaseRequest.getPrice() > 30000) {
+   			System.out.println(" 请求编号 id= " + purchaseRequest.getId() + " 被 " + this.name + " 处理");
+   		} else {
+   			approver.processRequest(purchaseRequest);
+   		}
+   	}
+   }
+   ```
+
+7. `Client`：测试代码
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 创建一个请求
+   		PurchaseRequest purchaseRequest = new PurchaseRequest(1, 31000, 1);
+   
+   		// 创建相关的审批人
+   		DepartmentApprover departmentApprover = new DepartmentApprover("张主任");
+   		CollegeApprover collegeApprover = new CollegeApprover("李院长");
+   		ViceSchoolMasterApprover viceSchoolMasterApprover = new ViceSchoolMasterApprover("王副校");
+   		SchoolMasterApprover schoolMasterApprover = new SchoolMasterApprover("佟校长");
+   
+   		// 需要将各个审批级别的下一个设置好 (处理人构成环形: )
+   		departmentApprover.setApprover(collegeApprover);
+   		collegeApprover.setApprover(viceSchoolMasterApprover);
+   		viceSchoolMasterApprover.setApprover(schoolMasterApprover);
+   		schoolMasterApprover.setApprover(departmentApprover);
+   
+   		departmentApprover.processRequest(purchaseRequest);
+   		viceSchoolMasterApprover.processRequest(purchaseRequest);
+   	}
+   
+   }
+   ```
+
+</details>
+
+#### 3.4.8.5. Spring MVC HandlerExecutionChain
+
+> **流程图**
+
+![design-patterns-100](./image/design-patterns-100.png)
+
+> **源码分析**
+
+1. 在 `DispatcherServlet` 类的 `doDispatch()` 方法中，关注如下几点：
+
+   1. `HandlerExecutionChain mappedHandler = null;`：表示 `Handler` 执行链
+   2. `mappedHandler = getHandler(processedRequest);`：通过请求参数(`processedRequest`)初始化 `mappedHandler`
+   3. `mappedHandler.applyPreHandle(processedRequest, response)`：执行 `applyPreHandle()` 方法
+   4. `mappedHandler.applyPostHandle(processedRequest, response, mv);`：执行 `applyPostHandle()` 方法
+
+   ```java
+   protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+   	HttpServletRequest processedRequest = request;
+   	HandlerExecutionChain mappedHandler = null;
+   	boolean multipartRequestParsed = false;
+   
+   	WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+   
+   	try {
+   		ModelAndView mv = null;
+   		Exception dispatchException = null;
+   
+   		try {
+   			processedRequest = checkMultipart(request);
+   			multipartRequestParsed = processedRequest != request;
+   
+   			// Determine handler for the current request.
+   			mappedHandler = getHandler(processedRequest);
+   			if (mappedHandler == null || mappedHandler.getHandler() == null) {
+   				noHandlerFound(processedRequest, response);
+   				return;
+   			}
+   
+   			// Determine handler adapter for the current request.
+   			HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
+   
+   			// Process last-modified header, if supported by the handler.
+   			String method = request.getMethod();
+   			boolean isGet = "GET".equals(method);
+   			if (isGet || "HEAD".equals(method)) {
+   				long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
+   				if (logger.isDebugEnabled()) {
+   					String requestUri = urlPathHelper.getRequestUri(request);
+   					logger.debug("Last-Modified value for [" + requestUri + "] is: " + lastModified);
+   				}
+   				if (new ServletWebRequest(request, response).checkNotModified(lastModified) && isGet) {
+   					return;
+   				}
+   			}
+   
+   			if (!mappedHandler.applyPreHandle(processedRequest, response)) {
+   				return;
+   			}
+   
+   			try {
+   				// Actually invoke the handler.
+   				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+   			}
+   			finally {
+   				if (asyncManager.isConcurrentHandlingStarted()) {
+   					return;
+   				}
+   			}
+   
+   			applyDefaultViewName(request, mv);
+   			mappedHandler.applyPostHandle(processedRequest, response, mv);
+   		}
+   		catch (Exception ex) {
+   			dispatchException = ex;
+   		}
+   		processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
+   	}
+   	catch (Exception ex) {
+   		triggerAfterCompletion(processedRequest, response, mappedHandler, ex);
+   	}
+   	catch (Error err) {
+   		triggerAfterCompletionWithError(processedRequest, response, mappedHandler, err);
+   	}
+   	finally {
+   		if (asyncManager.isConcurrentHandlingStarted()) {
+   			// Instead of postHandle and afterCompletion
+   			mappedHandler.applyAfterConcurrentHandlingStarted(processedRequest, response);
+   			return;
+   		}
+   		// Clean up any resources used by a multipart request.
+   		if (multipartRequestParsed) {
+   			cleanupMultipart(processedRequest);
+   		}
+   	}
+   }
+   ```
+
+2. `mappedHandler.applyPreHandle(processedRequest, response)` 方法中获取到拦截器(`getInterceptors`)，并调用拦截器的 `preHandle()` 方法完成前置拦截
+
+   ```java
+   boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+       if (getInterceptors() != null) {
+           for (int i = 0; i < getInterceptors().length; i++) {
+               HandlerInterceptor interceptor = getInterceptors()[i];
+               if (!interceptor.preHandle(request, response, this.handler)) {
+                   triggerAfterCompletion(request, response, null);
+                   return false;
+               }
+               this.interceptorIndex = i;
+           }
+       }
+       return true;
+   }
+   
+   public HandlerInterceptor[] getInterceptors() {
+       if (this.interceptors == null && this.interceptorList != null) {
+           this.interceptors = this.interceptorList.toArray(new HandlerInterceptor[this.interceptorList.size()]);
+       }
+       return this.interceptors;
+   }
+   ```
+
+3. `mappedHandler.applyPostHandle(processedRequest, response, mv);`方法中同样也是调用拦截器的 `postHandle()` 方法完成后置拦截
+
+   ```java
+   void applyPostHandle(HttpServletRequest request, HttpServletResponse response, ModelAndView mv) throws Exception {
+   	if (getInterceptors() == null) {
+   		return;
+   	}
+   	for (int i = getInterceptors().length - 1; i >= 0; i--) {
+   		HandlerInterceptor interceptor = getInterceptors()[i];
+   		interceptor.postHandle(request, response, this.handler, mv);
+   	}
+   }
+   ```
+
+4. `triggerAfterCompletion()` 在 `applyPreHandle()` 中被调用，同样也是通过调用拦截器的 `afterCompletion()` 方法
+
+   ```java
+   void triggerAfterCompletion(HttpServletRequest request, HttpServletResponse response, Exception ex)
+   		throws Exception {
+   
+   	if (getInterceptors() == null) {
+   		return;
+   	}
+   	for (int i = this.interceptorIndex; i >= 0; i--) {
+   		HandlerInterceptor interceptor = getInterceptors()[i];
+   		try {
+   			interceptor.afterCompletion(request, response, this.handler, ex);
+   		}
+   		catch (Throwable ex2) {
+   			logger.error("HandlerInterceptor.afterCompletion threw exception", ex2);
+   		}
+   	}
+   }
+   ```
+
+> **源码总结**
+
+1. `SpringMVC` 请求的流程图中，执行了拦截器相关方法：`interceptor.preHandler()` 、`interceptor.preHandler()` 等等
+2. 在处理`SpringMvc`请求时，使用到职责链模式，还使用到适配器模式
+3. `HandlerExecutionChain` 主要负责的是请求拦截器的执行和请求处理，但是他本身不处理请求，只是将请求分配给链上注册处理器执行， 这是职责链实现方式，减少职责链本身与处理逻辑之间的耦合，规范了处理流程
+4. `HandlerExecutionChain` 维护了 `HandlerInterceptor` 的集合， 可以向其中注册相应的拦截器
+
+#### 3.4.8.6. 注意事项
+
+1. 将请求和处理分开，实现解耦，提高系统的灵活性
+2. 简化了对象，使对象不需要知道链的结构
+3. 性能会受到影响，特别是在链比较长的时候，因此需控制链中最大节点数量，一般通过在`Handler`中设置一个最大节点数量，在`setNext()`方法中判断是否已经超过阀值，超过则不允许该链建立，避免出现超长链将会无意识地破坏系统性能
+4. 调试不方便。采用了类似递归的方式，调试时逻辑可能比较复杂
+5. 最佳应用场景： 有多个对象可以处理同一个请求时，比如：多级请求、请假、加薪等审批流程、 `Java Web`中`Tomcat`对`Encoding`的处理、拦截器
 
 ### 3.4.9. 解释器模式（Interpreter Pattern）
 
 #### 3.4.9.1. 说明
 
+- 基本说明
+  - 在编译原理中， 一个算术表达式通过词法分析器形成词法单元，而后这些词法单元再通过语法分析器构建语法分析树，最终形成一颗抽象的语法分析树。
+  - 这里的词法分析器和语法分析器都可以看做是解释器
+  - 解释器模式(`Interpreter Pattern`)：
+    - 是指给定一个语言(表达式)， 我们编程人员需要定义语句的文法的一种表示，并定义一个解释器，
+    - 使用该解释器来解释语言中的句子(表达式)
+
+- 应用场景
+  - 应用可以将一个需要解释执行的语言中的句子表示为一个抽象语法树
+  - 一些重复出现的问题可以用一种简单的语言来表达
+  - 一个简单语法需要解释的场景
+  - 这样的例子还有，比如编译器、 运算表达式计算、正则表达式、 机器人等
+
 #### 3.4.9.2. 情景介绍
+
+通过解释器模式来实现四则运算，如计算`a+b-c`的值，具体要求
+
+1. 先输入表达式的形式，比如 `a+b+c-d+e`，要求表达式的字母不能重复
+2. 在分别输入 `a, b, c, d, e` 的值
+3. 最后求出结果：如图
+
+![design-patterns-101.png](./image/design-patterns-101.png)
 
 #### 3.4.9.3. 传统方式
 
-#### 3.4.9.4. 代码
+1. 编写一个方法，接收表达式的形式，然后根据用户输入的数值进行解析，得到结果
+2. 问题分析：如果加入新的运算符，比如 ‘*’、’/’ ( 等等，不利于扩展， 另外让一个方法来解析会造成程序结构混乱，不够清晰
+3. 解决方案：可以考虑使用解释器模式， 即： 表达式 --> 解释器(可以有多种) --> 结果
 
-#### 3.4.9.5. 注意事项
+#### 3.4.9.4. 解释器模式代码
+
+> **类图**
+
+![design-patterns-102.png](./image/design-patterns-102.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `Expression`：表达式解释器的抽象父类
+
+   ```java
+   /**
+    * 抽象类表达式，通过HashMap 键值对, 可以获取到变量的值
+    * 
+    * @author Administrator
+    *
+    */
+   public abstract class Expression {
+   	// a + b - c
+   	// 解释公式和数值, key 就是公式(表达式)中的参数[a,b,c], value就是就是具体值
+   	// HashMap {a=10, b=20}
+   	public abstract int interpreter(HashMap<String, Integer> var);
+   }
+   ```
+
+2. `VarExpression`：变量的解释器，重写了 `interpreter()` 方法，该方法通过变量的名称获取变量的值
+
+   ```java
+   /**
+    * 变量的解释器
+    * 
+    * @author Administrator
+    *
+    */
+   public class VarExpression extends Expression {
+   
+   	private String key; // key=a,key=b,key=c
+   
+   	public VarExpression(String key) {
+   		this.key = key;
+   	}
+   
+   	// var 就是{a=10, b=20}
+   	// interpreter 根据 变量名称，返回对应值
+   	@Override
+   	public int interpreter(HashMap<String, Integer> var) {
+   		return var.get(this.key);
+   	}
+   }
+   ```
+
+3. `SymbolExpression`：抽象运算符的解释器，由于运算符有多中类型，所以在 `interpreter()` 无法完成具体的运算操作，具体操作交由子类实现
+
+   ```java
+   /**
+    * 抽象运算符号解析器 这里，每个运算符号，都只和自己左右两个数字有关系，
+    * 但左右两个数字有可能也是一个解析的结果，无论何种类型，都是Expression类的实现类
+    * 
+    * @author Administrator
+    *
+    */
+   public abstract class SymbolExpression extends Expression {
+   
+   	protected Expression left;
+   	protected Expression right;
+   
+   	public SymbolExpression(Expression left, Expression right) {
+   		this.left = left;
+   		this.right = right;
+   	}
+   
+   	// 因为 SymbolExpression 是让其子类来实现，因此 interpreter 是一个默认实现
+   	@Override
+   	public int interpreter(HashMap<String, Integer> var) {
+   		return 0;
+   	}
+   }
+   ```
+
+4. `AddExpression`：加法运算符的解释器，递归调用：表达式的值 = 左边表达式的值 + 右边表达式的值
+
+   ```java
+   /**
+    * 加法解释器
+    * 
+    * @author Administrator
+    *
+    */
+   public class AddExpression extends SymbolExpression {
+   
+   	public AddExpression(Expression left, Expression right) {
+   		super(left, right);
+   	}
+   
+   	// 处理相加
+   	// var 仍然是 {a=10,b=20}..
+   	// 一会我们debug 源码,就ok
+   	public int interpreter(HashMap<String, Integer> var) {
+   		// left.interpreter(var) ： 返回 left 表达式对应的值 a = 10
+   		// right.interpreter(var): 返回right 表达式对应值 b = 20
+   		return left.interpreter(var) + right.interpreter(var);
+   	}
+   }
+   ```
+
+5. `SubExpression`：减法运算符的解释器，递归调用：表达式的值 = 左边表达式的值 + 右边表达式的值
+
+   ```java
+   /**
+    * 减法解释器
+    * 
+    * @author Administrator
+    *
+    */
+   public class SubExpression extends SymbolExpression {
+   
+   	public SubExpression(Expression left, Expression right) {
+   		super(left, right);
+   	}
+   
+   	// 求出left 和 right 表达式相减后的结果
+   	public int interpreter(HashMap<String, Integer> var) {
+   		return left.interpreter(var) - right.interpreter(var);
+   	}
+   }
+   ```
+
+6. `Calculator`：计算器类，通过 `Expression` 的实现类完成具体的解释运算
+
+   ```java
+   public class Calculator {
+   
+   	// 定义表达式
+   	private Expression expression;
+   
+   	// 构造函数传参，并解析
+   	public Calculator(String expStr) { // expStr = a+b
+   		// 安排运算先后顺序
+   		Stack<Expression> stack = new Stack<>();
+   		// 表达式拆分成字符数组
+   		char[] charArray = expStr.toCharArray();// [a, +, b]
+   
+   		Expression left = null;
+   		Expression right = null;
+   		// 遍历我们的字符数组， 即遍历 [a, +, b]
+   		// 针对不同的情况，做处理
+   		for (int i = 0; i < charArray.length; i++) {
+   			switch (charArray[i]) {
+   			case '+': //
+   				left = stack.pop();// 从stack取出left => "a"
+   				right = new VarExpression(String.valueOf(charArray[++i]));// 取出右表达式 "b"
+   				stack.push(new AddExpression(left, right));// 然后根据得到left 和 right 构建 AddExpresson加入stack
+   				break;
+   			case '-': //
+   				left = stack.pop();
+   				right = new VarExpression(String.valueOf(charArray[++i]));
+   				stack.push(new SubExpression(left, right));
+   				break;
+   			default:
+   				// 如果是一个 Var 就创建一个 VarExpression 对象，并push到 stack
+   				stack.push(new VarExpression(String.valueOf(charArray[i])));
+   				break;
+   			}
+   		}
+   		// 当遍历完整个 charArray 数组后，stack 就得到最后Expression
+   		this.expression = stack.pop();
+   	}
+   
+   	public int run(HashMap<String, Integer> var) {
+   		// 最后将表达式a+b和 var = {a=10,b=20}
+   		// 然后传递给expression的interpreter进行解释执行
+   		return this.expression.interpreter(var);
+   	}
+   }
+   ```
+
+7. `ClientTest`：测试代码
+
+   ```java
+   public class ClientTest {
+   
+   	public static void main(String[] args) throws IOException {
+   		String expStr = getExpStr(); // a+b
+   		HashMap<String, Integer> var = getValue(expStr);// var {a=10, b=20}
+   		Calculator calculator = new Calculator(expStr);
+   		System.out.println("运算结果：" + expStr + "=" + calculator.run(var));
+   	}
+   
+   	// 获得表达式
+   	public static String getExpStr() throws IOException {
+   		System.out.print("请输入表达式：");
+   		return (new BufferedReader(new InputStreamReader(System.in))).readLine();
+   	}
+   
+   	// 获得值映射
+   	public static HashMap<String, Integer> getValue(String expStr) throws IOException {
+   		HashMap<String, Integer> map = new HashMap<>();
+   
+   		for (char ch : expStr.toCharArray()) {
+   			if (ch != '+' && ch != '-') {
+   				if (!map.containsKey(String.valueOf(ch))) {
+   					System.out.print("请输入" + String.valueOf(ch) + "的值：");
+   					String in = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+   					map.put(String.valueOf(ch), Integer.valueOf(in));
+   				}
+   			}
+   		}
+   
+   		return map;
+   	}
+   }
+   ```
+</details>
+
+#### 3.4.9.5. Spring SpelExpressionParser
+
+> **测试代码**
+
+```java
+public class Interpreter {
+
+	public static void main(String[] args) {
+		// 创建一个 Parser 对象
+		ExpressionParser parser = new SpelExpressionParser();
+
+		// 通过 Parser 对象 获取到一个Expression对象
+		// 会根据不同的 Parser 对象 ，返回不同的 Expression对象
+		Expression expression = parser.parseExpression("10 * (2 + 1) * 1 + 66"); // 96
+		int result = (Integer) expression.getValue();
+		System.out.println(result);
+	}
+
+}
+```
+
+> **源码追踪**
+
+1. `ExpressionParser` 是个接口，定义了获取 `Express` 表达式对象的行为规范，其继承关系如下
+
+  ![design-patterns-103.png](./image/design-patterns-103.png)
+
+   ```java
+   public interface ExpressionParser {
+   
+   	Expression parseExpression(String expressionString) throws ParseException;
+   
+   	Expression parseExpression(String expressionString, ParserContext context) throws ParseException;
+   
+   }
+   ```
+
+2. `TemplateAwareExpressionParser` 实现了 `ExpressionParser` 接口，其中有个重要的方法为 `parseExpression()`，该方法根据表达式的值，获取 `Express` 对象；在 `TemplateAwareExpressionParser` 中实现了获取 `CompositeStringExpression` 表达式对象的方法
+
+   ```java
+   public abstract class TemplateAwareExpressionParser implements ExpressionParser {
+       
+       // ...
+       
+        @Override
+        public Expression parseExpression(String expressionString) throws ParseException {
+          return parseExpression(expressionString, NON_TEMPLATE_PARSER_CONTEXT);
+        }
+   
+        @Override
+        public Expression parseExpression(String expressionString, ParserContext context)
+            throws ParseException {
+          if (context == null) {
+            context = NON_TEMPLATE_PARSER_CONTEXT;
+          }
+      
+          if (context.isTemplate()) {
+            return parseTemplate(expressionString, context); // 创建 CompositeStringExpression 对象
+          }
+          else {
+            return doParseExpression(expressionString, context); // 创建 SpelExpression 对象
+          }
+        }
+       
+       // ...
+       
+        private Expression parseTemplate(String expressionString, ParserContext context)
+           	throws ParseException {
+          if (expressionString.length() == 0) {
+            return new LiteralExpression("");
+          }
+          Expression[] expressions = parseExpressions(expressionString, context);
+          if (expressions.length == 1) {
+            return expressions[0];
+          }
+          else {
+            return new CompositeStringExpression(expressionString, expressions);
+          }
+        }
+       
+        protected abstract Expression doParseExpression(String expressionString,
+        ParserContext context) throws ParseException;
+   
+       // ...
+   ```
+
+3. `SpelExpressionParser` 类继承自 `TemplateAwareExpressionParser` 类，实现了 `doParseExpression()` 抽象方法
+
+   ```java
+   public class SpelExpressionParser extends TemplateAwareExpressionParser {
+       
+       // ...
+       
+       @Override
+   	protected SpelExpression doParseExpression(String expressionString, ParserContext context) throws ParseException {
+   		return new InternalSpelExpressionParser(this.configuration).doParseExpression(expressionString, context);
+   	}
+       
+       // ...
+   ```
+
+4. `Expression` 是个接口，定义了表达式解释器的业务规范，里面有超多的 `getValue()` 方法，用于获取表达式的值，其继承关系如下
+
+  ![design-patterns-104.png](./image/design-patterns-104.png)
+
+   ```java
+   public interface Expression {
+   
+      Object getValue() throws EvaluationException;
+    
+      Object getValue(Object rootObject) throws EvaluationException;
+    
+      <T> T getValue(Class<T> desiredResultType) throws EvaluationException;
+    
+      <T> T getValue(Object rootObject, Class<T> desiredResultType) throws EvaluationException;
+
+      // ...
+       
+   ```
+
+5. `SpelExpression` 实现了 `Expression` 接口，重写了超多的 `getValue()` 方法，主要是通过调用 `SpelNodeImpl` 类中的方法来实现 `Expresssion` 中的 `getValue()` 方法
+
+   ```java
+   public class SpelExpression implements Expression {
+   
+   	private final String expression;
+   
+   	private final SpelNodeImpl ast;
+   
+   	private final SpelParserConfiguration configuration;
+   
+   	// the default context is used if no override is supplied by the user
+   	private EvaluationContext defaultContext;
+   
+   	/**
+   	 * Construct an expression, only used by the parser.
+   	 */
+   	public SpelExpression(String expression, SpelNodeImpl ast, SpelParserConfiguration configuration) {
+   		this.expression = expression;
+   		this.ast = ast;
+   		this.configuration = configuration;
+   	}
+   
+   	// implementing Expression
+   
+   	@Override
+   	public Object getValue() throws EvaluationException {
+   		ExpressionState expressionState = new ExpressionState(getEvaluationContext(), this.configuration);
+   		return this.ast.getValue(expressionState);
+   	}
+   
+   	@Override
+   	public Object getValue(Object rootObject) throws EvaluationException {
+   		ExpressionState expressionState = new ExpressionState(getEvaluationContext(), toTypedValue(rootObject), this.configuration);
+   		return this.ast.getValue(expressionState);
+   	}
+   
+   	@Override
+   	public <T> T getValue(Class<T> expectedResultType) throws EvaluationException {
+   		ExpressionState expressionState = new ExpressionState(getEvaluationContext(), this.configuration);
+   		TypedValue typedResultValue = this.ast.getTypedValue(expressionState);
+   		return ExpressionUtils.convertTypedValue(expressionState.getEvaluationContext(), typedResultValue, expectedResultType);
+   	}
+   
+   	@Override
+   	public <T> T getValue(Object rootObject, Class<T> expectedResultType) throws EvaluationException {
+   		ExpressionState expressionState = new ExpressionState(getEvaluationContext(), toTypedValue(rootObject), this.configuration);
+   		TypedValue typedResultValue = this.ast.getTypedValue(expressionState);
+   		return ExpressionUtils.convertTypedValue(expressionState.getEvaluationContext(), typedResultValue, expectedResultType);
+   	}
+   
+   	@Override
+   	public Object getValue(EvaluationContext context) throws EvaluationException {
+   		Assert.notNull(context, "The EvaluationContext is required");
+   		return this.ast.getValue(new ExpressionState(context, this.configuration));
+   	}
+       
+       // ...
+   ```
+
+> **总结**
+
+`Expression` 接口有不同的实现类，比如 `SpelExpression`，使用的时候，根据我们创建的 `ExpressionParser` 对象不同，就返回不同的 `Expression` 对象
+
+#### 3.4.9.6. 注意事项
+
+1. 当有一个语言需要解释执行， 可将该语言中的句子表示为一个抽象语法树， 就可以考虑使用解释器模式， 让程序具有良好的扩展性
+2. 应用场景： 编译器、 运算表达式计算、 正则表达式、 机器人等
+3. 使用解释器可能带来的问题： 解释器模式会引起类膨胀、 解释器模式采用递归调用方法， 将会导致调试非常复杂、 效率可能降低
 
 ### 3.4.10. 备忘录模式（Memento Pattern）
 
 #### 3.4.10.1. 说明
 
+- 说明
+  - 备忘录模式(`Memento Pattern`) 在不破坏封装性的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态。这样以后就可将该对象恢复到原先保存的状态
+  - 可以这里理解备忘录模式：
+    - 现实生活中的备忘录是用来记录某些要去做的事情，或者是记录已经达成的共同意见的事情，以防忘记了。
+    - 而在软件层面，备忘录模式有着相同的含义，备忘录对象主要用来记录一个对象的某种状态，或者某些数据，
+    - 当要做回退时，可以从备忘录对象里获取原来的数据进行恢复操作
+
+- 适用的应用场景：
+  - 打游戏时的存档
+  - `Windows` 里的 `Ctrl + Z`。
+  - `IE` 中的后退
+  - 数据库的事务管理
+
+- 原理类图
+  - `Originator` ：对象(需要保存状态的对象)
+  - `Memento` ：备忘录对象，负责保存好记录， 即 `Originator` 内部状态
+  - `Caretaker`：守护者对象，负责保存多个备忘录对象， 使用集合管理， 提高效率
+  - 说明：如果希望保存多个 `Originator` 对象的不同时间的状态，只需要使用 `HashMap <String, Collection>` 存储即可，`String` 为 `Originator` 对象的唯一标识(`key`)，`Collection` 为 `Originator` 对象不同时间的备忘录集合
+
+  ![design-patterns-106.png](./image/design-patterns-106.png)
+
 #### 3.4.10.2. 情景介绍
+
+- 游戏角色有攻击力和防御力
+- 在大战`Boss`前保存自身的状态(攻击力和防御力)， 当大战`Boss`后攻击力和防御力下降
+- 然后从备忘录对象恢复到大战前的状态
 
 #### 3.4.10.3. 传统方式
 
-#### 3.4.10.4. 代码
+> **类图**
+
+![design-patterns-105.png](./image/design-patterns-105.png)
+
+> **传统的方式的问题分析**
+
+1. 一个对象，就对应一个保存对象状态的对象， 这样当我们游戏的对象很多时，不利于管理，开销也很大
+2. 传统的方式是简单地做备份， `new` 出另外一个对象出来，再把需要备份的数据放到这个新对象，但这就暴露了对象内部的细节
+3. 解决方案： ==> 备忘录模式
+
+#### 3.4.10.4. 备忘录模式代码
+
+<details>
+<summary style="color:red;">展开</summary>
+  
+1. `Originator`：实体类，该类的实例为需要保存状态的对象，`saveStateMemento()` 方法用于返回一个备忘录对象，`getStateFromMemento()` 方法用于从备忘录
+
+   ```java
+   public class Originator {
+   
+   	private String state;// 状态信息
+   
+   	public String getState() {
+   		return state;
+   	}
+   
+   	public void setState(String state) {
+   		this.state = state;
+   	}
+   
+   	// 编写一个方法，可以保存一个状态对象 Memento
+   	// 因此编写一个方法，返回 Memento
+   	public Memento saveStateMemento() {
+   		return new Memento(state);
+   	}
+   
+   	// 通过备忘录对象，恢复状态
+   	public void getStateFromMemento(Memento memento) {
+   		state = memento.getState();
+   	}
+   }
+   ```
+
+2. `Memento`：备忘录对象，负责保存对象的状态
+
+   ```java
+   public class Memento {
+   	private String state;
+   
+   	// 构造器
+   	public Memento(String state) {
+   		this.state = state;
+   	}
+   
+   	public String getState() {
+   		return state;
+   	}
+   
+   }
+   ```
+
+3. `Caretker`：聚合了备忘录的集合，即 `List<Memento>`
+
+   ```java
+   public class Caretaker {
+   
+   	// 在List 集合中会有很多的备忘录对象
+   	private List<Memento> mementoList = new ArrayList<Memento>();
+   
+   	public void add(Memento memento) {
+   		mementoList.add(memento);
+   	}
+   
+   	// 获取到第index个Originator 的 备忘录对象(即保存状态)
+   	public Memento get(int index) {
+   		return mementoList.get(index);
+   	}
+   	
+   }
+   ```
+
+4. `Client`：测试代码
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   
+   		Originator originator = new Originator();
+   		Caretaker caretaker = new Caretaker();
+   
+   		originator.setState(" 状态#1 攻击力 100 "); // 设置攻击速度
+   		caretaker.add(originator.saveStateMemento()); // 保存了当前的状态
+   		
+   		originator.setState(" 状态#2 攻击力 80 "); // 设置攻击速度
+   		caretaker.add(originator.saveStateMemento()); // 保存了当前的状态
+   		
+   		originator.setState(" 状态#3 攻击力 50 "); // 设置攻击速度
+   		caretaker.add(originator.saveStateMemento()); // 保存了当前的状态
+   
+   		System.out.println("当前的状态是 =" + originator.getState());
+   
+   		// 希望得到状态 1, 将 originator 恢复到状态1
+   		originator.getStateFromMemento(caretaker.get(0)); // 恢复对象属性
+   		System.out.println("恢复到状态1 , 当前的状态是");
+   		System.out.println("当前的状态是 =" + originator.getState());
+   
+   	}
+   
+   }
+   ```
+</details>
+
+> **备忘录模式解决游戏角色恢复**
+
+- 情景
+  - 游戏角色有攻击力和防御力，在大战`Boss`前保存自身的状态(攻击力和防御力)， 
+  - 当大战`Boss`后攻击力和防御力下降， 然后从备忘录对象恢复到大战前的状态
+
+- 类图
+
+  ![design-patterns-107.png](./image/design-patterns-107.png)
+
+<br />
+
+<details>
+<summary style="color:red;">代码实现（展开）</summary>
+
+1. `GameRole`：游戏角色对应的实体类，`createMemento()` 方法用于创建备忘录对象，`recoverGameRoleFromMemento()` 用于从备忘录对象中恢复角色的状态
+
+   ```java
+   public class GameRole {
+   
+   	private int vit;
+   	private int def;
+   
+   	// 创建Memento ,即根据当前的状态得到Memento
+   	public Memento createMemento() {
+   		return new Memento(vit, def);
+   	}
+   
+   	// 从备忘录对象，恢复GameRole的状态
+   	public void recoverGameRoleFromMemento(Memento memento) {
+   		this.vit = memento.getVit();
+   		this.def = memento.getDef();
+   	}
+   
+   	// 显示当前游戏角色的状态
+   	public void display() {
+   		System.out.println("游戏角色当前的攻击力：" + this.vit + " 防御力: " + this.def);
+   	}
+   
+   	public int getVit() {
+   		return vit;
+   	}
+   
+   	public void setVit(int vit) {
+   		this.vit = vit;
+   	}
+   
+   	public int getDef() {
+   		return def;
+   	}
+   
+   	public void setDef(int def) {
+   		this.def = def;
+   	}
+   
+   }
+   ```
+
+2. `Memento`：备忘录对象
+
+   ```java
+   public class Memento {
+   
+   	// 攻击力
+   	private int vit;
+   	// 防御力
+   	private int def;
+   
+   	public Memento(int vit, int def) {
+   		this.vit = vit;
+   		this.def = def;
+   	}
+   
+   	public int getVit() {
+   		return vit;
+   	}
+   
+   	public void setVit(int vit) {
+   		this.vit = vit;
+   	}
+   
+   	public int getDef() {
+   		return def;
+   	}
+   
+   	public void setDef(int def) {
+   		this.def = def;
+   	}
+   
+   }
+   ```
+
+3. `Caretaker`：守护者对象，用于管理备忘录对象
+
+   ```java
+   //守护者对象, 保存游戏角色的状态
+   public class Caretaker {
+   
+   	// 如果只保存一次状态
+   	private Memento memento;
+   	
+   	// 对GameRole 保存多次状态
+   	// private ArrayList<Memento> mementos;
+   	
+   	// 对多个游戏角色保存多个状态
+   	// private HashMap<String, ArrayList<Memento>> rolesMementos;
+   
+   	public Memento getMemento() {
+   		return memento;
+   	}
+   
+   	public void setMemento(Memento memento) {
+   		this.memento = memento;
+   	}
+   
+   }
+   ```
+
+4. `Client`：测试代码
+
+   ```java
+   public class Client {
+   
+   	public static void main(String[] args) {
+   		// 创建游戏角色
+   		GameRole gameRole = new GameRole();
+   		gameRole.setVit(100);
+   		gameRole.setDef(100);
+   
+   		System.out.println("和boss大战前的状态");
+   		gameRole.display();
+   
+   		// 把当前状态保存caretaker
+   		Caretaker caretaker = new Caretaker();
+   		caretaker.setMemento(gameRole.createMemento());
+   
+   		System.out.println("和boss大战~~~");
+   		gameRole.setDef(30);
+   		gameRole.setVit(30);
+   		gameRole.display();
+   
+   		System.out.println("大战后，使用备忘录对象恢复元气");
+   		gameRole.recoverGameRoleFromMemento(caretaker.getMemento());
+   		System.out.println("恢复后的状态");
+   		gameRole.display();
+   	}
+   
+   }
+   ```
+
+</details>
 
 #### 3.4.10.5. 注意事项
+
+1. 给用户提供了一种可以恢复状态的机制，可以使用户能够比较方便地回到某个历史的状态
+2. 实现了信息的封装，使得用户不需要关心状态的保存细节
+3. 如果类的成员变量过多，势必会占用比较大的资源，而且每一次保存都会消耗一定的内存，这个需要注意
+4. 为了节约内存，备忘录模式可以和原型模式配合使用
 
 ### 3.4.11. 状态模式（State Pattern）
 
 #### 3.4.11.1. 说明
 
-#### 3.4.11.2. 情景介绍
+- 基本说明
+  - 状态模式(`State Pattern`)：它主要用来解决对象在多种状态转换时，需要对外输出不同的行为的问题。
+  - 状态和行为是一一对应的，状态之间可以相互转换
+  - 当一个对象的内在状态改变时，允许改变其行为，这个对象看起来像是改变了其类
+  - 状态模式本质上是一种基于状态和事件的状态机
 
-#### 3.4.11.3. 传统方式
+- 原理类图
+  - `Context` 类为上下文对象，用于维护`State`实例，这个实例定义当前状态
+  - `State` 是抽象的状态角色，定义一个接口封装与`Context` 的一个特定接口相关行为
+  - `ConcreteState` 具体的状态角色，每个子类实现一个与`Context` 的一个状态相关行为
 
-#### 3.4.11.4. 代码
+  ![design-patterns-109.png](./image/design-patterns-109.png)
 
-#### 3.4.11.5. 注意事项
+- 应用场景
+  - 当一个事件或者对象有很多种状态，状态之间会相互转换，对不同的状态要求有不同的行为的时候，可以考虑使用状态模式
 
-### 3.4.12. 空对象模式（Null Object Pattern）
+#### 3.4.11.2. APP抽奖状态模式代码
+
+> **情景介绍**
+
+- 请编写程序完成`APP`抽奖活动，具体要求如下:
+  - 假如每参加一次这个活动要扣除用户`50`积分，中奖概率是`10%`
+  - 奖品数量固定，抽完就不能抽奖
+  - 活动有四个状态：可以抽奖、不能抽奖、发放奖品和奖品领完
+  - 活动的四个状态转换关系图
+
+  ![design-patterns-108.png](./image/design-patterns-108.png)
+
+> **类图**
+
+![design-patterns-110.png](./image/design-patterns-110.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `State`：抽奖状态的抽象父类，定义了三个抽奖动作：扣除积分、抽奖、发放奖品
+
+   ```java
+   /**
+    * 状态抽象类
+    * 
+    * @author Administrator
+    *
+    */
+   public abstract class State {
+   
+   	// 扣除积分 - 50
+   	public abstract void deductMoney();
+   
+   	// 是否抽中奖品
+   	public abstract boolean raffle();
+   
+   	// 发放奖品
+   	public abstract void dispensePrize();
+   
+   }
+   ```
+
+2. `NoRaffleState`：等待扣除积分，不能抽奖的状态
+
+   ```java
+   /**
+    * 不能抽奖状态
+    * 
+    * @author Administrator
+    *
+    */
+   public class NoRaffleState extends State {
+   
+   	// 初始化时传入活动引用，扣除积分后改变其状态
+   	RaffleActivity activity;
+   
+   	public NoRaffleState(RaffleActivity activity) {
+   		this.activity = activity;
+   	}
+   
+   	// 当前状态可以扣积分 , 扣除后，将状态设置成可以抽奖状态
+   	@Override
+   	public void deductMoney() {
+   		System.out.println("扣除50积分成功，您可以抽奖了");
+   		activity.setState(activity.getCanRaffleState());
+   	}
+   
+   	// 当前状态不能抽奖
+   	@Override
+   	public boolean raffle() {
+   		System.out.println("扣了积分才能抽奖喔！");
+   		return false;
+   	}
+   
+   	// 当前状态不能发奖品
+   	@Override
+   	public void dispensePrize() {
+   		System.out.println("不能发放奖品");
+   	}
+   }
+   ```
+
+3. `CanRaffleState`：已经扣除完积分，等待抽奖的状态
+
+   ```java
+   /**
+    * 可以抽奖的状态
+    * 
+    * @author Administrator
+    *
+    */
+   public class CanRaffleState extends State {
+   
+   	RaffleActivity activity;
+   
+   	public CanRaffleState(RaffleActivity activity) {
+   		this.activity = activity;
+   	}
+   
+   	// 已经扣除了积分，不能再扣
+   	@Override
+   	public void deductMoney() {
+   		System.out.println("已经扣取过了积分");
+   	}
+   
+   	// 可以抽奖, 抽完奖后，根据实际情况，改成新的状态
+   	@Override
+   	public boolean raffle() {
+   		System.out.println("正在抽奖，请稍等！");
+   		Random r = new Random();
+   		int num = r.nextInt(10);
+   		// 10%中奖机会
+   		if (num == 0) {
+   			// 改变活动状态为发放奖品 context
+   			activity.setState(activity.getDispenseState());
+   			return true;
+   		} else {
+   			System.out.println("很遗憾没有抽中奖品！");
+   			// 改变状态为不能抽奖
+   			activity.setState(activity.getNoRafflleState());
+   			return false;
+   		}
+   	}
+   
+   	// 不能发放奖品
+   	@Override
+   	public void dispensePrize() {
+   		System.out.println("没中奖，不能发放奖品");
+   	}
+   }
+   ```
+
+4. `DispenseState`：已抽完奖，等待发放奖品的状态
+
+   ```java
+   /**
+    * 发放奖品的状态
+    * 
+    * @author Administrator
+    *
+    */
+   public class DispenseState extends State {
+   
+   	// 初始化时传入活动引用，发放奖品后改变其状态
+   	RaffleActivity activity;
+   
+   	public DispenseState(RaffleActivity activity) {
+   		this.activity = activity;
+   	}
+   
+   	@Override
+   	public void deductMoney() {
+   		System.out.println("不能扣除积分");
+   	}
+   
+   	@Override
+   	public boolean raffle() {
+   		System.out.println("不能抽奖");
+   		return false;
+   	}
+   
+   	// 发放奖品
+   	@Override
+   	public void dispensePrize() {
+   		if (activity.getCount() > 0) {
+   			System.out.println("恭喜中奖了");
+   			// 改变状态为不能抽奖
+   			activity.setState(activity.getNoRafflleState());
+   		} else {
+   			System.out.println("很遗憾，奖品发送完了");
+   			// 改变状态为奖品发送完毕, 后面我们就不可以抽奖
+   			activity.setState(activity.getDispensOutState());
+   			// System.out.println("抽奖活动结束");
+   			// System.exit(0);
+   		}
+   
+   	}
+   }
+   ```
+
+5. `DispenseOutState`：奖品发放完毕的状态
+
+   ```java
+   /**
+    * 奖品发放完毕状态 说明，当我们activity 改变成 DispenseOutState， 抽奖活动结束
+    * 
+    * @author Administrator
+    *
+    */
+   public class DispenseOutState extends State {
+   
+   	// 初始化时传入活动引用
+   	RaffleActivity activity;
+   
+   	public DispenseOutState(RaffleActivity activity) {
+   		this.activity = activity;
+   	}
+   
+   	@Override
+   	public void deductMoney() {
+   		System.out.println("奖品发送完了，请下次再参加");
+   	}
+   
+   	@Override
+   	public boolean raffle() {
+   		System.out.println("奖品发送完了，请下次再参加");
+   		return false;
+   	}
+   
+   	@Override
+   	public void dispensePrize() {
+   		System.out.println("奖品发送完了，请下次再参加");
+   	}
+   }
+   ```
+
+6. `RaffleActivity`：上下文对象，用于维护 `State`状态对象，并实现扣除积分和抽奖的方法
+
+   ```java
+   /**
+    * 抽奖活动
+    * 
+    * @author Administrator
+    *
+    */
+   public class RaffleActivity {
+   
+   	// state 表示活动当前的状态，是变化的
+   	State state = null;
+   	// 奖品数量
+   	int count = 0;
+   
+   	// 四个属性，表示四种状态
+   	State noRafflleState = new NoRaffleState(this);
+   	State canRaffleState = new CanRaffleState(this);
+   	State dispenseState = new DispenseState(this);
+   	State dispensOutState = new DispenseOutState(this);
+   
+   	// 构造器
+   	// 1. 初始化当前的状态为 noRafflleState（即不能抽奖的状态）
+   	// 2. 初始化奖品的数量
+   	public RaffleActivity(int count) {
+   		this.state = getNoRafflleState();
+   		this.count = count;
+   	}
+   
+   	// 扣分, 调用当前状态的 deductMoney
+   	public void debuctMoney() {
+   		state.deductMoney();
+   	}
+   
+   	// 抽奖
+   	public void raffle() {
+   		// 如果当前的状态是抽奖成功
+   		if (state.raffle()) {
+   			// 领取奖品
+   			state.dispensePrize();
+   		}
+   
+   	}
+   
+   	// 这里请大家注意，每领取一次奖品，count--
+   	public int getCount() {
+   		int curCount = count;
+   		count--;
+   		return curCount;
+   	}
+       
+       // Getter and Setter
+   ```
+
+7. `ClientTest`：测试代码
+
+   ```java
+   /**
+    * 状态模式测试类
+    * 
+    * @author Administrator
+    *
+    */
+   public class ClientTest {
+   
+   	public static void main(String[] args) {
+   		// 创建活动对象，奖品有1个奖品
+   		RaffleActivity activity = new RaffleActivity(1);
+   
+   		// 我们连续抽300次奖
+   		for (int i = 0; i < 30; i++) {
+   			System.out.println("--------第" + (i + 1) + "次抽奖----------");
+   			// 参加抽奖，第一步点击扣除积分
+   			activity.debuctMoney();
+   
+   			// 第二步抽奖
+   			activity.raffle();
+   		}
+   	}
+   
+   }
+   ```
+</details>
+
+#### 3.4.11.3. 借债平台情景应用
+
+> **基本情景与传统实现方式分析**
+
+- 借贷平台的订单，有审核、发布、抢单等等 步骤，随着操作的不同，会改变订单的状态，项目中的这个模块实现就会使用到状态模式
+- 通常通过`if else`判断订单的状态，从而实现不同的逻辑，伪代码如下
+
+   ```java
+   if(审核){
+   	//审核逻辑
+   }elseif(发布){
+   	//发布逻辑
+   }elseif(接单){
+   	//接单逻辑
+   }
+   ```
+
+- 问题分析 ：
+  - 这类代码难以应对变化，在添加一种状态时，我们需要手动添加`if else`，
+  - 在添加一种功能时，要对所有的状态进行判断。因此代码会变得越来越臃肿
+  - 并且一旦没有处理某个状态，便会发生极其严重的`BUG`，难以维护
+
+> **状态模式在实际项目-借贷平台 源码剖析**
+
+- 状态模式本质上是一种基于状态和事件的状态机，下面是订单流程的状态图
+
+  ![design-patterns-111.png](./image/design-patterns-111.png)
+
+- 通过状态图，我们再设计一张横纵坐标关系表来比较，图如下
+
+  ![design-patterns-112.png](./image/design-patterns-112.png)
+
+- 类图
+
+  ![design-patterns-113.png](./image/design-patterns-113.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `State`：订单状态的接口
+
+   ```java
+   /**
+    * 状态接口
+    * 
+    * @author Administrator
+    *
+    */
+   public interface State {
+   
+   	/**
+   	 * 电审
+   	 */
+   	void checkEvent(Context context);
+   
+   	/**
+   	 * 电审失败
+   	 */
+   	void checkFailEvent(Context context);
+   
+   	/**
+   	 * 定价发布
+   	 */
+   	void makePriceEvent(Context context);
+   
+   	/**
+   	 * 接单
+   	 */
+   	void acceptOrderEvent(Context context);
+   
+   	/**
+   	 * 无人接单失效
+   	 */
+   	void notPeopleAcceptEvent(Context context);
+   
+   	/**
+   	 * 付款
+   	 */
+   	void payOrderEvent(Context context);
+   
+   	/**
+   	 * 接单有人支付失效
+   	 */
+   	void orderFailureEvent(Context context);
+   
+   	/**
+   	 * 反馈
+   	 */
+   	void feedBackEvent(Context context);
+   
+   	String getCurrentState();
+   }
+   ```
+
+2. `AbstractState`：订单状态的抽象父类，对 `State` 接口中的方法进行了默认实现
+
+   ```java
+   public abstract class AbstractState implements State {
+   
+   	protected static final RuntimeException EXCEPTION = new RuntimeException("操作流程不允许");
+   
+   	// 抽象类，默认实现了 State 接口的所有方法
+   	// 该类的所有方法，其子类(具体的状态类)，可以有选择的进行重写
+   
+   	@Override
+   	public void checkEvent(Context context) {
+   		throw EXCEPTION;
+   	}
+   
+   	@Override
+   	public void checkFailEvent(Context context) {
+   		throw EXCEPTION;
+   	}
+   
+   	@Override
+   	public void makePriceEvent(Context context) {
+   		throw EXCEPTION;
+   	}
+   
+   	@Override
+   	public void acceptOrderEvent(Context context) {
+   		throw EXCEPTION;
+   	}
+   
+   	@Override
+   	public void notPeopleAcceptEvent(Context context) {
+   		throw EXCEPTION;
+   	}
+   
+   	@Override
+   	public void payOrderEvent(Context context) {
+   		throw EXCEPTION;
+   	}
+   
+   	@Override
+   	public void orderFailureEvent(Context context) {
+   		throw EXCEPTION;
+   	}
+   
+   	@Override
+   	public void feedBackEvent(Context context) {
+   		throw EXCEPTION;
+   	}
+   }
+   ```
+
+3. `AllState`：各种具体的订单状态，继承了 `AbstractState` 父类，并重写了自己所需要的方法
+
+   ```java
+   //各种具体状态类
+   class FeedBackState extends AbstractState {
+   
+   	@Override
+   	public String getCurrentState() {
+   		return StateEnum.FEED_BACKED.getValue();
+   	}
+   }
+   
+   class GenerateState extends AbstractState {
+   
+   	@Override
+   	public void checkEvent(Context context) {
+   		context.setState(new ReviewState());
+   	}
+   
+   	@Override
+   	public void checkFailEvent(Context context) {
+   		context.setState(new FeedBackState());
+   	}
+   
+   	@Override
+   	public String getCurrentState() {
+   		return StateEnum.GENERATE.getValue();
+   	}
+   }
+   
+   class NotPayState extends AbstractState {
+   
+   	@Override
+   	public void payOrderEvent(Context context) {
+   		context.setState(new PaidState());
+   	}
+   
+   	@Override
+   	public void feedBackEvent(Context context) {
+   		context.setState(new FeedBackState());
+   	}
+   
+   	@Override
+   	public String getCurrentState() {
+   		return StateEnum.NOT_PAY.getValue();
+   	}
+   }
+   
+   class PaidState extends AbstractState {
+   
+   	@Override
+   	public void feedBackEvent(Context context) {
+   		context.setState(new FeedBackState());
+   	}
+   
+   	@Override
+   	public String getCurrentState() {
+   		return StateEnum.PAID.getValue();
+   	}
+   }
+   
+   class PublishState extends AbstractState {
+   
+   	@Override
+   	public void acceptOrderEvent(Context context) {
+   		// 把当前状态设置为 NotPayState。。。
+   		// 至于应该变成哪个状态，有流程图来决定
+   		context.setState(new NotPayState());
+   	}
+   
+   	@Override
+   	public void notPeopleAcceptEvent(Context context) {
+   		context.setState(new FeedBackState());
+   	}
+   
+   	@Override
+   	public String getCurrentState() {
+   		return StateEnum.PUBLISHED.getValue();
+   	}
+   }
+   
+   class ReviewState extends AbstractState {
+   
+   	@Override
+   	public void makePriceEvent(Context context) {
+   		context.setState(new PublishState());
+   	}
+   
+   	@Override
+   	public String getCurrentState() {
+   		return StateEnum.REVIEWED.getValue();
+   	}
+   
+   }
+   ```
+
+4. `Context`：环境上下文，继承了 `AbstractState` 父类，实现了自己所需要的方法，以供 `Client` 端调用
+
+   ```java
+   //环境上下文
+   public class Context extends AbstractState {
+   	// 当前的状态 state, 根据我们的业务流程处理，不停的变化
+   	private State state;
+   
+   	@Override
+   	public void checkEvent(Context context) {
+   		state.checkEvent(this);
+   		getCurrentState();
+   	}
+   
+   	@Override
+   	public void checkFailEvent(Context context) {
+   		state.checkFailEvent(this);
+   		getCurrentState();
+   	}
+   
+   	@Override
+   	public void makePriceEvent(Context context) {
+   		state.makePriceEvent(this);
+   		getCurrentState();
+   	}
+   
+   	@Override
+   	public void acceptOrderEvent(Context context) {
+   		state.acceptOrderEvent(this);
+   		getCurrentState();
+   	}
+   
+   	@Override
+   	public void notPeopleAcceptEvent(Context context) {
+   		state.notPeopleAcceptEvent(this);
+   		getCurrentState();
+   	}
+   
+   	@Override
+   	public void payOrderEvent(Context context) {
+   		state.payOrderEvent(this);
+   		getCurrentState();
+   	}
+   
+   	@Override
+   	public void orderFailureEvent(Context context) {
+   		state.orderFailureEvent(this);
+   		getCurrentState();
+   	}
+   
+   	@Override
+   	public void feedBackEvent(Context context) {
+   		state.feedBackEvent(this);
+   		getCurrentState();
+   	}
+   
+   	public State getState() {
+   		return state;
+   	}
+   
+   	public void setState(State state) {
+   		this.state = state;
+   	}
+   
+   	@Override
+   	public String getCurrentState() {
+   		System.out.println("当前状态 : " + state.getCurrentState());
+   		return state.getCurrentState();
+   	}
+   }
+   ```
+
+5. `ClientTest`：测试代码
+
+   ```java
+   /** 测试类 */
+   public class ClientTest {
+   
+   	public static void main(String[] args) {
+   		// 创建context 对象
+   		Context context = new Context();
+   		// 将当前状态设置为 PublishState
+   		context.setState(new PublishState());
+   		System.out.println(context.getCurrentState());
+   
+   		// publish --> not pay
+   		context.acceptOrderEvent(context);
+   		// not pay --> paid
+   		context.payOrderEvent(context);
+   		// 失败, 检测失败时，会抛出异常
+   		try {
+   			context.checkFailEvent(context);
+   			System.out.println("流程正常..");
+   		} catch (Exception e) {
+   			// TODO: handle exception
+   			System.out.println(e.getMessage());
+   		}
+   	}
+   }
+   ```
+</details>
+
+#### 3.4.11.4. 优缺点
+
+- 优点
+  - 状态模式将每个状态的行为封装到对应的一个类中，所以代码有很强的可读性
+  - 方便维护。因为将容易产生问题的`if-else`语句删除了，如果把每个状态的行为都放到一个类中，每次调用方法时都要判断当前是什么状态，不但会产出很多`if-else`语句，而且容易出错
+  - 符合“开闭原则”，容易增删对象的状态
+
+- 缺点
+  - 会产生很多类，每个状态都要一个对应的类，当状态过多时会产生很多类，加大维护难度
+
+---
+
+- 上面两个场景中
+  - APP抽奖情景，因为状态机里面有环，状态会作为成员变量，而不是临时new，避免产生过多无用对象。
+  - 借债平台情境中，因为没有环，每次到结束经过的状态有限，不需要作为成员变量
+
+### 3.4.12. 策略模式（Strategy Pattern）
 
 #### 3.4.12.1. 说明
 
+- 基本说明
+  - 策略模式(`Strategy Pattern`)中，定义算法族(策略簇)，分别封装起来，让他们之间可以互相替换，此模式让算法的变化独立于使用算法的客户
+  - 这算法体现了几个设计原则：
+    - 第一、把变化的代码从不变的代码中分离出来；
+    - 第二、针对接口编程而不是具体类(定义了策略接口)；
+    - 第三、多用组合(或聚合)，少用继承(客户通过组合方式使用策略)
+
+- 类图
+  -  客户 `context` 有成员变量 `strategy` 或者其他的策略接口
+  -  至于需要使用到哪个策略， 可以在构造器中指定
+
+  ![design-patterns-115.png](./image/design-patterns-115.png)
+
 #### 3.4.12.2. 情景介绍
+
+- 编写鸭子项目，具体要求如下:
+  - 有各种鸭子(比如野鸭、北京鸭、水鸭等， 鸭子有各种行为，比如叫、飞行等)
+  - 显示鸭子的信息
 
 #### 3.4.12.3. 传统方式
 
-#### 3.4.12.4. 代码
+> **类图**
 
-#### 3.4.12.5. 注意事项
+![design-patterns-114.png](./image/design-patterns-114.png)
 
-### 3.4.13. 策略模式（Strategy Pattern）
+> **代码实现**
 
-#### 3.4.13.1. 说明
+<details>
+<summary style="color:red;">展开</summary>
 
-#### 3.4.13.2. 情景介绍
+1. `Duck`：鸭子的抽象父类
 
-#### 3.4.13.3. 传统方式
+   ```java
+   public abstract class Duck {
+   
+   	public Duck() {
+   
+   	}
+   
+   	public abstract void display();// 显示鸭子信息
+   
+   	public void quack() {
+   		System.out.println("鸭子嘎嘎叫~~");
+   	}
+   
+   	public void swim() {
+   		System.out.println("鸭子会游泳~~");
+   	}
+   
+   	public void fly() {
+   		System.out.println("鸭子会飞翔~~~");
+   	}
+   
+   }
+   ```
 
-#### 3.4.13.4. 代码
+2. `WildDuck`：野鸭
 
-#### 3.4.13.5. 注意事项
+   ```java
+   public class WildDuck extends Duck {
+   
+   	@Override
+   	public void display() {
+   		System.out.println(" 这是野鸭 ");
+   	}
+   
+   }
+   ```
 
-## 3.5. J2EE 模式
+3. `PekingDuck`：北京烤鸭
 
-### 3.5.1. 概述
+   ```java
+   public class PekingDuck extends Duck {
+   
+   	@Override
+   	public void display() {
+   		System.out.println("~~北京鸭~~~");
+   	}
+   
+   	// 因为北京鸭不能飞翔，因此需要重写fly
+   	@Override
+   	public void fly() {
+   		System.out.println("北京鸭不能飞翔");
+   	}
+   
+   }
+   ```
+
+4. `ToyDuck`；玩具鸭鸭
+
+   ```java
+   public class ToyDuck extends Duck {
+   
+   	@Override
+   	public void display() {
+   		System.out.println("玩具鸭");
+   	}
+   
+   	// 需要重写父类的所有方法
+   	public void quack() {
+   		System.out.println("玩具鸭不能叫~~");
+   	}
+   
+   	public void swim() {
+   		System.out.println("玩具鸭不会游泳~~");
+   	}
+   
+   	public void fly() {
+   		System.out.println("玩具鸭不会飞翔~~~");
+   	}
+   }
+   ```
+</details>
+
+> **传统的方式实现的问题分析和解决方案**
+
+1. 其它鸭子，都继承了`Duck` 类，所以 `fly` 让所有子类都会飞了，这是不正确的
+2. 上面说的问题，其实是继承带来的问题： 对类的局部改动，尤其超类的局部改动，会影响其他部分，会有溢出效应
+3. 为了改进此问题，我们可以通过覆盖 `fly` 方法来解决 ==> 覆盖解决
+4. 问题又来了，如果我们有一个玩具鸭子`ToyDuck`，这样就需要`ToyDuck`去覆盖`Duck`的所有实现的方法 ==> 解决思路 ：策略模式 (`strategy pattern`)
+
+#### 3.4.12.4. 策略模式代码
+
+> **类图**
+
+- 策略模式：
+  - 分别封装行为接口， 实现算法族， 超类里放行为接口对象， 在子类里具体设定行为对象。
+  - 原则就是：分离变化部分， 封装接口， 基于接口编程各种功能。 此模式让行为的变化独立于算法的使用者
+
+  ![design-patterns-116.png](./image/design-patterns-116.png)
+
+> **代码实现**
+
+<details>
+<summary style="color:red;">展开</summary>
+
+1. `FlyBehavior`：飞行的行为(算法的提供者)
+
+   ```java
+   public interface FlyBehavior {
+   	void fly(); // 子类具体实现
+   }
+   ```
+
+2. `NoFlyBehavior`：
+
+   ```java
+   public class NoFlyBehavior implements FlyBehavior {
+   
+   	@Override
+   	public void fly() {
+   		System.out.println(" 不会飞翔  ");
+   	}
+   
+   }
+   ```
+
+3. `BadFlyBehavior`：
+
+   ```java
+   public class BadFlyBehavior implements FlyBehavior {
+   
+   	@Override
+   	public void fly() {
+   		System.out.println(" 飞翔技术一般 ");
+   	}
+   
+   }
+   ```
+
+4. `GoodFlyBehavior`：
+
+   ```java
+   public class GoodFlyBehavior implements FlyBehavior {
+   
+   	@Override
+   	public void fly() {
+   		System.out.println(" 飞翔技术高超 ~~~");
+   	}
+   
+   }
+   ```
+
+5. `QuackBehavior`：叫的行为(算法的提供者)
+
+   ```java
+   public interface QuackBehavior {
+   	void quack();// 子类实现
+   }
+   ```
+
+6. `NoQuackBehavior`：
+
+   ```java
+   public class NoQuackBehavior implements QuackBehavior {
+   
+   	@Override
+   	public void quack() {
+   		System.out.println("不能叫");
+   	}
+   
+   }
+   ```
+
+7. `GeGeQuackBehavior`：
+
+   ```java
+   public class GeGeQuackBehavior implements QuackBehavior {
+   
+   	@Override
+   	public void quack() {
+   		System.out.println("咯咯叫");
+   	}
+   
+   }
+   ```
+
+8. `GaGaQuackBehavior`：
+
+   ```java
+   public class GaGaQuackBehavior implements QuackBehavior {
+   
+   	@Override
+   	public void quack() {
+   		System.out.println("嘎嘎叫");
+   	}
+   
+   }
+   ```
+
+9. `Duck`：鸭子的抽象父类(算法的使用者)，通过聚合不同的行为对象(算法的提供者)，实现不同的行为模式
+
+   ```java
+   public abstract class Duck {
+   
+   	// 属性, 策略接口
+   	FlyBehavior flyBehavior;
+   	// 其它属性<->策略接口
+   	QuackBehavior quackBehavior;
+   
+   	public Duck() {
+   
+   	}
+   
+   	public abstract void display();// 显示鸭子信息
+   
+   	public void quack() {
+   		if (quackBehavior != null) {
+   			quackBehavior.quack();
+   		}
+   	}
+   
+   	public void swim() {
+   		System.out.println("鸭子会游泳~~");
+   	}
+   
+   	public void fly() {
+   		// 改进
+   		if (flyBehavior != null) {
+   			flyBehavior.fly();
+   		}
+   	}
+   
+   	public void setFlyBehavior(FlyBehavior flyBehavior) {
+   		this.flyBehavior = flyBehavior;
+   	}
+   
+   	public void setQuackBehavior(QuackBehavior quackBehavior) {
+   		this.quackBehavior = quackBehavior;
+   	}
+   
+   }
+   ```
+
+10. `WildDuck`：
+
+    ```java
+    public class WildDuck extends Duck {
+    
+    	// 构造器，传入FlyBehavior 和 QuackBehavior 的对象
+    	public WildDuck() {
+    		flyBehavior = new GoodFlyBehavior();
+    		quackBehavior = new GeGeQuackBehavior();
+    	}
+    
+    	@Override
+    	public void display() {
+    		System.out.println(" 这是野鸭 ");
+    	}
+    
+    }
+    ```
+
+11. `PekingDuck`：
+
+    ```java
+    public class PekingDuck extends Duck {
+    
+    	// 假如北京鸭可以飞翔，但是飞翔技术一般
+    	public PekingDuck() {
+    		flyBehavior = new BadFlyBehavior();
+    		quackBehavior = new GaGaQuackBehavior();
+    	}
+    
+    	@Override
+    	public void display() {
+    		System.out.println("~~北京鸭~~~");
+    	}
+    
+    }
+    ```
+
+12. `ToyDuck`：
+
+    ```java
+    public class ToyDuck extends Duck {
+    
+    	public ToyDuck() {
+    		flyBehavior = new NoFlyBehavior();
+    		quackBehavior = new NoQuackBehavior();
+    	}
+    
+    	@Override
+    	public void display() {
+    		System.out.println("玩具鸭");
+    	}
+    
+    	public void swim() {
+    		System.out.println("玩具鸭不会游泳~~");
+    	}
+    
+    }
+    ```
+
+13. `Client`：测试代码
+
+    ```java
+    public class Client {
+    
+    	public static void main(String[] args) {
+    		WildDuck wildDuck = new WildDuck();
+    		wildDuck.fly();
+    
+    		ToyDuck toyDuck = new ToyDuck();
+    		toyDuck.fly();
+    
+    		PekingDuck pekingDuck = new PekingDuck();
+    		pekingDuck.fly();
+    
+    		// 动态改变某个对象的行为, 北京鸭 不能飞
+    		pekingDuck.setFlyBehavior(new NoFlyBehavior());
+    		System.out.println("北京鸭的实际飞翔能力");
+    		pekingDuck.fly();
+    	}
+    
+    }
+    ```
+</details>
+
+> **总结**
+
+- 将原来的继承方式改为组合(或聚合)方式，来实现对象的行为，
+- 可以将算法的使用者(`Duck`)与算法的提供者(`FlyBehavior` 和 `QuackBehavior`)解耦
+
+## 3.5. JDK Arrays 源码分析
+
+- 代码
+  ```java
+  public class Strategy {
+
+    public static void main(String[] args) {
+      // TODO Auto-generated method stub
+      // 数组
+      Integer[] data = { 9, 1, 2, 8, 4, 3 };
+      // 实现降序排序，返回-1放左边，1放右边，0保持不变
+
+      // 说明
+      // 1. 实现了 Comparator 接口（策略接口） , 匿名类 对象 new Comparator<Integer>(){..}
+      // 2. 对象 new Comparator<Integer>(){..} 就是实现了 策略接口 的对象
+      // 3. public int compare(Integer o1, Integer o2){} 指定具体的处理方式
+      Comparator<Integer> comparator = new Comparator<Integer>() {
+        public int compare(Integer o1, Integer o2) {
+          if (o1 > o2) {
+            return -1;
+          } else {
+            return 1;
+          }
+        };
+      };
+      
+      // 说明
+      /*
+      * public static <T> void sort(T[] a, Comparator<? super T> c) {
+              if (c == null) {
+                  sort(a); //默认方法
+              } else { 
+                  if (LegacyMergeSort.userRequested)
+                      legacyMergeSort(a, c); //使用策略对象c
+                  else
+                    // 使用策略对象c
+                      TimSort.sort(a, 0, a.length, c, null, 0, 0);
+              }
+          }
+      */
+      //方式1 
+      Arrays.sort(data, comparator);
+
+      System.out.println(Arrays.toString(data)); // 降序排序
+
+      // 方式2- 同时lambda 表达式实现 策略模式
+      Integer[] data2 = { 19, 11, 12, 18, 14, 13 };
+
+      Arrays.sort(data2, (var1, var2) -> {
+        if (var1.compareTo(var2) > 0) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+
+      System.out.println("data2=" + Arrays.toString(data2));
+
+    }
+
+  }
+  ```
+
+- 说明
+  - `Comparator` 为策略接口(算法的提供者)，其实现对象指明了具体算法的行为，
+  - `Arrays` 为算法的使用者，通过组合(聚合)不同的算法提供者，实现不同的算法行为
+
+#### 3.5.0.5. 注意事项
+
+### 3.5.1. 空对象模式（Null Object Pattern）
+
+#### 3.5.1.1. 说明
+
+#### 3.5.1.2. 情景介绍
+
+#### 3.5.1.3. 传统方式
+
+#### 3.5.1.4. 代码
+
+#### 3.5.1.5. 注意事项
+
+## 3.6. J2EE 模式
+
+### 3.6.1. 概述
 
 这些设计模式特别关注表示层。这些模式是由 Sun Java Center 鉴定的。
 
-### 3.5.2. MVC 模式（MVC Pattern）
+### 3.6.2. MVC 模式（MVC Pattern）
 
-#### 3.5.2.1. 说明
+#### 3.6.2.1. 说明
 
-#### 3.5.2.2. 情景介绍
+#### 3.6.2.2. 情景介绍
 
-#### 3.5.2.3. 传统方式
+#### 3.6.2.3. 传统方式
 
-#### 3.5.2.4. 代码
+#### 3.6.2.4. 代码
 
-#### 3.5.2.5. 注意事项
+#### 3.6.2.5. 注意事项
 
-### 3.5.3. 业务代表模式（Business Delegate Pattern）
+### 3.6.3. 业务代表模式（Business Delegate Pattern）
 
-#### 3.5.3.1. 说明
+#### 3.6.3.1. 说明
 
-#### 3.5.3.2. 情景介绍
+#### 3.6.3.2. 情景介绍
 
-#### 3.5.3.3. 传统方式
+#### 3.6.3.3. 传统方式
 
-#### 3.5.3.4. 代码
+#### 3.6.3.4. 代码
 
-#### 3.5.3.5. 注意事项
+#### 3.6.3.5. 注意事项
 
-### 3.5.4. 组合实体模式（Composite Entity Pattern）
+### 3.6.4. 组合实体模式（Composite Entity Pattern）
 
-#### 3.5.4.1. 说明
+#### 3.6.4.1. 说明
 
-#### 3.5.4.2. 情景介绍
+#### 3.6.4.2. 情景介绍
 
-#### 3.5.4.3. 传统方式
+#### 3.6.4.3. 传统方式
 
-#### 3.5.4.4. 代码
+#### 3.6.4.4. 代码
 
-#### 3.5.4.5. 注意事项
+#### 3.6.4.5. 注意事项
 
-### 3.5.5. 数据访问对象模式（Data Access Object Pattern）
+### 3.6.5. 数据访问对象模式（Data Access Object Pattern）
 
-#### 3.5.5.1. 说明
+#### 3.6.5.1. 说明
 
-#### 3.5.5.2. 情景介绍
+#### 3.6.5.2. 情景介绍
 
-#### 3.5.5.3. 传统方式
+#### 3.6.5.3. 传统方式
 
-#### 3.5.5.4. 代码
+#### 3.6.5.4. 代码
 
-#### 3.5.5.5. 注意事项
+#### 3.6.5.5. 注意事项
 
-### 3.5.6. 前端控制器模式（Front Controller Pattern）
+### 3.6.6. 前端控制器模式（Front Controller Pattern）
 
-#### 3.5.6.1. 说明
+#### 3.6.6.1. 说明
 
-#### 3.5.6.2. 情景介绍
+#### 3.6.6.2. 情景介绍
 
-#### 3.5.6.3. 传统方式
+#### 3.6.6.3. 传统方式
 
-#### 3.5.6.4. 代码
+#### 3.6.6.4. 代码
 
-#### 3.5.6.5. 注意事项
+#### 3.6.6.5. 注意事项
 
-### 3.5.7. 拦截过滤器模式（Intercepting Filter Pattern）
+### 3.6.7. 拦截过滤器模式（Intercepting Filter Pattern）
 
-#### 3.5.7.1. 说明
+#### 3.6.7.1. 说明
 
-#### 3.5.7.2. 情景介绍
+#### 3.6.7.2. 情景介绍
 
-#### 3.5.7.3. 传统方式
+#### 3.6.7.3. 传统方式
 
-#### 3.5.7.4. 代码
+#### 3.6.7.4. 代码
 
-#### 3.5.7.5. 注意事项
+#### 3.6.7.5. 注意事项
 
-### 3.5.8. 服务定位器模式（Service Locator Pattern）
+### 3.6.8. 服务定位器模式（Service Locator Pattern）
 
-#### 3.5.8.1. 说明
+#### 3.6.8.1. 说明
 
-#### 3.5.8.2. 情景介绍
+#### 3.6.8.2. 情景介绍
 
-#### 3.5.8.3. 传统方式
+#### 3.6.8.3. 传统方式
 
-#### 3.5.8.4. 代码
+#### 3.6.8.4. 代码
 
-#### 3.5.8.5. 注意事项
+#### 3.6.8.5. 注意事项
 
-### 3.5.9. 传输对象模式（Transfer Object Pattern）
+### 3.6.9. 传输对象模式（Transfer Object Pattern）
 
-#### 3.5.9.1. 说明
+#### 3.6.9.1. 说明
 
-#### 3.5.9.2. 情景介绍
+#### 3.6.9.2. 情景介绍
 
-#### 3.5.9.3. 传统方式
+#### 3.6.9.3. 传统方式
 
-#### 3.5.9.4. 代码
+#### 3.6.9.4. 代码
 
-#### 3.5.9.5. 注意事项
+#### 3.6.9.5. 注意事项
 
-## 3.6. 设计模式的实际应用
+## 3.7. 设计模式的实际应用
 
-### 3.6.1. 工厂+策略模式消除if-else
+### 3.7.1. 工厂+策略模式消除if-else
 
 # 4. 参考资料
 
-- [设计模式六大原则详解](https://www.cnblogs.com/huansky/p/13700861.html)
-- [Java设计模式](https://www.bilibili.com/video/BV1G4411c7N4)
-- [设计模式笔记](https://blog.csdn.net/oneby1314/category_10348963.html)
-- [菜鸟教程](https://www.runoob.com/design-pattern/design-pattern-tutorial.html)
+- [x] [设计模式六大原则详解](https://www.cnblogs.com/huansky/p/13700861.html)
+- [ ] [Java设计模式](https://www.bilibili.com/video/BV1G4411c7N4)
+- [ ] [设计模式笔记](https://blog.csdn.net/oneby1314/category_10348963.html)
+- [ ] [菜鸟教程](https://www.runoob.com/design-pattern/design-pattern-tutorial.html)

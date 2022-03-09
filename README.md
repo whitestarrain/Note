@@ -91,6 +91,7 @@ awk 'BEGIN{
   - [ ] 数据库架构
 - 待完善/整理
   - [ ] 设计模式
+  - [ ] 编译原理
   - [ ] zookeeper完善
   - [ ] java并发整理
   - [ ] RabbitMQ整理
@@ -126,6 +127,7 @@ awk 'BEGIN{
   - [ ] Redis设计与实现
   - [ ] Operating Systems:Three Easy Pieces
 - 大数据笔记整理完善（抽时间零碎）
+  - [x] hadoop+hive+hbase
   - [ ] Spark
   - [ ] Flink
 - 短期小任务
@@ -136,6 +138,7 @@ awk 'BEGIN{
   - [ ] C++（待做）
   - [ ] go
   - [x] lua
+    - [ ] 实现markdown标题编号插件
   - [ ] rust（进行中）
 - 机器学习&深度学习
   - [ ] opencv 系统整理（进行中）
