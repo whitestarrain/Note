@@ -200,7 +200,7 @@
 
 ### 2.2.2. 文件类型与信息
 
-- 文件类型
+- 文件类型(`ls -lha`)
   > 扩展名只在图形化界面上有用
 
   - `-`:普通文件：文本文件，excel 文件，MP4 文件等
@@ -1253,6 +1253,15 @@ done
 
 ## 2.12. 网络管理
 
+## 远程管理命令
+
+- 免密登录
+  ```bash
+  ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa # 有公钥的话就不需要这步
+  cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys # 本机免密登录本机
+  scp ./authorized_keys ...... # 其他机器免密登录本机
+  ```
+
 # 3. Linux工具参考
 
 ## 3.1. Linux Crontab 定时任务
@@ -1346,6 +1355,117 @@ done
   ```
   0 23-7/1 * * * /etc/init.d/smb restart
   ```
+
+## 内网穿透frp
+
+### 基本说明
+
+- 说明
+  - 简单地说，frp就是一个反向代理软件，
+  - 它体积轻量但功能很强大，可以使处于内网或防火墙后的设备对外界提供服务，
+  - 支持HTTP、TCP、UDP等众多协议
+- 原理图
+
+  ![linux-1](./image/linux-1.png)
+
+### 服务端设置
+
+- **部署在vps上**
+- 下载frp
+  ```bash
+  wget https://github.com/fatedier/frp/releases/download/v0.33.0/frp_0.33.0_linux_amd64.tar.gz
+  ```
+- 解压
+  > 此处解压到 `/opt/frp`
+- 编辑服务端配置文件`frps.ini`
+  ```ini
+  [common]
+  # frp监听的端口，默认是7000，可以改成其他的
+  bind_port = 7000
+  # 授权码，请改成更复杂的
+  token = 13730395968
+  
+  # frp管理后台端口，请按自己需求更改
+  dashboard_port = 7500
+  # frp管理后台用户名和密码，请改成自己的
+  dashboard_user = admin
+  dashboard_pwd = 13730395968
+  enable_prometheus = true
+  
+  # frp日志配置
+  log_file = /var/log/frps.log
+  log_level = info
+  log_max_days = 3
+  
+  vhost_http_port = 10080
+  vhost_https_port = 10443
+  ```
+- 新建一个启动文件`start_server.sh`
+  ```bash
+  nohup ./frps -c frps.ini >& output.log &
+  # chmod +x ./start_server.sh 
+  # jobs 查看nohup运行任务
+  ```
+
+- 启动：`./start_server.sh`
+
+### 客户端设置
+
+- 安装
+  ```bash
+  scoop install frp
+  # 使用scoop软件管理器安装
+  ```
+- 配置`frpc.ini`
+  ```ini
+  # 服务端配置
+  [common]
+  server_addr = 服务器ip
+  # 请换成设置的服务器端口
+  server_port = 7000
+  # 换成服务端设置的token
+  token = 13730395968
+  
+  # 配置ssh服务
+  [ssh]
+  type = tcp
+  local_ip = 127.0.0.1
+  local_port = 22
+  remote_port = 自定义的远程服务器端口，例如2222
+  
+  # 配置http服务，可用于小程序开发、远程调试等
+  [web]
+  type = http
+  local_ip = 127.0.0.1
+  local_port = 8080
+  subdomain = test.hijk.pw
+  remote_port = 自定义的远程服务器端口，例如8080
+
+  [rdp] # 即Remote Desktop 远程桌面，Windows的RDP默认端口是3389，协议为TCP，
+        # 建议使用frp远程连接前，在局域网中测试好，能够成功连接后再使用frp穿透连接。
+  type = tcp
+  local_ip = 127.0.0.1           
+  local_port = 3389
+  remote_port = 7001  
+
+  [smb] # SMB，即Windows文件共享所使用的协议，默认端口号445，协议TCP，本条规则可实现远程文件访问。
+  type = tcp
+  local_ip = 127.0.0.1
+  local_port = 445
+  remote_port = 7002
+  ```
+  ```
+  说明：
+    “[xxx]”表示一个规则名称，自己定义，便于查询即可。
+    “type”表示转发的协议类型，有TCP和UDP等选项可以选择，如有需要请自行查询frp手册。
+    “local_port”是本地应用的端口号，按照实际应用工作在本机的端口号填写即可。
+    “remote_port”是该条规则在服务端开放的端口号，自己填写并记录即可。
+  ```
+
+- 注意：**一个服务端可以同时给多个客户端使用**
+- 启动客户端 `./frpc.exe -c frpc.ini`
+
+
 # 4. shell script
 
 ## 4.1. 开始
@@ -1890,7 +2010,9 @@ done
 # 7. 参考文档
 
 - [ ] [linux常用命令](https://tkstorm.com/linux-doc/)
-- [Linux Command](https://github.com/jaywcjlove/linux-command)
-- [一文掌握 Linux 性能分析之内存篇](https://segmentfault.com/a/1190000018553950)
-- [Linux常用命令](https://github.com/arkingc/note/blob/master/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4.md)
+- [ ] [使用frp进行内网穿透](https://sspai.com/post/52523)
+- [ ] [shell基础](https://github.com/52fhy/shell-book)
+- [ ] [Linux Command](https://github.com/jaywcjlove/linux-command)
+- [ ] [一文掌握 Linux 性能分析之内存篇](https://segmentfault.com/a/1190000018553950)
+- [ ] [Linux常用命令](https://github.com/arkingc/note/blob/master/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4.md)
 

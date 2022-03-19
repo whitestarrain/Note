@@ -1790,9 +1790,7 @@ plt.show()
 > - learn about Image Pyramids
 > - use Image pyramids to blend image
 
-### 3.8.1. example code
-
-#### 3.8.1.1. Theory
+### 3.8.1. Theory
 
 - Normally, we used to work with an image of constant size.
 - But on some occasions, we need to **work with (the same) images in different resolution**
@@ -1801,7 +1799,7 @@ plt.show()
   - These set of images with different resolutions are called Image Pyramids 
     > because when they are kept in a stack with the highest resolution image at the bottom and the lowest resolution image at top, it looks like a pyramid
 - There are two kinds of Image Pyramids
-  - 1) **Gaussian Pyramid**
+  - 1 **Gaussian Pyramid**
     - Higher level (Low resolution) in a Gaussian Pyramid is formed by removing consecutive rows and columns in Lower level (higher resolution) image. 
     - Then each pixel in higher level is formed by the contribution from 5 pixels in underlying level with gaussian weights.
     - By doing so, a M×N image becomes M/2×N/2 image. So area reduces to one-fourth of original area. It is called an Octave.
@@ -1822,16 +1820,16 @@ plt.show()
 
     ![opencv-37](./image/opencv-37.png)
 
-  - 2) **Laplacian Pyramids**
+  - 2 **Laplacian Pyramids**
+    - A level in Laplacian Pyramid is formed by **the difference between that level in Gaussian Pyramid and expanded version of its upper level in Gaussian Pyramid**.
     - Laplacian Pyramids are formed from the Gaussian Pyramids. **There is no exclusive function for that**.
     - Laplacian pyramid images are like **edge images only**. Most of its elements are zeros.
     - They are **used in image compression**.
-    - A level in Laplacian Pyramid is formed by **the difference between that level in Gaussian Pyramid and expanded version of its upper level in Gaussian Pyramid**.
     - The three levels of a Laplacian level will look like below (contrast is adjusted to enhance the contents):
 
     ![opencv-35](./image/opencv-35.png)
 
-#### 3.8.1.2. Image Blending using Pyramids
+### 3.8.2. Image Blending using Pyramids
 
 - One application of Pyramids is Image Blending.
 - For example, in image stitching, you will need to stack two images together, but it may not look good due to discontinuities between images.
@@ -1891,8 +1889,6 @@ plt.show()
   ```
 
   ![opencv-38](./image/opencv-38.png)
-
-### 3.8.2. function
 
 ## 3.9. Contours in OpenCV
 
@@ -2187,13 +2183,19 @@ cv.line(img,(cols-1,righty),(0,lefty),(0,255,0),2)
 
 ### 3.9.4. Contour Properties
 
+todo
+
 Learn to find different properties of contours like Solidity, Mean Intensity etc.
 
 ### 3.9.5. Contours:More Functions
 
+todo
+
 Learn to find convexity defects, pointPolygonTest, match different shapes etc.
 
 ### 3.9.6. Contours Hierarchy
+
+todo
 
 Learn about Contour Hierarchy
 

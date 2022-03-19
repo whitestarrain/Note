@@ -775,3 +775,7 @@
 	- SpaceVim/SpaceVim
 	- PegasusWang/vim-config(视频作者配置)
 	- 不建议新手直接用，越复杂成本越高。可以看一下SpaceVim，牛炸，用的时候就相当于黑盒
+
+# 参考资料
+
+- [Vim-一些实用技巧](https://tkstorm.com/posts-list/os/linux/vim-usages/)

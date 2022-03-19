@@ -98,6 +98,7 @@ awk 'BEGIN{
   - [ ] 鉴权方式整理
   - [ ] CORS跨域完善+整理
   - [ ] linux常用命令&工具系统整理（进行中）
+  - [ ] shell编程系统整理
   - [x] 鉴权认证
   - [x] 分布式缓存算法整理
   - [x] JVM字节码与类的加载
@@ -106,6 +107,7 @@ awk 'BEGIN{
   - [ ] regex系统整理（进行中）
   - [ ] html,css,js 历史笔记+资料整理（有时间再整）
   - [ ] latex 基本语法（vim-latex&texlab环境搭建时有练习，有时间再整）
+  - [ ] nginx&lvs 整理(./Middleware/load_balance.md 中笔记梳理)
 - 待继续学习
   - [ ] Undertow
   - [ ] Mysql XA
@@ -137,6 +139,7 @@ awk 'BEGIN{
 - lang
   - [ ] C++（待做）
   - [ ] go
+    - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua
     - [ ] 实现markdown标题编号插件
   - [ ] rust（进行中）
