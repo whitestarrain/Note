@@ -2237,7 +2237,7 @@ class Ticket implements Runnable{
 				try {
 					Thread.sleep(20);
 				} catch (Exception e) {
-					// TODO: handle exception
+					// TODO handle exception
 				}
 				System.out.println(Thread.currentThread().getName()+".....sales"+tick--);
 			}
@@ -2257,7 +2257,7 @@ class Ticket implements Runnable{
 			try {
 				Thread.sleep(20);
 			} catch (Exception e) {
-				// TODO: handle exception
+				// TODO handle exception
 			}
 			System.out.println(Thread.currentThread().getName()+".....sales"+tick--);
 		}
@@ -2296,7 +2296,7 @@ class tick2 implements Runnable{
 						try {
 							Thread.sleep(10);
 						} catch (Exception e) {
-							// TODO: handle exception
+							// TODO handle exception
 						}
 						System.out.println(Thread.currentThread().getName()+"----if:"+tick--);
 					}
@@ -2316,7 +2316,7 @@ class tick2 implements Runnable{
 			try {
 				Thread.sleep(10);
 			} catch (Exception e) {
-				// TODO: handle exception
+				// TODO handle exception
 			}
 			System.out.println(Thread.currentThread().getName()+"else---"+tick--);
 		}
@@ -2334,7 +2334,7 @@ class 多线程05tickdemo2{
 		try {
 			Thread.sleep(10);
 		} catch (Exception e) {
-			// TODO: handle exception
+			// TODO handle exception
 		}
 		t.flag=false;
 		th2.start();
@@ -2342,7 +2342,7 @@ class 多线程05tickdemo2{
 		try {
 			Thread.sleep(2000);
 		} catch (Exception e) {
-			// TODO: handle exception
+			// TODO handle exception
 		}
 		System.exit(0);
 	}
@@ -2621,7 +2621,7 @@ class Res3 {
 			try {
 				this.wait();
 			} catch (Exception e) {
-				// TODO: handle exception
+				// TODO handle exception
 			}
 		}
 		System.out.println(name+"...."+sex);

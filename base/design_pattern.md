@@ -2745,7 +2745,7 @@ public class Factory {
           // create a BuddhistCalendar for th_TH locale,
           // a JapaneseImperialCalendar for ja_JP_JP locale, or
           // a GregorianCalendar for any other locales.
-          // NOTE: The language, country and variant strings are interned.
+          // NOTE The language, country and variant strings are interned.
           if (aLocale.getLanguage() == "th" && aLocale.getCountry() == "TH") {
               cal = new BuddhistCalendar(zone, aLocale);
           } else if (aLocale.getVariant() == "JP" && aLocale.getLanguage() == "ja"
@@ -3315,7 +3315,7 @@ public class Factory {
    
    			return copyObj;
    		} catch (Exception e) {
-   			// TODO: handle exception
+   			// TODO handle exception
    			e.printStackTrace();
    			return null;
    		} finally {
@@ -10710,7 +10710,7 @@ public class Interpreter {
    			context.checkFailEvent(context);
    			System.out.println("流程正常..");
    		} catch (Exception e) {
-   			// TODO: handle exception
+   			// TODO handle exception
    			System.out.println(e.getMessage());
    		}
    	}

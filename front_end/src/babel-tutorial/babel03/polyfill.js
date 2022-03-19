@@ -2177,7 +2177,7 @@ if (PATCH) {
     }
     if (NPCG_INCLUDED && match && match.length > 1) {
       // Fix browsers whose `exec` methods don't consistently return `undefined`
-      // for NPCG, like IE8. NOTE: This doesn' work for /(.?)?/
+      // for NPCG, like IE8. NOTE This doesn' work for /(.?)?/
       // eslint-disable-next-line no-loop-func
       nativeReplace.call(match[0], reCopy, function () {
         for (i = 1; i < arguments.length - 2; i++) {
@@ -2831,7 +2831,7 @@ if (_dereq_(58)) {
       && has(desc, 'value')
       && !has(desc, 'get')
       && !has(desc, 'set')
-      // TODO: add validation descriptor w/o calling accessors
+      // TODO add validation descriptor w/o calling accessors
       && !desc.configurable
       && (!has(desc, 'writable') || desc.writable)
       && (!has(desc, 'enumerable') || desc.enumerable)
@@ -5236,7 +5236,7 @@ _dereq_(65)('replace', 2, function (defined, REPLACE, $replace, maybeCallNative)
         var matched = String(result[0]);
         var position = max(min(toInteger(result.index), S.length), 0);
         var captures = [];
-        // NOTE: This is equivalent to
+        // NOTE This is equivalent to
         //   captures = result.slice(1).map(maybeToString)
         // but for some reason `nativeSlice.call(result, 1, result.length)` (called in
         // the slice polyfill when slicing native arrays) "doesn't work" in safari 9 and
@@ -5413,7 +5413,7 @@ _dereq_(65)('split', 2, function (defined, SPLIT, $split, maybeCallNative) {
     // `RegExp.prototype[@@split]` method
     // https://tc39.github.io/ecma262/#sec-regexp.prototype-@@split
     //
-    // NOTE: This cannot be properly polyfilled in engines that don't support
+    // NOTE This cannot be properly polyfilled in engines that don't support
     // the 'y' flag.
     function (regexp, limit) {
       var res = maybeCallNative(internalSplit, regexp, this, limit, internalSplit !== $split);
@@ -6386,7 +6386,7 @@ var TO_STRING_TAG = wks('toStringTag');
 var ArrayValues = Iterators.Array;
 
 var DOMIterables = {
-  CSSRuleList: true, // TODO: Not spec compliant, should be false.
+  CSSRuleList: true, // TODO Not spec compliant, should be false.
   CSSStyleDeclaration: false,
   CSSValueList: false,
   ClientRectList: false,
@@ -6399,7 +6399,7 @@ var DOMIterables = {
   HTMLCollection: false,
   HTMLFormElement: false,
   HTMLSelectElement: false,
-  MediaList: true, // TODO: Not spec compliant, should be false.
+  MediaList: true, // TODO Not spec compliant, should be false.
   MimeTypeArray: false,
   NamedNodeMap: false,
   NodeList: true,
@@ -6413,7 +6413,7 @@ var DOMIterables = {
   SVGStringList: false,
   SVGTransformList: false,
   SourceBufferList: false,
-  StyleSheetList: true, // TODO: Not spec compliant, should be false.
+  StyleSheetList: true, // TODO Not spec compliant, should be false.
   TextTrackCueList: false,
   TextTrackList: false,
   TouchList: false
