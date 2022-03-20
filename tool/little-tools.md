@@ -10,7 +10,7 @@
 - [链接](https://aidn.jp/ugomoji/)
 - 示例
 
-  ![little-tools-2](./image/little-tools-1.png) 
+  ![little-tools-2](./image/little-tools-2.gif) 
 
 # 生成taag
 
@@ -41,3 +41,18 @@
            \/____/                  \/____/                  ~~                                                    \/____/                  \/____/                                  
                                                                                                                                                                                      
   ```
+
+# leetcode-cli工具
+
+- [链接](https://github.com/skygragon/leetcode-cli)
+- 说明：拿命令行进行刷题
+
+  ![leetcode-cli](./image/leetcode-cli-1.gif) 
+
+- 注意：
+  - 官方那个默认连美国leetcode
+  - 而且leetcode.cn装插件还需要全局翻墙(proxifier)
+  - 登录上去后，还有404报错
+- 解决：用下面这个修改过的就行
+  - `npm install -g ketankr9/leetcode-cli`。 
+  - [参考链接](https://github.com/skygragon/leetcode-cli/issues/201)
