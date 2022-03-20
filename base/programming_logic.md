@@ -132,9 +132,45 @@ Meta Programming
 - kafka的网络数据传输有一些数据配置，减少网络开销。如：batch.size和linger.ms等等
 - 平时开发是不是都个叫批量获取接口
 
+# 编程语言类型系统
+
+- 总览
+
+  ![programming_logic-1](./image/programming_logic-1.png)
+
+- 强弱类型
+  - 强类型语言是一种强制类型定义的语言，即一旦某一个变量被定义类型，如果不经强制转换，那么它永远就是该数据类型
+  - 而弱类型语言是一种弱类型定义的语言，某一个变量被定义类型，该变量可以根据环境变化自动进行转换，不需要经过现行强制转换。
+
+- 动态静态类型
+  - 动态类型语言：
+    - 动态性语言是指在运行期间才去做数据类型检查的语言
+    - 也就是说动态类型语言编程时，永远不用给任何变量指定数据类型
+    - 该语言会在第一次赋值给变量时，在内部将数据类型记录下来
+    - Python和Ruby就是一种典型的动态类型语言
+    - 其他的各种脚本语言如VBScript也多少属于动态类型语言。
+  - 静态类型语言
+    - 静态类型语言与动态类则刚好相反， **它的数据类型在编译期间检查**
+    - 也就是说在写程序时要声明所有变量的数据类型
+    - C/C++是静态类型语言的典型代表，其他静态语言还有C#、Java等。
+
+- 根据上面说明可得：
+
+  > ![programming_logic-2](./image/programming_logic-2.png)
+  > - 红色区域外：well behaved （type soundness）
+  > - 红色区域内：ill behaved
+
+  - 如果所有程序都是灰的，strongly typed
+  - 否则如果存在红色的程序，weakly typed
+  - 编译时排除红色程序，statically typed
+  - 运行时排除红色程序，dynamically typed
+  - 所有程序都在黄框以外，type safe
+
 # 参考资料
 
 待补充
 
 - [谈谈编程思想](https://blog.p2hp.com/archives/4978)
+- [ ] [弱类型、强类型、动态类型、静态类型语言的区别是什么？](https://www.zhihu.com/question/19918532) TODO: 重要。编程语言类型系统，学ts，看看这个挺有用
+  - [原文](http://blogs.perl.org/users/ovid/2010/08/what-to-know-before-debating-type-systems.html)
 - 《冒号课堂》

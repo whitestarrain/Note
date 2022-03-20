@@ -13,6 +13,7 @@
 > c语言资料
 
 - [ ] **[Linux C编程一站式学习](http://akaedu.github.io/book/)**
+  - [markdown版本](https://github.com/52fhy/linux-c)
 - [ ] 雨痕C语言学习笔记
 - [ ] [MinGW到底是个什么ghost](https://blog.csdn.net/lee_ham/article/details/81778581)
 - [ ] [C语言菜鸟教程](https://www.runoob.com/cprogramming/c-environment-setup.html)
