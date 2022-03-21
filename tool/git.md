@@ -115,7 +115,7 @@
   - `git branch -v` 显示所有分支以及每条分支上最新的提交
   - `git branch -r` 查看远程所有分支
   - `git branch -a` 显示所有分支，包括 FETCH_HARD 中的分支和远程分支 **推荐**
-  - `git branceh --merged` 查看已经合并分支
+  - `git branch --merged` 查看已经合并分支
   - `get branch --no-merged` 查看未合并分支
   - `git branch -vv` 查看所有本地分支与其对应远程分支，以及是否有领先，落后 **推荐**
     > 需要重点注意的一点是这些数字的值来自于你从每个服务器上最后一次抓取的数据。 这个命令并没有连接服务器，它只会告诉你关于本地缓存的服务器数据。 如果想要统计最新的领先与落后数字，需要在运行此命令前抓取所有的远程仓库。 可以像这样做：\$ git fetch --all; git branch -vv
@@ -208,6 +208,10 @@
     >>>>>>> iss53:index.html
     ```
   - 在你解决了所有文件里的冲突之后，对每个文件使用 git add 命令来将其标记为冲突已解决。
+
+- 合并前查看两个分支的冲突
+  - `git merge-base branch1 branch2` 得到共同祖先`<base-commit-id>`
+  - `git merge-tree <base-commit-id> branch1 branch2` 可以查看冲突信息
 
 ## 1.11. 储存
 

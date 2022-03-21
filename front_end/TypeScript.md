@@ -2539,6 +2539,7 @@ myGenericNumber.add = function (x, y) {
 # 21. 参考资料
 
 - [x] [了不起的 TypeScript 入门教程（1.2W字）](https://segmentfault.com/a/1190000022876390)
+- [ ] [使用 Typescript 开发 Nodejs 命令行工具](https://cloud.tencent.com/developer/article/1745697)
 - [ ] [TypeScript入门教程](https://ts.xcatliu.com/)
 - [ ] [深入理解 TypeScript](https://jkchao.github.io/typescript-book-chinese/)
 - [ ] [TypeScript 官方中文文档](https://www.tslang.cn/docs/home.html)

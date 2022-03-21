@@ -342,6 +342,8 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 
 #### 1.1.4.5. 字符编码方案 CES (Character Encoding Schema)
 
+<!-- TODO: 加密算法。有时间继续整理一下吧 -->
+
 #### 1.1.4.6. 传输编码语法 TES (Transfer Encoding Syntax)
 
 ## 1.2. 编码算法

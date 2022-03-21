@@ -97,15 +97,15 @@ awk 'BEGIN{
   - [ ] RabbitMQ整理
   - [ ] 鉴权方式整理
   - [ ] CORS跨域完善+整理
-  - [ ] linux常用命令&工具系统整理（进行中）
+  - [ ] linux常用命令&工具系统整理
   - [ ] shell编程系统整理
   - [x] 鉴权认证
   - [x] 分布式缓存算法整理
   - [x] JVM字节码与类的加载
-  - [ ] JVM性能监控和调优（进行中）
-  - [ ] 各种加密算法（进行中）
-  - [ ] regex系统整理（进行中）
-  - [ ] html,css,js 历史笔记+资料整理（有时间再整）
+  - [ ] JVM性能监控和调优
+  - [ ] 各种加密算法
+  - [ ] regex系统整理
+  - [ ] html,css,js 历史笔记+资料整理
   - [ ] latex 基本语法（vim-latex&texlab环境搭建时有练习，有时间再整）
   - [ ] nginx&lvs 整理(./Middleware/load_balance.md 中笔记梳理)
 - 待继续学习
@@ -124,7 +124,7 @@ awk 'BEGIN{
 - 阅读书目
   > 个人习惯使用 知之阅读 做一些读书笔记。markdown版笔记仅抽空整理
   - [x] 代码整洁之道
-  - [ ] **重构：改善既有代码设计** （进行中）
+  - [ ] **重构：改善既有代码设计**
   - [ ] **程序设计实践**
   - [ ] Redis设计与实现
   - [ ] Operating Systems:Three Easy Pieces
@@ -137,18 +137,23 @@ awk 'BEGIN{
   - [ ] Raft 协议
   - [ ] SPEL
 - lang
-  - [ ] C++（待做）
+  - [ ] C/C++
   - [ ] go
     - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua
     - [ ] 实现markdown标题编号插件
-  - [ ] rust（进行中）
+  - [ ] rust
+  - [ ] TypeScript
+    - [x] 基础
+    - [ ] 深入
+    - [ ] 命令行工具开发
+    - [ ] **练手项目：kakuyomu 小说阅读器(包含登录功能)**
 - 机器学习&深度学习
-  - [ ] opencv 系统整理（进行中）
+  - [ ] opencv 系统整理
   - [ ] 深度学习笔记系统整理（暂时抽不出时间）
 - 其他
   - [ ] JNI（c++之后）
-  - [x] nvim配置模块化(迁移到dotfiles)
+  - [x] nvim配置模块化(迁移到[dotfiles](https://github.com/whitestarrain/dotfiles))
 
 <!--
 - [ ] SpringBoot原理

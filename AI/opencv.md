@@ -2145,6 +2145,8 @@ For eg, check the first value: cnt[129] = [[234, 202]] which is same as first re
   > Green rectangle shows the normal bounding rect.<br />
   > Red rectangle is the rotated rect.
 
+<!-- TODO: opencv整理 -->
+
 #### 3.9.3.2. Minimum Enclosing Circle
 
 Next we find the circumcircle of an object using the function cv.minEnclosingCircle(). It is a circle which completely covers the object with minimum area.

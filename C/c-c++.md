@@ -12,7 +12,7 @@
 
 > c语言资料
 
-- [ ] **[Linux C编程一站式学习](http://akaedu.github.io/book/)**
+- [ ] **[Linux C编程一站式学习](http://akaedu.github.io/book/)(重要)**
   - [markdown版本](https://github.com/52fhy/linux-c)
   - [本地链接](../books/linux-c/index.md)
 - [ ] 雨痕C语言学习笔记
