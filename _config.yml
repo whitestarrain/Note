@@ -1,0 +1,18 @@
+exclude:
+    - AI
+    - base
+    - big_data
+    - booknote
+    - C
+    - container
+    - daily
+    - database
+    - distributed_system
+    - front_end
+    - go
+    - java
+    - javaFrame
+    - Middleware
+    - others
+    - python
+    - tool
