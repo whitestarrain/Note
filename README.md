@@ -128,6 +128,7 @@ awk 'BEGIN{
   - [ ] **程序设计实践**
   - [ ] Redis设计与实现
   - [ ] Operating Systems:Three Easy Pieces
+  - [ ] Linux C 编程一站式学习
 - 大数据笔记整理完善（抽时间零碎）
   - [x] hadoop+hive+hbase
   - [ ] Spark
