@@ -1,0 +1,4 @@
+-I
+D:/ProgramFiles/VisualStudio/IDE/VC/Tools/MSVC/14.29.30133/include/
+-I
+D:/FromC/Windows Kits/10/Include/10.0.19041.0/ucrt/

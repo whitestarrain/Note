@@ -761,6 +761,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 #### 5.2.1.4. Raft
 
+<!-- TODO: 把看完的资料整理一下吧 -->
 
 ##### leader election
 
