@@ -420,10 +420,11 @@
   ```
 - `<c-a>`:increase number
 - `echo expand("%:p")`: 查看当前文件路径
+- visual模式下`g+<c-g>`:查看选中字符个数
 
 # 4. vim插件
 
-TODO: 下面的vim插件都太旧了。待更新
+**详细插件配置：[dotfiles](https://github.com/whitestarrain/dotfiles)** 
 
 ## 4.1. 插件
 
@@ -798,7 +799,7 @@ TODO: 笨方法学vimscript
 
 # 其他
 
-# Vim中的^M
+## Vim中的^M
 
 Unix uses 0xA for a newline character. Windows uses a combination of two characters: 0xD 0xA. 0xD is the carriage return character. `^M` happens to be the way vim displays 0xD (0x0D = 13, M is the 13th letter in the English alphabet).
 

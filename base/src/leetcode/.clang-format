@@ -16,7 +16,7 @@ AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: true
  
 # 连续声明时，对齐所有声明的变量名
-AlignConsecutiveDeclarations: false
+AlignConsecutiveDeclarations: true
  
 # 对齐连续位域字段的风格
 # AlignConsecutiveBitFields: AcrossEmptyLinesAndComments

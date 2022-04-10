@@ -1997,7 +1997,7 @@
   - 对OnOutOfMemoryError的运维处理
     - 以部署在linux系统/opt/Server目录下的Server.jar为例
     - （1）在run.sh启动脚本中添加jvm参数
-      <!--这里一定要有空行，否则下面代码块显示会有bug -->
+      <!-- WARN: 这里一定要有空行，否则下面代码块显示会有bug -->
       - 
          ```bash
          -XX:OnOutOfMemoryError=/opt/Server/restart.sh

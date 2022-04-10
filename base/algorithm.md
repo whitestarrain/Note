@@ -4,6 +4,8 @@
 
 > 开始使用leetcode-cli写算法了。`npm install -g ketankr9/leetcode-cli`
 >
+> 语言可能都用用，顺便语法复习
+>
 > 环境：
 > - wezterm
 > - leetcode-cli(questions)
@@ -16,6 +18,9 @@
 >   - gdb 8.1 (debugger)
 > - cint 0.9.27(Run without compiling manually)
 > - jdk:1.8.0_251
+> - python: 3.7
+
+> stl速查 [链接](../C/STL.md)
 
 ## 获得面试频率较高的题目
 

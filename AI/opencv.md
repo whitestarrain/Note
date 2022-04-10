@@ -155,17 +155,17 @@
   - If the frame is read correctly, it will be True.
   - So you can check for the end of the video by checking this returned value. 
 
- - `cv.cvtColor(frame, ColorConversionCodes)`
+- `cv.cvtColor(frame, ColorConversionCodes)`
   - Converts an image from one color space to another.
   - **can convert BGR to RGB**
-  - [ColorConversionCodes](https://docs.opencv.org/4.x/d8/d01/group__imgproc__color__conversions.html#ga4e0972be5de079fed4e3a10e24ef5ef0)
+  - [ColorConversionCodes](https://docs.opencv.org/4.x/d8/d01/group__imgproc__color__conversions.html#ga397ae87e1288a81d2363b61574eb8cab)
 
 - `cv.VideoWriter(file_name,fourcc,number_of_frames_per_second(fps),frame_size)`
   - fourcc code example:
     - In Fedora: DIVX, XVID, MJPG, X264, WMV1, WMV2. (XVID is more preferable. MJPG results in high size video. X264 gives very small size video)
     - In Windows: DIVX (More to be tested and added)
     - In OSX: MJPG (.mp4), DIVX (.avi), X264 (.mkv).
-  - [The list of available fourcc codes](fourcc.org)
+  - [The list of available fourcc codes](https://www.fourcc.org/codecs.php)
 
 - `cv.destroyAllWindows()`
 

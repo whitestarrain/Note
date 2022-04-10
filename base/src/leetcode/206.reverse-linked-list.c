@@ -1,3 +1,5 @@
+// 链表
+
 /*
  * @lc app=leetcode.cn id=206 lang=c
  *
@@ -56,6 +58,7 @@
  *
  */
 
+// 这部分test的时候会上传，但是submit的时候不会
 struct ListNode
 {
     int              val;

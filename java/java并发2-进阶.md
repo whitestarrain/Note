@@ -1352,5 +1352,8 @@ java同步方式有哪些
 - [并发编程之submit和execute区别](https://www.jianshu.com/p/29610984f1dd)
 - [ThreadLocal详解](https://www.cnblogs.com/fsmly/p/11020641.html)
 - [Java魔法类：Unsafe应用解析](https://tech.meituan.com/2019/02/14/talk-about-java-magic-class-unsafe.html)
+<!-- TODO:java并发，下面笔记看一下吧，你到底是个java程序员 -->
+- [ ] [Juc_并发编程](https://blog.csdn.net/TZ845195485/article/details/109210095)
+- [ ] [大厂面试题第三季](https://blog.csdn.net/oneby1314/article/details/113789332)
 
 

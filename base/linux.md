@@ -1032,7 +1032,7 @@ done
 
 ## 2.4. 磁盘管理
 
-<!-- TODO: linux常用命令整理。正在进行性中 -->
+<!-- TODO: linux常用命令整理。正在进行中 -->
 
 ### 磁盘信息
 
@@ -1047,9 +1047,145 @@ done
 
 ### 挂载
 
+## 2.6. 性能监控
+
+### 监控CPU
+
+#### sar
+
+- 查看CPU使用率: 
+
+  ```
+  $sar -u 1 2
+  Linux 2.6.35-22-generic-pae (MyVPS)     06/28/2014      _i686_  (1 CPU)
+
+  09:03:59 AM     CPU     %user     %nice   %system   %iowait    %steal     %idle
+  09:04:00 AM     all      0.00      0.00      0.50      0.00      0.00     99.50
+  09:04:01 AM     all      0.00      0.00      0.00      0.00      0.00    100.00
+  ```
+
+  - 后面的两个参数表示监控的频率，比如例子中的1和2，表示每秒采样一次，总共采样2次；
+
+- 查看CPU平均负载:
+  ```
+  $sar -q 1 2
+  # sar指定-q后，就能查看运行队列中的进程数、系统上的进程大小、平均负载等；
+  ```
+
+#### vmstat
+
+### 内存信息
+
+#### 文件：/proc/meminfo
+
+- 这个文件记录着比较详细的内存配置信息，使用 `cat /proc/meminfo` 查看。
+
+#### 命令：free
+
+- 示例
+
+  ```
+  [root@VM-24-11-centos ~]# free -h
+                total        used        free      shared  buff/cache   available
+  Mem:           1.8G        1.5G         76M        644K        237M        163M
+  Swap:            0B          0B          0B
+  ```
+
+- 字段说明：
+  - total 系统总的可用物理内存大小
+  - used 已被使用的物理内存大小
+  - free 还有多少物理内存可用
+  - shared 被共享使用的物理内存大小
+  - buff/cache 被 buffer 和 cache 使用的物理内存大小
+    - free比buff/cache小，这是由linux的设计决定的。
+    - Linux 的想法是内存闲着反正也是闲着，不如拿出来做系统缓存和缓冲区，提高数据读写的速率
+    - 但是当系统内存不足时，buff/cache 会让出部分来，非常灵活的操作。
+  - available 还可以被 应用程序 使用的物理内存大小
+    - 对于内核来说，buffer 和 cache 其实都属于已经被使用的内存
+    - 但当应用程序申请内存时，如果 free 内存不够，内核就会回收 buffer 和 cache 的内存来满足应用程序的请求
+    - 也就是available = free+(buff/cache 中可回收的部分内存)
+
+### 硬件信息:dmidecode
+
+- 在Linux系统下获取有关硬件方面的信息
+
+### 查询页面交换
+
+- 查看页面交换发生状况:
+  - 页面发生交换时，服务器的吞吐量会大幅下降
+  - 服务器状况不良时，如果怀疑因为内存不足而导致了页面交换的发生，可以使用sar -W这个命令来确认是否发生了大量的交换；
+
+  ```
+  sar -W 1 3
+  ```
+
+### vmstat/prstat
+
+- 示例
+
+  ```
+  [root@VM-24-11-centos ~]# vmstat 1
+  procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+  r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+  2  0      0  80780   2476 240008    0    0    74    28    3    8 14  3 83  0  0
+  1  0      0  80780   2476 240008    0    0     0     0 6538 13456 13  3 84  0  0
+  1  0      0  80796   2476 240008    0    0     0     0 6330 12957 13  4 82  0  0
+  1  0      0  80812   2476 240008    0    0     0     0 6428 13142 13  3 84  0  0
+  1  0      0  80812   2476 240008    0    0     0    16 6105 12506 15  3 82  0  0
+  1  0      0  80812   2484 240000    0    0     0    44 6327 12941 14  3 82  1  0
+  1  0      0  80408   2484 240008    0    0     0     0 6219 12768 15  3 82  0  0
+  ```
+
+- 字段说明：
+  - Procs（进程）
+    - r: 运行队列中进程数量，这个值也可以判断是否需要增加CPU。（长期大于1）
+    - b: 等待IO的进程数量。
+  - Memory（内存）
+    - swpd: 使用虚拟内存大小，如果swpd的值不为0，但是SI，SO的值长期为0，这种情况不会影响系统性能。
+    - free: 空闲物理内存大小。
+    - buff: 用作缓冲的内存大小。
+    - cache: 用作缓存的内存大小，如果cache的值大的时候，说明cache处的文件数多，如果频繁访问到的文件都能被cache处，那么磁盘的读IO bi会非常小。
+  - Swap
+    - si: 每秒从交换区写到内存的大小，由磁盘调入内存。
+    - so: 每秒写入交换区的内存大小，由内存调入磁盘。
+    - 注意：
+      - 内存够用的时候，这2个值都是0
+      - 如果这2个值长期大于0时，系统性能会受到影响，磁盘IO和CPU资源都会被消耗
+      - 有些朋友看到空闲内存（free）很少的或接近于0时，就认为内存不够用了
+      - 不能光看这一点，还要结合si和so
+      - 如果free很少，但是si和so也很少（大多时候是0），那么不用担心，系统性能这时不会受到影响的。
+  - IO（现在的Linux版本块的大小为1kb）
+    - bi: 每秒读取的块数
+    - bo: 每秒写入的块数
+    - 注意：随机磁盘读写的时候，这2个值越大（如超出1024k)，能看到CPU在IO等待的值也会越大。
+  - system（系统）
+    - in: 每秒中断数，包括时钟中断。
+    - cs: 每秒上下文切换数。
+    - 注意：上面2个值越大，会看到由内核消耗的CPU时间会越大。
+  - CPU（以百分比表示）
+    - us: 用户进程执行时间百分比(user time)
+      - us的值比较高时，说明用户进程消耗的CPU时间多
+      - 但是如果长期超50%的使用，那么我们就该考虑优化程序算法或者进行加速。
+    - sy: 内核系统进程执行时间百分比(system time)
+      - sy的值高时，说明系统内核消耗的CPU资源多
+      - 这并不是良性表现，我们应该检查原因。
+    - wa: IO等待时间百分比
+      - wa的值高时，说明IO等待比较严重
+      - 这可能由于磁盘大量作随机访问造成，也有可能磁盘出现瓶颈（块操作）。
+  - id: 空闲时间百分比
+
 ## 2.5. 进程管理工具
 
-## 2.6. 性能监控
+
+### 查询进程
+
+### 终止进程
+
+### 进程监控
+
+### 分析线程栈
+
+### 综合运用
 
 ## 2.7. 网络工具
 
@@ -1467,6 +1603,23 @@ done
 - 注意：**一个服务端可以同时给多个客户端使用**
 - 启动客户端 `./frpc.exe -c frpc.ini`
 
+## neofetch
+
+- 安装 epel-release
+  ```bash
+  sudo yum install epel-release
+  ```
+- 添加第三方软件源
+  ```
+  curl -o /etc/yum.repos.d/konimex-neofetch-epel-7.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo
+  ```
+- 使用包管理器安装 neofetch
+  ```
+  sudo yum install neofetch
+  ```
+- 效果
+
+  ![linux-2](./image/linux-2.png)
 
 # 4. shell script
 
@@ -2012,7 +2165,7 @@ done
 # 7. 参考文档
 
 - [ ] [linux常用命令](https://tkstorm.com/linux-doc/)
-- [ ] [使用frp进行内网穿透](https://sspai.com/post/52523)
+- [x] [使用frp进行内网穿透](https://sspai.com/post/52523)
 - [ ] [shell基础](https://github.com/52fhy/shell-book)
 - [ ] [Linux Command](https://github.com/jaywcjlove/linux-command)
 - [ ] [一文掌握 Linux 性能分析之内存篇](https://segmentfault.com/a/1190000018553950)
