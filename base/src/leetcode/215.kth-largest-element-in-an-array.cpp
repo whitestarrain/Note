@@ -37,7 +37,6 @@
  * -10^4 
  */
 
-
 // @lc code=start
 
 #include <algorithm>
@@ -46,11 +45,9 @@
 
 using namespace std;
 
-class Solution
-{
-public:
-    int findKthLargest(vector<int>& nums, int k)
-    {
+class Solution {
+   public:
+    int findKthLargest(vector<int>& nums, int k) {
         // sort(nums.begin(), nums.end());
         quickSort(nums, 0, nums.size() - 1);
         return nums[nums.size() - k];
@@ -58,8 +55,7 @@ public:
 
     // NOTE: 十大排序算法
     // https://www.runoob.com/w3cnote/quick-sort-2.html
-    void popSort1(vector<int>& nums)
-    {
+    void popSort1(vector<int>& nums) {
         // 2,1,3,4
         int size = nums.size();
         for (int i = 0; i < size - 1; i++) {
@@ -69,8 +65,7 @@ public:
         }
     }
 
-    void popSort2(vector<int>& nums)
-    {
+    void popSort2(vector<int>& nums) {
         int size = nums.size();
         for (int i = 0; i < size - 1; i++) {
             for (int j = size - 1; j > i; j--) {
@@ -92,8 +87,7 @@ public:
      * 重新排序数列，所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面（相同的数可以到任一边）。在这个分区退出之后，该基准就处于数列的中间位置。这个称为分区（partition）操作；
      * 递归地（recursive）把小于基准值元素的子数列和大于基准值元素的子数列排序；
      */
-    void quickSort(vector<int>& nums, int left, int right)
-    {
+    void quickSort(vector<int>& nums, int left, int right) {
         if (left >= right) return;
         cout << "left:" << left << endl;
         cout << "right:" << right << endl;
@@ -108,7 +102,8 @@ public:
             if (nums[i] > nums[j]) swap(nums, i, j);
         }
 
-        // 左哨兵和当前i位置处进行交换。(因为哨兵位于左侧，此时nums[left] >= nums[i])
+        // 左哨兵和当前i位置处进行交换。(因为哨兵位于左侧，此时nums[left] >=
+        // nums[i])
         swap(nums, i, left);
 
         quickSort(nums, left, i - 1);
@@ -123,27 +118,27 @@ public:
 
     void radixSort(vector<int>& nums) {}
 
-
     /**
      * 位置交换
      */
-    void swap(vector<int>& nums, int i, int j)
-    {
+    void swap(vector<int>& nums, int i, int j) {
         int temp = nums[i];
-        nums[i]  = nums[j];
-        nums[j]  = temp;
+        nums[i] = nums[j];
+        nums[j] = temp;
     }
 };
 
 // @lc code=end
 
-int main(int argc, char* argv[])
-{
-    vector<int> testVector = {1, 2, 3, 1, 2, 4, 1, 2, 52, 4, 6, 10};   //初始化vector，v:{1, 2, 3}
-    Solution    solution   = Solution();
+int main(int argc, char* argv[]) {
+    vector<int> testVector = {1, 2, 3,  1, 2, 4,
+                              1, 2, 52, 4, 6, 10};  //初始化vector，v:{1, 2, 3}
+    Solution solution = Solution();
     // solution.popSort1(testVector);
     solution.quickSort(testVector, 0, testVector.size() - 1);
-    for (int i = 0; i < testVector.size(); i++) { cout << testVector[i] << " "; }
+    for (int i = 0; i < testVector.size(); i++) {
+        cout << testVector[i] << " ";
+    }
 
     return 0;
 }

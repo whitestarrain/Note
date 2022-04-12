@@ -74,26 +74,14 @@
  */
 
 #include <stdio.h>
-struct TreeNode
-{
+struct TreeNode {
     int val;
     TreeNode* left;
     TreeNode* right;
-    TreeNode()
-        : val(0)
-        , left(nullptr)
-        , right(nullptr)
-    {}
-    TreeNode(int x)
-        : val(x)
-        , left(nullptr)
-        , right(nullptr)
-    {}
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
     TreeNode(int x, TreeNode* left, TreeNode* right)
-        : val(x)
-        , left(left)
-        , right(right)
-    {}
+        : val(x), left(left), right(right) {}
 };
 
 // @lc code=start
@@ -105,10 +93,10 @@ struct TreeNode
  *     TreeNode *right;
  *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
  *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left),
+ * right(right) {}
  * };
  */
-
 
 #include <iostream>
 #include <string>
@@ -116,14 +104,11 @@ struct TreeNode
 
 using namespace ::std;
 
-class Solution
-{
-public:
-    vector<vector<string>> printTree(TreeNode* root)
-    {
+class Solution {
+   public:
+    vector<vector<string>> printTree(TreeNode* root) {
         // 广度优先遍历
         vector<vector<string>> result{};
-
 
         result.push_back(vector<string>());
 
@@ -131,9 +116,10 @@ public:
         return result;
     }
 
-    void traverse(TreeNode* node, vector<vector<string>> result)
-    {
-        if (nullptr == node) { return; }
+    void traverse(TreeNode* node, vector<vector<string>> result) {
+        if (nullptr == node) {
+            return;
+        }
         traverse(node->left, result);
 
         traverse(node->right, result);

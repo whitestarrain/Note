@@ -1,56 +1,54 @@
-#include <iostream>
 #include <stddef.h>
 #include <stdio.h>
+
+#include <iostream>
 #include <string>
 #include <vector>
 
 using namespace std;
-struct ListNode
-{
-    int              val;
+struct ListNode {
+    int val;
     struct ListNode* next;
 };
 
-void test1()
-{
+void test1() {
     int* i;
-    if (i) { printf("野指针为true"); }
-    else {
+    if (i) {
+        printf("野指针为true");
+    } else {
         printf("野指针为false");
     }
 }
 
-void test2()
-{
+void test2() {
     std::vector<int> v(256, -1);
-    for (int i = 0; i < v.size(); i++) { printf("%d", v[i]); }
+    for (int i = 0; i < v.size(); i++) {
+        printf("%d", v[i]);
+    }
 }
 
-void test3()
-{
-    std::string s      = "sssss";
-    int         size   = s.size();
-    int         length = s.length();
+void test3() {
+    std::string s = "sssss";
+    int size = s.size();
+    int length = s.length();
     // int cap = s.capacity();
     printf("%d,%d", size, length);
 }
 
-void test4()
-{
+void test4() {
     int a[] = {1, 2, 3, 4, 5};
     // []的优先级比*高
     int(*pa)[5] = &a;
 
-    char*  str[] = {"aaa", "bb"};
-    char** ppa   = str;
+    char* str[] = {"aaa", "bb"};
+    char** ppa = str;
 }
 
-void test5()
-{
+void test5() {
     // c++中的引用，类似于变量的别名
     // 可以对比一下java中的引用变量
 
-    int  i  = 10;
+    int i = 10;
     int& ir = i;
     cout << i << endl;
     cout << ir << endl;
@@ -66,8 +64,7 @@ void test5()
     11 */
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     // test1();
     // test2();
     // test3();

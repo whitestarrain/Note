@@ -61,16 +61,14 @@
 
 using namespace ::std;
 
-class Solution
-{
-public:
+class Solution {
+   public:
     /**
      * 思路：滑动窗口
      * 每个字符为起点
      * 从左向右，计算一遍最长的非重复字符
      */
-    int lengthOfLongestSubstring(string s)
-    {
+    int lengthOfLongestSubstring(string s) {
         unordered_set<char> set;
         int len = s.size();
         // right 为右指针

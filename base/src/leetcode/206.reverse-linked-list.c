@@ -59,12 +59,10 @@
  */
 
 // 这部分test的时候会上传，但是submit的时候不会
-struct ListNode
-{
-    int              val;
+struct ListNode {
+    int val;
     struct ListNode* next;
 };
-
 
 // @lc code=start
 /**
@@ -77,18 +75,16 @@ struct ListNode
 
 #include <stddef.h>
 
-struct ListNode* reverseList(struct ListNode* head)
-{
+struct ListNode* reverseList(struct ListNode* head) {
     struct ListNode* preNode = NULL;
     struct ListNode* curNode = head;
 
     while (curNode) {
         struct ListNode* next = curNode->next;
-        curNode->next         = preNode;
-        preNode               = curNode;
-        curNode               = next;
+        curNode->next = preNode;
+        preNode = curNode;
+        curNode = next;
     }
 
     return preNode;
 }
-
