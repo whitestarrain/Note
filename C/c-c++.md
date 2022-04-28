@@ -530,3 +530,4 @@ printf("%d",pa == &a);                // ①
   - [LLVM,Clang,GCC](https://blog.csdn.net/ShockYu/article/details/102793708)
   - [VC, GCC, Clang/LLVM区别 ](https://www.cnblogs.com/xuesu/p/14542821.html)
 - [ ] [cstdio和stdio.h的区别](https://blog.csdn.net/Abigial_/article/details/54799629)
+- [ ] [Google的C++开源代码项目以及经典C++库](https://www.cnblogs.com/zhoug2020/p/5812578.html)

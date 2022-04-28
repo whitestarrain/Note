@@ -156,7 +156,7 @@ RabbitMQ是由erlang语言开发，基于AMQP（Advanced Message Queue 高级消
   - topic (publish-subscribe)
   - fanout (multicast)
 - `Queue：`消息最终被送到这里等待 consumer 取走
-- `Binding：`exchange 和 queue 之间的虚拟连接，binding 中可以包含 routing key。Binding 信息被保存到 exchange 中的查询表中，用于 message 的分发依据
+- `Binding：exchange 和 queue 之间的虚拟连接，binding 中可以包含 routing key。Binding 信息被保存到 exchange 中的查询表中，用于 message 的分发依据
 
 ### 1.6.3. 模式
 

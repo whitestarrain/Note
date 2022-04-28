@@ -70,6 +70,7 @@
  *
  */
 
+#include <stdio.h>
 struct ListNode {
     int val;
     ListNode* next;
@@ -89,8 +90,74 @@ struct ListNode {
  *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
  */
+
+#include <iostream>
+
+using namespace ::std;
+
 class Solution {
    public:
-    ListNode* reverseKGroup(ListNode* head, int k) {}
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        cout << head->val << " " << k << endl;
+        if (k <= 0 || k == 1 || nullptr == head) {
+            return head;
+        }
+        struct ListNode* curNode = head;
+        struct ListNode* tempNode = nullptr;
+        struct ListNode* tempPreNode = nullptr;
+        int first = 1;
+        struct ListNode* result = nullptr;
+        while (curNode) {
+            // cout << curNode->val << " ";
+            struct ListNode* sectionHead = curNode;
+            tempNode = curNode;
+            int reverseFlag = 1;
+            for (int i = 0; i < k; i++) {
+                tempNode = tempNode->next;
+                if (!tempNode->next) {
+                    reverseFlag = 0;
+                }
+            }
+            // cout << reverseFlag << " ";
+            if (!reverseFlag) {
+                break;
+            }
+            // cout << endl;
+            for (int i = 0; i <= k; i++) {
+                struct ListNode* temp = curNode->next;
+                curNode->next = tempPreNode;
+                tempPreNode = curNode;
+                curNode = temp;
+            }
+            sectionHead->next = curNode->next;
+            if (first) {
+                first = 0;
+                result = curNode;
+            }
+        }
+        return result;
+    }
 };
+
+int main(int argc, char* argv[]) {
+    struct ListNode node1 = ListNode(1);
+    struct ListNode node2 = ListNode(2);
+    struct ListNode node3 = ListNode(3);
+    struct ListNode node4 = ListNode(4);
+    struct ListNode node5 = ListNode(5);
+    struct ListNode node6 = ListNode(6);
+    node1.next = &node2;
+    node2.next = &node3;
+    node3.next = &node4;
+    node4.next = &node5;
+    node5.next = &node6;
+
+    struct ListNode* node = &node1;
+    Solution s = Solution();
+    s.reverseKGroup(node, 2);
+    while (node) {
+        std::cout << node->val << std::endl;
+        node = node->next;
+    }
+}
 // @lc code=end

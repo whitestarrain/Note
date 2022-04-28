@@ -125,6 +125,7 @@ awk 'BEGIN{
   - [ ] React
   - [ ] Vue
     - **练手项目：博客评论系统前端**
+  - 常用JVM
 - 阅读书目
   > 个人习惯使用 知之阅读 做一些读书笔记。markdown版笔记仅抽空整理
   - [x] 代码整洁之道
@@ -133,6 +134,7 @@ awk 'BEGIN{
   - [ ] Redis设计与实现
   - [ ] Operating Systems:Three Easy Pieces
   - [ ] Linux C 编程一站式学习
+  - [ ] 冒号课堂
 - 大数据笔记整理完善（抽时间零碎）
   - [x] hadoop+hive+hbase
   - [ ] Spark

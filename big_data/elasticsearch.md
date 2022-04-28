@@ -215,7 +215,7 @@
 
   - 解压后，进入 bin 文件目录，点击 elasticsearch.bat 文件启动 ES 服务 。
   - 注意： 9300 端口为 Elasticsearch 集群间组件的通信端口， 9200 端口为浏览器访问的 http 协议 RESTful 端口。
-  - 打开浏览器，输入地址： http://localhost:9200，测试返回结果，返回结果如下：
+  - 打开浏览器，输入地址： `http://localhost:9200`，测试返回结果，返回结果如下：
 
   ```json
   {

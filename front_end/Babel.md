@@ -103,13 +103,12 @@
 
 ## 2.3. 小结
 
-1.一个完整的Babel转码工程通常包括如下：
+- 一个完整的Babel转码工程通常包括如下：
+  - Babel配置文件
+  - Babel相关的npm包
+  - 需要转码的JS文件
 
-- Babel配置文件
-- Babel相关的npm包
-- 需要转码的JS文件
-
-2.我们通过以下命令对单个JS文件进行转码：
+- 我们通过以下命令对单个JS文件进行转码：
 
   ```bash
   npx babel main.js -o compiled.js

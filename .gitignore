@@ -15,3 +15,6 @@ diary.md
 base/src/leetcode/question
 AI/AbandonObject.md
 *.exe
+.vscode/
+leetcode.code-workspace
+Note.code-workspace

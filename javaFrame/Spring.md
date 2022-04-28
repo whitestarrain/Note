@@ -2516,7 +2516,53 @@ public class JdbcConfig {
 
 ## 5.3. 事务失效情况分析
 
-# 6. Spring 源码解读
+# Spring IOC实现原理
+
+## IOC体系设计
+
+### 站在设计者的角度考虑设计IOC容器
+
+- 在设计时，首先需要考虑的是 IOC 容器的功能（输入和输出), 承接前面的文章，我们初步的画出 IOC 容器的整体功能。
+
+  ![spring-src-1](./image/spring-src-1.png)
+- 在此基础上，我们初步的去思考，如果作为一个 IOC 容器的设计者，主体上应该包含哪几个部分：
+  - 加载 Bean 的配置（比如 xml 配置）
+    - 比如不同类型资源的加载，解析成生成统一 Bean 的定义
+  - 根据 Bean 的定义加载生成 Bean 的实例，并放置在 Bean 容器中
+    - 比如 Bean 的依赖注入，Bean 的嵌套，Bean 存放（缓存）等
+  - 除了基础 Bean 外，还有常规针对企业级业务的特别 Bean
+    - 比如国际化 Message，事件 Event 等生成特殊的类结构去支撑
+  - 对容器中的 Bean 提供统一的管理和调用
+    - 比如用工厂模式管理，提供方法根据名字/类的类型等从容器中获取 Bean
+  - ...
+
+### Spring IoC的体系结构设计
+
+#### BeanFactory和BeanRegistry：IOC容器功能规范和Bean的注册 
+
+##### BeanFactory定义了IOC 容器基本功能规范？
+
+##### BeanFactory为何要定义这么多层次的接口？定义了哪些接口？
+
+##### 如何将Bean注册到BeanFactory中？
+
+#### BeanRegistry BeanDefinition：各种Bean对象及其相互的关系 
+
+##### ApplicationContext：IOC接口设计和实现 
+
+> ApplicationContext接口的设计 
+
+> ApplicationContext接口的实现
+
+## 初始化
+
+## Bean实例化(声明周期与循环依赖)
+
+# Spring AOP实现原理
+
+## 切面实现详解
+
+## AOP代理
 
 # 7. SPEL
 

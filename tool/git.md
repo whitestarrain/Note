@@ -342,6 +342,17 @@
   doc/**/*.txt
 ```
 
+```
+  比如一个三级目录，只不忽略一个文件/fileTemplates/includes/File Header.java，就要这么写
+
+  /*
+  !/fileTemplates
+  /fileTemplates/*
+  !/fileTemplates/includes
+  /fileTemplates/includes/*
+  !/fileTemplates/includes/File Header.java
+```
+
 ## 1.16. 别名
 
 - `git config --global alias.st status` /*设置st为status的别名，git st即为git status*/

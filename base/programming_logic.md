@@ -134,43 +134,163 @@ Meta Programming
 
 # 编程语言类型系统
 
-- 总览
+## 基础
 
-  ![programming_logic-1](./image/programming_logic-1.png)
+### 类型与数据
 
-- 强弱类型
-  - 强类型语言是一种强制类型定义的语言，即一旦某一个变量被定义类型，如果不经强制转换，那么它永远就是该数据类型
-  - 而弱类型语言是一种弱类型定义的语言，某一个变量被定义类型，该变量可以根据环境变化自动进行转换，不需要经过现行强制转换。
+- 定义了一个某一个类型的数据，通常意味着以下三件事：
+  > 无论编译型语言还是解释型语言，这三点是共性。
+  - **定义了一块某种结构的存储空间，用来存储这个数据** ；
+  - **特定类型意味可以对这块存储空间进行一些特定的操作** ；
+  - **声明了一个标识符（不严密的说就是变量名）操作这块数据，否则这块数据是无法使用的** 。
 
-- 动态静态类型
-  - 动态类型语言：
-    - 动态性语言是指在运行期间才去做数据类型检查的语言
-    - 也就是说动态类型语言编程时，永远不用给任何变量指定数据类型
-    - 该语言会在第一次赋值给变量时，在内部将数据类型记录下来
-    - Python和Ruby就是一种典型的动态类型语言
-    - 其他的各种脚本语言如VBScript也多少属于动态类型语言。
-  - 静态类型语言
-    - 静态类型语言与动态类则刚好相反， **它的数据类型在编译期间检查**
-    - 也就是说在写程序时要声明所有变量的数据类型
-    - C/C++是静态类型语言的典型代表，其他静态语言还有C#、Java等。
+- 从程序出错的角度来看，和类型有关的错误：
+  - 访问了一个特定类型的标识符，但是访问的不是预期的存储空间。
+  - 对特定类型的标识符对应的数据，进行了非预期的操作。
 
-- 根据上面说明可得：
+### 判断标准参考
 
-  > ![programming_logic-2](./image/programming_logic-2.png)
-  > - 红色区域外：well behaved （type soundness）
-  > - 红色区域内：ill behaved
+> ![programming_logic-2](./image/programming_logic-2.png)
+> - 红色区域外：well behaved （type soundness）
+> - 红色区域内：ill behaved
 
+- 强/弱
   - 如果所有程序都是灰的，strongly typed
   - 否则如果存在红色的程序，weakly typed
+- 动/静
   - 编译时排除红色程序，statically typed
   - 运行时排除红色程序，dynamically typed
-  - 所有程序都在黄框以外，type safe
+- 所有程序都在黄框以外，type safe
+
+- <details>
+  <summary style="color:red;">参考</summary>
+
+  参考：《Type Systems》 Luca Cardelli - Microsoft Research
+
+  - **Trapped error** : An execution error that immediately results in a fault.
+  - **Untrapped error** : An execution error that does not immediately result in a fault.
+  - **Forbidden error** : The occurrence of one of a predetermined class of execution errors;
+  - **Typically the**  improper application of an operation to a value, such as not(3).
+  - **Well behaved** : A program fragment that will not produce forbidden errors at run time.
+  - **Strongly checked**  language: A language where no forbidden errors can occur at run time (depending on the definition of forbidden error).
+  - **Weakly checked**  language: A language that is statically checked but provides no clear guarantee of absence of execution errors.
+  - **Statically checked**  language: A language where good behavior is determined before execution.
+  - **Dynamically checked**  language: A language where good behavior is enforced during execution.
+  - **Type safety** : The property stating that programs do not cause untrapped errors.
+  - **Explicitly typed**  language: A typed language where types are part of the syntax.
+  - **Implicitly typed**  language: A typed language where types are not part of the syntax.
+  </details>
+
+### 语言总览
+
+![programming_logic-1](./image/programming_logic-1.png)
+
+## 类型系统的分类说明
+
+### 强弱类型
+
+- 说明
+  - 强类型语言是一种强制类型定义的语言
+    - 即一旦某一个变量被定义类型
+    - **如果不经强制转换** ，那么它永远就是该数据类型
+  - 弱类型语言是一种弱类型定义的语言
+    - 某一个变量被定义类型
+    - **该变量可以根据环境变化自动进行转换** ，不需要经过现行强制转换。
+
+- 注意：
+  - 可以拿两个类型系统非常相近的语言进行比较，然后说其中一个的类型系统更强一些
+  - 但除此之外，强弱这样的词语是无意义的
+
+### 静态/动态类型
+
+> 动态和静态类型系统是截然不同的两个概念，只不过它们的目的有部分重合。
+
+- 说明
+  - 静态类型语言
+    - 说明
+      - 静态类型语言与动态类则刚好相反， **它的数据类型在编译期间检查**
+      - 也就是说在写程序时要声明所有变量的数据类型
+    - 原理：
+      - 在编译器在检查代码时，会为特定的语法打标签，进而推断出程序的行为
+      - 这里的标签就是“类型”，或者称为静态类型
+    - 语言示例
+      - C/C++是静态类型语言的典型代表，其他静态语言还有C#、Java等。
+  - 动态类型语言：
+    - 说明
+      - 动态性语言是指在运行期间才去做数据类型检查的语言
+      - 也就是说动态类型语言编程时，永远不用给任何变量指定数据类型
+      - 该语言会在第一次赋值给变量时，在内部将数据类型记录下来
+    - 原理：
+      - 动态类型系统也是编译器的一种机制
+      - 但是是用来跟踪记录程序中数据的种类（巧合的是，这个“种类“通常也被称为“类型”）的。
+    - 语言示例
+      - Python和Ruby就是一种典型的动态类型语言
+      - 其他的各种脚本语言如VBScript也多少属于动态类型语言。
+
+  > 这里两次使用了同一个词——“类型”，这并不完全是一种巧合。
+  > 但是我们最好将此理解为一种历史遗留，因为一旦将两种系统中的“类型”解释为同一个概念，往往就容易混淆不清。
+
+- 联系和差别
+  - 很多时候，静态类型和动态类型是为了解决同样的问题。
+  - 然而，静态类型能解决的问题不只限于动态类型解决的。
+  - 同样的，动态类型能解决的问题也不只限于静态类型所解决的。
+  - **从本质上看，这两种技术是完全不同的** 
+ 
+- 静态类型和动态类型的二分有一定的误导性
+  - 大多数语言——即便自称是动态类型的——都包含一定的静态类型
+  - 同时，几乎所有语言都有动态类型。但多数语言主要表现出这两种中的某一种
+  - 为什么呢？因为上面四点中的第一点：
+    - 这两种类型系统想要解决的问题有很大的重合
+    - 所以，为一门语言既设计很强的静态类型又设计很强的动态类型并不会带来太多额外的好处，反而会增添不少成本。
+
+### 其他区分
+
+> 还有很多其他相对不那么常见的类型系统分类方式，但有一些也值得一提。
+
+- 可靠类型（sound types）：
+  - 可靠类型系统能够提供可靠的某种保证。
+  - 它是和静态类型相关的一个严格定义的概念，也有相关的证明技术等等。很多现代的类型系统都是可靠的。
+  - 老的编程语言，比如C，由于设计原因，常常没有可靠的类型系统。它们的类型系统仅仅能够对一些常见的错误给出警告。
+  - 可靠类型系统的概念也可以不那么严格的扩展到动态类型系统上去，但是不同用法的含义可能会略有不同。
+- 显式/隐式类型（explicit/implicit types）：
+  - 这些术语指的是编译器在何种程度上对程序的静态类型进行推理。
+  - 所有的编程语言都对类型进行一些推理。有些语言比其他的推理得更多。
+  - ML和Haskell使用隐式类型，程序员不（或很少，视具体的语言和扩展而定）需要进行类型声明。
+  - Java和Ada使用非常显式的类型，你需要不停地声明所有东西的类型。所有这些语言都（相对C和C++）使用了更强的静态类型系统。
+- Lambda方（the lambda cube）：
+  - 不同静态类型系统之间的差别被抽象总结为了lambda方。
+  - 它的具体定义超出了本文所讨论的范围，但简单来说就是描述了类型系统的一些特征：例如参数类型，依赖类型，类型运算符等等。想了解更多请点[这里](http://citeseer.ist.psu.edu/barendregt92lambda.html)。
+- 结构化/名义类型（structural/nominal types）：
+  - 结构化类型与名义类型的区分主要是针对有子类的静态类型而言的。
+  - 结构化类型意味着只要某种关于类型的假定是合理的，我们就可以真的这么假定。
+  - 例如某个含有字段x、y、z的类型可以自动被认为是只有x、y字段的类型的子类。而对于名义类型，除非我们显式地声明，否则这种关系并不存在。
+    > **结构化类型比如typescript**
+- 鸭子类型（duck typing）：
+  - 这是一个最近开始流行的术语，可以认为是结构类型在动态类型系统里的对应概念。
+  - 运行时系统并不是通过检查一个值的类型标签来决定它的类型和所支持的操作，而是检查它是否确实支持那些会被调用到的操作。
+  - 而这些操作可以被不同的类型用不同的方式实现。
+
+## 误区分析
+
+### 误区：静态类型需要类型声明
+
+### 误区：动态类型语言都是弱类型的
+
+### 误区：静态类型意味着预先设计或是瀑布开发模式（waterfall methods）
+
+### 误区：动态类型语言不容易发现bug
+
+### 误区：静态类型要写更多代码
+
+## 静态类型优势
+
+## 类型与类型系统
 
 # 参考资料
 
 待补充
 
 - [谈谈编程思想](https://blog.p2hp.com/archives/4978)
-- [ ] [弱类型、强类型、动态类型、静态类型语言的区别是什么？](https://www.zhihu.com/question/19918532) TODO: 重要。编程语言类型系统，学ts，看看这个挺有用
-  - [原文](http://blogs.perl.org/users/ovid/2010/08/what-to-know-before-debating-type-systems.html)
+- [What to know before debating type systems](http://blogs.perl.org/users/ovid/2010/08/what-to-know-before-debating-type-systems.html)
+  - [x] [翻译](https://www.zhihu.com/question/19918532) TODO: ※ 重要。编程语言类型系统，学ts，看看这个挺有用
 - 《冒号课堂》

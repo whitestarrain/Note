@@ -2550,6 +2550,7 @@ myGenericNumber.add = function (x, y) {
 - [ ] [解决typescript Cannot redeclare block-scoped variable](https://segmentfault.com/a/1190000021865919?utm_source=tag-newest)
 - [ ] [mariusschulz - the-unknown-type-in-typescript](https://mariusschulz.com/blog/the-unknown-type-in-typescript)
 - [ ] [TypeScript 声明文件](https://www.runoob.com/typescript/ts-ambient.html)
+- [ ] [深入理解TypeScipt](https://jkchao.github.io/typescript-book-chinese/#why)
 
 
 

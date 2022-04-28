@@ -1,6 +1,6 @@
 # 1. 基础操作
 
-## 基础
+## 1.1. 基础
 
 - 版本：`:version`
     > 同时也可以查看支持
@@ -9,7 +9,7 @@
 	- esc
 	- C-[
 
-## 移动
+## 1.2. 移动
 
 - hjkl:移动
 - w:下一个单词开头，e：下一个单词末尾。W下一个空格开头，E下一个空格末尾
@@ -31,7 +31,7 @@
       - ma 在当前位置做标记，通过'a可以回来
 - L:最后一行行首
 
-## 搜索
+## 1.3. 搜索
 
 - /pattern 搜索，n往下搜索，N往上搜索。?pattern倒序搜索
 - /\cpattern 搜索，同时忽略大小写
@@ -39,7 +39,7 @@
 - :/pattern 定位到查找字符所在行的第一个非空白字符
 - `* #` 查询匹配当前光标所在单词，前后移到查到的单词
 
-## 可视化
+## 1.4. 可视化
 
 - 选择模式
   - v
@@ -50,7 +50,7 @@
   - gv 重选上一次的高亮选区
 - `w! >> file` 将选中内容写入到一个文件中
 
-## 编辑
+## 1.5. 编辑
 
 - vim +10 file 打开一个文件并定位到某行
 - vim + file 打开文件并定位到最后
@@ -72,7 +72,7 @@
 - 0y\$ 从行开头复制到行末尾；y2/help复制查到的两个help之间的内容
 - gU选中内容变大写,gu选中内容变小写
 
-## 插入模式下的编辑操作：
+## 1.6. 插入模式下的编辑操作：
 
 > 终端中编辑适用
 - C-h删除上一个字符
@@ -85,7 +85,7 @@
 - C-b前移
 - C-f后移
 
-## 替换
+## 1.7. 替换
 
 > 本质上就是 substitute这个命令
 - 格式[range]s/pattern/string/[flags]
@@ -118,13 +118,13 @@
   - q - quit 退出替换
   - l - last 最后一个，并把光标移动到行首
 
-## 折叠展开
+## 1.8. 折叠展开
 
 - za:折叠展开切换
 - zM:折叠所有
 - zR:展开所有
 
-## 多文件操作
+## 1.9. 多文件操作
 
 - :Vexplore 纵向展示目录树（）
 - :e path/file 打开指定文件
@@ -158,7 +158,7 @@
 - tab:容纳一系列窗口的容器。类似工作区。用起来比较少
   - 这里不多说了，看后面的插件
 
-## 窗口跳转
+## 1.10. 窗口跳转
 
 - `CTRL-W w` 在各个窗口之间来回切换。每输入一次，切换一个窗口。不停输入，可以遍历所有窗口。在只有两个窗口时很方便来回切换。
 - `CTRL-W j` 光标切换到下一个窗口。
@@ -166,7 +166,7 @@
 - `CTRL-W h` 光标切换到左边窗口。如果左边没有窗口，保持在当前窗口不变。
 - `CTRL-W l` 光标切换到右边窗口。
 
-## 区域选择和文本对象
+## 1.11. 区域选择和文本对象
 
 - 区域选择 `<action>a<object>` 或 `<action>i<object>`
 	> action可以是任何的命令，如 d (删除), y (拷贝), v (可以视模式选择)。c(修改)，s(替代)<br>
@@ -199,7 +199,7 @@
 		- das 删除一个句子
 		- dap 删除一个段落
 
-## 复制粘贴，寄存器
+## 1.12. 复制粘贴，寄存器
 
 - 简单命令
   - 普通模式下：
@@ -252,7 +252,7 @@
   - filetype on 开启文档类型检查。 set filetype 查看文档类型
   - 插件设置看后面
 
-## 命令
+## 1.13. 命令
 
 - . 重复上次命令
 - :help <command> 查看帮助
@@ -273,14 +273,14 @@
 - :g 相当于linux中的grep
 - :st 最小化窗口
 
-## 更换主题
+## 1.14. 更换主题
 
 - :colorscheme 显示当前配色方案，默认是default
 - :colorscheme C-d 可以显示所有配色方案
 - 可以去 https://github.com/flazz/vim-colorschemes 安装其他配色方案
 - 持久化的话就写到 vimrc中
 
-## 其他
+## 1.15. 其他
 
 - ^E 向下滚屏
 - ^Y 向上滚屏
@@ -293,7 +293,7 @@
 - ssh-keygen -p 重新设置ssh的密码
 - Q: 进入Ex模式
 
-# 代码跳转操作
+# 2. 代码跳转操作
 
 - %
   - 跳转到光标所在括号的另一个配对括号上，适用于小括号()、大括号{}、方括号[]。
@@ -367,7 +367,7 @@
   - 其他命令的说明可以类似查看。
   - 可以用 :help gd 和 :help gD 命令来查看帮助说明，这两个命令的帮助说明是相邻的。
 
-# 2. 实用命令
+# 3. 实用命令
 
 [w3school-vim命令大全](https://www.w3cschool.cn/vim/cjtr1pu3.html)
 
@@ -748,13 +748,13 @@
 	- PegasusWang/vim-config(视频作者配置)
 	- 不建议新手直接用，越复杂成本越高。可以看一下SpaceVim，牛炸，用的时候就相当于黑盒
 
-# vimscript
+# 6. vimscript
 
-## 前言
+## 6.1. 前言
 
 尽管都转到了lua，vimscript还是稍微学一下吧
 
-## 基本vim配置
+## 6.2. 基本vim配置
 
 TODO: 笨方法学vimscript
 
@@ -797,9 +797,9 @@ TODO: 笨方法学vimscript
 - 查看配置项配置位置：
   - `verbose set ...`，如`verbose set number`
 
-# 其他
+# 7. 其他
 
-## Vim中的^M
+## 7.1. Vim中的^M
 
 Unix uses 0xA for a newline character. Windows uses a combination of two characters: 0xD 0xA. 0xD is the carriage return character. `^M` happens to be the way vim displays 0xD (0x0D = 13, M is the 13th letter in the English alphabet).
 
@@ -813,7 +813,7 @@ Where `^M` is entered by holding down Ctrl and typing v followed by m, and then 
 
 This expression will replace all occurrences of `^M` with the empty string (i.e. nothing). I use this to get rid of `^M` in files copied from Windows to Unix (Solaris, Linux, OSX).
 
-# 参考资料
+# 8. 参考资料
 
 - [Vim-一些实用技巧](https://tkstorm.com/posts-list/os/linux/vim-usages/)
 - 《笨方法学vimscript》
