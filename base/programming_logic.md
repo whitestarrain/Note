@@ -270,6 +270,8 @@ Meta Programming
   - 运行时系统并不是通过检查一个值的类型标签来决定它的类型和所支持的操作，而是检查它是否确实支持那些会被调用到的操作。
   - 而这些操作可以被不同的类型用不同的方式实现。
 
+TODO: ※ 重要。编程语言类型系统，学ts，看看这个挺启发的
+
 ## 误区分析
 
 ### 误区：静态类型需要类型声明
@@ -292,5 +294,9 @@ Meta Programming
 
 - [谈谈编程思想](https://blog.p2hp.com/archives/4978)
 - [What to know before debating type systems](http://blogs.perl.org/users/ovid/2010/08/what-to-know-before-debating-type-systems.html)
-  - [x] [翻译](https://www.zhihu.com/question/19918532) TODO: ※ 重要。编程语言类型系统，学ts，看看这个挺有用
+  - [x] [翻译](https://www.zhihu.com/question/19918532)
 - 《冒号课堂》
+
+
+# 面条代码与面向对象的平衡
+

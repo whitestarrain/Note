@@ -1355,5 +1355,6 @@ java同步方式有哪些
 <!-- TODO:java并发，下面笔记看一下吧，你到底是个java程序员 -->
 - [ ] [Juc_并发编程](https://blog.csdn.net/TZ845195485/article/details/109210095)
 - [ ] [大厂面试题第三季](https://blog.csdn.net/oneby1314/article/details/113789332)
+- [ ] [如何设置线程池参数？美团给出了一个让面试官虎躯一震的回答。](https://www.cnblogs.com/thisiswhy/p/12690630.html)
 
 

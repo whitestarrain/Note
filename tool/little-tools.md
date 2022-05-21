@@ -56,3 +56,8 @@
 - 解决：用下面这个修改过的就行
   - `npm install -g ketankr9/leetcode-cli`。 
   - [参考链接](https://github.com/skygragon/leetcode-cli/issues/201)
+
+# 代码高亮工具
+
+- 往word里面粘贴用的
+- [链接](https://highlightcode.com/)

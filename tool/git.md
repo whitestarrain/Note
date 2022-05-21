@@ -319,6 +319,8 @@
 ## 1.14. cherry-pick和patch
 
 - `git cherry-pick ref` 应用提交，总之十分重要的命令
+- `git cherry-pick commit1..commit2` 应用提交(commit1,commit2]
+  > 两个点
 - `git format-patch ref` 当前到指定位置的修改打为patch
 - `git apply --check patch_path` 检查是否合法
 - `git am --signoff < patch_path` 打补丁

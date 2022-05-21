@@ -1034,7 +1034,7 @@ done
 
 <!-- TODO: linux常用命令整理。正在进行中 -->
 
-### 磁盘信息
+### 2.4.1. 磁盘信息
 
 - 磁盘信息：
   - df:显示硬盘分区。
@@ -1043,15 +1043,15 @@ done
   - du -sh ./\*:统计此文件夹下每个目录大小
   - 清楚数据前一定要备份
 
-### 解压缩
+### 2.4.2. 解压缩
 
-### 挂载
+### 2.4.3. 挂载
 
-## 2.6. 性能监控
+## 2.5. 性能监控
 
-### 监控CPU
+### 2.5.1. 监控CPU
 
-#### sar
+#### 2.5.1.1. sar
 
 - 查看CPU使用率: 
 
@@ -1072,15 +1072,15 @@ done
   # sar指定-q后，就能查看运行队列中的进程数、系统上的进程大小、平均负载等；
   ```
 
-#### vmstat
+#### 2.5.1.2. vmstat
 
-### 内存信息
+### 2.5.2. 内存信息
 
-#### 文件：/proc/meminfo
+#### 2.5.2.1. 文件：/proc/meminfo
 
 - 这个文件记录着比较详细的内存配置信息，使用 `cat /proc/meminfo` 查看。
 
-#### 命令：free
+#### 2.5.2.2. 命令：free
 
 - 示例
 
@@ -1105,11 +1105,11 @@ done
     - 但当应用程序申请内存时，如果 free 内存不够，内核就会回收 buffer 和 cache 的内存来满足应用程序的请求
     - 也就是available = free+(buff/cache 中可回收的部分内存)
 
-### 硬件信息:dmidecode
+### 2.5.3. 硬件信息:dmidecode
 
 - 在Linux系统下获取有关硬件方面的信息
 
-### 查询页面交换
+### 2.5.4. 查询页面交换
 
 - 查看页面交换发生状况:
   - 页面发生交换时，服务器的吞吐量会大幅下降
@@ -1119,7 +1119,7 @@ done
   sar -W 1 3
   ```
 
-### vmstat/prstat
+### 2.5.5. vmstat/prstat
 
 - 示例
 
@@ -1174,20 +1174,291 @@ done
       - 这可能由于磁盘大量作随机访问造成，也有可能磁盘出现瓶颈（块操作）。
   - id: 空闲时间百分比
 
-## 2.5. 进程管理工具
+## 2.6. 进程管理工具
 
+### 2.6.1. 查询进程
 
-### 查询进程
+#### 2.6.1.1. ps,pgrep 基本信息
 
-### 终止进程
+- 查询正在运行的进程信息
+  ```bash
+  ps -ef
 
-### 进程监控
+  # 查询归属于用户colin115的进程
+  ps -ef | grep colin115
+  ps -lu colin115
+  ```
 
-### 分析线程栈
+- 查询进程ID（适合只记得部分进程字段）
 
-### 综合运用
+  ```bash
+  pgrep 查找进程
+
+  # 查询进程名中含有re的进程
+  pgrep -l re
+  2 kthreadd
+  28 ecryptfs-kthrea
+  29515 redis-server
+  ```
+
+- 以完整的格式显示所有的进程
+  ```
+  ps -ajx
+  ```
+
+#### 2.6.1.2. lsof 条件查询与位进程打开文件列表
+
+- lsof（list open files）是一个列出当前系统打开文件的工具。
+  - 在linux环境下，任何事物都以文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。
+  - 所以如传输控制协议 (TCP) 和用户数据报协议 (UDP) 套接字等； 在查询网络端口时，经常会用到这个工具。
+
+- 查看端口占用的进程状态：
+
+  ```bash
+  # -i<条件>：列出符合条件的进程。（4、6、协议、:端口、 @ip ）
+  lsof -i:3306
+  ```
+
+- 查看用户username的进程所打开的文件
+
+  ```bash
+  $lsof -u username
+  ```
+
+- 查询init进程当前打开的文件
+
+  ```bash
+  $lsof -c init
+  ```
+
+- 查询指定的进程ID(23295)打开的文件：
+
+  ```bash
+  $lsof -p 23295
+  ```
+
+- 查询指定目录下被进程开启的文件（使用+D 递归目录）：
+
+  ```bash
+  $lsof +d mydir1/
+  ```
+
+### 2.6.2. 终止进程
+
+- 杀死指定PID的进程 (PID为Process ID)
+
+  ```bash
+  kill PID
+  ```
+
+- 杀死相关进程
+
+  ```bash
+  kill -9 3434
+  ```
+
+- 杀死job工作 (job为job number)
+
+  ```bash
+  kill %job
+  ```
+
+### 2.6.3. 进程监控
+
+- 查看系统中使用CPU、使用内存最多的进程；
+
+  ```bash
+  top
+  ```
+
+  - 输入top命令后，进入到交互界面；接着输入字符命令后显示相应的进程状态：
+  - 对于进程，平时我们最常想知道的就是哪些进程占用CPU最多，占用内存最多。
+
+  ```
+  P：根据CPU使用百分比大小进行排序。
+  M：根据驻留内存大小进行排序。
+  i：使top不显示任何闲置或者僵死进程。
+  ```
+
+  - 对于更详细的使用，详见 [top linux下的任务管理器](https://tkstorm.com/linux-doc/tool/top.html#top) ;
+
+### 2.6.4. 分析线程栈
+
+- 使用命令pmap，来输出进程内存的状况，可以用来分析线程堆栈；
+
+  ```
+  $pmap PID
+
+  eg:
+  [/home/weber#]ps -fe| grep redis
+  weber    13508 13070  0 08:14 pts/0    00:00:00 grep --color=auto redis
+  weber    29515     1  0  2013 ?        02:55:59 ./redis-server redis.conf
+  [/home/weber#]pmap 29515
+  29515:   ./redis-server redis.conf
+  08048000    768K r-x--  /home/weber/soft/redis-2.6.16/src/redis-server
+  08108000      4K r----  /home/weber/soft/redis-2.6.16/src/redis-server
+  08109000     12K rw---  /home/weber/soft/redis-2.6.16/src/redis-server
+  ```
+
+### 2.6.5. 综合运用
+
+- 将用户colin115下的所有进程名以av_开头的进程终止:
+
+  ```bash
+  ps -u colin115 |  awk '/av_/ {print "kill -9 " $1}' | sh
+  ```
+
+- 将用户colin115下所有进程名中包含HOST的进程终止:
+
+  ```bash
+  ps -fe| grep colin115|grep HOST |awk '{print $2}' | xargs kill -9;
+  ```
 
 ## 2.7. 网络工具
+
+### 2.7.1. netstat 查询网络服务和端口
+
+> netstat 命令用于显示各种网络相关信息，如网络连接，路由表，接口状态 (Interface Statistics)，masquerade 连接，多播成员 (Multicast Memberships) 等等。
+
+- 列出所有端口 (包括监听和未监听的):
+
+  ```bash
+  netstat -a
+  ```
+
+- 列出所有 tcp 端口:
+
+  ```bash
+  netstat -at
+
+  netstat -au # udp
+  ```
+
+- 列出所有有监听的服务状态:
+
+  ```bash
+  netstat -l
+  ```
+
+- 使用netstat工具查询端口:
+
+  ```bash
+  netstat -antp | grep 6379
+  tcp        0      0 127.0.0.1:6379          0.0.0.0:*               LISTEN      25501/redis-server
+
+  ps 25501
+    PID TTY      STAT   TIME COMMAND
+  25501 ?        Ssl   28:21 ./redis-server ./redis.conf
+  ```
+
+- lsof（list open files）是一个列出当前系统打开文件的工具。
+  - 在linux环境下，任何事物都以文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。
+  - 所以如传输控制协议 (TCP) 和用户数据报协议 (UDP) 套接字等； 在查询网络端口时，经常会用到这个工具。
+  - 查询7902端口现在运行什么程序:
+
+    ```bash
+    #分为两步
+    #第一步，查询使用该端口的进程的PID；
+    lsof -i:7902
+    COMMAND   PID   USER   FD   TYPE    DEVICE SIZE NODE NAME
+    WSL     30294 tuapp    4u  IPv4 447684086       TCP 10.6.50.37:tnos-dp (LISTEN)
+    
+    #查到30294
+    #使用ps工具查询进程详情：
+    ps -fe | grep 30294
+    tdev5  30294 26160  0 Sep10 ?        01:10:50 tdesl -k 43476
+    root     22781 22698  0 00:54 pts/20   00:00:00 grep 11554
+    ```
+
+
+### 2.7.2. 网络路由(route,ping,traceroute,host)
+
+- 查看路由状态:
+
+  ```bash
+  route -n
+  ```
+
+- 发送ping包到地址IP:
+
+  ```bash
+  ping IP
+  ```
+
+- 探测前往地址IP的路由路径:
+
+  ```bash
+  traceroute IP
+  ```
+
+- DNS查询，寻找域名domain对应的IP:
+
+  ```bash
+  host domain
+  ```
+
+- 反向DNS查询:
+
+  ```bash
+  host IP
+  ```
+
+### 2.7.3. wget 下载
+
+- 直接下载文件或者网页:
+
+  ```bash
+  wget url
+
+  # –limit-rate :下载限速
+  # -o：指定日志文件；输出都写入日志；
+  # -c：断点续传
+  ```
+
+### 2.7.4. ftp sftp lftp ssh
+
+- SSH登陆:
+
+  ```bash
+  ssh ID@host
+
+  # ssh登陆远程服务器host，ID为用户名。
+  ```
+
+- ftp/sftp文件传输:
+
+  ```bash
+  sftp ID@host # 登陆服务器host，ID为用户名。
+
+  # sftp登陆后，可以使用下面的命令进一步操作：
+    # get filename # 下载文件
+    # put filename # 上传文件
+    # ls # 列出host上当前路径的所有文件
+    # cd # 在host上更改当前路径
+    # lls # 列出本地主机上当前路径的所有文件
+    # lcd # 在本地主机更改当前路径
+  ```
+
+- lftp同步文件夹(类似rsync工具):
+
+  ```bash
+  lftp -u user:pass host
+  lftp user@host:~> mirror -n
+  ```
+
+### 2.7.5. scp 网络复制
+
+- 将本地localpath指向的文件上传到远程主机的path路径:
+
+  ```bash
+  $scp localpath ID@host:path
+  ```
+
+- 以ssh协议，遍历下载path路径下的整个文件系统，到本地的localpath:
+
+  ```bash
+  $scp -r ID@site:path localpath
+  ```
 
 ## 2.8. 用户管理工具
 
@@ -1391,7 +1662,7 @@ done
 
 ## 2.12. 网络管理
 
-## 远程管理命令
+## 2.13. 远程管理命令
 
 - 免密登录
   ```bash
@@ -1402,9 +1673,45 @@ done
 
 # 3. Linux工具参考
 
-## 3.1. Linux Crontab 定时任务
+## 3.1. gdb 调试利器
 
-### 3.1.1. 介绍
+## 3.2. ldd 查看程序依赖库
+
+## 3.3. lsof 一切皆文件
+
+## 3.4. ps 进程查看器
+
+## 3.5. pstack 跟踪进程栈
+
+## 3.6. strace 跟踪进程中的系统调用
+
+## 3.7. ipcs 查询进程间通信状态
+
+## 3.8. top linux 下的任务管理器
+
+## 3.9. free 查询可用内存
+
+## 3.10. vmstat 监视内存使用情况
+
+## 3.11. iostat 监视 I/O 子系统
+
+## 3.12. sar 找出系统瓶颈的利器
+
+## 3.13. readelf elf 文件格式分析
+
+## 3.14. objdump 二进制文件分析
+
+## 3.15. nm 目标文件格式分析
+
+## 3.16. size 查看程序内存映像大小
+
+## 3.17. wget 文件下载
+
+## 3.18. scp 跨机远程拷贝
+
+## 3.19. crontab 定时任务
+
+### 3.19.1. 介绍
 
 - crontab命令
   - 是cron table的简写
@@ -1419,7 +1726,7 @@ done
     - /etc/cron.weekly
     - /etc/cron.monthly
 
-### 3.1.2. 使用
+### 3.19.2. 使用
 
 - 语法
   ```bash
@@ -1443,7 +1750,7 @@ done
     - - 从X到Z
     - ，散列数字
 
-### 3.1.3. 实例
+### 3.19.3. 实例
 
 - 实例 1：每 1 分钟执行一次 myCommand
   ```bash
@@ -1494,9 +1801,9 @@ done
   0 23-7/1 * * * /etc/init.d/smb restart
   ```
 
-## 内网穿透frp
+## 3.20. 内网穿透frp
 
-### 基本说明
+### 3.20.1. 基本说明
 
 - 说明
   - 简单地说，frp就是一个反向代理软件，
@@ -1506,7 +1813,7 @@ done
 
   ![linux-1](./image/linux-1.png)
 
-### 服务端设置
+### 3.20.2. 服务端设置
 
 - **部署在vps上**
 - 下载frp
@@ -1547,7 +1854,7 @@ done
 
 - 启动：`./start_server.sh`
 
-### 客户端设置
+### 3.20.3. 客户端设置
 
 - 安装
   ```bash
@@ -1603,7 +1910,7 @@ done
 - 注意：**一个服务端可以同时给多个客户端使用**
 - 启动客户端 `./frpc.exe -c frpc.ini`
 
-## neofetch
+## 3.21. neofetch
 
 - 安装 epel-release
   ```bash
@@ -1621,7 +1928,11 @@ done
 
   ![linux-2](./image/linux-2.png)
 
-# 4. shell script
+# 4. bash
+
+> [bash-handbook](./bash.md)
+
+<!-- TODO: 小任务，这里看看有没有什么有用的东西整理到bash.md -->
 
 ## 4.1. 开始
 
@@ -2141,7 +2452,7 @@ done
 
 ## 6.2. 系统文件
 
-### /etc/inittab
+### 6.2.1. /etc/inittab
 
 - 计算机开机-->计算机内核进内存-->加载根目录分区进内存-->引导 sbin 目录下 init 程序作为第一个进程-->该进程读取/etc/inittab 中的开机设置
   > 小知识
@@ -2152,7 +2463,7 @@ done
   - 1 是单用户模式（物理服务器身边，重启时可以设置，不需要密码登录，修改密码时用）
   - 不过 linux 中图形界面并没有在内核代码中，需要安装后台程序
 
-### /etc/passwd
+### 6.2.2. /etc/passwd
 
 - /etc/passwd 文件
   - `root:x:0:0:root:/root:/bin/bash`
@@ -2166,6 +2477,9 @@ done
 
 - [ ] [linux常用命令](https://tkstorm.com/linux-doc/)
 - [x] [使用frp进行内网穿透](https://sspai.com/post/52523)
+- [ ] **[bash-handbook-zh-CN](https://github.com/denysdovhan/bash-handbook/blob/master/translations/zh-CN/README.md)**
+  - [基于上述文档的shell学习平台](https://git.io/learnyoubash)
+- [ ] [explain shell:shell命令解释](https://explainshell.com/)
 - [ ] [shell基础](https://github.com/52fhy/shell-book)
 - [ ] [Linux Command](https://github.com/jaywcjlove/linux-command)
 - [ ] [一文掌握 Linux 性能分析之内存篇](https://segmentfault.com/a/1190000018553950)

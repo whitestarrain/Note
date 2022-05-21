@@ -1277,7 +1277,7 @@ object SaveAsTextFile {
 
 # 4. SparkStreaming-Kafuka
 
-[kafka笔记](../Middleware/kafka/kafka.md)
+[kafka笔记](../Middleware/kafka.md)
 
 ## 4.1. Reciver模式
 

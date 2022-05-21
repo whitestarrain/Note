@@ -296,7 +296,7 @@
     - 弊端： 如果有某个成员必须有值，则获取对象时有可能 set 方法没有执行。（也就是忘了写）
   - 第三种：使用注解提供（之后的内容）
 
-## IoC和DI是什么关系
+## 1.6. IoC和DI是什么关系
 
 - 谁依赖于谁？
   - 当然是应用程序依赖于IoC容器
@@ -2516,11 +2516,564 @@ public class JdbcConfig {
 
 ## 5.3. 事务失效情况分析
 
-# Spring IOC实现原理
+### 5.3.1. 事务不生效
 
-## IOC体系设计
+#### 5.3.1.1. 访问权限问题
 
-### 站在设计者的角度考虑设计IOC容器
+- 说明：
+  - 事务方法被定义为了private
+  - spring要求被代理方法必须是public的。
+- 示例
+
+  ```java
+  @Service
+  public class UserService {
+      
+      @Transactional
+      private void add(UserModel userModel) {
+          saveData(userModel);
+          updateData(userModel);
+      }
+  }
+  ```
+
+- 源码解析
+  - 在`AbstractFallbackTransactionAttributeSource`类的`computeTransactionAttribute`方法中有个判断
+  - 如果目标方法不是public，则`TransactionAttribute`返回null，即不支持事务。
+
+  ```java
+  protected TransactionAttribute computeTransactionAttribute(Method method, @Nullable Class<?> targetClass) {
+      // Don't allow no-public methods as required.
+      if (allowPublicMethodsOnly() && !Modifier.isPublic(method.getModifiers())) {
+        return null;
+      }
+
+      // The method may be on an interface, but we need attributes from the target class.
+      // If the target class is null, the method will be unchanged.
+      Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
+
+      // First try is the method in the target class.
+      TransactionAttribute txAttr = findTransactionAttribute(specificMethod);
+      if (txAttr != null) {
+        return txAttr;
+      }
+
+      // Second try is the transaction attribute on the target class.
+      txAttr = findTransactionAttribute(specificMethod.getDeclaringClass());
+      if (txAttr != null && ClassUtils.isUserLevelMethod(method)) {
+        return txAttr;
+      }
+
+      if (specificMethod != method) {
+        // Fallback is to look at the original method.
+        txAttr = findTransactionAttribute(method);
+        if (txAttr != null) {
+          return txAttr;
+        }
+        // Last fallback is the class of the original method.
+        txAttr = findTransactionAttribute(method.getDeclaringClass());
+        if (txAttr != null && ClassUtils.isUserLevelMethod(method)) {
+          return txAttr;
+        }
+      }
+      return null;
+    }
+  ```
+
+#### 5.3.1.2. 方法使用final或者static修饰
+
+- 说明
+  - 有时候，某个方法不想被子类重新，这时可以将该方法定义成final的。
+  - 普通方法这样定义是没问题的，但如果将事务方法定义成final，会导致事务失效。
+
+- 示例：
+
+  ```java
+  @Service
+  public class UserService {
+
+      @Transactional
+      public final void add(UserModel userModel){
+          saveData(userModel);
+          updateData(userModel);
+      }
+  }
+  ```
+
+- 解析
+  - 可能会知道spring事务底层使用了aop，也就是通过jdk动态代理或者cglib，帮我们生成了代理类，在代理类中实现的事务功能。
+  - 但如果某个方法用final修饰了，那么在它的代理类中，就无法重写该方法，而添加事务功能。
+  - 注意：如果某个方法是static的，同样无法通过动态代理，变成事务方法。
+
+#### 5.3.1.3. 同类方法内部调用
+
+- 说明：事务方法调用事务方法，会导致事务失效
+- 示例
+
+  ```java
+  @Service
+  public class UserService {
+
+      @Autowired
+      private UserMapper userMapper;
+
+      @Transactional
+      public void add(UserModel userModel) {
+          userMapper.insertUser(userModel);
+          updateStatus(userModel);
+      }
+
+      @Transactional
+      public void updateStatus(UserModel userModel) {
+          doSameThing();
+      }
+  }
+  ```
+- 解析
+  - updateStatus方法拥有事务的能力是因为spring aop生成代理了对象，
+    > 生成代理对象后，注入代理对象，所以用的是代理对象的方法。直接内部调用不会使用代理方法
+  - 但是这种方法直接调用了this对象的方法，所以updateStatus方法不会生成事务。
+  - 由此可见，在同一个类中的方法直接内部调用，会导致事务失效。
+
+- 解决方式：
+  - 新加一个Service方法
+    - 这个方法非常简单，只需要新加一个Service方法
+    - 把@Transactional注解加到新Service方法上，把需要事务执行的代码移到新方法中。具体代码如下：
+
+      ```java
+      @Servcie
+      public class ServiceA {
+        @Autowired
+        prvate ServiceB serviceB;
+
+        public void save(User user) {
+              queryData1();
+              queryData2();
+              serviceB.doSave(user);
+        }
+      }
+
+      @Servcie
+      public class ServiceB {
+
+          @Transactional(rollbackFor=Exception.class)
+          public void doSave(User user) {
+            addData1();
+            updateData2();
+          }
+
+      }
+      ```
+  - 如果不想再新加一个Service类，在该Service类中注入自己也是一种选择。
+
+      ```java
+      @Servcie
+      public class ServiceA {
+        @Autowired
+        prvate ServiceA serviceA;
+
+        public void save(User user) {
+              queryData1();
+              queryData2();
+              serviceA.doSave(user);
+        }
+
+        @Transactional(rollbackFor=Exception.class)
+        public void doSave(User user) {
+            addData1();
+            updateData2();
+          }
+      }
+
+      ```
+      - spring ioc内部的三级缓存保证了它，不会出现循环依赖问题。
+
+  - 通过AopContent类，在该Service类中使用AopContext.currentProxy()获取代理对象
+    - 上面的方法2确实可以解决问题，但是代码看起来并不直观，
+    - 还可以通过在该Service类中使用AOPProxy获取代理对象，实现相同的功能。具体代码如下：
+
+    ```java
+    @Servcie
+    public class ServiceA {
+
+      public void save(User user) {
+            queryData1();
+            queryData2();
+            ((ServiceA)AopContext.currentProxy()).doSave(user);
+      }
+
+      @Transactional(rollbackFor=Exception.class)
+      public void doSave(User user) {
+          addData1();
+          updateData2();
+        }
+    }
+    ```
+
+
+#### 5.3.1.4. 未被spring管理
+
+- 说明
+  - 在使用spring事务的前提是：对象要被spring管理，需要创建bean实例。
+  - 通常情况下，我们通过@Controller、@Service、@Component、@Repository等注解，可以自动实现bean实例化和依赖注入的功能。
+  - 如果不交给spring管理，就无法生成代理类，使用Spring事务
+
+- 示例
+
+  ```java
+  //@Service
+  public class UserService {
+
+      @Transactional
+      public void add(UserModel userModel) {
+          saveData(userModel);
+          updateData(userModel);
+      }    
+  }
+  ```
+
+#### 5.3.1.5. 多线程调用
+
+- 示例
+
+  ```
+  @Slf4j
+  @Service
+  public class UserService {
+
+      @Autowired
+      private UserMapper userMapper;
+      @Autowired
+      private RoleService roleService;
+
+      @Transactional
+      public void add(UserModel userModel) throws Exception {
+          userMapper.insertUser(userModel);
+          new Thread(() -> {
+              roleService.doOtherThing();
+          }).start();
+      }
+  }
+
+  @Service
+  public class RoleService {
+
+      @Transactional
+      public void doOtherThing() {
+          System.out.println("保存role表数据");
+      }
+  }
+  ```
+
+- 说明/解析
+  - 从上面的例子中，事务方法add中，调用了事务方法doOtherThing，但是事务方法doOtherThing是在另外一个线程中调用的。
+  - **这样会导致两个方法不在同一个线程中，获取到的数据库连接不一样，从而是两个不同的事务** 
+  - 如果想doOtherThing方法中抛了异常，add方法也回滚是不可能的。
+  - spring的事务是通过数据库连接来实现的。当前线程中保存了一个map，key是数据源，value是数据库连接。
+
+    ```java
+    private static final ThreadLocal<Map<Object, Object>> resources = new NamedThreadLocal<>("Transactional resources");
+    ```
+    - 同一个事务，其实是指同一个数据库连接
+    - 只有拥有同一个数据库连接才能同时提交和回滚
+    - 如果在不同的线程，拿到的数据库连接肯定是不一样的，所以是不同的事务。
+
+#### 5.3.1.6. 原始SSM项目，重复扫描导致事务失效
+
+#### 5.3.1.7. 表不支持事务
+
+- 说明：myisam引擎的表不支持事务
+
+#### 5.3.1.8. 未开启事务
+
+- 说明：
+  - springboot通过DataSourceTransactionManagerAutoConfiguration类，已经自动开启了事务。
+  - 但使用的是传统的spring项目，则需要在applicationContext.xml文件中，手动配置事务相关参数
+    - 如果忘了配置，事务肯定是不会生效的。
+
+  ```xml
+    
+  <!-- 配置事务管理器 --> 
+  <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager"> 
+      <property name="dataSource" ref="dataSource"></property> 
+  </bean> 
+  <tx:advice id="advice" transaction-manager="transactionManager"> 
+      <tx:attributes> 
+          <tx:method name="*" propagation="REQUIRED"/>
+      </tx:attributes> 
+  </tx:advice> 
+  <!-- 用切点把事务切进去 --> 
+  <aop:config> 
+      <aop:pointcut expression="execution(* com.susan.*.*(..))" id="pointcut"/> 
+      <aop:advisor advice-ref="advice" pointcut-ref="pointcut"/> 
+  </aop:config> 
+  ```
+
+### 5.3.2. 事务不回滚
+
+#### 5.3.2.1. 错误的传播特性
+
+- 说明
+  - 在使用`@Transactional`注解时，是可以指定`propagation`参数的。
+  - 该参数的作用是指定事务的传播特性，spring目前支持7种传播特性：
+    - `REQUIRED` 如果当前上下文中存在事务，那么加入该事务，如果不存在事务，创建一个事务，这是默认的传播属性值。
+    - `SUPPORTS` 如果当前上下文存在事务，则支持事务加入事务，如果不存在事务，则使用非事务的方式执行。
+    - `MANDATORY` 如果当前上下文中存在事务，否则抛出异常。
+    - `REQUIRES_NEW` 每次都会新建一个事务，并且同时将上下文中的事务挂起，执行当前新建事务完成以后，上下文事务恢复再执行。
+    - `NOT_SUPPORTED` 如果当前上下文中存在事务，则挂起当前事务，然后新的方法在没有事务的环境中执行。
+    - `NEVER` 如果当前上下文中存在事务，则抛出异常，否则在无事务环境上执行代码。
+    - `NESTED` 如果当前上下文中存在事务，则嵌套事务执行，如果不存在事务，则新建事务。
+
+- 示例：如果我们在手动设置propagation参数的时候，把传播特性设置错了，比如：
+
+  ```java
+  @Service
+  public class UserService {
+
+      @Transactional(propagation = Propagation.NEVER)
+      public void add(UserModel userModel) {
+          saveData(userModel);
+          updateData(userModel);
+      }
+  }
+  ```
+
+  - 可以看到add方法的事务传播特性定义成了Propagation.NEVER，这种类型的传播特性不支持事务，如果有事务则会抛异常。
+  - 目前只有这三种传播特性才会创建新事务：REQUIRED，REQUIRES_NEW，NESTED。
+
+#### 5.3.2.2. 自己捕获了异常
+
+- 说明：
+  - 事务不会回滚，最常见的问题是：开发者在代码中手动try...catch了异常。
+  - 这种情况下spring事务当然不会回滚，因为开发者自己捕获了异常，又没有手动抛出，换句话说就是把异常吞掉了。
+  - 如果想要spring事务能够正常回滚，必须抛出它能够处理的异常。如果没有抛异常，则spring认为程序是正常的。
+- 示例
+
+  ```java
+  @Slf4j
+  @Service
+  public class UserService {
+      
+      @Transactional
+      public void add(UserModel userModel) {
+          try {
+              saveData(userModel);
+              updateData(userModel);
+          } catch (Exception e) {
+              log.error(e.getMessage(), e);
+          }
+      }
+  }
+  ```
+
+#### 5.3.2.3. 手动抛了别的异常
+
+- 即使开发者没有手动捕获异常，但如果抛的异常不正确，spring事务也不会回滚。
+- 示例
+
+  ```java
+  @Slf4j
+  @Service
+  public class UserService {
+      
+      @Transactional
+      public void add(UserModel userModel) throws Exception {
+          try {
+              saveData(userModel);
+              updateData(userModel);
+          } catch (Exception e) {
+              log.error(e.getMessage(), e);
+              throw new Exception(e);
+          }
+      }
+  }
+  ```
+  - 上面的这种情况，开发人员自己捕获了异常，又手动抛出了异常：Exception，事务同样不会回滚。
+  - 因为spring事务， **默认情况下只会回滚RuntimeException（运行时异常）和Error（错误）**
+  - 对于普通的Exception（非运行时异常），它不会回滚。
+
+#### 5.3.2.4. 自定义了回滚异常
+
+- 说明：
+  - 在使用@Transactional注解声明事务时，有时我们想自定义回滚的异常，spring也是支持的
+  - 可以通过设置rollbackFor参数，来完成这个功能。
+
+- 但如果这个参数的值设置错了，就会引出一些莫名其妙的问题，例如：
+
+  ```java
+  @Slf4j
+  @Service
+  public class UserService {
+      
+      @Transactional(rollbackFor = BusinessException.class)
+      public void add(UserModel userModel) throws Exception {
+        saveData(userModel);
+        updateData(userModel);
+      }
+  }
+  ```
+  - 如果在执行上面这段代码，保存和更新数据时，程序报错了，抛了SqlException、DuplicateKeyException等异常
+  - 而BusinessException是我们自定义的异常，报错的异常不属于BusinessException，所以事务也不会回滚。
+  - 即使rollbackFor有默认值，但阿里巴巴开发者规范中，还是要求开发者重新指定该参数。
+  - 这是因为如果使用默认值，一旦程序抛出了Exception，事务不会回滚，这会出现很大的bug。
+  - **所以，建议一般情况下，将该参数设置成：Exception或Throwable** 。
+
+#### 5.3.2.5. 嵌套事务回滚多了
+
+- 示例：
+
+  ```java
+  public class UserService {
+
+      @Autowired
+      private UserMapper userMapper;
+
+      @Autowired
+      private RoleService roleService;
+
+      @Transactional
+      public void add(UserModel userModel) throws Exception {
+          userMapper.insertUser(userModel);
+          roleService.doOtherThing();
+      }
+  }
+
+  @Service
+  public class RoleService {
+
+      @Transactional(propagation = Propagation.NESTED)
+      public void doOtherThing() {
+          System.out.println("保存role表数据");
+      }
+  }
+  ```
+
+  - 这种情况使用了嵌套的内部事务
+  - 原本是希望调用roleService.doOtherThing方法时，如果出现了异常，只回滚doOtherThing方法里的内容，不回滚 userMapper.insertUser里的内容
+  - 即回滚保存点。但事实是，insertUser也回滚了。
+  - 因为doOtherThing方法出现了异常，没有手动捕获，会继续往上抛，到外层add方法的代理方法中捕获了异常。
+  - 所以，这种情况是直接回滚了整个事务，不只回滚单个保存点。
+
+- 怎么样才能只回滚保存点呢？
+
+  ```java
+  @Slf4j
+  @Service
+  public class UserService {
+
+      @Autowired
+      private UserMapper userMapper;
+
+      @Autowired
+      private RoleService roleService;
+
+      @Transactional
+      public void add(UserModel userModel) throws Exception {
+
+          userMapper.insertUser(userModel);
+          try {
+              roleService.doOtherThing();
+          } catch (Exception e) {
+              log.error(e.getMessage(), e);
+          }
+      }
+  }
+  ```
+  - 可以将内部嵌套事务放在try/catch中，并且不继续往上抛异常。
+  - 这样就能保证，如果内部嵌套事务中出现异常，只回滚内部事务，而不影响外部事务。
+
+### 5.3.3. 其他
+
+#### 5.3.3.1. 大事务问题
+
+- 示例：通常情况下，我们会在方法上@Transactional注解，填加事务功能
+
+  ```java
+  @Service
+  public class UserService {
+      
+      @Autowired 
+      private RoleService roleService;
+      
+      @Transactional
+      public void add(UserModel userModel) throws Exception {
+        query1();
+        query2();
+        query3();
+        roleService.save(userModel);
+        update(userModel);
+      }
+  }
+
+  @Service
+  public class RoleService {
+      
+      @Autowired 
+      private RoleService roleService;
+      
+      @Transactional
+      public void save(UserModel userModel) throws Exception {
+        query4();
+        query5();
+        query6();
+        saveData(userModel);
+      }
+  }
+  ```
+
+  - 但@Transactional注解，如果被加到方法上，有个缺点就是整个方法都包含在事务当中了。
+  - 上面的这个例子中，在UserService类中，其实只有这两行才需要事务：
+
+    ```java
+    roleService.save(userModel);
+    update(userModel);
+    ```
+  - 在RoleService类中，只有这一行需要事务：
+
+    ```
+    saveData(userModel);
+    ```
+
+  - 现在的这种写法，会导致所有的query方法也被包含在同一个事务当中。
+  - 如果query方法非常多，调用层级很深，而且有部分查询方法比较耗时的话，会造成整个事务非常耗时，而从造成大事务问题。
+
+- 具体解决：[让人头痛的大事务问题到底要如何解决？](https://mp.weixin.qq.com/s?__biz=MzkwNjMwMTgzMQ==&mid=2247490259&idx=1&sn=1dd11c5f49103ca303a61fc82ce406e0&source=41#wechat_redirect)
+
+
+#### 5.3.3.2. 编程式事务
+
+- 说明：
+  - 上面的内容都是基于`@Transactional`注解的，主要说的是它的事务问题，我们把这种事务叫做：`声明式事务`。
+  - 其实，spring还提供了另外一种创建事务的方式，即通过手动编写代码实现的事务，我们把这种事务叫做：`编程式事务`。
+
+- 示例
+  ```java
+  @Autowired
+  private TransactionTemplate transactionTemplate;
+  
+  ...
+  
+  public void save(final User user) {
+        queryData1();
+        queryData2();
+        transactionTemplate.execute((status) => {
+            addData1();
+            updateData2();
+            return Boolean.TRUE;
+        })
+  }
+  ```
+
+  - 在spring中为了支持编程式事务，专门提供了一个类：TransactionTemplate，在它的execute方法中，就实现了事务的功能。
+  - 相较于`@Transactional`注解声明式事务，更建议大家使用，基于`TransactionTemplate`的编程式事务。主要原因如下：
+    - 避免由于spring aop问题，导致事务失效的问题。
+    - 能够更小粒度的控制事务的范围，更直观。
+
+# 6. Spring IOC实现原理
+
+## 6.1. IOC体系设计
+
+### 6.1.1. 站在设计者的角度考虑设计IOC容器
 
 - 在设计时，首先需要考虑的是 IOC 容器的功能（输入和输出), 承接前面的文章，我们初步的画出 IOC 容器的整体功能。
 
@@ -2536,40 +3089,42 @@ public class JdbcConfig {
     - 比如用工厂模式管理，提供方法根据名字/类的类型等从容器中获取 Bean
   - ...
 
-### Spring IoC的体系结构设计
+### 6.1.2. Spring IoC的体系结构设计
 
-#### BeanFactory和BeanRegistry：IOC容器功能规范和Bean的注册 
+#### 6.1.2.1. BeanFactory和BeanRegistry：IOC容器功能规范和Bean的注册 
 
-##### BeanFactory定义了IOC 容器基本功能规范？
+##### 6.1.2.1.1. BeanFactory定义了IOC 容器基本功能规范？
 
-##### BeanFactory为何要定义这么多层次的接口？定义了哪些接口？
+##### 6.1.2.1.2. BeanFactory为何要定义这么多层次的接口？定义了哪些接口？
 
-##### 如何将Bean注册到BeanFactory中？
+##### 6.1.2.1.3. 如何将Bean注册到BeanFactory中？
 
-#### BeanRegistry BeanDefinition：各种Bean对象及其相互的关系 
+#### 6.1.2.2. BeanRegistry BeanDefinition：各种Bean对象及其相互的关系 
 
-##### ApplicationContext：IOC接口设计和实现 
+##### 6.1.2.2.1. ApplicationContext：IOC接口设计和实现 
 
 > ApplicationContext接口的设计 
 
 > ApplicationContext接口的实现
 
-## 初始化
+## 6.2. 初始化
 
-## Bean实例化(声明周期与循环依赖)
+## 6.3. Bean实例化(声明周期与循环依赖)
 
-# Spring AOP实现原理
+# 7. Spring AOP实现原理
 
-## 切面实现详解
+## 7.1. 切面实现详解
 
-## AOP代理
+## 7.2. AOP代理
 
-# 7. SPEL
+# 8. SPEL
 
-# 8. 参考资料
+# 9. 参考资料
 
-- [ ] [Spring 事务失效的 12 个场景](https://z.itpub.net/article/detail/18A4D9564A61EC7AF8EAA66FCA251444)
+- [x] [Spring 事务失效的 12 个场景](https://z.itpub.net/article/detail/18A4D9564A61EC7AF8EAA66FCA251444)
+- [ ] [事务失效的场景？](https://segmentfault.com/a/1190000022420927)
 - [ ] [@Transactional 提交时间点的分析](https://mp.weixin.qq.com/s/how7s_dxWGmmDja14WIAXw)
+- [ ] [spring：我是如何解决循环依赖的？](https://mp.weixin.qq.com/s?__biz=MzkwNjMwMTgzMQ==&mid=2247490271&idx=1&sn=e4476b631c48882392bd4cd06d579ae9&source=41#wechat_redirect)
   <!-- TODO:spring循环依赖啥的，完善一下吧 -->
 - [ ] [java 全栈知识体系-Spring 框架知识体系详解](https://www.pdai.tech/md/spring/spring.html)
 - [ ] [大场面试题第三季](https://blog.csdn.net/oneby1314/category_10692968.html)

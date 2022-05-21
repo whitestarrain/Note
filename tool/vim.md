@@ -9,6 +9,8 @@
 	- esc
 	- C-[
 
+- 查看功能键映射字符`:h key-notation`
+
 ## 1.2. 移动
 
 - hjkl:移动

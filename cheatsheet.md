@@ -6,7 +6,9 @@
 
 ## [bash与linux命令 速查](./base/bash_cheatsheet.sh) 
 
-## [bash速查](./base/shell_quick_note.txt)
+## [bash速查](./base/References/bash_quick_note.txt)
 
-## [参考](https://github.com/skywind3000/awesome-cheatsheets)
+## 参考
+
+- [awesome-cheatsheets](https://github.com/skywind3000/awesome-cheatsheets)
 

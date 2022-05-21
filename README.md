@@ -1,10 +1,78 @@
+> **我对自己的大脑很有信心，它早晚会把我学的东西忘得一干二净，所以就有了这个仓库**
+>
+> 记笔记是为了以后查起来方便。看过的东西，就算没有整理，基本上也都会搞一下目录和参考资料
+>
+> 里面的笔记不全是我自己写的，时间有限，既然有现成的笔记，拿过来改改整理一下也是一种不错的方式。(当然会注明出处)
+>
 > 本人也在学习过程中，欢迎参与此仓库的完善与讨论
 
-# 目录索引
+# 目录索引(未整理完)
 
 > 我个人比较喜欢**尽可能得把所有笔记整理在一个文件上面**，因此有些笔记文件可能很大，加载可能会慢一些。
 
-> 目录索引待补充，根据文件夹名称应该可以猜个差不多
+- **基础**
+  - [计算机网络基础问题](./base/computer_network_question.md)
+  - [计算机网络知识体系与知识点](./base/computer_network.md)
+    > 没开始整理，只整理了大致结构。具体知识结构整理到了思维导图里面，有时间再整理具体内容
+  - [操作系统基础知识点与问题](./base/os_question.md)
+  - [操作系统基础知识体系与知识点](./base/os.md)
+    > 没开始整理。看上面那个也行。之前打算抽时间重新梳理一下的。不过看上面那个也行
+  - [设计模式](./base/design_pattern.md)
+    > 这东西感觉得经常看啊
+  - [linux常用命令，工具与shell](./base/linux.md)
+    > 抽时间完善中
+  - [编程思想](./base/programming_logic.md)
+    > 鬼知道我啥时候整的这些东西。记得只是想抽时间把大学里学的一些概念性的东西整理一下来着。一个字，杂
+  - [正则表达式](./base/regex.md)
+    > 网上太多教程了，这里就打算记录一下比较生的用法
+- **大数据(笔记没时间更完，看一下[资料](./big_data/资料)吧)** 
+  - [hadoop(hdfs,MR,HBase),hive](./big_data/hadoop.md)
+    > 好像是以前跟着视频边学边记的。更到HBase后就没时间更了。
+  - [storm](./big_data/storm.md)
+    > 记了一些基础
+  - [scala基本语法](./big_data/scala.md)
+    > 学spark必学
+  - [spark](./big_data/spark.md)
+    > spark笔记，也是更到一半就没时间更了
+  - [flink](./big_data/flink.md)
+    > 基本上没记多少笔记
+  - [elasticsearch](./big_data/elasticsearch.md)
+    > 边学边从网上抄的笔记
+- **中间件** 
+  - [lvs,keepalive,](./Middleware/lvs+keepalive.md)
+  - [nginx](./Middleware/nginx.md)
+  - [RabbitMQ](./Middleware/RabbitMQ.md)
+  - [kafka](./Middleware/kafka.md)
+- **容器**
+  - [docker](./container/docker.md)
+    > 占位
+  - [k8s](./container/k8s.md)
+    > 占位
+- **前端** 
+- **python**
+  - [pyqt5](./python/pyqt5.md)
+    > 做一些图像处理的界面还不错
+  - [python爬虫和MongoDB](./python/python爬虫.md)
+- **Java** 
+- **分布式** 
+- **读书笔记** 
+- **人工智能** (深度学习部分没怎么整过)
+  - [numpy,pandas速查](./AI/np,pd_doc.md)
+  - [机器学习基础笔记](./AI/machine_learning.md)
+  - [深度学习框架](./AI/deeplearning_frame.md)
+    > pytorch,tensorflow,caffe等。基本不会自己整理
+  - [深度学习笔记目录](./AI/deep_learning.md)
+    > 没时间整理，推荐找找吴恩达的视频笔记看
+  - [opencv](./AI/opencv.md)
+    > 官方教程整理的文档，英文。整理中
+  - [深度学习工具](./AI/tools.md)
+    > 记录一些常用工具，如wandb。还没开始整理
+  - [模型部署](./AI/module_deploy.md)
+    > 模型轻量化，部署相关
+
+- **C/C++**
+- **[速查表](./cheatsheet.md)** 
+- **其他**
 
 # 思维导图
 
@@ -42,7 +110,7 @@
 - 待做项说明：
   - <del>待做项会以`待`字为开头。放在一行。比如`待整理`，`待补充`</del>
     > 以后还是改成TODO吧，`folke/todo-comments.nvim`挺好用的
-  - 通常会罗列一些资料在下面，待整理以及待完善需要的资料后面也会指明`待整理`，`待完善等`
+  - 通常会以todo列表的形式罗列一些资料在下面，注明待完善以及已经整理完成的资料
 
 # 历史仓库
 
@@ -60,7 +128,7 @@
 
 ```awk
 awk 'BEGIN{
-      target = "../javaFrame/image"
+      target = "../javaFrame/image"  # 图片移动位置
       print target
     }
     {
@@ -74,7 +142,7 @@ awk 'BEGIN{
         print command
         system(command)
       }
-    }' Spring.md
+    }' Spring.md  # 移动图片所关联的md文件
 ```
 
 # 待做项
@@ -122,7 +190,8 @@ awk 'BEGIN{
   - [ ] elasticsearch
   - [ ] ELK
   - [ ] TensorRT
-  - [ ] React
+  - [ ] React <!-- - 个人博客框架 -->
+    - 练手项目：浏览器主页私人订制
   - [ ] Vue
     - **练手项目：博客评论系统前端**
   - 常用JVM
@@ -143,12 +212,13 @@ awk 'BEGIN{
   - [ ] Gossip 协议
   - [x] Raft 协议
   - [ ] SPEL
+  - [ ] 阿里巴巴数据库内核月报目录爬虫
 - lang
   - [ ] C/C++
   - [ ] go
     - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua
-    - [ ] 实现markdown标题编号插件
+    - [ ] 实现markdown标题编号nvim插件
   - [ ] rust
   - [ ] TypeScript
     - [x] 基础
