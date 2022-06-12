@@ -3,6 +3,7 @@
 ## 1.1. 说明
 
 - 说明
+  - 原来项目名叫做 6to5
   - Babel是一个**工具集**，主要用于将ES6版本的JavaScript代码转为ES5等向后兼容的JS代码
   - 从而可以运行在低版本浏览器或其它环境中。
 
@@ -1738,6 +1739,6 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
 
 # 5. 参考资料
 
-- [ ] [Babel 教程](https://www.jiangruitao.com/babel/)
+- [x] [Babel 教程](https://www.jiangruitao.com/babel/)
 - [ ] [前端工程师的自我修养-关于 Babel 那些事儿](https://juejin.cn/post/6844904079118827533#heading-14)
 - [ ] [babel中文文档](https://www.babeljs.cn/)

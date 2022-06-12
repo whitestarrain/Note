@@ -10,6 +10,8 @@
 	- C-[
 
 - 查看功能键映射字符`:h key-notation`
+- 查看keymap设置代码：`verbose map s`
+  > 查看为s设置map的代码位置
 
 ## 1.2. 移动
 
@@ -32,6 +34,8 @@
   > 在可视行模式，选择一块时挺好用的
       - ma 在当前位置做标记，通过'a可以回来
 - L:最后一行行首
+- ctrl-y: 向上滚动屏幕
+- ctrl-e: 向下滚动屏幕
 
 ## 1.3. 搜索
 
@@ -76,16 +80,31 @@
 
 ## 1.6. 插入模式下的编辑操作：
 
-> 终端中编辑适用
-- C-h删除上一个字符
-- C-w删除上一个单词
-- C-u删除当前行
-
 - 仅终端使用：
-- C-a快速移动到开头
-- C-e快速移动到结尾
-- C-b前移
-- C-f后移
+  > 终端中编辑使用
+  - C-a快速移动到开头
+  - C-e快速移动到结尾
+  - C-b前移
+  - C-f后移
+
+- 删除操作
+  - `ctrl-w`删除一个单词
+  - `ctrl-h`删除至航首
+  - `ctrl-h`相当于退格
+- 调整缩进
+  - `ctrl-t`增加缩进
+  - `ctrl-d`减少缩进
+- 复制
+  - `ctrl-y`复制上一行相同列的字符
+  - `ctrl-e`复制下一行相同列的字符
+- 粘贴寄存器内容
+  - `ctrl-r` + `寄存器名称`:插入指定寄存器中的内容，会自动调整缩进
+  - `ctrl-r ctrl-p` + `寄存器名称`: 插入指定寄存器中的内容，按原义插入文本，并不会修正不必要的缩进
+
+- 使用表达式寄存器
+- 输入非常用字符
+- 自动补全
+- 替换模式相关
 
 ## 1.7. 替换
 
@@ -160,13 +179,18 @@
 - tab:容纳一系列窗口的容器。类似工作区。用起来比较少
   - 这里不多说了，看后面的插件
 
-## 1.10. 窗口跳转
+## 1.10. 窗口跳转，移动
 
 - `CTRL-W w` 在各个窗口之间来回切换。每输入一次，切换一个窗口。不停输入，可以遍历所有窗口。在只有两个窗口时很方便来回切换。
 - `CTRL-W j` 光标切换到下一个窗口。
 - `CTRL-W k` 光标切换到上一个窗口。
 - `CTRL-W h` 光标切换到左边窗口。如果左边没有窗口，保持在当前窗口不变。
 - `CTRL-W l` 光标切换到右边窗口。
+- `CTRL-w r` 上下或左右交换窗口
+- `CTRL-w x` 交换同列或同行的窗口的位置
+  - vim默认交换当前窗口的与它下一个窗口的位置
+  - 如果下方没有窗口，则试着与上一个窗口交换位置
+  - 亦可在此命令前加上数量，与制定的窗口交换位置。
 
 ## 1.11. 区域选择和文本对象
 
@@ -815,8 +839,12 @@ Where `^M` is entered by holding down Ctrl and typing v followed by m, and then 
 
 This expression will replace all occurrences of `^M` with the empty string (i.e. nothing). I use this to get rid of `^M` in files copied from Windows to Unix (Solaris, Linux, OSX).
 
-# 8. 参考资料
+# 8. vim启动过程
 
+# 9. 参考资料
+
+- **help**
 - [Vim-一些实用技巧](https://tkstorm.com/posts-list/os/linux/vim-usages/)
 - 《笨方法学vimscript》
 - [What does ^M character mean in Vim?](https://stackoverflow.com/questions/5843495/what-does-m-character-mean-in-vim)
+- [VIM插入模式下的几个命令](https://blog.csdn.net/champwang/article/details/47656463)

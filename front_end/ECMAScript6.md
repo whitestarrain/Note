@@ -513,6 +513,7 @@
   p.then((val) => console.log("Promise Resolved", val),
         (err) => console.log("Promise Rejected", err));
   ```
+
 # 参考资料
 
 - [x] 菜鸟教程

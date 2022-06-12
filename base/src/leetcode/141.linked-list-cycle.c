@@ -76,6 +76,11 @@ struct ListNode {
     struct ListNode* next;
 };
 
+struct Test{
+    int test;
+    struct Test* next;
+};
+
 // @lc code=start
 #include <stdbool.h>
 #include <stdio.h>

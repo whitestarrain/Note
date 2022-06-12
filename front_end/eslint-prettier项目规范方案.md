@@ -40,8 +40,11 @@ vscode 和 vim都有对应使用方法
   };
   ```
 
-  - 以上是使用网上流行的lint规则包eslint-plugin-standard，当然也可以使用其他预设lint，只需安装对应的依赖即可
-  - eslint官方也有预定义的lint规则，比如eslint:recommended，把以上的standard改成eslint:recommended即可，这个不需要安装其他依赖。
+  - 以上是使用网上流行的lint规则包`eslint-plugin-standard`，当然也可以使用其他预设lint，只需安装对应的依赖即可
+  - eslint官方也有预定义的lint规则，比如`eslint:recommended`
+    - 把以上的`standard`改成`eslint:recommended`即可，这个不需要安装其他依赖。
+    - 但是eslint:recommended可能会有把一些node预设变量(如`__dirname`)识别为未定义
+    - **推荐使用standard**
 
 ## 1.2. 配置对vue代码的lint
 

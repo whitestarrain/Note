@@ -49,6 +49,28 @@
   - [k8s](./container/k8s.md)
     > 占位
 - **前端** 
+  - [html基础](./front_end/资料/HTML.md)
+  - [css基础](./front_end/资料/CSS.md)
+  - [css-BFC](./front_end/资料/BFC.md)
+  - [javascript基础](./front_end/资料/JavaScript基础.md)
+  - [javascript深入](./front_end/资料/JavaScript高级.md)
+  - [web api](./front_end/资料/Web-API.md)
+  - [JS模块化规范](./front_end/JS模块化规范.md)
+    > 待整理
+  - [es6规范](./front_end/ECMAScript6.md)
+  - [nodejs](./front_end/Node.js.md)
+  - [babel](./front_end/Babel.md)
+  - [webpack](./front_end/webpack.md)
+    > 待继续整理完善
+  - [vue](./front_end/vue.md)
+    > 待整理
+  - [typescript](./front_end/TypeScript.md)
+  - [react](./front_end/react.md)
+    > 待整理
+  - [flow](./front_end/flow.md)
+    > 静态类型检查
+  - [sass](./front_end/scss.md)
+  - [eslint-prettier项目规范方案](./front_end/eslint-prettier项目规范方案.md)
 - **python**
   - [pyqt5](./python/pyqt5.md)
     > 做一些图像处理的界面还不错
@@ -191,7 +213,8 @@ awk 'BEGIN{
   - [ ] ELK
   - [ ] TensorRT
   - [ ] React <!-- - 个人博客框架 -->
-    - 练手项目：浏览器主页私人订制
+    - 练手项目：浏览器主页私人定制
+    - 练手项目：个人博客定制
   - [ ] Vue
     - **练手项目：博客评论系统前端**
   - 常用JVM
@@ -225,12 +248,14 @@ awk 'BEGIN{
     - [ ] 深入
     - [ ] 命令行工具开发
     - [ ] **练手项目：kakuyomu 小说终端阅读器(包含登录功能)**
+  - kotlin 好像挺火的
 - 机器学习&深度学习
   - [ ] opencv 系统整理
   - [ ] 深度学习笔记系统整理（暂时抽不出时间）
 - 其他
   - [ ] JNI（c++之后）
   - [x] nvim配置模块化(迁移到[dotfiles](https://github.com/whitestarrain/dotfiles))
+  - [ ] [想搞搞树莓派](https://shumeipai.nxez.com/)
 
 <!--
 - [ ] SpringBoot原理
