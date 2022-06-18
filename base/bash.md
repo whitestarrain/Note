@@ -120,6 +120,13 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   #!/bin/bash
   # This script will print your username.
   whoami
+
+  # 多行注释,:和‘间有空格
+  : '
+  This is a
+  multi line
+  comment
+  '
   ```
 
 > **Tip**: 用注释来说明你的脚本是干什么的，以及 _为什么_ 这样写。
@@ -190,7 +197,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
 ## 位置参数
 
 - **位置参数** 是在调用一个函数并传给它参数时创建的变量。
-  - 下表列出了在函数中，位置参数变量和一些其它的特殊变量以及它们的意义。
+  > 下表列出了在函数中，位置参数变量和一些其它的特殊变量以及它们的意义。
 
   | Parameter      | Description                    |
   | :------------- | :----------------------------- |
@@ -218,6 +225,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   - 当被双引号`" "`包含时，`"$@"` 会将各个参数分开，以`"$1" "$2" … "$n"` 的形式输出所有参数。
 - `$?`	上个命令的退出状态，或函数的返回值。
 - `$$`	当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。
+- `$_`  上一个命令的最后一个参数
 
 ## 默认值
 
@@ -320,7 +328,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   - 但是，假如这个值来自某个环境变量，来自一个位置参数，或者来自其它命令（`find`, `cat`, 等等）呢
   - 因此，如果输入 *可能* 包含空格， **务必要用引号把表达式包起来** 。
 
-# 字符串
+# 字符串(Parameter expansions)
 
 ## 拼接
 
@@ -342,7 +350,66 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   echo ${#string}
   ```
 
+## 字符替换
+
+| Code              | Description         |
+| ----------------- | ------------------- |
+| `${FOO%suffix}`   | Remove suffix       |
+| `${FOO#prefix}`   | Remove prefix       |
+| ---               | ---                 |
+| `${FOO%%suffix}`  | Remove long suffix  |
+| `${FOO##prefix}`  | Remove long prefix  |
+| ---               | ---                 |
+| `${FOO/from/to}`  | Replace first match |
+| `${FOO//from/to}` | Replace all         |
+| ---               | ---                 |
+| `${FOO/%from/to}` | Replace suffix      |
+| `${FOO/#from/to}` | Replace prefix      |
+
+```bash
+name="John"
+echo ${name/J/j}    #=> "john" (substitution)
+echo ${food:-Cake}  #=> $food or "Cake"
+```
+
 ## 提取子字符串
+
+- 语法
+
+  | Expression      | Description                    |
+  | --------------- | ------------------------------ |
+  | `${FOO:0:3}`    | Substring *(position, length)* |
+  | `${FOO:(-3):3}` | Substring from the right       |
+
+- 示例
+
+  ```bash
+  name="John"
+  echo ${name:0:2}    #=> "Jo" (slicing)
+  echo ${name::2}     #=> "Jo" (slicing)
+  echo ${name::-1}    #=> "Joh" (slicing)
+  echo ${name:(-1)}   #=> "n" (slicing from right)
+  echo ${name:(-2):1} #=> "h" (slicing from right)
+  ```
+
+## 默认值
+
+- 语法
+
+  | Expression        | Description                                              |
+  | ----------------- | -------------------------------------------------------- |
+  | `${FOO:-val}`     | `$FOO`, or `val` if unset (or null)                      |
+  | `${FOO:=val}`     | Set `$FOO` to `val` if unset (or null)                   |
+  | `${FOO:+val}`     | `val` if `$FOO` is set (and not null)                    |
+  | `${FOO:?message}` | Show error message and exit if `$FOO` is unset (or null) |
+
+  > Omitting the : removes the (non)nullity checks, e.g. ${FOO-val} expands to val if unset otherwise $FOO.
+
+- 示例
+
+  ```bash
+  echo ${food:-Cake}  #=> $food or "Cake"
+  ```
 
 # 数组
 
@@ -459,6 +526,46 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   unset fruits[0]
   echo ${fruits[@]} # Apple Desert fig Plum Banana Cherry
   ```
+
+# 字典
+
+## 定义
+
+```bash
+declare -A sounds # Declares sound as a Dictionary object (aka associative array).
+sounds[dog]="bark"
+sounds[cow]="moo"
+sounds[bird]="tweet"
+sounds[wolf]="howl"
+```
+
+## 基本使用
+
+```bash
+echo ${sounds[dog]} # Dog's sound
+echo ${sounds[@]}   # All values
+echo ${!sounds[@]}  # All keys
+echo ${#sounds[@]}  # Number of elements
+unset sounds[dog]   # Delete dog
+```
+
+## 遍历
+
+### 遍历所有value
+
+```bash
+for val in "${sounds[@]}"; do
+  echo $val
+done
+```
+
+### 遍历所有key
+
+```bash
+for key in "${!sounds[@]}"; do
+  echo $key
+done
+```
 
 # 流，管道以及序列
 
@@ -743,7 +850,7 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
 
 ## `for`循环
 
-- `for`与它在C语言中的姊妹非常像。看起来是这样：
+- `for`与它在C语言中的循环
 
   ```bash
   for arg in elem1 elem2 ... elemN
@@ -869,6 +976,40 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
     Enter the package name: bash-handbook
     <installing bash-handbook>
     ```
+
+## 实际情景
+
+### range
+
+```bash
+for i in {1..5}; do # 大括号扩展
+    echo "Welcome $i"
+done
+
+for i in {5..50..5}; do # 带步长
+    echo "Welcome $i"
+done
+```
+
+### reading line
+
+```bash
+cat file.txt | while read line; do
+  echo $line
+done
+```
+
+### list file
+
+```bash
+for file in "path"/*; do
+  if [ -d "$file" ]; then # $file 是全路径
+    # 为文件夹时
+  else
+    # 为文件时
+  fi
+done
+```
 
 ## 循环控制
 
@@ -1042,7 +1183,7 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
 
 # 其它资源
 
-  <!-- TODO: bash完善：字符串处理等，根据下面这个完善一下吧 -->
+- [x] **[bash-handbook-zh-CN](https://github.com/liushuaikobe/bash-handbook-zh-CN)**
 - [ ] **[rstacruz/cheatsheets-bash.md](https://github.com/rstacruz/cheatsheets/blob/master/bash.md)** 
   > 异常全的bash命令。包括一些字符串处理
 - [shellcheck](https://github.com/koalaman/shellcheck)
