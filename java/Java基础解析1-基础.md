@@ -609,6 +609,12 @@ spring里为我们提供了许多属性编辑器，这时我们如果想把sprin
 
 ### HotSpot SPI
 
+# 代理
+
+## jdk动态代理
+
+## cglib代理
+
 # 新特性
 
 ## Java8

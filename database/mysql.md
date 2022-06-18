@@ -776,14 +776,59 @@ create table student(
 
 > 其实就是将所有数据还原为命令行
 
-1. 命令行
-   - 备份（不用登陆）： mysqldump -u 用户名 -p 密码 指定数据库 > 保存的路径
-   - 还原：
-     1. 登陆数据库
-     2. 创建数据库
-     3. 使用数据库
-     4. 执行文件：source 文件路径
-2. 图形化工具
+### 基本命令
+
+- 备份整个数据库(结构和数据)
+
+  ```bash
+  # 备份单个数据库
+  mysqldump -u username -p password db_name> 保存的路径
+  # 备份多个数据库
+  mysqldump -u username -p --databases dbname2 dbname2 > Backup.sql
+  # 带删除表的格式，能够让该备份覆盖已有数据库而不需要手动删除原有数据库。
+  mysqldump -–add-drop-table -uusername -ppassword databasename > backupfile.sql
+  # 直接将MySQL数据库压缩备份
+  mysqldump -hhostname -uusername -ppassword databasename | gzip > backupfile.sql.gz
+  ```
+
+- 备份指定表(结构和数据)
+
+  ```bash
+  mysqldump -hhostname -uusername -ppassword databasename specific_table1 specific_table2 > backupfile.sql
+  ```
+
+- 备份结构：
+
+  ```bash
+  mysqldump –no-data –databases databasename1 databasename2 databasename3 > structurebackupfile.sql
+  ```
+
+- 备份所有数据库
+
+  ```bash
+  mysqldump –all-databases > allbackupfile.sql
+  ```
+
+- 还原数据库
+
+  ```bash
+  # 普通还原
+  mysql -hhostname -uusername -ppassword databasename < backupfile.sql
+  # 从压缩文件中还原
+  gunzip < backupfile.sql.gz | mysql -uusername -ppassword databasename
+  # 将数据库转移到新的服务器
+  mysqldump -uusername -ppassword databasename | mysql –host=*.*.*.* -C databasename
+  ```
+
+### 参数--single-transaction
+
+- 备份数据库时可能会出现
+
+  ```
+  mysqldump: Got error: 1044: Access denied for user... when doing LOCK TABLES
+  ```
+
+- `--single-transaction`
 
 ## 2.9. 多表查询
 
@@ -5996,3 +6041,5 @@ v
 - [mysql insert锁机制](https://www.cnblogs.com/better-farther-world2099/articles/14722850.html)(待整理)
 - [Mysql自定义变量的使用](https://jianshu.com/p/357a02fb2d64)
 - [MySQL 5.6 Reference Manual](https://docs.oracle.com/cd/E17952_01/mysql-5.6-en/index.html)
+- [ ] [报错：mysqldump: Got error: 1044:](https://blog.csdn.net/liu16659/article/details/84838764)
+- [ ] [深入理解mysqldump原理](https://blog.csdn.net/cug_jiang126com/article/details/49824471)

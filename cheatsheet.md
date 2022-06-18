@@ -11,4 +11,7 @@
 ## 参考
 
 - [awesome-cheatsheets](https://github.com/skywind3000/awesome-cheatsheets)
+- [cheatsheets](https://github.com/rstacruz/cheatsheets)
+  - 几乎所有速查表，异常强大
+  - [在线网站](https://devhints.io/)
 

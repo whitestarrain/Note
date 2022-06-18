@@ -6662,6 +6662,8 @@ public class FlyWeight {
 - 应用实例：
   - spring 中对 Hibernate 的支持，将一些已经定好的方法封装起来，比如开启事务、获取 Session、关闭 Session 等
   - AQS
+  - Spring IOC容器初始化流程中的的refresh函数（初始化容器，载入资源）
+    > 典型的资源类加载处理模型，[跳转](../javaFrame/Spring.md)
 - 优缺点
   - 优点： 
     - 1、封装不变部分，扩展可变部分。

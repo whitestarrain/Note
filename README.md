@@ -76,6 +76,18 @@
     > 做一些图像处理的界面还不错
   - [python爬虫和MongoDB](./python/python爬虫.md)
 - **Java** 
+  - [学习笔记1](./java/JavaBaseNote1.md)
+  - [学习笔记2](./java/JavaBaseNote2.md)
+  - [基础解析1](./java/Java基础解析1-基础.md)
+  - [基础解析1](./java/java基础解析2-深入.md)
+  - [Java NIO](./java/JavaNIO.md)
+  - [JNI](./java/JNI.md)
+- **jvm**
+  - [JVM1内存与垃圾回收](./java/JVM1内存与垃圾回收.md)
+  - [JVM2字节码与类的加载](./java/JVM2字节码与类的加载.md)
+  - [JVM3性能监控和调优](./java/JVM3性能监控和调优.md)
+  - [JVM指令手册](./java/JVM指令手册.md)
+  - [JVM-常用JVM](./java/JVM-常用JVM.md)
 - **分布式** 
 - **读书笔记** 
 - **人工智能** (深度学习部分没怎么整过)
@@ -242,6 +254,7 @@ awk 'BEGIN{
     - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua
     - [ ] 实现markdown标题编号nvim插件
+      > 正好复习一下编译原理，一个小任务
   - [ ] rust
   - [ ] TypeScript
     - [x] 基础

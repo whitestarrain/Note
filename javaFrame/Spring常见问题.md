@@ -309,8 +309,9 @@ after method send
 
 #### 3.3.3.4. JDK和GBLib对比
 
-1. **JDK 动态代理只能只能代理实现了接口的类或者直接代理接口，而 CGLIB 可以代理未实现任何接口的类。** 另外， CGLIB 动态代理是通过生成一个被代理类的子类来拦截被代理类的方法调用，因此不能代理声明为 final 类型的类和方法。
+1. **JDK 动态代理只能只能代理实现了接口的类或者直接代理接口，而 CGLIB 可以代理未实现任何接口的类** 。另外， CGLIB 动态代理是通过生成一个被代理类的子类来拦截被代理类的方法调用，因此不能代理声明为 final 类型的类和方法。
 2. 就二者的效率来说，大部分情况都是 JDK 动态代理更优秀，随着 JDK 版本的升级，这个优势更加明显。
+  > Java动态代理使用Java原生的反射API进行操作，在生成类上比较高效；CGLIB使用ASM框架直接对字节码进行操作，在类的执行过程中比较高效
 
 ### 3.3.4. 静态代理和动态代理对比
 
@@ -440,8 +441,29 @@ after method send
 
 ## 11.3. Spring容器与MCV容器
 
+# 待分类
+
+- 注解是干什么的？
+- 一个注解可以使用多次么？如何使用？
+- @Inherited是做什么的？
+- @Target中的TYPE_PARAMETER和TYPE_USER用在什么地方？
+- 泛型中如何使用注解？
+- 注解定义可以实现继承么？
+- spring中对注解有哪些增强？@Aliasfor注解是干什么的？
+- spring中，类上加不加@Configuration注解，有什么区别？
+- @ComponentScan注解是做什么的？
+- basePackages的方式和basePackageClasses的方式有什么区别？你建议用哪个？为什么？
+- useDefaultFilters有什么用？
+- 常见的过滤器有哪些类型？说说你知道的几个
+- @ComponentScan是在哪个类中处理的？说一下大概的解析过程？
+- @Import你用过么？是做什么的？
+- @Import使用有几种方式？有何区别？
+- DeferredImportSelector是做什么的？他和ImportSelector有什么区别？
+- 可以介绍介绍一下spring中哪些功能是通过@Import来实现的？
+- 可以介绍一下spring中是如何解析@Import注解的么？
 
 # 参考文献
 
 - [Spring Bean的生命周期（非常详细）](https://www.cnblogs.com/zrtqsk/p/3735273.html)
+- [ ] [java充电社-Spring教程](http://www.itsoku.com/course/5)
 

@@ -10,10 +10,10 @@
 
 在通往高效和高生产力的路上，我们经常不得不做一些重复的劳动，比如：
 
-* 对屏幕截图，并把截图上传到服务器上
-* 处理各种各种的文本
-* 在不同格式之间转换文件
-* 格式化一个程序的输出
+- 对屏幕截图，并把截图上传到服务器上
+- 处理各种各种的文本
+- 在不同格式之间转换文件
+- 格式化一个程序的输出
 
 就让**Bash**来拯救我们吧。
 
@@ -1037,14 +1037,26 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
 
 下面是一些其它有关Bash的资料：
 
-* Bash的man页面。在Bash可以运行的众多环境中，通过运行`man bash`可以借助帮助系统`man`来显示Bash的帮助信息。有关`man`命令的更多信息，请看托管在[The Linux Information Project](http://www.linfo.org/)上的网页["The man Command"](http://www.linfo.org/man.html)。
-* ["Bourne-Again SHell manual"](https://www.gnu.org/software/bash/manual/)，有很多可选的格式，包括HTML，Info，Tex，PDF，以及Textinfo。托管在<https://www.gnu.org/>上。截止到2016/01，它基于的是Bash的4.3版本，最后更新日期是2015/02/02。
+- Bash的man页面。在Bash可以运行的众多环境中，通过运行`man bash`可以借助帮助系统`man`来显示Bash的帮助信息。有关`man`命令的更多信息，请看托管在[The Linux Information Project](http://www.linfo.org/)上的网页["The man Command"](http://www.linfo.org/man.html)。
+- ["Bourne-Again SHell manual"](https://www.gnu.org/software/bash/manual/)，有很多可选的格式，包括HTML，Info，Tex，PDF，以及Textinfo。托管在<https://www.gnu.org/>上。截止到2016/01，它基于的是Bash的4.3版本，最后更新日期是2015/02/02。
 
 # 其它资源
 
-* [awesome-bash](https://github.com/awesome-lists/awesome-bash)，是一个组织有序的有关Bash脚本以及相关资源的列表
-* [awesome-shell](https://github.com/alebcay/awesome-shell)，另一个组织有序的shell资源列表
-* [bash-it](https://github.com/Bash-it/bash-it)，为你日常使用，开发以及维护shell脚本和自定义命令提供了一个可靠的框架
-* [dotfiles.github.io](http://dotfiles.github.io/)，上面有bash和其它shell的各种dotfiles集合以及shell框架的链接
-* [learnyoubash](https://github.com/denysdovhan/learnyoubash)，帮助你编写你的第一个bash脚本
-* [shellcheck](https://github.com/koalaman/shellcheck)，一个shell脚本的静态分析工具，既可以在网页[www.shellcheck.net](http://www.shellcheck.net/)上使用它，又可以在命令行中使用，安装教程在[koalaman/shellcheck](https://github.com/koalaman/shellcheck)的github仓库页面上
+  <!-- TODO: bash完善：字符串处理等，根据下面这个完善一下吧 -->
+- [ ] **[rstacruz/cheatsheets-bash.md](https://github.com/rstacruz/cheatsheets/blob/master/bash.md)** 
+  > 异常全的bash命令。包括一些字符串处理
+- [shellcheck](https://github.com/koalaman/shellcheck)
+  > 一个shell脚本的静态分析工具，既可以在网页[www.shellcheck.net](http://www.shellcheck.net/)上使用它，又可以在命令行中使用，安装教程在[koalaman/shellcheck](https://github.com/koalaman/shellcheck)的github仓库页面上
+- [awesome-bash](https://github.com/awesome-lists/awesome-bash)
+  > 是一个组织有序的有关Bash脚本以及相关资源的列表
+- [awesome-shell](https://github.com/alebcay/awesome-shell)
+  > 另一个组织有序的shell资源列表
+- [bash-it](https://github.com/Bash-it/bash-it)
+  > 为你日常使用，开发以及维护shell脚本和自定义命令提供了一个可靠的框架
+  >
+  > 有时间可以搞搞，跟`oh-my-zsh`差不多
+- [dotfiles.github.io](http://dotfiles.github.io/)
+  > 上面有bash和其它shell的各种dotfiles集合以及shell框架的链接
+- [learnyoubash](https://github.com/denysdovhan/learnyoubash)
+  > 帮助你编写你的第一个bash脚本
+

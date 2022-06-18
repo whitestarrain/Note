@@ -94,9 +94,16 @@
 ## 2.1. 基本概念
 
 - 注解与注释
-  - 注解概念：说明程序的，给电脑看。
-    - 进一步：注解是一系列元数据，它提供数据用来解释程序代码，但是注解并非是所解释的代码本身的一部分。注解对于代码的运行效果没有直接影响。
-  - 注释概念：用文字描述程序，给程序员看
+  - 注释概念：
+    - 用文字描述程序，给程序员看
+    - 注释是给开发者看的，可以提升代码的可读性和可维护性，但是对于java编译器和虚拟机来说是没有意义的
+    - 编译之后的字节码文件中是没有注释信息的
+  - 注解概念：
+    - 说明程序的，给电脑看。
+    - 注解是一系列元数据，它提供数据用来解释程序代码，但是注解并非是所解释的代码本身的一部分。注解对于代码的运行效果没有直接影响。
+    - 而注解和注释有点类似，唯一的区别就是注释是给人看的，而注释是给编译器和虚拟机看的，编译器和虚拟机在运行的过程中可以获取注解信息，然后可以根据这些注解的信息做各种想做的事情
+    - 比如：大家对@Override应该比较熟悉，就是一个注解，加在方法上，标注当前方法重写了父类的方法，当编译器编译代码的时候，会对@Override标注的方法进行验证，验证其父类中是否也有同样签名的方法，否则报错，通过这个注解是不是增强了代码的安全性。
+    - 总的来说：注解是对代码的一种增强，可以在代码编译或者程序运行期间获取注解的信息，然后根据这些信息做各种事情
 
 ## 2.2. 作用
 
@@ -161,25 +168,41 @@
 
 ## 2.4. 自定义注解
 
-- 格式：
+- 基本格式：
+  ```java
   元注解
   public @interface 注解名称{
-  属性列表;
+    // 属性列表;
+    [public] 参数类型 参数名称1() [default 参数默认值];
+    [public] 参数类型 参数名称2() [default 参数默认值];
+    // 参数名称后面的()不是定义方法参数的地方，也不能在括号中定义任何参数， **仅仅只是一个特殊的语法** 
+    [public] 参数类型 参数名称n() [default 参数默认值];
   }
-- 本质：注解就是一个接口，该接口默认继承下面一个接口<br>
+  ```
+- 本质：注解就是一个接口，该接口默认继承下面一个接口
+
+  ```java
   public interface myAnnotation extends java.lang.annotation.Annotation{}
-- 属性：
-  - 定义：接口中可以定义的成员方法
-  - 要求返回值类型只能以下几种 ：
+  ```
+- 属性要求：
+  - 访问修饰符
+    - 必须为public，不写默认为public
+  - 命名：
+    - 该元素的名称一般定义为名词
+    - 如果注解中只有一个元素，请把名字起为value（后面使用会带来便利操作）
+  - 返回值类型，只能以下几种 ：
     - 基本数据类型
     - String
     - 枚举
     - 注解
     - 以上数据类型的数组
   - 赋值：
-    1. 定义了属性，在使用时需要给属性赋值，但也可以通过 default 关键字给属性默认初始化值，那么在使用注解时，就不必要进行赋值。
-    2. 但如果只有一个属性值，那么在赋值时只要在括号中填入值即可
-    3. 当为数组中只有一个值时，大括号可以省略。
+    - 定义了属性，在使用时需要给属性赋值，
+      - 可以通过 default 关键字给属性默认初始化值，那么在使用注解时，就不必要进行赋值。
+      - 如果没有默认值，代表后续使用注解时必须给该类型元素赋值
+    - 但如果只有一个属性值，那么在赋值时只要在括号中填入值即可
+    - 当为数组中只有一个值时，大括号可以省略。
+
     ```java
     @myAnnotation(age=2,name="Anna",anno=@myannno2,strs={"aa","bb"})
     @myAnnotation(2)
@@ -192,34 +215,91 @@
 - @Target：用于描述注解能作用的位置,前三个重要,后面的 6 个可以自己查看源文档
 
   ```java
-  摘自javadoc文档前三个：
-      /** Class, interface (including annotation type), or enum declaration */
-      TYPE,//类上
-
-      /** Field declaration (includes enum constants) */
-      FIELD,//成员变量上
-
-      /** Method declaration */
-      METHOD,//方法上
-
-  全部：
-      ElementType.ANNOTATION_TYPE 可以给一个注解进行注解
-      ElementType.CONSTRUCTOR 可以给构造方法进行注解
-      ElementType.FIELD 可以给属性进行注解
-      ElementType.LOCAL_VARIABLE 可以给局部变量进行注解
-      ElementType.METHOD 可以给方法进行注解
-      ElementType.PACKAGE 可以给一个包进行注解
-      ElementType.PARAMETER 可以给一个方法内的参数进行注解
-      ElementType.TYPE 可以给一个类型进行注解，比如类、接口、枚举
+    /*类、接口、枚举、注解上面*/
+    TYPE,
+    /*字段上*/
+    FIELD,
+    /*方法上*/
+    METHOD,
+    /*方法的参数上*/
+    PARAMETER,
+    /*构造函数上*/
+    CONSTRUCTOR,
+    /*本地变量上*/
+    LOCAL_VARIABLE,
+    /*注解上*/
+    ANNOTATION_TYPE,
+    /*包上*/
+    PACKAGE,
+    /*类型参数上,1.8+*/
+    TYPE_PARAMETER,
+    /*类型名称上,1.8+*/
+    TYPE_USE
+  ```
+  ```java
+  // TYPE_PARAMETER说明：
+  // 是1.8加上的，用来标注类型参数，类型参数一般在类后面声明或者方法上声明，这块需要先了解一下泛型
+  @Target(value = {
+          ElementType.TYPE_PARAMETER
+  })
+  @Retention(RetentionPolicy.RUNTIME)
+  @interface Ann7 {
+      String value();
+  }
+  public class UseAnnotation7<@Ann7("T0是在类上声明的一个泛型类型变量") T0, @Ann7("T1是在类上声明的一个泛型类型变量") T1> {
+      public <@Ann7("T2是在方法上声明的泛型类型变量") T2> void m1() {
+      }
+      public static void main(String[] args) throws NoSuchMethodException {
+          for (TypeVariable typeVariable : UseAnnotation7.class.getTypeParameters()) {
+              print(typeVariable);
+          }
+          for (TypeVariable typeVariable : UseAnnotation7.class.getDeclaredMethod("m1").getTypeParameters()) {
+              print(typeVariable);
+          }
+      }
+      private static void print(TypeVariable typeVariable) {
+          System.out.println("类型变量名称:" + typeVariable.getName());
+          Arrays.stream(typeVariable.getAnnotations()).forEach(System.out::println);
+      }
+  }
+  ```
+  ```
+  类型变量名称:T0
+  @com.javacode2018.lesson001.demo18.Ann7(value=T0是在类上声明的一个泛型类型变量)
+  类型变量名称:T1
+  @com.javacode2018.lesson001.demo18.Ann7(value=T1是在类上声明的一个泛型类型变量)
+  类型变量名称:T2
+  @com.javacode2018.lesson001.demo18.Ann7(value=T2是在方法上声明的泛型类型变量)
   ```
 
 - @Retention:描述注解被保留的一个阶段
   - @Retention(value = RetentionPolicy.RUNTIME):当前描述的注解会保留到 class 字节码文件中并被 jvm 读取到,所以在程序运行时可以获取到它们。（一般是这个）
   - 如果是 CLASS,那么会被加载到字节码文件中，但不会被 jvm 读取到
   - 如果是 SOURCE,那么不会加载到字节码文件中。
-- @Documented：描述注解是否被抽取到 doc 文档中，如果在注解的定义中有标注@Documented，那么就会被加到 doc 文档中<br>![此处的@Anno](image/annotation-1.jpg)
-- @Inherited：描述注解是否被子类继承。@myAnnotation 被@Inherited 描述，那么如果@myAnnotation 描述一个类，那么这个类的子类也会从父类继承这个注解。
-- @Repeatable：表示注解中属性值可以取多个，其中要了解容器注解。
+
+  ```java
+  public enum RetentionPolicy {
+      /*注解只保留在源码中，编译为字节码之后就丢失了，也就是class文件中就不存在了*/
+      SOURCE,
+      /*注解只保留在源码和字节码中，运行阶段会丢失*/
+      CLASS,
+      /*源码、字节码、运行期间都存在*/
+      RUNTIME
+  }
+  ```
+- @Documented：
+  - 描述注解是否被抽取到 doc 文档中
+  - 如果在注解的定义中有标注@Documented，那么就会被加到 doc 文档中
+
+  ![此处的@Anno](image/annotation-1.jpg)
+- @Inherited：
+  - 描述注解是否被子类继承。
+  - @myAnnotation 被@Inherited 描述，那么如果@myAnnotation 描述一个类，那么这个类的子类也会从父类继承这个注解。
+  - **注意**
+    - 是继承父类的注解，如果@myAnnotation 描述一个接口，实现这个接口的类是不能继承接口注解的*
+    - 另外，这里是类的继承关系，子类会有父类的注解信息。注意一下情况：
+- @Repeatable：
+  - 表示注解中属性值可以取多个，其中要了解容器注解。
 
   ```java
   //什么是容器注解呢？就是用来存放其它注解的地方。它本身也是一个注解。
@@ -243,12 +323,18 @@
 
 ## 2.6. 使用（解析）注解
 
-- 本质：获取注解中定义的属性值，把配置文件的工作交给注解来完成，简化配置操作。后期注解大多数用来替换配置文件。
-- 步骤：
+- 说明：
+  - 为了运行时能准确获取到注解的相关信息，Java在java.lang.reflect 反射包下新增了AnnotatedElement接口
+  - 它主要用于表示目前正在虚拟机中运行的程序中已使用注解的元素，通过该接口提供的方法可以利用反射技术地读取注解的信息
 
-1. 获取注解定义位置的对象（Class,Method,Field 等）
-2. 获取指定的注解（getAnnotation）
-3. 调用注解中的抽象方法获取配置属性值
+  ![javabasenote2-1](./image/javabasenote2-1.png)
+- 本质：
+  - 获取注解中定义的属性值，把配置文件的工作交给注解来完成，简化配置操作
+  - 后期注解大多数用来替换配置文件。
+- 步骤：
+  - 获取注解定义位置的对象（Class,Method,Field 等）
+  - 获取指定的注解（getAnnotation）
+  - 调用注解中的抽象方法获取配置属性值
 
 ```java
  //摘抄部分代码，详情可以去看代码文件
@@ -5857,4 +5943,6 @@ public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain
 
 ## 19.1 Java8新特性
 
+# 参考资料
 
+- [ ] [深入理解java注解](http://www.itsoku.com/course/5/98)

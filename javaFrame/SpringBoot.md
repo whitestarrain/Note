@@ -100,3 +100,6 @@
 
 - [参考](https://blog.csdn.net/Hello_Ray/article/details/103601856)
 
+# SpringBoot 国际化配置
+
+- [参考](https://juejin.cn/post/6844904066691104775)
