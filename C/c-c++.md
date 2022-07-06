@@ -588,3 +588,4 @@ printf("%d",pa == &a);                // ①
   - [VC, GCC, Clang/LLVM区别 ](https://www.cnblogs.com/xuesu/p/14542821.html)
 - [ ] [cstdio和stdio.h的区别](https://blog.csdn.net/Abigial_/article/details/54799629)
 - [ ] [Google的C++开源代码项目以及经典C++库](https://www.cnblogs.com/zhoug2020/p/5812578.html)
+- [C/C++中关于静态链接库(.a)、动态链接库（.so）的编译与使用](https://blog.csdn.net/qq_27825451/article/details/105700361)

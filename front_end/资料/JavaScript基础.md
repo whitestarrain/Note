@@ -1561,7 +1561,7 @@ var p1 = createPerson("张三", 22, "actor");
 
 - 自定义构造函数
 
-  > 没错，构造函数·就是独立的，与普通函数不同的是里面没行都要使用 this。干
+  > 没错，构造函数·就是独立的，与普通函数不同的是里面每行都要使用 this。干
 
 ```javascript
 function Person(name, age, job) {

@@ -38,7 +38,6 @@ DI(Dependency injection)依赖注入，和控制反转是同一个概念的不�
 
 最直观的表达就是，以前创建对象的主动权和时机都是由自己把控的，IOC让对象的创建不用去new了，可以由spring自动生产，使用java的反射机制，根据配置文件在运行时动态的去创建对象以及管理对象，并调用对象的方法的。
 
-
 ## 2.2. IOC的方式
 
 Spring的IOC有三种注入方式 
@@ -98,7 +97,6 @@ InvocationHandler 的 invoke(Object  proxy,Method  method,Object[] args)：为�
 - proxy是最终生成的代理对象;
 - method 是被代理目标实例的某个具体方法;
 - args 是被代理目标实例某个方法的具体入参, 在方法反射调用时使用。
-
 
 <details>
 <summary style="color:red;">代码示例</summary>
@@ -193,7 +191,6 @@ after method send
 ```
 </details>
 
-
 #### 3.3.3.3. GBLib
 
 **JDK 动态代理有一个最致命的问题是其只能代理实现了接口的类。**
@@ -207,8 +204,6 @@ CGLIB（Code Generation Library），是一个代码生成的类库，可以在�
 CGLIB是通过**继承**的方式做的动态代理，因此如果某个类被标记为final，那么它是无法使用CGLIB做动态代理的。
 
 不同于 JDK 动态代理不需要额外的依赖。[CGLIB](https://github.com/cglib/cglib)(*Code Generation Library*) 实际是属于一个开源项目，如果你要使用它的话，需要手动添加相关依赖。
-
-
 
 <details>
 <summary style="color:red;">代码示例</summary>
@@ -248,7 +243,6 @@ import java.lang.reflect.Method;
  * 自定义MethodInterceptor
  */
 public class DebugMethodInterceptor implements MethodInterceptor {
-
 
     /**
      * @param o           被代理的对象（需要增强的对象）
@@ -325,8 +319,6 @@ after method send
 
 [详细请看此处笔记](./Spring.md)
 
-
-
 # 4. Spring Bean
 
 ## 4.1. 作用域都有哪些？
@@ -394,7 +386,6 @@ after method send
     - CustomAutowireConfigurer
     - 等等
 
-
 # 5. Spring 注解
 
 # 6. Spring数据访问
@@ -410,7 +401,6 @@ after method send
 # 10. SpringBoot
 
 ## 10.1. 装配过程
-
 
 # 11. 容器相关
 
@@ -461,6 +451,20 @@ after method send
 - DeferredImportSelector是做什么的？他和ImportSelector有什么区别？
 - 可以介绍介绍一下spring中哪些功能是通过@Import来实现的？
 - 可以介绍一下spring中是如何解析@Import注解的么？
+- @Conditional是做什么的?
+- @Conditional多个条件是什么逻辑关系？
+- 条件判断在什么时候执行？
+- ConfigurationCondition和Condition有什么区别？什么时候使用ConfigurationCondition？
+- 多个Condition执行的顺序是什么样的？可以配置优先级么？
+- 可以介绍一下@Conditional常见的一些用法么？
+- 通过注解的方式注入依赖对象，介绍一下你知道的几种方式
+- @Autowired和@Resource有何区别
+- 说一下@Autowired查找候选者的过程
+- 说一下@Resource查找候选者的过程
+- @Qulifier有哪些用法？
+- @Qulifier加在类上面是干什么用的？
+- @Primary是做什么的？
+- 泛型注入用过么？
 
 # 参考文献
 

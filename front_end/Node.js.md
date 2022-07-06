@@ -607,6 +607,8 @@ NPM是随同NodeJS一起安装的包管理工具，能解决NodeJS代码部署�
 - 使用`npm update <package> -g`可以把全局安装的对应命令行程序更新至最新版。
 - 使用`npm cache clear`可以清空NPM本地缓存，用于对付使用相同版本号发布新版本代码的人。
 - 使用`npm unpublish <package>@<version>`可以撤销发布自己发布过的某个版本代码。
+- 使用`npm run <scriptname>` 执行`package.json`中配置的脚本
+  - `npx <package_name>` 等同于在`<package>` 下执行 `npm run <package>`
 
 ## 2.6. 小结
 

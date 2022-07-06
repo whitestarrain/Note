@@ -1,17 +1,16 @@
 # 1. 基础操作
 
-## 1.1. 基础
+## 1.1. 查看相关信息
 
 - 版本：`:version`
     > 同时也可以查看支持
 
-- 普通模式：
-	- esc
-	- C-[
-
 - 查看功能键映射字符`:h key-notation`
 - 查看keymap设置代码：`verbose map s`
   > 查看为s设置map的代码位置
+- `:scriptnames`输出`source`或者`runtime`过的所有脚本
+- `gQ`:进入Ex模式
+
 
 ## 1.2. 移动
 
@@ -447,6 +446,7 @@
 - `<c-a>`:increase number
 - `echo expand("%:p")`: 查看当前文件路径
 - visual模式下`g+<c-g>`:查看选中字符个数
+- `ctrl-a` 数字加一。`ctrl-x` 数字减一
 
 # 4. vim插件
 

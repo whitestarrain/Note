@@ -253,8 +253,7 @@ awk 'BEGIN{
   - [ ] go
     - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua
-    - [ ] 实现markdown标题编号nvim插件
-      > 正好复习一下编译原理，一个小任务
+    - [x] [实现markdown标题编号nvim插件](https://github.com/whitestarrain/md-section-number.nvim)
   - [ ] rust
   - [ ] TypeScript
     - [x] 基础
