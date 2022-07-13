@@ -2126,6 +2126,10 @@ inputFormat --> inputSplit --> recordReader --> mapper --> outputControler --> (
 
 ### 2.7.5. itemcf
 
+### 其他问题
+
+#### hdfs分块断行情况
+
 # 3. hive 数据仓库
 
 > 注意：教程都是最基本的，如果想深入就去查官方文档
@@ -2776,6 +2780,8 @@ select * from psn;
     > 复制表结构和数据
   - `create table temp1 like psn`
     > 只复制表结构
+
+#### 添加新字段与老分区
 
 ### 3.6.3. 内部表，外部表
 

@@ -117,4 +117,5 @@
 # 参考资料
 
 - [分布式KV数据库的架构对比与设计](https://dbaplus.cn/new_video/detail/54.html)
+- [OLTP与OLAP概念，主要区别和完美实践]()
 
