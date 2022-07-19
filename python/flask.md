@@ -14,9 +14,7 @@
 
 # Cookie 和 Session
 
-# ORM(Flask-sqlAlchemy)
-
-[sqlAlchemy](./sqlAlchemy.md)
+# LocalProxy
 
 # 上下文机制
 
@@ -31,6 +29,10 @@
 # 信号机制(blinker)
 
 # Flask 插件
+
+# Flask-sqlAlchemy
+
+- [sqlAlchemy](./sqlAlchemy.md)
 
 ## Flask-wtf
 
