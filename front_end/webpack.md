@@ -1,4 +1,4 @@
-# 基本概念
+# 1. 基本概念
 
 ![webpack-7](./image/webpack-7.png)
 
@@ -12,9 +12,9 @@
   - 分析项目结构，找到并加载所依赖的资源模块
   - 把一些不被浏览器支持的特性（如 **Sass，TypeScript，ES6+、JSX** 等）转换和打包成浏览器兼容的格式来使用。
 
-# 基本使用
+# 2. 基本使用
 
-## 入门
+## 2.1. 入门
 
 - 安装
 
@@ -57,11 +57,17 @@
     - 因为配置文件是nodejs要看的。nodejs用CommonJS
     - 要打包的js是浏览器要看的
 
-## webpack 参数详细说明
+## 2.2. webpack 参数详细说明
 
-# 资源模块与加载器
+## 2.3. 测试代码
 
-## 基本说明
+[webpack测试跳转](https://github.com/whitestarrain/webpack_learn)
+
+提交注释末尾有 flagXX，对应下面说明
+
+# 3. 资源模块与加载器
+
+## 3.1. 基本说明
 
 > 对应代码flag1
 
@@ -104,16 +110,16 @@
     - `filename`: 设置资源文件输出名称和保存的路径（只适用于type属性为 `asset` 和 `asset/resource` 的场景）
   - `include/exclude`:手动添加必须处理的文件（文件夹）或屏蔽不需要处理的文件（文件夹）
 
-## 资源模块
+## 3.2. 资源模块
 
-### 概念
+### 3.2.1. 概念
 
 - **资源模块(asset module)**
   - 是一种模块类型
   - 它允许在js代码中引入其它资源文件（字体，图片、样式等）
   - 以前只能通过 loader 加载器来实现，而Webpack5中通过asset module轻松实现。
 
-### 种类
+### 3.2.2. 种类
 
 - 种类：Webpack5 实现了 4 种新的模块类型，通过`Rule`的`type`属性设置：
   - `asset/resource` 输出一个单独的文件并导出 URL。之前通过使用 `file-loader` 实现。
@@ -121,7 +127,7 @@
   - `asset/source` 导出资源的源代码。之前通过使用 `raw-loader` 实现。
   - `asset` 在导出一个 dataURI 和发送一个单独的文件之间自动选择。之前通过使用 `url-loader`，并且配置资源体积限制实现。
 
-### 使用示例
+### 3.2.3. 使用示例
 
 > 对应代码flag2
 
@@ -179,7 +185,7 @@
   }
   ```
 
-### 修改资源模块输出文件名与路径
+### 3.2.4. 修改资源模块输出文件名与路径
 
 - 图片文件虽然已经输出，但文件名是一段哈希字符
 - 如果想修改特定的文件名称，可以通过`generator.filename`设置资源文件名和保存的路径
@@ -206,9 +212,9 @@
       }
   ```
 
-## 加载器
+## 3.3. 加载器
 
-### 概念
+### 3.3.1. 概念
 
 - 除了资源模块方式，也可以使用Loader实现其它类型资源的加载
 - **不同的资源应用的不同的loader（loader需要单独安装）** 
@@ -220,9 +226,9 @@
   - 编写Rule并配置loader
     - 如需对加载器进行一些细节配置，则添加options属性
 
-### CSS加载器
+### 3.3.2. CSS加载器
 
-#### css-loader
+#### 3.3.2.1. css-loader
 
 > 代码对应 flag3
 
@@ -274,7 +280,7 @@
   eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/noSourceMaps.js */ \"./node_modules/css-loader/dist/runtime/noSourceMaps.js\");\n/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ \"./node_modules/css-loader/dist/runtime/api.js\");\n/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);\n// Imports\n\n\nvar ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));\n// Module\n___CSS_LOADER_EXPORT___.push([module.id, \"/*./css/home.css*/ \\r\\nbody {\\r\\n  padding: 20px;\\r\\n  margin: 0;\\r\\n  color:#f00;\\r\\n}\\r\\n\", \"\"]);\n// Exports\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);\n\n\n//# sourceURL=webpack://webpack_learn/./src/css/home.css?");
   ```
 
-#### style-loader
+#### 3.3.2.2. style-loader
 
 > 代码见 flag4
 
@@ -314,7 +320,7 @@
 
   ![webpack-1](./image/webpack-1.png)
 
-#### css module
+#### 3.3.2.3. css module
 
 > 代码见 flag5
 
@@ -372,7 +378,7 @@
   - css-loader默认支持*.module.css格式的样式文件实现模块化
   - 也就是说如果你的文件采用该命名方式，哪不配置modules:true，也能实现css模块化
 
-### postcss-loader
+### 3.3.3. postcss-loader
 
 > 代码见 flag6
 
@@ -437,7 +443,7 @@
 
   ![webpack-5](./image/webpack-5.png)
 
-### sass加载器
+### 3.3.4. sass加载器
 
 > 暂未写测试代码
 
@@ -466,11 +472,11 @@
 
 - 以上就解决了sass代码编译的问题，less同理（需要less-loader与less），这里不再赘述
 
-### babel-loader
+### 3.3.5. babel-loader
 
 > 代码见 flag7
 
-#### 基本说明
+#### 3.3.5.1. 基本说明
 
 - 说明：
   - 用于处理js模块
@@ -496,7 +502,7 @@
   npm install @babel/preset-env -D
   ```
 
-#### 配置
+#### 3.3.5.2. 配置
 
 - 配置加载器：
   - 如果只是指定loader的名称，那就没什么意义，因为Webpack已经默认js模块的加载
@@ -600,7 +606,7 @@
       }
       ```
 
-#### 示例
+#### 3.3.5.3. 示例
 
 > 如果想兼容浏览器最后2个版本，且按需兼容Promise等内建对象，步骤如下：
 
@@ -659,7 +665,7 @@
   - 可以实现更多的需求
   - 可以自行查阅官网
 
-#### 注意
+#### 3.3.5.4. 注意
 
 - 不要忘了配置exclude
   - index.js中有`import`polifill相关的一些依赖
@@ -698,7 +704,7 @@
   },
   ```
 
-### 其他加载器
+### 3.3.6. 其他加载器
 
 - 在Webpack的生态中，这样的资源加载器有很多，
 - 其它的加载器的使用与css-loader、style-loader、sass-loader、babel-loader类似
@@ -709,15 +715,15 @@
   - vue-loader: 加载并编译.vue单文件组件
   - ...
 
-# 插件
+# 4. 插件
 
-## 问题引入
+## 4.1. 问题引入
 
 - 上面测试的时候，使用的html是手动引入的js文件
 - 因为编译后hash值会变化，导致每次编译后得手动改文件引入，非常繁琐
 - 若指定编译后文件名一直为`main.js`，上线后会有缓存问题，导致页面不会更新
 
-## 概念说明
+## 4.2. 概念说明
 
 - 说明
   - `Loader`是用来解决资源文件的加载和编译问题，它只在模块加载环节工作
@@ -731,9 +737,9 @@
   - 压缩webpack打包后的输出文件
   - 自动化部署
 
-## 实例
+## 4.3. 实例
 
-### html生成
+### 4.3.1. html生成
 
 > 代码见 flag8
 
@@ -810,7 +816,7 @@
 
   ![webpack-10](./image/webpack-10.png)
 
-### 清除历史构建
+### 4.3.2. 清除历史构建
 
 - 安装依赖
 
@@ -841,7 +847,7 @@
   }
   ```
 
-### 拷贝不需要webpack处理的资源文件
+### 4.3.3. 拷贝不需要webpack处理的资源文件
 
 > 代码见flag9
 
@@ -876,9 +882,9 @@
   }
   ```
 
-# 利用服务器自动打包
+# 5. 利用服务器自动打包
 
-## 问题引入
+## 5.1. 问题引入
 
 - 每次代码编译都有以下几步
 
@@ -892,7 +898,7 @@
 - 这种开发方式太过于原始，效率也极其低下
 - 可以通过webpack的watch监听模式和配置devServer开发服务器的方式来改变这种工作模式
 
-## webpack的watch监听模式
+## 5.2. webpack的watch监听模式
 
 - 使用方式：使用这种方式最简单，只需要在执行webpack命令时添加--watch（简写：-w）参数即可：
 
@@ -904,7 +910,7 @@
 - 当项目中的文件有修改时，webpack会自动重新打包并输出
 - 弊端： **需要手动刷新浏览器才能看到最新效果** 
 
-## devServer开发服务器
+## 5.3. devServer开发服务器
 
 - 说明
   - 通过devServer能在本地开发环境创建一个服务器，该服务器基于express
@@ -1054,9 +1060,9 @@
       };
       ```
 
-# webpack打包优化
+# 6. webpack打包优化
 
-## 基本说明
+## 6.1. 基本说明
 
 - 只要是做项目开发，必定离不开项目优化这个话题
 - 当然如果做的项目很小，可能不会遇到构建方面的问题，自然也不太关心性能优化的问题，但实际工作中的项目页面一般都比多
@@ -1068,14 +1074,14 @@
   - Tree Shaking
   - Code Splitting代码分割
 
-## 提取js公共代码
+## 6.2. 提取js公共代码
 
 - 说明
   - 提取公共代码一般用于多入口的情况
   - 为防止重复打包而进行的优化操作
   - 好处是可以减少文件体积，加快打包和启动速度
 
-### 依赖需要被打包的情况
+### 6.2.1. 依赖需要被打包的情况
 
 - 场景说明：多入口js文件问题时的重复代码打包：
   - 项目中我们常会遇到有多个入口文件的情况（假设为a.js与b.js）
@@ -1166,7 +1172,7 @@
     - tools.js被打包到common.bundle.js
   - 从而实现了公共代码的提取。
 
-### 依赖不需要打包的情况
+### 6.2.2. 依赖不需要打包的情况
 
 - 场景说明
   - 实际开发中有一些第三方库（如jQuery）,如果在项目中使用以下代码引入`import $ from 'jquery'`
@@ -1219,7 +1225,7 @@
 
   - 其他不需要打包到最终js中的自定义工具库也可以这样做
 
-## 提取css公共代码
+## 6.3. 提取css公共代码
 
 - 说明
   - 前面讲到的css-loader与style-loader只是把css样式写入到html页面的style标签内
@@ -1264,17 +1270,17 @@
 
     ![webpack-15](./image/webpack-15.png)
 
-## 压缩代码
+## 6.4. 压缩代码
 
 > 实现删除多余的代码、注释、简化代码的写法等⽅式。
 
-### 压缩js
+### 6.4.1. 压缩js
 
 - Webpack默认在生产环境下（mode:'production'）自动进行代码压缩
 - 内部用的是terser-webpack-plugin插件
 - 具体使用请查看官网
 
-### 压缩css
+### 6.4.2. 压缩css
 
 > 见代码 flag10
 
@@ -1306,16 +1312,16 @@
       }
     ```
 
-## tree shaking
+## 6.5. tree shaking
 
-### 说明
+### 6.5.1. 说明
 
 - Tree Shaking 也叫摇树优化，是一种通过移除冗余代码，来优化打包体积的手段
 - 它并不是webpack中的某个配置选项，而是一组功能搭配使用后的效果
 - 基于`ESModules`模块化（即只有ESModules的模块化代码才能使Tree Shaking生效）
 - **在production生产环境下默认开启**
 
-### 示例
+### 6.5.2. 示例
 
 - 假设有一个`element.js`文件
 
@@ -1347,7 +1353,7 @@
 
 - 显然，那些没有使用的代码都不会被打包，达到了优化的效果
 
-### 配置实现
+### 6.5.3. 配置实现
 
 > 不开启production模式的情况，通过配置的方式说明实现
 
@@ -1440,12 +1446,12 @@
         ```
         > 配置后，webpack 打包时遇到 css 文件或以`global.js` 结尾的文件时会自动打包到最终结果
 
-## Code Splitting代码分割
+## 6.6. Code Splitting代码分割
 
 > 把项目中的资源模块按照我们设定的规则打包到不同的文件中
 > 代码分割后可以降低应用启动成本，提高响应速度
 
-### 配置多入口
+### 6.6.1. 配置多入口
 
 > 见代码flag11
 
@@ -1489,7 +1495,7 @@
   >
   > 相对temp2.js很小
 
-### 多入口导致重复打包
+### 6.6.2. 多入口导致重复打包
 
 - 接上面，如果temp2中也引入`axios`，结果如图：
 
@@ -1498,9 +1504,9 @@
 - 两个文件都比较大，显然把`axios`重复打包了
   > temp.js 和 temp2.js中都有打包axios
 
-### 解决重复打包问题
+### 6.6.3. 解决重复打包问题
 
-#### 内置：dependOn
+#### 6.6.3.1. 内置：dependOn
 
 > 见flag 12
 
@@ -1527,7 +1533,7 @@
 
   ![webpack-21](./image/webpack-21.png)
 
-#### 内置：splitchunks(推荐)
+#### 6.6.3.2. 内置：splitchunks(推荐)
 
 TODO: 深入 webpack-splitchunks
 
@@ -1577,7 +1583,7 @@ TODO: 深入 webpack-splitchunks
     ]
     ```
 
-#### ESModules动态导入
+#### 6.6.3.3. ESModules动态导入
 
 - 使用ECMAScript2019（ES10）推出的`import()`动态引入模块，返回`Promise`对象，用法如下
 
@@ -1616,14 +1622,14 @@ TODO: 深入 webpack-splitchunks
   - 利用Webpack的魔法注释还能实现**预加载**功能，只需要添加`webpackPrefetch:true`即可，
   - Webpack的预加载是在页面其它内容全部加载完成后才加载需要的模块，所以不会影响页面的加载速度
 
-# webpack 打包Vue和React
+# 7. webpack 打包Vue和React
 
-## 说明
+## 7.1. 说明
 
 - 由于是从零配置，所以跟使用脚手架（如@vue/cli或react-create-app）创建的项目操作肯定不一样，但本质是一样的
 - 从零配置自然就能懂得脚手架的实现原理
 
-## Vue
+## 7.2. Vue
 
 - 项目文件结构
 
@@ -1725,7 +1731,7 @@ TODO: 深入 webpack-splitchunks
   npx webpack server
   ```
 
-## React
+## 7.3. React
 
 - 项目结构
 
@@ -1813,9 +1819,9 @@ TODO: 深入 webpack-splitchunks
   }
   ```
 
-# webpack基本原理
+# 8. webpack基本原理
 
-# 参考资料
+# 9. 参考资料
 
 - [ ] **[webpack5教程系列](https://juejin.cn/post/7067175422902927368)**
 - [ ] [Webpack 教程](https://www.jiangruitao.com/webpack/rudiments/)

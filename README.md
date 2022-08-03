@@ -257,12 +257,14 @@ awk 'BEGIN{
   - [ ] 设计模式
   - [ ] 编译原理
   - [ ] zookeeper完善
-  - [ ] java并发整理
-  - [ ] RabbitMQ整理
-  - [ ] 鉴权方式整理
-  - [ ] CORS跨域完善+整理
-  - [ ] linux常用命令&工具系统整理
-  - [ ] shell编程系统整理
+  - [ ] java并发笔记完善
+  - [ ] [RabbitMQ整理](./Middleware/RabbitMQ.md)
+  - [ ] [鉴权方式整理](./others/authentication.md)
+  - [ ] [CORS跨域完善+整理](./safety/CSRF与CORS.md)
+  - [ ] [linux常用命令&工具系统整理](./base/linux.md)
+  - [x] [bash编程系统整理](./base/bash.md)
+    - [ ] 寻找练手
+    - [ ] 语法深入
   - [x] 鉴权认证
   - [x] 分布式缓存算法整理
   - [x] JVM字节码与类的加载
@@ -282,10 +284,10 @@ awk 'BEGIN{
   - [ ] SpringData
   - [ ] Cassandra
   - [ ] xdb
-  - [ ] elasticsearch
+  - [ ] [elasticsearch](./big_data/elasticsearch.md)
   - [ ] ELK
   - [ ] TensorRT
-  - [ ] React <!-- - 个人博客框架 -->
+  - [ ] [React](./front_end/react.md) <!-- - 个人博客框架 -->
     - 练手项目：浏览器主页私人定制
     - 练手项目：个人博客定制
   - [ ] Vue
@@ -315,6 +317,7 @@ awk 'BEGIN{
     - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua
     - [x] [实现markdown标题编号nvim插件](https://github.com/whitestarrain/md-section-number.nvim)
+    - [ ] 在markdown中实现plantuml代码转换为图片
   - [ ] rust
   - [ ] TypeScript
     - [x] 基础
@@ -339,4 +342,20 @@ cookie和session攻击
 25匹马赛马
 
 数据库 分区分库分表
+
+c  
+c++
+java
+scala
+rust
+javascript
+typescript
+lua
+vimscript
+ruby
+python
+- kotlin
+- rust 
+- go
+- Lisp
 -->

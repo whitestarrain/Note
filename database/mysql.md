@@ -776,7 +776,7 @@ create table student(
 
 > 其实就是将所有数据还原为命令行
 
-### 基本命令
+### 2.8.1. 基本命令
 
 - 备份整个数据库(结构和数据)
 
@@ -820,7 +820,7 @@ create table student(
   mysqldump -uusername -ppassword databasename | mysql –host=*.*.*.* -C databasename
   ```
 
-### 参数--single-transaction
+### 2.8.2. 参数--single-transaction
 
 - 备份数据库时可能会出现
 
@@ -945,7 +945,7 @@ create table student(
 
 #### 2.9.2.3. 子查询
 
-##### 2.9.2.3.1. 嵌套子查询
+##### 嵌套子查询
 
 - 概念：查询中嵌套查询，称嵌套查询为子查询。
 
@@ -1028,7 +1028,7 @@ create table student(
 
   - 自关联映射（不会的话看 30 分钟处）
 
-##### 2.9.2.3.2. with 字句查询
+##### with 字句查询
 
 > 进行临时定义关系，只对下面挨着的 select 语句有效
 
@@ -1277,9 +1277,17 @@ in
 
   4. 查询用户：
      mysql 数据库-->user 表
+
      ![](image/MySQL-4.11-1.jpg)
+
      localhost 是本地主机，%是通配符，表示任意主机，可以用来远程登陆
      数据库中密码会进行加密
+
+  5. 刷新权限列表
+
+    ```
+    FLUSH PRIVILEGES;
+    ```
 
 - 权限管理
 
@@ -1291,6 +1299,10 @@ in
     - grant 权限列表 on 数据库名.表名 to '用户名'@'主机名';
       > 所有权限关键字：all
       > 所有数据库和表：_ ._ ><br>所有权限分类：SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, SHUTDOWN, PROCESS, FILE, REFERENCES, INDEX, ALTER, SHOW DATABASES, SUPER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER
+      >
+      > 添加远程访问权限：GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;
+      >
+      >'root'@%”其中root代表账户名，%代表所有的访问地址
   - 撤销权限
 
     - revoke 权限列表 on 数据库名.表名 from '用户名'@'主机名';
@@ -1834,7 +1846,7 @@ InnoDB中的二级索引存放的是主键值，如果需要查询对应的数�
 
 待整理
 
-##### 5.6.7.2.1. 概念
+##### 概念
 
 通过数值比较、范围过滤等就可以完成绝大多数我们需要的查询，但是，如果希望通过关键字的匹配来进行查询过滤，那么就需要基于相似度的查询，而不是原来的精确数值比较。全文索引就是为这种场景设计的。
 
@@ -1846,7 +1858,7 @@ MySQL 的全文索引最开始仅支持英语，因为英语的词与词之间�
 
 事实上，MyISAM 存储引擎对全文索引的支持有很多的限制，例如表级别锁对性能的影响、数据文件的崩溃、崩溃后的恢复等，这使得 MyISAM 的全文索引对于很多的应用场景并不适合。所以，多数情况下的建议是使用别的解决方案，例如 Sphinx、Lucene 等等第三方的插件，亦或是使用 InnoDB 存储引擎的全文索引。
 
-##### 5.6.7.2.2. 版本支持
+##### 版本支持
 
 开始之前，先说一下全文索引的版本、存储引擎、数据类型的支持情况
 
@@ -1856,7 +1868,7 @@ MySQL 的全文索引最开始仅支持英语，因为英语的词与词之间�
 
 测试或使用全文索引时，要先看一下自己的 MySQL 版本、存储引擎和数据类型是否支持全文索引。
 
-##### 5.6.7.2.3. 操作全文索引
+##### 操作全文索引
 
 索引的操作随便一搜都是，这里还是再啰嗦一遍。
 
@@ -1981,7 +1993,7 @@ innodb_ft_max_token_size = 84;
 
 可以看到最小搜索长度 MyISAM 引擎下默认是 4，InnoDB 引擎下是 3，也即，MySQL 的全文索引只会对长度大于等于 4 或者 3 的词语建立索引，而刚刚搜索的只有 *aaaa* 的长度大于等于 4。
 
-##### 5.6.7.2.4. 配置最小搜索长度
+##### 配置最小搜索长度
 
 全文索引的相关参数都无法进行动态修改，必须通过修改 MySQL 的配置文件来完成。修改最小搜索长度的值为 1，首先打开 MySQL 的配置文件 /etc/my.cnf，在 [mysqld] 的下面追加以下内容
 
@@ -2003,7 +2015,7 @@ repair table test quick;
 
 但是，这里还有一个问题，搜索关键字 *a* 时，为什么 *aa、aaa、aaaa* 没有出现结果中，讲这个问题之前，先说说两种全文索引。
 
-##### 5.6.7.2.5. 自然语言的全文索引
+##### 自然语言的全文索引
 
 默认情况下，或者使用 in natural language mode 修饰符时，match() 函数对文本集合执行自然语言搜索，上面的例子都是自然语言的全文索引。
 
@@ -2011,7 +2023,7 @@ repair table test quick;
 
 这个机制也比较好理解，比如说，一个数据表存储的是一篇篇的文章，文章中的常见词、语气词等等，出现的肯定比较多，搜索这些词语就没什么意义了，需要搜索的是那些文章中有特殊意义的词，这样才能把文章区分开。
 
-##### 5.6.7.2.6. 布尔全文索引
+##### 布尔全文索引
 
 在布尔搜索中，我们可以在查询中自定义某个被搜索的词语的相关性，当编写一个布尔搜索查询时，可以通过一些前缀修饰符来定制搜索。
 
@@ -2029,7 +2041,7 @@ MySQL 内置的修饰符，上面查询最小搜索长度时，搜索结果 ft_b
 select * test where match(content) against('a*' in boolean mode);
 ```
 
-##### 5.6.7.2.7. 几个注意点
+##### 几个注意点
 
 1. 使用全文索引前，搞清楚版本支持情况；
 2. 全文索引比 like + % 快 N 倍，但是可能存在精度问题；

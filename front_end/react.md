@@ -25,3 +25,11 @@
 # SPA 路由
 
 # react-redux
+
+# 参考资料
+
+- [x] [官方入门项目](https://react.html.cn/tutorial/tutorial.html)
+- [ ] 中文文档](https://react.html.cn/docs/hello-world.html)
+- [ ] react全家桶学习笔记](https://juejin.cn/post/6979132493333004319)
+- [ ] 用React、Redux、Immutable做俄罗斯方块](https://github.com/chvin/react-tetris)
+- [ ] Immutable 详解及 React 中实践](https://github.com/camsong/blog/issues/3)
