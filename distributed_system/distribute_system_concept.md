@@ -662,13 +662,13 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 ### 5.2.1. 算法
 
-#### 5.2.1.1. PC(两阶段提交)
+#### 5.2.1.1. 2PC(两阶段提交)
 
-#### 5.2.1.2. PC(三阶段提交)
+#### 5.2.1.2. 3PC(三阶段提交)
 
 #### 5.2.1.3. paxos
 
-##### 5.2.1.3.1. 说明
+##### 说明
 
 `Paxos` 算法是基于**消息传递且具有高度容错特性的一致性算法**，是目前公认的解决分布式一致性问题最有效的算法之一，**其解决的问题就是在分布式系统中如何就某个值（决议）达成一致** 。
 
@@ -681,7 +681,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
   - `Prepare` 阶段
   - `accept` 阶段
 
-##### 5.2.1.3.2. Prepare阶段
+##### Prepare阶段
 
 > 也就是广播编号，没什么流程
 
@@ -712,7 +712,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 ![zookeeper-15](./image/zookeeper-15.png)
 
-##### 5.2.1.3.3. accept阶段
+##### accept阶段
 
 - Prepare阶段，我(`Proposer提案者`)给那么多`Acceptor表决者`发了这个提案，他们觉得咋样啊？
   - 如果 `Proposer` 收到了超过半数的 `Acceptor` 的批准（`Proposer` 本身同意）， 那么此时 `Proposer` 会给所有的 `Acceptor` 发送真正的提案
@@ -741,11 +741,11 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
   - **情况2**：如果 `Proposer` 如果没有收到超过半数的 `accept` 
     - 那么它将会将 **递增** 该 `Proposal` 的编号，然后 **重新进入 Prepare 阶段** 。
 
-##### 5.2.1.3.4. Leader的学习
+##### Leader的学习
 
 对于 `Learner` 来说如何去学习 `Acceptor` 批准的提案内容，这有很多方式，读者可以自己去了解一下，这里不做过多解释。
 
-##### 5.2.1.3.5. 死循环问题
+##### 死循环问题
 
 - 说明：
   - 比如说，此时提案者 P1 提出一个方案 M1，完成了 `Prepare` 阶段的工作，这个时候 `acceptor` 则批准了 M1

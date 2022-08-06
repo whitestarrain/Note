@@ -906,7 +906,7 @@ Nginx的指令远远不止下面这些。
 - [ ] [Nginx 开发从入门到精通](http://tengine.taobao.org/book/index.html)
 - [ ] [nginx-admins-handbook](https://github.com/trimstray/nginx-admins-handbook)
 - [ ] [nginxconfig.io](https://nginxconfig.io/) - 一款 Nginx 配置生成器
-- [ ] [nginx配置文件详解](https://www.cnblogs.com/54chensongxia/p/12938929.html)
+- [x] [nginx配置文件详解](https://www.cnblogs.com/54chensongxia/p/12938929.html)
 - [ ] [nginx 的 default_server 定义及匹配规则](https://segmentfault.com/a/1190000015681272)
 
 
