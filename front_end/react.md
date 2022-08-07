@@ -48,7 +48,6 @@
 
   > 也就是说React也可以定义为一个将数据渲染为HTML视图的开源JavaScript库。
 
-
 ## 2.3. React的三大特性
 
 ### 2.3.1. 声明式编程
@@ -271,9 +270,9 @@
 
 # 4. 面向组件化编程
 
-## 定义组件
+## 4.1. 定义组件
 
-### 基本定义
+### 4.1.1. 基本定义
 
 - 最简单的定义组件的方法是写一个 JavaScript 函数:
 
@@ -299,7 +298,7 @@
   - 组件其实有一些额外的特性，比如`state`，之后再继续说明
   - 在此之前, 我们先用函数式组件，因为它们更加简洁。
 
-### 合成组件
+### 4.1.2. 合成组件
 
 - 组件可以在它们的输出中引用其它组件
   - 可以使用同样的组件来抽象到任意层级
@@ -328,11 +327,11 @@
   );
   ```
 
-## 4.1. 组件核心属性
+## 4.2. 组件核心属性
 
-### 4.1.1. props与不可变
+### 4.2.1. props与不可变
 
-#### props说明
+#### 4.2.1.1. props说明
 
 - 说明：
   - 当 React 遇到一个代表用户定义组件的元素时，它将 JSX 属性以一个单独对象props的形式传递给相应的组件
@@ -364,8 +363,7 @@
     - 而 `<Welcome />` 则代表一个组件
     - 并且需要在作用域中有一个 `Welcome` 组件。
 
-
-#### props不可变性
+#### 4.2.1.2. props不可变性
 
 - 纯函数与非纯函数
 
@@ -384,7 +382,7 @@
 
 - React 很灵活，但是它有一条严格的规则：  **所有 React 组件都必须是纯函数，并禁止修改其自身 props** 
 
-#### 类型限制与使用
+#### 4.2.1.3. 类型限制与使用
 
 - 类型限制写法
 
@@ -414,27 +412,27 @@
   }
   ```
 
-#### 使用方式
+#### 4.2.1.4. 使用方式
 
-### 4.1.2. state与生命周期
+### 4.2.2. state与生命周期
 
-#### state
+#### 4.2.2.1. state
 
 - 不要直接修改 state(状态)
 - state(状态) 更新可能是异步的
 - state(状态)更新会被合并
 
-#### 生命周期方法
+#### 4.2.2.2. 生命周期方法
 
-#### 数据的向下流动(state->props)
+#### 4.2.2.3. 数据的向下流动(state->props)
 
-### 4.1.3. ref
+### 4.2.3. ref
 
-## 4.2. 事件处理
+## 4.3. 事件处理
 
 > 通过 React 元素处理事件跟在 DOM 元素上处理事件非常相似。但是有一些语法上的区别：
 
-### 与html上事件语法区别
+### 4.3.1. 与html上事件语法区别
 
 - React 事件使用驼峰命名，而不是全部小写。
 - 通过 JSX , 你传递一个函数作为事件处理程序，而不是一个字符串。
@@ -480,7 +478,7 @@
   - 这里， e 是一个合成的事件。 React 根据 W3C 规范 定义了这个合成事件，所以你不需要担心跨浏览器的兼容性问题
   - 查看 [SyntheticEvent](https://react.html.cn/docs/events.html) 参考指南了解更多。
 
-### 类组件事件与bind
+### 4.3.2. 类组件事件与bind
 
 - 当使用一个 ES6 类 定义一个组件时，通常的一个事件处理程序是类上的一个方法
   - 例如， Toggle 组件渲染一个按钮，让用户在 “ON” 和 “OFF” 状态之间切换：
@@ -562,29 +560,60 @@
     }
     ```
     - 每次 LoggingButton 渲染时都创建一个不同的回调。在多数情况下，没什么问题。
-    - 然而，如果这个回调被作为 prop(属性) 传递给下级组件，这些组件可能需要额外的重复渲染。
+    - 然而， **如果这个回调被作为 prop(属性) 传递给下级组件，这些组件可能需要额外的重复渲染** 。
     - 通常建议在构造函数中进行绑定，以避免这类性能问题。
 
+### 4.3.3. 事件的参数传递
 
-## 4.3. 表单数据处理
+- 示例：
+  - 在循环内部，通常需要将一个额外的参数传递给事件处理程序
+  - 例如，如果 id 是一个内联 ID，则以下任一方式都可以正常工作：
 
-## 4.4. 生命周期
+  ```jsx
+  <button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
+  <button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
+  ```
 
-## 4.5. 虚拟DOM与真实DOM diff算法
+  - 上述两行代码是等价的，分别使用 [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) 和 [Function.prototype.bind](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind) 。
+  - 上面两个例子中，参数 e 作为 React 事件对象将会被作为第二个参数进行传递。
+  - 通过箭头函数的方式，事件对象 **必须显式** 的进行传递
+  - 但是通过 bind 的方式， **事件对象以及更多的参数将会被隐式的进行传递** 。
 
-# 5. React 脚手架
+## 4.4. 渲染方式
 
-# 6. React 路由
+### 4.4.1. 条件渲染
 
-# 7. React Ajax、axios
+### 4.4.2. 列表渲染
 
-# 8. react-redux
+## 4.5. 表单数据处理
 
-# 9. CRACO
+## 4.6. 状态提升
+
+## 4.7. 组合(Composition) VS 继承(Inheritance)
+
+# 5. React深入
+
+## 5.1. React编程思想
+
+## 5.2. 生命周期
+
+## 5.3. 虚拟DOM与真实DOM diff算法
+
+# 6. 常用框架
+
+## 6.1. React 脚手架
+
+## 6.2. React 路由
+
+## 6.3. React Ajax、axios
+
+## 6.4. react-redux
+
+## 6.5. CRACO
 
 **C** **r**eate **R**eact **A**pp **C**onfiguration **O**verride 
 
-# 10. 参考资料
+# 7. 参考资料
 
 - [x] [官方入门项目](https://react.html.cn/tutorial/tutorial.html)
 - [ ] [中文文档](https://react.html.cn/docs/hello-world.html)
