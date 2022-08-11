@@ -50,11 +50,11 @@
   - [lvs,keepalive](./Middleware/lvs+keepalive.md)
     > 随笔笔记，仍未整理
   - [nginx](./Middleware/nginx.md)
-    > 随笔笔记，仍未整理
+    > 整理了部分基础的配置
   - [RabbitMQ](./Middleware/RabbitMQ.md)
     > 网上找了一些资料先整理了一下，亟需扩充与补充。
   - [kafka](./Middleware/kafka.md)
-    > 没时间整理
+    > 暂时没时间继续整理
 - **容器**
   - [docker](./container/docker.md)
     > 占位
@@ -84,7 +84,7 @@
   - [typescript](./front_end/TypeScript.md)
     > 基本语法整理了一遍。
   - [react](./front_end/react.md)
-    > 待学习与整理
+    > 基础整理中
   - [flow](./front_end/flow.md)
     > 静态类型检查。看vim的lspconfig的时候发现到
   - [sass](./front_end/scss.md)
@@ -102,10 +102,18 @@
 - **Java** 
   - [学习笔记1](./java/JavaBaseNote1.md)
   - [学习笔记2](./java/JavaBaseNote2.md)
-  - [基础解析1](./java/Java基础解析1-基础.md)
-  - [基础解析1](./java/java基础解析2-深入.md)
+  - [基础解析1-基础](./java/Java基础解析1-基础.md)
+  - [基础解析2-深入](./java/java基础解析2-深入.md)
+  - [java并发基础](./java/java并发1-基础.md)
+    > 非常基础的内容
+  - [java并发进阶](./java/java并发2-进阶.md)
+    > java并发深入，面试重点。在整理中，大多数内容基于文末资料中的《深入浅出java多线程》
+  - [java并发实战](./java/java并发3-实战.md)
+    > 未开始
   - [Java NIO](./java/JavaNIO.md)
+    > 只是一些基础
   - [JNI](./java/JNI.md)
+    > 未开始
 - **JavaFrame**
   - [Spring框架](./javaFrame/Spring.md)
     > 以前记的一些基础笔记，最近开始整理一些源码阅读笔记
@@ -122,7 +130,7 @@
   - [测试框架，junit与mockito](./javaFrame/Junit_Mockito.md)
     > 有部份感觉官方文档比较透彻，就直接把英文进去了
 - **jvm**
-  > 唯一一个整理得比较齐全的笔记了
+  > **唯一一个整理得比较齐全的笔记了**
   - [JVM1内存与垃圾回收](./java/JVM1内存与垃圾回收.md)
   - [JVM2字节码与类的加载](./java/JVM2字节码与类的加载.md)
   - [JVM3性能监控和调优](./java/JVM3性能监控和调优.md)
@@ -155,7 +163,8 @@
   - [模型部署](./AI/module_deploy.md)
     > 模型轻量化，部署相关
 - **C/C++**
-  - 待整理
+  - [c,c++](./C/c-c++.md)
+    > 刚开始搞
 - **其他**
   - [OAuth2.0](./others/OAuth2.0.md)
   - [鉴权](./others/authentication.md)
