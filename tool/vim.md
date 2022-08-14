@@ -447,6 +447,13 @@
 - `echo expand("%:p")`: 查看当前文件路径
 - visual模式下`g+<c-g>`:查看选中字符个数
 - `ctrl-a` 数字加一。`ctrl-x` 数字减一
+- 将输出写出到文件
+
+  ```
+  :redir > highlight.txt
+  :highlight
+  :redir END
+  ```
 
 # 4. vim插件
 

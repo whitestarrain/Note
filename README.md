@@ -33,6 +33,9 @@
     > 鬼知道我啥时候整的这些东西。记得只是想抽时间把大学里学的一些概念性的东西整理一下来着。一个字，杂
   - [正则表达式](./base/regex.md)
     > 网上太多教程了，这里就打算记录一下比较生的用法
+- **数据库**
+  - [mysql](./database/mysql.md)
+  - [redis](./database/redis.md)
 - **大数据(笔记没时间更完，看一下[资料](./big_data/资料)吧)** 
   - [hadoop(hdfs,MR,HBase),hive](./big_data/hadoop.md)
     > 好像是以前跟着视频边学边记的。更到HBase后就没时间更了。
