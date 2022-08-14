@@ -412,19 +412,160 @@
   }
   ```
 
-#### 4.2.1.4. 使用方式
-
 ### 4.2.2. state与生命周期
 
 #### 4.2.2.1. state
 
-- 不要直接修改 state(状态)
-- state(状态) 更新可能是异步的
-- state(状态)更新会被合并
+- 说明：
+  - state是组件对象最重要的属性, 值是对象(可以包含多个key-value的组合)
+  - 组件被称为"状态机", 通过更新组件的state来更新对应的页面显示(重新渲染组件)
 
-#### 4.2.2.2. 生命周期方法
+- 注意：
+  - 不要直接修改 state(状态)
+  - state(状态) 更新可能是异步的
+    - 出于性能考虑，React 可能会把多个 setState() 调用合并成一个调用。
+    - 因为 this.props 和 this.state 可能会异步更新，所以你不要依赖他们的值来更新下一个状态。
+    - 要解决这个问题，可以让 setState() 接收一个函数而不是一个对象。
+      > 这个函数用上一个 state 作为第一个参数，将此次更新被应用时的 props 做为第二个参数
+
+    ```javascript
+    // Correct
+    this.setState((state, props) => ({
+      counter: state.counter + props.increment
+    }));
+    ```
+  - state(状态)更新会被合并
+
+#### 4.2.2.2. 生命周期与相关方法
+
+##### 旧版生命周期
+
+![react-2](./image/react-2.png)
+
+> React 的生命周期主要可分为: 
+> - 初始化阶段
+> - 挂载阶段
+> - 更新阶段
+> - 卸载阶段。
+
+- 初始化阶段
+  - 发生在 constructor 中的内容，在 constructor 中进行 state、props 的初始化
+  - 在这个阶段修改 state，不会执行更新阶段的生命周期，可以直接对 state 赋值。
+
+- 挂载阶段，对应的生命周期为：
+  - 1.componentWillMount :发生在 render 函数之前，还没有挂载 Dom
+  - 2.render 
+  - 3.componentDidMount :发生在 render 函数之后，已经挂载 Dom
+
+- 更新阶段:更新阶段分为由 state 更新引起和 props 更新引起
+  - props
+    - 1. componentWillReceiveProps(nextProps,nextState)
+      - 这个生命周期主要为我们提供对 props 发生改变的监听
+      - 如果需要在 props 发生改变后，相应改变组件的一些 state，可以使用这个方法
+      - 在这个方法中改变 state 不会二次渲染，而是直接合并 state。
+    - 2. shouldComponentUpdate(nextProps,nextState)
+      - 这个生命周期需要返回一个 Boolean 类型的值，判断是否需要更新渲染组件
+      - 优化 react 应用的主要手段之一
+      - 当返回 false 就不会再向下执行生命周期了，在这个阶段 **不可以 setState()** ，会导致循环调用。
+    - 3. componentWillUpdate(nextProps,nextState)
+      - 这个生命周期主要是给我们一个时机能够处理一些在 Dom 发生更新之前的事情
+      - 如获得 Dom 更新前某些元素的坐标、大小等
+      - 在这个阶段 **不可以 setState()** ，会导致循环调用。
+    - *一直到这里 this.props 和 this.state 都还未发生更新*
+    - 4. render
+      - 执行 render 函数。
+    - 5. componentDidUpdate(prevProps, prevState) 
+      - 在此时已经完成渲染，Dom 已经发生变化，State 已经发生更新
+      - prevProps、prevState 均为上一个状态的值
+  - state（具体同上）
+    - 1. shouldComponentUpdate
+    - 2. componentWillUpdate
+    - 3. render
+    - 4. componentDidUpdate
+- 卸载阶段，对应的生命周期为
+  - componentWillUnmount
+    - componentWillUnmount 会在组件卸载及销毁之前直接调用
+    - 在此方法中执行必要的清理操作
+      - 例如，清除 timer，取消网络请求或清除在 componentDidMount  中创建的订阅等
+    - componentWillUnmount 中不应调用 setState，因为该组件将永远不会重新渲染
+      - 组件实例卸载后，将永远不会再挂载它。
+
+- 注意：
+  - 根据上面的生命周期可以理解所谓的 setState 是“异步”的并非 setState 函数插入了新的宏任务或微任务
+  - 而是在进行到 componentDidUpdate 这个生命周期之前，React 都不会更新组件实例的 state 值。
+
+  ```
+  引发问题： setState 在 setTimeout 和原生事件回调中却可以同步更新（ this.state 立即获得更新结果）是为什么呢？
+  答案： 
+      在 React 中，如果是由 React 引发的事件处理（比如：onClick 引发的事件处理）或在钩子函数中，调用 setState 不会同步更新 this.state，
+      除此之外的 setState 调用会同步执行this.setState。
+      “除此之外”指的是：绕过 React 通过 addEventListener 直接添加的事件处理函数和 setTimeout/setInterval 产生的异步调用。
+  解释： 
+      每次 setState 产生新的state会依次被存入一个队列，然后会根据isBathingUpdates 变量判断是直接更新 this.state 还是放进 dirtyComponent 里回头再说。
+      isBatchingUpdates 默认是 false，也就表示 setState 会同步更新 this.state。
+      但是，当 React 在调用事件处理函数之前就会调用 batchedUpdates，这个函数会把 isBatchingUpdates 修改为 true，
+      造成的后果就是由 React 控制的事件处理过程 setState 不会同步更新 this.state。
+  解决方法：
+      当我们想要依据上一个 state 的值来 setState 时，可以使用函数式 setState。
+
+  function increment(state, props) {
+    return {count: state.count + 1};
+  }
+  function incrementMultiple() {
+    this.setState(increment);
+    this.setState(increment);
+    this.setState(increment);
+  }
+  ```
+
+##### react16及以后
+
+- React 16 中删除了如下三个生命周期。
+  - componentWillMount
+  - componentWillReceiveProps
+  - componentWillUpdate
+
+  ```
+  官方给出的解释是 react 打算在17版本推出新的 Async Rendering，提出一种可被打断的生命周期，
+  而可以被打断的阶段正是实际 dom 挂载之前的虚拟 dom 构建阶段，也就是要被去掉的三个生命周期。
+  本身这三个生命周期所表达的含义是没有问题的，但 react 官方认为我们（开发者）也许在这三个函数中编写了有副作用的代码，
+  所以要替换掉这三个生命周期，因为这三个生命周期可能在一次 render 中被反复调用多次。
+  ``` 
+- 取代这三个生命周期的是两个新生命周期
+  - `static getDerivedStateFromProps(nextProps,nextState)`
+    - 在 React 16.3.0 版本中：在组件实例化、接收到新的 props 时会被调用
+    - 在 React 16.4.0 版本中：在组件实例化、接收到新的 props 、组件状态更新时会被调用
+
+    ```
+    该方法可以返回一个对象，将会和 state 发生合并，且不会触发 re-render。
+    这个生命周期主要为我们提供了一个可以在组件实例化或 props、state 发生变化后根据 props 修改 state 的一个时机，
+    用来替代旧的生命周期中的 componentWillMount、ComponentWillReceiveProps。
+    因为是一个静态方法，this 指向不是组件实例。
+    ```
+  - `getSnapshotBeforeUpdate（prevProps,prevState）`
+    - 在 render 函数调用之后，实际的 Dom 渲染之前，在这个阶段我们可以拿到上一个状态 Dom 元素的坐标、大小的等相关信息，用于替代旧的生命周期中的 componentWillUpdate。
+    - 该函数的返回值将会作为 componentDidUpdate 的第三个参数出现。
 
 #### 4.2.2.3. 数据的向下流动(state->props)
+
+- 说明
+  - 不管是父组件或是子组件都无法知道某个组件是有状态的还是无状态的，并且它们也并不关心它是函数组件还是 class 组件。
+  - 这就是为什么称 state 为局部的或是封装的的原因
+  - 除了拥有并设置了它的组件，其他组件都无法访问。
+
+- 组件可以选择把它的 state 作为 props 向下传递到它的子组件中：
+
+  ```javascript
+  <FormattedDate date={this.state.date} />
+  ```
+  - FormattedDate 组件会在其 props 中接收参数 date
+  - 但是组件本身无法知道它是来自于 Clock 的 state，或是 Clock 的 props，还是手动输入的：
+
+  ```javascript
+  function FormattedDate(props) {
+    return <h2>It is {props.date.toLocaleTimeString()}.</h2>;
+  }
+  ```
 
 ### 4.2.3. ref
 
@@ -479,6 +620,10 @@
   - 查看 [SyntheticEvent](https://react.html.cn/docs/events.html) 参考指南了解更多。
 
 ### 4.3.2. 类组件事件与bind
+
+- 注意：
+  - 组件中render方法中的this为组件实例对象
+  - 组件自定义的方法中this为undefined(作为事件的回调使用)，
 
 - 当使用一个 ES6 类 定义一个组件时，通常的一个事件处理程序是类上的一个方法
   - 例如， Toggle 组件渲染一个按钮，让用户在 “ON” 和 “OFF” 状态之间切换：
@@ -583,7 +728,262 @@
 
 ### 4.4.1. 条件渲染
 
-### 4.4.2. 列表渲染
+#### 4.4.1.1. 基本说明
+
+- 说明：
+  - React 中的条件渲染就和在 JavaScript 中的条件语句一样。
+  - 使用 JavaScript 操作符如 if 或者条件操作符来创建渲染当前状态的元素，并且让 React 更新匹配的 UI 。
+- 示例：
+
+  ```javascript
+  function Greeting(props) {
+    const isLoggedIn = props.isLoggedIn;
+    if (isLoggedIn) {
+      return <UserGreeting />;
+    }
+    return <GuestGreeting />;
+  }
+
+  ReactDOM.render(
+    // 修改为 isLoggedIn={true} 试试:
+    <Greeting isLoggedIn={false} />,
+    document.getElementById('root')
+  );
+  ```
+
+#### 4.4.1.2. 元素变量
+
+- 说明：可以用变量来存储元素
+- 目的：有条件地渲染组件的一部分，而输出的其余部分不会更改。
+- 示例：
+
+  ```javascript
+  function LoginButton(props) {
+    return (
+      <button onClick={props.onClick}>
+        Login
+      </button>
+    );
+  }
+
+  function LogoutButton(props) {
+    return (
+      <button onClick={props.onClick}>
+        Logout
+      </button>
+    );
+  }
+  ```
+
+  ```javascript
+  class LoginControl extends React.Component {
+    constructor(props) {
+      super(props);
+      this.handleLoginClick = this.handleLoginClick.bind(this);
+      this.handleLogoutClick = this.handleLogoutClick.bind(this);
+      this.state = {isLoggedIn: false};
+    }
+
+    handleLoginClick() {
+      this.setState({isLoggedIn: true});
+    }
+
+    handleLogoutClick() {
+      this.setState({isLoggedIn: false});
+    }
+
+    render() {
+      const isLoggedIn = this.state.isLoggedIn;
+      let button;
+
+      if (isLoggedIn) {
+        button = <LogoutButton onClick={this.handleLogoutClick} />;
+      } else {
+        button = <LoginButton onClick={this.handleLoginClick} />;
+      }
+
+      return (
+        <div>
+          <Greeting isLoggedIn={isLoggedIn} />
+          {button}
+        </div>
+      );
+    }
+  }
+
+  ReactDOM.render(
+    <LoginControl />,
+    document.getElementById('root')
+  );
+  ```
+
+#### 4.4.1.3. 内联条件写法
+
+> 声明一个变量并使用 if 语句进行条件渲染是不错的方式，但有时你可能会想使用更为简洁的语法。
+
+##### 与运算符 &&
+
+- 之所以能这样做，是因为在 JavaScript 中
+- true && expression 总是会返回 expression
+- 而 false && expression 总是会返回 false。
+
+```javascript
+function Mailbox(props) {
+  const unreadMessages = props.unreadMessages;
+  return (
+    <div>
+      <h1>Hello!</h1>
+      {unreadMessages.length > 0 &&
+        <h2>
+          You have {unreadMessages.length} unread messages.
+        </h2>
+      }
+    </div>
+  );
+}
+
+const messages = ['React', 'Re: React', 'Re:Re: React'];
+
+const root = ReactDOM.createRoot(document.getElementById('root')); 
+root.render(<Mailbox unreadMessages={messages} />);
+```
+
+##### 三目运算符
+
+```javascript
+render() {
+  const isLoggedIn = this.state.isLoggedIn;
+  return (
+    <div>
+      The user is <b>{isLoggedIn ? 'currently' : 'not'}</b> logged in.
+    </div>
+  );
+}
+```
+```javascript
+render() {
+  const isLoggedIn = this.state.isLoggedIn;
+  return (
+    <div>
+      {isLoggedIn
+        ? <LogoutButton onClick={this.handleLogoutClick} />
+        : <LoginButton onClick={this.handleLoginClick} />
+      }
+    </div>
+  );
+}
+```
+
+### 4.4.2. 阻止渲染
+
+- 在极少数情况下，可能希望能隐藏组件，即使它已经被其他组件渲染
+  - 若要完成此操作， **可以让 render 方法直接返回 null，而不进行任何渲染** 。
+
+- 下面的示例中，`<WarningBanner />` 会根据 prop 中 warn 的值来进行条件渲染
+  - 如果 warn 的值是 false，那么组件则不会渲染:
+
+  ```javascript
+  function WarningBanner(props) {
+    if (!props.warn) {
+      return null;
+    }
+
+    return (
+      <div className="warning">
+        Warning!
+      </div>
+    );
+  }
+
+  class Page extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {showWarning: true};
+      this.handleToggleClick = this.handleToggleClick.bind(this);
+    }
+
+    handleToggleClick() {
+      this.setState(state => ({
+        showWarning: !state.showWarning
+      }));
+    }
+
+    render() {
+      return (
+        <div>
+          <WarningBanner warn={this.state.showWarning} />
+          <button onClick={this.handleToggleClick}>
+            {this.state.showWarning ? 'Hide' : 'Show'}
+          </button>
+        </div>
+      );
+    }
+  }
+
+  const root = ReactDOM.createRoot(document.getElementById('root')); 
+  root.render(<Page />);
+  ```
+
+- 注意：
+  - 在组件的 render 方法中 **返回 null 并不会影响组件的生命周期** 
+  - 例如，上面这个示例中，componentDidUpdate 依然会被调用。。
+
+### 4.4.3. 列表渲染与key
+
+- react可以渲染多个组件，其中列表中的react元素应该设置key属性
+
+  ```javascript
+  function NumberList(props) {
+    const numbers = props.numbers;
+    const listItems = numbers.map((number) =>
+      <li key={number.toString()}>
+        {number}
+      </li>
+    );
+    return (
+      <ul>{listItems}</ul>
+    );
+  }
+  ```
+
+- key 帮助 React 识别哪些元素改变了，比如被添加或删除
+  - 因此你应当给数组中的每一个元素赋予一个确定的标识。
+  - 一个元素的 key 最好是这个元素在列表中拥有的一个独一无二的字符串
+  - 当元素没有确定 id 的时候，万不得已你可以使用元素索引 index 作为 key
+  - 如果列表项目的顺序可能会变化，我们不建议使用索引来用作 key 值，因为这样做会导致性能变差，还可能引起组件状态的问题。
+
+  > [深度解析使用索引作为 key 的负面影响](https://medium.com/@robinpokorny/index-as-a-key-is-an-anti-pattern-e0349aece318)
+  >
+  > [深入解析为什么 key 是必须的](https://zh-hans.reactjs.org/docs/reconciliation.html#recursing-on-children)
+
+- key注意：
+  - 元素的 key 只有放在就近的数组上下文中才有意义。
+
+    ```javascript
+    function ListItem(props) {
+      const value = props.value;
+      return (
+        // 错误！你不需要在这里指定 key：
+        <li key={value.toString()}>
+          {value}
+        </li>
+      );
+    }
+
+    function NumberList(props) {
+      const numbers = props.numbers;
+      const listItems = numbers.map((number) =>
+        // 错误！元素的 key 应该在这里指定：
+        <ListItem value={number} />
+      );
+      return (
+        <ul>
+          {listItems}
+        </ul>
+      );
+    }
+    ```
+  - key 值在兄弟节点之间必须唯一
 
 ## 4.5. 表单数据处理
 
@@ -595,11 +995,9 @@
 
 ## 5.1. React编程思想
 
-## 5.2. 生命周期
+## 5.2. 虚拟DOM与真实DOM diff算法
 
-## 5.3. 虚拟DOM与真实DOM diff算法
-
-# 6. 常用框架
+# 6. 常用相关套件
 
 ## 6.1. React 脚手架
 
@@ -616,8 +1014,10 @@
 # 7. 参考资料
 
 - [x] [官方入门项目](https://react.html.cn/tutorial/tutorial.html)
-- [ ] [中文文档](https://react.html.cn/docs/hello-world.html)
+- [ ] [中文文档18.2.0](https://react.html.cn/docs/hello-world.html)
+- [ ] [中文文档16.6.3](https://react.html.cn/docs/hello-world.html)
 - [ ] [react全家桶学习笔记](https://juejin.cn/post/6979132493333004319)
+  - [补充](https://github.com/IgnorantCircle/myStudy)
 - [ ] [用React、Redux、Immutable做俄罗斯方块](https://github.com/chvin/react-tetris)
 - [ ] [Immutable 详解及 React 中实践](https://github.com/camsong/blog/issues/3)
 - [ ] [从 1 到完美，用 js 和 react-native 写一个 APP](https://segmentfault.com/a/1190000016272845)
