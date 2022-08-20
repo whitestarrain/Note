@@ -985,7 +985,220 @@ render() {
     ```
   - key 值在兄弟节点之间必须唯一
 
-## 4.5. 表单数据处理
+## 4.5. 表单数据处理与受控组件
+
+### 4.5.1. 受控组件
+
+- 在 HTML 中，表单元素如 `<input>`，`<textarea>` 和 `<select>` 表单元素通常保持自己的状态，并根据用户输入进行更新。
+- 而在 React 中，可变状态一般保存在组件的 `state(状态)` 属性中，并且只能通过 `setState()` 更新。
+- 可以通过使 React 的 state 成为 “单一数据源” 来结合这两个形式
+  - 渲染表单的 React 组件也可以控制在用户输入之后的行为
+  - 这种形式，其值由 React 控制的表单元素称为“受控组件”。
+
+
+### 4.5.2. 与html有区别的受控组件
+
+#### `<input type="text">`
+
+```javascript
+class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('A name was submitted: ' + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Name:
+          <input type="text" value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+```
+
+- 设置表单元素的 value 属性之后，其显示值将由 this.state.value 决定，以满足 React 状态的同一数据理念
+- 每次键盘敲击之后会执行 handleChange 方法以更新 React 状态，显示值也将随着用户的输入改变。
+- 对于受控组件来说，每一次 state(状态) 变化都会伴有相关联的处理函数。
+  - 这使得 **可以直接修改或验证用户的输入** 
+  - 比如，如果我们希望强制 name 的输入都是大写字母，可以这样来写 handleChange 方法
+
+  ```javascript
+  handleChange(event) {
+    this.setState({value: event.target.value.toUpperCase()});
+  }
+  ```
+
+#### 4.5.2.1. textare
+
+- 在 HTML 中，`<textarea>` 元素通过它的子节点定义了它的文本值：
+- 在 React 中，`<textarea>` 的赋值使用 value 属性替代。这样一来，表单中 <textarea> 的书写方式接近于单行文本输入框。
+
+  ```javascript
+  class ControlledTextArea extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        // 注意，this.state.value 在构造函数中初始化，所以这些文本一开始就出现在文本域中
+        value: "the value of textarea",
+      };
+
+      this.handleChange = this.handleChange.bind(this);
+    }
+    handleChange(event) {
+      console.log(event.target.value);
+      this.setState({ value: event.target.value });
+    }
+    render() {
+      return <textarea value={this.state.value} onChange={this.handleChange} />;
+    }
+  }
+  ```
+
+#### 4.5.2.2. select
+
+- 在 HTML 中，`<select>` 创建了一个下拉列表
+  - 里面使用`<option>`表示可选项
+  - 并用`selected`属性进行选中
+  ```html
+  <select>
+    <option value="grapefruit">Grapefruit</option>
+    <option value="lime">Lime</option>
+    <option selected value="coconut">Coconut</option>
+    <option value="mango">Mango</option>
+  </select>
+  ```
+- React 中，并不使用这个 selected 属性，而是在根 select 标签中使用了一个 value 属性。
+
+  ```javascript
+  class ControlledSelect extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        value: "1value",
+      };
+      this.handleChange = this.handleChange.bind(this);
+    }
+    handleChange(event) {
+      this.setState({
+        value: event.target.value,
+      });
+    }
+    render() {
+      const options = [1, 2, 3, 4, 5, 6];
+      return (
+        <select value={this.state.value} onChange={this.handleChange}>
+          {options.map((num) => (
+            <option key={num.toString()} value={num.toString() + "value"}>
+              {num.toString() + "value" + "-content"}
+            </option>
+          ))}
+        </select>
+      );
+    }
+  }
+  ```
+
+### 4.5.2.3. 不受控组件
+
+- 在HTML中， 
+  - `<input type="file">` 可以让用户从设备存储器中选择一个或多个文件上传到服务器
+  - 或者通过 JavaScript 使用 [File API](https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications) 操作。
+
+- 因为它的值是只读的，所以它是 Reac t中的  **不受控 组件** 
+  > React深入中会进行详细说明
+
+### 4.5.3. 处理多个输入元素
+
+- 加个name做区分就行
+
+  ```javascript
+  class Reservation extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        isGoing: true,
+        numberOfGuests: 2
+      };
+
+      this.handleInputChange = this.handleInputChange.bind(this);
+    }
+
+    handleInputChange(event) {
+      const target = event.target;
+      const value = target.type === 'checkbox' ? target.checked : target.value;
+      const name = target.name;
+
+      this.setState({
+        // es6 语法。取变量name的值作为key
+        [name]: value
+      });
+    }
+
+    render() {
+      return (
+        <form>
+          <label>
+            Is going:
+            <input
+              name="isGoing"
+              type="checkbox"
+              checked={this.state.isGoing}
+              onChange={this.handleInputChange} />
+          </label>
+          <br />
+          <label>
+            Number of guests:
+            <input
+              name="numberOfGuests"
+              type="number"
+              value={this.state.numberOfGuests}
+              onChange={this.handleInputChange} />
+          </label>
+        </form>
+      );
+    }
+  }
+  ```
+- 想为每一个组件写一个`handleChange`也拦不住你
+
+### 受控组件的null值
+
+- 下面这种情况，因为已经给定了固定值，并且没有设置`onChange`处理处理方法，input输入框可以聚焦，但是无法修改值
+
+  ```javascript
+  <input type="text" value="hi" />
+  ```
+- 若将value改为`null`则可以输入值，这种情况下可以看作input组件已经不受react控制了。
+
+### 4.5.5. 受控组件的替代方案
+
+- 有时使用受控组件有些乏味，因为需要为每一个可更改的数据提供事件处理器，并通过 React 组件管理所有输入状态。
+- 当将已经存在的代码转换为 React 时，或将 React 应用程序与非 React 库集成时，这可能变得特别烦人。
+- 在这些情况下，可能需要使用 **不受控的组件** ，用于实现输入表单的替代技术。
+- 这将在React深入章节进行讨论
+
+### 4.5.6. 完全成熟的解决方案
+
+- 如果正在寻找一个完整的解决方案，包括验证、跟踪访问的字段以及处理表单提交
+- 那么 Formik 是最受欢迎的选择之一
+- 它建立在受控组件和管理状态的相同原则之上。
 
 ## 4.6. 状态提升
 
