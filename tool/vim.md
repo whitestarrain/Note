@@ -423,6 +423,8 @@
   ```
   </details>
 
+- `<c-a>` `<c-x>`:数字加一减一
+
 - `g<c-a>`编号，`sort`排序
   > help v_g_CTRL-A 查看帮助
   ```

@@ -345,6 +345,7 @@ awk 'BEGIN{
   - [ ] JNI（c++之后）
   - [x] nvim配置模块化(迁移到[dotfiles](https://github.com/whitestarrain/dotfiles))
   - [ ] [想搞搞树莓派](https://shumeipai.nxez.com/)
+  - [ ] 数据结构-索引
 
 <!--
 - [ ] SpringBoot原理
