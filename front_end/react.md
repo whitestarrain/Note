@@ -998,7 +998,7 @@ render() {
 
 ### 4.5.2. 与html有区别的受控组件
 
-#### `<input type="text">`
+#### 4.5.2.1. `<input type="text">`
 
 ```javascript
 class NameForm extends React.Component {
@@ -1045,7 +1045,7 @@ class NameForm extends React.Component {
   }
   ```
 
-#### 4.5.2.1. textare
+#### 4.5.2.2. textare
 
 - 在 HTML 中，`<textarea>` 元素通过它的子节点定义了它的文本值：
 - 在 React 中，`<textarea>` 的赋值使用 value 属性替代。这样一来，表单中 <textarea> 的书写方式接近于单行文本输入框。
@@ -1071,7 +1071,7 @@ class NameForm extends React.Component {
   }
   ```
 
-#### 4.5.2.2. select
+#### 4.5.2.3. select
 
 - 在 HTML 中，`<select>` 创建了一个下拉列表
   - 里面使用`<option>`表示可选项
@@ -1115,7 +1115,7 @@ class NameForm extends React.Component {
   }
   ```
 
-### 4.5.2.3. 不受控组件
+### 4.5.3. 不受控组件
 
 - 在HTML中， 
   - `<input type="file">` 可以让用户从设备存储器中选择一个或多个文件上传到服务器
@@ -1124,7 +1124,7 @@ class NameForm extends React.Component {
 - 因为它的值是只读的，所以它是 Reac t中的  **不受控 组件** 
   > React深入中会进行详细说明
 
-### 4.5.3. 处理多个输入元素
+### 4.5.4. 处理多个输入元素
 
 - 加个name做区分就行
 
@@ -1178,7 +1178,7 @@ class NameForm extends React.Component {
   ```
 - 想为每一个组件写一个`handleChange`也拦不住你
 
-### 受控组件的null值
+### 4.5.5. 受控组件的null值
 
 - 下面这种情况，因为已经给定了固定值，并且没有设置`onChange`处理处理方法，input输入框可以聚焦，但是无法修改值
 
@@ -1187,14 +1187,14 @@ class NameForm extends React.Component {
   ```
 - 若将value改为`null`则可以输入值，这种情况下可以看作input组件已经不受react控制了。
 
-### 4.5.5. 受控组件的替代方案
+### 4.5.6. 受控组件的替代方案
 
 - 有时使用受控组件有些乏味，因为需要为每一个可更改的数据提供事件处理器，并通过 React 组件管理所有输入状态。
 - 当将已经存在的代码转换为 React 时，或将 React 应用程序与非 React 库集成时，这可能变得特别烦人。
 - 在这些情况下，可能需要使用 **不受控的组件** ，用于实现输入表单的替代技术。
 - 这将在React深入章节进行讨论
 
-### 4.5.6. 完全成熟的解决方案
+### 4.5.7. 完全成熟的解决方案
 
 - 如果正在寻找一个完整的解决方案，包括验证、跟踪访问的字段以及处理表单提交
 - 那么 Formik 是最受欢迎的选择之一
@@ -1202,13 +1202,249 @@ class NameForm extends React.Component {
 
 ## 4.6. 状态提升
 
+> 如果已经做过了井字棋的入门案例，那么这一节简单看看即可。
+
+### 4.6.1. 基本说明
+
+- 通常情况下，同一个数据的变化需要几个不同的组件来反映。
+- 建议提升共享的状态到它们最近的祖先组件中。
+
+### 4.6.2. 示例
+
+```javascript
+const scaleNames = {
+  c: 'Celsius',
+  f: 'Fahrenheit'
+};
+
+function toCelsius(fahrenheit) {
+  return (fahrenheit - 32) * 5 / 9;
+}
+
+function toFahrenheit(celsius) {
+  return (celsius * 9 / 5) + 32;
+}
+
+function tryConvert(temperature, convert) {
+  const input = parseFloat(temperature);
+  if (Number.isNaN(input)) {
+    return '';
+  }
+  const output = convert(input);
+  const rounded = Math.round(output * 1000) / 1000;
+  return rounded.toString();
+}
+
+function BoilingVerdict(props) {
+  if (props.celsius >= 100) {
+    return <p>The water would boil.</p>;
+  }
+  return <p>The water would not boil.</p>;
+}
+
+class TemperatureInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.props.onTemperatureChange(e.target.value);
+  }
+
+  render() {
+    const temperature = this.props.temperature;
+    const scale = this.props.scale;
+    return (
+      <fieldset>
+        <legend>Enter temperature in {scaleNames[scale]}:</legend>
+        <input value={temperature}
+              onChange={this.handleChange} />
+      </fieldset>
+    );
+  }
+}
+
+class Calculator extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
+    this.handleFahrenheitChange = this.handleFahrenheitChange.bind(this);
+    this.state = {temperature: '', scale: 'c'};
+  }
+
+  handleCelsiusChange(temperature) {
+    this.setState({scale: 'c', temperature});
+  }
+
+  handleFahrenheitChange(temperature) {
+    this.setState({scale: 'f', temperature});
+  }
+
+  render() {
+    const scale = this.state.scale;
+    const temperature = this.state.temperature;
+    const celsius = scale === 'f' ? tryConvert(temperature, toCelsius) : temperature;
+    const fahrenheit = scale === 'c' ? tryConvert(temperature, toFahrenheit) : temperature;
+
+    return (
+      <div>
+        <TemperatureInput
+          scale="c"
+          temperature={celsius}
+          onTemperatureChange={this.handleCelsiusChange} />
+        <TemperatureInput
+          scale="f"
+          temperature={fahrenheit}
+          onTemperatureChange={this.handleFahrenheitChange} />
+        <BoilingVerdict
+          celsius={parseFloat(celsius)} />
+      </div>
+    );
+  }
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<Calculator />);
+```
+
+### 4.6.3. 经验总结
+
+- 在一个 React 应用中，对于任何可变的数据都应该循序“单一数据源”原则
+  - 通常情况下，state 首先被添加到需要它进行渲染的组件
+  - 然后，如果其它的组件也需要它，可以提升状态到它们最近的祖先组件。
+  - 应该依赖 从上到下的数据流向 ，而不是试图在不同的组件中同步状态。
+
+- 提升状态相对于双向绑定方法需要写更多的“模板”代码
+  - 但是有一个好处，它可以更方便的找到和隔离 bugs
+  - 由于任何 state(状态) 都 “存活” 在若干的组件中，而且可以分别对其独立修改，所以发生错误的可能大大减少。
+  - 另外，可以实现任何定制的逻辑来拒绝或者转换用户输入。
+
+- 如果某个东西可以从 props(属性) 或者 state(状态) 中计算得到，那么它可能不应该在 state(状态) 中
+  - 例如，我们只保存最后编辑的 temperature 和它的 scale，
+  - 而不是保存 celsiusValue 和 fahrenheitValue ， 另一个输入框的值总是在 render() 方法中计算得来的。
+  - 这使我们对其进行清除和四舍五入到其他字段同时不会丢失用户输入的精度。
+
+- 当你看到 UI 中的错误，你可以使用 React 开发者工具来检查 props 
+  - 并向上遍历树，直到找到负责更新状态的组件。
+  - 这使你可以跟踪到 bug 的源头
+
+
 ## 4.7. 组合(Composition) VS 继承(Inheritance)
+
+### 4.7.1. 说明
+
+- React 拥有一个强大的组合模型，建议使用组合而不是继承以实现代码的重用。
+- 在 Facebook ，还没有发现任何用例，值得建议用继承层次结构来创建组件。
+- 使用 props(属性) 和 组合已经足够灵活来明确、安全的定制一个组件的外观和行为。
+- 切记，组件可以接受任意的 props(属性) ，包括原始值、React 元素，或者函数。
+- 如果要在组件之间重用非 U I功能
+  - 建议将其提取到单独的 JavaScript 模块中
+  - 组件可以导入它并使用该函数，对象或类，而不扩展它。
+
+### 4.7.2. 组合方式
+
+- 使用`props.children`进行组合
+
+  ```javascript
+  function FancyBorder(props) {
+    console.log(props.children)
+    return (
+      <div className={'FancyBorder FancyBorder-' + props.color}>
+        {props.children} // h1 和 p两个React对象
+      </div>
+    );
+  }
+
+  function WelcomeDialog() {
+    return (
+      <FancyBorder color="blue">
+        <h1 className="Dialog-title">
+          Welcome
+        </h1>
+        <p className="Dialog-message">
+          Thank you for visiting our spacecraft!
+        </p>
+      </FancyBorder>
+    );
+  }
+
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(<WelcomeDialog />);
+  ```
+
+- 使用自定义属性传React对象
+
+  ```javascript
+  function SplitPane(props) {
+    return (
+      <div className="SplitPane">
+        <div className="SplitPane-left">
+          {props.left}
+        </div>
+        <div className="SplitPane-right">
+          {props.right}
+        </div>
+      </div>
+    );
+  }
+
+  function App() {
+    return (
+      <SplitPane
+        left={
+          <Contacts />
+        }
+        right={
+          <Chat />
+        } />
+    );
+  }
+  ```
+
+- 使用普通变量配置React元素
+
+  ```javascript
+  function Dialog(props) {
+    return (
+      <FancyBorder color="blue">
+        <h1 className="Dialog-title">
+          {props.title}
+        </h1>
+        <p className="Dialog-message">
+          {props.message}
+        </p>
+      </FancyBorder>
+    );
+  }
+
+  function WelcomeDialog() {
+    return (
+      <Dialog
+        title="Welcome"
+        message="Thank you for visiting our spacecraft!" />
+
+    );
+  }
+  ```
+
+## 4.8. React编程思想
+
+> [示例跳转](https://react.html.cn/docs/thinking-in-react.html)
+
+- 将 UI 拆解到组件层次结构中
+- 用 React 构建一个静态版本
+- 确定 UI state(状态) 的最小（但完整）表示
+- 确定 state(状态) 的位置
+  - 确定每个基于这个 state(状态) 渲染的组件。
+  - 找出公共父级组件（一个单独的组件，在组件层级中位于所有需要这个 state(状态) 的组件的上面。
+  - 公共父级组件 或者 另一个更高级组件拥有这个 state(状态) 。
+  - 如果找不出一个拥有该 state(状态) 的合适组件，可以创建一个简单的新组件来保留这个 state(状态) ，并将其添加到公共父级组件的上层即可。
+- 添加反向数据流(回调函数)
 
 # 5. React深入
 
-## 5.1. React编程思想
-
-## 5.2. 虚拟DOM与真实DOM diff算法
+## 5.1. 虚拟DOM与真实DOM diff算法
 
 # 6. 常用相关套件
 
