@@ -1442,25 +1442,59 @@ root.render(<Calculator />);
   - 如果找不出一个拥有该 state(状态) 的合适组件，可以创建一个简单的新组件来保留这个 state(状态) ，并将其添加到公共父级组件的上层即可。
 - 添加反向数据流(回调函数)
 
-# 5. React深入
+# 5. Hooks思想与React Hooks入门
 
-## 5.1. 虚拟DOM与真实DOM diff算法
+## 5.1. React的两套api
 
-# 6. 常用相关套件
+## 5.2. 函数式编程的副效应
 
-## 6.1. React 脚手架
+## 5.3. Hook的作用
 
-## 6.2. React 路由
+## 5.4. 副效应函数useEffect
 
-## 6.3. React Ajax、axios
+# 6. React Hook Api(ver 16.8)
 
-## 6.4. react-redux
+## 6.1. useEffect
 
-## 6.5. CRACO
+## 6.2. useContext
+
+## 6.3. useReducer
+
+## 6.4. useEffect
+
+## 6.5. useRef
+
+## 6.6. useImperativeHandle
+
+## 6.7. useMemo
+
+## 6.8. useCallBack
+
+## 6.9. useDebugValue
+
+## 6.10. useLayoutEffect
+
+## 6.11. 自定义 hook
+
+# 7. React深入
+
+## 7.1. 虚拟DOM与真实DOM diff算法
+
+# 8. 常用相关套件
+
+## 8.1. React 脚手架
+
+## 8.2. React 路由
+
+## 8.3. React Ajax、axios
+
+## 8.4. react-redux
+
+## 8.5. CRACO
 
 **C** **r**eate **R**eact **A**pp **C**onfiguration **O**verride 
 
-# 7. 参考资料
+# 9. 参考资料
 
 - [x] [官方入门项目](https://react.html.cn/tutorial/tutorial.html)
 - [ ] [中文文档18.2.0](https://react.html.cn/docs/hello-world.html)
@@ -1474,3 +1508,5 @@ root.render(<Calculator />);
   - [ ] [React模块化与组件化](https://www.jianshu.com/p/ffd4101cee4b)
 <!-- https://www.bilibili.com/video/BV1wy4y1D7JT/ -->
 - [ ] [js class支持定义属性/属性初始化器语法](https://www.jianshu.com/p/d80c30cb4d71)
+- [ ] **[react hook](https://github.com/puxiao/react-hook-tutorial)**
+- [ ] **[React Hooks 入门教程](https://www.ruanyifeng.com/blog/2019/09/react-hooks.html)**

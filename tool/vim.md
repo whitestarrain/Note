@@ -1,3 +1,5 @@
+> 历史vim学习笔记记录，当前[个人dotfiles](https://github.com/whitestarrain/dotfiles)试用的插件和配置与下方记录可能有较大不同
+
 # 1. 基础操作
 
 ## 1.1. 查看相关信息

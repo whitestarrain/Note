@@ -656,19 +656,17 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 # 5. 分布式算法
 
-## 5.1. 一致性问题
+## 5.1. 分布式事务算法
 
-## 5.2. 分布式事务算法
+### 5.1.1. 2PC(两阶段提交)
 
-### 5.2.1. 算法
 
-#### 5.2.1.1. 2PC(两阶段提交)
 
-#### 5.2.1.2. 3PC(三阶段提交)
+### 5.1.2. 3PC(三阶段提交)
 
-#### 5.2.1.3. paxos
+### 5.1.3. paxos
 
-##### 说明
+#### 5.1.3.1. 说明
 
 `Paxos` 算法是基于**消息传递且具有高度容错特性的一致性算法**，是目前公认的解决分布式一致性问题最有效的算法之一，**其解决的问题就是在分布式系统中如何就某个值（决议）达成一致** 。
 
@@ -681,7 +679,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
   - `Prepare` 阶段
   - `accept` 阶段
 
-##### Prepare阶段
+#### 5.1.3.2. Prepare阶段
 
 > 也就是广播编号，没什么流程
 
@@ -712,7 +710,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 ![zookeeper-15](./image/zookeeper-15.png)
 
-##### accept阶段
+#### 5.1.3.3. accept阶段
 
 - Prepare阶段，我(`Proposer提案者`)给那么多`Acceptor表决者`发了这个提案，他们觉得咋样啊？
   - 如果 `Proposer` 收到了超过半数的 `Acceptor` 的批准（`Proposer` 本身同意）， 那么此时 `Proposer` 会给所有的 `Acceptor` 发送真正的提案
@@ -741,11 +739,11 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
   - **情况2**：如果 `Proposer` 如果没有收到超过半数的 `accept` 
     - 那么它将会将 **递增** 该 `Proposal` 的编号，然后 **重新进入 Prepare 阶段** 。
 
-##### Leader的学习
+#### 5.1.3.4. Leader的学习
 
 对于 `Learner` 来说如何去学习 `Acceptor` 批准的提案内容，这有很多方式，读者可以自己去了解一下，这里不做过多解释。
 
-##### 死循环问题
+#### 5.1.3.5. 死循环问题
 
 - 说明：
   - 比如说，此时提案者 P1 提出一个方案 M1，完成了 `Prepare` 阶段的工作，这个时候 `acceptor` 则批准了 M1
@@ -759,11 +757,11 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 - 解决方案: 就允许一个能提案 
 
-#### 5.2.1.4. Raft
+### 5.1.4. Raft
 
 <!-- TODO: 把看完的资料整理一下吧 -->
 
-##### leader election
+#### 5.1.4.1. leader election
 
 > **初次选举**
 
@@ -771,15 +769,15 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 > **再次选举**
 
-##### log replication
+#### 5.1.4.2. log replication
 
-##### safety
+#### 5.1.4.3. safety
 
-##### corner case
+#### 5.1.4.4. corner case
 
-### 5.2.2. 应用
+### 5.1.5. 应用
 
-#### 5.2.2.1. mysql的两段式提交
+#### 5.1.5.1. mysql的两段式提交
 
 > **简单说明**
 
@@ -809,19 +807,17 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 [Mysql笔记，XA章节](../database/mysql.md)
 
-#### 5.2.2.2. zookeeper 的ZAB使用paxos
+#### 5.1.5.2. zookeeper 的ZAB使用paxos
 
 [跳转](./zookeeper.md)
 
-#### 5.2.2.3. Mysql:5.7开始，支持group replication，采用Paxos
+#### 5.1.5.3. Mysql:5.7开始，支持group replication，采用Paxos
 
-#### 5.2.2.4. MongoDB:从3.4开始，支持类raft复制协议
+#### 5.1.5.4. MongoDB:从3.4开始，支持类raft复制协议
 
-## 5.3. 分布式缓存算法
+## 5.2. 分布式缓存算法
 
-### 5.3.1. 算法
-
-#### 5.3.1.1. 传统hash算法局限性
+### 5.2.1. 传统hash算法局限性
 
 > **情景**
 
@@ -880,7 +876,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 - 缓存节点增加
   - 同理
 
-#### 5.3.1.2. 一致性hash算法
+### 5.2.2. 一致性hash算法
 
 > **说明**
 
@@ -1027,7 +1023,7 @@ public class ConsistentHashingWithoutVirtualNode {
 ```
 </details>
 
-#### 5.3.1.3. hash slot分块算法
+### 5.2.3. hash slot分块算法
 
 [Redis 使用的虚拟槽分区只是一致性哈希算法的变种](https://www.reddit.com/r/redis/comments/4yztxi/whichoneisbetterhashslotor_consistent/)
 
@@ -1039,8 +1035,22 @@ public class ConsistentHashingWithoutVirtualNode {
 
 **[redis笔记](../database/redis.md)**
 
-### 5.3.2. 应用
+### 5.2.4. 应用
 
+## 5.3. 分布式复制模型
+
+### 5.3.1. 基本模型
+
+#### 5.3.1.1. 主从复制
+
+#### 5.3.1.2. 多节点复制
+
+#### 5.3.1.3. 无主节点复制
+
+### 5.3.2. 分布式系统挑战
+
+...
+ 
 ## 5.4. 其他重要分布式协议
 
 ### 5.4.1. Gossip 协议
@@ -1145,16 +1155,20 @@ public class ConsistentHashingWithoutVirtualNode {
 
 # 10. 参考资料
 
-- [图解一致性哈希算法](https://segmentfault.com/a/1190000021199728)
-- [万字带你入门Zookeeper](https://juejin.cn/post/6844904045283377165)
-- [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)
-- [springcloud：RPC和HTTP ](https://www.cnblogs.com/flypig666/p/11699526.html)
-- [【RPC】SpringCloud简介 & RPC与Restful API关系（三）](https://blog.csdn.net/weixin_33724659/article/details/92518863)
+- [ ] [图解一致性哈希算法](https://segmentfault.com/a/1190000021199728)
+- [ ] [万字带你入门Zookeeper](https://juejin.cn/post/6844904045283377165)
+- [ ] [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)
+- [ ] [springcloud：RPC和HTTP ](https://www.cnblogs.com/flypig666/p/11699526.html)
+- [ ] [【RPC】SpringCloud简介 & RPC与Restful API关系（三）](https://blog.csdn.net/weixin_33724659/article/details/92518863)
 - [x] [The Secret Lives of Data(raft算法演示)](http://thesecretlivesofdata.com/raft/)
 - [ ] [一文搞懂Raft算法](https://www.cnblogs.com/xybaby/p/10124083.html)
 - [x] [「图解Raft」让一致性算法变得更简单](https://zinglix.xyz/2020/06/25/raft/)
 - [ ] [微服务架构设计](https://gudaoxuri.gitbook.io/microservices-architecture/)
 - [ ] [什么是 Service Mesh](https://zhuanlan.zhihu.com/p/61901608)
 - [ ] [缓存一致性最佳实践](https://mp.weixin.qq.com/s/vuqFtP1NWR2wi4VgtoLT9A)
+- [ ] [分布式系统设计之共识算法—2PC、3PC、 Paxos ](https://blog.51cto.com/u_15654567/5327089)
+- [ ] [Replication（上）：常见复制模型&分布式系统挑战](https://tech.meituan.com/2022/08/25/replication-in-meituan-01.html)
+- [ ] [Replication（下）：事务，一致性与共识](https://tech.meituan.com/2022/08/25/replication-in-meituan-01.html)
+- [ ] [《数据密集型应用系统设计（DDIA）》]()
 
 

@@ -87,7 +87,7 @@
   - [typescript](./front_end/TypeScript.md)
     > 基本语法整理了一遍。
   - [react](./front_end/react.md)
-    > 基础整理中
+    > 基础整理完成，还差hook以及一些框架
   - [flow](./front_end/flow.md)
     > 静态类型检查。看vim的lspconfig的时候发现到
   - [sass](./front_end/scss.md)

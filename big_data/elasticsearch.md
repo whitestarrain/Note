@@ -1,6 +1,6 @@
-# Elasticsearch 概述
+# 1. Elasticsearch 概述
 
-## 开篇
+## 1.1. 开篇
 
 - 数据存储类型
 
@@ -19,9 +19,9 @@
 - Elasticsearch 目的；
   - 准确地查询结构化数据和非结构化数据
 
-## 技术选型
+## 1.2. 技术选型
 
-### Elasticsearch 是什么
+### 1.2.1. Elasticsearch 是什么
 
 - **The Elastic Stack(技术栈)**
 
@@ -32,7 +32,7 @@
   - 简称为 ES， ES 是一个**开源的高扩展的分布式全文搜索引擎**， 是整个 ElasticStack 技术栈的核心。
   - 它可以近乎实时的存储、检索数据；本身扩展性很好，可以扩展到上百台服务器，处理 PB 级别的数据。
 
-### 全文搜索引擎
+### 1.2.2. 全文搜索引擎
 
 - 关系型数据库对全文搜索的支持:
 
@@ -59,7 +59,7 @@
   - 当用户查询时，检索程序就根据事先建立的索引进行查找，并将查找的结果反馈给用户的检索方式。
   - 这个过程类似于通过字典中的检索字表查字的过程。
 
-### 搜索引擎软件
+### 1.2.3. 搜索引擎软件
 
 - Lucene
 
@@ -72,7 +72,7 @@
   - **这两款都是基 于 Lucene 搭建的**，可以独立部署启动的**搜索引擎服务软件**。
   - 由于内核相同，所以两者除了服务器安装、部署、管理、集群以外，对于数据的操作 修改、添加、保存、查询等等都十分类似。
 
-### Elasticsearch 和 Solr 对比与权衡
+### 1.2.4. Elasticsearch 和 Solr 对比与权衡
 
 ![elasticsearch-4](./image/elasticsearch-4.png)
 
@@ -109,7 +109,7 @@
 - 监控与指标
   - 如果你喜欢监控和指标，那么请使用 Elasticsearch，因为相对于 Solr，Elasticsearch 暴露了更多的关键指标
 
-### Elasticsearch 应用案例
+### 1.2.5. Elasticsearch 应用案例
 
 - GitHub:
   - 2013 年初，抛弃了 Solr，采取 Elasticsearch 来做 PB 级的搜索。
@@ -122,9 +122,9 @@
 - 阿里：使用 Elasticsearch 构建日志采集和分析体系。
 - Stack Overflow：解决 Bug 问题的网站，全英文，编程人员交流的网站。
 
-## Elasticsearch基本概念
+## 1.3. Elasticsearch基本概念
 
-### 倒排索引
+### 1.3.1. 倒排索引
 
 > **概念说明**
 
@@ -144,7 +144,7 @@
   | name    | 1001, 1002 |
   | zhang   | 1001       |
 
-### 数据格式
+### 1.3.2. 数据格式
 
 - Elasticsearch 是**面向文档型数据库**，一条数据在这里就是一个文档，和 Mysql 对应关系大致如下：
 
@@ -157,7 +157,7 @@
     > Elasticsearch 7.X 中, Type 的概念已经被删除了。
   - Documents 则相当于表的行
 
-### 基本概念
+### 1.3.3. 基本概念
 
 - 接近实时(NRT Near Real Time )
   - Elasticsearch是一个接近实时的搜索平台。这意味着，从索引一个文档直到这个文档能够被搜索到有一个轻微的延迟(通常是1秒内)
@@ -191,9 +191,9 @@
 
   ![elasticsearch-7.png](./image/elasticsearch-7.png)
 
-# 环境准备
+# 2. 环境准备
 
-## 安装
+## 2.1. 安装
 
 - 官方资料
 
@@ -237,24 +237,24 @@
   }
   ```
 
-## RESTful & JSON
+## 2.2. RESTful & JSON
 
 [见分布式系统概念](../distributed_system/distribute_system_concept.md)
 
-## 客户端工具
+## 2.3. 客户端工具
 
 - [Postman 下载页面](https://www.postman.com/downloads/)
 - VSCode-REST Client(个人推荐)
 
-# Elasticsearch 基本操作
+# 3. Elasticsearch 基本操作
 
 
 
-## 索引操作
+## 3.1. 索引操作
 
-### 索引创建
+### 3.1.1. 索引创建
 
-#### 基本语法
+#### 3.1.1.1. 基本语法
 
 - 对比关系型数据库，创建索引就等同于创建数据库。创建索引需要使用`PUT`请求
 - 向 ES 服务器发 PUT 请求 ：`http://127.0.0.1:9200/shopping`
@@ -267,13 +267,13 @@
   }
   ```
 
-#### 后台日志
+#### 3.1.1.2. 后台日志
 
 ```cmd
 [2021-04-08T13:57:06,954][INFO ][o.e.c.m.MetadataCreateIndexService] [DESKTOP-LNJQ0VF] [shopping] creating index, cause [api], templates [], shards [1]/[1], mappings []
 ```
 
-#### PUT 幂等性
+#### 3.1.1.3. PUT 幂等性
 
 - `PUT`具有幂等性
 
@@ -305,9 +305,9 @@
 
   </details>
 
-### 索引查询
+### 3.1.2. 索引查询
 
-#### 查看所有索引
+#### 3.1.2.1. 查看所有索引
 
 - 在 Postman 中，向 ES 服务器发 GET 请求 ： `http://127.0.0.1:9200/_cat/indices?v`
 
@@ -334,7 +334,7 @@
   | store.size     | 主分片和副分片整体占空间大小                                                      |
   | pri.store.size | 主分片占空间大小                                                                  |
 
-#### 查看单个索引
+#### 3.1.2.2. 查看单个索引
 
 - 在 Postman 中，向 ES 服务器发 GET 请求 ：`http://127.0.0.1:9200/shopping`
 
@@ -362,7 +362,7 @@
   }
   ```
 
-### 索引删除
+### 3.1.3. 索引删除
 
 - 在 Postman 中，向 ES 服务器发 `DELETE` 请求 ： `http://127.0.0.1:9200/shopping`
 
@@ -380,9 +380,9 @@
   // 成功删除。
   ```
 
-## 文档操作
+## 3.2. 文档操作
 
-### 文档创建（Put & Post）
+### 3.2.1. 文档创建（Put & Post）
 
 - 文档创建
 
@@ -451,9 +451,9 @@
     ```
   - **此处需要注意：如果增加数据时明确数据主键，那么请求方式也可以为 PUT(PUT 的幂等性)**
 
-### 文档查询
+### 3.2.2. 文档查询
 
-#### 主键查询
+#### 3.2.2.1. 主键查询
 
 - 在 Postman 中，向 ES 服务器发 GET 请求 ： `http://127.0.0.1:9200/shopping/_doc/1`
 
@@ -490,7 +490,7 @@
   }
   ```
 
-#### 全查询
+#### 3.2.2.2. 全查询
 
 - 查看索引下所有数据，向 ES 服务器发 GET 请求 ： `http://127.0.0.1:9200/shopping/_search`
 
@@ -542,9 +542,9 @@
   }
   ```
 
-### 文档修改
+### 3.2.3. 文档修改
 
-#### 全量修改
+#### 3.2.3.1. 全量修改
 
 - 在 Postman 中，向 ES 服务器发 POST 请求 ： `http://127.0.0.1:9200/shopping/_doc/1`
 
@@ -578,7 +578,7 @@
     }
     ```
 
-#### 局部修改
+#### 3.2.3.2. 局部修改
 
 - 在 Postman 中，向 ES 服务器发 POST 请求 ： `http://127.0.0.1:9200/shopping/_update/1`
 
@@ -633,7 +633,7 @@
   }
   ```
 
-#### 删除
+#### 3.2.3.3. 删除
 
 - 在 Postman 中，向 ES 服务器发 DELETE 请求 ： `http://127.0.0.1:9200/shopping/_doc/1`
 
@@ -668,9 +668,9 @@
 
 - 注意： **删除一个文档不会立即从磁盘上移除，它只是被标记成已删除（逻辑删除）**
 
-## 查询操作
+## 3.3. 查询操作
 
-### 示例数据
+### 3.3.1. 示例数据
 
 <details>
 <summary style="color:red;">展开</summary>
@@ -771,9 +771,9 @@
 
 </details>
 
-### 条件查询
+### 3.3.2. 条件查询
 
-#### URL 带参查询
+#### 3.3.2.1. URL 带参查询
 
 ```
 查找 category 为小米的文档e
@@ -842,7 +842,7 @@
 > 上述为 URL 带参数形式查询，这很容易让不善者心怀恶意，或者参数值出现中文会出现乱码情况。
 > 为了避免这些情况，我们可用使用带 JSON 请求体请求进行查询。
 
-#### 请求体带参查询
+#### 3.3.2.2. 请求体带参查询
 
 - 向 ES 服务器发 GET 请求 ：` http://127.0.0.1:9200/shopping/_search`，附带 JSON 体如下：
 
@@ -920,7 +920,7 @@
   ```
   </details>
 
-#### 带请求体方式的查找所有内容
+#### 3.3.2.3. 带请求体方式的查找所有内容
 
 ```
 查找所有文档内容
@@ -1037,7 +1037,7 @@
 
   </details>
 
-#### 查询指定字段
+#### 3.3.2.4. 查询指定字段
 
 ```
 只查询指定字段title
@@ -1137,7 +1137,7 @@
 
   </details>
 
-### 分页查询
+### 3.3.3. 分页查询
 
 - 向 ES 服务器发 GET 请求 ： `http://127.0.0.1:9200/shopping/_search`，附带 JSON 体如下：
 
@@ -1199,7 +1199,7 @@
   }
   ```
 
-### 查询排序
+### 3.3.4. 查询排序
 
 - 向 ES 服务器发 GET 请求 ： `http://127.0.0.1:9200/shopping/_search`，附带 JSON 体如下：
 
@@ -1322,9 +1322,9 @@
   ```
   </details>
 
-### 多条件查询
+### 3.3.5. 多条件查询
 
-#### must
+#### 3.3.5.1. must
 
 ```
 假设想找出小米牌子，价格为3999元的。
@@ -1395,7 +1395,7 @@
 
   </details>
 
-#### should
+#### 3.3.5.2. should
 
 ```
 假设想找出小米和华为的牌子。
@@ -1533,7 +1533,7 @@
 
   </details>
 
-### 范围查询
+### 3.3.6. 范围查询
 
 ```
 假设想找出小米和华为的牌子，价格大于2000元的手机。
@@ -1610,9 +1610,9 @@
 
   </details>
 
-## 其他查询相关
+## 3.4. 其他查询相关
 
-### 全文检索
+### 3.4.1. 全文检索
 
 ```
 这功能像搜索引擎那样，如品牌输入“小华”，返回结果带回品牌有“小米”和华为的。
@@ -1730,7 +1730,7 @@
   ```
   </details>
 
-### 完全匹配
+### 3.4.2. 完全匹配
 
 - 向 ES 服务器发 GET 请求 ： http://127.0.0.1:9200/shopping/_search，附带JSON体如下：
 
@@ -1808,7 +1808,7 @@
   ```
   </details>
 
-### 高亮查询
+### 3.4.3. 高亮查询
 
 - 向 ES 服务器发 GET 请求 ： http://127.0.0.1:9200/shopping/_search，附带JSON体如下：
 
@@ -1902,7 +1902,7 @@
   ```
   </details>
 
-### 聚合查询
+### 3.4.4. 聚合查询
 
 - 说明
   - 聚合允许使用者对 es 文档进行统计分析
@@ -2156,7 +2156,7 @@
   ```
   </details>
 
-## 映射关系
+## 3.5. 映射关系
 
 - 说明
   - 有了索引库，等于有了数据库中的 database。
@@ -2479,12 +2479,12 @@
 
   > 报错只因创建映射时"tel"的"index"为 false。
 
+# 4. ElasticSearch 原生sql
 
+# 5. 参考资料
 
-# 参考资料
-
-- [理解ElasticSearch工作原理](https://www.jianshu.com/p/52b92f1a9c47)
-- [从原理到应用，Elasticsearch详解](https://segmentfault.com/a/1190000020022504)
-- [ElasticSearch学习笔记、详解](https://blog.csdn.net/qq_45988496/article/details/116380830)
-- [Elasticsearch学习笔记](https://blog.csdn.net/u011863024/article/details/115721328#06Postman_163)
+- [ ] [理解ElasticSearch工作原理](https://www.jianshu.com/p/52b92f1a9c47)
+- [ ] [从原理到应用，Elasticsearch详解](https://segmentfault.com/a/1190000020022504)
+- [ ] [ElasticSearch学习笔记、详解](https://blog.csdn.net/qq_45988496/article/details/116380830)
+- [ ] [Elasticsearch sql document](https://www.elastic.co/guide/en/elasticsearch/reference/current/xpack-sql.html)
 

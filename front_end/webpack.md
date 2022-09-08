@@ -59,15 +59,15 @@
 
 ## 2.2. webpack 参数详细说明
 
-## 2.3. 测试代码
+# 3. 资源模块与加载器
+
+## 3.1. 测试代码
 
 [webpack测试跳转](https://github.com/whitestarrain/webpack_learn)
 
 提交注释末尾有 flagXX，对应下面说明
 
-# 3. 资源模块与加载器
-
-## 3.1. 基本说明
+## 3.2. 基本说明
 
 > 对应代码flag1
 
@@ -110,16 +110,16 @@
     - `filename`: 设置资源文件输出名称和保存的路径（只适用于type属性为 `asset` 和 `asset/resource` 的场景）
   - `include/exclude`:手动添加必须处理的文件（文件夹）或屏蔽不需要处理的文件（文件夹）
 
-## 3.2. 资源模块
+## 3.3. 资源模块
 
-### 3.2.1. 概念
+### 3.3.1. 概念
 
 - **资源模块(asset module)**
   - 是一种模块类型
   - 它允许在js代码中引入其它资源文件（字体，图片、样式等）
   - 以前只能通过 loader 加载器来实现，而Webpack5中通过asset module轻松实现。
 
-### 3.2.2. 种类
+### 3.3.2. 种类
 
 - 种类：Webpack5 实现了 4 种新的模块类型，通过`Rule`的`type`属性设置：
   - `asset/resource` 输出一个单独的文件并导出 URL。之前通过使用 `file-loader` 实现。
@@ -127,7 +127,7 @@
   - `asset/source` 导出资源的源代码。之前通过使用 `raw-loader` 实现。
   - `asset` 在导出一个 dataURI 和发送一个单独的文件之间自动选择。之前通过使用 `url-loader`，并且配置资源体积限制实现。
 
-### 3.2.3. 使用示例
+### 3.3.3. 使用示例
 
 > 对应代码flag2
 
@@ -185,7 +185,7 @@
   }
   ```
 
-### 3.2.4. 修改资源模块输出文件名与路径
+### 3.3.4. 修改资源模块输出文件名与路径
 
 - 图片文件虽然已经输出，但文件名是一段哈希字符
 - 如果想修改特定的文件名称，可以通过`generator.filename`设置资源文件名和保存的路径
@@ -212,9 +212,9 @@
       }
   ```
 
-## 3.3. 加载器
+## 3.4. 加载器
 
-### 3.3.1. 概念
+### 3.4.1. 概念
 
 - 除了资源模块方式，也可以使用Loader实现其它类型资源的加载
 - **不同的资源应用的不同的loader（loader需要单独安装）** 
@@ -226,9 +226,9 @@
   - 编写Rule并配置loader
     - 如需对加载器进行一些细节配置，则添加options属性
 
-### 3.3.2. CSS加载器
+### 3.4.2. CSS加载器
 
-#### 3.3.2.1. css-loader
+#### 3.4.2.1. css-loader
 
 > 代码对应 flag3
 
@@ -280,7 +280,7 @@
   eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/noSourceMaps.js */ \"./node_modules/css-loader/dist/runtime/noSourceMaps.js\");\n/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ \"./node_modules/css-loader/dist/runtime/api.js\");\n/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);\n// Imports\n\n\nvar ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));\n// Module\n___CSS_LOADER_EXPORT___.push([module.id, \"/*./css/home.css*/ \\r\\nbody {\\r\\n  padding: 20px;\\r\\n  margin: 0;\\r\\n  color:#f00;\\r\\n}\\r\\n\", \"\"]);\n// Exports\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);\n\n\n//# sourceURL=webpack://webpack_learn/./src/css/home.css?");
   ```
 
-#### 3.3.2.2. style-loader
+#### 3.4.2.2. style-loader
 
 > 代码见 flag4
 
@@ -320,7 +320,7 @@
 
   ![webpack-1](./image/webpack-1.png)
 
-#### 3.3.2.3. css module
+#### 3.4.2.3. css module
 
 > 代码见 flag5
 
@@ -378,7 +378,7 @@
   - css-loader默认支持*.module.css格式的样式文件实现模块化
   - 也就是说如果你的文件采用该命名方式，哪不配置modules:true，也能实现css模块化
 
-### 3.3.3. postcss-loader
+### 3.4.3. postcss-loader
 
 > 代码见 flag6
 
@@ -443,7 +443,7 @@
 
   ![webpack-5](./image/webpack-5.png)
 
-### 3.3.4. sass加载器
+### 3.4.4. sass加载器
 
 > 暂未写测试代码
 
@@ -472,11 +472,11 @@
 
 - 以上就解决了sass代码编译的问题，less同理（需要less-loader与less），这里不再赘述
 
-### 3.3.5. babel-loader
+### 3.4.5. babel-loader
 
 > 代码见 flag7
 
-#### 3.3.5.1. 基本说明
+#### 3.4.5.1. 基本说明
 
 - 说明：
   - 用于处理js模块
@@ -502,7 +502,7 @@
   npm install @babel/preset-env -D
   ```
 
-#### 3.3.5.2. 配置
+#### 3.4.5.2. 配置
 
 - 配置加载器：
   - 如果只是指定loader的名称，那就没什么意义，因为Webpack已经默认js模块的加载
@@ -606,7 +606,7 @@
       }
       ```
 
-#### 3.3.5.3. 示例
+#### 3.4.5.3. 示例
 
 > 如果想兼容浏览器最后2个版本，且按需兼容Promise等内建对象，步骤如下：
 
@@ -665,7 +665,7 @@
   - 可以实现更多的需求
   - 可以自行查阅官网
 
-#### 3.3.5.4. 注意
+#### 3.4.5.4. 注意
 
 - 不要忘了配置exclude
   - index.js中有`import`polifill相关的一些依赖
@@ -704,7 +704,7 @@
   },
   ```
 
-### 3.3.6. 其他加载器
+### 3.4.6. 其他加载器
 
 - 在Webpack的生态中，这样的资源加载器有很多，
 - 其它的加载器的使用与css-loader、style-loader、sass-loader、babel-loader类似
@@ -1510,7 +1510,6 @@
 
 > 见flag 12
 
-
 - 说明： **dependOn**: 通过修改`entry`入口配置实现，利用`dependOn`的提取公共的`axios`
 
   ```javascript
@@ -1716,7 +1715,6 @@ TODO: 深入 webpack-splitchunks
           // vue-loader@15+版本后请确保引入这个插件！
           new VueLoaderPlugin()
       ],
-
 
   }
   ```

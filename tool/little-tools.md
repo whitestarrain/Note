@@ -57,7 +57,7 @@
   - `npm install -g ketankr9/leetcode-cli`。 
   - [参考链接](https://github.com/skygragon/leetcode-cli/issues/201)
 
-# 代码高亮工具
+# 在线代码高亮工具
 
 - 往word里面粘贴用的
 - [链接](https://highlightcode.com/)
@@ -67,3 +67,13 @@
 - [code prints](https://codeprints.dev/)
 
   ![little-tools-2](./image/little-tools-2.png)
+
+# 文件传输工具 Croc
+
+- 基于go语言
+
+# 代码行数统计工具 cloc
+
+- 基于node
+
+
