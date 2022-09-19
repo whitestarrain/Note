@@ -60,7 +60,7 @@
     > 暂时没时间继续整理
 - **容器**
   - [docker](./container/docker.md)
-    > 占位
+    > 整理了一点儿基础
   - [k8s](./container/k8s.md)
     > 占位
 - **前端** 
@@ -252,9 +252,11 @@ awk 'BEGIN{
     }' Spring.md  # 移动图片所关联的md文件
 ```
 
-# 待做项
+# 待做项(备忘录草稿)
 
-> 完成项不保证不再更新
+> 完成项会可能继续完善更新
+>
+> 详细todo会具体在文件中使用TODO标出
 
 - 长期
   - [ ] java编程思想 整理
@@ -308,8 +310,9 @@ awk 'BEGIN{
 - 阅读书目
   > 个人习惯使用 知之阅读 做一些读书笔记。markdown版笔记仅抽空整理
   - [x] 代码整洁之道
-  - [ ] **重构：改善既有代码设计**
-  - [ ] **程序设计实践**
+  - [ ] 重构：改善既有代码设计
+  - [ ] 程序设计实践
+  - [ ] 深入理解现代操作系统
   - [ ] Redis设计与实现
   - [ ] Operating Systems:Three Easy Pieces
   - [ ] Linux C 编程一站式学习
@@ -329,7 +332,7 @@ awk 'BEGIN{
     - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua
     - [x] [实现markdown标题编号nvim插件](https://github.com/whitestarrain/md-section-number.nvim)
-    - [ ] 在markdown中实现plantuml代码转换为图片
+    - [ ] 双链生成插件(基于标题？tag功能？lsp补全？)，用来优化YourBrain思维导图
   - [ ] rust
   - [ ] TypeScript
     - [x] 基础
@@ -337,7 +340,7 @@ awk 'BEGIN{
     - [ ] 命令行工具开发
     - [ ] **练手项目：kakuyomu 小说终端阅读器(包含登录功能)**
   - [ ] kotlin 好像挺火的
-  - [ ] php 工作中，有项目用
+  - [ ] php 工作中，有项目用，可以看看
 - 机器学习&深度学习
   - [ ] opencv 系统整理
   - [ ] 深度学习笔记系统整理（暂时抽不出时间）
@@ -347,10 +350,7 @@ awk 'BEGIN{
   - [ ] [想搞搞树莓派](https://shumeipai.nxez.com/)
   - [ ] 数据结构-索引
 
-<!--
-- [ ] SpringBoot原理
-- [ ] JVM字节码
-- [ ] JVM调优
+<!-- 
 
 cookie和session攻击
 25匹马赛马
@@ -372,4 +372,5 @@ python
 - rust 
 - go
 - Lisp
+
 -->

@@ -135,7 +135,6 @@
   - 让NoSQL数据库对关系型数据库的不足进行弥补。
   - 一般会将数据存储在关系型数据库中，在nosql数据库中备份存储关系型数据库的数据
 
-
 ```
 关系型数据库                               nosql
 
@@ -241,7 +240,6 @@
     - 图示
       > ![redis-8](./image/redis-8.png)-
 
-
 <details>
 <summary style="color:red;">详细说明</summary>
 
@@ -274,7 +272,6 @@
 对于多数大型互联网应用的场景，主机众多、部署分散，而且现在的集群规模越来越大，所以节点故障、网络故障是常态，而且要保证服务可用性达到N个9，即保证P和A，舍弃C（退而求其次保证最终一致性）。虽然某些地方会影响客户体验，但没达到造成用户流程的严重程度。
 </details>
 
-
 ---
 
 - 当今数据库的需求说明：
@@ -290,7 +287,6 @@
     - 特别是SNS类型的网站，从需求以及产品设计角度，就避免了这种情况的产生。
     - 往往更多的只是单表的主键查询，以及单表的简单条件分页查询，SQL的功能被极大的弱化了。
 
-
 ### 1.6.2. BASE
 
 - BASE
@@ -303,9 +299,7 @@
 为什么这么说呢，缘由就在于大型系统往往由于地域分布和极高性能的要求，不可能采用分布式事务来完成这些指标，要想获得这些指标，
 我们必须采用另外一种方式来完成，这里BASE就是解决这个问题的办法。
 
-
 ### 1.6.3. 分布式+集群
-
 
 - 分布式系统（distributed system）
   - 由多台计算机和通信的软件组件通过计算机网络连接（本地网络或广域网）组成。
@@ -316,7 +310,6 @@
 - 概括：
   - 分布式：不同的多台服务器上面部署不同的服务模块（工程），他们之间通过Rpc/Rmi之间通信和调用，对外提供服务和组内协作。
   - 集群：不同的多台服务器上面部署相同的服务模块，通过分布式调度软件进行统一的调度，对外提供服务和访问。
-
 
 # 2. Redis概述
 
@@ -489,7 +482,6 @@
     - 比如可以通过 **lrange** 命令，读取某个闭区间内的元素，可以基于 **List** 实现分页查询，这个是很棒的一个功能，基于 **Redis** 实现简单的高性能分页，可以做类似微博那种下拉不断分页的东西，性能高，就一页一页走。
     - 比如，我们常用的博客网站的文章列表，当用户量越来越多时，而且每一个用户都有自己的文章列表，而且当文章多时，都需要分页展示，这时可以考虑使用**Redis**的列表，列表不但有序同时还支持按照范围内获取元素，可以完美解决分页查询功能。大大提高查询效率。
 
-
 ## 3.5. Set
 
 **常用命令**
@@ -559,7 +551,6 @@
 - Redis hash 是一个string类型的field和value的映射表，hash特别适合用于存储对象。
 - 哈希类型中的 **映射关系** 叫作 `field-value`，这里的 `value` 是指 `field` 对应的 **值**，不是 **键** 对应的值。
 - Redis 中每个 hash 可以存储 232 - 1 键值对（40多亿）。
-
 
 | 序号 | 命令及描述                                                   |
 | :--- | :----------------------------------------------------------- |
@@ -655,7 +646,6 @@ zset:
 - 修改配置文件
 - 通过 `CONFIG` 命令set或get配置项。
 
-
 # 5. 缓存淘汰策略
 
 > 针对于redis 6.0.8
@@ -715,7 +705,6 @@ zset:
     - 因为删除操作会占用 CPU 的时间，如果刚好碰上了 CPU 很忙的时候，比如正在做交集或排序等计算的时候，就会给 CPU 造成额外的压力。
     - 这会产生大量的性能消耗，同时也会影响数据的读取操作。
 
-
 - 定时删除：
   - 说明：创建一个定时器，当key设置有过期时间，且过期时间到达时，由定时器任务立即执行对键的删除操作
   - 优点：节约内存，到时就删除，快速释放掉不必要的内存占用
@@ -750,7 +739,6 @@ zset:
   - 特点1：CPU 性能占用设置有峰值，检测频度可自定义设置
   - 特点2：内存压力不是很大，长期占用内存的冷数据会被持续清理
 
-
 - **定期删除的举例**
   - redis 默认每间隔 100ms 检查是否有过期的 key，如果有过期 key 则删除。
   - 注意：redis 不是每隔100ms 将所有的 key 检查一次而是**随机抽取**进行检查（如果每隔 100ms，全部 key 进行检查，redis 直接进去ICU）
@@ -763,7 +751,6 @@ zset:
   - 因此，**如果采用定期删除策略的话，服务器必须根据情况，合理地设置删除操作的执行时长和执行频率**。
 
 - **总结**:周期性抽查存储空间（随机抽查，重点抽查)
-
 
 ### 5.3.4. 总结
 
@@ -806,7 +793,6 @@ Redis的过期删除策略就是：**惰性删除和定期删除两种策略配�
 
 ## 5.6. 手写LRU
 
-
 # 6. 持久化
 
 <!--https://www.cnblogs.com/ysocean/p/9114268.html-->
@@ -826,7 +812,6 @@ Redis的过期删除策略就是：**惰性删除和定期删除两种策略配�
 - 整个过程中，主进程是不进行任何IO操作的，这就确保了极高的性能。
 - 如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。
 - RDB的缺点是 **最后一次持久化后的数据可能丢失** 。
-
 
 ### 6.1.3. 配置
 
@@ -880,7 +865,6 @@ Redis的过期删除策略就是：**惰性删除和定期删除两种策略配�
 
 > 主机和备机一般不是一台机器。
 
-
 ### 6.1.5. RDB触发条件原理
 
 - Redis有个服务器状态结构：
@@ -922,8 +906,6 @@ Redis的过期删除策略就是：**惰性删除和定期删除两种策略配�
   - 那么服务器状态中的saveparam 数组将会是如下的样子：
 
   ![redis-9](./image/redis-9.png)
-
-
 
 ### 6.1.6. 总结
 
@@ -1083,8 +1065,6 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - 对于相同的数据集来说，AOF文件的体积通常要大于RDB文件的体积
   - 根据所使用的fsync 策略，AOF的速度可能会慢于RDB
 
-
-
 - 优点：
   - AOF 持久化的方法提供了多种的同步频率，即使使用默认的同步频率每秒同步一次，Redis 最多也就丢失 1 秒的数据而已。
   - AOF 文件使用 Redis 命令追加的形式来构造，因此，即使 Redis 只能向 AOF 文件写入命令的片断，使用 redis-check-aof 工具也很容易修正 AOF 文件。
@@ -1162,7 +1142,6 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - alloc: 表示字符串的最大容量（不包含最后多余的那个字节）。
   - flags: 总是占用一个字节。其中的最低3个bit用来表示header的类型。
   - buf：字符串内容
-
 
 - 源码位置：`sds.h/sdshdr` 
   > 可以看到 SDS 完整的实现细节
@@ -1529,7 +1508,6 @@ typedef struct intset {
   - 我们需要这个链表按照 score 值进行排序，
   - 然后因为链表不能像数组一样定位，因此查找复杂度依旧为:O(N)
 
-
 - 优化：每相邻两个节点之间就增加一个指针，让指针指向下一个节点
 
   ![redis-50](./image/redis-50.png)
@@ -1568,7 +1546,6 @@ typedef struct intset {
     - 每一个节点的层数（level）是随机出来的
     - 而且新插入一个节点并不会影响到其他节点的层数
     - 因此， **插入操作只需要修改节点前后的指针，而不需要对多个节点都进行调整** ，这就降低了插入操作的复杂度。
-
 
 - 层数分配：
   - 50% 的概率被分配到 `Level 1`，25% 的概率被分配到 `Level 2`，12.5% 的概率被分配到 `Level 3`，以此类推
@@ -1653,7 +1630,6 @@ typedef struct intset {
   - 当我们调用 `ZADD` 方法时，如果对应的 value 不存在，那就是插入过程，
   - 如果这个 value 已经存在，只是调整一下 score 的值，那就需要走一个更新流程。
 
-
 - **把这个元素删除再插入这个**
 
   <details>
@@ -1671,7 +1647,6 @@ typedef struct intset {
 
   - 从源码 `t_zset.c/zsetAdd` 函数 `1350` 行左右
   - 非常简单，但是要两次路径搜索，因此可以进一步优化
-
 
 > **排名实现**
 
@@ -1832,7 +1807,7 @@ Redis Stream 是 Redis 5.0 版本新增加的数据结构。
 
 Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是有一个 Redis 发布订阅 (pub/sub) 来实现消息队列的功能，但它有个缺点就是消息无法持久化，如果出现网络断开、Redis 宕机等，消息就会被丢弃。
 
-待补充
+TODO: redis stream底层数据结构
 
 - [妈妈再也不担心我面试被Redis问得脸都绿了](https://segmentfault.com/a/1190000022146622)
 - [菜鸟教程](https://www.runoob.com/redis/redis-stream.html)
@@ -1905,22 +1880,19 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 
 ### 7.3.6. HyperLogLog(2.8.9)
 
-待补充
+TODO redis hyperloglog
 
 [Redis(4)——神奇的HyperLoglog解决统计问题](https://www.wmyskxz.com/2020/03/02/reids-4-shen-qi-de-hyperloglog-jie-jue-tong-ji-wen-ti/)
-
-
 
 ## 7.4. 高级算法
 
 ### 7.4.1. GeoHash(坐标定位算法)
 
-待补充
+TODO: redis geohash
 
 [Redis(6)——GeoHash查找附近的人](https://www.wmyskxz.com/2020/03/12/redis-6-geohash-cha-zhao-fu-jin-de-ren/)
 
 ### 7.4.2. scan(数据快速查询算法)
-
 
 # 8. 事务的控制
 
@@ -1979,7 +1951,7 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 
 # 9. 并发问题解决
 
-待补充
+TODO: redis并发竞争解决方案
 
 > Redis 并发竞争 的问题就是高并发写同一个key时导致的值错误如何解决
 
@@ -2013,7 +1985,7 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 
 # 10. 消息发布订阅与Stream
 
-待整理
+
 
 [Redis(8)——发布/订阅与Stream](https://www.wmyskxz.com/2020/03/15/redis-8-fa-bu-ding-yue-yu-stream/)
 
@@ -2187,7 +2159,6 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
       - 移动 hash slot 的成本是非常低的。客户端的 api，可以对指定的数据，让他们走同一个 hash slot，通过 hash tag 来实现。
       - 任何一台机器宕机，其他节点，不影响的。因为 key 找的是 hash slot，不是机器。
 
-
 - Redis 集群的主从复制模型
   - 说明
     - 为了保证高可用，redis-cluster集群引入了主从复制模型
@@ -2204,7 +2175,7 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 
 [搭建说明](https://juejin.cn/post/6844904057044205582#heading-0)
 
-待整理
+TODO: redis cluster分片集群 搭建
 
 [说明与搭建](https://blog.csdn.net/J080624/article/details/103121930)
 
@@ -2214,9 +2185,7 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 
 ## 12.1. 缓存
 
-查看 双写一致 进行整理
-
-待补充
+TODO: redis 3种缓存策略
 
 <!--file:///D:/learn/githubRepo/JavaGuide/docs/database/Redis/3%E7%A7%8D%E5%B8%B8%E7%94%A8%E7%9A%84%E7%BC%93%E5%AD%98%E8%AF%BB%E5%86%99%E7%AD%96%E7%95%A5.md-->
 
@@ -2334,11 +2303,9 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
 
 ![redis-30](./image/redis-30.png)
 
-
 - 加锁机制
   - 线程去获取锁，获取成功: 执行lua脚本，保存数据到redis数据库。
   - 线程去获取锁，获取失败: 一直通过while循环尝试获取锁，获取成功后，执行lua脚本，保存数据到redis数据库。
-
 
 - 自动延期机制
   - 主要针对两种情况(上面也提到了)：
@@ -2347,7 +2314,6 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
   - 使用：
     - 所以这个时候`看门狗`就出现了，它的作用就是 线程1 业务还没有执行完，时间就过了，线程1 还想持有锁的话，就会启动一个watch dog后台线程，不断的延长锁key的生存时间。
     - **注意**: 正常这个看门狗线程是不启动的，还有就是这个看门狗启动后对整体性能也会有一定影响，所以不建议开启看门狗。
-
 
 - 为啥要用lua脚本呢？
   - 主要是如果你的业务逻辑复杂的话，通过封装在lua脚本中发送给redis
@@ -2625,12 +2591,11 @@ Redis Stream 主要用于消息队列（MQ，Message Queue），Redis 本身是�
   - 这时`客户端2` 来尝试加锁的时候，在新的master节点上也能加锁，此时就会导致多个客户端对同一个分布式锁完成了加锁。
   - 这时系统在业务语义上一定会出现问题，**导致各种脏数据的产生**。
 
-
 ### 12.2.6. 思考题
 
 - 如何解决上述缺陷
 
-待补充
+TODO: redis 分布式锁缺陷解决
 
 ---
 
@@ -2641,8 +2606,6 @@ redis锁每秒并发量只有几万，如何增大并发量
 - 资源分段存储
   - 仿照ConcurrentHashMap的分段锁
   - 也就是不能去所整个方法，应该根据商品id去锁
-
-
 
 ## 12.3. 布隆过滤器
  
@@ -2663,7 +2626,6 @@ redis锁每秒并发量只有几万，如何增大并发量
 ## 12.8. 广告弹窗触达频率的控制
 
 ## 12.9. 延时队列
-
 
 # 13. 常见其他问题
 
@@ -2793,7 +2755,7 @@ redis锁每秒并发量只有几万，如何增大并发量
 
 ### 13.4.4. 缓存与数据库双写一致
 
-待补充完善
+TODO: redis双写一致问题
 
 [双写一致](https://zhuanlan.zhihu.com/p/59167071)
 
@@ -2882,7 +2844,7 @@ redis锁每秒并发量只有几万，如何增大并发量
     - 负责轮训所有socket产生的请求
     - 压进队列（与阻塞式IO多路复用的区别）
 
-待补充
+TODO: redis单线程模型
 
 [单线程模型详解/单线程为何效率高](file:///D:/learn/githubRepo/JavaGuide/docs/database/Redis/redis-all.md#7-redis-%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E8%AF%A6%E8%A7%A3)
 
@@ -2900,7 +2862,6 @@ redis锁每秒并发量只有几万，如何增大并发量
   > 用的就是 epoll <br />
   > 复习：select/poll/epoll
 4. **高效的数据结构，加上底层做了大量优化**：Redis 对于底层的数据结构和内存占用做了大量的优化，例如不同长度的字符串使用不同的结构体表示，HyperLogLog 的密集型存储结构等等..
-
 
 ### 13.5.4. Redis6.0 之前 为什么不使用多线程？
 
@@ -2936,11 +2897,10 @@ io-threads-do-reads yes
 io-threads 4 #官网建议4核的机器建议设置为2或3个线程，8核的建议设置为6个线程
 ```
 
-待补充
+TODO: redis引入多线程
 
 1. [Redis 6.0 新特性-多线程连环 13 问！](https://mp.weixin.qq.com/s/FZu3acwK6zrCBZQ_3HoUgw)
 2. [为什么 Redis 选择单线程模型](https://draveness.me/whys-the-design-redis-single-thread/)
-
 
 # 14. java客户端
 
@@ -2951,7 +2911,6 @@ Redis支持的java客户端都Redisson、Jedis、lettuce等等，官方推荐使
 - Redis和Redisson的关系
   - Redisson是一个高级的分布式协调Redis客户端，能帮助用户在分布式环境中轻松实现一些java的对象
     > （Bloom filter、BitSet、Set、SetMultimap、ScoredSortedSet、SortedSet、Map、List、Queue、ConcurrentMap、ListMultimap、BlockingQueue、Deque、BlockingDeque、Semaphore、Lock、ReadWriteLock、AtomicLong、CountDownLatch、Publish/Subscribe、HyperLogLog）
-
 
 - Jedis和Redisson对比优缺点
   - Jedis是Redis的java实现的客户端，其中API提供了比较全面的Redis命令的支持；

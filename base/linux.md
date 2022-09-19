@@ -1,5 +1,7 @@
 > 注：命令的具体使用推荐使用man或者**[linux-comand](https://github.com/jaywcjlove/linux-command#web-%E7%89%88%E6%9C%AC)**查询
 
+TODO: linux 常用命令整理
+
 # 1. 常用命令列表
 
 |                |           |         |               |           |
@@ -176,6 +178,8 @@
   - man -k (apropos)
 - which
 - whereis
+
+### 2.1.3. linux架构信息查询
 
 ## 2.2. 文件及目录管理
 

@@ -1039,6 +1039,8 @@ public class ConsistentHashingWithoutVirtualNode {
 
 ## 5.3. 分布式复制模型
 
+TODO: 分布式复制模型 理论整理
+
 ### 5.3.1. 基本模型
 
 #### 5.3.1.1. 主从复制
