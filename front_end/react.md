@@ -1239,7 +1239,7 @@ class NameForm extends React.Component {
 #### 4.5.2.2. textare
 
 - 在 HTML 中，`<textarea>` 元素通过它的子节点定义了它的文本值：
-- 在 React 中，`<textarea>` 的赋值使用 value 属性替代。这样一来，表单中 <textarea> 的书写方式接近于单行文本输入框。
+- 在 React 中，`<textarea>` 的赋值使用 value 属性替代。这样一来，表单中 `<textarea>` 的书写方式接近于单行文本输入框。
 
   ```javascript
   class ControlledTextArea extends React.Component {
