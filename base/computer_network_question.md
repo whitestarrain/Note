@@ -3,21 +3,13 @@
 
 ## 1.1. 七层网络与协议
 
-<details>
-<summary style="color:red;">网络分层</summary>
-
 ![network-20](./image/network-20.png)
 
 ![network-19](./image/network-19.png)
-</details>
 
 ## 1.2. 不同层数据包的称呼
 
-<details>
-<summary style="color:red;">称呼</summary>
-
 ![network-18](./image/network-18.png)
-</details>
 
 # 2. 物理层
 
@@ -32,9 +24,6 @@
 ## 4.2. 什么是划分子网，构成超网
 
 待重新整理
-
-<details>
-<summary style="color:red;">划分子网</summary>
 
 ### 4.2.1. 划分子网
 
@@ -132,11 +121,6 @@
 1. H1把本子网的子网掩码 255.255.255.128 与目的主机的ip地址逐位相”与”, 得出 128.30.33.128,它不等于H1的网络地址,说明H1与H2不在同一个子网内, 因此H1不能把分组直接交付给H2,必须交给子网上的默认路由器R1,由R1来进行转发
 2. R1收到一个分组后, 就在路由表中寻找有无匹配的网络地址.(1)计算出目的网络地址为128.30.33.128, 与路由表中的第二行的目的网络地址匹配, 说明这个网络就是分组想要寻找的目的网络, 于是R1将分组从接口1,直接交付给主机H2.
 
-</details>
-
-<details>
-<summary style="color:red;">构成超网</summary>
-
 ### 4.2.2. 无分类编址CIDR(构成超网)
 
 无分类域间路由选择CIDR解决的问题:
@@ -164,16 +148,11 @@
 
 使用CIDR后, 由于要查找最长前缀匹配, 使路由表的查找过程变得更加复杂.为了更有效的查找, 通常是把无分类编址的路由表存放在一种层次的数据结构中, 然后,自上而下进行查找.这里最常用的是二叉线索.为了提高二叉线索的查找速度,可以使用压缩技术.
 
-</details>
-
 ## 4.3. 什么是ARP协议
 
 > ip协议配套使用，看链路层那里
 
 ## 4.4. 什么是ICMP协议
-
-<details>
-<summary style="color:red;">展开</summary>
 
 - 网际控制报文协议说明：
   - 层级： 
@@ -182,12 +161,8 @@
   - 作用：
     - 使用 ICMP 数据报并不是为了实现可靠传输。
     - ICMP 允许主机或路由器**报告差错情况**和**提供有关异常情况的报告**。
-</details>
 
 ### 4.4.1. 报文种类
-
-<details>
-<summary style="color:red;">展开</summary>
 
 - 差错报告报文
   - 终点不可达
@@ -198,12 +173,8 @@
 - 询问报文
   - 回送请求和回答
   - 时间戳请求和回答
-</details>
 
 ### 4.4.2. ping的流程是什么
-
-<details>
-<summary style="color:red;">展开</summary>
 
 > **ping说明**
 
@@ -233,8 +204,6 @@
 
 可以知道PING的过程即一段发送报文和接受确认报文的过程，在来回直接可以计算时延。其过程简单，但其中还包括了一步ARP协议请求，广播请求，单播回应的过程。其他都是正常IP数据包的发送和接受
 
-</details>
-
 ## 4.5. 网络地址转换NAT
 
 ### 4.5.1. IP地址冲突的原因及解决方法是什么
@@ -243,21 +212,13 @@
 
 ## 5.1. 什么是三次握手 (three-way handshake)？
 
-<details>
-<summary style="color:red;">展开</summary>
-
 ![network-2](./image/network-2.png)
 
 - 第一次握手：Client将SYN置1，随机产生一个初始序列号seq发送给Server，进入SYN_SENT状态；
 - 第二次握手：Server收到Client的SYN=1之后，知道客户端请求建立连接，将自己的SYN置1，ACK置1，产生一个acknowledge number=sequence number+1，并随机产生一个自己的初始序列号，发送给客户端；进入SYN_RCVD状态；
 - 第三次握手：客户端检查acknowledge number是否为序列号+1，ACK是否为1，检查正确之后将自己的ACK置为1，产生一个acknowledge number=服务器发的序列号+1，发送给服务器；进入ESTABLISHED状态；服务器检查ACK为1和acknowledge number为序列号+1之后，也进入ESTABLISHED状态；完成三次握手，连接建立。
 
-</details>
-
 ### 5.1.1. TCP 建立连接可以两次握手吗？为什么?
-
-<details>
-<summary style="color:red;">展开</summary>
 
 不可以。有两个原因：
 
@@ -267,23 +228,13 @@
 
 其次，两次握手无法保证 Client 正确接收第二次握手的报文（Server 无法确认 Client 是否收到），也无法保证 Client 和 Server 之间成功互换初始序列号。
 
-</details>
-
 ### 5.1.2. 可以采用四次握手吗？为什么？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 可以。但是会降低传输的效率。
 
 四次握手是指：第二次握手：Server 只发送 ACK 和 acknowledge number；而 Server 的 SYN 和初始序列号在第三次握手时发送；原来协议中的第三次握手变为第四次握手。出于优化目的，四次握手中的二、三可以合并。
 
-</details>
-
 ### 5.1.3. 第三次握手中，如果客户端的 ACK 未送达服务器，会怎样？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 Server 端：  
 由于 Server 没有收到 ACK 确认，因此会重发之前的 SYN+ACK（默认重发五次，之后自动关闭连接进入 CLOSED 状态），Client 收到后会重新传 ACK 给 Server。
@@ -292,30 +243,16 @@ Client 端，两种情况：
 
 1. 在 Server 进行超时重发的过程中，如果 Client 向服务器发送数据，数据头部的 ACK 是为 1 的，所以服务器收到数据之后会读取 ACK number，进入 establish 状态
 2. 在 Server 进入 CLOSED 状态之后，如果 Client 向服务器发送数据，服务器会以 RST 包应答。
-</details>
 
 ### 5.1.4. 如果已经建立了连接，但客户端出现了故障怎么办？
 
-<details>
-<summary style="color:red;">展开</summary>
-
 服务器每收到一次客户端的请求后都会重新复位一个计时器，时间通常是设置为 2 小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔 75 秒钟发送一次。若一连发送 10 个探测报文仍然没反应，服务器就认为客户端出了故障，接着就关闭连接。
-
-</details>
 
 ### 5.1.5. 初始序列号是什么？
 
-<details>
-<summary style="color:red;">展开</summary>
-
 TCP 连接的一方 A，随机选择一个 32 位的序列号（Sequence Number）作为发送数据的初始序列号（Initial Sequence Number，ISN），比如为 1000，以该序列号为原点，对要传送的数据进行编号：1001、1002...三次握手时，把这个初始序列号传送给另一方 B，以便在传输数据时，B 可以确认什么样的数据编号是合法的；同时在进行数据传输时，A 还可以确认 B 收到的每一个字节，如果 A 收到了 B 的确认编号（acknowledge number）是 2001，就说明编号为 1001-2000 的数据已经被 B 成功接受。
 
-</details>
-
 ## 5.2. 什么是四次挥手？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 ![network-3](./image/network-3.png)
 
@@ -323,59 +260,30 @@ TCP 连接的一方 A，随机选择一个 32 位的序列号（Sequence Number�
 - 第二次挥手：Server 收到 FIN 之后，发送一个 ACK=1，acknowledge number=收到的序列号+1；进入 CLOSE_WAIT 状态。此时客户端已经没有要发送的数据了，但仍可以接受服务器发来的数据。
 - 第三次挥手：Server 将 FIN 置 1，发送一个序列号给 Client；进入 LAST_ACK 状态；
 - 第四次挥手：Client 收到服务器的 FIN 后，进入 TIME_WAIT 状态；接着将 ACK 置 1，发送一个 acknowledge number=序列号+1 给服务器；服务器收到后，确认 acknowledge number 后，变为 CLOSED 状态，不再向客户端发送数据。客户端等待 2\*MSL（报文段最长寿命）时间后，也进入 CLOSED 状态。完成四次挥手。
-</details>
 
 ### 5.2.1. 为什么不能把服务器发送的 ACK 和 FIN 合并起来，变成三次挥手（CLOSE_WAIT 状态意义是什么）？
 
-<details>
-<summary style="color:red;">展开</summary>
-
 因为服务器收到客户端断开连接的请求时，可能还有一些数据没有发完，这时先回复 ACK，表示接收到了断开连接的请求。等到数据发完之后再发 FIN，断开服务器到客户端的数据传送。
-
-</details>
 
 ### 5.2.2. 如果第二次挥手时服务器的 ACK 没有送达客户端，会怎样？
 
-<details>
-<summary style="color:red;">展开</summary>
-
 客户端没有收到 ACK 确认，会重新发送 FIN 请求。
 
-</details>
-
 ### 5.2.3. 客户端 TIME_WAIT 状态的意义是什么？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 第四次挥手时，客户端发送给服务器的 ACK 有可能丢失，TIME_WAIT 状态就是用来重发可能丢失的 ACK 报文。如果 Server 没有收到 ACK，就会重发 FIN，如果 Client 在 2\*MSL 的时间内收到了 FIN，就会重新发送 ACK 并再次等待 2MSL，防止 Server 没有收到 ACK 而不断重发 FIN。
 
 MSL(Maximum Segment Lifetime)，指一个片段在网络中最大的存活时间，2MSL 就是一个发送和一个回复所需的最大时间。如果直到 2MSL，Client 都没有再次收到 FIN，那么 Client 推断 ACK 已经被成功接收，则结束 TCP 连接。
 
-</details>
-
 ### 5.2.4. 服务器出现了大量CLOSE_WAIT状态如何解决
-
-<details>
-<summary style="color:red;">展开</summary>
 
 大量 CLOSE_WAIT 表示程序出现了问题，对方的 socket 已经关闭连接，而我方忙于读或写没有及时关闭连接，需要检查代码，特别是释放资源的代码，或者是处理请求的线程配置。
 
-</details>
-
 ## 5.3. 说明一下syn超时，洪泛攻击
-
-<details>
-<summary style="color:red;">展开</summary>
 
 什么 SYN 是洪泛攻击？ 在 TCP 的三次握手机制的第一步中，客户端会向服务器发送 SYN 报文段。服务器接收到 SYN 报文段后会为该TCP分配缓存和变量，如果攻击分子大量地往服务器发送 SYN 报文段，服务器的连接资源终将被耗尽，导致内存溢出无法继续服务。
 
-</details>
-
 ### 5.3.1. 有什么解决策略
-
-<details>
-<summary style="color:red;">展开</summary>
 
 最常用的一个手段就是优化主机系统设置。比如降低SYN timeout时间，使得主机尽快释放半连接的占用或者采用SYN cookie设置，如果短时间内收到了某个IP的重复SYN请求，我们就认为受到了攻击。我们合理的采用防火墙设置等外部网络也可以进行拦截。
 
@@ -385,14 +293,9 @@ SYN Cookie： 当服务器接受到 SYN 报文段时，不直接为该 TCP 分�
 
 这样一来就不会为恶意攻击的 SYN 报文段分配资源空间，避免了攻击。
 
-</details>
-
 ## 5.4. 自动重传请求(ARQ协议)
 
 ## 5.5. TCP 如何实现流量控制？(连续ARQ协议)
-
-<details>
-<summary style="color:red;">展开</summary>
 
 ![network-4](./image/network-4.png)
 
@@ -404,23 +307,13 @@ SYN Cookie： 当服务器接受到 SYN 报文段时，不直接为该 TCP 分�
 
 ![network-5](./image/network-5.png)
 
-</details>
-
 ### 5.5.1. 什么是零窗口（接收窗口为 0 时会怎样）？
 
-<details>
-<summary style="color:red;">展开</summary>
-
 如果接收方没有能力接收数据，就会将接收窗口设置为 0，这时发送方必须暂停发送数据，但是会启动一个持续计时器(persistence timer)，到期后发送一个大小为 1 字节的探测数据包，以查看接收窗口状态。如果接收方能够接收数据，就会在返回的报文中更新接收窗口大小，恢复数据传送。
-
-</details>
 
 ### 5.5.2. 什么是go-back-n
 
 ## 5.6. TCP的拥塞控制时怎么实现的
-
-<details>
-<summary style="color:red;">展开</summary>
 
 ![network-6](./image/network-6.png)
 
@@ -440,12 +333,8 @@ SYN Cookie： 当服务器接受到 SYN 报文段时，不直接为该 TCP 分�
 
 4. 快恢复：当发送方连续收到三个重复确认时，就把慢开始门限减半，然后执行拥塞避免算法。不执行慢开始算法的原因：因为如果网络出现拥塞的话就不会收到好几个重复的确认，所以发送方认为现在网络可能没有出现拥塞。  
    也有的快重传是把开始时的拥塞窗口 cwnd 值再增大一点，即等于 ssthresh + 3\*MSS 。这样做的理由是：既然发送方收到三个重复的确认，就表明有三个分组已经离开了网络。这三个分组不再消耗网络的资源而是停留在接收方的缓存中。可见现在网络中减少了三个分组。因此可以适当把拥塞窗口扩大些。
-</details>
 
 ## 5.7. TCP和UDP的区别
-
-<details>
-<summary style="color:red;">展开</summary>
 
 1. TCP 是面向连接的，UDP 是无连接的；
 
@@ -454,7 +343,7 @@ SYN Cookie： 当服务器接受到 SYN 报文段时，不直接为该 TCP 分�
 
   UDP 发送数据之前不需要建立连接
 
-  </details>
+  
 
 2. TCP 是可靠的，UDP 不可靠；
 
@@ -463,7 +352,7 @@ SYN Cookie： 当服务器接受到 SYN 报文段时，不直接为该 TCP 分�
 
   UDP 接收方收到报文后，不需要给出任何确认
 
-  </details>
+  
 
 3. TCP 只支持点对点通信，UDP 支持一对一、一对多、多对一、多对多；
 4. TCP 是面向字节流的，UDP 是面向报文的；
@@ -472,33 +361,21 @@ SYN Cookie： 当服务器接受到 SYN 报文段时，不直接为该 TCP 分�
 
   面向字节流是指发送数据时以字节为单位，一个数据包可以拆分成若干组进行发送，而 UDP 一个报文只能一次发完。
 
-  </details>
+  
 
 5. TCP 有拥塞控制机制，UDP 没有。网络出现的拥塞不会使源主机的发送速率降低，这对某些实时应用是很重要的，比如媒体通信，游戏；
 6. TCP 首部开销（20 字节）比 UDP 首部开销（8 字节）要大
 7. UDP 的主机不需要维持复杂的连接状态表
 
-</details>
-
 ### 5.7.1. 什么时候选择 TCP，什么时候选 UDP？
 
-<details>
-<summary style="color:red;">展开</summary>
 对某些实时性要求比较高的情况，选择UDP，比如游戏，媒体通信，实时视频流（直播），即使出现传输错误也可以容忍；其它大部分情况下，HTTP都是用TCP，因为要求传输的内容可靠，不出现丢失
-</details>
 
 ### 5.7.2. HTTP 可以使用 UDP 吗？
 
-<details>
-<summary style="color:red;">展开</summary>
 HTTP不可以使用UDP，HTTP需要基于可靠的传输协议，而UDP不可靠
 
-</details>
-
 ### 5.7.3. 面向连接和无连接的区别(端到端和点对点)
-
-<details>
-<summary style="color:red;">展开</summary>
 
 无连接的网络服务（数据报服务）-- 面向连接的网络服务（虚电路服务）
 
@@ -508,12 +385,7 @@ HTTP不可以使用UDP，HTTP需要基于可靠的传输协议，而UDP不可靠
 
 ![network-9](./image/network-9.png)
 
-</details>
-
 ## 5.8. TCP 如何保证传输的可靠性
-
-<details>
-<summary style="color:red;">展开</summary>
 
 ![network-21](./image/network-21.png)
 
@@ -524,26 +396,16 @@ HTTP不可以使用UDP，HTTP需要基于可靠的传输协议，而UDP不可靠
 - 应答机制：接收方收到数据之后，会发送一个确认（通常延迟几分之一秒）；
 - 超时重发：发送方发出数据之后，启动一个定时器，超时未收到接收方的确认，则重新发送这个数据；
 
-</details>
-
 # 6. 应用层
 
 ## 6.1. HTTP 和 HTTPS 有什么区别？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 1. 端口不同：HTTP 使用的是 80 端口，HTTPS 使用 443 端口；
 2. HTTP（超文本传输协议）信息是明文传输，HTTPS 运行在 SSL(Secure Socket Layer)之上，添加了加密和认证机制，更加安全；
 3. HTTPS 由于加密解密会带来更大的 CPU 和内存开销；
 4. HTTPS 通信需要证书，一般需要向证书颁发机构（CA）购买
 
-</details>
-
 ### 6.1.1. Https 的连接过程？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 ![network-14](./image/network-14.png)
 
@@ -582,12 +444,7 @@ HTTP不可以使用UDP，HTTP需要基于可靠的传输协议，而UDP不可靠
 
 总结：**非对称加密算法用于在握手过程中加密生成的密码；对称加密算法用于对真正传输的数据进行加密；HASH 算法用于验证数据的完整性。**
 
-</details>
-
 ### 6.1.2. HTTPS 连接的时候，怎么确定收到的包是服务器发来的（中间人攻击）？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 - 安全问题：
   - HTTP 协议被认为不安全是因为传输过程容易被监听者勾线监听、伪造服务器
@@ -609,12 +466,7 @@ HTTP不可以使用UDP，HTTP需要基于可靠的传输协议，而UDP不可靠
 - 中间人通过与客户端建立的对称加密算法对正规内容返回的数据进行加密传输
 - 客户端通过与中间人建立的对称加密算法对返回结果数据进行解密
 
-</details>
-
 ### 6.1.3. https如何保证连接的安全性？(连接过程说明)
-
-<details>
-<summary style="color:red;">展开</summary>
 
 **如何安全地进行数据传输？**
 
@@ -673,12 +525,7 @@ HTTP不可以使用UDP，HTTP需要基于可靠的传输协议，而UDP不可靠
 
 总得来说通过这一系列机制协商出了一个对称加密算法后，客户端与服务器之间就能通过该算法进行安全的通信了。
 
-</details>
-
 ### 6.1.4. SSL，HTTPS，TLS三者的区别
-
-<details>
-<summary style="color:red;">展开</summary>
 
 ![network-13](./image/network-13.png)
 
@@ -703,50 +550,27 @@ HTTP不可以使用UDP，HTTP需要基于可靠的传输协议，而UDP不可靠
   - 事实上我们现在用的都是TLS，但因为历史上习惯了SSL这个称呼
   - 平常还是以SSL为多。
 
-</details>
-
 ### 6.1.5. 输入 www.baidu.com，怎么变成 https://www.baidu.com 的，怎么确定用 HTTP 还是 HTTPS？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 [你访问的网站是如何自动切换到 HTTPS 的？](https://www.sohu.com/a/136637876_487516)
 
 一种是原始的 302 跳转，服务器把所有的 HTTp 流量跳转到 HTTPS。但这样有一个漏洞，就是中间人可能在第一次访问站点的时候就劫持。
 解决方法是引入 HSTS 机制，用户浏览器在访问站点的时候强制使用 HTTPS。
 
-</details>
-
 ### 6.1.6. 什么是对称加密、非对称加密？区别是什么？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 - 对称加密：加密和解密采用相同的密钥。如：DES、RC2、RC4
 - 非对称加密：需要两个密钥：公钥和私钥。如果用公钥加密，需要用私钥才能解密。如：RSA
 - 区别：对称加密速度更快，通常用于大量数据的加密；非对称加密安全性更高（不需要传送私钥）
-</details>
 
 ### 6.1.7. 数字签名、报文摘要的原理
 
-<details>
-<summary style="color:red;">展开</summary>
-
 - 发送者 A 用私钥进行签名，接收者 B 用公钥验证签名。因为除 A 外没有人有私钥，所以 B 相信签名是来自 A。A 不可抵赖，B 也不能伪造报文。
 - 摘要算法:MD5、SHA
-</details>
 
 ### 6.1.8. 其他加密算法
 
-<details>
-<summary style="color:red;">展开</summary>
-
-</details>
-
 ## 6.2. HTTP1.0、1.1、2.0之间的区别
-
-<details>
-<summary style="color:red;">展开</summary>
 
 > **HTTP1.1**
 
@@ -781,12 +605,7 @@ HTTP1.0最早在网页中使用是在1996年，那个时候只是使用一些较
   - **header压缩**，如上文中所言，对前面提到过HTTP1.x的header带有大量信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小。
   - **服务端推送**（server push），同SPDY一样，HTTP2.0也具有server push功能。
 
-</details>
-
 ### 6.2.1. HTTP2.0的多路复用和HTTP1.X中的长连接复用有什么区别？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 - HTTP/1.0 一次请求-响应，建立一个连接，用完关闭；每一个请求都要建立一个连接；
 - HTTP/1.1 Pipeling解决方式为，若干个请求排队串行化单线程处理，后面的请求等待前面请求的返回才能获得执行机会，一旦有某请求超时等，后续请求只能被阻塞，毫无办法，也就是人们常说的线头阻塞；
@@ -794,47 +613,29 @@ HTTP1.0最早在网页中使用是在1996年，那个时候只是使用一些较
 
   ![network-12](./image/network-12.png)
 
-</details>
-
 ### 6.2.2. 为什么需要头部压缩？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 假定一个页面有100个资源需要加载（这个数量对于今天的Web而言还是挺保守的）, 而每一次请求都有1kb的消息头（这同样也并不少见，因为Cookie和引用等东西的存在）, 则至少需要多消耗100kb来获取这些消息头。
 
 HTTP2.0可以维护一个字典，差量更新HTTP头部，大大降低因头部传输产生的流量。具体参考：HTTP/2 头部压缩技术介绍
-</details>
 
 ### 6.2.3. HTTP2.0多路复用有多好？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 HTTP 性能优化的关键并不在于高带宽，而是低延迟。TCP 连接会随着时间进行自我「调谐」，起初会限制连接的最大速度，如果数据成功传输，会随着时间的推移提高传输的速度。这种调谐则被称为 TCP 慢启动（TCP拥塞控制中的）
 
 由于这种原因，让原本就具有突发性和短时性的 HTTP 连接变的十分低效。
 
 HTTP/2 通过让所有数据流共用同一个连接，可以更有效地使用 TCP 连接，让高带宽也能真正的服务于 HTTP 的性能提升。
-</details>
 
 ## 6.3. 请求行、请求头、请求体、响应行、响应头、响应体都包括什么
 
 ## 6.4. GET 与 POST 的区别？
 
-<details>
-<summary style="color:red;">展开</summary>
-
 - 从 HTTP 报文层面来看，GET 请求将信息放在 URL，POST 将请求信息放在请求体中。这一点使得 GET 请求携带的数据量有限，因为 URL 本身是有长度限制的，而 POST 请求的数据存放在报文体中，因此对大小没有限制。而且从形式上看，GET 请求把数据放 URL 上感觉不太安全，而 POST 请求把数据放在请求体里似乎安全一些。实际上想要获取 POST 请求中的内容还是很容易的，因此两者在安全性上其实没有太大差异，想要实现安全的信息传输还是得靠 HTTPS
 - 从数据库层面来看，GET 符合幂等性和安全性，而 POST 请求不符合。这个其实和 GET/POST 请求的作用有关。按照 HTTP 的约定，GET 请求用于查看信息，不会改变服务器上的信息；而 POST 请求用来改变服务器上的信息。正因为 GET 请求只查看信息，不改变信息，对数据库的一次或多次操作获得的结果是一致的，认为它符合幂等性。安全性是指对数据库操作没有改变数据库中的数据。
 - 从其他层面来看，GET 请求能够被缓存，GET 请求能够保存在浏览器的浏览记录里，GET 请求的 URL 能够保存为浏览器书签。这些都是 POST 请求所不具备的。缓存是 GET 请求被广泛应用的根本，他能够被缓存也是因为它的幂等性和安全性，除了返回结果没有其他多余的动作，因此绝大部分的 GET 请求都被 CDN 缓存起来了，大大减少了 Web 服务器的负担。
 
-</details>
-
 ## 6.5. 什么是cookie和session
-
-<details>
-<summary style="color:red;">展开</summary>
 
 由于 http 协议是无状态协议，如果客户通过浏览器访问 web 应用时没有一个保存用户访问状态的机制，那么将不能持续跟踪应用的操作。比如当用户往购物车中添加了商品，web 应用必须在用户浏览别的商品的时候仍保存购物车的状态，以便用户继续往购物车中添加商品。
 
@@ -867,26 +668,17 @@ session 是一种维持客户端与服务器端会话的机制。但是与 cooki
    1. 首先用户登陆后，需要把用户登陆信息保存在服务端，这里我们可以采用 redis。比如说给用户生成一个 userToken，然后以 userId 作为键，以 userToken 作为值保存到 redis 中，并在返回时把 userToken 带回给小程序端。
    2. 小程序端接收到 userToken 后把它缓存起来，以后每当访问后端服务时就把 userToken 带上。
    3. 在后续的服务中服务端只要拿着小程序端带来的 userToken 和 redis 中的 userToken 进行比对，就能确定用户的登陆状态了。
-</details>
 
 ### 6.5.1. Session 与 Cookie 的区别？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 - cookie 是浏览器提供的一种缓存机制，它可以用于维持客户端与服务端之间的会话
 - session 指的是维持客户端与服务端会话的一种机制，它可以通过 cookie 实现，也可以通过别的手段实现。
 - 如果用 cookie 实现会话，那么会话会保存在客户端浏览器中
 - 而 session 机制提供的会话是保存在服务端的。
-</details>
 
 ### 6.5.2. session和cookie的攻击方式有哪些
 
 TODO: session cookie攻击
-
-
-<details>
-<summary style="color:red;">展开</summary>
 
 - XSS攻击
   - 反射性XSS的原理是
@@ -898,16 +690,11 @@ session劫持：攻击者通过捕获到的Session ID访问站点即可获得目
 
 - [cookie,session攻击](../safety/cookie_session.md)
 
-</details>
-
 ### 6.5.3. 如何解决分布式session问题
 
 ### 6.5.4. 如果禁用浏览器 cookie，如何实现用户追踪和认证
 
 ## 6.6. 从输入网址到获得页面的过程 (越详细越好)？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 1. 浏览器查询 DNS，获取域名对应的 IP 地址:具体过程包括浏览器搜索自身的 DNS 缓存、搜索操作系统的 DNS 缓存、读取本地的 Host 文件和向本地 DNS 服务器进行查询等。对于向本地 DNS 服务器进行查询，如果要查询的域名包含在本地配置区域资源中，则返回解析结果给客户机，完成域名解析(此解析具有权威性)；如果要查询的域名不由本地 DNS 服务器区域解析，但该服务器已缓存了此网址映射关系，则调用这个 IP 地址映射，完成域名解析（此解析不具有权威性）。如果本地域名服务器并未缓存该网址映射关系，那么将根据其设置发起递归查询或者迭代查询；
 2. 浏览器获得域名对应的 IP 地址以后，浏览器向服务器请求建立链接，发起三次握手；
@@ -916,12 +703,7 @@ session劫持：攻击者通过捕获到的Session ID访问站点即可获得目
 5. 浏览器解析并渲染视图，若遇到对 js 文件、css 文件及图片等静态资源的引用，则重复上述步骤并向服务器请求这些资源；
 6. 浏览器根据其请求到的资源、数据渲染页面，最终向用户呈现一个完整的页面。
 
-</details>
-
 ### 6.6.1. DNS使用的是什么协议
-
-<details>
-<summary style="color:red;">展开</summary>
 
 **DNS在进行区域传输的时候使用TCP协议，其它时候则使用UDP协议**
 
@@ -942,12 +724,7 @@ session劫持：攻击者通过捕获到的Session ID访问站点即可获得目
   - 不用经过TCP三次握手，这样DNS服务器负载更低，响应更快。
     > 虽然从理论上说，客户端也可以指定向DNS服务器查询的时候使用TCP，但事实上，很多DNS服务器进行配置的时候，仅支持UDP查询包。
 
-</details>
-
 ### 6.6.2. ARP协议了解吗
-
-<details>
-<summary style="color:red;">添加ip,路由和MAC相关说明</summary>
 
 **获取本机IP地址，DNS服务器地址，网关路由器地址**
 
@@ -965,12 +742,7 @@ session劫持：攻击者通过捕获到的Session ID访问站点即可获得目
 
 我们假设 DNS 服务器缓存有该网站的 IP 地址，（如果没有缓存会进一步向更高级的DNS服务器索要IP地址）。接着 DNS 服务器会返回该域名的 IP 地址。
 
-</details>
-
 ## 6.7. HTTP 请求有哪些常见状态码？
-
-<details>
-<summary style="color:red;">展开</summary>
 
 1. 1xx：代表指示信息，表示请求已接收，继续处理
 2. 2xx 状态码：操作成功。200 OK
@@ -985,8 +757,6 @@ session劫持：攻击者通过捕获到的Session ID访问站点即可获得目
   - 404 Not Found：请求资源不存在，输入了错误的URL
   - 500 Internal Server Error：服务器发生不可预期错误
   - 503 Server Unavailable：服务器当前不能处理客户端的请求，一段时间后可能恢复正常
-
-</details>
 
 # 7. 参考
 
