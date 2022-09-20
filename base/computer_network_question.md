@@ -882,13 +882,8 @@ session 是一种维持客户端与服务器端会话的机制。但是与 cooki
 
 ### 6.5.2. session和cookie的攻击方式有哪些
 
-待整理
+TODO: session cookie攻击
 
-[web安全之XSS攻击原理及防范](https://www.cnblogs.com/tugenhua0707/p/10909284.html)
-
-[Session攻击（会话劫持+固定）与防御](https://www.cnblogs.com/phpstudy2015-6/p/6776919.html)
-
-[cookie窃取和session劫持](https://www.cnblogs.com/gavin-num1/p/4555179.html)
 
 <details>
 <summary style="color:red;">展开</summary>
@@ -900,6 +895,9 @@ session 是一种维持客户端与服务器端会话的机制。但是与 cooki
   - 存储型XSS的原理是：主要是将恶意代码上传或存储到服务器中，下次只要受害者浏览包含此恶意代码的页面就会执行恶意代码。
 
 session劫持：攻击者通过捕获到的Session ID访问站点即可获得目标用户合法会话。可以通过token校验解决。
+
+- [cookie,session攻击](../safety/cookie_session.md)
+
 </details>
 
 ### 6.5.3. 如何解决分布式session问题
