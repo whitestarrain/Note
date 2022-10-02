@@ -36,7 +36,7 @@
 - React 的定义：用于 **构建用户界面** 的 **JavaScript库** 。
   -  **构建用户界面**
     -  说明React专注于视图的构建，既不是一个请求库，也不是一个打包工具，而是主要提供UI层面的解决方案。
-  -  **JavaScript库**
+  -  **JavaScript库(flow)**
     -  这说明React并不是一个框架，并不能解决项目中的所有问题
     -  为了在项目中使用它，需要结合其他的库，例如Redux/React-router等来协助提供完整的解决方案
     -  在这些周边生态的配合下才能组合成一个框架
@@ -224,6 +224,8 @@
 
 #### 2.3.4.3. Fiber架构
 
+TODO: React Fiber架构
+
 TODO: react fiber架构整理
 
 ##### 心智模型
@@ -325,6 +327,8 @@ TODO: react fiber架构整理
   -  **调度**：产生更新
   -  **协调**：决定需要更新什么组件
   -  **渲染**：将更新的组件渲染到页面
+
+## 2.6. React源码调试与浏览器调试
 
 # 3. react入门
 
@@ -613,7 +617,7 @@ TODO: react fiber架构整理
 
 - 注意：
   - 不要直接修改 state(状态)
-  - state(状态) 更新可能是异步的
+  - state(状态) 更新可能是 **异步** 的
     - 出于性能考虑，React 可能会把多个 setState() 调用合并成一个调用。
     - 因为 this.props 和 this.state 可能会异步更新，所以你不要依赖他们的值来更新下一个状态。
     - 要解决这个问题，可以让 setState() 接收一个函数而不是一个对象。
@@ -1877,27 +1881,89 @@ root.render(<Calculator />);
 
 ## 6.1. useEffect
 
+## 6.2. useState
 
+### 6.2.1. 基本使用
 
-## 6.2. useContext
+- 目的：
+  - useState能够解决类组件 所有自定义变量只能存储在this.state 的问题。
 
-## 6.3. useReducer
+- 示例
 
-## 6.4. useEffect
+  ```javascript
+  constructor(props) {
+      super(props);
+      this.state = {
+        name:'puxiao',
+        age:34
+      }
+  }
+  ```
+  ```javascript
+  const [name,setName] = useState('puxiao');
+  const [age,setAge] = useState(34);
+  ```
 
-## 6.5. useRef
+### 6.2.2. 注意
 
-## 6.6. useImperativeHandle
+- 异步更新注意：
+  - 之前谈到的`setState`数据异步更新问题，`useState` hook同样也有
 
-## 6.7. useMemo
+      ```javascript
+      // 最终count结果为count+1。
+      for(let i=0; i<3; i++){
+        setCount(count+1);
+      }
+      ```
+ - 解决
 
-## 6.8. useCallBack
+    ```javascript
+    // 这样会把值的计算放到
+    for(let i=0; i<3; i++){
+      setCount(prevData => {return prevData+1});
+    }
+    ```
 
-## 6.9. useDebugValue
+- object更新注意
+  - `setState`为异步对比累加赋值
+  - 但是`useState`的`setXxx`为异步直接赋值
 
-## 6.10. useLayoutEffect
+    ```javascript
+    console.log(person);//{name:'puxiao',age:34}
+    setPerson({age:18});
+    console.log(person);//{age:18}
+    ```
+  - 应该先复制一份原来的数据，再进行赋值
 
-## 6.11. 自定义 hook
+    ```javascript
+    let newData = {...person};
+    newData.age = 18;
+    setPerson(newData);
+    ```
+    ```javascript
+    // 简写
+    setPerson({...person,age:18}); //这种简写是解构赋值带来的，并不是React提供的
+    ```
+
+## 6.3. useContext
+
+## 6.4. useReducer
+
+## 6.5. useEffect
+
+## 6.6. useRef
+
+## 6.7. useImperativeHandle
+
+## 6.8. useMemo
+
+## 6.9. useCallBack
+
+## 6.10. useDebugValue
+
+## 6.11. useLayoutEffect
+
+## 6.12. 自定义 hook
 
 # 7. React深入
 
@@ -1931,6 +1997,7 @@ root.render(<Calculator />);
   - [ ] [React模块化与组件化](https://www.jianshu.com/p/ffd4101cee4b)
 <!-- https://www.bilibili.com/video/BV1wy4y1D7JT/ -->
 - [ ] [js class支持定义属性/属性初始化器语法](https://www.jianshu.com/p/d80c30cb4d71)
+- [ ] [《自顶向下学习React》学习笔记](https://github.com/puxiao/notes/blob/master/《自顶向下学习React》学习笔记.md)
 - [ ] **[react hook](https://github.com/puxiao/react-hook-tutorial)**
 - [ ] **[React Hooks 入门教程](https://www.ruanyifeng.com/blog/2019/09/react-hooks.html)**
 - [ ] **[React技术揭秘](https://react.iamkasong.com/)**
