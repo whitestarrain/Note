@@ -1,6 +1,6 @@
-# 环境配置
+# 1. 环境配置
 
-## 安装
+## 1.1. 安装
 
 - windows
   - 下载go安装包，安装到指定目录[下载链接](https://golang.google.cn/dl/)
@@ -14,11 +14,11 @@
     ```
   - 配置环境变量
 
-## 环境变量
+## 1.2. 环境变量
 
-### 说明
+### 1.2.1. 说明
 
-#### GOROOT
+#### 1.2.1.1. GOROOT
 
 - 说明
   - Go 语言安装根目录的路径，也就是GO语言的安装路径,官方推荐的目录地址一般在GOROOT="/usr/local/go"
@@ -35,7 +35,7 @@
   - 在 GO 1.10 及以后，这个变量已经不用我们设置了，它会根据go工具集的位置，即相对go tool的位置来动态决定GOROOT的值
   - 说简单点，其实就是go命令决定GOROOT的位置。
 
-#### GOPATH
+#### 1.2.1.2. GOPATH
 
 - 说明
   - GOPATH是用户自定义的工作区
@@ -58,7 +58,7 @@
   - bin: 
     - 一般通过执行go install命令完成安装后，保存由Go命令源码文件生成的可执行文件（executable file）
 
-#### GOPROXY
+#### 1.2.1.3. GOPROXY
 
 - 由于众所周知的原因，国内无法使用一些谷歌的库，需要设置代理
 - 具体国内设置网站 https://goproxy.io/
@@ -67,7 +67,7 @@
   GOPROXY="https://goproxy.io"
   ```
 
-### 设置环境变量
+### 1.2.2. 设置环境变量
 
 - 对于>=1.13版本的go，可以直接使用go env -w 设置环境变量
 
@@ -113,29 +113,29 @@
   $ go env
   ```
 
-## 开发环境
+## 1.3. 开发环境
 
-### Go Playground
+### 1.3.1. Go Playground
 
 - 一般小规模运行代码 或则希望把自己运行代码分享给其他人 
 - 可以使用The Go Playground，这是一个可以在线运行Go的环境
 - [链接](https://play.golang.org/ )
 
-### GoLand
+### 1.3.2. GoLand
 
 - jetbrains公司开发的软件
 
-### VSCode
+### 1.3.3. VSCode
 
 - go插件
 
-### Neovim+LSP
+### 1.3.4. Neovim+LSP
 
 - [个人配置](https://github.com/whitestarrain/dotfiles)
 
-## 了解常用系统命令
+## 1.4. 了解常用系统命令
 
-### 总括
+### 1.4.1. 总括
 
 ```
 go help
@@ -192,7 +192,7 @@ Additional help topics:
 Use "go help <topic>" for more information about that topic.
 ```
 
-### go env
+### 1.4.2. go env
 
 - 查看本地go环境变量
 - 官方的说明文档
@@ -221,7 +221,7 @@ Use "go help <topic>" for more information about that topic.
   For more about environment variables, see 'go help environment'.
   ```
 
-### go get
+### 1.4.3. go get
 
 - 用于动态获取远程仓库中的代码包及其依赖，并进行安装。
 - 这个命令实际上分为两步：
@@ -264,11 +264,11 @@ Use "go help <topic>" for more information about that topic.
   go get github.com/foo@e3702bed2
   ```
 
-### go run
+### 1.4.4. go run
 
 - 直接从源码文件运行编译任务并执行编译文件。
 
-### go build
+### 1.4.5. go build
 
 - 说明：这个命令主要用来编译代码
   - Go 是一门编译型语言，因此需要将源码编译为二进制文件之后才能执行
@@ -296,7 +296,7 @@ Use "go help <topic>" for more information about that topic.
 - 忽略文件：
   - go build 会忽略目录下以“_”或“.”开头的 go 文件。
 
-### go clean
+### 1.4.6. go clean
 
 - 移除当前源码包和关联源码包里面编译生成的文件。
 - 参数
@@ -307,19 +307,19 @@ Use "go help <topic>" for more information about that topic.
   - `-cache`： 删除所有`go build`命令的缓存
   - `-testcache`： 删除当前包所有的测试结果
 
-### go fmt
+### 1.4.7. go fmt
 
 - Go 语言有标准的书写风格，不按照此风格的代码将不能编译通过，
 - 为了减少浪费在排版上的时间，go fmt 命令可以帮你格式化你写好的代码文件，使你写代码的时候不需要关心格式
 - 你只需要在写完之后执行 go fmt filename.go，你的代码就被修改成了标准格式。
 
-### go install
+### 1.4.8. go install
 
 - 编译和安装包及其依赖。在内部实际上分成了两步操作：
   - 第一步是生成结果文件(可执行文件或者包)
   - 第二步会把编译好的结果移到`$GOPATH/bin`
 
-### go test
+### 1.4.9. go test
 
 - 说明：读取源码目录下面名为 *_test.go 的文件，生成并自动运行测试用的可执行文件。
 - 参数
@@ -331,7 +331,7 @@ Use "go help <topic>" for more information about that topic.
   -v - 显示测试的详细命令。
   ```
 
-### go tool
+### 1.4.10. go tool
 
 - 一些有用的工具集合。常用的有：
 
@@ -340,7 +340,7 @@ Use "go help <topic>" for more information about that topic.
   go tool vet directory|file # 用来分析当前目录的代码是否都是正确的代码，例如函数里面提前 return 导致出现了无用代码之类的。
   ```
 
-### go doc
+### 1.4.11. go doc
 
 - 说明
   - 为 go 程序自动提取和生成文档，或者查看某个 package 的文档。
@@ -350,13 +350,13 @@ Use "go help <topic>" for more information about that topic.
 
 支持使用 -http 参数开启一个本地服务，用于展示 golang.org 的上的官方文档。例如：godoc -http=:8080。
 
-# 基础
+# 2. 基础
 
-## 基本数据类型
+## 2.1. 基本数据类型
 
-### 声明方式
+### 2.1.1. 声明方式
 
-#### 一行声明一个变量
+#### 2.1.1.1. 一行声明一个变量
 
 - 语法
 
@@ -392,7 +392,7 @@ Use "go help <topic>" for more information about that topic.
     var rate float32 = 0.89
     ```
 
-#### 多个变量一起声明
+#### 2.1.1.2. 多个变量一起声明
 
 - 声明多个变量，除了可以按照上面写成多行之外，还可以写成下面这样
 
@@ -404,7 +404,7 @@ Use "go help <topic>" for more information about that topic.
   )
   ```
 
-#### :=简短声明
+#### 2.1.1.3. :=简短声明
 
 - 使用`:=`
   - 推导声明写法或者短类型声明法
@@ -426,7 +426,7 @@ Use "go help <topic>" for more information about that topic.
   - 但这种方法有个限制就是，只能用于函数内部是 if、for 和 switch 的初始化语句中
   - 函数外部使用则会无法编译通过，所以 **一般用var方式来定义全局变量**
 
-#### 声明和初始化多个变量
+#### 2.1.1.4. 声明和初始化多个变量
 
 - 示例：
   ```go
@@ -440,7 +440,7 @@ Use "go help <topic>" for more information about that topic.
   b, a = a, b
   ```
 
-#### new 函数声明一个指针变量
+#### 2.1.1.5. new 函数声明一个指针变量
 
 > **指针说明**
 
@@ -510,7 +510,7 @@ Use "go help <topic>" for more information about that topic.
     }
     ```
 
-#### 匿名变量
+#### 2.1.1.6. 匿名变量
 
 - 以上不管哪种方法，变量/常量都只能声明一次，声明多次，编译就会报错。
 - 但也有例外，这就要说到一个特殊变量： **匿名变量** ，也称作占位符，或者空白标识符，用下划线表示。
@@ -531,7 +531,7 @@ Use "go help <topic>" for more information about that topic.
   }
   ```
 
-### 引用和值类型
+### 2.1.2. 引用和值类型
 
 - 说明
   - 引用类型的修改可以影响到任何引用到它的变量。
@@ -544,7 +544,7 @@ Use "go help <topic>" for more information about that topic.
   | **引用类型** | **切片,字典，通道,函数**       |
   | **值类型**   | **数组，基本数据类型，结构体** |
 
-### 类型转换
+### 2.1.3. 类型转换
 
 - 说明：Go 有着非常严格的强类型特征。Go 没有自动类型提升或类型转换
 
@@ -579,9 +579,9 @@ Use "go help <topic>" for more information about that topic.
   }
   ```
 
-### 整型与浮点型
+### 2.1.4. 整型与浮点型
 
-#### 整型
+#### 2.1.4.1. 整型
 
 > **说明**
 
@@ -662,7 +662,7 @@ Use "go help <topic>" for more information about that topic.
     %f    用浮点数表示
     ```
 
-#### 浮点型
+#### 2.1.4.2. 浮点型
 
 > **说明**
 
@@ -764,7 +764,7 @@ Use "go help <topic>" for more information about that topic.
   ```
   - 由于精度的问题，就会出现这种很怪异的现象，`myfloat == myfloat +1` 会返回 `true` 。
 
-### byte,rune
+### 2.1.5. byte,rune
 
 - 简单说明：
   - byte 和 uint8 没有区别
@@ -836,9 +836,9 @@ Use "go help <topic>" for more information about that topic.
   - 单引号用来表示字符，在上面的例子里，如果你使用双引号，就意味着你要定义一个字符串
   - 赋值时与前面声明的会不一致，这样在编译的时候就会出错。
 
-### 字符串
+### 2.1.6. 字符串
 
-#### 说明
+#### 2.1.6.1. 说明
 
 - 字符串声明
   ```go
@@ -884,7 +884,7 @@ Use "go help <topic>" for more information about that topic.
   // 12
   ```
 
-#### 解释型表示法
+#### 2.1.6.2. 解释型表示法
 
 - 说明
   - 除了双引号表示字符串（解释型表示法）之外 ，还可以使用反引号。
@@ -956,13 +956,13 @@ Use "go help <topic>" for more information about that topic.
     hello
     ```
 
-#### 底层数据结构
+#### 2.1.6.3. 底层数据结构
 
-#### 字符串操作
+#### 2.1.6.4. 字符串操作
 
-### 数组与切片
+### 2.1.7. 数组与切片
 
-#### 数组
+#### 2.1.7.1. 数组
 
 - 说明
   - 数组是一个由固定长度的特定类型元素组成的序列，一个数组可以由零个或多个元素组成
@@ -1052,7 +1052,7 @@ Use "go help <topic>" for more information about that topic.
   - 2 和 3 分别表示该数组索引为2（初始索引为0）的值为3
   - 而其他没有指定值的，就是 int 类型的零值，即0
 
-#### 切片
+#### 2.1.7.2. 切片
 
 - 说明
   - 切片（Slice）与数组一样，也是可以容纳若干类型相同的元素的容器
@@ -1248,7 +1248,7 @@ Use "go help <topic>" for more information about that topic.
   numbers4:[1 2 3 4 5 6 7 8 9 10]
   ```
 
-### 字典
+### 2.1.8. 字典
 
 - 说明
   - 字典（Map 类型），是由若干个 `key:value` 这样的键值对映射组合在一起的数据结构。
@@ -1403,7 +1403,7 @@ Use "go help <topic>" for more information about that topic.
     }
     ```
 
-### 布尔类型
+### 2.1.9. 布尔类型
 
 - 说明：
   - 关于布尔值，无非就两个值：true 和 false
@@ -1459,57 +1459,57 @@ Use "go help <topic>" for more information about that topic.
   // output: true
   ```
 
-### 指针
+### 2.1.10. 指针
 
-## 流程控制
+## 2.2. 流程控制
 
-### if-else
+### 2.2.1. if-else
 
-### switch-case
+### 2.2.2. switch-case
 
-### for
+### 2.2.3. for
 
-### goto
+### 2.2.4. goto
 
-### defer
+### 2.2.5. defer
 
-### select
+### 2.2.6. select
 
-## 异常机制
+## 2.3. 异常机制
 
-## 语法规则：语句块与作用域
+## 2.4. 语法规则：语句块与作用域
 
-## 基本数据结构
+## 2.5. 基本数据结构
 
-### 字符串
+### 2.5.1. 字符串
 
-### 数组
+### 2.5.2. 数组
 
-### Slice
+### 2.5.3. Slice
 
-### Map
+### 2.5.4. Map
 
-# go面向对象
+# 3. go面向对象
 
-## Struct
+## 3.1. Struct
 
-## Interface
+## 3.2. Interface
 
-## Function
+## 3.3. Function
 
-## 反射
+## 3.4. 反射
 
-# 项目管理
+# 4. 项目管理
 
-# 并发编程
+# 5. 并发编程
 
-# 开发技能
+# 6. 开发技能
 
-# 进阶内容
+# 7. 进阶内容
 
-# 开源资料
+# 8. 开源资料
 
-## 开源电子书
+## 8.1. 开源电子书
 
 | **书名**                              | **地址**                                                                                                                                                                                                                                                                 |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1540,7 +1540,7 @@ Use "go help <topic>" for more information about that topic.
 | **go-awesome**                        | [https://github.com/shockerli/go-awesome](https://github.com/shockerli/go-awesome)                                                                                                                                                                                       |
 | **Go 每日一库**                       | [https://github.com/darjun/go-daily-lib](https://github.com/darjun/go-daily-lib)                                                                                                                                                                                         |
 
-## 学习资料
+## 8.2. 学习资料
 
 | **Go 社区的知识图谱**   | [https://github.com/gocn/knowledge](https://github.com/gocn/knowledge)                 |
 | ----------------------- | -------------------------------------------------------------------------------------- |
@@ -1548,7 +1548,7 @@ Use "go help <topic>" for more information about that topic.
 | **GoCN 每日新闻**       | [https://github.com/gocn/news](https://github.com/gocn/news)                           |
 | **Go 夜读**             | [https://github.com/talk-go/night](https://github.com/talk-go/night)                   |
 
-## 学习网站
+## 8.3. 学习网站
 
 | **Go**官方文档                                                             | [https://golang.org/doc/](https://golang.org/doc/)                                                             |
 | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
@@ -1563,7 +1563,7 @@ Use "go help <topic>" for more information about that topic.
 | **Go 学习、Go 进阶、Go 实用工具类、Go-kit ，Go-Micro 微服务实践、Go 推送** | [https://github.com/hwholiday/learning_tools](https://github.com/hwholiday/learning_tools)                     |
 | **Golang 写的一些基础后端服务，基本包含大多数后端需要的服务**              | [https://github.com/axetroy/go-server](https://github.com/axetroy/go-server)                                   |
 
-# 参考资料
+# 9. 参考资料
 
 - [ ] **[Go编程时光](https://golang.iswbm.com/preface.html)(可以参考知识点结构)**
 - [ ] **[Go语言学习笔记](https://www.yuque.com/baxiang/go)(知识点比较细，用来查缺补漏)**
