@@ -4,7 +4,7 @@ TODO: docker笔记整理
 
 ## 1.1. 简单说明
 
-Docker 是一个开放源代码软件项目，项目主要代码在2013年开源于 GitHub。
+Docker 是一个开放源代码软件项目，基于Go语言，项目主要代码在2013年开源于 GitHub。
 它是云服务技术上的一次创新，让应用程序布署在软件容器下的工作可以自动化进行，借此在 Linux 操作系统上，提供一个额外的软件抽象层，以及操作系统层虚拟化的自动管理机制。
 
 Docker 利用 Linux 核心中的资源分脱机制，例如 cgroups，以及 Linux 核心名字空间（name space），来创建独立的软件容器（containers），属于操作系统层面的虚拟化技术。
@@ -54,7 +54,14 @@ Docker 可以在单一 Linux 实体下运作，避免因为创建一个虚拟机
     - Docker 的租户 root 和宿主机 root 等同，一旦容器内的用户从普通用户权限提升为 root 权限，它就直接具备了宿主机的 root 权限，进而可进行无限制的操作。
     - 虚拟机租户 root 权限和宿主机的 root 虚拟机权限是分离的，并且利用硬件隔离技术可以防止虚拟机突破和彼此交互，而容器至今还没有任何形式的硬件隔离，这使得容器容易受到攻击。
 
-## 1.3. 核心概念
+## 1.3. 应用场景
+
+- Web 应用的自动化打包和发布。
+- 自动化测试和持续集成、发布。
+- 在服务型环境中部署和调整数据库或其他的后台应用。
+- 从头编译或者扩展现有的 OpenShift 或 Cloud Foundry 平台来搭建自己的 PaaS 环境。
+
+## 1.4. 核心概念
 
 ![docker-3](./image/docker-3.png)
 
@@ -70,22 +77,51 @@ Docker 可以在单一 Linux 实体下运作，避免因为创建一个虚拟机
   - Docker Registry 就是这样的服务。一个 Docker Registry 中可以包含多个仓库；
   - 每个仓库可以包含多个标签；每个标签对应一个镜像，其中标签可以理解为镜像的版本号。
 
-## 1.4. 不同系统下的运行原理
-
-### 1.4.1. Linux
-
-### 1.4.2. Windows
-
-### 1.4.3. Mac
-
 # 2. 基本配置
 
 # 3. 常用命令
 
-# 4. 参考资料
+# 4. 不同系统下的运行原理
+
+## 4.1. Linux
+
+### 4.1.1. 基本说明
+
+![docker-4](./image/docker-4.png)
+
+- 从本质上，容器其实就是一种沙盒技术
+  - 就好像把应用隔离在一个盒子内，使其运行
+  - 因为有了盒子边界的存在，应用于应用之间不会相互干扰。并且像集装箱一样，拿来就走，随处运行。
+  - 其实这就是 PaaS 的理想状态。
+- 实现容器的核心，就是要生成限制应用运行时的边界
+  - 我们知道，编译后的可执行代码加上数据，叫做程序
+  - 而把程序运行起来后，就变成了进程，也就是所谓的应用
+  - 如果能在应用启动时，给其加上一个边界，就能实现期待的沙盒
+- 在 Linux 中，实现容器的边界，主要有两种技术 Cgroups 和 Namespace
+  - Cgroups 用于对运行的容器进行资源的限制
+  - Namespace 则会将容器隔离起来，实现边界
+- 这样看来，容器只是一种被限制的了特殊进程而已。
+
+
+### 4.1.2. NameSpaces
+
+### 4.1.3. CGroups
+
+### 4.1.4. UnionFS
+
+## 4.2. Windows
+
+## 4.3. Mac
+
+# 5. 参考资料
 
 - [ ] [docker中文网](https://dockerdocs.cn/)
 - [ ] [docker笔记](https://zhuanlan.zhihu.com/p/365455200)
 - [ ] [Docker学习新手笔记](https://hijiangtao.github.io/2018/04/17/Docker-in-Action/)
 - [ ] [docker-tutorial](https://github.com/jaywcjlove/docker-tutorial)
+- docker原理
+  - [linux Docker原理](https://blog.csdn.net/crazymakercircle/article/details/120747767)
+  - [一篇文章带你吃透 Docker 原理](https://www.cnblogs.com/michael9/p/13039700.html)
+  - [Docker 核心技术与实现原理](https://draveness.me/docker/)
+  - [Windows系统下的Docker](http://blog.allposs.com/post/kubernetes/101-windows%E7%B3%BB%E7%BB%9F%E4%B8%8B%E7%9A%84docker/)
 
