@@ -1182,7 +1182,7 @@ done
 
 ### 2.6.1. 查询进程
 
-#### 2.6.1.1. ps,pgrep 基本信息
+#### 2.6.1.1. ps,pstree,pgrep 基本信息
 
 - 查询正在运行的进程信息
   ```bash
@@ -1192,6 +1192,10 @@ done
   ps -ef | grep colin115
   ps -lu colin115
   ```
+
+- 查询所有线程与进程
+  - `ps -uxH`
+  - `pstree -p`
 
 - 查询进程ID（适合只记得部分进程字段）
 
@@ -1972,6 +1976,12 @@ done
 - 效果
 
   ![linux-2](./image/linux-2.png)
+
+## 3.22. Supervisor
+
+# linux常见问题
+
+## 线程数量过多
 
 # 4. bash
 

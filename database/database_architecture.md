@@ -1,5 +1,7 @@
 TODO: 数据库架构 补充，学习
 
+# 数据模型
+
 # 数据库
 
 ## OLTP
@@ -127,4 +129,6 @@ superset中如何兼容的不同类型数据库的连接，以及兼容库与表
 
 - [分布式KV数据库的架构对比与设计](https://dbaplus.cn/new_video/detail/54.html)
 - [OLTP与OLAP概念，主要区别和完美实践]()
+- [三种数据模型---层次模型、网状模型以及关系模型](https://www.cnblogs.com/daniumeng/p/8717438.html)
+
 
