@@ -1511,57 +1511,57 @@ Use "go help <topic>" for more information about that topic.
 
 ## 8.1. 开源电子书
 
-| **书名**                              | **地址**                                                                                                                                                                                                                                                                 |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Go 语言高级编程**                   | [https://github.com/chai2010/advanced-go-programming-book/blob/master/SUMMARY.md](https://github.com/chai2010/advanced-go-programming-book/blob/master/SUMMARY.md)[https://chai2010.cn/advanced-go-programming-book/](https://chai2010.cn/advanced-go-programming-book/) |
-| **Go 语言四十二章经**                 | [https://legacy.gitbook.com/book/wizardforcel/go42/details](https://legacy.gitbook.com/book/wizardforcel/go42/details)[https://github.com/ffhelicopter/Go42/blob/master/SUMMARY.md](https://github.com/ffhelicopter/Go42/blob/master/SUMMARY.md)                         |
-| **For-learning-Go-Tutorial**          | [https://github.com/KeKe-Li/For-learning-Go-Tutorial](https://github.com/KeKe-Li/For-learning-Go-Tutorial)                                                                                                                                                               |
-| **go 源码分析**                       | [https://github.com/cch123/golang-notes](https://github.com/cch123/golang-notes)                                                                                                                                                                                         |
-| **GO 专家编程**                       | [https://github.com/RainbowMango/GoExpertProgramming](https://github.com/RainbowMango/GoExpertProgramming)                                                                                                                                                               |
-| **Go 语言标准库**                     | [https://github.com/polaris1119/The-Golang-Standard-Library-by-Example](https://github.com/polaris1119/The-Golang-Standard-Library-by-Example)                                                                                                                           |
-| **Go 语言 101**                       | [https://gfw.go101.org/article/101.html](https://gfw.go101.org/article/101.html)[https://go101.org/article/101.html](https://go101.org/article/101.html)                                                                                                                 |
-| **深入解析 go**                       | [https://tiancaiamao.gitbooks.io/go-internals/content/zh/](https://tiancaiamao.gitbooks.io/go-internals/content/zh/)                                                                                                                                                     |
-| **Golang 101 hacks**                  | [https://nanxiao.gitbooks.io/golang-101-hacks/content/](https://nanxiao.gitbooks.io/golang-101-hacks/content/)                                                                                                                                                           |
-| **Go 语言圣经（中文版）**             | [https://yar999.gitbooks.io/gopl-zh/content/](https://yar999.gitbooks.io/gopl-zh/content/)                                                                                                                                                                               |
-| **Golang**                            | [https://www.kancloud.cn/liupengjie/go/570005](https://www.kancloud.cn/liupengjie/go/570005)                                                                                                                                                                             |
-| **Go 入门指南**                       | [https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md](https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md)                                                                                                           |
-| **learning_tools**                    | [https://github.com/hwholiday/learning_tools](https://github.com/hwholiday/learning_tools)                                                                                                                                                                               |
-| **go 语言原本**                       | [https://changkun.de/golang/](https://changkun.de/golang/)[https://github.com/changkun/go-under-the-hood](https://github.com/changkun/go-under-the-hood)                                                                                                                 |
-| **Golang 笔记**                       | [https://github.com/overnote/over-golang](https://github.com/overnote/over-golang)                                                                                                                                                                                       |
-| **梯子教程**                          | [https://www.tizi365.com/archives/470.html](https://www.tizi365.com/archives/470.html)                                                                                                                                                                                   |
-| **Mastering GO**                      | [https://wskdsgcf.gitbook.io/mastering-go-zh-cn/](https://wskdsgcf.gitbook.io/mastering-go-zh-cn/)[https://github.com/hantmac/Mastering_Go_ZH_CN](https://github.com/hantmac/Mastering_Go_ZH_CN)                                                                         |
-| **build-web-application-with-golang** | [https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/preface.md](https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/preface.md)                                                                                         |
-| **Go 语言设计与实现**                 | [https://draveness.me/golang/](https://draveness.me/golang/)                                                                                                                                                                                                             |
-| **从问题切入，串连 Go 语言**          | [https://github.com/qcrao/Go-Questions](https://github.com/qcrao/Go-Questions)                                                                                                                                                                                           |
-| **dave**                              | [https://dave.cheney.net/category/golang](https://dave.cheney.net/category/golang)                                                                                                                                                                                       |
-| **Go 语法树入门**                     | [https://github.com/chai2010/go-ast-book](https://github.com/chai2010/go-ast-book)                                                                                                                                                                                       |
-| **data-structures-questions**         | [https://github.com/KeKe-Li/data-structures-questions](https://github.com/KeKe-Li/data-structures-questions)                                                                                                                                                             |
-| **Go 编程时光**                       | [https://github.com/iswbm/GolangCodingTime](https://github.com/iswbm/GolangCodingTime)[http://golang.iswbm.com/en/latest/](http://golang.iswbm.com/en/latest/)                                                                                                           |
-| **go-awesome**                        | [https://github.com/shockerli/go-awesome](https://github.com/shockerli/go-awesome)                                                                                                                                                                                       |
-| **Go 每日一库**                       | [https://github.com/darjun/go-daily-lib](https://github.com/darjun/go-daily-lib)                                                                                                                                                                                         |
+| **书名**                              | **地址**                                                                               |
+| ------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Go 语言高级编程**                   | https://github.com/chai2010/advanced-go-programming-book/blob/master/SUMMARY.md        |
+| **Go 语言四十二章经**                 | https://legacy.gitbook.com/book/wizardforcel/go42/details                              |
+| **For-learning-Go-Tutorial**          | https://github.com/KeKe-Li/For-learning-Go-Tutorial                                    |
+| **go 源码分析**                       | https://github.com/cch123/golang-notes                                                 |
+| **GO 专家编程**                       | https://github.com/RainbowMango/GoExpertProgramming                                    |
+| **Go 语言标准库**                     | https://github.com/polaris1119/The-Golang-Standard-Library-by-Example                  |
+| **Go 语言 101**                       | https://gfw.go101.org/article/101.html                                                 |
+| **深入解析 go**                       | https://tiancaiamao.gitbooks.io/go-internals/content/zh/                               |
+| **Golang 101 hacks**                  | https://nanxiao.gitbooks.io/golang-101-hacks/content/                                  |
+| **Go 语言圣经（中文版）**             | https://yar999.gitbooks.io/gopl-zh/content/                                            |
+| **Golang**                            | https://www.kancloud.cn/liupengjie/go/570005                                           |
+| **Go 入门指南**                       | https://github.com/unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md          |
+| **learning_tools**                    | https://github.com/hwholiday/learning_tools                                            |
+| **go 语言原本**                       | https://changkun.de/golang/                                                            |
+| **Golang 笔记**                       | https://github.com/overnote/over-golang                                                |
+| **梯子教程**                          | https://www.tizi365.com/archives/470.html                                              |
+| **Mastering GO**                      | https://wskdsgcf.gitbook.io/mastering-go-zh-cn/                                        |
+| **build-web-application-with-golang** | https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/preface.md |
+| **Go 语言设计与实现**                 | https://draveness.me/golang/                                                           |
+| **从问题切入，串连 Go 语言**          | https://github.com/qcrao/Go-Questions                                                  |
+| **dave**                              | https://dave.cheney.net/category/golang                                                |
+| **Go 语法树入门**                     | https://github.com/chai2010/go-ast-book                                                |
+| **data-structures-questions**         | https://github.com/KeKe-Li/data-structures-questions                                   |
+| **Go 编程时光**                       | https://github.com/iswbm/GolangCodingTime                                              |
+| **go-awesome**                        | https://github.com/shockerli/go-awesome                                                |
+| **Go 每日一库**                       | https://github.com/darjun/go-daily-lib                                                 |
 
 ## 8.2. 学习资料
 
-| **Go 社区的知识图谱**   | [https://github.com/gocn/knowledge](https://github.com/gocn/knowledge)                 |
-| ----------------------- | -------------------------------------------------------------------------------------- |
-| **Go 语言学习资料索引** | [https://github.com/Unknwon/go-study-index](https://github.com/Unknwon/go-study-index) |
-| **GoCN 每日新闻**       | [https://github.com/gocn/news](https://github.com/gocn/news)                           |
-| **Go 夜读**             | [https://github.com/talk-go/night](https://github.com/talk-go/night)                   |
+| **Go 社区的知识图谱**   | https://github.com/gocn/knowledge         |
+| ----------------------- | ----------------------------------------- |
+| **Go 语言学习资料索引** | https://github.com/Unknwon/go-study-index |
+| **GoCN 每日新闻**       | https://github.com/gocn/news              |
+| **Go 夜读**             | https://github.com/talk-go/night          |
 
 ## 8.3. 学习网站
 
-| **Go**官方文档                                                             | [https://golang.org/doc/](https://golang.org/doc/)                                                             |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Go**官方学习网站                                                         | [https://go.dev/](https://go.dev/)                                                                             |
-| **Go**交流论坛                                                             | [gocn.vip](https://gocn.vip/)                                                                                  |
-| **Go**语言中文网                                                           | [https://studygolang.com/](https://studygolang.com/)                                                           |
-| **Go 技术论坛**                                                            | [https://learnku.com/go](https://learnku.com/go)                                                               |
-| **Go**的库、框架和项目                                                     | [awesome-go](https://awesome-go.com/)                                                                          |
-| **Go 学习之路**                                                            | [https://github.com/developer-learning/learning-golang](https://github.com/developer-learning/learning-golang) |
-| **7 天用 Go 动手写/从零实现系列**                                          | [https://github.com/geektutu/7days-golang](https://github.com/geektutu/7days-golang)                           |
-| **Golang - 100 天从新手到大师**                                            | [https://github.com/rubyhan1314/Golang-100-Days](https://github.com/rubyhan1314/Golang-100-Days)               |
-| **Go 学习、Go 进阶、Go 实用工具类、Go-kit ，Go-Micro 微服务实践、Go 推送** | [https://github.com/hwholiday/learning_tools](https://github.com/hwholiday/learning_tools)                     |
-| **Golang 写的一些基础后端服务，基本包含大多数后端需要的服务**              | [https://github.com/axetroy/go-server](https://github.com/axetroy/go-server)                                   |
+| **Go**官方文档                                                             | https://golang.org/doc/                               |
+| -------------------------------------------------------------------------- | ----------------------------------------------------- |
+| **Go**官方学习网站                                                         | https://go.dev/                                       |
+| **Go**交流论坛                                                             | https://gocn.vip/                                     |
+| **Go**语言中文网                                                           | https://studygolang.com/                              |
+| **Go 技术论坛**                                                            | https://learnku.com/go                                |
+| **Go**的库、框架和项目                                                     | https://awesome-go.com/                               |
+| **Go 学习之路**                                                            | https://github.com/developer-learning/learning-golang |
+| **7 天用 Go 动手写/从零实现系列**                                          | https://github.com/geektutu/7days-golang              |
+| **Golang - 100 天从新手到大师**                                            | https://github.com/rubyhan1314/Golang-100-Days        |
+| **Go 学习、Go 进阶、Go 实用工具类、Go-kit ，Go-Micro 微服务实践、Go 推送** | https://github.com/hwholiday/learning_tools           |
+| **Golang 写的一些基础后端服务，基本包含大多数后端需要的服务**              | https://github.com/axetroy/go-server                  |
 
 # 9. 参考资料
 
