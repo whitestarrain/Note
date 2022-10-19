@@ -78,7 +78,7 @@
     > 入门教程
   - [babel](./front_end/Babel.md)
     > web工程化必要。
-  - [webpack](./front_end/webpack.md)
+  - [webpack](./front_end/package_tool/webpack.md)
     > web工程化必要。
     > 大致流程，主要原理与组件进行了说明，待继续整理完善高级应用
   - [vue](./front_end/vue.md)
