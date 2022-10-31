@@ -136,9 +136,9 @@ array([[ 0,  1,  2,  3,  4],
   Out[17]: array([4, 2, 0])
   ```
 
-### 1.5.3. 多维数组切片
+### 1.5.3. 多维数组切片（不同维度用逗号分隔)
 
-- 不同维度用逗号分隔。
+- **不同维度用逗号分隔** 。
 
   ```python
   In [18]: arr[1:3,2:5]
@@ -590,9 +590,77 @@ array([[ 0,  1,  2,  3,  4],
 
 ## 1.10. 高级索引和组合索引
 
-- 注意：
-  - **高级索引的多个维度组合方式也遵守广播的规则**。
-  - **高级索引结果的形状是索引数组广播后的形状而不是被索引数组形状**
+- 说明：
+  - 通过数组进行枚举索引。
+  - 并且 **高级索引的多个维度组合方式也遵守广播的规则**
+  - **结果的形状与索引数组的形状一致， 而不是与被索引数组的形状一致**
+
+- 示例：
+
+  ```python
+  # 一维
+  In [30]: arr1 = np.arange(4,10)
+  In [32]: arr = np.arange(0,25).reshape(5,5)
+
+  In [31]: arr1[[1,3]]
+  Out[31]: array([5, 7])
+
+  In [32]: arr = np.arange(0,25).reshape(5,5)
+
+  In [33]: arr[[1]]
+  Out[33]: array([[5, 6, 7, 8, 9]])
+
+  # 解析：
+    # arr.shape 为 (5,5)，索引数组shape为(2,1)。arr.shape的一级元素shape为(5,)
+    # shape为(2,1)的索引数组中，每个元素会索引到arr指定位置的一级元素。
+    # 结果shape就成了 (2,1,5)
+  In [34]: arr[[[1],[2]]]
+  Out[34]: 
+  array([[[ 5,  6,  7,  8,  9]],
+
+        [[10, 11, 12, 13, 14]]])
+  ```
+
+- mask和高级索引组合使用
+
+  ```python
+  # shape: (3,4)
+  In [38]: X = np.arange(12).reshape((3, 4))
+
+  # shape:(4,)
+  In [39]: mask = np.array([1, 0, 1, 0], dtype=bool)
+
+  # shape:(3,)
+  In [41]: row = np.array([0, 1, 2])
+
+  # row[:,np.newaxis]: shape (3,1)
+  # 对X axis=0 维度进行高级索引，得到值shape: (3,1,4)
+  In [43]: X[row[:,np.newaxis]]
+  Out[43]: 
+  array([[[ 0,  1,  2,  3]],
+
+        [[ 4,  5,  6,  7]],
+
+        [[ 8,  9, 10, 11]]])
+
+  # 使用mask对axis = 1 进行取值。shape为(3,2)
+    # 此处必须加一个维度，(3,1)可以广播到(3,4)
+    # 否则(3,)会广播失败
+  In [42]: X[row[:, np.newaxis], mask]
+  Out[42]: 
+  array([[ 0,  2],
+         [ 4,  6],
+         [ 8, 10]])
+
+  # 对 axis=1 进行切片。shape为 (3,1,2)
+  In [53]: X[row[:, np.newaxis], 1:3]
+  Out[53]: 
+  array([[[ 1,  2]],
+        [[ 5,  6]],
+        [[ 9, 10]]])
+
+  # TODO: # 高级索引+mask 和 高级索引+切片 shape不同。
+  ```
 
 - 高级索引的计算误区
 
@@ -838,32 +906,98 @@ array([[ 0,  1,  2,  3,  4],
 
 ## 2.4. 取值与选择
 
-TODO: np,pd api的使用
+```python
+In [4]: arr = np.arange(0,25).reshape(5,5)
+In [5]: df = pd.DataFrame(arr[::-1,::-1])
+In [6]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
+```
 
 ### 2.4.1. Series 的数据选择
 
-![img](./image/image_2020-11-03-13-37-04.png)
+- 通过显式索引和隐式索引切片
 
-- 注意：
+  ```python
+  In [16]: se[0]
+  Out[16]: 0
 
-  > 单个的时候
+  In [17]: se["a"]
+  Out[17]: 0
+  ```
 
-  - 索引是针对列的
-    - 对行： `data['Florida':'Illinois']` = `data[1:3]`
-  - 而切片是针对行的：
-    - 对列： `data["area"]` = `data[0]`
-  - 直接的遮盖操作也是对行的操作而不是对列的操作：
-    - `data[data.density > 100]`。获得满足 density 大于 100 的所有行
+- 通过显式索引和隐式索引切片
 
-### 2.4.2. 索引器loc,iloc,ix
+  ```python
+  # 包含头尾
+  In [12]: se["a":"b"]
+  Out[12]: 
+  a    0
+  b    1
+  dtype: int32
 
-- loc,iloc,ix
-  - loc 属性允许用户永远使用显式索引来进行定位和切片，包含**头尾**
-    > loc 索引符中我们可以结合遮盖和高级索引模式：`data.loc[data.density > 100, ['pop', 'density']]`
-  - iloc 属性允许用户永远使用隐式索引来定位和切片,不包含头尾
-  - ix:混用，但是不推荐
+  # 不包含尾
+  In [15]: se[0:1]
+  Out[15]: 
+  a    0
+  dtype: int32
+  ```
 
-### 2.4.3. DataFrame 的数据选择
+- 通过掩码进行查询
+
+  ```python
+  In [20]: se>2
+  Out[20]: 
+  a    False
+  b    False
+  c    False
+  d     True
+  e     True
+  dtype: bool
+
+  In [21]: se[se>2]
+  Out[21]: 
+  d    3
+  e    4
+  dtype: int32
+  ```
+
+- 通过高级索引
+
+  ```python
+  In [24]: se[["a","b"]]
+  Out[24]: 
+  a    0
+  b    1
+  dtype: int32
+  ```
+
+### 2.4.2. DataFrame 的数据选择
+
+- 索引是针对列的
+  - 对行： `data['Florida':'Illinois']` = `data[1:3]`
+
+- 而切片是针对行的：
+  - 对列： `data["area"]` = `data[0]`
+- 直接的遮盖操作也是对行的操作而不是对列的操作：
+  - `data[data.density > 100]`。获得满足 density 大于 100 的所有行
+
+
+### 2.4.3. 索引器loc,iloc,ix
+
+**可以用在Series 和 DataFrame中**
+
+#### 2.4.3.1. loc
+
+- loc 属性允许用户永远使用显式索引来进行定位和切片，包含**头尾**
+  - loc 索引符中我们可以结合mask和高级索引模式:
+  - `data.loc[data.density > 100, ['pop', 'density']]`
+
+#### 2.4.3.2. iloc
+
+- iloc 属性允许用户永远使用隐式索引来定位和切片,不包含头尾
+
+#### 2.4.3.3. ix
+
+- ix:混用，但是不推荐
 
 ## 2.5. Series 和 DataFrame 的计算
 
