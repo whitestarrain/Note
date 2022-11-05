@@ -163,7 +163,7 @@ array([[ 0,  1,  2,  3,  4],
 - numpy切片只是逻辑上的切片，使用的底层数据依旧是同一个。
 - 切片视图的修改会反映到底层数据上。
 
-  ```
+  ```python
   In [21]: x1 = np.arange(0,5)
 
   In [22]: x1_sub = x1[1:3]
@@ -186,7 +186,7 @@ array([[ 0,  1,  2,  3,  4],
 
 ## 1.6. 数组操作
 
-```
+```python
 In [1]: import numpy as np
 
 In [2]: arr = np.arange(0,25).reshape(5,5)
@@ -347,7 +347,7 @@ array([[ 0,  1,  2,  3,  4],
   - np.absolute
   - np.abs
 
-  ```
+  ```python
   In [9]: np.abs == np.absolute
   Out[9]: True
   ```
@@ -431,7 +431,7 @@ array([[ 0,  1,  2,  3,  4],
 
 #### 1.7.7.1. 指定输出
 
-  ```
+  ```python
   In [12]: x = np.arange(5)
   
   In [13]: y = np.empty(5)
