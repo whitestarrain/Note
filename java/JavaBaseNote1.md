@@ -5819,4 +5819,4 @@ class TcpNumbersOfThreadServers{
 
 ## 11.5. host
 
-![](./image/host.jpg)
+![host](./image/host.jpg)

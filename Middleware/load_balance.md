@@ -499,6 +499,6 @@ lvs和nginx都是现在很主流的负载均衡方式，他们各有优缺点，
 
 # 参考资料
 
-- [2W 字总结 ！体系化带你全面认识 Nginx](https://blog.p2hp.com/archives/7982)
-- [nginx平台初探(100%)](http://tengine.taobao.org/book/chapter_02.html)
-- [四层和七层负载均衡的区别](https://mp.weixin.qq.com/s/MoLGPsgrx91pFBqwm9ondw)
+- [ ] [2W 字总结 ！体系化带你全面认识 Nginx](https://blog.p2hp.com/archives/7982)
+- [ ] [nginx平台初探(100%)](http://tengine.taobao.org/book/chapter_02.html)
+- [ ] [四层和七层负载均衡的区别](https://mp.weixin.qq.com/s/MoLGPsgrx91pFBqwm9ondw)

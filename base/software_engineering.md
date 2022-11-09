@@ -28,5 +28,5 @@ TODO: 软件工程相关概念回顾整理
 
 # 参考资料
 
-- 《软件工程导论》
-- [DDD领域驱动设计落地实践](https://www.cnblogs.com/dennyzhangdd/p/14376904.html)
+- [ ] 《软件工程导论》
+- [ ] [DDD领域驱动设计落地实践](https://www.cnblogs.com/dennyzhangdd/p/14376904.html)

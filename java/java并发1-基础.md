@@ -795,7 +795,7 @@ public class WaitNotifyPrintOddEveWait {
 
 ### 2.6.3. 名称
 
-### 2.6.5. 线程优先级
+### 2.6.4. 线程优先级
 
 - 范围：1~10
   > 但是并不是所有的操作系统都支持10级优先级的划分（比如有些操作系统只支持3级划分：低，中，高）
@@ -807,7 +807,7 @@ public class WaitNotifyPrintOddEveWait {
   - **Java程序中对线程所设置的优先级只是给操作系统一个建议，操作系统不一定会采纳**
   - **而真正的调用顺序，是由操作系统的线程调度算法决定的。**
 
-### 2.6.4. 守护线程
+### 2.6.5. 守护线程
 
 - 守护线程默认的优先级比较低。一个线程默认是非守护线程，可以通过Thread类的setDaemon(boolean on)来设置为守护线程。
 
@@ -837,7 +837,7 @@ public class WaitNotifyPrintOddEveWait {
 
 [未捕获异常](https://droidyue.com/blog/2019/01/06/how-java-handle-uncaught-exceptions/)
 
-## ThreadGroup与优先级
+## 2.8. ThreadGroup与优先级
 
 - 结构
   - ThreadGroup管理着它下面的Thread
@@ -855,17 +855,17 @@ public class WaitNotifyPrintOddEveWait {
     - 复制线程组 enumerate
     - 线程组统一异常处理。重写uncaughtException
 
-## 2.8. 多线程导致的问题
+## 2.9. 多线程导致的问题
 
-### 2.8.1. 线程安全
+### 2.9.1. 线程安全
 
-### 2.8.2. 性能问题
+### 2.9.2. 性能问题
 
-# 7. 线程池
+# 3. 线程池
 
 <!--黑马程Java线程池深入浅出视频教程-->
 
-## 7.1. 概述
+## 3.1. 概述
 
 - 线程池优势
   - 1:线程和任务分离,提升线程重用性;
@@ -902,7 +902,7 @@ public class WaitNotifyPrintOddEveWait {
     - 这个参数的设计完全参考系统运行环境和硬件压力设定,没有固定的参考值
     - 用户可以根据经验和系统产生任务的时间间隔合理设置一个值即可;
 
-## 7.2. 自定义线程池
+## 3.2. 自定义线程池
 
 - 任务类
   <details>
@@ -1074,7 +1074,7 @@ public class WaitNotifyPrintOddEveWait {
   ```
   </details>
 
-## 7.3. ExecutorService接口
+## 3.3. ExecutorService接口
 
 - ExecutorService接口是java内置的线程池接口,通过学习接口中的方法,可以快速的掌握java内置线程池的基本使用
 - **常用方法**:
@@ -1084,9 +1084,9 @@ public class WaitNotifyPrintOddEveWait {
   - `Future<?> submit(Runnable task)`  执行 Runnable 任务，并返回一个表示该任务的 Future。 
   - `<T> Future<T> submit(Runnable task, T result)`  执行 Runnable 任务，并返回一个表示该任务的 Future。 
 
-## 7.4. ThreadPoolExecutor
+## 3.4. ThreadPoolExecutor
 
-## 7.5. Executors工具类
+## 3.5. Executors工具类
 
 用来获取常用线程池。
 
@@ -1119,7 +1119,7 @@ public class WaitNotifyPrintOddEveWait {
     - `ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit)` 
       > 创建并执行一个在给定初始延迟后首次启用的定期操作，随后，在每一次执行终止和下一次执行开始之间都存在给定的延迟。 
 
-## 7.6. Future
+## 3.6. Future
 
 - 目的：利用线程进行一些计算,获取异步计算结果
 
@@ -1189,7 +1189,7 @@ public class WaitNotifyPrintOddEveWait {
   }
   ```
 
-## 7.7. sumbit 和 execute区别
+## 3.7. sumbit 和 execute区别
 
 https://www.jianshu.com/p/29610984f1dd
 

@@ -2627,7 +2627,7 @@ redis锁每秒并发量只有几万，如何增大并发量
 
 ## 12.9. 延时队列
 
-# 13. 常见其他问题
+# 13. 常见问题
 
 ## 13.1. 介绍Redis
 
@@ -2902,6 +2902,27 @@ TODO: redis引入多线程
 1. [Redis 6.0 新特性-多线程连环 13 问！](https://mp.weixin.qq.com/s/FZu3acwK6zrCBZQ_3HoUgw)
 2. [为什么 Redis 选择单线程模型](https://draveness.me/whys-the-design-redis-single-thread/)
 
+
+
+## 13.6. 其他问题
+
+- Redis常见性能问题和解决方案？
+  - Master 最好不要做任何持久化工作，包括内存快照和 AOF 日志文件，
+  - 特别是不要启用内存快照做持久化。
+  - 如果数据比较关键，某个 Slave 开启 AOF 备份数据，策略为每秒同步一次。
+  - 为了主从复制的速度和连接的稳定性，Slave 和 Master 最好在同一个局域网内。
+  - 尽量避免在压力较大的主库上增加从库。
+  - Master 调用 BGREWRITEAOF 重写 AOF 文件，AOF 在重写的时候会占大量的 CPU 和内存资源，导致服务 load 过高，出现短暂服务暂停现象。 
+  - 为了 Master 的稳定性，主从复制不要用图状结构，用单向链表结构更稳定，即主从关系为：`Master<–Slave1<–Slave2<–Slave3…`，这样的结构也方便解决单点故障问题，实现 Slave 对 Master 的替换，也即，如果 Master 挂了，可以立马启用 Slave1 做 Master，其他不变。
+
+- 假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如何将它们全部找出来？
+  - 使用 keys 指令可以扫出指定模式的 key 列表。
+  - 但是要注意 keys 指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复。
+  - 这个时候可以使用 scan 指令
+    - scan 指令可以无阻塞的提取出指定模式的 key 列表
+    - 但是会有一定的重复概率，在客户端做一次去重就可以了
+    - 但是整体所花费的时间会比直接用 keys 指令长。
+
 # 14. java客户端
 
 ## 14.1. 基本说明
@@ -2927,12 +2948,12 @@ Redis支持的java客户端都Redisson、Jedis、lettuce等等，官方推荐使
 
 # 16. 参考
 
-- [redis笔记](https://blog.csdn.net/u011863024/article/details/107476187)
-- [Redisson实现分布式锁](https://www.cnblogs.com/qdhxhz/p/11046905.html)
-- [Redis删除策略](https://www.cnblogs.com/liushoudong/p/12679174.html)
-- [妈妈再也不担心我面试被Redis问得脸都绿了](https://segmentfault.com/a/1190000022146622)
-- [图解Redis之数据结构篇——压缩列表](https://mp.weixin.qq.com/s/nba0FUEAVRs0vi24KUoyQg)
-- [Redis(2)——跳跃表(含源码解析，未整理)](https://www.wmyskxz.com/2020/02/29/redis-2-tiao-yue-biao/)
-- [Redis之字典](https://www.jianshu.com/p/bfecf4ccf28b)
-- [内存节省到极致！！！Redis中的压缩表,值得了解...(待进一步整理)](https://juejin.cn/post/6847009772353355783)
-- [redis底层数据结构思维导图(待整理)](https://www.cnblogs.com/christmad/p/11364372.html)
+- [x] [redis笔记](https://blog.csdn.net/u011863024/article/details/107476187)
+- [x] [Redisson实现分布式锁](https://www.cnblogs.com/qdhxhz/p/11046905.html)
+- [x] [Redis删除策略](https://www.cnblogs.com/liushoudong/p/12679174.html)
+- [x] [妈妈再也不担心我面试被Redis问得脸都绿了](https://segmentfault.com/a/1190000022146622)
+- [ ] [图解Redis之数据结构篇——压缩列表](https://mp.weixin.qq.com/s/nba0FUEAVRs0vi24KUoyQg)
+- [ ] [Redis(2)——跳跃表(含源码解析，未整理)](https://www.wmyskxz.com/2020/02/29/redis-2-tiao-yue-biao/)
+- [ ] [Redis之字典](https://www.jianshu.com/p/bfecf4ccf28b)
+- [ ] [内存节省到极致！！！Redis中的压缩表,值得了解...(待进一步整理)](https://juejin.cn/post/6847009772353355783)
+- [ ] [redis底层数据结构思维导图(待整理)](https://www.cnblogs.com/christmad/p/11364372.html)

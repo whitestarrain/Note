@@ -307,8 +307,8 @@ java Swing、Pyqt等
 
 待补充
 
-- [谈谈编程思想](https://blog.p2hp.com/archives/4978)
-- [What to know before debating type systems](http://blogs.perl.org/users/ovid/2010/08/what-to-know-before-debating-type-systems.html)
+- [ ] [谈谈编程思想](https://blog.p2hp.com/archives/4978)
+- [x] [What to know before debating type systems](http://blogs.perl.org/users/ovid/2010/08/what-to-know-before-debating-type-systems.html)
   - [x] [翻译](https://www.zhihu.com/question/19918532)
-- 《冒号课堂》
+- []  《冒号课堂》
 

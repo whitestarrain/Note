@@ -2516,9 +2516,9 @@ In this section, we will see how OpenCV-Python bindings are generated
 
 # 11. refs
 
-- [OpenCV-Python Tutorials](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html)
-- [OpenCV Image Processing doc](https://docs.opencv.org/4.x/d7/dbd/group__imgproc.html)
-- [如何理解图像深度- 8bit、16bit、24bit、32bi](https://blog.csdn.net/qq_41498261/article/details/104898045)
-- [2.2. Advanced NumPy](http://scipy-lectures.org/advanced/advanced_numpy/index.html#advanced-numpy)
-- [HSV颜色模型](https://zhuanlan.zhihu.com/p/67930839)
-- [线性变换与仿射变换](https://www.zhihu.com/question/20666664)
+- [ ] [OpenCV-Python Tutorials](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html)
+- [ ] [OpenCV Image Processing doc](https://docs.opencv.org/4.x/d7/dbd/group__imgproc.html)
+- [ ] [如何理解图像深度- 8bit、16bit、24bit、32bi](https://blog.csdn.net/qq_41498261/article/details/104898045)
+- [ ] [2.2. Advanced NumPy](http://scipy-lectures.org/advanced/advanced_numpy/index.html#advanced-numpy)
+- [ ] [HSV颜色模型](https://zhuanlan.zhihu.com/p/67930839)
+- [ ] [线性变换与仿射变换](https://www.zhihu.com/question/20666664)

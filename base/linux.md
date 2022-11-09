@@ -2535,8 +2535,7 @@ done
 - [ ] **[bash-handbook-zh-CN](https://github.com/denysdovhan/bash-handbook/blob/master/translations/zh-CN/README.md)**
   - [基于上述文档的shell学习平台](https://git.io/learnyoubash)
 - [ ] [explain shell:shell命令解释](https://explainshell.com/)
-- [ ] [shell基础](https://github.com/52fhy/shell-book)
-- [ ] [Linux Command](https://github.com/jaywcjlove/linux-command)
 - [ ] [一文掌握 Linux 性能分析之内存篇](https://segmentfault.com/a/1190000018553950)
-- [ ] [Linux常用命令](https://github.com/arkingc/note/blob/master/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4.md)
+- 工具：
+  - [Linux Command](https://github.com/jaywcjlove/linux-command)
 

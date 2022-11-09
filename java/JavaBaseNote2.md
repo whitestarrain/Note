@@ -75,15 +75,15 @@
 
 > Field Constructor Method 都是类。Class 类中有这三个类
 
-## 深入解析
+## 1.3. 深入解析
 
 待做
 
 [资料](https://www.cnblogs.com/yougewe/p/10125073.html)
 
-## 应用
+## 1.4. 应用
 
-### 重写private方法
+### 1.4.1. 重写private方法
 
 待做
 
@@ -3717,7 +3717,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 > 这里只是简单地做个演示
 > 实际上以后验证码不需要自己实现，**从网上找找比较美观的就行**
 
-##### 11.13.4.4.1. 主要代码
+##### 主要代码
 
 ```java
 @WebServlet("/checkCode")
@@ -3766,7 +3766,7 @@ public class CheckCodeServlet extends HttpServlet {
 
 ```
 
-##### 11.13.4.4.2. 点击刷新的实现
+##### 点击刷新的实现
 
 ```html
 <!DOCTYPE html>
@@ -5941,8 +5941,8 @@ public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain
 
 # 19. 新特性
 
-## 19.1 Java8新特性
+## 19.1. 1 Java8新特性
 
-# 参考资料
+# 20. 参考资料
 
 - [ ] [深入理解java注解](http://www.itsoku.com/course/5/98)

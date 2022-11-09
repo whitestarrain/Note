@@ -11308,7 +11308,7 @@ public class Interpreter {
 # 4. 参考资料
 
 - [x] [设计模式六大原则详解](https://www.cnblogs.com/huansky/p/13700861.html)
-- [ ] [Java设计模式](https://www.bilibili.com/video/BV1G4411c7N4)
-- [ ] [设计模式笔记](https://blog.csdn.net/oneby1314/category_10348963.html)
+- [x] [Java设计模式](https://www.bilibili.com/video/BV1G4411c7N4)
+- [x] [设计模式笔记](https://blog.csdn.net/oneby1314/category_10348963.html)
 - [ ] [菜鸟教程](https://www.runoob.com/design-pattern/design-pattern-tutorial.html)
 - [ ] [mixin模式](https://www.liaoxuefeng.com/wiki/1016959663602400/1017502939956896)

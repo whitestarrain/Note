@@ -1183,21 +1183,24 @@ done
 
 # 其它资源
 
-- [x] **[bash-handbook-zh-CN](https://github.com/liushuaikobe/bash-handbook-zh-CN)**
-- [ ] **[rstacruz/cheatsheets-bash.md](https://github.com/rstacruz/cheatsheets/blob/master/bash.md)** 
-  > 异常全的bash命令。包括一些字符串处理
-- [shellcheck](https://github.com/koalaman/shellcheck)
-  > 一个shell脚本的静态分析工具，既可以在网页[www.shellcheck.net](http://www.shellcheck.net/)上使用它，又可以在命令行中使用，安装教程在[koalaman/shellcheck](https://github.com/koalaman/shellcheck)的github仓库页面上
-- [awesome-bash](https://github.com/awesome-lists/awesome-bash)
-  > 是一个组织有序的有关Bash脚本以及相关资源的列表
-- [awesome-shell](https://github.com/alebcay/awesome-shell)
-  > 另一个组织有序的shell资源列表
-- [bash-it](https://github.com/Bash-it/bash-it)
-  > 为你日常使用，开发以及维护shell脚本和自定义命令提供了一个可靠的框架
-  >
-  > 有时间可以搞搞，跟`oh-my-zsh`差不多
-- [dotfiles.github.io](http://dotfiles.github.io/)
-  > 上面有bash和其它shell的各种dotfiles集合以及shell框架的链接
-- [learnyoubash](https://github.com/denysdovhan/learnyoubash)
-  > 帮助你编写你的第一个bash脚本
+- 学习资源
+  - [x] **[bash-handbook-zh-CN](https://github.com/liushuaikobe/bash-handbook-zh-CN)**
+  - [ ] **[rstacruz/cheatsheets-bash.md](https://github.com/rstacruz/cheatsheets/blob/master/bash.md)** 
+    > 异常全的bash命令。包括一些字符串处理
+
+- 辅助
+  - [shellcheck](https://github.com/koalaman/shellcheck)
+    > 一个shell脚本的静态分析工具，既可以在网页[www.shellcheck.net](http://www.shellcheck.net/)上使用它，又可以在命令行中使用，安装教程在[koalaman/shellcheck](https://github.com/koalaman/shellcheck)的github仓库页面上
+  - [awesome-bash](https://github.com/awesome-lists/awesome-bash)
+    > 是一个组织有序的有关Bash脚本以及相关资源的列表
+  - [awesome-shell](https://github.com/alebcay/awesome-shell)
+    > 另一个组织有序的shell资源列表
+  - [bash-it](https://github.com/Bash-it/bash-it)
+    > 为你日常使用，开发以及维护shell脚本和自定义命令提供了一个可靠的框架
+    >
+    > 有时间可以搞搞，跟`oh-my-zsh`差不多
+  - [dotfiles.github.io](http://dotfiles.github.io/)
+    > 上面有bash和其它shell的各种dotfiles集合以及shell框架的链接
+  - [learnyoubash](https://github.com/denysdovhan/learnyoubash)
+    > 帮助你编写你的第一个bash脚本
 

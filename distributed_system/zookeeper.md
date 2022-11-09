@@ -1489,11 +1489,11 @@ List<String> childrenPaths = zkClient.getChildren().forPath("/node1");
 
 # 9. 参考文献
 
-- [zookeeper笔记](https://piaosanlang.gitbooks.io/faq/content/zookeeperde-gong-neng-yi-ji-gong-zuo-yuan-li.html)
-- 《从 Paxos 到 Zookeeper——分布式一致性原理与实践》
-- [万字带你入门Zookeeper](https://juejin.cn/post/6844904045283377165)
-- [实例详解ZooKeeper ZAB协议、分布式锁与领导选举](https://dbaplus.cn/news-141-1875-1.html)
-- [分布式锁用Redis坚决不用Zookeeper？](https://cloud.tencent.com/developer/article/1476050)
+- [ ] [zookeeper笔记](https://piaosanlang.gitbooks.io/faq/content/zookeeperde-gong-neng-yi-ji-gong-zuo-yuan-li.html)
+- [ ] 《从 Paxos 到 Zookeeper——分布式一致性原理与实践》
+- [x] [万字带你入门Zookeeper](https://juejin.cn/post/6844904045283377165)
+- [ ] [实例详解ZooKeeper ZAB协议、分布式锁与领导选举](https://dbaplus.cn/news-141-1875-1.html)
+- [ ] [分布式锁用Redis坚决不用Zookeeper？](https://cloud.tencent.com/developer/article/1476050)
 
 待整理
 

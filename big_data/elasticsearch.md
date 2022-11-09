@@ -2485,6 +2485,6 @@
 
 - [ ] [理解ElasticSearch工作原理](https://www.jianshu.com/p/52b92f1a9c47)
 - [ ] [从原理到应用，Elasticsearch详解](https://segmentfault.com/a/1190000020022504)
-- [ ] [ElasticSearch学习笔记、详解](https://blog.csdn.net/qq_45988496/article/details/116380830)
+- [x] [ElasticSearch学习笔记、详解](https://blog.csdn.net/qq_45988496/article/details/116380830)
 - [ ] [Elasticsearch sql document](https://www.elastic.co/guide/en/elasticsearch/reference/current/xpack-sql.html)
 

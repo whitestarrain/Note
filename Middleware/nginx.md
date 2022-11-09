@@ -908,10 +908,10 @@ TODO: nginx使用场景整理
 - [ ] [Nginx 的中文维基](http://tool.oschina.net/apidocs/apidoc?api=nginx-zh)
 - [ ] [Nginx 开发从入门到精通](http://tengine.taobao.org/book/index.html)
 - [ ] [nginx-admins-handbook](https://github.com/trimstray/nginx-admins-handbook)
-- [ ] [nginxconfig.io](https://nginxconfig.io/) - 一款 Nginx 配置生成器
+- [ ] [nginxconfig.io](https://nginxconfig.io/)
 - [x] [nginx配置文件详解](https://www.cnblogs.com/54chensongxia/p/12938929.html)
 - [ ] [nginx 的 default_server 定义及匹配规则](https://segmentfault.com/a/1190000015681272)
 - [ ] [nginx入门教程](https://github.com/jaywcjlove/nginx-tutorial)
-- [ ] [彻底弄懂 Nginx location 匹配](https://juejin.cn/post/6844903849166110733)
+- [x] [彻底弄懂 Nginx location 匹配](https://juejin.cn/post/6844903849166110733)
 
 

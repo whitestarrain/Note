@@ -779,8 +779,7 @@ printf("%d",pa == &a);                // ①
 - [ ] [MinGW到底是个什么ghost](https://blog.csdn.net/lee_ham/article/details/81778581)
   - [ ] [MinGW中的头文件路径级环境变量设置](https://blog.csdn.net/wdjhzw/article/details/26576847)
   - [ ] [Window下g++搜索机制以及mingw环境配置](https://blog.csdn.net/weixin_34387284/article/details/91980027)
-- [ ] [C语言菜鸟教程](https://www.runoob.com/cprogramming/c-environment-setup.html)
-- [ ] [关于C语言](https://www.cnblogs.com/huya-edu/p/13920691.html)
+- [x] [C语言菜鸟教程](https://www.runoob.com/cprogramming/c-environment-setup.html)
 - [ ] [Neovim C Cpp Lsp Integration Tips](https://ttys3.dev/post/neovim-c-cpp-lsp-integration-tips)
 
 > c++资料
