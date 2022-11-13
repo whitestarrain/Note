@@ -635,6 +635,8 @@ TODO: react fiber架构整理
 
 ##### 旧版生命周期
 
+![react-4](./image/react-4.png)
+
 ![react-2](./image/react-2.png)
 
 > React 的生命周期主要可分为: 
@@ -715,6 +717,10 @@ TODO: react fiber架构整理
 
 ##### react16及以后
 
+![react-3](./image/react-3.png)
+
+![react-5](./image/react-5.png)
+
 - React 16 中删除了如下三个生命周期。
   - componentWillMount
   - componentWillReceiveProps
@@ -740,6 +746,7 @@ TODO: react fiber架构整理
   - `getSnapshotBeforeUpdate（prevProps,prevState）`
     - 在 render 函数调用之后，实际的 Dom 渲染之前，在这个阶段我们可以拿到上一个状态 Dom 元素的坐标、大小的等相关信息，用于替代旧的生命周期中的 componentWillUpdate。
     - 该函数的返回值将会作为 componentDidUpdate 的第三个参数出现。
+
 
 #### 4.2.2.3. 数据的向下流动(state->props)
 
@@ -1121,7 +1128,7 @@ render() {
 
 - 注意：
   - 在组件的 render 方法中 **返回 null 并不会影响组件的生命周期** 
-  - 例如，上面这个示例中，componentDidUpdate 依然会被调用。。
+  - 例如，上面这个示例中，componentDidUpdate 依然会被调用。
 
 ### 4.4.3. 列表渲染与key
 
@@ -1881,9 +1888,177 @@ root.render(<Calculator />);
 
 ## 6.1. useEffect
 
+### 6.1.1. 基本使用
+
+- 源码
+
+  ```typescript
+  export function useEffect(
+    create: () => (() => void) | void,
+    deps: Array<mixed> | void | null,
+  ): void {
+    const dispatcher = resolveDispatcher();
+    return dispatcher.useEffect(create, deps);
+  }
+  ```
+
+- 目的
+  - useEffect是来解决类组件 某些执行代码被分散在不同的生命周期函数中 的问题
+  - 处理常用的三个生命周期函数
+    - componentDidMount(组件被挂载完成后)
+    - componentDidUpdate(组件重新渲染完成后)
+    - componentWillUnmount(组件即将被卸载前)
+
+- 说明
+  - 数据变更会触发组件重新渲染，上面3个就是和组件渲染关联最紧密的生命周期函数
+  - 其他生命周期函数见文档：[React官方中文文档FAQ](https://react.docschina.org/docs/hooks-faq.html#do-hooks-cover-all-use-cases-for-classes)
+    > 我们给 Hook 设定的目标是尽早覆盖 class 的所有使用场景。
+    > 目前暂时还没有对应不常用的 getSnapshotBeforeUpdate，getDerivedStateFromError 和 componentDidCatch 生命周期的 Hook 等价写法，
+    > 但我们计划尽早把它们加进来。 
+
+- api说明
+
+  ```javascript
+  useEffect(() => {
+      //此处编写 组件挂载之后和组件重新渲染之后执行的代码
+      ...
+
+      return () => {
+          //此处编写 组件即将被卸载前执行的代码
+          ...
+      }
+  },[deps])
+  ```
+  - 第1个参数effect是一个function
+    - 用来编写useEffect对应的执行代码。
+    - 当下面3个生命周期函数执行后，就会触发useEffect函数，进而执行而第1个参数 effect 中的内容
+      > componentDidMount、componentDidUpdate、componentWillUnmount 
+    - effect 函数主体内容中的代码，就是组件挂载之后和组件重新渲染之后你需要执行的代码；
+    - effect 函数 return 出去的返回函数主体内容中的代码，就是组件即将被卸载前你需要执行的代码；
+      - 不需要在组件卸载前执行代码的话，不需要return
+  - 第2个参数 deps 
+    - 可选参数，是Hook用来向React表明useEffect依赖关系
+    - 指定的依赖项改变时，才会执行副效应函数
+    - 如果为一个空数组，就表明副效应参数没有任何依赖项
+      - 因此，副效应函数这时只会在组件加载进入 DOM 后执行一次，后面组件重新渲染，就不会再次执行
+
+- 示例:每次被挂载或者重新渲染后，显示变量`a`的值
+
+  ```javascript
+  // class的写法
+
+  componentDidMount(){
+      document.title = `${this.state.a} - ${Math.floor(Math.random()*100)}`;
+  }
+  componentDidUpdate(){
+      document.title = `${this.state.a} - ${Math.floor(Math.random()*100)}`;
+  }
+  ```
+
+  ```javascript
+  // hook的写法
+  import React, { useState,useEffect} from 'react';
+
+  function Component() {
+    const [a, setA] = useState(0);//定义变量a，并且默认值为0
+    useEffect(() => {
+        //无论是第一次挂载还是以后每次组件更新，修改网页标题的执行代码只需要在这里写一次即可
+        document.title = `${a} - ${Math.floor(Math.random()*100)}`;
+    })
+    const clickAbtHandler = (eve) =>{
+        setA(a+1);
+    }
+    return <div>
+        {a}
+        <button onClick={clickAbtHandler}>a+1</button>
+      </div>
+  }
+
+  export default Component;
+  ```
+
+### 6.1.2. 注意
+
+- useEffect第二个参数deps为空数组时，
+  - 那么react会将该useEffect的第1个参数 effect 建立一个闭包
+  - 该闭包里的变量 a 被永远设定为当初的值。
+
+  ```javascript
+  import React, { useState,useEffect} from 'react';
+
+  function Component() {
+    const [a, setA] = useState(0);//定义变量a，并且默认值为0
+
+    //定义第1个useEffect，专门用来处理自动累加器
+    useEffect(() => {
+      let timer = setInterval(() => {setA(a+1)},1000);// <-- 请注意这行代码，暗藏玄机
+      return () => {
+          clearInterval(timer);
+      }
+    }, []);//此处第2个参数为[]，告知React以后该组件任何更新引发的重新渲染都与此useEffect无关
+
+    //定义第2个useEffect，专门用来处理网页标题更新
+    useEffect(() => {
+      document.title = `${a} - ${Math.floor(Math.random()*100)}`;
+    },[a])
+    return <div> {a} </div>
+  }
+
+  export default Component;
+  ```
+  ```
+  有警告：
+  Either include it or remove the dependency array. 
+  You can also do a functional update 'setA(a => ...)' 
+  if you only need 'a' in the 'setA' call.
+  ```
+  ```javascript
+  //需要改为
+  let timer = setInterval(() => {setA(a => a+1)},1000);  
+  ```
+
+  - 上面，尽管setInterval正常工作，每次都“正常执行了”，
+  - 可是 setA(a+1)中 a 的值一直没变化，一直都是当初的0，
+  - 所以造成 0 + 1 一直都等于 1 的结果。
+
+- 合理使用deps参数优化性能
+
+  ```javascript
+  import React, { useState,useEffect} from 'react';
+  function Component() {
+    const [obj,setObj] = useState({a:0,b:0});
+    useEffect(() => {
+      document.title = `${obj.a} - ${Math.floor(Math.random()*50)}`;
+    }); //注意此时我们并未设置useEffect函数的第2个参数
+
+    //如果下面代码看不懂，你需要重新去温习useState高级用法中的“数据类型为Objcet，修改方法”
+    return <div>
+      {JSON.stringify(obj)}
+      <button onClick={() => {setObj({...obj,a:obj.a+1})}}>a+1</button> 
+      <button onClick={() => {setObj({...obj,b:obj.b+1})}}>b+1</button>
+    </div>
+  }
+  export default Component;
+  ```
+
+  - 添加过[obj.a]之后，再次运行，无论obj.b或者其他数据变量引发的组件重新渲染，都不会执行该useEffect。
+  - 因此达到提高性能的目的。
+
 ## 6.2. useState
 
 ### 6.2.1. 基本使用
+
+- 源码
+
+  ```typescript
+  //备注：源码采用TypeScript编写，如果不懂TS代码，阅读起来稍显困难
+  export function useState<S>(
+    initialState: (() => S) | S,
+  ): [S, Dispatch<BasicStateAction<S>>] {
+    const dispatcher = resolveDispatcher();
+    return dispatcher.useState(initialState);
+  }
+  ```
 
 - 目的：
   - useState能够解决类组件 所有自定义变量只能存储在this.state 的问题。
@@ -1947,9 +2122,257 @@ root.render(<Calculator />);
 
 ## 6.3. useContext
 
+### 6.3.1. React 的Provider、Consumer
+
+- 问题说明
+  - 原本不同级别的组件(包括类组建和函数组件)之间传递属性值，必须逐层传递，即使中间层的组件不需要这些数据
+  - 数据层层传递增加了组件的复杂性，降低了可复用性。
+
+- 为了解决这个问题，我们可以使用以下方式
+  - 在组件顶层或单独的模块中，由React.createContext()创建一个共享数据对象；
+  - 在父组件中添加共享数据对象的引用
+    - 通过且只能通过`<XxxContext.provider value={{xx:'xxx'}}></XxxContext.provider>`的形式将数据传递给子组件
+    - 请注意传值必须使用value={obj}这种形式，若值本身为字符串则可以改为 value='xxx'
+  - 若下一层的子组件用不到共享数据对象中的数据，则可以不做任何属性标签传递；
+  - 若某一层的子组件需要用到共享数据对象的数据，则可通过`<XxxContext.Consumer></XxxContext.Consumer>`获取到数据；
+    - consumer中通过匿名函数接收provider传来的值
+  - 在类组件中除了`<XxxContext.Consumer>`标签，还有另外一种获取共享数据方式：`static xxx = XxxContext;`
+    - 但是这种形式在函数组件中无法使用。
+
+- 示例代码
+
+  ```javascript
+  import {createContext} from 'react'
+  // Provider,Consumer来源于同一个createContext()
+  const TestContext = createContext();
+  export {
+    Provider,
+    Consumer
+  }
+  ```
+  ```javascript
+  // Provider组件接受一个value属性，值可以是字符串也可以是对象等。
+  import React, {Component} from 'react'
+  import Child from './children'
+  import {TestContext} from "./context";
+
+  // 类组件
+  class App extends Component {
+    constructor(props) {
+      super(props)
+      this.state = {
+        name: 'aa'
+      }
+    }
+
+    render() {
+      const {data} = this.props
+      const {name}=this.state
+      return (<div>
+        <TestContext.provider value={data}>
+          {
+            data.map((item, index) => {
+              return <div key={index}>
+                <p>{item}</p>
+              </div>
+            })
+          }
+          <Child/>
+        </TestContext.provider>
+      </div>)
+    }
+  }
+
+  export default App
+  ```
+  ```javascript
+  // Consumer组件内可以通过匿名函数的形式接收Provider传过来的数据
+  import React, {Component} from 'react'
+  import {TestContext} from "./context";
+
+  export default class Child extends Component {
+    constructor(props) {
+      super(props)
+      this.state = {
+        name: 'll'
+      }
+    }
+    render() {
+      console.log(3, '组件渲染虚拟dom')
+      return (<TestContext.consumer>{
+        // 接收Provider传过来的数据
+        (data) => {
+          console.log(data)
+        }
+      }</TestContext.consumer>)
+    }
+  }
+  ```
+
+### 6.3.2. 基本使用
+
+- 源码
+
+  ```typescript
+  export function useContext<T>(
+    Context: ReactContext<T>,
+    unstable_observedBits: number | boolean | void,): T {
+    const dispatcher = resolveDispatcher();
+    if (__DEV__) {
+      if (unstable_observedBits !== undefined) {
+        console.error(
+          'useContext() second argument is reserved for future ' +
+          'use in React. Passing it is not supported. ' +
+          'You passed: %s.%s',
+          unstable_observedBits,
+          typeof unstable_observedBits === 'number' && Array.isArray(arguments[2])
+          ? '\n\nDid you call array.map(useContext)? ' +
+            'Calling Hooks inside a loop is not supported. ' +
+            'Learn more at https://fb.me/rules-of-hooks'
+          : '',
+        );
+    }
+
+    // TODO add a more generic warning for invalid values.
+    if ((Context: any)._context !== undefined) {
+      const realContext = (Context: any)._context;
+      // Don't deduplicate because this legitimately causes bugs
+      // and nobody should be using this in existing code.
+      if (realContext.Consumer === Context) {
+        console.error(
+          'Calling useContext(Context.Consumer) is not supported, may cause bugs, and will be ' +
+            'removed in a future major release. Did you mean to call useContext(Context) instead?',
+        );
+      } else if (realContext.Provider === Context) {
+        console.error(
+          'Calling useContext(Context.Provider) is not supported. ' +
+            'Did you mean to call useContext(Context) instead?',
+        );
+      }
+    }
+  }
+    return dispatcher.useContext(Context, unstable_observedBits);
+  }
+  ```
+
+- 说明
+  - useContext是`<XxxContext.Consumer>`的替代品，可以大量简化获取共享数据值的代码。
+  - 函数组件和类组件，对于`<XxxContext.Provider>、<XxxContext.Consumer>`使用方式没有任何差别。
+  - 可以在函数组件中不使用useContext，继续使用`<XxxContext.Consumer>`，这都没问题
+  - 只不过使用useContext后，可以让 **获取共享数据** 相关代码简单一些。
+
+- api说明
+
+  ```javascript
+  import GlobalContext from './global-context'; //引入共享数据对象
+
+  function Component(){
+    const contextValue= useContext(GlobalContext); //在函数组件中声明一个变量来代表该共享数据对象的value值
+
+    //若想获取共享数据对象中的属性xxx的值，直接使用global.xxx即可
+    return <div>
+      {contextValue.xxx}
+    </div>
+  }
+  ```
+  - 子组件(函数组件)需要先引入共享数据对象GlobalContext；
+  - 内部定义一个常量global，用来接收useContext函数返回GlobalContext的value值；
+  - 函数组件在return时，可以不使用`<GlobalCount.Customer>`标签，而是直接使用global.xx来获取共享数据；
+  - 请注意，这里执行的依然是 **单向数据流** ，只可以获取global.xx，不可以直接更改global.xx;
+
+- 示例代码
+
+  ```javascript
+  //global-context.js
+  import React from 'react';
+  const GlobalContext = React.createContext(); //请注意，这里还可以给React.createContext()传入一个默认值
+  //例如：const GlobalContext = React.createContext({name:'Yang',age:18})
+  //假如<GlobalContext.Provider>中没有设置value的值，就会使用上面定义的默认值
+  export default GlobalContext;
+
+  ...
+
+  //component.js
+  import React, { useContext } from 'react';
+  import GlobalContext from './global-context';
+
+  function AppComponent() {
+    //标签<GlobalContext.Provider>中向下传递数据，必须使用value这个属性，且数据必须是键值对类型的object
+    //如果不添加value，那么子组件获取到的共享数据value值是React.createContext(defaultValues)中的默认值defaultValues
+    return <div>
+      <GlobalContext.Provider value={{name:'puxiao',age:34}}>
+          <MiddleComponent />
+      </GlobalContext.Provider>
+    </div>
+  }
+
+  function MiddleComponent(){
+    //MiddleComponent 不需要做任何 “属性数据传递接力”，因此降低该组件数据传递复杂性，提高组件可复用性
+    return <div>
+      <ChildComponent />
+    </div>
+  }
+
+  function ChildComponent(){
+    const global = useContext(GlobalContext); //获取共享数据对象的value值
+    //忘掉<GlobalContext.Consumer>标签，直接用global获取需要的值
+    return <div>
+      {global.name} - {global.age}
+    </div>
+  }
+
+  export default AppComponent;
+  ```
+
+### 6.3.3. 注意
+
+- useContext只是简化了获取共享数据value的代码
+  - 但是对于`<XxxContext.Provider>`的使用没有做任何改变
+  - 如果组件需要设置2个XxxContext，那么依然需要进行`<XxxContext.Provider>`嵌套
+
+  ```javascript
+  import React,{ useContext } from 'react'
+
+  const UserContext = React.createContext();
+  const NewsContext = React.createContext();
+
+  function AppComponent() {
+    return (
+      <UserContext.Provider value={{name:'puxiao'}}>
+          <NewsContext.Provider value={{title:'Hello React Hook.'}}>
+              <ChildComponent />
+              <ChildComponent />
+          </NewsContext.Provider>
+      </UserContext.Provider>
+    )
+  }
+
+  function ChildComponent(){
+    const user = useContext(UserContext);
+    const news = useContext(NewsContext);
+    return <div>
+      {user.name} - {news.title}
+    </div>
+  }
+
+  export default AppComponent;
+  ```
+
+- 为什么不使用Redux
+  - 在Hook出现以前，React主要负责视图层的渲染，并不负责组件数据状态管理
+  - 所以才有了第三方Redux模块，专门来负责React的数据管理。
+  - 但是自从有了Hook后，使用React Hook 进行函数组件开发，实现数据状态管理变得切实可行
+  - 只要根据实际项目需求，使用useContext以及useReducer，一定程度上是可以满足常见需求的。
+  - 而使用Redux会增大项目复杂度，此外还要花费学习Redux成本。
+  - 具体需求具体分析，不必过分追求Redux。
+
 ## 6.4. useReducer
 
-## 6.5. useEffect
+### 6.4.1. 基本使用
+
+### 6.4.2. 注意
+
+## 6.5. useCallback
 
 ## 6.6. useRef
 
@@ -2002,3 +2425,4 @@ root.render(<Calculator />);
 - [ ] **[React Hooks 入门教程](https://www.ruanyifeng.com/blog/2019/09/react-hooks.html)**
 - [ ] **[React技术揭秘](https://react.iamkasong.com/)**
 - [ ] [React 架构的演变 - Hooks 的实现(包含历史文章，一共四篇)](https://cloud.tencent.com/developer/article/1745767)
+- [ ] [React生命周期](https://github.com/aermin/blog/issues/55)
