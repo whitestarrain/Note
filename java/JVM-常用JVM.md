@@ -2,10 +2,14 @@
 >
 > 所以打算好好研究一下
 
+TODO: 常用jvm，性能对比，以及核心技术
+
 # HotSpot
 
 # zulu
 
 # OpenJ9
 
+# DragonWell
 
+alibaba的龙井JVM，很厉害。
