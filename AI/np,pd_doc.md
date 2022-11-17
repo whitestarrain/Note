@@ -635,6 +635,8 @@ array([[ 0,  1,  2,  3,  4],
 
   # row[:,np.newaxis]: shape (3,1)
   # 对X axis=0 维度进行高级索引，得到值shape: (3,1,4)
+    # 此处必须加一个维度，(3,1)可以广播到(3,4)
+    # 否则(3,)会广播失败
   In [43]: X[row[:,np.newaxis]]
   Out[43]: 
   array([[[ 0,  1,  2,  3]],
@@ -643,16 +645,14 @@ array([[ 0,  1,  2,  3,  4],
 
         [[ 8,  9, 10, 11]]])
 
-  # 使用mask对axis = 1 进行取值。shape为(3,2)
-    # 此处必须加一个维度，(3,1)可以广播到(3,4)
-    # 否则(3,)会广播失败
+  # 同时使用mask对axis = 1 进行取值。结果shape为(3,2)
   In [42]: X[row[:, np.newaxis], mask]
   Out[42]: 
   array([[ 0,  2],
          [ 4,  6],
          [ 8, 10]])
 
-  # 对 axis=1 进行切片。shape为 (3,1,2)
+  # 同时对 axis=1 进行切片。shape为 (3,1,2)
   In [53]: X[row[:, np.newaxis], 1:3]
   Out[53]: 
   array([[[ 1,  2]],
@@ -908,20 +908,22 @@ array([[ 0,  1,  2,  3,  4],
 
 ```python
 In [4]: arr = np.arange(0,25).reshape(5,5)
-In [5]: df = pd.DataFrame(arr[::-1,::-1])
-In [6]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
+In [5]: df = pd.DataFrame(arr[::-1,::-1],
+                          index=['a1','b1','c1','d1','e1'],
+                          columns=['a1','b1','c1','d1','e1'])
+In [7]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
 ```
 
 ### 2.4.1. Series 的数据选择
 
-- 通过显式索引和隐式索引切片
+- 通过显式索引和隐式索引取值
 
   ```python
-  In [16]: se[0]
-  Out[16]: 0
-
   In [17]: se["a"]
   Out[17]: 0
+
+  In [16]: se[0]
+  Out[16]: 0
   ```
 
 - 通过显式索引和隐式索引切片
@@ -972,14 +974,62 @@ In [6]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
 
 ### 2.4.2. DataFrame 的数据选择
 
-- 索引是针对列的
-  - 对行： `data['Florida':'Illinois']` = `data[1:3]`
+```python
+In [9]: df
+Out[9]: 
+    a1  b1  c1  d1  e1
+a1  24  23  22  21  20
+b1  19  18  17  16  15
+c1  14  13  12  11  10
+d1   9   8   7   6   5
+e1   4   3   2   1   0
+```
 
-- 而切片是针对行的：
-  - 对列： `data["area"]` = `data[0]`
-- 直接的遮盖操作也是对行的操作而不是对列的操作：
-  - `data[data.density > 100]`。获得满足 density 大于 100 的所有行
+- **切片** 是使用index选取行：
 
+  ```python
+  In [7]: df['a1':'b1']
+  Out[7]: 
+      a1  b1  c1  d1  e1
+  a1  24  23  22  21  20
+  b1  19  18  17  16  15
+  
+  In [8]: df[0:1]
+  Out[8]: 
+      a1  b1  c1  d1  e1
+  a1  24  23  22  21  20
+  ```
+
+- **取值** 使用column_name选取列
+  - 使用索引获取，会降级为Series
+
+  ```python
+  In [10]: df["a1"]
+  Out[10]: 
+  a1    24
+  b1    19
+  c1    14
+  d1     9
+  e1     4
+  Name: a1, dtype: int32
+  ```
+
+- 高级索引，使用column_name选取列。
+  - 高级索引不会导致降级为Series
+  - 因为列固定，
+
+  ```python
+  In [37]: df[['a1','b1']]
+  Out[37]: 
+      a1  b1
+  a1  24  23
+  b1  19  18
+  c1  14  13
+  d1   9   8
+  e1   4   3
+
+  In [38]: df[['a1','b1'],['a1','b1']] # 会报错，要使用下面的索引器
+  ```
 
 ### 2.4.3. 索引器loc,iloc,ix
 
