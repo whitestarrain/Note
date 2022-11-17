@@ -21106,8 +21106,8 @@ Node.js 要求 ES6 模块采用`.mjs`后缀文件名。也就是说，只要脚�
 一旦设置了以后，该项目的 JS 脚本，就被解释成 ES6 模块。
 
 ```bash
-# 解释成 ES6 模块
-$ node my-app.js
+ # 解释成 ES6 模块
+ $ node my-app.js
 ```
 
 如果这时还要使用 CommonJS 模块，那么需要将 CommonJS 脚本的后缀名都改成`.cjs`。如果没有`type`字段，或者`type`字段为`commonjs`，则`.js`脚本会被解释成 CommonJS 模块。

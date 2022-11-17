@@ -350,3 +350,5 @@ vscode 和 vim都有对应使用方法
 # 7. 参考资料
 
 - [x] [eslint规则在项目中的整合](https://www.panyanbin.com/article/b679027e.html)
+- [ ] [eslint报错：Parsing error: No Babel config file detected?](https://www.cnblogs.com/hmy-666/p/16441069.html)
+  > 如果root为true，就不会进行查找。非bool值时，会遍历目录，找到babel.config.js
