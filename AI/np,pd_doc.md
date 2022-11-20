@@ -659,7 +659,7 @@ array([[ 0,  1,  2,  3,  4],
         [[ 5,  6]],
         [[ 9, 10]]])
 
-  # TODO: # 高级索引+mask 和 高级索引+切片 shape不同。
+  # TODO: # 高级索引+mask 和 高级索引+切片 shape不同。源码解析
   ```
 
 - 高级索引的计算误区
@@ -748,7 +748,9 @@ array([[ 0,  1,  2,  3,  4],
 
 # 2. pandas
 
-## 2.1. 构建 Series 对象
+## 2.1. 基本对象构建
+
+### 2.1.1. 构建 Series 对象
 
 > Series 可以看作数组或字典
 
@@ -764,7 +766,7 @@ array([[ 0,  1,  2,  3,  4],
   population = pd.Series(population_dict)
   ```
 
-## 2.2. 构建 DataFrame 对象
+### 2.1.2. 构建 DataFrame 对象
 
 > DataFrame 可以作为数个 Series，
 > 字典列表(一个 key 去多个字典中取 value)，
@@ -865,7 +867,7 @@ array([[ 0,  1,  2,  3,  4],
   最好还是将DataFrame当成是一个特殊的字典而不是通用的二维数组
   ```
 
-## 2.3. index 对象
+## 2.2. index 对象
 
 - 说明
   - 可以将它看作是一个不可变数组或有序集合
@@ -904,7 +906,7 @@ array([[ 0,  1,  2,  3,  4],
   Out[66]: Int64Index([1, 2, 9, 11], dtype='int64') # Use index.symmetric_difference(other) instead
   ```
 
-## 2.4. 取值与选择
+## 2.3. 切片与取值
 
 ```python
 In [4]: arr = np.arange(0,25).reshape(5,5)
@@ -914,7 +916,7 @@ In [5]: df = pd.DataFrame(arr[::-1,::-1],
 In [7]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
 ```
 
-### 2.4.1. Series 的数据选择
+### 2.3.1. Series 的数据选择
 
 - 通过显式索引和隐式索引取值
 
@@ -972,7 +974,7 @@ In [7]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
   dtype: int32
   ```
 
-### 2.4.2. DataFrame 的数据选择
+### 2.3.2. DataFrame 的数据选择
 
 ```python
 In [9]: df
@@ -986,22 +988,29 @@ e1   4   3   2   1   0
 ```
 
 - **切片** 是使用index选取行：
+  - 可使用隐式索引切片
 
   ```python
+  # 显式切片
   In [7]: df['a1':'b1']
   Out[7]: 
       a1  b1  c1  d1  e1
   a1  24  23  22  21  20
   b1  19  18  17  16  15
   
+  # 隐式切片
   In [8]: df[0:1]
   Out[8]: 
       a1  b1  c1  d1  e1
   a1  24  23  22  21  20
+
+  # 无法对column_name进行切片，下面一句会报错，需要使用索引器loc
+  In [13]: df['a1':'b1','a1':'c1']
   ```
 
 - **取值** 使用column_name选取列
-  - 使用索引获取，会降级为Series
+  - 会降级为Series
+  - 无法使用隐式索引进行取值
 
   ```python
   In [10]: df["a1"]
@@ -1016,7 +1025,6 @@ e1   4   3   2   1   0
 
 - 高级索引，使用column_name选取列。
   - 高级索引不会导致降级为Series
-  - 因为列固定，
 
   ```python
   In [37]: df[['a1','b1']]
@@ -1031,31 +1039,153 @@ e1   4   3   2   1   0
   In [38]: df[['a1','b1'],['a1','b1']] # 会报错，要使用下面的索引器
   ```
 
-### 2.4.3. 索引器loc,iloc,ix
+### 2.3.3. 索引器loc,iloc,ix
 
 **可以用在Series 和 DataFrame中**
 
-#### 2.4.3.1. loc
+#### 2.3.3.1. loc
 
-- loc 属性允许用户永远使用显式索引来进行定位和切片，包含**头尾**
-  - loc 索引符中我们可以结合mask和高级索引模式:
-  - `data.loc[data.density > 100, ['pop', 'density']]`
+- 说明
+  - loc 属性允许用户永远使用 **显式索引** 来进行 **定位和切片** ， **包含头尾**
+  - 逗号前是对index进行选取，逗号后是对icolumn_name进行选取
+  - 可以结合mask和高级索引模式: `data.loc[data.density > 100, ['pop', 'density']]`
 
-#### 2.4.3.2. iloc
+---
 
-- iloc 属性允许用户永远使用隐式索引来定位和切片,不包含头尾
+- 显式对index和column_name进行切片
 
-#### 2.4.3.3. ix
+  ```python
+  In [10]: df.loc['a1':'b1','a1':'c1']
+  Out[10]: 
+      a1  b1  c1
+  a1  24  23  22
+  b1  19  18  17
+  ```
 
-- ix:混用，但是不推荐
+- 显式对index和column_name进行高级索引
 
-## 2.5. Series 和 DataFrame 的计算
+  ```python
+  In [11]: df.loc[['a1','b1'],['a1','c1']]
+  Out[11]: 
+      a1  c1
+  a1  24  22
+  b1  19  17
+  ```
 
-### 2.5.1. 保留索引
+- 显式对index进行取值
+  - 只指定index或者column_name，会降级为Series
 
-### 2.5.2. 索引对齐，使用广播
+  ```python
+  In [18]: df.loc['a1']
+  Out[18]: 
+  a1    24
+  b1    23
+  c1    22
+  d1    21
+  e1    20
+  Name: a1, dtype: int32
 
-- 索引对齐
+  # 不使用索引器，是对column_name进行取值
+  # 下面等同于 df.loc[:,'a1']
+  In [20]: df['a1']
+  Out[20]: 
+  a1    24
+  b1    19
+  c1    14
+  d1     9
+  e1     4
+  Name: a1, dtype: int32
+  ```
+
+#### 2.3.3.2. iloc
+
+- 说明
+  - 允许用户永远使用 **隐式索引** 来定位和切片, **包含头，不包含尾(左闭右开)** 
+  - 同loc，逗号前是对index进行选取，逗号后是对icolumn_name进行选取
+
+---
+
+> 使用同loc，不再详细说明
+
+- 切片示例
+
+  ```python
+  In [26]: df.iloc[0:1,0:1]
+  Out[26]: 
+      a1
+  a1  24
+  ```
+
+- 取值示例
+
+  ```python
+  In [32]: df.iloc[1,1]
+  Out[32]: 18
+
+  # 单独指定index或者column_name，降级
+  In [31]: df.iloc[:,1]
+  Out[31]: 
+  a1    23
+  b1    18
+  c1    13
+  d1     8
+  e1     3
+  Name: b1, dtype: int32
+
+  In [33]: df.iloc[1]
+  Out[33]: 
+  a1    19
+  b1    18
+  c1    17
+  d1    16
+  e1    15
+  Name: b1, dtype: int32
+  ```
+
+#### 2.3.3.3. ix
+
+- ix:以上两种混用，但是不推荐
+
+### 2.3.4. 其他常用数据处理方法
+
+- 获取内部数据
+
+  ```python
+  In [34]: df.values
+  Out[34]: 
+  array([[24, 23, 22, 21, 20],
+        [19, 18, 17, 16, 15],
+        [14, 13, 12, 11, 10],
+        [ 9,  8,  7,  6,  5],
+        [ 4,  3,  2,  1,  0]])
+  ```
+- 转置
+
+  ```python
+  In [35]: df.T
+  Out[35]: 
+      a1  b1  c1  d1  e1
+  a1  24  19  14   9   4
+  b1  23  18  13   8   3
+  c1  22  17  12   7   2
+  d1  21  16  11   6   1
+  e1  20  15  10   5   0
+  ```
+
+- mask只有loc索引器可以使用
+
+  ```python
+  In [18]: df.loc[df.a1>10,:]
+  Out[18]: 
+      a1  b1  c1  d1  e1
+  a1  24  23  22  21  20
+  b1  19  18  17  16  15
+  c1  14  13  12  11  10
+  ```
+
+## 2.4. 通用函数计算
+
+### 2.4.1. 通用函数
 
 | Python 运算符 | Pandas 方法                      |
 | ------------- | -------------------------------- |
@@ -1067,18 +1197,118 @@ e1   4   3   2   1   0
 | `%`           | `mod()`                          |
 | `**`          | `pow()`                          |
 
-- 使用广播
-  - dataFrame 和 Series
-  - dataFrame 和 dataFrame
+### 2.4.2. 保留索引
 
-## 2.6. 缺失值处理
+```python
+  # 索引会保留
+  In [5]: df = pd.DataFrame(arr[::-1,::-1],
+                            index=['a1','b1','c1','d1','e1'],
+                            columns=['a1','b1','c1','d1','e1'])
+  In [21]: np.add(df,100)
+  Out[21]: 
+      a1   b1   c1   d1   e1
+  a1  124  123  122  121  120
+  b1  119  118  117  116  115
+  c1  114  113  112  111  110
+  d1  109  108  107  106  105
+  e1  104  103  102  101  100
+```
 
-| 大类型   | 当 NA 值存在时转换规则 | NA 哨兵值          |
-| -------- | ---------------------- | ------------------ |
-| `浮点数` | 保持不变               | `np.nan`           |
-| `object` | 保持不变               | `None` 或 `np.nan` |
-| `整数`   | 转换为`float64`        | `np.nan`           |
-| `布尔`   | 转换为`object`         | `None` 或 `np.nan` |
+### 2.4.3. 索引对齐，使用广播
+
+#### 2.4.3.1. 基本说明
+
+- series 索引对齐
+  - 索引会进行union操作
+  - 没有值的列进行计算，默认会补为NaN。
+  - 可以使用`fill_value`参数，指定补全值。
+
+  ```python
+  In [22]: area = pd.Series({'Alaska': 1723337, 'Texas': 695662,
+      ...:           'California': 423967}, name='area')
+
+  In [23]: population = pd.Series({'California': 38332521, 'Texas': 26448193,
+      ...:           'New York': 19651127}, name='population')
+
+  In [24]: area/population
+  Out[24]: 
+  Alaska             NaN
+  California    0.011060
+  New York           NaN
+  Texas         0.026303
+  dtype: float64
+
+  # 指定fill_value
+  In [37]: area.divide(population,fill_value=1)
+  Out[37]: 
+  Alaska        1.723337e+06
+  California    1.106024e-02
+  New York      5.088767e-08
+  Texas         2.630282e-02
+  dtype: float64
+
+  In [28]: area.index.union(population.index)
+  Out[28]: Index(['Alaska', 'California', 'New York', 'Texas'], dtype='object')
+  ```
+
+- DataFrame的 索引对齐和column_name对齐
+
+  ```python
+  In [32]: A = pd.DataFrame(np.random.randint(0, 20, (2, 2)), columns=list('AB'))
+  In [33]: B = pd.DataFrame(np.random.randint(0, 10, (3, 3)), columns=list('BAC'))
+  In [35]: A+B
+  Out[35]: 
+        A     B   C
+  0  15.0  25.0 NaN
+  1  27.0   0.0 NaN
+  2   NaN   NaN NaN
+  ```
+
+#### 2.4.3.2. 使用广播
+
+- dataFrame 和 Series
+- dataFrame 和 dataFrame
+
+### 2.4.4. 缺失值处理
+
+- 缺失值形式
+  - null: 也就是 `None`
+  - NaN: `np.nan`，表示 not a number
+  - NA: `pd.NA`，表示not available
+
+- 缺失值处理
+  - isnull(): 创建一个布尔类型的掩码标签缺失值。
+  - notnull(): 与 isnull() 操作相反。
+  - dropna(): 返回一个剔除缺失值的数据。
+  - fillna(): 返回一个填充了缺失值的数据副本
+
+  ```python
+  In [48]: null_test = pd.Series([1,None,pd.NA,np.nan])
+  In [49]: null_test.isnull()
+  Out[49]:  
+  0    False
+  1     True
+  2     True
+  3     True
+  dtype: bool
+
+  In [50]: null_test.isna()
+  Out[50]:  
+  0    False
+  1     True
+  2     True
+  3     True
+  dtype: bool
+  ```
+
+- 转换规则
+
+  | 大类型   | 当 NA 值存在时转换规则 | NA 哨兵值          |
+  | -------- | ---------------------- | ------------------ |
+  | `浮点数` | 保持不变               | `np.nan`           |
+  | `object` | 保持不变               | `None` 或 `np.nan` |
+  | `整数`   | 转换为`float64`        | `np.nan`           |
+  | `布尔`   | 转换为`object`         | `None` 或 `np.nan` |
 
 - `isnull()`：生成一个布尔遮盖数组指示缺失值的位置
 - `notnull()`：`isnull()`相反方法
@@ -1089,9 +1319,12 @@ e1   4   3   2   1   0
   - axis
   - method
 
-## 2.7. 多层索引
 
-### 2.7.1. 行的 multiindex
+## 2.5. 多层索引
+
+TODO: pandas 数据处理相关
+
+### 2.5.1. 行的 multiindex
 
 - 不推荐的方式：
 
@@ -1125,13 +1358,13 @@ e1   4   3   2   1   0
 - 层次名称：
   - pop.index.names = ['state', 'year']
 
-### 2.7.2. 列的 multiindex
+### 2.5.2. 列的 multiindex
 
 ![multiindex-1](./image/multiindex-1.png)
 
-### 2.7.3. 多重索引上的检索和切片
+### 2.5.3. 多重索引上的检索和切片
 
-#### 2.7.3.1. Series
+#### 2.5.3.1. Series
 
 - 获取单个元素:pop['California', 2000]
 - 按照第一个索引选取多个元素：pop['California']
@@ -1143,7 +1376,7 @@ e1   4   3   2   1   0
   - mask：pop[pop > 22000000]
   - 高级索引：pop[['California', 'Texas']]
 
-#### 2.7.3.2. DataFrame
+#### 2.5.3.2. DataFrame
 
 ![multiindex-2](./image/multiindex-2.png)
 
@@ -1161,7 +1394,7 @@ e1   4   3   2   1   0
     health_data.loc[idx[:, 1], idx[:, 'HR']]
     ```
 
-### 2.7.4. 排序与堆叠
+### 2.5.4. 排序与堆叠
 
 - 索引排序：data.sort_index()
 - 多重索引与多维间的转换
@@ -1171,13 +1404,13 @@ e1   4   3   2   1   0
   - 例：pop.reset_index(name='population')
   - 例：pop_flat.set_index(['state', 'year'])
 
-### 2.7.5. 数据聚合
+### 2.5.5. 数据聚合
 
 ![img_2020-11-04-16-52-42](./image/image_2020-11-04-16-52-42.png)
 
 ![img_2020-11-04-16-52-53](./image/image_2020-11-04-16-52-53.png)
 
-## 2.8. 组合数据集
+## 2.6. 组合数据集
 
 - pd.concat()
 
@@ -1218,7 +1451,7 @@ e1   4   3   2   1   0
 - pd.drop():移除列
   - inplace=true 会直接作用到数据中。否则需要 copy，才会在副本中修改
 
-## 2.9. 聚合和分组
+## 2.7. 聚合和分组
 
 | 聚合函数             | 描述                 |
 | -------------------- | -------------------- |
@@ -1283,7 +1516,7 @@ e1   4   3   2   1   0
     - df2.groupby(str.lower).mean()
     - 主要是会给分组重命名
 
-## 2.10. 数据透视表
+## 2.8. 数据透视表
 
 - 单层
 
@@ -1326,7 +1559,7 @@ e1   4   3   2   1   0
   )
   ```
 
-## 2.11. 字符串
+## 2.9. 字符串
 
 - series.str.xxx()
 
