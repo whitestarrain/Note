@@ -2851,9 +2851,15 @@ function validateFiles(pathnames, callback) {
 - 要充分利用三方包。NodeJS有一个庞大的生态圈，在写代码之前先看看有没有现成的三方包能节省不少时间。
 - 不要迷信三方包。任何事情做过头了就不好了，三方包也是一样。三方包是一个黑盒，每多使用一个三方包，就为程序增加了一份潜在风险。并且三方包很难恰好只提供程序需要的功能，每多使用一个三方包，就让程序更加臃肿一些。因此在决定使用某个三方包之前，最好三思而后行。
 
-# 8. 其他
+# 8. Nodejs 深入
 
-## 8.1. nvm
+## 8.1. EventEmitter
+
+TODO: nodejs EventEmitter
+
+# 9. 其他
+
+## 9.1. nvm
 
 - 概念：Node.js 版本管理工具
 
@@ -2920,7 +2926,7 @@ function validateFiles(pathnames, callback) {
     ```
 
 
-## 8.2. Nodejs,npm,webpack 关系
+## 9.2. Nodejs,npm,webpack 关系
 
 > 什么是nodejs
 
@@ -2954,19 +2960,19 @@ Webpack可以帮你处理好各个包/模块之间的依赖关系（modules with
 
 这里需要注意的是，webpack只是一个前端的打包工具，打包的是静态资源，和后台没有关系，虽然webpack依赖于node环境。
 
-## 8.3. node.js 高性能原理
+## 9.3. node.js 高性能原理
 
-### 8.3.1. 异步非阻塞事件驱动模型
+### 9.3.1. 异步非阻塞事件驱动模型
 
 - [ ] [异步非阻塞事件驱动模型](https://segmentfault.com/a/1190000020038443)
 - [ ] [NodeJS 异步I/O详解](https://zhuanlan.zhihu.com/p/93289115)
 - [ ] [深入浅出 Node.js（五）：初探 Node.js 的异步 I/O 实现](https://www.infoq.cn/article/nodejs-asynchronous-io)
 
-### 8.3.2. 事件循环详解
+### 9.3.2. 事件循环详解
 
 - [ ] [事件循环详解](https://segmentfault.com/a/1190000020054890)
 
-# 9. 参考资料
+# 10. 参考资料
 
 - [x] [前端模块化开发中webpack、npm、node、nodejs之间的关系](https://blog.csdn.net/AngelLover2017/article/details/84801673)
 - [x] [七天学会NodeJS](https://nqdeng.github.io/7-days-nodejs)

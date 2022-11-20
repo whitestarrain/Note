@@ -66,7 +66,6 @@
   - 若 JS 脚本执行 在 16.6毫秒内并未执行完毕，那么就会出现 卡顿、掉帧、不流畅 这样的情况。
   - 卡顿、掉帧、不流畅 就会让用户感受到 `这不是一个不快速响应的Web操作体验`
 
-
 - JS 脚本执行的4种形态
   - 同步更新
   - 防抖(Debounced)：一段时间内只执行一次
@@ -95,7 +94,6 @@
     > 往往还有一个环节：新UI与老UI进行切换，而切换是需要过程的(转场过渡动画)，
     > 这个过程不可能是 0 秒，那么 React 就可以利用 切换过程中的 时间间隙 来弥补 计算所用到超过 2 帧的时间。
     > 最终你并未感受到卡顿。
-
 
 #### 2.3.2.2. I/O(读写 网络延迟)
 
@@ -747,7 +745,6 @@ TODO: react fiber架构整理
     - 在 render 函数调用之后，实际的 Dom 渲染之前，在这个阶段我们可以拿到上一个状态 Dom 元素的坐标、大小的等相关信息，用于替代旧的生命周期中的 componentWillUpdate。
     - 该函数的返回值将会作为 componentDidUpdate 的第三个参数出现。
 
-
 #### 4.2.2.3. 数据的向下流动(state->props)
 
 - 说明
@@ -1197,7 +1194,6 @@ render() {
   - 渲染表单的 React 组件也可以控制在用户输入之后的行为
   - 这种形式，其值由 React 控制的表单元素称为“受控组件”。
 
-
 ### 4.5.2. 与html有区别的受控组件
 
 #### 4.5.2.1. `<input type="text">`
@@ -1530,7 +1526,6 @@ root.render(<Calculator />);
 - 当你看到 UI 中的错误，你可以使用 React 开发者工具来检查 props 
   - 并向上遍历树，直到找到负责更新状态的组件。
   - 这使你可以跟踪到 bug 的源头
-
 
 ## 4.7. 组合(Composition) VS 继承(Inheritance)
 
@@ -2368,9 +2363,134 @@ root.render(<Calculator />);
 
 ## 6.4. useReducer
 
-### 6.4.1. 基本使用
+### 6.4.1. js原生事件处理
 
-### 6.4.2. 注意
+TODO: js,nodejs事件处理
+
+#### 6.4.1.1. Event,EventTarget
+
+```javascript
+var event = new Event('click');//创建一个click事件
+elem.addEventListener('click', function(e){}, false);//为元素绑定事件监听
+elem.dispatchEvent(event);//派发事件
+```
+
+#### 6.4.1.2. nodeJS原生EventEmitter
+
+也有用原生js实现的类似框架
+
+### 6.4.2. 基本使用
+
+- 源码
+
+  ```javascript
+  export function useReducer<S, I, A>(
+    reducer: (S, A) => S,
+    initialArg: I,
+    init?: I => S,
+  ): [S, Dispatch<A>] {
+    const dispatcher = resolveDispatcher();
+    return dispatcher.useReducer(reducer, initialArg, init);
+  }
+  ```
+
+- 目的
+  - useReducer是useState的原始版
+    - 可以实现复杂逻辑修改
+    - 而不是像useState那样只是直接赋值修改
+  - 在React源码中，实际上useState就是由useReducer实现的
+    - 所以useReducer准确来说是useState的原始版。
+  - 无论哪一个Hook函数，本质上都是通过事件驱动来实现视图层更新的。
+  - 推荐组件自己内部的简单逻辑变量用useState、多个组件之间共享的复杂逻辑变量用useReducer
+
+- 说明：
+  - React Hook帮我们做了底层的事件驱动处理，
+  - 拿到的dispatch以及“事件处理函数”reducer，都时被React Hook 封装过后的，
+  - 并不是真正的抛出和事件处理函数。
+
+- api说明 useReducer(reducer,initialValue)函数通常传入2个参数
+  - 第1个参数为我们定义的一个“由dispatch引发的数据修改处理函数”
+  - 第2个参数为自定义数据的默认值
+  - 返回自定义变量的引用和该自定义变量对应的“dispatch”。
+
+  ```javascript
+  import React, { useReducer } from 'react'; //引入useReducer
+
+  //定义好“事件处理函数” reducer
+  function reducer(state, action) {
+    switch (action) {
+      case 'xx':
+          return xxxx;
+      case 'xx':
+          return xxxx;
+      default:
+          return xxxx;
+    }
+  }
+
+  function Component(){
+    //声明一个变量xxx，以及对应修改xxx的dispatch
+    //将事件处理函数reducer和默认值initialValue作为参数传递给useReducer
+    const [xxx, dispatch] = useReducer(reducer, initialValue); 
+
+    //若想获取xxx的值，直接使用xxx即可
+    
+    //若想修改xxx的值，通过dispatch来修改
+    dispatch('xx');
+  }
+
+  //请注意，上述代码中的action只是最基础的字符串形式
+    // 事实上action可以是多属性的object，这样可以自定义更多属性和更多参数值
+    //例如 action 可以是 {type:'xx',param:xxx}
+  ```
+
+- 示例
+
+  ```javascript
+  import React, { useReducer } from 'react';
+
+  function reducer(state,action){
+    //根据action.type来判断该执行哪种修改
+    switch(action.type){
+      case 'add':
+        //count 最终加多少，取决于 action.param 的值
+        return state + action.param;
+      case 'sub':
+        return state - action.param;
+      case 'mul':
+        return state * action.param;
+      default:
+        console.log('what?');
+        return state;
+    }
+  }
+
+  function getRandom(){
+    return Math.floor(Math.random()*10);
+  }
+
+  function CountComponent() {
+    const [count, dispatch] = useReducer(reducer,0);
+
+    return <div>
+      {count}
+      <button onClick={() => {dispatch({type:'add',param:getRandom()})}} >add</button>
+      <button onClick={() => {dispatch({type:'sub',param:getRandom()})}} >sub</button>
+      <button onClick={() => {dispatch({type:'mul',param:getRandom()})}} >mul</button>
+    </div>;
+  }
+
+  export default CountComponent;
+  ```
+
+### 6.4.3. 常见使用场景
+
+- 使用useReducer来管理复杂类型的数据
+
+- 使用useContext和useReducer实现操作全局共享数据
+  > 类组件是无法实现的，这里使用hook实现类似Redux共享数据的功能
+  - 用 useContext 实现“获取全局数据”
+  - 用 useReducer 实现“修改全局数据”
 
 ## 6.5. useCallback
 
@@ -2402,7 +2522,9 @@ root.render(<Calculator />);
 
 ## 8.4. react-redux
 
-## 8.5. CRACO
+## 8.5. hook版redux:Recoil
+
+## 8.6. CRACO
 
 **C** **r**eate **R**eact **A**pp **C**onfiguration **O**verride 
 
@@ -2426,3 +2548,5 @@ root.render(<Calculator />);
 - [ ] **[React技术揭秘](https://react.iamkasong.com/)**
 - [ ] [React 架构的演变 - Hooks 的实现(包含历史文章，一共四篇)](https://cloud.tencent.com/developer/article/1745767)
 - [ ] [React生命周期](https://github.com/aermin/blog/issues/55)
+- [ ] [【JavaScript】EventEmitter的前端实现](https://www.cnblogs.com/penghuwan/p/11370120.html)
+- [ ] [MDN 创建和触发 events](https://developer.mozilla.org/zh-CN/docs/Web/Events/Creating_and_triggering_events)
