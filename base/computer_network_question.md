@@ -1,3 +1,12 @@
+- 旧思维导图
+
+  <details>
+  <summary style="color:red;">展开</summary>
+
+  ![](./image/network-1.png)
+  </details>
+
+- 查看新版思维导图：[思维导图](https://whitestarrain.github.io/Note/YourBrain.html)
 
 # 1. 基础
 
@@ -637,46 +646,106 @@ HTTP/2 通过让所有数据流共用同一个连接，可以更有效地使用 
 
 ## 6.5. 什么是cookie和session
 
-由于 http 协议是无状态协议，如果客户通过浏览器访问 web 应用时没有一个保存用户访问状态的机制，那么将不能持续跟踪应用的操作。比如当用户往购物车中添加了商品，web 应用必须在用户浏览别的商品的时候仍保存购物车的状态，以便用户继续往购物车中添加商品。
+> [request和response相关笔记](../java/JavaBaseNote2.md)
 
-cookie 是浏览器的一种缓存机制，它可用于维持客户端与服务器端之间的会话。由于下面一题会讲到session，所以这里要强调cookie会将会话保存在客户端（session则是把会话保存在服务端）
+### 6.5.1. 基本说明
 
-这里以最常见的登陆案例讲解cookie的使用过程：
+- 背景说明
+  - 由于 http 协议是无状态协议
+  - 如果客户通过浏览器访问 web 应用时 **没有一个保存用户访问状态的机制** 
+  - 那么将不能持续跟踪应用的操作
+  > 比如当用户往购物车中添加了商品，web 应用必须在用户浏览别的商品的时候仍保存购物车的状态，以便用户继续往购物车中添加商品。
 
-1. 首先用户在客户端浏览器向服务器发起登陆请求
-2. 登陆成功后，服务端会把登陆的用户信息设置 cookie 中，返回给客户端浏览器
-3. 客户端浏览器接收到 cookie 请求后，会把 cookie 保存到本地（可能是内存，也可能是磁盘，看具体使用情况而定）
-4. 以后再次访问该 web 应用时，客户端浏览器就会把本地的 cookie 带上，这样服务端就能根据 cookie 获得用户信息了
+- cookie
+  - 是 **浏览器的一种缓存机制** 
+  - 它可用于维持客户端与服务器端之间的会话
+  - cookie会将会话保存在客户端（session则是把会话保存在服务端）
+  - cookie登陆案例示例：
+    - 首先用户在客户端浏览器向服务器发起登陆请求
+    - 登陆成功后，服务端会把登陆的用户信息设置 cookie 中，返回给客户端浏览器
+    - 客户端浏览器接收到 cookie 请求后，会把 cookie 保存到本地（可能是内存，也可能是磁盘，看具体使用情况而定）
+    - 以后再次访问该 web 应用时，客户端浏览器就会把本地的 cookie 带上，这样服务端就能根据 cookie 获得用户信息了
 
-<br /><br />
+- session
+  - 是一种 **维持客户端与服务器端会话的机制** 
+  - 但是与 cookie 把会话信息保存在客户端本地不一样，session 把会话保留在浏览器端。
+  - session登陆案例
+    - 首先用户在客户端浏览器发起登陆请求
+    - 登陆成功后，服务端会把用户信息保存在服务端，并返回一个唯一的 session 标识给客户端浏览器。
+    - 客户端浏览器会把这个唯一的 session 标识保存起来（大多数是保存在cookie中）
+    - 以后再次访问 web 应用时，客户端浏览器会把这个唯一的 session 标识带上，这样服务端就能根据这个唯一标识找到用户信息。
 
-session 是一种维持客户端与服务器端会话的机制。但是与 cookie 把会话信息保存在客户端本地不一样，session 把会话保留在浏览器端。
+- cookie与session
+  - session 只是一种会话机制
+  - 在许多 web 应用中，session 机制就是通过 cookie 来实现的
+  - 也就是说它只是使用了 cookie 的功能，并不是使用 cookie 完成会话保存。
+  - 与 cookie 在保存客户端保存会话的机制相反，session 通过 cookie 的功能把会话信息保存到了服务端。
 
-   我们同样以登陆案例为例子讲解 session 的使用过程：
+- session的其他实现方案
+  - session 是一种维持服务端与客户端之间会话的机制，它可以有不同的实现
+  - 以小程序为例，阐述一个 session 的实现方案：
+    - 首先用户登陆后，需要把用户登陆信息保存在服务端，这里我们可以采用 redis
+    - 比如说给用户生成一个 userToken，然后以 userId 作为键，以 userToken 作为值保存到 redis 中
+    - 并在返回时把 userToken 带回给小程序端。
+    - 小程序端接收到 userToken 后把它缓存起来，以后每当访问后端服务时就把 userToken 带上。
+    - 在后续的服务中服务端只要拿着小程序端带来的 userToken 和 redis 中的 userToken 进行比对，就能确定用户的登陆状态了。
 
-   1. 首先用户在客户端浏览器发起登陆请求
-   2. 登陆成功后，服务端会把用户信息保存在服务端，并返回一个唯一的 session 标识给客户端浏览器。
-   3. 客户端浏览器会把这个唯一的 session 标识保存在起来
-   4. 以后再次访问 web 应用时，客户端浏览器会把这个唯一的 session 标识带上，这样服务端就能根据这个唯一标识找到用户信息。
-
-   看到这里可能会引起疑问：把唯一的 session 标识返回给客户端浏览器，然后保存起来，以后访问时带上，这难道不是 cookie 吗？
-
-   没错，session 只是一种会话机制，在许多 web 应用中，session 机制就是通过 cookie 来实现的。也就是说它只是使用了 cookie 的功能，并不是使用 cookie 完成会话保存。与 cookie 在保存客户端保存会话的机制相反，session 通过 cookie 的功能把会话信息保存到了服务端。
-
-   进一步地说，session 是一种维持服务端与客户端之间会话的机制，它可以有不同的实现。以现在比较流行的小程序为例，阐述一个 session 的实现方案：
-
-   1. 首先用户登陆后，需要把用户登陆信息保存在服务端，这里我们可以采用 redis。比如说给用户生成一个 userToken，然后以 userId 作为键，以 userToken 作为值保存到 redis 中，并在返回时把 userToken 带回给小程序端。
-   2. 小程序端接收到 userToken 后把它缓存起来，以后每当访问后端服务时就把 userToken 带上。
-   3. 在后续的服务中服务端只要拿着小程序端带来的 userToken 和 redis 中的 userToken 进行比对，就能确定用户的登陆状态了。
-
-### 6.5.1. Session 与 Cookie 的区别？
+### 6.5.2. Session 与 Cookie 的区别？
 
 - cookie 是浏览器提供的一种缓存机制，它可以用于维持客户端与服务端之间的会话
 - session 指的是维持客户端与服务端会话的一种机制，它可以通过 cookie 实现，也可以通过别的手段实现。
 - 如果用 cookie 实现会话，那么会话会保存在客户端浏览器中
 - 而 session 机制提供的会话是保存在服务端的。
 
-### 6.5.2. session和cookie的攻击方式有哪些
+### 6.5.3. cookie深入
+
+- 域名等级
+  - 顶级域名：dalomao.com
+  - 二级域名：super.dalomao.com
+  - 三级域名：big.super.dalomao.com
+
+- cookie的设置
+
+  ![network-23](./image/network-23.png)
+
+  - request请求时，会携带已有的cookie访问后端服务。
+  - 后端处理返回的response中，有`Set-Cookie`Response header，告诉浏览器要更新哪些cookie
+
+- request 中携带cookie的条件
+  - 浏览器端某个 Cookie 的 domain（.a.com） 字段等于请求的域名或者是请求的父域名
+  - 都是 http 或者 https，或者不同的情况下 Secure 属性为 false
+    - 即 secure 是 true 的情况下，只有 https 请求才能携带这个 cookie
+  - 要发送请求的路径，跟浏览器端 Cookie 的 path 属性必须一致，或者是浏览器端 Cookie 的 path 的子目录
+    - 比如浏览器端 Cookie 的 path 为 /test
+    - 那么请求的路径必须为/test 或者/test/xxxx 等子目录才可以
+- response设置cookie的限制
+  - 设置cookie时，仅可以设置父域名或者自身。
+  - 如果设置为其他域名或者子域名，cookie不起作用。
+
+- cookie的基本属性说明
+
+  |名称           |说明|
+  |:--            |:-- |
+  |Name           |    |
+  |Value          |    |
+  |Domain         |    |
+  |Path           |    |
+  |Expires/Max-Age|    |
+  |Size           |    |
+  |HttpOnly       |    |
+  |Secure         |    |
+  |SameSite       |    |
+  |SameParty      |    |
+  |Partition Key  |    |
+  |Priority       |    |
+
+  ![network-22](./image/network-22.png)
+
+- cookie的共享
+  - cookie在不同域名之间是无法共享的，即 **跨域问题** 。
+  - 但是在顶级域名、二级域名、三级域名中是可以共享的！
+
+### 6.5.4. session和cookie的攻击方式有哪些
 
 TODO: session cookie攻击
 
@@ -690,9 +759,9 @@ session劫持：攻击者通过捕获到的Session ID访问站点即可获得目
 
 - [cookie,session攻击](../safety/cookie_session.md)
 
-### 6.5.3. 如何解决分布式session问题
+### 6.5.5. 如何解决分布式session问题
 
-### 6.5.4. 如果禁用浏览器 cookie，如何实现用户追踪和认证
+### 6.5.6. 如果禁用浏览器 cookie，如何实现用户追踪和认证
 
 ## 6.6. 从输入网址到获得页面的过程 (越详细越好)？
 
@@ -760,9 +829,6 @@ session劫持：攻击者通过捕获到的Session ID访问站点即可获得目
 
 # 7. 参考
 
-待详细整理
-
-- [最常见的12道计算机网络面试题](https://www.justdojava.com/2019/11/03/Network_interview_question/)
-- [HTTP1.0、HTTP1.1 和 HTTP2.0 的区别](https://www.cnblogs.com/heluan/p/8620312.html)
-- [你连 HTTPS 原理都不懂,还讲“中间人攻击”?](https://juejin.cn/post/6844904065227292685)
-
+- [ ] [最常见的12道计算机网络面试题](https://www.justdojava.com/2019/11/03/Network_interview_question/)
+- [ ] [HTTP1.0、HTTP1.1 和 HTTP2.0 的区别](https://www.cnblogs.com/heluan/p/8620312.html)
+- [ ] [你连 HTTPS 原理都不懂,还讲“中间人攻击”?](https://juejin.cn/post/6844904065227292685)
