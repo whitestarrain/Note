@@ -1,118 +1,180 @@
-# Array
+TODO: 《算法》大多是一些比较基础的算法
 
-# Linked List
+TODO: 《算法导论》非常全面的算法书。(2021出了第四版)
 
-# Stack
+TODO: 《算法珠玑》 有一些大数据处理的算法可以看看
 
-# Queue
+# 1. DataStructure
 
-## Queue
+## 1.1. Array
 
-## Circular queue
+### 1.1.1. basic array
 
-## Priority Queue
+### 1.1.2. sds(from redis)
 
-# Tree
+## 1.2. Linked List
+
+### 1.2.1. basic list
+
+### 1.2.2. ziplist(from redis)
+
+### 1.2.3. skiplist(from redis)
+
+### 1.2.4. quicklist(from redis)
+
+## 1.3. Map
+
+### 1.3.1. Hashmap
+
+### 1.3.2. Treemap
+
+## 1.4. Stack
+
+## 1.5. Queue
+
+### 1.5.1. Queue
+
+### 1.5.2. Circular queue
+
+### 1.5.3. Priority queue
+
+## 1.6. Tree
 
 > always used as index
 
-## Binary Search Tree
+### 1.6.1. Binary Search Tree
 
-## 2-3 Tree
+### 1.6.2. 2-3 Tree
 
-## Red-Black Tree(From 2-3 Tree)
+### 1.6.3. Red-Black Tree(From 2-3 Tree)
 
-## AVL Tree
+### 1.6.4. AVL Tree
 
-## B Tree
+### 1.6.5. B Tree
 
-## B+ Tree
+### 1.6.6. B+ Tree
 
-## Splay Tree
+### 1.6.7. Splay Tree
 
-## Prefix Tree(Trie)
+### 1.6.8. Prefix Tree(Trie)
 
-## Radix Tree(Compact Trie)
+### 1.6.9. Radix Tree(Compact Trie)
 
-## Ternary Search Tree (Trie with BST of children)
+### 1.6.10. Ternary Search Tree (Trie with BST of children)
 
-# Heap-Like
+## 1.7. Heap-Like
 
-## Heaps
+### 1.7.1. Heaps
 
-## Binomial Queues
+### 1.7.2. Binomial Queues
 
-## Fibonacci Heaps
+### 1.7.3. Fibonacci Heaps
 
-## Leftist Heaps
+### 1.7.4. Leftist Heaps
 
-## Skew Heaps
+### 1.7.5. Skew Heaps
 
-# Graph Algorithms
+## 1.8. Hashing
 
-## Breadth-First Search
+### 1.8.1. Open Hash Table
 
-## Depth-First Search
+### 1.8.2. Closed Hash Table
 
-## Connected Components
+### 1.8.3. Closed bucket Hash Table
 
-## Dijkstra's Shortest Path
+## 1.9. Graph
 
-## Prim's Minimum Cost Spanning Tree
+# 2. Algorithm or The application of DataStructure
 
-## Topological Sort (Using Indegree array)
+## 2.1. Sorting
 
-## Topological Sort (Using DFS)
+### 2.1.1. Comparison Sorting
 
-## Floyd-Warshall (all pairs shortest paths)
+#### 2.1.1.1. Bubble Sort
 
-## Kruskal Minimum Cost Spanning Tree Algorithm
+#### 2.1.1.2. Selection Sort
 
-# Hashing
+#### 2.1.1.3. Insertion Sort
 
-## Open Hash Table
+#### 2.1.1.4. Shell Sort
 
-## Closed Hash Table
+#### 2.1.1.5. Merge Sort
 
-## Closed bucket Hash Table
+#### 2.1.1.6. Quck Sort
 
-# Sorting
+### 2.1.2. Bucket Sort
 
-## Comparison Sorting
+### 2.1.3. Counting Sort
 
-### Bubble Sort
+### 2.1.4. Radix Sort
 
-### Selection Sort
+### 2.1.5. Heap Sort
 
-### Insertion Sort
+## 2.2. Searching
 
-### Shell Sort
+### 2.2.1. Binary
 
-### Merge Sort
+### 2.2.2. Linear Search (of sorted list)
 
-### Quck Sort
+## 2.3. Substring search
 
-## Bucket Sort
+### 2.3.1. 暴力查找
 
-## Counting Sort
+### 2.3.2. Knuth-Morris-Pratt
 
-## Radix Sort
+### 2.3.3. Boyer-karp 指纹字符串查找
 
-## Heap Sort
+## 2.4. Graph Algorithms
 
-# Searching
+### 2.4.1. Breadth-First Search
 
-## Binary
+### 2.4.2. Depth-First Search
 
-## Linear Search (of sorted list)
+### 2.4.3. Connected Components
 
-# Other structure
+### 2.4.4. Dijkstra's Shortest Path
 
-## LSM
+### 2.4.5. Prim's Minimum Cost Spanning Tree
+
+### 2.4.6. Topological Sort (Using Indegree array)
+
+### 2.4.7. Topological Sort (Using DFS)
+
+### 2.4.8. Floyd-Warshall (all pairs shortest paths)
+
+### 2.4.9. Kruskal Minimum Cost Spanning Tree Algorithm
+
+
+## 2.5. Index
+
+### 2.5.1. Implemented by tree
+
+- Binary and Linear Search (of sorted list)
+- Binary Search Trees
+- AVL Trees (Balanced binary search trees)
+- Red-Black Trees
+- Splay Trees
+- Trie (Prefix Tree, 26-ary Tree)
+- Radix Tree (Compact Trie)
+- Ternary Search Tree (Trie with BST of children)
+- B Trees
+- B+ Trees
+
+### 2.5.2. Implemented by hash table
+
+- Open Hash Tables (Closed Addressing)
+- Closed Hash Tables (Open Addressing)
+- Closed Hash Tables, using buckets
+
+### 2.5.3. z-order index
+
+# 3. Other structure
+
+## 3.1. LSM
 
 > from k-v database, used by levelDB, HBase etc.
 
-# 参考资料
+# 4. 参考资料
 
 - [ ] [Indexing — Data Structures](https://medium.com/nerd-for-tech/indexing-data-structures-aa7363693c40)
 - [ ] [可视化：Data Structure Visualizations](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
