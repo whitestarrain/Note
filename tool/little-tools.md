@@ -76,7 +76,6 @@
 
 - 基于node
 
-# 一次性聊天工具
+# 如果你想创造一门编程语言
 
-- [hack.chat](https://hack.chat/)
-
+- [你需要决策的事情](https://www.mcmillen.dev/language_checklist.html)

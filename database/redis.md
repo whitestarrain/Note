@@ -2846,8 +2846,6 @@ TODO: redis双写一致问题
 
 TODO: redis单线程模型
 
-[单线程模型详解/单线程为何效率高](file:///D:/learn/githubRepo/JavaGuide/docs/database/Redis/redis-all.md#7-redis-%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E8%AF%A6%E8%A7%A3)
-
 ### 13.5.2. 为什么使用单线程
 
 1. 使用单线程模型能带来更好的 **可维护性**，方便开发和调试；
@@ -2957,3 +2955,6 @@ Redis支持的java客户端都Redisson、Jedis、lettuce等等，官方推荐使
 - [ ] [Redis之字典](https://www.jianshu.com/p/bfecf4ccf28b)
 - [ ] [内存节省到极致！！！Redis中的压缩表,值得了解...(待进一步整理)](https://juejin.cn/post/6847009772353355783)
 - [ ] [redis底层数据结构思维导图(待整理)](https://www.cnblogs.com/christmad/p/11364372.html)
+- [ ] [单线程模型详解/单线程为何效率高](file:///d:/learn/githubrepo/javaguide/docs/database/redis/redis-all.md#7-redis-%e5%8d%95%e7%ba%bf%e7%a8%8b%e6%a8%a1%e5%9e%8b%e8%af%a6%e8%a7%a3)
+- [ ] [为什么 Redis 选择单线程模型](https://draveness.me/whys-the-design-redis-single-thread/)
+

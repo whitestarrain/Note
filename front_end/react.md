@@ -2494,6 +2494,43 @@ elem.dispatchEvent(event);//派发事件
 
 ## 6.5. useCallback
 
+### 6.5.1. React的引用对比与性能优化
+
+- 性能优化点
+  - react中，对比组件数据时，使用的是 **引用对比** 
+  - 当父组件重新渲染时，所有子组件也都会重新渲染。
+
+- 优化方式：
+  - 类组件: 
+    - **生命周期函数拦截**
+
+      ```javascript
+      shouldComponentUpdate(nextProps,nextStates){
+        //判断xxx值是否相同，如果相同则不进行重新渲染
+        return (nextProps.xxx !== this.props.xxx); //注意是 !== 而不是 !=
+      }
+      ```
+    - **PureComponent**
+      - 将类组件由默认继承自React.Component改为React.PureComponent
+      - React.PureComponent会对 **props上所有可枚举属性** 做一遍 **浅层对比**
+  - 函数组件: `React.memo`
+    - React.memo()只会帮我们做浅层对比
+      - 例如props.name='puxiao'或props.list=[1,2,3]
+      - 如果是props中包含复杂的数据结构，例如props.obj.list=[{age:34}]，那么有可能达不到你的预期，因为不会做到深层次对比。
+    - 使用React.memo仅仅是让该函数组件具备了可以跳过本次渲染的基础
+      - 若组件在使用的时候属性值中有某些处理函数
+      - 那么还需要配合`useCallback`才可以做到跳过本次重新渲染。
+
+    ```javascript
+    import React from 'react'
+    function Xxxx() {
+      return <div>xx</div>;
+    }
+    export default React.memo(Xxxx); //使用React.memo包裹住要导出的函数组件
+    ```
+
+### 6.5.2. 基本使用
+
 ## 6.6. useRef
 
 ## 6.7. useImperativeHandle

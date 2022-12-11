@@ -88,7 +88,7 @@
       - 如果想拿到其他字段，就必须在`Access-Control-Expose-Headers`里面指定。
       - 上面的例子指定，`getResponseHeader('FooBar')`可以返回`FooBar`字段的值。
 
-## 3.2. withCredentials 属性
+## 3.2. withCredentials 属性 与 cookie设置
 
 - 上面说到，CORS请求默认不发送Cookie和HTTP认证信息
   - 如果要把Cookie发到服务器，一方面要服务器同意，指定`Access-Control-Allow-Credentials`字段。
@@ -110,7 +110,9 @@
   xhr.withCredentials = false;
   ```
 
-- 需要注意的是，如果要发送Cookie，`Access-Control-Allow-Origin`就不能设为星号，必须指定明确的、与请求网页一致的域名。同时，Cookie依然遵循同源政策，只有用服务器域名设置的Cookie才会上传，其他域名的Cookie并不会上传，且（跨源）原网页代码中的`document.cookie`也无法读取服务器域名下的Cookie。
+- 需要注意的是，如果要发送Cookie，
+  - **`Access-Control-Allow-Origin`就不能设为星号** ， **必须指定明确的、与请求网页一致的域名** 。
+  - 同时，Cookie依然 **遵循同源政策** ，只有 **用服务器域名设置的Cookie才会上传** ，其他域名的Cookie并不会上传，且（跨源）原网页代码中的`document.cookie`也无法读取服务器域名下的Cookie。
 
 # 4. 非简单请求
 
