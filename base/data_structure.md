@@ -62,6 +62,60 @@ TODO: 《算法珠玑》 有一些大数据处理的算法可以看看
 
 ### 1.6.10. Ternary Search Tree (Trie with BST of children)
 
+### 1.6.11. MPTT
+
+> 也称为 嵌套集合模型 (nested set model)
+
+- 说明：
+  - 预排序遍历树遍历 全称 Modified Preorder Tree Traversal，
+  - 可以说是树遍历的一种应用。
+  - 主要是为了改进sql查询树结构时的效率问题。
+
+- 标准树
+
+  ![datastructure-2](./image/datastructure-2.png)
+
+  - 在程序里查询某个子节点时，要先从根节点进行递归查询，时间复杂度是 O(n)。
+
+- mptt结构查询：
+
+  ![datastructure-1](./image/datastructure-1.png)
+
+  ![datastructure-3](./image/datastructure-3.png)
+
+  - 遍历整棵树:遍历整棵树只需要查找 tree_id 等于 1 的条件即可
+  - 找到某节点下所有的子孙节点:
+    - 查找节点 4 的所有子孙节点，以 4 作为参考点。
+    - 左值大于 6 且右值小于 11 的所有子孙节点，就是节点 4 的所有子孙节点。
+  - 找到某节点下所有的子节点
+    - 查找节点 1 的所有子节点，以 1 作为参考点。tree_id 等于 1 且 level 等于 2。
+  - 查找某节点的路径
+    - 查找节点 9 的所有上级路径，以 9 作为参考点。
+    - 左值小于 14 且右值大于 15 的所有节点，就是节点9的路径。结果是：`1 -> 7 -> 8 -> 9`。
+
+- mptt结构平衡算法
+  - 新增
+    - 如果要在不存在的树中新增节点，即要创建一颗新树。
+      - 那么它是没有 parent_id 的，所以 parent_id 值为 NULL，level 是 1，tree_id 是根据已有树的最大 tree_id 加 1。
+    - 如果要在已存在的树中新增节点。
+      - 那么它的 parent_id 是父节点的 id，level 是父节点的 level 加 1，tree_id 和父节点保持一致。
+    - 修复被破坏平衡的其他节点的左值。
+      - 大于 parent_id 右值的所有节点的左值加 2。
+    - 修复被破坏平衡的其他节点的右值。
+      - 大于等于 parent_id 右值的所有节点的右值加 2。
+  - 删除
+    - 和增加类似，只不过删除一个节点以后对左值和右值进行相反的操作，即减 2。
+  - 更新（移动）
+    - 更新（移动）其实就是删除一个老节点，再新增一个新节点，具体算法参考上面的例子。
+
+- 标准树和预排序遍历树的优劣对比
+  - 标准树：
+    - 适用于增删 操作较多的场景，每次删改只需要修改一条数据。
+    - 在查询方面，随着分类层级的增加邻接表的递归查询效率逐渐降低。
+  - 预排序遍历树：
+    - 适用于查询操作较多的场景，查询的效率不受分类层级的增加的影响，但是随着数据的增多，
+    - 每增删数据，都要同时操作多条受影响数据，执行效率逐渐下降。
+
 ## 1.7. Heap-Like
 
 ### 1.7.1. Heaps
@@ -144,7 +198,6 @@ TODO: 《算法珠玑》 有一些大数据处理的算法可以看看
 
 ### 2.4.9. Kruskal Minimum Cost Spanning Tree Algorithm
 
-
 ## 2.5. Index
 
 ### 2.5.1. Implemented by tree
@@ -179,3 +232,5 @@ TODO: 《算法珠玑》 有一些大数据处理的算法可以看看
 - [ ] [Indexing — Data Structures](https://medium.com/nerd-for-tech/indexing-data-structures-aa7363693c40)
 - [ ] [可视化：Data Structure Visualizations](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
 - [ ] 《算法（第四版）》
+- [x] [数据结构和算法：预排序遍历树算法(MPTT)](https://blog.csdn.net/yilovexing/article/details/107066591)
+- [ ] [Modified Preorder Tree Traversal](https://gist.github.com/tmilos/f2f999b5839e2d42d751)
