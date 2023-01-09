@@ -1,3 +1,5 @@
+TODO: kafka底层架构补充
+
 # 1. 说明
 
 - 优点：
@@ -26,8 +28,6 @@
     - 自己不丢数据，通过零拷贝，将数据存到内存中
     - 消费者不丢数据：默认在磁盘存7天，7天内，可以处理多次
 
-
-
 - 节点：
   > ![spark-41](./image/spark-41.png) 
   - producer:消息生产者
@@ -42,7 +42,6 @@
     - 不同类消息会分别存储
     - 每个topic由多个partition组成。在创建topic时可以指定
       - partition:组成topic的单元，直接接触内存
-
 
 - 消息存储模型
   > ![spark-42](./image/spark-42.png) 
@@ -128,7 +127,6 @@
 
 ![spark-45](./image/spark-45.png)
 
-
 # 5. 集群搭建
 
 待做
@@ -136,4 +134,5 @@
 
 # 参考资料
 
+- [ ] [大数据技术体系（长期更新）](https://blog.csdn.net/Shockang/article/details/117266839)
 - [ ] [kafka知识点总结](https://mp.weixin.qq.com/s/PjlSNftjafIA3cnlZAcUaA)

@@ -308,6 +308,10 @@ awk 'BEGIN{
   - [ ] Vue
     - **练手项目：博客评论系统前端**
   - [ ] [常用JVM](./java/JVM-常用JVM.md)
+  - [ ] electron
+    - 网易云 音乐可视化软件 [音乐频谱库vudio.js](https://github.com/alex2wong/vudio.js)
+  - [ ] 大数据：数据湖，湖仓一体，delta lake
+  - [ ] 对象存储，apache ozone，以及其他存储概念
 - 阅读书目
   > 个人习惯在实体书，或者使用 知之阅读 做一些读书笔记。markdown版笔记仅针对一些工具书
   - [x] 代码整洁之道

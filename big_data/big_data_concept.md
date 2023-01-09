@@ -1,5 +1,7 @@
 TODO: 个人资料整理 <!-- ./资料/个人资料/大数据技术文章分享.pdf -->
 
+TODO: 数据湖概念，湖仓一体概念，delta lake
+
 # 1. 大数据
 
 ## 1.1. 大数据概念
@@ -136,4 +138,6 @@ TODO: 个人资料整理 <!-- ./资料/个人资料/大数据技术文章分享.
 
 # 11. 参考资料
 
+- **[大数据理论体系](https://blog.csdn.net/Shockang/article/details/115609804)**
+- **[大数据技术体系（长期更新）](https://blog.csdn.net/Shockang/article/details/117266839)**
 - [大数据技术发展简史](https://cloud.tencent.com/developer/article/1640405)
