@@ -114,7 +114,7 @@ Shell 不属于内核的一部分。大部分情况下 Shell 都会去调用内�
 
 <br /><br />
 
-拓展：[java 线程状态](../MAIN_NOTE/java并发.md)
+拓展：[java 线程状态](../java/java并发1-基础.md)
 
 ## 3.7. 进程运行相关系统调用
 

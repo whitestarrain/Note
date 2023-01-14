@@ -258,15 +258,28 @@ Docker 的主要用途，目前有三大类。
 
 # 4. 基础命令
 
-## 4.1. docker基本命令
+## 4.1. 命令格式
 
-### 4.1.1. 通用命令
+- docker 1.13之后，为了方便命令的管理，分为了Management Commands 和 Commands。比如：
+
+  ```
+  获取系统信息：
+  docker system info # Management Command
+  docker info # Command
+  ```
+- 两种命令式兼容的
+
+- `docker --help`
+
+## 4.2. docker基本命令
+
+## 4.3. 通用命令
 
 - docker version:查看版本等相关信息
 - docker info:查看容器镜像等相关信息
 - docker --help：查看docker有哪些命令，当你记不住docker的命令的时候，可使用这个命令查看；
 
-### 4.1.2. 镜像命令
+## 4.4. 镜像命令
 
 - docker images: 查看本机所有镜像
 
@@ -278,14 +291,50 @@ Docker 的主要用途，目前有三大类。
 
   - docker images -a：查询本地所有镜像，包括镜像中的镜像（中间层）
   - docker images -q：只显示镜像id
+  - docker images -aq:显示镜像所有id，包括中间层的id
   - docker images --digests:显示镜像摘要信息
   - docker images --no-trunc：显示完整的进行信息
 
-- docker search redis: 搜索镜像
+- docker search image_name: 搜索镜像
+  - docker search  --no-trunc image_name: 显示完整的镜像描述信息
+  - docker search -s 50 image_name： 只列出收藏大于 50 的镜像
 
-## 4.2. docker镜像
+- docker pull image_name: 拉取镜像
 
-## 4.3. docker数据共享-容器数据卷
+- docker rmi -f 镜像id: 删除镜像
+  - `docker rmi -f ${docker images -qa}`: 删除所有镜像
+
+## 4.5. 容器命令
+
+- docker run 【可选参数】 镜像名称 【可选其他参数】: 启动一个容器执行命令
+  ```
+  注意：
+  在执行命令之后，容器就会退出
+  如果需要一个保持运行的容器，最简单的方法就是给这个容器一个可以保持运行的命令或者应用
+  ```
+  - --name="容器新名字": 为容器指定一个名称；
+  - -d: 后台运行容器，并返回容器ID，也即启动守护式容器；
+  - -i：以交互模式运行容器，通常与 -t 同时使用；
+  - -t：为容器重新分配一个伪输入终端，通常与 -i 同时使用；
+  - -P: 随机端口映射；
+  - -p: 指定端口映射，有以下四种格式
+
+    ```
+　　ip:hostPort:containerPort
+　　ip::containerPort
+　　hostPort:containerPort
+　　containerPort
+    ```
+
+- docker run -it 镜像名称 /bin/bash: 以交互模式启动一个容器,在容器内执行/bin/bash命令。
+- docker run -d 镜像名称: 后台运行容器，并返回容器ID，也即启动守护式容器
+
+  ```
+  注意：
+  docker启动守护式的容器,就必须有一个前台进程，否则容器会认为没有事情干了，就会自动退出。
+  假设我们启动的时候不停的打印日志，那么就表示有前台进程了，然后再次观察
+  docker run -d centos /bin/bash -c "while true;do echo log;sleep 5;done"
+  ```
 
 # 5. Dockerfile
 
