@@ -258,6 +258,8 @@ Docker 的主要用途，目前有三大类。
 
 # 4. 基础命令
 
+> 其他命令详见docker 文档以及docker --help
+
 ## 4.1. 命令格式
 
 - docker 1.13之后，为了方便命令的管理，分为了Management Commands 和 Commands。比如：
@@ -267,9 +269,20 @@ Docker 的主要用途，目前有三大类。
   docker system info # Management Command
   docker info # Command
   ```
-- 两种命令式兼容的
+  ```
+  新版命令主要是更直观了,添加了镜像[image]和容器[container]来区分命令,简单举例对比:
 
-- `docker --help`
+  1. 显示容器命令
+    老版命令:`docker ps`
+    新版命令:`docker container ls`
+  2. 显示镜像命令
+    老版命令: `docker images`
+    新版命令: `docker image ls`
+  3. 删除镜像命令
+    老版命令: `docker rmi centos:latest`
+    新版命令: `docker image rm centos:latest`
+  ```
+- 两种命令式兼容的
 
 ## 4.2. docker基本命令
 
@@ -281,7 +294,25 @@ Docker 的主要用途，目前有三大类。
 
 ## 4.4. 镜像命令
 
-- docker images: 查看本机所有镜像
+### 4.4.1. 搜索镜像
+
+- `docker search xxx`
+  - 选镜像的建议：优先考虑官方镜像,然后是`starts`数量多的镜像
+  - `docker search  --no-trunc image_name`: 显示完整的镜像描述信息
+  - `docker search -s 50 image_name`： 只列出收藏大于 50 的镜像
+
+### 4.4.2. 拉取/推送镜像
+
+1. 拉取镜像到本地
+   `docker image pull centos`
+2. 推送centos镜像到仓库
+   `docker image push centos`
+
+### 4.4.3. 查看/删除镜像
+
+1. 查看镜像
+
+  `docker images`: 查看本机所有镜像
 
   ```
   注意：
@@ -295,45 +326,267 @@ Docker 的主要用途，目前有三大类。
   - docker images --digests:显示镜像摘要信息
   - docker images --no-trunc：显示完整的进行信息
 
-- docker search image_name: 搜索镜像
-  - docker search  --no-trunc image_name: 显示完整的镜像描述信息
-  - docker search -s 50 image_name： 只列出收藏大于 50 的镜像
+2. 删除镜像
 
-- docker pull image_name: 拉取镜像
+   `docker image rm centos`
 
-- docker rmi -f 镜像id: 删除镜像
-  - `docker rmi -f ${docker images -qa}`: 删除所有镜像
+### 4.4.4. 导入导出镜像
+
+1. 导出镜像
+   `docker image save centos > docker-centos7.4.tar.gz`
+2. 导入镜像
+   `docker image load -i docker-centos7.4.tar.gz`
 
 ## 4.5. 容器命令
 
-- docker run 【可选参数】 镜像名称 【可选其他参数】: 启动一个容器执行命令
+### 4.5.1. 创建启动容器
+
+- 创建容器并启动: 
+
+    ```bash
+    # 旧版命令：
+    docker run 【可选参数】 镜像名称 【可选其他参数】
+      # 在执行命令之后，容器就会退出
+      # 如果需要一个保持运行的容器，最简单的方法就是给这个容器一个可以保持运行的命令或者应用
+    # 以交互模式启动一个容器,在容器内执行/bin/bash命令。
+    docker run -it 镜像名称 /bin/bash: 
+    # 后台运行
+    docker run -d 镜像名称: 后台运行容器，并返回容器ID，也即启动守护式容器
+      # docker启动守护式的容器,就必须有一个前台进程，否则容器会认为没有事情干了，就会自动退出。
+      # 假设我们启动的时候不停的打印日志，那么就表示有前台进程了，然后再次观察
+      # docker run -d centos /bin/bash -c "while true;do echo log;sleep 5;done"
+
+    #创建并启动容器
+    docker container  run -d -p 80:80 nginx:latest {cmd}
+    #单独创建容器
+    docker container create -p 80:80 nginx
+    #单独启动容器
+    docker container start -d 容器ID|容器名
+    ```
+
+- 参数
+
+  | 参数名  | 功能                 | 不带此参数时        |
+  | :------ | :------------------- | :------------------ |
+  | -d      | 将容器放在后台运行   | 前台运行,会占用终端 |
+  | -p      | 进行端口映射         | 有些复杂,单独说明   |
+  | -it     | 分配新终端并进入容器 | 不会进入容器内部    |
+  | --name  | 指定容器的名字       | 随机命名            |
+  | cmd     | 覆盖容器的初始命令   | 使用容器的初始命令  |
+  | --cpus  | 限定cpu的权重        | 不限制              |
+  | -memory | 限定内存的大小       | 不限制              |
+  | -h      | 指定容器的主机名     | 以容器端ID命名      |
+
   ```
-  注意：
-  在执行命令之后，容器就会退出
-  如果需要一个保持运行的容器，最简单的方法就是给这个容器一个可以保持运行的命令或者应用
+  -p 端口映射格式：
+
+  ip:hostPort:containerPort
+  ip::containerPort
+  hostPort:containerPort
+  containerPort
   ```
-  - --name="容器新名字": 为容器指定一个名称；
-  - -d: 后台运行容器，并返回容器ID，也即启动守护式容器；
-  - -i：以交互模式运行容器，通常与 -t 同时使用；
-  - -t：为容器重新分配一个伪输入终端，通常与 -i 同时使用；
-  - -P: 随机端口映射；
-  - -p: 指定端口映射，有以下四种格式
+### 4.5.2. 停止删除容器
+
+1. 停止容器
+   `docker container stop 容器ID|容器名`
+2. 杀死容器
+   `docker container kill 容器ID|容器名`
+3. 删除容器
+   `docker container rm 容器ID|容器名`
+4. 批量删除容器
+   `docker container rm -f $(docker container ls -a -q)`
+
+### 4.5.3. 查看容器
+
+- 查看容器
+
+  ```
+  # 旧版命令
+  docker ps [可选参数] : 不写参数表示只显示正在运行的容器
+    # -a :列出当前所有正在运行的容器+历史上运行过的
+    # -l :显示最近创建的容器。
+    # -n：显示最近n个创建的容器。
+    # -q :静默模式，只显示容器id。
+    # --no-trunc :不截断输出。
+
+  #查看运行中的容器
+  docker container ls
+  #查看所有容器
+  docker container ls -a
+  ```
+
+- 查看指定容器详细信息
+  - `docker container inspect 容器ID|容器名`
+  - 命令可以查看容器的超详细信息,以json格式显示
+
+- 查看容器日志:
+  - `docker logs -tf --tail 5 容器id`: 
+
+  ```
+  -t 是加入时间戳
+  -f 跟随最新的日志打印
+  --tail 数字 显示最后多少条
+  ```
+
+- 查看容器运行的进程: 
+  - `docker top 容器id或名称:`
+  - 支持ps命令参数
+
+### 4.5.4. 进入容器的方法
+
+进入容器的目的：排错，调试
+
+- attach 方法[不常用]
+  - `docker container attach [OPTIONS] 容器ID|容器名`
+  - 会通过连接stdin，连接到容器内输入输出流，会实时打印容器的输出信息
+  - 退出很麻烦[Ctrl+p Ctrl+q ],容易按成[Ctrl+c]导致容器被关闭
+- exec方法
+  - `docker container exec [OPTIONS] 容器ID|容器名 {命令}`
+  - 常用`docker exec -it xxx /bin/bash`的方法打开新终端进入容器
+
+### 4.5.5. docker和宿主机器文件复制
+
+- docker cp 容器id /path/to/docker/file path/of/host: 将容器中的文件拷贝到主机上
+
+## 4.6. 端口映射
+
+### 4.6.1. docker容器为什么要使用端口映射
+
+默认情况下，容器使用的ip网段是172.17.0.0/16，外界的用户只能访问宿主机的10.0.0.0/24网段，无法访问172.17.0.0/16网段。
+
+而我们运行容器的目的,是希望运行在容器中的服务，能够被外界访问，这里就涉及到了外网10.0.0.0/24到容器内网172.17.0.0/16网段的转换，所以需要做端口映射。
+
+### 4.6.2. docker容器端口映射的方法
+
+docker 的端口映射是通过自动添加一条iptables规则实现的
+
+- 指定映射端口
+
+  | 语法               | 举例                 | 说明                |
+  | :----------------- | :------------------- | :------------------ |
+  | -p hPort:cPort     | -p 8800:80           | 主机8800映射容器80  |
+  | 同上,指定多个-p    | -p 81:80 -p 443:443  | 一次映射多个端口    |
+  | -p ip:hPort:cPort  | -p 10.0.0.11:8800:80 | 指定主机IP          |
+  | -p crPort          | -p 80                | 随机端口映射容器80  |
+  | -p ip::crPort      | -p 10.0.11::80       | IP指定,主机端口随机 |
+  | -p hPort:cPort:udp | -p 8800:80:udp       | 默认tcp映射,改为UDP |
+
+- 完全随机映射
+  - `docker run -P`
+  - 将`dockerfile`创建镜像时指定的,需要映射出来的内网端口,做外网随机映射
+
+## 4.7. docker资源限额
+
+一个 docker host 上会运行若干容器，每个容器都需要 CPU、内存和 IO 资源，Docker 提供了资源限制的机制避免某个容器因占用太多资源而影响其他容器乃至整个 host 的性能。
+
+### 4.7.1. 内存限额
+
+与操作系统类似，容器可使用的内存包括两部分：物理内存和 swap。
+
+- `-m` 或 `--memory`：设置内存的使用限额，例如 100M, 2G。
+- `--memory-swap`：设置 **内存+swap** 的使用限额。
+- 默认情况下都为为 -1，即对容器内存和 swap 的使用没有限制。
+- 如果只指定 `-m` 参数，那么 `--memory-swap` 默认为 `-m` 的两倍
+
+命令案例:
+
+```
+docker run -m 200M --memory-swap=300M ubuntu
+```
+
+允许该容器最多使用 200M 的内存和 100M 的 swap。
+
+### 4.7.2. 动态修改内存限额
+
+动态修改运行中的容器内存限额,需要用到`update`参数,并且不能只修改内存限制,需要同步修改swap限制,否则会报错,报错详见:
+[参考链接](https://my.oschina.net/Kanonpy/blog/2209207)
+
+```
+docker update  --memory 2048m --memory-swap -1 gitlab
+```
+
+### 4.7.3. cpu限额
+
+通过 `-c` 设置的 cpu share 并不是 CPU 资源的绝对数量，而是一个相对的权重值。某个容器最终能分配到的 CPU 资源取决于它的 cpu share 占所有容器 cpu share 总和的比例。
+
+1. 默认所有容器可以平等地使用 host CPU 资源 ,并且没有限制。
+2. 通过 `-c` 或 `--cpu-shares` 设置容器使用 CPU 的权重。
+3. 如果不指定，默认值为 1024。
+4. **通过 cpu share 可以设置容器使用 CPU 的优先级**。
+
+案例:在 host 中启动了两个容器：
+
+```
+docker run --name "container_A" -c 1024 ubuntu
+docker run --name "container_B" -c 512  ubuntu
+```
+
+container_A 的 cpu share 1024，是 container_B 的两倍。当两个容器都需要 CPU 资源时，container_A 可以得到的 CPU 是 container_B 的两倍。
+
+> 这种按权重分配 CPU 只会发生在 CPU 资源紧张的情况下。如果 container_A 处于空闲状态，这时，为了充分利用 CPU 资源，container_B 也可以分配到全部可用的 CPU。
+
+### 4.7.4. 磁盘限额
+
+Block IO 指的是磁盘的读写，docker 可通过设置权重、限制 bps 和 iops 的方式控制容器读写磁盘的带宽，下面分别讨论。
+
+> 目前 Block IO 限额只对 direct IO（不使用文件缓存）有效。
+
+- block IO 权重
+  - 默认情况下，所有容器能平等地读写磁盘，可以通过设置 `--blkio-weight` 参数来改变容器 block IO 的优先级。
+  - `--blkio-weight` 与 `--cpu-shares` 类似，设置的是相对权重值，默认为 500。
+  - 在下面的例子中，container_A 读写磁盘的带宽是 container_B 的两倍。
 
     ```
-　　ip:hostPort:containerPort
-　　ip::containerPort
-　　hostPort:containerPort
-　　containerPort
+    docker run -it --name container\_A --blkio-weight 600 ubuntu   
+    docker run -it --name container\_B --blkio-weight 300 ubuntu
     ```
 
-- docker run -it 镜像名称 /bin/bash: 以交互模式启动一个容器,在容器内执行/bin/bash命令。
-- docker run -d 镜像名称: 后台运行容器，并返回容器ID，也即启动守护式容器
+- 限制 bps 和 iops
+  - bps 是 byte per second，每秒读写的数据量。
+  - iops 是 io per second，每秒 IO 的次数。
+  - 参数
+    - `--device-read-bps`，限制读某个设备的 bps。
+    - `--device-write-bps`，限制写某个设备的 bps。
+    - `--device-read-iops`，限制读某个设备的 iops。
+    - `--device-write-iops`，限制写某个设备的 iops。
+  - 下面这个例子限制容器写 /dev/sda 的速率为 30 MB/s
+    ```
+    docker run -it --device-write-bps /dev/sda:30MB ubuntu
+    ```
+
+## 4.8. 数据卷与挂载
+
+### 4.8.1. 常见的docker数据卷命令
+
+- 创建一个数据卷
+  `docker volume create xxx`
+- 查看数据卷列表
+  `docker volume ls`
+- 删除一个数据卷
+  `docker volume rm`
+- 查看一个数据卷的属性
+  `docker volume inspect`
+
+### 4.8.2. 数据卷与容器卷挂载
+
+1. 绑定卷
 
   ```
-  注意：
-  docker启动守护式的容器,就必须有一个前台进程，否则容器会认为没有事情干了，就会自动退出。
-  假设我们启动的时候不停的打印日志，那么就表示有前台进程了，然后再次观察
-  docker run -d centos /bin/bash -c "while true;do echo log;sleep 5;done"
+  docker run -d -p 80:80  -v /data/test/:/usr/share/nginx/html nginx
+  ```
+
+2. 容器管理卷
+
+  ```
+  docker run -d -p 180:80 -v         /usr/share/nginx/html nginx
+  docker run -d -p 380:80 -v noah-v1:/usr/share/nginx/html nginx
+  ```
+
+3. 容器卷
+
+  ```
+  docker volume create noah-v2
+  docker run -d -p 801:80 --volumes-from vc_data nginx
   ```
 
 # 5. Dockerfile
