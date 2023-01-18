@@ -267,12 +267,12 @@ awk 'BEGIN{
   - [ ] 分布式系统相关
   - [ ] 数据库架构
 - 待完善/整理
-  - [ ] 设计模式
+  - [x] [设计模式](./base/design_pattern.md)
   - [ ] 编译原理
   - [ ] zookeeper完善
-  - [ ] java并发笔记完善
-  - [ ] [RabbitMQ整理](./Middleware/RabbitMQ.md)
-  - [ ] [鉴权方式整理](./others/authentication.md)
+  - [ ] [java并发笔记完善](./java/)
+  - [x] [RabbitMQ基础整理](./Middleware/RabbitMQ.md)
+  - [x] [鉴权方式整理](./others/authentication.md)
   - [ ] [CORS跨域完善+整理](./safety/CSRF与CORS.md)
   - [ ] [linux常用命令&工具系统整理](./base/linux.md)
   - [x] [bash编程系统整理](./base/bash.md)
@@ -313,15 +313,16 @@ awk 'BEGIN{
   - [ ] 大数据：数据湖，湖仓一体，delta lake
   - [ ] 对象存储，apache ozone，以及其他存储概念
 - 阅读书目
-  > 个人习惯在实体书，或者使用 知之阅读 做一些读书笔记。markdown版笔记仅针对一些工具书
+  > 个人习惯在实体书，或者使用 知之阅读 做一些读书笔记。markdown版笔记主要针对一些工具书
   - [x] 代码整洁之道
-  - [ ] 重构：改善既有代码设计
-  - [ ] 程序设计实践
+  - [x] 重构：改善既有代码设计
+  - [ ] clickhouse 原理解析与应用实践
+  - [ ] 数据密集型应用系统设计 
   - [ ] 深入理解现代操作系统
-  - [ ] Redis设计与实现
   - [ ] Operating Systems:Three Easy Pieces
-  - [ ] Linux C 编程一站式学习
   - [ ] 冒号课堂
+  - [ ] Linux C 编程一站式学习
+  - [ ] Redis设计与实现
 - 大数据笔记整理完善（抽时间零碎）
   - [x] hadoop+hive+hbase
   - [ ] Spark
@@ -337,15 +338,16 @@ awk 'BEGIN{
     - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua
     - [x] [实现markdown标题编号nvim插件](https://github.com/whitestarrain/md-section-number.nvim)
+      - [ ] 扩展，实现侧边栏。
     - [ ] 双链生成插件(基于标题？tag功能？lsp补全？)，用来优化YourBrain思维导图
-  - [ ] rust
   - [ ] TypeScript
     - [x] 基础
     - [ ] 深入
     - [ ] 命令行工具开发
     - [ ] **练手项目：kakuyomu 小说终端阅读器(包含登录功能)**
-  - [ ] kotlin 好像挺火的
   - [ ] php 工作中，有项目用，可以看看
+  - [ ] rust
+  - [ ] kotlin 好像挺火的
 - 机器学习&深度学习
   - [ ] opencv 系统整理
   - [ ] 深度学习笔记系统整理（暂时抽不出时间）
@@ -353,7 +355,6 @@ awk 'BEGIN{
   - [ ] JNI（c++之后）
   - [x] nvim配置模块化(迁移到[dotfiles](https://github.com/whitestarrain/dotfiles))
   - [ ] [想搞搞树莓派](https://shumeipai.nxez.com/)
-  - [ ] 数据结构-索引
 
 <!-- 
 

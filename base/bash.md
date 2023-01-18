@@ -1187,6 +1187,8 @@ done
   - [x] **[bash-handbook-zh-CN](https://github.com/liushuaikobe/bash-handbook-zh-CN)**
   - [ ] **[rstacruz/cheatsheets-bash.md](https://github.com/rstacruz/cheatsheets/blob/master/bash.md)** 
     > 异常全的bash命令。包括一些字符串处理
+  - [ ] [GNU Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
+    - [译文](https://xy2401.com/local-docs/gnu/manual.zh/bash.html)
 
 - 辅助
   - [shellcheck](https://github.com/koalaman/shellcheck)

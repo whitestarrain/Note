@@ -4086,6 +4086,8 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
 
 ## 7.3. 分区分库分表
 
+TODO: 分库，分表，分库中间件
+
 待整理
 
 - [一文快速入门分库分表](https://mp.weixin.qq.com/s/rYG58KS9kHDDOMajKT9y5Q)
