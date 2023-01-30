@@ -812,7 +812,7 @@ done
   else
     echo "Apples are delicious!"
   fi
-```
+  ```
 
 ## 使用`case`
 
