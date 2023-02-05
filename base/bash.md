@@ -54,40 +54,60 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
 
 ## 非交互模式
 
-在非交互模式下，shell从文件或者管道中读取命令并执行。当shell解释器执行完文件中的最后一个命令，shell进程终止，并回到父进程。
+- 在非交互模式下，shell从文件或者管道中读取命令并执行。
+  - 当shell解释器执行完文件中的最后一个命令，shell进程终止，并回到父进程。
 
-可以使用下面的命令让shell以非交互模式运行：
+- 可以使用下面的命令让shell以非交互模式运行：
 
-    sh /path/to/script.sh
-    bash /path/to/script.sh
+  ```bash
+  sh /path/to/script.sh
+  bash /path/to/script.sh
+  ```
 
-上面的例子中，`script.sh`是一个包含shell解释器可以识别并执行的命令的普通文本文件，`sh`和`bash`是shell解释器程序。你可以使用任何喜欢的编辑器创建`script.sh`（vim，nano，Sublime Text, Atom等等）。
+  - 上面的例子中，`script.sh`是一个包含shell解释器可以识别并执行的命令的普通文本文件
+  - `sh`和`bash`是shell解释器程序。
+  - 你可以使用任何喜欢的编辑器创建`script.sh`（vim，nano，Sublime Text, Atom等等）。
 
-除此之外，你还可以通过`chmod`命令给文件添加可执行的权限，来直接执行脚本文件：
+- 注意：
+  - 大多数`/bin/sh`都是指向`/bin/bash`
+  - 但是 **如果以sh命令启动bash，bash将模拟sh的行为**
+  - 也就是`bash --posix`
 
-    chmod +x /path/to/script.sh
+- 除此之外，你还可以通过`chmod`命令给文件添加可执行的权限，来直接执行脚本文件：
 
-这种方式要求脚本文件的第一行必须指明运行该脚本的程序，比如：
+  ```bash
+  chmod +x /path/to/script.sh
+  ```
+
+- 这种方式要求脚本文件的第一行必须指明运行该脚本的程序，依旧是 **Shebang行** 。
+  - `#!`与脚本解释器之间有没有空格，都是可以的。
 
   ```bash
   #!/bin/bash
   echo "Hello, world!"
   ```
-如果你更喜欢用`sh`，把`#!/bin/bash`改成`#!/bin/sh`即可。`#!`被称作[shebang](https://zh.wikipedia.org/wiki/Shebang)。之后，就能这样来运行脚本了：
 
+  - 如果你更喜欢用`sh`，把`#!/bin/bash`改成`#!/bin/sh`即可。`#!`被称作[shebang](https://zh.wikipedia.org/wiki/Shebang)。之后，就能这样来运行脚本了：
+
+    ```bash
     /path/to/script.sh
+    ```
 
-上面的例子中，我们使用了一个很有用的命令`echo`来输出字符串到屏幕上。
+  - Shebang 行不是必需的，但是建议加上这行。
+    - 如果缺少该行，就需要手动将脚本传给解释器。
 
-我们还可以这样来使用shebang：
+  - 还可以这样来使用shebang：
 
-  ```bash
-  #!/usr/bin/env bash
-  echo "Hello, world!"
-  ```
-
-这样做的好处是，系统会自动在`PATH`环境变量中查找你指定的程序（本例中的`bash`）。相比第一种写法，你应该尽量用这种写法，因为程序的路径是不确定的。这样写还有一个好处，操作系统的`PATH`变量有可能被配置为指向程序的另一个版本。比如，安装完新版本的`bash`，我们可能将其路径添加到`PATH`中，来“隐藏”老版本。如果直接用`#!/bin/bash`，那么系统会选择老版本的`bash`来执行脚本，如果用`#!/usr/bin/env bash`，则会使用新版本。
-
+    ```bash
+    #!/usr/bin/env bash
+    echo "Hello, world!"
+    ```
+    - 上面命令使用env命令（这个命令总是在/usr/bin目录），返回 Bash 可执行文件的位置。
+    - 这样做的好处是，系统会自动在`PATH`环境变量中查找你指定的程序（本例中的`bash`）
+    - 相比第一种写法，你应该尽量用这种写法，因为程序的路径是不确定的。
+    - 这样写还有一个好处，操作系统的`PATH`变量有可能被配置为指向程序的另一个版本。
+    - 比如，安装完新版本的`bash`，我们可能将其路径添加到`PATH`中，来“隐藏”老版本。
+    - 如果直接用`#!/bin/bash`，那么系统会选择老版本的`bash`来执行脚本，如果用`#!/usr/bin/env bash`，则会使用新版本。
 
 ## 返回值
 
@@ -214,6 +234,8 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
     ./script.sh foo bar
     ```
 
+- `shift`:
+
 ## 特殊变量
 
 - `$0`	当前脚本的文件名
@@ -241,27 +263,394 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
 
 # Shell扩展
 
-- _扩展_
-  - 发生在一行命令被分成一个个的 _记号（tokens）_ 之后
-  - 换言之，扩展是一种执行数学运算的机制，还可以用来保存命令的执行结果，等等。
-  - 感兴趣的话可以阅读[关于shell扩展的更多细节](https://www.gnu.org/software/bash/manual/bash.html#Shell-Expansions)。
+## 说明
 
-## 大括号扩展
+- 基本说明：
+  - Shell 接收到用户输入的命令以后， **会根据空格将用户的输入，拆分成一个个词元（token）** 。
+  - 然后，Shell 会扩展词元里面的 **特殊字符** ，扩展完成后才会调用相应的命令。
+  - 这种特殊字符的扩展，称为模式扩展（globbing）。
+  - 其中有些用到通配符，又称为通配符扩展（wildcard expansion）
 
-- 大括号扩展让生成任意的字符串成为可能。它跟 _文件名扩展_ 很类似，举个例子：
+- Bash 一共提供八种扩展。
+  - `波浪线扩展`
+  - `? 字符扩展`
+  - `* 字符扩展`
+  - `方括号扩展`
+  - `大括号扩展`
+  - `变量扩展`
+  - `子命令扩展`
+  - `算术扩展`
 
-  ```bash
-  echo beg{i,a,u}n # begin began begun
+- Bash 是先进行扩展，再执行命令。
+  - 因此，扩展的结果是由 Bash 负责的，与所要执行的命令无关。
+  - 命令本身并不存在参数扩展，收到什么参数就原样执行。
+
+- 扩展资料
+
+  ```
+  模块扩展的英文单词是globbing，这个词来自于早期的 Unix 系统有一个/etc/glob文件，保存扩展的模板。
+  后来 Bash 内置了这个功能，但是这个名字就保留了下来。
+  模式扩展与正则表达式的关系是，模式扩展早于正则表达式出现，可以看作是原始的正则表达式。
+  它的功能没有正则那么强大灵活，但是优点是简单和方便。
+
+  Bash 允许用户关闭扩展。
+  $ set -o noglob
+  # 或者
+  $ set -f
+  下面的命令可以重新打开扩展。
+  $ set +o noglob
+  # 或者
+  $ set +f
   ```
 
-- 大括号扩展还可以用来创建一个可被循环迭代的区间。
+## 扩展
+
+### 波浪线扩展
+
+- 波浪线`~`会自动扩展成当前用户的主目录。
 
   ```bash
-  echo {0..5} # 0 1 2 3 4 5
-  echo {00..8..2} # 00 02 04 06 08
+  $ echo ~
+  /home/me
   ```
 
-## 命令置换
+- `~/dir`表示扩展成主目录的某个子目录，`dir`是主目录里面的一个子目录名。
+
+  ```bash
+  # 进入 /home/me/foo 目录
+  $ cd ~/foo
+  ```
+
+- `~user`表示扩展成用户`user`的主目录。
+
+  ```bash
+  $ echo ~foo
+  /home/foo
+
+  $ echo ~root
+  /root
+  ```
+
+- 如果`~user`的`user`是不存在的用户名，则波浪号扩展不起作用。
+
+  ```bash
+  $ echo ~nonExistedUser
+  ~nonExistedUser
+  ```
+
+- `~+`会扩展成当前所在的目录，等同于`pwd`命令。
+
+  ```bash
+  $ cd ~/foo
+  $ echo ~+
+  /home/me/foo
+  ```
+
+### 文件名扩展
+
+#### `?` 字符扩展
+
+- `?`字符代表文件路径里面的 **任意单个字符，不包括空字符** 。
+  > 比如，`Data???`匹配所有`Data`后面跟着三个字符的文件名。
+
+  ```bash
+  # 存在文件 a.txt 和 b.txt
+  $ ls ?.txt
+  a.txt b.txt
+  ```
+
+  - 上面命令中，`?`表示单个字符，所以会同时匹配`a.txt`和`b.txt`。
+
+- 如果匹配多个字符，就需要多个`?`连用。
+
+  ```bash
+  # 存在文件 a.txt、b.txt 和 ab.txt
+  $ ls ??.txt
+  ab.txt
+  ```
+
+  - 上面命令中，`??`匹配了两个字符。
+
+- 注意：`?` 字符扩展属于 **文件名扩展** ， **只有文件确实存在的前提下，才会发生扩展** 。如果文件不存在，扩展就不会发生。
+
+  ```bash
+  # 当前目录有 a.txt 文件
+  $ echo ?.txt
+  a.txt
+  
+  # 当前目录为空目录
+  $ echo ?.txt
+  ?.txt
+  ```
+
+  - 上面例子中，如果`?.txt`可以扩展成文件名，`echo`命令会输出扩展后的结果；
+  - 如果不能扩展成文件名，`echo`就会原样输出`?.txt`
+
+#### `*` 字符扩展
+
+- `*`字符代表文件路径里面的任意数量的任意字符，包括零个字符。
+
+  ```bash
+  # 存在文件 a.txt、b.txt 和 ab.txt
+  $ ls *.txt
+  a.txt b.txt ab.txt
+  ```
+
+  - 上面例子中，`*.txt`代表后缀名为`.txt`的所有文件。
+
+- 如果想输出当前目录的所有文件，直接用`*`即可。
+
+  ```bash
+  $ ls *
+  ```
+
+- `*` **可以匹配空字符** ，下面是一个例子。
+
+  ```bash
+  # 存在文件 a.txt、b.txt 和 ab.txt
+  $ ls a*.txt
+  a.txt ab.txt
+  
+  $ ls *b*
+  b.txt ab.txt
+  ```
+
+- 注意，`*` **不会匹配隐藏文件** （以`.`开头的文件），即`ls *`不会输出隐藏文件。
+  - 如果要匹配隐藏文件，需要写成`.*`。
+
+  ```bash
+  # 显示所有隐藏文件
+  $ echo .*
+  ```
+
+  - 如果要匹配隐藏文件，同时要排除`.`和`..`这两个特殊的隐藏文件，可以与方括号扩展结合使用，写成`.[!.]*`。
+
+    ```bash
+    $ echo .[!.]*
+    ```
+
+- 注意，`*`字符扩展属于文件名扩展， **只有文件确实存在的前提下才会扩展。如果文件不存在，就会原样输出** 。
+
+  ```bash
+  # 当前目录不存在 c 开头的文件
+  $ echo c*.txt
+  c*.txt
+  ```
+
+  - 上面例子中，当前目录里面没有`c`开头的文件，导致`c*.txt`会原样输出。
+
+- `*`只匹配当前目录，不会匹配子目录。
+
+  ```bash
+  # 子目录有一个 a.txt
+  # 无效的写法
+  $ ls *.txt
+  
+  # 有效的写法
+  $ ls */*.txt
+  ```
+
+  - 上面的例子，文本文件在子目录，`*.txt`不会产生匹配，必须写成`*/*.txt`。有几层子目录，就必须写几层星号。
+
+- Bash 4.0 引入了一个参数`globstar`，当该参数打开时，允许`**`匹配零个或多个子目录
+  - 因此，`**/*.txt`可以匹配顶层的文本文件和任意深度子目录的文本文件。
+  - 详细介绍请看后面`shopt`命令的介绍。
+
+#### 方括号扩展
+
+- 方括号扩展的形式是`[...]`， **只有文件确实存在的前提下才会扩展** 。
+  - 如果文件不存在，就会原样输出。
+  - 括号之中的任意一个字符。比如，`[aeiou]`可以匹配五个元音字母中的任意一个。
+
+  ```bash
+  # 存在文件 a.txt 和 b.txt
+  $ ls [ab].txt
+  a.txt b.txt
+  
+  # 只存在文件 a.txt
+  $ ls [ab].txt
+  a.txt
+  ```
+
+  - 上面例子中，`[ab]`可以匹配`a`或`b`，前提是确实存在相应的文件。
+
+- 方括号扩展属于 **文件名匹配** ，即扩展后的结果必须符合现有的文件路径。
+  - 如果不存在匹配，就会保持原样，不进行扩展。
+
+  ```bash
+  # 不存在文件 a.txt 和 b.txt
+  $ ls [ab].txt
+  ls: 无法访问'[ab].txt': 没有那个文件或目录
+  ```
+
+  - 上面例子中，由于扩展后的文件不存在，`[ab].txt`就原样输出了，导致`ls`命名报错。
+
+- 方括号扩展还有两种变体：`[^...]`和`[!...]`。
+  - 它们表示匹配不在方括号里面的字符，这两种写法是等价的。
+  - 比如，`[^abc]`或`[!abc]`表示匹配除了`a`、`b`、`c`以外的字符。
+
+  ```bash
+  # 存在 aaa、bbb、aba 三个文件
+  $ ls ?[!a]?
+  aba bbb
+  ```
+
+  - 上面命令中，`[!a]`表示文件名第二个字符不是`a`的文件名，所以返回了`aba`和`bbb`两个文件。
+  - 注意，如果需要匹配`[`字符，可以放在方括号内，比如`[[aeiou]`。如果需要匹配连字号`-`，只能放在方括号内部的开头或结尾，比如`[-aeiou]`或`[aeiou-]`。
+
+---
+
+- 方括号扩展有一个简写形式`[start-end]`，表示匹配一个连续的范围。
+  - 比如，`[a-c]`等同于`[abc]`，`[0-9]`匹配`[0123456789]`。
+
+  ```bash
+  # 存在文件 a.txt、b.txt 和 c.txt
+  $ ls [a-c].txt
+  a.txt
+  b.txt
+  c.txt
+  
+  # 存在文件 report1.txt、report2.txt 和 report3.txt
+  $ ls report[0-9].txt
+  report1.txt
+  report2.txt
+  report3.txt
+  ...
+  ```
+
+- 下面是一些常用简写的例子。
+  - `[a-z]`：所有小写字母。
+  - `[a-zA-Z]`：所有小写字母与大写字母。
+  - `[a-zA-Z0-9]`：所有小写字母、大写字母与数字。
+  - `[abc]*`：所有以`a`、`b`、`c`字符之一开头的文件名。
+  - `program.[co]`：文件`program.c`与文件`program.o`。
+  - `BACKUP.[0-9][0-9][0-9]`：所有以`BACKUP.`开头，后面是三个数字的文件名。
+
+- 这种简写形式有一个否定形式`[!start-end]`，表示匹配不属于这个范围的字符。
+  - 比如，`[!a-zA-Z]`表示匹配非英文字母的字符。
+
+  ```bash
+  $ ls report[!1–3].txt
+  report4.txt report5.txt
+  ```
+
+  - 上面代码中，`[!1-3]`表示排除 1、2 和 3。
+
+### 变量扩展
+
+- Bash 将美元符号`$`开头的词元视为变量，将其扩展成变量值，详见《Bash 变量》一章。
+
+  ```bash
+  $ echo $SHELL
+  /bin/bash
+  ```
+
+- 变量名除了放在美元符号后面，也可以放在`${}`里面。
+
+  ```bash
+  $ echo ${SHELL}
+  /bin/bash
+  ```
+
+- `${!string*}`或`${!string@}`返回所有匹配给定字符串`string`的变量名。
+
+  ```bash
+  $ echo ${!S*}
+  SECONDS SHELL SHELLOPTS SHLVL SSH_AGENT_PID SSH_AUTH_SOCK
+  ```
+
+- 上面例子中，`${!S*}`扩展成所有以`S`开头的变量名。
+
+### 大括号扩展
+
+- 大括号扩展`{...}`表示分别扩展成大括号里面的所有值，各个值之间使用逗号分隔。
+  - 比如，`{1,2,3}`扩展成`1 2 3`。
+
+   ```bash
+   $ echo {1,2,3}
+   1 2 3
+   
+   $ echo d{a,e,i,u,o}g
+   dag deg dig dug dog
+   
+   $ echo Front-{A,B,C}-Back
+   Front-A-Back Front-B-Back Front-C-Back
+   ```
+
+- 注意， **大括号扩展不是文件名扩展** 。 **它会扩展成所有给定的值，而不管是否有对应的文件存在** 。
+
+  ```bash
+  $ ls {a,b,c}.txt
+  ls: 无法访问'a.txt': 没有那个文件或目录
+  ls: 无法访问'b.txt': 没有那个文件或目录
+  ls: 无法访问'c.txt': 没有那个文件或目录
+  ```
+
+  - 上面例子中，即使不存在对应的文件，`{a,b,c}`依然扩展成三个文件名，导致`ls`命令报了三个错误。
+
+- 另一个需要注意的地方是， **大括号内部的逗号前后不能有空格** 。否则，大括号扩展会失效。
+
+  ```bash
+  $ echo {1 , 2}
+  {1 , 2}
+  ```
+
+  - 上面例子中，逗号前后有空格，Bash 就会认为这不是大括号扩展，而是三个独立的参数。
+
+- **逗号前面可以没有值** ，表示扩展的第一项为空。
+
+  ```bash
+  $ cp a.log{,.bak}
+  
+  # 等同于
+  # cp a.log a.log.bak
+  ```
+
+- 大括号 **可以嵌套** 。
+
+  ```bash
+  $ echo {j{p,pe}g,png}
+  jpg jpeg png
+  
+  $ echo a{A{1,2},B{3,4}}b
+  aA1b aA2b aB3b aB4b
+  ```
+
+- 大括号也 **可以与其他模式联用，并且总是先于其他模式进行扩展** 
+
+  ```bash
+  $ echo /bin/{cat,b*}
+  /bin/cat /bin/b2sum /bin/base32 /bin/base64 ... ...
+  
+  # 基本等同于
+  $ echo /bin/cat;echo /bin/b*
+  ```
+
+  - 上面例子中，会先进行大括号扩展，然后进行`*`扩展，等同于执行两条`echo`命令。
+
+- 大括号 **可以用于多字符的模式** ，方括号不行（只能匹配单字符）。
+
+  ```bash
+  $ echo {cat,dog}
+  cat dog
+  ```
+
+- 由于大括号扩展`{...}`不是文件名扩展，所以它总是会扩展的。
+  - 这与方括号扩展`[...]`完全不同，如果匹配的文件不存在，方括号就不会扩展。
+  - 这一点要注意区分。
+
+  ```bash
+  # 不存在 a.txt 和 b.txt
+  $ echo [ab].txt
+  [ab].txt
+  
+  $ echo {a,b}.txt
+  a.txt b.txt
+  ```
+
+  - 上面例子中，如果不存在`a.txt`和`b.txt`，那么`[ab].txt`就会变成一个普通的文件名，而`{a,b}.txt`可以照样扩展。
+
+### 子命令置换
 
 - 命令置换允许我们对一个命令求值，并将其值置换到另一个命令或者变量赋值表达式中
 - 当一个命令被`反引号` 或`$()`包围时，命令置换将会执行
@@ -275,7 +664,9 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   echo $now # 19:08:26
   ```
 
-## 算数扩展
+- `$(...)`可以嵌套，比如`$(ls $(pwd))`。
+
+### 算数扩展
 
 - 在bash中，执行算数运算是非常方便的。算数表达式必须包在`$(( ))`中。算数扩展的格式为：
 
@@ -404,6 +795,8 @@ echo ${food:-Cake}  #=> $food or "Cake"
   | `${FOO:?message}` | Show error message and exit if `$FOO` is unset (or null) |
 
   > Omitting the : removes the (non)nullity checks, e.g. ${FOO-val} expands to val if unset otherwise $FOO.
+  >
+  > : 移除了 null 检查，${FOO-val} 指的是，如果FOO没有设置值，就取val，如果设置为了null，就取null
 
 - 示例
 
@@ -842,6 +1235,29 @@ done
   - `*`代表任何不匹配以上给定模式的模式。
   - 命令块儿之间要用`;;`分隔。
 
+- `shift` 命令：
+  - 会对参数进行左移，即删除`$#`中的第一个参数
+  - 经常与case一起使用遍历参数
+
+  ```bash
+  # 示例
+  while [ $# -gt 0 ]
+  do
+    case $1 in
+      -h|--help) print_usage; exit;;
+      # For options with required arguments, an additional shift is needed.
+      -i|--ip) IP="$2" ; shift;;
+      -p|--port) PORT="$2" ; shift;;
+      -f|--file) FILE="$2" ; shift;;
+      -t|--type) TYPE="$2" ; shift;;
+      (--) shift; break;;
+      (-*) echo "$0: invalid option $1" 1>&2; exit 1;;
+      (*) break;;
+    esac
+    shift
+  done
+  ```
+
 # 循环
 
 循环其实不足为奇。跟其它程序设计语言一样，bash中的循环也是只要控制条件为真就一直迭代执行的代码块。
@@ -1030,12 +1446,13 @@ done
 
 # 函数
 
-- 在脚本中，我们可以定义并调用函数。
+## 基本说明
+
+- 在脚本中，可以定义并调用函数。
   - 跟其它程序设计语言类似，函数是一个代码块，但有所不同。
   - bash中，函数是一个 **命令序列** ，这个命令序列组织在某个名字下面，即 _函数名_ 。
   - 调用函数跟其它语言一样，写下函数名字，函数就会被 _调用_ 。
-
-- 我们可以这样声明函数：
+  - 必须在调用前声明函数。
 
   ```bash
   my_func () {
@@ -1045,14 +1462,7 @@ done
   my_func # 调用 my_func
   ```
 
-  - 我们必须在调用前声明函数。
-
-- 函数可以接收参数并返回结果 —— 返回值。
-  - 参数，在函数内部
-  - 跟[非交互式](#非交互模式)下的脚本参数处理方式相同，使用[位置参数](#位置参数)。
-  - 返回值可以使用`return`命令 _返回_ 。
-
-- 下面这个函数接收一个名字参数，返回`0`，表示成功执行。
+- 示例：下面这个函数接收一个名字参数，返回`0`，表示成功执行。
 
   ```bash
   # 带参数的函数
@@ -1069,11 +1479,51 @@ done
   # greeting        # Hello, unknown!
   ```
 
-- 我们之前已经介绍过[返回值](#返回值)
-  - 不带任何参数的`return`会返回最后一个执行的命令的返回值
-  - 上面的例子，`return 0`会返回一个成功表示执行的值，`0`。
+## 参数与返回
+
+- **参数和返回值** ：函数可以接收参数并返回结果。
+  - 参数，在函数内部
+    - 跟 非交互式 下的脚本参数处理方式相同，使用 **位置参数** 
+  - 返回值可以使用`return`命令，_返回_ 。
+    - 之前已经介绍过 **返回值** 
+    - 函数的返回值和脚本、命令的返回值要求相同，必须为0~255
+    - 不带任何参数的`return`会返回最后一个执行的命令的返回值
+    - 上面的例子，`return 0`会返回一个成功表示执行的值，`0`。
+
+- 字符串返回。通过函数调用+获取stdout值：
+
+  ```bash
+  return_str() {
+    echo "value"
+  }
+  v=$(return_str)
+  echo "${v}"
+  ```
+
+- 函数式编程：
+  - bash脚本中的数据类型本质为字符串
+  - 所以可以做到传递函数的效果。
+
+  ```bash
+  function get_execute_time() {
+    t1=$(date +%s)
+    $1
+    t2=$(date +%s)
+    spend_time=$((t2 - t1))
+    echo "$1花费时间: ${spend_time}"
+  }
+  function fun1() {
+    sleep 3
+  }
+
+  # 下面调用都可以执行
+  get_execute_time fun1
+  get_execute_time "sleep 3"
+  ```
 
 # Debugging
+
+## bash参数设置
 
 - shell提供了用于debugging脚本的工具
   - 如果我们想以debug模式运行某脚本，可以在其shebang中使用一个特殊的选项：
@@ -1137,12 +1587,174 @@ done
   echo "xtrace is turned off again"
   ```
 
+## 环境变量
+
+- LINENO: 变量`LINENO`返回它在脚本里面的行号。
+
+  ```bash
+  #!/bin/bash
+  
+  echo "This is line $LINENO"
+  ```
+
+  ```bash
+  $ ./test.sh
+  This is line 3
+  ```
+
+- FUNCNAME
+  - 变量`FUNCNAME`返回一个数组，内容是当前的函数调用堆栈。
+  - 该数组的0号成员是当前调用的函数，1号成员是调用当前函数的函数，以此类推。
+
+  ```bash
+  #!/bin/bash
+  
+  function func1()
+  {
+    echo "func1: FUNCNAME0 is ${FUNCNAME[0]}"
+    echo "func1: FUNCNAME1 is ${FUNCNAME[1]}"
+    echo "func1: FUNCNAME2 is ${FUNCNAME[2]}"
+    func2
+  }
+  
+  function func2()
+  {
+    echo "func2: FUNCNAME0 is ${FUNCNAME[0]}"
+    echo "func2: FUNCNAME1 is ${FUNCNAME[1]}"
+    echo "func2: FUNCNAME2 is ${FUNCNAME[2]}"
+  }
+  
+  func1
+  ```
+
+  ```bash
+  $ ./test.sh
+  func1: FUNCNAME0 is func1
+  func1: FUNCNAME1 is main
+  func1: FUNCNAME2 is
+  func2: FUNCNAME0 is func2
+  func2: FUNCNAME1 is func1
+  func2: FUNCNAME2 is main
+  ```
+
+- BASH_SOURCE:
+  - 变量`BASH_SOURCE`返回一个数组，内容是当前的脚本调用堆栈。
+  - 该数组的0号成员是当前执行的脚本，1号成员是调用当前脚本的脚本，以此类推，
+  - 跟变量`FUNCNAME`是一一对应关系。
+
+  > 下面有两个子脚本`lib1.sh`和`lib2.sh`。
+
+  ```bash
+  # lib1.sh
+  function func1()
+  {
+    echo "func1: BASH_SOURCE0 is ${BASH_SOURCE[0]}"
+    echo "func1: BASH_SOURCE1 is ${BASH_SOURCE[1]}"
+    echo "func1: BASH_SOURCE2 is ${BASH_SOURCE[2]}"
+    func2
+  }
+  ```
+
+  ```bash
+  # lib2.sh
+  function func2()
+  {
+    echo "func2: BASH_SOURCE0 is ${BASH_SOURCE[0]}"
+    echo "func2: BASH_SOURCE1 is ${BASH_SOURCE[1]}"
+    echo "func2: BASH_SOURCE2 is ${BASH_SOURCE[2]}"
+  }
+  ```
+
+  > 然后，主脚本`main.sh`调用上面两个子脚本。
+
+  ```bash
+  #!/bin/bash
+  # main.sh
+  
+  source lib1.sh
+  source lib2.sh
+  
+  func1
+  ```
+
+  > 执行主脚本`main.sh`，会得到下面的结果。
+
+  ```bash
+  $ ./main.sh
+  func1: BASH_SOURCE0 is lib1.sh
+  func1: BASH_SOURCE1 is ./main.sh
+  func1: BASH_SOURCE2 is
+  func2: BASH_SOURCE0 is lib2.sh
+  func2: BASH_SOURCE1 is lib1.sh
+  func2: BASH_SOURCE2 is ./main.sh
+  ```
+
+- BASH_LINENO
+  - 变量`BASH_LINENO`返回一个数组，内容是每一轮调用对应的行号。
+  - `${BASH_LINENO[$i]}`跟`${FUNCNAME[$i]}`是一一对应关系，表示`${FUNCNAME[$i]}`在调用它的脚本文件`${BASH_SOURCE[$i+1]}`里面的行号。
+  - 下面有两个子脚本`lib1.sh`和`lib2.sh`。
+
+  ```bash
+  # lib1.sh
+  function func1()
+  {
+    echo "func1: BASH_LINENO is ${BASH_LINENO[0]}"
+    echo "func1: FUNCNAME is ${FUNCNAME[0]}"
+    echo "func1: BASH_SOURCE is ${BASH_SOURCE[1]}"
+  
+    func2
+  }
+  ```
+
+  ```bash
+  # lib2.sh
+  function func2()
+  {
+    echo "func2: BASH_LINENO is ${BASH_LINENO[0]}"
+    echo "func2: FUNCNAME is ${FUNCNAME[0]}"
+    echo "func2: BASH_SOURCE is ${BASH_SOURCE[1]}"
+  }
+  ```
+
+  > 然后，主脚本`main.sh`调用上面两个子脚本。
+
+  ```bash
+  #!/bin/bash
+  # main.sh
+  
+  source lib1.sh
+  source lib2.sh
+  
+  func1
+  ```
+
+  > 执行主脚本`main.sh`，会得到下面的结果。
+
+  ```bash
+  $ ./main.sh
+  func1: BASH_LINENO is 7
+  func1: FUNCNAME is func1
+  func1: BASH_SOURCE is main.sh
+  func2: BASH_LINENO is 8
+  func2: FUNCNAME is func2
+  func2: BASH_SOURCE is lib1.sh
+  ```
+
+  - 上面例子中，
+    - 函数`func1`是在`main.sh`的第7行调用
+    - 函数`func2`是在`lib1.sh`的第8行调用的。
+
 # 其他
 
-## expr
+## bash中的括号
+
+- `[[`
+- `[`
+- `(`
+- `((`
+- `${ ...; }`
 
 ## 双括号语法
-
 
 - 语法：
 
@@ -1170,6 +1782,18 @@ done
   #结果为2,3,4
   ```
 
+TODO: bash笔记
+
+## 目录堆栈
+
+## 临时文件夹
+
+## set,shopt命令
+
+## read命令
+
+## getoption命令
+
 # 后记
 
 因此如果你想了解更多，请运行`man bash`，从那里开始
@@ -1185,6 +1809,7 @@ done
 
 - 学习资源
   - [x] **[bash-handbook-zh-CN](https://github.com/liushuaikobe/bash-handbook-zh-CN)**
+  - [ ] **[网道 Bash 脚本教程](https://wangdoc.com/bash/)**
   - [ ] **[rstacruz/cheatsheets-bash.md](https://github.com/rstacruz/cheatsheets/blob/master/bash.md)** 
     > 异常全的bash命令。包括一些字符串处理
   - [ ] [GNU Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
@@ -1205,4 +1830,9 @@ done
     > 上面有bash和其它shell的各种dotfiles集合以及shell框架的链接
   - [learnyoubash](https://github.com/denysdovhan/learnyoubash)
     > 帮助你编写你的第一个bash脚本
+
+- 其他参考资料:
+  - [Why doesn't Bash `(())` work inside `[[]]`?](https://stackoverflow.com/questions/61889505/why-doesnt-bash-work-inside)
+  - [Use { ..; } instead of (..) to avoid subshell overhead](https://www.shellcheck.net/wiki/SC2235)
+  - [What is the difference between the Bash operators [[ vs [ vs ( vs ((?](https://unix.stackexchange.com/questions/306111/what-is-the-difference-between-the-bash-operators-vs-vs-vs)
 

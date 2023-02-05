@@ -624,6 +624,7 @@ Block IO 指的是磁盘的读写，docker 可通过设置权重、限制 bps �
 
 # 7. 参考资料
 
+- [ ] [docker从入门到实践](https://yeasy.gitbook.io/docker_practice/)
 - [ ] [看云-linux运维docker](https://www.kancloud.cn/noahs/linux/951023)
 - [ ] [docker系统化学习图文](https://www.cnblogs.com/newAndHui/p/13508771.html)
 - [x] [阮一峰-Docker 入门教程](https://www.ruanyifeng.com/blog/2018/02/docker-tutorial.html)

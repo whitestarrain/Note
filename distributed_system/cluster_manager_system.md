@@ -1,7 +1,7 @@
-集群管理器，集群操作系统
+TODO: 集群管理器，集群操作系统
 
 - google: brog
 - baidu: metrix
-- 开源
-  - kubernetes
-  - mesos
+- 阿里: fuxi
+- 腾讯: 台风平台
+- 开源: mesos, kubernetes
