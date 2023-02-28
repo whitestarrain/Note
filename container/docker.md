@@ -400,7 +400,7 @@ Docker 的主要用途，目前有三大类。
 
 - 查看容器
 
-  ```
+  ```bash
   # 旧版命令
   docker ps [可选参数] : 不写参数表示只显示正在运行的容器
     # -a :列出当前所有正在运行的容器+历史上运行过的
@@ -409,8 +409,10 @@ Docker 的主要用途，目前有三大类。
     # -q :静默模式，只显示容器id。
     # --no-trunc :不截断输出。
 
-  #查看运行中的容器
+  #查看运行中的容器。默认不会显示停止的容器。
   docker container ls
+  # 如果想要启动并进入没有前台进程的容器：
+  docker container start <id> && docker exec -it <id> /bin/bash
   #查看所有容器
   docker container ls -a
   ```
@@ -537,8 +539,8 @@ Block IO 指的是磁盘的读写，docker 可通过设置权重、限制 bps �
   - 在下面的例子中，container_A 读写磁盘的带宽是 container_B 的两倍。
 
     ```
-    docker run -it --name container\_A --blkio-weight 600 ubuntu   
-    docker run -it --name container\_B --blkio-weight 300 ubuntu
+    docker run -it --name container_A --blkio-weight 600 ubuntu   
+    docker run -it --name container_B --blkio-weight 300 ubuntu
     ```
 
 - 限制 bps 和 iops
@@ -554,39 +556,236 @@ Block IO 指的是磁盘的读写，docker 可通过设置权重、限制 bps �
     docker run -it --device-write-bps /dev/sda:30MB ubuntu
     ```
 
-## 4.8. 数据卷与挂载
+## 4.8. 数据持久化与共享互联
 
-### 4.8.1. 常见的docker数据卷命令
+### 4.8.1. 说明
 
-- 创建一个数据卷
-  `docker volume create xxx`
-- 查看数据卷列表
-  `docker volume ls`
-- 删除一个数据卷
-  `docker volume rm`
-- 查看一个数据卷的属性
-  `docker volume inspect`
+- 为什么要使用docker数据持久化
+  - 正常情况下，删除容器，容器中所有的文件也会被删除。
+  - 所以需要能持久化容器中数据的方法,也就是数据卷
+  - 数据卷(Data Volume)的作用：
+    - 持久化容器运行过程中产生的数据文件
+    - 实现多个容器间的文件共享。
+    - 实现多个主机间有状态容器的迁移
 
-### 4.8.2. 数据卷与容器卷挂载
+- docker数据卷的分类
+  > 在集群环境下,数据卷分为
+  - 单机内容器间的数据持久化和共享
+    - 数据卷[Data Volume]
+      - 绑定挂载[bind mount]
+      - 容器管理卷[docker managed volume]
+    - 容器卷[volume container]
+  - 跨主机容器间的数据持久化和共享
+    - 使用分布式文件系统(如NFS)
+    - 使用volume driver实现跨主机存储
+      - Rex-Ray插件
+      - [更多官方插件](https://docs.docker.com/engine/extend/legacy_plugins/#volume-plugins)
 
-1. 绑定卷
+- 容器间互连的方式
+  > 容器互联大体有以下三种方式：
+  - 基于volume的互联
+  - 基于link的互联
+  - 基于网络的互联
+ 
+### 4.8.2. 数据卷
 
+#### 4.8.2.1. 说明
+
+- 数据卷[Data Volume]就是将宿主机中的一个文件或目录挂载到容器中,供容器使用
+  - 分为绑定卷[bind mount]和容器管理卷[docker managed volume]
+  - 区别是:
+
+  | 区别点                 | bind mount                   | docker managed volume        |
+  | :--------------------- | :--------------------------- | :--------------------------- |
+  | volume 位置            | 可任意指定                   | /var/lib/docker/volumes/...  |
+  | 对已有mount point 影响 | 隐藏并替换为 volume          | 原有数据复制到 volume        |
+  | 是否支持单个文件       | 支持                         | 不支持，只能是目录           |
+  | 权限控制               | 可设置为只读，默认为读写权限 | 无控制，均为读写权限         |
+  | 移植性                 | 移植性弱，与 host path 绑定  | 移植性强，无需指定 host 目录 |
+
+#### 4.8.2.2. 数据卷命令
+
+- 常用命令
+  - 创建一个数据卷
+    `docker volume create xxx`
+  - 查看数据卷列表
+    `docker volume ls`
+  - 删除一个数据卷
+    `docker volume rm`
+  - 查看一个数据卷的属性
+    `docker volume inspect`
+
+- `-v`挂载数据卷语法
+
+   ```
+   -v 挂载源:挂载目的[:其他选项]
+   ```
+
+   > 使用举例:
+
+    ```bash
+    docker run -d -p 80:80 -v /data/test/:/usr/share/nginx/html nginx
+    # 其他选项一般只有一个`ro`只读选项常用,不举例了
+    ```
+
+  > `-v`参数用法详解
+
+  | `-v`参数所跟选项        | 举例                   | 导致的结果                                                |
+  | :---------------------- | :--------------------- | :-------------------------------------------------------- |
+  | A:不跟任何选项          | -v                     | 根据创建镜像的dockerfiled的配置进行挂载                   |
+  | B:只写一个目录          | -v /data               | 表示只有挂载目的,会自动创建挂载源                         |
+  | C:源目都有[四种]        | -v xxx:/test           | 又如下分四种情况                                          |
+  | C1:源目都是目录         | -v /data/:/test        | 将主机的data目录挂载到容器的test目录                      |
+  | C2:源目都是文件         | -v ~/f.txt:/test/b.txt | 用主机文件f.txt文件替代容器b.txt文件                      |
+  | C3:源是容器管理卷[已建] | -v noah:/test          | 挂载容器管理卷noah为容器目录/test                         |
+  | C4:源是容器管理卷[未建] | -v noah:/test          | 创建并挂载容器管理卷,并用容器目录中的数据初始化容器管理卷 |
+
+#### 4.8.2.3. 绑定挂载(bind mount)示例
+
+先创建好一个目录和里面的测试文件,然后创建实例的时候,直接加参数挂载到相应的目录即可
+
+- 准备数据
+
+  ```bash
+  mkdir -p /data/test/
+  echo 'this is test ----------> bind mount' >/data/test/index.html
   ```
-  docker run -d -p 80:80  -v /data/test/:/usr/share/nginx/html nginx
+
+- 创建`bind mount`的容器
+
+  ```bash
+  docker run -d -p 80:80 -v /data/test/:/usr/share/nginx/html nginx
+   ```
+
+- 验证结果
+
+  ```bash
+  [root@docker01 ~]# curl 127.0.0.1
+  this is test ----------> bind mount
+  [root@docker01 ~]# echo 'this is new change pag' >/data/test/index.html
+  [root@docker01 ~]# curl 127.0.0.1
+  this is new change pag
+  #可见已经将目录成功挂载到容器中,并且可以实时更新
   ```
 
-2. 容器管理卷
+- 用`inspect`查看镜像信息
 
+  ```bash
+  [root@docker01 ~]# docker container inspect 9c5e35343873|grep -A 4 Mounts
+          "Mounts": [
+              {
+                  "Type": "bind",
+                  "Source": "/data/test",
+                  "Destination": "/usr/share/nginx/html",
   ```
-  docker run -d -p 180:80 -v         /usr/share/nginx/html nginx
+
+#### 4.8.2.4. 容器管理卷(docker managed volume)示例
+
+- 手动创建卷"noah-v1"并写入文件
+
+  ```bash
+  docker volume create noah-v1
+  echo 'this is noah-v1 vol' >/var/lib/docker/volumes/noah-v1/_data/index.html
+  ```
+
+- 分别用三种方式创建含容器管理卷的容器
+
+  ```bash
+  # 未指定挂载源时,自动创建一个卷
+  docker run -d -p 180:80 -v /usr/share/nginx/html nginx
+  # 指定的挂载源不存在时,自动创建卷并命名
+  docker run -d -p 280:80 -v noah:/usr/share/nginx/html nginx
+  # 指定的挂载源存在时,直接挂载该卷
   docker run -d -p 380:80 -v noah-v1:/usr/share/nginx/html nginx
+  [root@docker01 ~]# curl 127.0.0.1:380
+  this is noah-v1 vol
+  [root@docker01 ~]# docker volume ls
+  DRIVER              VOLUME NAME
+  local               95b29d4a729017510df9fdc1753ebeb117a7464c24af9657913130c7e6ef2f01
+  local               noah
+  local               noah-v1
   ```
 
-3. 容器卷
+- 分别curl三个端口看结果
 
+  ```bash
+  [root@docker01 ~]# curl 127.0.0.1:180
+  ......
+  [root@docker01 ~]# curl 127.0.0.1:280
+  ......
+  [root@docker01 ~]# curl 127.0.0.1:380
+  this is noah-v1 vol
   ```
+
+### 4.8.3. 容器卷(volume container)
+
+#### 4.8.3.1. 说明
+
+- volume container 是专门为其他容器提供 volume 的容器
+- 它提供的卷可以是 bind mount，也可以是 docker managed volume。
+
+- 特点：
+  - **实现了容器与 host 的解耦**
+    - 与 bind mount 相比，不必为每一个容器指定 host path，
+    - 所有 path 都在 volume container 中定义好了，容器只需与 volume container 关联。
+  - 有利于配置的规范和标准化
+    - 使用 volume container 的容器其 mount point 是一致的，有利于配置的规范和标准化，
+    - 但也带来一定的局限，使用时需要综合考虑。
+
+#### 4.8.3.2. 容器卷示例
+
+- 示例说明
+  - 创建一个名为`vc_data`的容器, mount 了1个`docker managed volume`,
+  - 其他容器可以通过`--volumes-from`使用`vc_data`这个 volume container：
+
+> 注意这里执行的是`docker create`命令，
+> 这是因为 volume container 的作用只是提供数据， **它本身不需要处于运行状态** 。
+
+- 创建容器卷容器
+
+  ```bash
   docker volume create noah-v2
+  echo 'this is noah-v2 vol' >/var/lib/docker/volumes/noah-v2/_data/index.html
+  docker create --name vc_data -v noah-v2:/usr/share/nginx/html busybox
+  ```
+
+- 通过 `docker inspect` 可以查看到信息
+
+  ```bash
+  [root@docker01 ~]# docker inspect vc_data |grep -A 4 Mounts
+          "Mounts": [
+              {
+                  "Type": "volume",
+                  "Name": "noah-v2",
+                  "Source": "/var/lib/docker/volumes/noah-v2/_data",
+  ```
+
+- 其他容器挂载 `vc_data`
+
+  ```bash
   docker run -d -p 801:80 --volumes-from vc_data nginx
+  docker run -d -p 802:80 --volumes-from vc_data nginx
+  ```
+
+- 查看结果验证
+
+  ```
+  [root@docker01 ~]# curl 127.0.0.1:801
+  this is noah-v2 vol
+  [root@docker01 ~]# curl 127.0.0.1:802
+  this is noah-v2 vol
+  ```
+
+- 修改数据验证共享
+
+  ```bash
+  echo 'change data info is now' >/var/lib/docker/volumes/noah-v2/_data/index.html
+  [root@docker01 ~]# curl 127.0.0.1:801
+  change data info is now
+  [root@docker01 ~]# curl 127.0.0.1:802
+  change data info is now
+
+  # 可见，两个容器已经成功共享了 volume container 中的 volume。
   ```
 
 # 5. Dockerfile
