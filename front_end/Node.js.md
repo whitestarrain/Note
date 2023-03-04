@@ -1091,7 +1091,7 @@ NodeJS通过`fs`内置模块提供对文件的操作。`fs`模块提供的API基
 
 ### 3.4.2. BOM的移除
 
-> [BOM详细说明](../others/encryption.md)
+> [BOM详细说明](../base/encoding.md)
 
 - 说明
   - BOM用于标记一个文本文件使用Unicode编码，其本身是一个Unicode字符（"\uFEFF"），位于文本文件头部。

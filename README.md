@@ -171,7 +171,7 @@
 - **其他**
   - [OAuth2.0](./others/OAuth2.0.md)
   - [鉴权](./others/authentication.md)
-  - [编码与加密算法](./others/encryption.md)
+  - [编码](./base/encoding.md)
 
 # 思维导图
 
