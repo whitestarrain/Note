@@ -342,15 +342,19 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 
 ## 5.6. 传输编码语法 TES (Transfer Encoding Syntax)
 
+# 6. 应用与问题
 
-# 6. 参考资料
+## 6.1. mysql处理emoji
 
-- [字符集和字符编码（Charset & Encoding）](https://www.runoob.com/w3cnote/charset-encoding.html)
-- [Unicode 和 UTF-8 的关系](https://blog.csdn.net/zhusongziye/article/details/84261211)
-- [字符编码笔记：ASCII，Unicode 和 UTF-8](https://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html)
-- **[阮一峰的网络日志](https://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html)**
-- [十分钟搞清字符集和字符编码](http://cenalulu.github.io/linux/character-encoding/)
-- [Java中的编码问题：接收、转码、输出](https://blog.csdn.net/ts_dchs/article/details/73011259)
-- [字符编码掠影：现代编码模型](https://www.zhihu.com/question/31833164/answer/115069547?spm=a2c6h.12873639.0.0.50534cadpacQ2r)
-- [字符编码：Unicode、UTF-8、GBK](https://senitco.github.io/2017/06/06/character-encoding/)
+# 7. 参考资料
+
+- [ ] [字符集和字符编码（Charset & Encoding）](https://www.runoob.com/w3cnote/charset-encoding.html)
+- [ ] [Unicode 和 UTF-8 的关系](https://blog.csdn.net/zhusongziye/article/details/84261211)
+- [ ] [字符编码笔记：ASCII，Unicode 和 UTF-8](https://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html)
+- [ ] **[阮一峰的网络日志](https://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html)**
+- [ ] [十分钟搞清字符集和字符编码](http://cenalulu.github.io/linux/character-encoding/)
+- [ ] [Java中的编码问题：接收、转码、输出](https://blog.csdn.net/ts_dchs/article/details/73011259)
+- [ ] [字符编码掠影：现代编码模型](https://www.zhihu.com/question/31833164/answer/115069547?spm=a2c6h.12873639.0.0.50534cadpacQ2r)
+- [ ] [字符编码：Unicode、UTF-8、GBK](https://senitco.github.io/2017/06/06/character-encoding/)
 - [ ] [深入浅出了解Java程序中的乱码](https://blog.csdn.net/weixin_43465312/article/details/106124420)
+- [ ] [让 MySQL 支持存储 emoji 表情](https://juejin.cn/post/6844903847018627079)
