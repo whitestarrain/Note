@@ -258,7 +258,7 @@ Docker 的主要用途，目前有三大类。
 
 # 4. 基础命令
 
-> 其他命令详见docker 文档以及docker --help
+> 其他命令详见docker 文档以及 **docker --help** 
 
 ## 4.1. 命令格式
 
@@ -282,7 +282,7 @@ Docker 的主要用途，目前有三大类。
     老版命令: `docker rmi centos:latest`
     新版命令: `docker image rm centos:latest`
   ```
-- 两种命令式兼容的
+- 两种命令式兼容的。
 
 ## 4.2. docker基本命令
 
@@ -303,16 +303,12 @@ Docker 的主要用途，目前有三大类。
 
 ### 4.4.2. 拉取/推送镜像
 
-1. 拉取镜像到本地
-   `docker image pull centos`
-2. 推送centos镜像到仓库
-   `docker image push centos`
+- 拉取镜像到本地 `docker image pull centos`
+- 推送centos镜像到仓库 `docker image push centos`
 
 ### 4.4.3. 查看/删除镜像
 
-1. 查看镜像
-
-  `docker images`: 查看本机所有镜像
+- 查看本机所有镜像: `docker images`
 
   ```
   注意：
@@ -326,77 +322,163 @@ Docker 的主要用途，目前有三大类。
   - docker images --digests:显示镜像摘要信息
   - docker images --no-trunc：显示完整的进行信息
 
-2. 删除镜像
-
-   `docker image rm centos`
+- 删除镜像 `docker image rm centos`
 
 ### 4.4.4. 导入导出镜像
 
-1. 导出镜像
-   `docker image save centos > docker-centos7.4.tar.gz`
-2. 导入镜像
-   `docker image load -i docker-centos7.4.tar.gz`
+- 导出镜像 `docker image save centos > docker-centos7.4.tar.gz`
+- 导入镜像 `docker image load -i docker-centos7.4.tar.gz`
 
 ## 4.5. 容器命令
 
-### 4.5.1. 创建启动容器
+### 4.5.1. 启动
 
-- 创建容器并启动: 
+- 启动容器有两种方式
+  > 因为 Docker 的容器实在太轻量级了，很多时候用户都是随时删除和新创建容器。
+  - 一种是基于镜像新建一个容器并启动
+  - 另外一个是将在终止状态（exited）的容器重新启动。
+
+- 新建并启动
+  - 所需要的命令主要为 `docker run`。
+  - 示例：
+    - 下面的命令输出一个 “Hello World”，之后终止容器。
+
+      ```
+      docker run ubuntu:18.04 /bin/echo 'Hello world'
+      ```
+      - 这跟在本地直接执行 /bin/echo 'hello world' 几乎感觉不出任何区别。
+    - 下面的命令则启动一个 bash 终端，允许用户进行交互。
+
+      ```
+      docker run -t -i ubuntu:18.04 /bin/bash
+      ```
+      - -t 选项让Docker分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上
+      - -i 则让容器的标准输入保持打开。
+      - 在交互模式下，用户可以通过所创建的终端来输入命令
+    - 若不指定命令，默认docker启动命令为`/bin/bash`
+
+  - 当利用 docker run 来创建容器时，Docker 在后台运行的标准操作包括：
+    - 检查本地是否存在指定的镜像，不存在就从 registry 下载
+    - 利用镜像创建并启动一个容器
+    - 分配一个文件系统，并在只读的镜像层外面挂载一层可读写层
+    - 从宿主主机配置的网桥接口中桥接一个虚拟接口到容器中去
+    - 从地址池配置一个 ip 地址给容器
+    - 执行用户指定的应用程序
+    - 执行完毕后容器被终止
+
+- 启动已终止容器
+  - 可以利用 `docker container start` 命令，直接将一个已经终止（exited）的容器启动运行。
+  - **容器的核心为所执行的应用程序** ，所需要的资源都是应用程序运行所必需的。
+  - 除此之外，并没有其它的资源。
+  - 可以在伪终端中利用 ps 或 top 来查看进程信息。
+
+    ```
+    root@ba267838cc1b:/# ps
+      PID TTY          TIME CMD
+        1 ?        00:00:00 bash
+       11 ?        00:00:00 ps
+    ```
+    - 可见，容器中仅运行了指定的 bash 应用。
+    - 这种特点使得 Docker 对资源的利用率极高，是货真价实的轻量级虚拟化。
+
+- 注意：
+
+  ![docker-6](./image/docker-6.png)
+
+  - 每个容器都会以一个命令作为入口，即会称为容器内的 **初始进程** 
+    - 剩下的其他所有进程都是由初始进程启动的。
+  - `docker container start` 命令就会重新执行入口命令
+  - 若入口命令为 `/bin/bash` 等shell程序
+    - 则可以通过`docker container start -i` 的方式重新进入容器。
+    - 基本原理：
+      - `-i` 会将 STDIN 输入到初始进程，即bash进程
+      - 而bash进程非守护进程(没有指定`-d`参数)，输出则会直接输出到宿主机上。
+      - 表现出来的效果就是一个交互shell
+
+  - **若所有执行的进程都退出的话，容器也会停止** 
+
+- 其他
+  - 有一种方式可以保证 **已经停止的容器内一直运行一个bash程序** ，使容器不停止：
+    ```bash
+    # 启动一个入口命令为bash的容器后再退出
+    docker run -it xxx /bin/bash
+    # 假设刚刚停止的容器id为 yyy
+
+    # 这种方式可以重新开启进入容器，但是退出后容器就会停止
+    docker start -i 
+    # ps -elf输出为：
+      F S UID        PID  PPID  C PRI  NI ADDR SZ WCHAN  STIME TTY          TIME CMD
+      4 S root         1     0  0  80   0 -  3009 do_wai 10:12 pts/0    00:00:00 /bin/bash
+      4 R root        21     1  0  80   0 - 11163 -      10:15 pts/0    00:00:00 ps -elf
+    # 若想要退出bash后，容器就会关闭
+
+    # 可以这样重新启动容器，可以发现ppid为0的有两个bash进程
+    # 这样exit退出后就会一直有一个bash进程跑着
+    docker container start  3aaef6c6a538 && docker exec -it 3aaef6c6a538 /bin/bash
+    [root@3aaef6c6a538 /]# ps -elf
+    F S UID        PID  PPID  C PRI  NI ADDR SZ WCHAN  STIME TTY          TIME CMD
+    4 S root         1     0  0  80   0 -  3009 poll_s 10:31 pts/0    00:00:00 /bin/bash
+    4 S root        14     0  0  80   0 -  3009 do_wai 10:31 pts/1    00:00:00 /bin/bash
+    4 R root        28    14  0  80   0 - 11163 -      10:31 pts/1    00:00:00 ps -elf
+    # 后续可以通过 docker container stop 
+      或者docker container exec <container_id> kill 1 
+      来关闭容器
+    ```
+  - 如果重新启动一个新的容器
+    - 直接`docker run -dit <image_name> /bin/bash` 
+    - 即可在容器里面启动一个bash守护进程
+
+    ![docker-7](./image/docker-7.png)
+
+### 4.5.2. 守护态运行
+
+- 守护态运行：
+  - 需要让 Docker 在后台运行而不是直接把执行命令的结果输出在当前宿主机下
+  - 此时，可以通过添加 -d 参数来实现。
+
+- 示例
+  - 如果不使用 -d 参数运行容器。
 
     ```bash
-    # 旧版命令：
-    docker run 【可选参数】 镜像名称 【可选其他参数】
-      # 在执行命令之后，容器就会退出
-      # 如果需要一个保持运行的容器，最简单的方法就是给这个容器一个可以保持运行的命令或者应用
-    # 以交互模式启动一个容器,在容器内执行/bin/bash命令。
-    docker run -it 镜像名称 /bin/bash: 
-    # 后台运行
-    docker run -d 镜像名称: 后台运行容器，并返回容器ID，也即启动守护式容器
-      # docker启动守护式的容器,就必须有一个前台进程，否则容器会认为没有事情干了，就会自动退出。
-      # 假设我们启动的时候不停的打印日志，那么就表示有前台进程了，然后再次观察
-      # docker run -d centos /bin/bash -c "while true;do echo log;sleep 5;done"
-
-    #创建并启动容器
-    docker container  run -d -p 80:80 nginx:latest {cmd}
-    #单独创建容器
-    docker container create -p 80:80 nginx
-    #单独启动容器
-    docker container start -d 容器ID|容器名
+    $ docker run ubuntu:18.04 /bin/sh -c "while true; do echo hello world; sleep 1; done"
+    hello world
+    hello world
+    hello world
+    hello world
     ```
+    - 容器会把输出的结果 (STDOUT) 打印到宿主机上面
+  - 如果使用了 -d 参数运行容器。
 
-- 参数
+    ```bash
+    $ docker run -d ubuntu:18.04 /bin/sh -c "while true; do echo hello world; sleep 1; done"
+    77b2dc01fe0f3f1265df143181e7b9af5e05279a884f4776ee75350ea9d8017a
+    ```
+    - 此时容器会在后台运行并不会把输出的结果 (STDOUT) 打印到宿主机上面(输出结果可以用 docker logs 查看)。
+    - 注： **容器是否会长久运行，是和 docker run 指定的命令有关，和 -d 参数无关** 。
+    - 使用 -d 参数启动后会返回一个唯一的 id，也可以通过 docker container ls 命令来查看容器信息。
 
-  | 参数名  | 功能                 | 不带此参数时        |
-  | :------ | :------------------- | :------------------ |
-  | -d      | 将容器放在后台运行   | 前台运行,会占用终端 |
-  | -p      | 进行端口映射         | 有些复杂,单独说明   |
-  | -it     | 分配新终端并进入容器 | 不会进入容器内部    |
-  | --name  | 指定容器的名字       | 随机命名            |
-  | cmd     | 覆盖容器的初始命令   | 使用容器的初始命令  |
-  | --cpus  | 限定cpu的权重        | 不限制              |
-  | -memory | 限定内存的大小       | 不限制              |
-  | -h      | 指定容器的主机名     | 以容器端ID命名      |
+      ```bash
+      $ docker container ls
+      CONTAINER ID  IMAGE         COMMAND               CREATED        STATUS       PORTS NAMES
+      77b2dc01fe0f  ubuntu:18.04  /bin/sh -c 'while tr  2 minutes ago  Up 1 minute        agitated_wright
+      ```
+    - 要获取容器的输出信息，可以通过 docker container logs 命令。
+      ```
+      $ docker container logs [container ID or NAMES]
+      hello world
+      hello world
+      hello world
+      ```
 
-  ```
-  -p 端口映射格式：
+### 4.5.3. 停止删除容器
 
-  ip:hostPort:containerPort
-  ip::containerPort
-  hostPort:containerPort
-  containerPort
-  ```
-### 4.5.2. 停止删除容器
+- 停止容器 `docker container stop 容器ID|容器名`
+  - 当 Docker 容器中指定的应用终结时，容器也自动终止
+- 杀死容器 `docker container kill 容器ID|容器名`
+- 删除容器 `docker container rm 容器ID|容器名`
+- 批量删除容器 `docker container rm -f $(docker container ls -a -q)`
 
-1. 停止容器
-   `docker container stop 容器ID|容器名`
-2. 杀死容器
-   `docker container kill 容器ID|容器名`
-3. 删除容器
-   `docker container rm 容器ID|容器名`
-4. 批量删除容器
-   `docker container rm -f $(docker container ls -a -q)`
-
-### 4.5.3. 查看容器
+### 4.5.4. 查看容器
 
 - 查看容器
 
@@ -434,29 +516,72 @@ Docker 的主要用途，目前有三大类。
   - `docker top 容器id或名称:`
   - 支持ps命令参数
 
-### 4.5.4. 进入容器的方法
+### 4.5.5. 进入容器的方法
 
-进入容器的目的：排错，调试
+- 说明
+  - 在使用 -d 参数时，容器启动后会进入后台。
+  - 某些时候需要进入容器进行操作，包括使用 docker attach 命令或 docker exec 命令
+  - 推荐使用 docker exec 命令
 
-- attach 方法[不常用]
-  - `docker container attach [OPTIONS] 容器ID|容器名`
-  - 会通过连接stdin，连接到容器内输入输出流，会实时打印容器的输出信息
-  - 退出很麻烦[Ctrl+p Ctrl+q ],容易按成[Ctrl+c]导致容器被关闭
-- exec方法
-  - `docker container exec [OPTIONS] 容器ID|容器名 {命令}`
-  - 常用`docker exec -it xxx /bin/bash`的方法打开新终端进入容器
+- attach 命令
+  - 下面示例如何使用 docker attach 命令。
 
-### 4.5.5. docker和宿主机器文件复制
+    ```bash
+    $ docker run -dit ubuntu
+    243c32535da7d142fb0e6df616a3c3ada0b8ab417937c853a9e1c251f499f550
+
+    $ docker container ls
+    CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+    243c32535da7        ubuntu:latest       "/bin/bash"         18 seconds ago      Up 17 seconds                           nostalgic_hypatia
+
+    $ docker attach 243c
+    root@243c32535da7:/#
+    ```
+  - 注意： 如果从这个 stdin 中 exit，会导致容器的停止。
+
+- exec 命令
+  - docker exec 后边可以跟多个参数，这里主要说明 -i -t 参数。
+    - 只用 `-i` 参数时
+      - 由于没有分配伪终端，界面 **没有我们熟悉的 Linux 命令提示符**
+      - 但命令执行结果仍然可以返回。
+    - 当 `-i -t` 参数一起使用时
+      - 则可以看到我们熟悉的 Linux 命令提示符。
+
+      ```bash
+      $ docker run -dit ubuntu
+      69d137adef7a8a689cbcb059e94da5489d3cddd240ff675c640c8d96e84fe1f6
+
+      $ docker container ls
+      CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+      69d137adef7a        ubuntu:latest       "/bin/bash"         18 seconds ago      Up 17 seconds                           zealous_swirles
+
+      $ docker exec -i 69d1 bash
+      ls
+      bin
+      boot
+      dev
+      ...
+
+      $ docker exec -it 69d1 bash
+      root@69d137adef7a:/#
+      ```
+  - 如果从这个 stdin 中 exit，不会导致容器的停止
+    - 因为 exec 是在容器中执行一条命令，会新开一个进程
+
+### 4.5.6. 导入和导出
+
+### 4.5.7. docker和宿主机器文件复制
 
 - docker cp 容器id /path/to/docker/file path/of/host: 将容器中的文件拷贝到主机上
 
 ## 4.6. 端口映射
 
-### 4.6.1. docker容器为什么要使用端口映射
+### 4.6.1. 说明
 
-默认情况下，容器使用的ip网段是172.17.0.0/16，外界的用户只能访问宿主机的10.0.0.0/24网段，无法访问172.17.0.0/16网段。
-
-而我们运行容器的目的,是希望运行在容器中的服务，能够被外界访问，这里就涉及到了外网10.0.0.0/24到容器内网172.17.0.0/16网段的转换，所以需要做端口映射。
+- 默认情况下，容器使用的ip网段是172.17.0.0/16
+  - 外界的用户只能访问宿主机的10.0.0.0/24网段，无法访问172.17.0.0/16网段。
+- 而我们运行容器的目的,是希望运行在容器中的服务，能够被外界访问
+  - 这里就涉及到了外网10.0.0.0/24到容器内网172.17.0.0/16网段的转换，所以需要做端口映射。
 
 ### 4.6.2. docker容器端口映射的方法
 
@@ -483,25 +608,25 @@ docker 的端口映射是通过自动添加一条iptables规则实现的
 
 ### 4.7.1. 内存限额
 
-与操作系统类似，容器可使用的内存包括两部分：物理内存和 swap。
+- 与操作系统类似，容器可使用的内存包括两部分：物理内存和 swap。
 
-- `-m` 或 `--memory`：设置内存的使用限额，例如 100M, 2G。
-- `--memory-swap`：设置 **内存+swap** 的使用限额。
-- 默认情况下都为为 -1，即对容器内存和 swap 的使用没有限制。
-- 如果只指定 `-m` 参数，那么 `--memory-swap` 默认为 `-m` 的两倍
+  - `-m` 或 `--memory`：设置内存的使用限额，例如 100M, 2G。
+  - `--memory-swap`：设置 **内存+swap** 的使用限额。
+  - 默认情况下都为为 -1，即对容器内存和 swap 的使用没有限制。
+  - 如果只指定 `-m` 参数，那么 `--memory-swap` 默认为 `-m` 的两倍
 
-命令案例:
+- 命令示例:
 
-```
-docker run -m 200M --memory-swap=300M ubuntu
-```
+  ```
+  docker run -m 200M --memory-swap=300M ubuntu
+  ```
 
-允许该容器最多使用 200M 的内存和 100M 的 swap。
+  - 允许该容器最多使用 200M 的内存和 100M 的 swap。
 
 ### 4.7.2. 动态修改内存限额
 
-动态修改运行中的容器内存限额,需要用到`update`参数,并且不能只修改内存限制,需要同步修改swap限制,否则会报错,报错详见:
-[参考链接](https://my.oschina.net/Kanonpy/blog/2209207)
+- 动态修改运行中的容器内存限额,需要用到`update`参数
+- 并且不能只修改内存限制,需要同步修改swap限制,否则会报错,报错详见: [参考链接](https://my.oschina.net/Kanonpy/blog/2209207)
 
 ```
 docker update  --memory 2048m --memory-swap -1 gitlab
@@ -789,6 +914,12 @@ Block IO 指的是磁盘的读写，docker 可通过设置权重、限制 bps �
   ```
 
 # 5. Dockerfile
+
+## 5.1. 镜像制作说明
+
+## 5.2. 指令详解
+
+## 5.3. 多阶段构建
 
 # 6. 不同系统下的运行原理
 
