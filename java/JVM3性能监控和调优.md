@@ -1630,6 +1630,7 @@ class Picture {
 
   <details>
   <summary style="color:red;">展开</summary>
+
    ```java
    public static void main(String[] args) {
        try {
