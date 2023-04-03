@@ -298,7 +298,6 @@ awk 'BEGIN{
   - [ ] Cassandra
   - [ ] xdb
   - [ ] [elasticsearch](./big_data/elasticsearch.md)
-  - [ ] ELK
   - [ ] TensorRT
   - [ ] [React](./front_end/react.md) <!-- - 个人博客框架 -->
     - 练手项目：浏览器主页私人定制
@@ -312,10 +311,12 @@ awk 'BEGIN{
     - 网易云 音乐可视化软件 [音乐频谱库vudio.js](https://github.com/alex2wong/vudio.js)
   - [ ] 大数据：数据湖，湖仓一体，delta lake
   - [ ] 对象存储，apache ozone，以及其他存储概念
+  - [ ] 中间件Nacos
 - 阅读书目
   > 个人习惯在实体书，或者使用 知之阅读 做一些读书笔记。markdown版笔记主要针对一些工具书
   - [x] 代码整洁之道
   - [x] 重构：改善既有代码设计
+  - [ ] [《操作系统导论》(OS Three Easy Pieces)](https://github.com/remzi-arpacidusseau/ostep-translations/tree/master/chinese)
   - [ ] clickhouse 原理解析与应用实践
   - [ ] 数据密集型应用系统设计 
   - [ ] 深入理解现代操作系统
@@ -327,6 +328,7 @@ awk 'BEGIN{
   - [x] hadoop+hive+hbase
   - [ ] Spark
   - [ ] Flink
+  - [ ] ELK
 - 短期小任务
   - [ ] Gossip 协议
   - [x] Raft 协议

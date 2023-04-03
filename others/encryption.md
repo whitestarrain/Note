@@ -171,3 +171,4 @@
 - [hashids库说明](https://zhuanlan.zhihu.com/p/32671455)
   - [Cryptanalysis of hashids](http://carnage.github.io/2015/08/cryptanalysis-of-hashids)
 - [HTTPS 证书和中间人攻击的原理](https://cloud.tencent.com/developer/article/1900287)
+- [LEB128编码格式](http://gttiankai.github.io/2016/06/30/leb128%E7%BC%96%E7%A0%81%E6%A0%BC%E5%BC%8F/)

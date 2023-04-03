@@ -2207,25 +2207,25 @@ Condition默认会对2个过程都有效
 ConfigurationCondition控制得更细一些，可以控制到具体那个阶段使用条件判断
 ```
 
-### 注解实现依赖注入
+### 2.4.6. 注解实现依赖注入
 
-#### @Autowired
+#### 2.4.6.1. @Autowired
 
-#### @Resource
+#### 2.4.6.2. @Resource
 
-#### @Primary
+#### 2.4.6.3. @Primary
 
-#### @Qulifier
+#### 2.4.6.4. @Qulifier
 
-### 其他
+### 2.4.7. 其他
 
-#### @Scope
+#### 2.4.7.1. @Scope
 
-#### @DependsOn
+#### 2.4.7.2. @DependsOn
 
-#### @ImportResource
+#### 2.4.7.3. @ImportResource
 
-#### @@Lazy
+#### 2.4.7.4. @@Lazy
 
 ## 2.5. xml 和注解实现单表 crud
 
@@ -4206,7 +4206,7 @@ public class JdbcConfig {
 }
 ```
 
-### 编程式(硬编码)事务使用方式
+### 5.2.5. 编程式(硬编码)事务使用方式
 
 ## 5.3. 事务失效情况分析
 
@@ -4815,15 +4815,15 @@ public class JdbcConfig {
     - 避免由于 spring aop 问题，导致事务失效的问题。
     - 能够更小粒度的控制事务的范围，更直观。
 
-## 多数据源的事务管理
+## 5.4. 多数据源的事务管理
 
-## 事务消息
+## 5.5. 事务消息
 
-## 事务拦截器
+## 5.6. 事务拦截器
 
-# Spring 中使用注解实现相关功能
+# 6. Spring 中使用注解实现相关功能
 
-## @PropertySource、@Value 注解及动态刷新实现
+## 6.1. @PropertySource、@Value 注解及动态刷新实现
 
 ### 6.1.1. @PropertySource
 
@@ -4912,29 +4912,29 @@ public class JdbcConfig {
 
   ```
 
-## 国际化
+## 6.2. 国际化
 
-## Spring 中的事件
+## 6.3. Spring 中的事件
 
-## @Scheduled & @EnableScheduling 定时器详解
+## 6.4. @Scheduled & @EnableScheduling 定时器详解
 
-## SPEL 表达式进行计算
+## 6.5. SPEL 表达式进行计算
 
-## 缓存使用
+## 6.6. 缓存使用
 
 > 缓存使用 @EnableCaching、@Cacheable、@CachePut、@CacheEvict、@Caching、@CacheConfig
 
-### 基本使用
+### 6.6.1. 基本使用
 
-### @EnableCaching 集成 redis
+### 6.6.2. @EnableCaching 集成 redis
 
-# 6. Spring IOC 实现原理
+# 7. Spring IOC 实现原理
 
 > 从顶层构建对 IoC 容器的设计理解，而不是过早沉溺于代码的细节
 
-## 6.1. IOC 体系设计
+## 7.1. IOC 体系设计
 
-### 6.1.1. 站在设计者的角度考虑设计 IOC 容器
+### 7.1.1. 站在设计者的角度考虑设计 IOC 容器
 
 - 在设计时，首先需要考虑的是 IOC 容器的功能（输入和输出), 承接前面的文章，我们初步的画出 IOC 容器的整体功能。
 
@@ -4954,9 +4954,9 @@ public class JdbcConfig {
 
   > (这种思考的过程才是建设性的，知识体系的构建才是高效的
 
-### 6.1.2. BeanFactory 和 BeanRegistry:IOC 容器功能规范和 Bean 的注册
+### 7.1.2. BeanFactory 和 BeanRegistry:IOC 容器功能规范和 Bean 的注册
 
-#### 6.1.2.1. 基本说明
+#### 7.1.2.1. 基本说明
 
 - 说明
 
@@ -4971,7 +4971,7 @@ public class JdbcConfig {
 
   ![spring-src-2](./image/spring-src-2.png)
 
-#### 6.1.2.2. BeanFactory 定义的功能规范
+#### 7.1.2.2. BeanFactory 定义的功能规范
 
 - BeanFactory 作为最顶层的一个接口类，它定义了 IOC 容器的基本功能规范
 - BeanFactory 有三个子类
@@ -5019,7 +5019,7 @@ public class JdbcConfig {
   }
   ```
 
-#### 6.1.2.3. 继承 BeanFactory 的接口
+#### 7.1.2.3. 继承 BeanFactory 的接口
 
 - 目的： **主要是为了区分在 Spring 内部在操作过程中对象的传递和转化过程中，对对象的数据访问所做的限制**
 - 主要接口：
@@ -5041,16 +5041,16 @@ public class JdbcConfig {
   - AutowireCapableBeanFactory：
     - 定义了将容器中的 Bean 按某种规则（如按名字匹配、按类型匹配等）进行自动装配的方法；
 
-### 6.1.3. 注册 Bean 倒 BeanFactory
+### 7.1.3. 注册 Bean 倒 BeanFactory
 
 - 使用 BeanRegistry 将 Bean 注册倒 BeanFactory 中
 - Spring 配置文件中每一个`<bean>`节点元素在 Spring 容器里都通过一个 BeanDefinition 对象表示
 - BeanDefinition 描述了 Bean 的配置信息
 - 而 BeanDefinitionRegistry 接口提供了向容器手工注册 BeanDefinition 对象的方法。
 
-### 6.1.4. BeanDefinition:各种 Bean 与相互关系
+### 7.1.4. BeanDefinition:各种 Bean 与相互关系
 
-#### 6.1.4.1. 基本说明
+#### 7.1.4.1. 基本说明
 
 - 目的：
   - Bean 对象存在依赖嵌套等关系，所以设计者设计了 BeanDefinition，它用来对 Bean 对象及关系定义
@@ -5059,7 +5059,7 @@ public class JdbcConfig {
   - BeanDefinitionReader 这是 BeanDefinition 的解析器
   - BeanDefinitionHolder 这是 BeanDefination 的包装类，用来存储 BeanDefinition，name 以及 aliases 等。
 
-#### 6.1.4.2. BeanDefinition 继承体系
+#### 7.1.4.2. BeanDefinition 继承体系
 
 - SpringIOC 容器管理了我们定义的各种 Bean 对象及其相互的关系
 - Bean 对象在 Spring 实现中是以 BeanDefinition 来描述的
@@ -5067,7 +5067,7 @@ public class JdbcConfig {
 
   ![spring-src-3](./image/spring-src-3.png)
 
-#### 6.1.4.3. BeanDefinitionReader
+#### 7.1.4.3. BeanDefinitionReader
 
 - Bean 的解析过程非常复杂，功能被分的很细，
 - 因为这里需要被扩展的地方很多，必须保证有足够的灵活性，以应对可能的变化
@@ -5076,15 +5076,15 @@ public class JdbcConfig {
 
 ![spring-src-4](./image/spring-src-4.png)
 
-#### 6.1.4.4. BeanDefinitionHolder
+#### 7.1.4.4. BeanDefinitionHolder
 
 - BeanDefinitionHolder 这是 BeanDefination 的包装类，用来存储 BeanDefinition，name 以及 aliases 等
 
   ![spring-src-5](./image/spring-src-5.png)
 
-### 6.1.5. ApplicationContext：IOC 接口设计和实现
+### 7.1.5. ApplicationContext：IOC 接口设计和实现
 
-#### 6.1.5.1. 基本说明
+#### 7.1.5.1. 基本说明
 
 - IoC 容器的接口类是 ApplicationContext
 - 很显然它必然继承 BeanFactory，对 Bean 规范（最基本的 ioc 容器的实现）进行定义
@@ -5094,7 +5094,7 @@ public class JdbcConfig {
   - 国际化: 支持信息源，可以实现国际化。（实现 MessageSource 接口）
   - 应用事件: 支持应用事件。(实现 ApplicationEventPublisher 接口)
 
-#### 6.1.5.2. ApplicationContext 接口的设计
+#### 7.1.5.2. ApplicationContext 接口的设计
 
 - 整体结构
 
@@ -5119,7 +5119,7 @@ public class JdbcConfig {
     - ApplicationContext 会将 start/stop 的信息传递给容器中所有实现了该接口的 Bean
     - 以达到管理和控制 JMX、任务调度等目的
 
-#### 6.1.5.3. ApplicationContext 接口的实现
+#### 7.1.5.3. ApplicationContext 接口的实现
 
 - 在考虑 ApplicationContext 接口的实现时
 
@@ -5181,19 +5181,19 @@ public class JdbcConfig {
       */
     ```
 
-### 6.1.6. 设计总结
+### 7.1.6. 设计总结
 
 - 从顶层构建理解 ioc 容器：
 
   ![spring-src-8](./image/spring-src-8.png)
 
-## 6.2. ioc 容器初始化流程
+## 7.2. ioc 容器初始化流程
 
 > 自己打开 ide 看看，debug 一下，比较清晰。下面的说明基本上是根据调用链进行的说明
 >
 > 下面的代码都往里，往外好几层
 
-### 6.2.1. 引入
+### 7.2.1. 引入
 
 - 通过阅读源码的方式，说明：
 
@@ -5202,9 +5202,9 @@ public class JdbcConfig {
 
   ![spring-src-9](./image/spring-src-9.png)
 
-### 6.2.2. 整体流程
+### 7.2.2. 整体流程
 
-#### 6.2.2.1. 初始化的入口
+#### 7.2.2.1. 初始化的入口
 
 > IOC 容器初始化过程
 
@@ -5239,7 +5239,7 @@ public class JdbcConfig {
   }
   ```
 
-#### 6.2.2.2. 设置资源解析器和环境
+#### 7.2.2.2. 设置资源解析器和环境
 
 - 调用父类容器 AbstractApplicationContext 的构造方法(`super(parent)`方法)，为容器设置好 Bean 资源加载器
 
@@ -5288,7 +5288,7 @@ public class JdbcConfig {
   }
   ```
 
-#### 6.2.2.3. 设置配置路径
+#### 7.2.2.3. 设置配置路径
 
 - 在设置容器的资源加载器之后，接下来 FileSystemXmlApplicationContet 执行 setConfigLocations 方法通过调用其父类 AbstractRefreshableConfigApplicationContext 的方法进行对 Bean 定义资源文件的定位
 
@@ -5312,7 +5312,7 @@ public class JdbcConfig {
   }
   ```
 
-#### 6.2.2.4. 初始化的主体流程(refresh 方法)
+#### 7.2.2.4. 初始化的主体流程(refresh 方法)
 
 > **基本说明**
 
@@ -5401,7 +5401,7 @@ public class JdbcConfig {
   - 将初始化的阶段封装，用来记录当前初始化到什么阶段；常见的设计是 xxxPhase/xxxStage；
   - 资源加载初始化有失败等处理，必然是 try/catch/finally...
 
-#### 6.2.2.5. refresh 中的 obtainFreshBeanFactory
+#### 7.2.2.5. refresh 中的 obtainFreshBeanFactory
 
 - 初始化 BeanFactory 之 obtainFreshBeanFactory
 
@@ -5540,44 +5540,6 @@ public class JdbcConfig {
 - XmlBeanDefinitionReader 加载 Bean 定义资源
 
   ```java
-
-  e
-  {
-  ;
-  }
-
-  {
-  ;
-  {
-  ;
-  }
-
-  ;
-
-  {
-  (
-  ;
-  }
-
-  {
-  ;
-  {
-  ;
-  }
-  ;
-  }
-  {
-  (
-  ;
-  }
-  {
-  ;
-  {
-  ;
-  }
-  }
-  }
-
   /**
       * 本质上是加载XML配置的Bean。
       * @param inputSource the SAX InputSource to read from
@@ -5630,12 +5592,6 @@ public class JdbcConfig {
 - DocumentLoader 将 Bean 定义资源转换为 Document 对象
 
   ```java
-
-  {
-  ,
-  ;
-  }
-
   // 使用标准的JAXP将载入的Bean定义资源转换成document对象
   @Override
   public Document loadDocument(InputSource inputSource, EntityResolver entityResolver,
@@ -5935,7 +5891,7 @@ public class JdbcConfig {
   - IoC 容器的作用就是对这些注册的 Bean 定义信息进行处理和维护
   - 这些的注册的 Bean 定义信息是 IoC 容器控制反转的基础，正是有了这些注册的数据，容器才可以进行依赖注入
 
-### 6.2.3. 总结
+### 7.2.3. 总结
 
 ![spring-src-12](./image/spring-src-12.png)
 
@@ -5960,9 +5916,9 @@ public class JdbcConfig {
   - 基本的策略是把工厂放到已知的地方，最好是放在对预期使用的上下文有意义的地方，以及代码将实际需要访问工厂的地方
   - Spring 本身提供了对声明式载入 web 应用程序用法的应用程序上下文,并将其存储在 ServletContext 中的框架实现
 
-## 6.3. Bean 实例化，循环依赖与生命周期
+## 7.3. Bean 实例化，循环依赖与生命周期
 
-### 6.3.1. 引入
+### 7.3.1. 引入
 
 - 前言
   - 前面，了解了 IOC 设计要点和设计结构；以及 Spring 如何实现将资源配置（以 xml 配置为例）通过加载，解析，生成 BeanDefination 并注册到 IoC 容器中的；
@@ -5977,7 +5933,7 @@ public class JdbcConfig {
   - Spring 如何解决循环依赖问题
   - Spring 中 Bean 的生命周期
 
-### 6.3.2. 基本思路
+### 7.3.2. 基本思路
 
 - BeanFactory 中获取 Bean 的方法：
 
@@ -6012,7 +5968,7 @@ public class JdbcConfig {
   >
   > Spring 还需要考虑各种设计上的问题，比如 beanDefinition 中其它定义，循环依赖等
 
-### 6.3.3. Spring 中 Bean 实例化主体流程
+### 7.3.3. Spring 中 Bean 实例化主体流程
 
 - BeanFactory 实现 getBean 方法在 AbstractBeanFactory 中，这个方法重载都是调用 doGetBean 方法进行实现的
 
@@ -6303,14 +6259,14 @@ public class JdbcConfig {
     }
   ```
 
-### 6.3.4. 重点：循环依赖问题
+### 7.3.4. 重点：循环依赖问题
 
-#### 6.3.4.1. 什么是循环依赖
+#### 7.3.4.1. 什么是循环依赖
 
 - 多个 bean 之间相互依赖，形成了一个闭环。
 - 比如：A 依赖于 B、B 依赖于 C、C 依赖于 A。
 
-#### 6.3.4.2. 如何检测循环依赖
+#### 7.3.4.2. 如何检测循环依赖
 
 - 检测循环依赖比较简单，使用一个列表来记录正在创建中的 bean
 - bean 创建之前，先去记录中看一下自己是否已经在列表中了，如果在，说明存在循环依赖
@@ -6330,7 +6286,7 @@ protected void beforeSingletonCreation(String beanName) {
 - this.singletonsCurrentlyInCreation.add(beanName)返回 false，说明 beanName 已经在当前列表中了
 - 此时会抛循环依赖的异常 BeanCurrentlyInCreationException
 
-#### 6.3.4.3. 解决基础：三级缓存
+#### 7.3.4.3. 解决基础：三级缓存
 
 - 三级缓存
 
@@ -6393,7 +6349,7 @@ protected void beforeSingletonCreation(String beanName) {
   - 若是仍是获取不到且容许 singletonFactories 经过 getObject()获取，就从三级缓存 singletonFactory.getObject()(三级缓存)获取
   - 若是获取到了则从三级缓存移动到了二级缓存。
 
-#### 6.3.4.4. Spring 解决循环依赖分析
+#### 7.3.4.4. Spring 解决循环依赖分析
 
 > **主要依靠三级缓存 singletonFactories**
 
@@ -6457,7 +6413,7 @@ public interface ObjectFactory<T> {
   9. 并且更加幸运的是，因为B拿到了A的对象引用，因此B如今hold住的A对象完成了初始化。
   ```
 
-#### 6.3.4.5. 循环依赖相关问题
+#### 7.3.4.5. 循环依赖相关问题
 
 - Spring 为什么不能解决构造器的循环依赖？
   - 构造器注入形成的循环依赖： 也就是 beanB 需要在 beanA 的构造函数中完成初始化
@@ -6533,9 +6489,9 @@ public interface ObjectFactory<T> {
   - 循环依赖的情况下，由于注入的是早期的 bean，此时早期的 bean 中还未被填充属性，初始化等各种操作
   - 也就是说此时 bean 并没有被完全初始化完毕，此时若直接拿去使用，可能存在有问题的风险。
 
-### 6.3.5. Bean 生命周期
+### 7.3.5. Bean 生命周期
 
-#### 6.3.5.1. 基本说明
+#### 7.3.5.1. 基本说明
 
 - 注意：
 
@@ -6557,7 +6513,7 @@ public interface ObjectFactory<T> {
   - 了解 Spring 生命周期的意义就在于，可以利用 Bean 在其存活期间的指定时刻完成一些相关操作
   - 这种时刻可能有很多，但一般情况下，会在 Bean 被初始化后和被销毁前执行一些相关操作。
 
-#### 6.3.5.2. 生命周期说明
+#### 7.3.5.2. 生命周期说明
 
 ![spring-src-15](./image/spring-src-15.png)
 
@@ -6590,33 +6546,33 @@ public interface ObjectFactory<T> {
   - **容器级生命周期接口方法**： 这个包括了 InstantiationAwareBeanPostProcessor 和 BeanPostProcessor 这两个接口实现，一般称它们的实现类为“后处理器”。
   - **工厂后处理器接口方法**： 这个包括了 AspectJWeavingEnabler, ConfigurationClassPostProcessor, CustomAutowireConfigurer 等等非常有用的工厂后处理器　　接口的方法。工厂后处理器也是容器级的。在应用上下文装配配置文件之后立即调用。
 
-#### 6.3.5.3. 生命周期案例
+#### 7.3.5.3. 生命周期案例
 
-#### 6.3.5.4. 生命周期源码
+#### 7.3.5.4. 生命周期源码
 
-# 7. Spring AOP 实现原理
+# 8. Spring AOP 实现原理
 
-## 7.1. 切面实现
+## 8.1. 切面实现
 
-## 7.2. 代理创建
+## 8.2. 代理创建
 
-### 7.2.1. Cglib 代理
+### 8.2.1. Cglib 代理
 
-### 7.2.2. JDK 代理
+### 8.2.2. JDK 代理
 
-# 8. SpringMVC
+# 9. SpringMVC
 
-## 8.1. 基本流程
+## 9.1. 基本流程
 
-## 8.2. DispatcherServlet 初始化过程
+## 9.2. DispatcherServlet 初始化过程
 
-## 8.3. DispatcherServlet 处理请求过程
+## 9.3. DispatcherServlet 处理请求过程
 
-## 父子容器
+## 9.4. 父子容器
 
-# 9. SPEL
+# 10. SPEL
 
-# 10. 参考资料
+# 11. 参考资料
 
 - [ ] **[java 充电社-Spring 教程](http://www.itsoku.com/course/5)**
   > 复习的话，绝对要读一遍。也可以当常用 api 的手册

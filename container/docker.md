@@ -950,11 +950,11 @@ Block IO 指的是磁盘的读写，docker 可通过设置权重、限制 bps �
   - Namespace 则会将容器隔离起来，实现边界
 - 这样看来，容器只是一种被限制的了特殊进程而已。
 
-### 6.1.2. NameSpaces
+### 6.1.2. NameSpaces(容器隔离)
 
-### 6.1.3. CGroups
+### 6.1.3. CGroups( 容器限制)
 
-### 6.1.4. UnionFS
+### 6.1.4. UnionFS(文件系统隔离)
 
 ## 6.2. Windows
 
