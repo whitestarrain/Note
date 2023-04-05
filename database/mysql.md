@@ -3372,7 +3372,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4='a4' ORDER 
 ```
 
 - `EXPLAIN SELECT * FROM~ test03 WHERE c1='a1' AND c2='a2' ORDER BY c3;`
-- 那不就和上面一样的嘛~~，c4 列都没有用到索引
+- 那不就和上面一样的嘛，c4 列都没有用到索引
 
 ```
 mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c3; 
@@ -4082,37 +4082,13 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
 
 经典的数据库拆分方案，主库负责写，从库负责读；
 
-详情请看下面的**主从复制，读写分离**
+详情请看下面的 **主从复制，读写分离**
 
-## 7.3. 分区分库分表
+## 7.3. 分区
 
-TODO: 分库，分表，分库中间件
+TODO: 分区
 
-待整理
-
-- [一文快速入门分库分表](https://mp.weixin.qq.com/s/rYG58KS9kHDDOMajKT9y5Q)
-- [MySql分库分表与分区的区别和思考](https://www.cnblogs.com/GrimMjx/p/11772033.html#_label1_0)
-- [搞懂MySQL分区](https://www.cnblogs.com/GrimMjx/p/10526821.html)
-
-### 7.3.1. 说明
-
-- 说明：
-  - 分库分表是为了解决由于库、表数据量过大，而导致数据库性能持续下降的问题。
-  - 按照一定的规则，将原本数据量大的数据库拆分成多个单独的数据库，将原本数据量大的表拆分成若干个数据表，使得单一的库、表性能达到最优的效果（响应速度快），以此提升整体数据库性能。
-
-- 场景
-  - 单表的数据达到千万级别以上，数据库读写速度比较缓慢（分表）。
-  - 数据库中的数据占用的空间越来越大，备份时间越来越长（分库）。
-  - 应用的并发量太大（分库）。
-
-![mysql-7-1](./image/mysql-7-1.png)
-
-- 顺序
-  - 分表
-  - 分库
-  - 分区
-
-### 7.3.2. Innodb逻辑存储结构
+### 7.3.1. Innodb逻辑存储结构
 
 > **结构图**
 
@@ -4150,9 +4126,7 @@ TODO: 分库，分表，分库中间件
     - 压缩的二进制大对象页
     - ...
 
-### 7.3.3. 分区
-
-#### 7.3.3.1. 分区概述
+### 7.3.2. 分区概述
 
 > 这里讲的分区的意思是指将同一表中不同行的记录分配到不同的物理文件中，**几个分区就有几个.idb文件**，不是存储结构中的区
 
@@ -4164,44 +4138,76 @@ TODO: 分库，分表，分库中间件
 - 注意
   - 要知道MySQL是面向OLTP的数据，它不像TIDB等其他DB。
   - 那么对于分区的使用应该非常小心，如果不清楚如何使用分区可能会对性能产生负面的影响。
+  - MySQL数据库的分区是局部分区索引，一个分区中既存了数据，又放了索引。也就是说，
+    - 每个区的聚集索引和非聚集索引都放在各自区的（不同的物理文件）。
+    - 目前MySQL数据库还不支持全局分区。
+  - 无论哪种类型的分区，如果表中存在主键或唯一索引时，分区列必须是唯一索引的一个组成部分。
 
-　　MySQL数据库的分区是局部分区索引，一个分区中既存了数据，又放了索引。也就是说，每个区的聚集索引和非聚集索引都放在各自区的（不同的物理文件）。目前MySQL数据库还不支持全局分区。
+### 7.3.3. 分区类型
 
-　　无论哪种类型的分区，如果表中存在主键或唯一索引时，分区列必须是唯一索引的一个组成部分。
+### 7.3.4. 分区和性能
 
-#### 7.3.3.2. 分区类型
+## 7.4. 分库分表
 
-#### 7.3.3.3. 分区和性能
+TODO: 分库，分表，分库中间件
 
-### 7.3.4. 分表
+### 7.4.1. 说明
 
-#### 7.3.4.1. 水平分表
+![mysql-7-1](./image/mysql-7-1.png)
 
-#### 7.3.4.2. 垂直分表
+- 说明：
+  - 分库分表是为了解决由于库、表数据量过大，而导致数据库性能持续下降的问题。
+  - 按照一定的规则，将原本数据量大的数据库拆分成多个单独的数据库，
+  - 将原本数据量大的表拆分成若干个数据表，使得单一的库、表性能达到最优的效果（响应速度快），以此提升整体数据库性能。
 
-### 7.3.5. 分库
+- 相较与分区:
+  - 用途：
+    - 分库分表是为了承接超出单机规模的表
+    - 分区的话则一般都是放在单机里的，用的比较多的是时间范围分区，方便归档。
+  - 实现：
+    - 分区表是mysql内部实现的，会比分表方案少一点数据交互
 
-#### 7.3.5.1. 水平分库
+- 场景
+  - 单表的数据达到千万级别以上，数据库读写速度比较缓慢（分表）。
+  - 数据库中的数据占用的空间越来越大，备份时间越来越长（分库）。
+  - 应用的并发量太大（分库）。
 
-#### 7.3.5.2. 垂直分库
+- 参考顺序: 
+  > 先垂直分，后水平分
+  - 先垂直分表
+  - 再垂直分库
+  - 再水平分库
+  - 最后水平分表
 
-### 7.3.6. 分库分表涉及算法
+### 7.4.2. 分表
 
-#### 7.3.6.1. 取模算法
+#### 7.4.2.1. 水平分表
 
-#### 7.3.6.2. 范围限定算法
+#### 7.4.2.2. 垂直分表
 
-### 7.3.7. 带来的问题
+### 7.4.3. 分库
 
-#### 7.3.7.1. 跨库联合查询
+#### 7.4.3.1. 水平分库
+
+#### 7.4.3.2. 垂直分库
+
+### 7.4.4. 分库分表涉及算法
+
+#### 7.4.4.1. 取模算法
+
+#### 7.4.4.2. 范围限定算法
+
+### 7.4.5. 带来的问题
+
+#### 7.4.5.1. 跨库联合查询
 
 - **join 操作** ： 同一个数据库中的表分布在了不同的数据库中，导致无法使用 join 操作。这样就导致我们需要手动进行数据的封装，比如你在一个数据库中查询到一个数据之后，再根据这个数据去另外一个数据库中找对应的数据。
 
-#### 7.3.7.2. 分布式事务
+#### 7.4.5.2. 分布式事务
 
 - **事务问题** ：同一个数据库中的表分布在了不同的数据库中，如果单个操作涉及到多个数据库，那么数据库自带的事务就无法满足我们的要求了。
 
-#### 7.3.7.3. 分布式id
+#### 7.4.5.3. 分布式id
 
 - **分布式 id** ：分库之后， 数据遍布在不同服务器上的数据库，数据库的自增主键已经没办法满足生成的主键唯一了。我们如何为不同的数据节点生成全局唯一主键呢？这个时候，我们就需要为我们的系统引入分布式 id 了。
 
@@ -4216,7 +4222,7 @@ TODO: 分库，分表，分库中间件
 
 <!--file:///D:/learn/githubRepo/JavaGuide/docs/system-design/micro-service/%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.md-->
 
-#### 7.3.7.4. 数去迁移问题
+#### 7.4.5.4. 数去迁移问题
 
 > **停机迁移**
 
@@ -6042,25 +6048,28 @@ TODO: mysql semi-join
 
 # 16. 参考资料
 
-- [尚硅谷MySQL数据库高级，mysql优化，数据库优化](https://www.bilibili.com/video/BV1KW411u7vy?p=44)
-- [Mysql笔记博客](https://blog.csdn.net/oneby1314/category_10278969.html)
-- [论 MySql InnoDB 如何通过插入意向锁控制并发插入](https://juejin.cn/post/6844903666856493064)
-- [InnoDB解决幻读的方案--LBCC&MVCC](https://mp.weixin.qq.com/s/4ncvGW7klk8pDLE5o4jhFw)
-- [一分钟理清mysql锁种类](https://blog.csdn.net/zcl_love_wx/article/details/82052479)
-- [面试官出的MySQL索引问题，这篇文章全给你解决！](https://segmentfault.com/a/1190000020621056)
-- [MySQL -- Fast Index Creation](https://www.cnblogs.com/abclife/p/7505064.html)
-- [一文快速入门分库分表](https://mp.weixin.qq.com/s/rYG58KS9kHDDOMajKT9y5Q)
-- [MySql分库分表与分区的区别和思考](https://www.cnblogs.com/GrimMjx/p/11772033.html#_label1_0)
-- [搞懂MySQL分区](https://www.cnblogs.com/GrimMjx/p/10526821.html)
-- [使用mysql乐观锁解决并发问题](https://www.cnblogs.com/laoyeye/p/8097684.html)
-- **[Mysql-基础篇(1)-一条更新SQL执行流程](https://www.jianshu.com/p/d4e6105ab4e5)**
-- [mysql insert锁机制](https://www.cnblogs.com/better-farther-world2099/articles/14722850.html)(待整理)
-- [Mysql自定义变量的使用](https://jianshu.com/p/357a02fb2d64)
-- [MySQL 5.6 Reference Manual](https://docs.oracle.com/cd/E17952_01/mysql-5.6-en/index.html)
+- [x] [尚硅谷MySQL数据库高级，mysql优化，数据库优化](https://www.bilibili.com/video/BV1KW411u7vy?p=44)
+- [x] [Mysql笔记博客](https://blog.csdn.net/oneby1314/category_10278969.html)
+- [x] [论 MySql InnoDB 如何通过插入意向锁控制并发插入](https://juejin.cn/post/6844903666856493064)
+- [x] [InnoDB解决幻读的方案--LBCC&MVCC](https://mp.weixin.qq.com/s/4ncvGW7klk8pDLE5o4jhFw)
+- [x] [一分钟理清mysql锁种类](https://blog.csdn.net/zcl_love_wx/article/details/82052479)
+- [x] [面试官出的MySQL索引问题，这篇文章全给你解决！](https://segmentfault.com/a/1190000020621056)
+- [x] [MySQL -- Fast Index Creation](https://www.cnblogs.com/abclife/p/7505064.html)
+- [ ] [一文快速入门分库分表](https://mp.weixin.qq.com/s/rYG58KS9kHDDOMajKT9y5Q)
+- [ ] [MySql分库分表与分区的区别和思考](https://www.cnblogs.com/GrimMjx/p/11772033.html#_label1_0)
+- [ ] [搞懂MySQL分区](https://www.cnblogs.com/GrimMjx/p/10526821.html)
+- [ ] [分库分表的垂直切分与水平切分](https://www.51cto.com/article/698289.html)
+- [ ] [MySQL分库分表，何时分？怎么分？](https://developer.aliyun.com/article/943858)
+- [ ] [使用mysql乐观锁解决并发问题](https://www.cnblogs.com/laoyeye/p/8097684.html)
+- [x] **[Mysql-基础篇(1)-一条更新SQL执行流程](https://www.jianshu.com/p/d4e6105ab4e5)**
+- [ ] [mysql insert锁机制](https://www.cnblogs.com/better-farther-world2099/articles/14722850.html)(待整理)
+- [ ] [Mysql自定义变量的使用](https://jianshu.com/p/357a02fb2d64)
+- [ ] [MySQL 5.6 Reference Manual](https://docs.oracle.com/cd/E17952_01/mysql-5.6-en/index.html)
 - [x] [Mysql加锁过程详解（1）-基本知识](https://blog.csdn.net/geekjoker/article/details/79444076)
 - [ ] [报错：mysqldump: Got error: 1044:](https://blog.csdn.net/liu16659/article/details/84838764)
 - [ ] [深入理解mysqldump原理](https://blog.csdn.net/cug_jiang126com/article/details/49824471)
 - [ ] [数据库系统的三大范式以及BCNF范式](https://blog.csdn.net/weixin_43649997/article/details/105835007)
 - [ ] 《数据库系统概念》
+
 
 

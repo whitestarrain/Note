@@ -142,9 +142,9 @@
 - **分布式** 
   - [分布式系统概念](./distributed_system/distribute_system_concept.md)
     > 一些算法和概念依旧不太全，有时间再继续补充
-  - [zookeeper](./distributed_system/zookeeper.md)
+  - [zookeeper](./Middleware/zookeeper.md)
     > zookeeper基本概念，主要流程以及一些api
-  - [dubbo](./distributed_system/dubbo.md)
+  - [dubbo](./javaFrame/dubbo.md)
     > 一些简单笔记，估计还是官方文档好用
   - [SpringCloud](./distributed_system/SpringCloud.md)
     > 优秀的笔记已经一堆了
