@@ -1254,6 +1254,7 @@ TODO: 分布式复制模型 理论整理，之后再融到整个文件中。
 
 # 9. 参考资料
 
+- [ ] [Java全栈知识体系](https://pdai.tech/md/algorithm/alg-domain-load-balance.html)
 - [ ] [图解一致性哈希算法](https://segmentfault.com/a/1190000021199728)
 - [ ] [万字带你入门Zookeeper](https://juejin.cn/post/6844904045283377165)
 - [ ] [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)

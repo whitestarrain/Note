@@ -1,4 +1,6 @@
-# 什么是 STL
+# STL 
+
+## 什么是 STL
 
 > STL 提供了六大组件，彼此之间可以组合套用
 > 这六大组件分别是容器、算法、迭代器、仿函数、适配器、空间配置器
@@ -22,9 +24,9 @@
   - 负责空间的配置与管理
   - 从实现角度来看，配置器是一个实现了动态空间配置、空间管理、空间释放的 class template。
 
-# 容器
+## 容器
 
-## vector
+### vector
 
 - vector
 
@@ -81,7 +83,7 @@
       cout << x << ' ';
   ```
 
-## stack
+### stack
 
 - stack
 
@@ -109,7 +111,7 @@
   stk.empty();//返回stack是否为空，若为空则返回true否则返回false
   ```
 
-## string
+### string
 
 - string：
 
@@ -170,7 +172,7 @@
   str5.erase(remove(str5.begin(), str5.end(), 'n'), str5.end());//删除[str5.begin(),str5.end())中所有字符'n'，"I love AcWig! It's very fuy!"
   ```
 
-## queue and priority_queue
+### queue and priority_queue
 
 - queue
 
@@ -204,7 +206,7 @@
   que.empty();//返回stack是否为空，若为空则返回true否则返回false
   ```
 
-## deque
+### deque
 
 - deque
 
@@ -263,7 +265,7 @@
   cout << x << ' ';
   ```
 
-## map/multimap
+### map/multimap
 
 - map/multimap
 
@@ -320,7 +322,7 @@
   cout << k << ' ' << v << endl;
   ```
 
-## set/multiset
+### set/multiset
 
 - set/multiset：
 
@@ -371,7 +373,7 @@
       cout << x << ' ';
   ```
 
-## unordered_map/unordered_set
+### unordered_map/unordered_set
 
 - unordered_map/unordered_set
 
@@ -436,7 +438,7 @@
       cout << k << ' ' << v << endl;
   ```
 
-# 算法
+## 算法
 
 - 说明
 
