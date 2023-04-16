@@ -305,7 +305,11 @@ TODO: archlinux
 
 - 而简化后的 UEFI 在引导过程中: 只需要寻找并执行 ESP 内的引导程序即可
 
-# 多系统安装引导说明
+# 4. Live CD
+
+[Linux 引导那些事儿](https://zdyxry.github.io/2019/12/01/Linux-%E5%BC%95%E5%AF%BC%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF/)
+
+# 5. 多系统安装引导说明
 
 ```
 # 设置字体
@@ -330,64 +334,73 @@ setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
   # 重启
   ```
 
-# 固态硬盘类型
+# 6. 固态硬盘类型
 
-## NVMe
+## 6.1. NVMe
 
-## SATA
+## 6.2. SATA
 
-# 文件系统
+# 7. 文件系统
 
-## btrfs
+## 7.1. btrfs
 
-## ext4
+## 7.2. ext4
 
-# archlinux安装
+# 8. archlinux安装
 
-## 基础安装
+## 8.1. 基础安装
 
-## 图形化界面
+## 8.2. 图形化界面
 
-## 系统备份
+## 8.3. 系统备份
 
  因为用的btrfs文件系统，因此系统崩了后，用启动盘进入后，挂载@,@home两个分卷到`/`,`/home`后，change root 后再进行操作或者备份还原就行（非root需要su到指定用户）
 
-# linux 图形化接口
+# 9. linux 图形化接口
 
 - x windows
 
-# linux 桌面环境
+# 10. linux 桌面环境
 
-## DE(Desktop Enviroment, 桌面环境)
+## 10.1. DE(Desktop Enviroment, 桌面环境)
 
 - KDE、Gnome、Xfce、Cinammon这些应该叫“桌面环境(Desktop Enviroment，DE)”，
 - 同时也自带了“窗口管理器(Windows Manager，WM)”，
   - KDE 的 kwin
 
-## WM(Windows Manager, 窗口管理器)
+## 10.2. WM(Windows Manager, 窗口管理器)
 
 - KDE 的kwin，
   - 其窗口排布设计是采用浮动式的，类似于windows或mac的体验，注重鼠标操作；
 - i3wm和dwm是目前平铺式桌面中的佼佼者，它们自己本身就是一个窗口管理器WM，二者的体验相似，都可以做到个性化定制
   - i3wm、dwm之流则直接舍弃了DE，只有一个WM，且采用平铺式的窗口排布，因而体验与windows/mac完全不同，主要是通过键盘操作(当然也可以用鼠标操作)
 
-## DM (Display Manager, 显式管理器)
+## 10.3. DM (Display Manager, 显式管理器)
 
 - 显示管理器(DM)又叫做登陆管理器，如sddm、lightdm等，其作用仅仅只是在你开机后，让你输入用户名和密码登陆
 - 然后引导进入桌面，至此任务完成，之后就交给kde或i3wm管理桌面了。
 - **可以不需要DM，直接通过startx脚本命令进入桌面** 。
 
-# 参考资料
+# 11. 参考资料
 
+- 基础理论
+  - [ ] [Arch入门指南](https://zhuanlan.zhihu.com/p/561081661)
+  - [ ] [Linux 引导那些事儿](https://zdyxry.github.io/2019/12/01/Linux-%E5%BC%95%E5%AF%BC%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF/)
+  - [x] [关于启动引导的那些事儿（上）](https://cloud.tencent.com/developer/article/1934547)
+  - [x] [关于启动引导的那些事儿（下）](https://blog.kaaass.net/archives/1422)
 - arch 安装
-  - [arch基础安装](https://arch.icekylin.online/guide/rookie/basic-install.html)
-  - [最全Arch Linux安装教程——打造真正属于你的操作系统](https://www.bilibili.com/video/BV11J411a7Tp/?from=search&seid=16049395152824050336&vd_source=6040768a03c22f9dac8d817ab002d7ab)
-  - [arch-wiki libinput](https://wiki.archlinux.org/title/libinput)
-  - [Life With Arch: 触摸板改用Synaptics驱动](https://www.jianshu.com/p/2212d452119b?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)
-  - [Archlinux Timeshift系统备份与还原 ](https://www.cnblogs.com/Likfees/p/14806538.html)
-  - [Linux 下 MacBook 触摸板设置](https://harttle.land/2019/05/01/linux-macbook-trackpad-settings.html)
+  - [ ] [arch基础安装](https://arch.icekylin.online/guide/rookie/basic-install.html)
+  - [ ] [最全Arch Linux安装教程——打造真正属于你的操作系统](https://www.bilibili.com/video/BV11J411a7Tp/?from=search&seid=16049395152824050336&vd_source=6040768a03c22f9dac8d817ab002d7ab)
+  - [ ] [arch-wiki libinput](https://wiki.archlinux.org/title/libinput)
+  - [ ] [Life With Arch: 触摸板改用Synaptics驱动](https://www.jianshu.com/p/2212d452119b?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation)
+  - [ ] [Archlinux Timeshift系统备份与还原 ](https://www.cnblogs.com/Likfees/p/14806538.html)
+  - [ ] [Linux 下 MacBook 触摸板设置](https://harttle.land/2019/05/01/linux-macbook-trackpad-settings.html)
     > macbook上实际无法实现惯性功能
-- [入坑dwm](https://zhuanlan.zhihu.com/p/183861786)
-- [BSPWM vs dwm , i3 , awesome](https://zhuanlan.zhihu.com/p/273461212)
-- [Plasma中使用其他的窗口管理器](https://userbase.kde.org/Tutorials/Using_Other_Window_Managers_with_Plasma/zh-cn)
-- [鸟哥的linux私房菜-x window system](http://shouce.jb51.net/vbird-linux-basic-4/201.html)
+- dwm 工具链（待尝试）
+  - [ ] [从零开始配置自己的Arch Linux桌面（极简）](https://zhuanlan.zhihu.com/p/112536524)
+    > dwm工具链相关软件，推荐看下
+  - [ ] [入坑dwm](https://zhuanlan.zhihu.com/p/183861786)
+  - [ ] [BSPWM vs dwm , i3 , awesome](https://zhuanlan.zhihu.com/p/273461212)
+  - [ ] [Plasma中使用其他的窗口管理器](https://userbase.kde.org/Tutorials/Using_Other_Window_Managers_with_Plasma/zh-cn)
+- 其他相关
+  - [ ] [鸟哥的linux私房菜-x window system](http://shouce.jb51.net/vbird-linux-basic-4/201.html)
