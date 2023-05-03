@@ -356,14 +356,41 @@
   !/fileTemplates/includes/File Header.java
 ```
 
-## 1.16. 别名
+## 1.16. .gitattributes
+
+- .gitattributes示例
+
+  ```
+  * text=auto
+  *.png -text
+  *.gif -text
+  *.jpg -text
+  *.cmd text eol=crlf
+  *.ps1 text eol=crlf
+  *.vim text eol=lf
+  *.lua text eol=lf
+  *.json text eol=lf
+  *.xml text eol=lf
+  *.sh text eol=lf
+  *.bashrc text eol=lf
+  *.conf text eol=lf
+  *.yml text eol=lf
+  ```
+
+- 在修改了 core.autocrlf 的配置或者添加 .gitattributes 文件后 ，执行以下命令，修复换行符
+
+  ```
+  git add --renormalize .
+  ```
+
+## 1.17. 别名
 
 - `git config --global alias.st status` /*设置st为status的别名，git st即为git status*/
 - `git config --global alias.unstage 'reset HEAD'`
 - `git config --global alias.last 'log -1'` /*最后一次提交信息*/
 - `git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"`
 
-## 1.17. 工具
+## 1.18. 工具
 
 - tig
   - 使用
@@ -379,7 +406,7 @@
 
 - gitk:图形化工具
 
-## 1.18. 常见问题
+## 1.19. 常见问题
 
 - git乱码：
   - 右键->option->text
@@ -638,3 +665,4 @@
 # 3. 参考资料
 
 - [ ] [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
+- [ ] [使用 Git 来处理 LF 和 CRLF 的系统差异](https://www.fullstackbb.com/post/handle-line-endings-in-git/)
