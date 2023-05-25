@@ -1,8 +1,6 @@
-> 考虑到以前学的时候没做笔记，没有系统的认识。因此重新梳理一遍
+> 为查询方便，根据linux-c整理为一个文件
 >
-> 偶尔会进行整理，但大多数时间可能在读资料
-
-> 根据linux-c整理而成
+> 大多数跳转链接未修改，
 
 # 1. C语言基础
 
@@ -9994,7 +9992,1593 @@ main
 
 ## 2.9. Makefile 基础
 
+### 2.9.1. 基本规则
+
+除了 Hello World 这种极简单的程序之外，一般的程序都是由多个源文件编译链接而成的，这些源文件的处理步骤通常用 Makefile 来管理。Makefile 起什么作用呢？我们先看一个例子，这个例子由[第 12 章「栈与队列」例 12.3「用深度优先搜索解迷宫问题」](1-C-语言入门/ch12-栈与队列#e12-3)改写而成：
+
+```c
+/* main.c */
+#include <stdio.h>
+#include "main.h"
+#include "stack.h"
+#include "maze.h"
+
+struct point predecessor[MAX_ROW][MAX_COL] = {
+	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+};
+
+void visit(int row, int col, struct point pre)
+{
+	struct point visit_point = { row, col };
+	maze[row][col] = 2;
+	predecessor[row][col] = pre;
+	push(visit_point);
+}
+
+int main(void)
+{
+	struct point p = { 0, 0 };
+
+	maze[p.row][p.col] = 2;
+	push(p);	
+	
+	while (!is_empty()) {
+		p = pop();
+		if (p.row == MAX_ROW - 1  /* goal */
+		    && p.col == MAX_COL - 1)
+			break;
+		if (p.col+1 < MAX_COL     /* right */
+		    && maze[p.row][p.col+1] == 0)
+			visit(p.row, p.col+1, p);
+		if (p.row+1 < MAX_ROW     /* down */
+		    && maze[p.row+1][p.col] == 0)
+			visit(p.row+1, p.col, p);
+		if (p.col-1 >= 0          /* left */
+		    && maze[p.row][p.col-1] == 0)
+			visit(p.row, p.col-1, p);
+		if (p.row-1 >= 0          /* up */
+		    && maze[p.row-1][p.col] == 0)
+			visit(p.row-1, p.col, p);
+		print_maze();
+	}
+	if (p.row == MAX_ROW - 1 && p.col == MAX_COL - 1) {
+		printf("(%d, %d)\n", p.row, p.col);
+		while (predecessor[p.row][p.col].row != -1) {
+			p = predecessor[p.row][p.col];
+			printf("(%d, %d)\n", p.row, p.col);
+		}
+	} else
+		printf("No path!\n");
+
+	return 0;
+}
+```
+
+我们把堆栈和迷宫的代码分别转移到模块 `stack.c` 和 `maze.c` 中，`main.c` 包含它们提供的头文件 `stack.h` 和 `maze.h`。
+
+```c
+/* main.h */
+#ifndef MAIN_H
+#define MAIN_H
+
+typedef struct point { int row, col; } item_t;
+
+#define MAX_ROW 5
+#define MAX_COL 5
+
+#endif
+```
+
+在 `main.h` 中定义了一个类型和两个常量，`main.c`、`stack.c`和 `maze.c` 都要用到这些定义，都要包含这个头文件。
+
+```c
+/* stack.c */
+#include "stack.h"
+
+static item_t stack[512];
+static int top = 0;
+
+void push(item_t p)
+{
+	stack[top++] = p;
+}
+
+item_t pop(void)
+{
+	return stack[--top];
+}
+
+int is_empty(void)
+{
+	return top == 0;
+}
+/* stack.h */
+#ifndef STACK_H
+#define STACK_H
+
+#include "main.h" /* provides definition for item_t */
+
+extern void push(item_t);
+extern item_t pop(void);
+extern int is_empty(void);
+
+#endif
+```
+
+[第 12 章「栈与队列」例 12.3「用深度优先搜索解迷宫问题」](1-C-语言入门/ch12-栈与队列#e12-3)中的堆栈规定死了只能放 `char` 型数据，现在我们做进一步抽象，堆栈中放 `item_t` 类型的数据，`item_t` 可以定义为任意类型，只要它能够通过函数的参数和返回值传递并且支持赋值操作就行。这也是一种避免硬编码的策略，`stack.c` 中多次使用 `item_t` 类型，要改变它的定义只需改变 `main.h` 中的一行代码。
+
+```c
+/* maze.c */
+#include <stdio.h>
+#include "maze.h"
+
+int maze[MAX_ROW][MAX_COL] = {
+	0, 1, 0, 0, 0,
+	0, 1, 0, 1, 0,
+	0, 0, 0, 0, 0,
+	0, 1, 1, 1, 0,
+	0, 0, 0, 1, 0,
+};
+
+void print_maze(void)
+{
+	int i, j;
+	for (i = 0; i < MAX_ROW; i++) {
+		for (j = 0; j < MAX_COL; j++)
+			printf("%d ", maze[i][j]);
+		putchar('\n');
+	}
+	printf("*********\n");
+}
+/* maze.h */
+#ifndef MAZE_H
+#define MAZE_H
+
+#include "main.h" /* provides defintion for MAX_ROW and MAX_COL */
+
+extern int maze[MAX_ROW][MAX_COL];
+void print_maze(void);
+
+#endif
+```
+
+`maze.c` 中定义了一个 `maze` 数组和一个 `print_maze` 函数，需要在头文件 `maze.h` 中声明，以便提供给 `main.c` 使用，注意 `print_maze` 的声明可以不加 `extern`，而 `maze` 的声明必须加 `extern`。
+
+这些源文件可以这样编译：
+
+```bash
+$ gcc main.c stack.c maze.c -o main
+```
+
+但这不是个好办法，如果编译之后又对 `maze.c` 做了修改，又要把所有源文件编译一遍，即使 `main.c`、`stack.c` 和那些头文件都没有修改也要跟着重新编译。一个大型的软件项目往往由上千个源文件组成，全部编译一遍需要几个小时，只改一个源文件就要求全部重新编译肯定是不合理的。
+
+这样编译也许更好一些：
+
+```bash
+$ gcc -c main.c
+$ gcc -c stack.c
+$ gcc -c maze.c
+$ gcc main.o stack.o maze.o -o main
+```
+
+如果编译之后又对 `maze.c` 做了修改，要重新编译只需要做两步：
+
+```bash
+$ gcc -c maze.c
+$ gcc main.o stack.o maze.o -o main
+```
+
+这样又有一个问题，每次编译敲的命令都不一样，很容易出错，比如我修改了三个源文件，可能有一个忘了重新编译，结果编译完了修改没生效，运行时出了 Bug 还满世界找原因呢。更复杂的问题是，假如我改了 `main.h` 怎么办？所有包含 `main.h` 的源文件都需要重新编译，我得挨个找哪些源文件包含了 `main.h`，有的还很不明显，例如 `stack.c` 包含了 `stack.h`，而后者包含了 `main.h`。可见手动处理这些问题非常容易出错，那有没有自动的解决办法呢？有，就是写一个 `Makefile` 文件和源代码放在同一个目录下：
+
+```bash
+main: main.o stack.o maze.o
+	gcc main.o stack.o maze.o -o main
+
+main.o: main.c main.h stack.h maze.h
+	gcc -c main.c
+
+stack.o: stack.c stack.h main.h
+	gcc -c stack.c
+
+maze.o: maze.c maze.h main.h
+	gcc -c maze.c
+```
+
+然后在这个目录下运行 `make` 编译：
+
+```bash
+$ make
+gcc -c main.c
+gcc -c stack.c
+gcc -c maze.c
+gcc main.o stack.o maze.o -o main
+```
+
+`make` 命令会自动读取当前目录下的 `Makefile` 文件<sup>[33]</sup>，完成相应的编译步骤。Makefile 由一组规则（Rule）组成，每条规则的格式是：
+
+```bash
+target ... : prerequisites ... 
+	command1
+	command2
+	...
+```
+
+例如：
+
+```bash
+main: main.o stack.o maze.o
+	gcc main.o stack.o maze.o -o main
+```
+
+> <sup>[33]</sup> 只要符合本章所描述的语法的文件我们都叫它 Makefile，而它的文件名则不一定是 `Makefile`。事实上，执行 `make` 命令时，是按照 `GNUmakefile`、`makefile`、`Makefile` 的顺序找到第一个存在的文件并执行它，不过还是建议使用 `Makefile` 做文件名。除了GNU `make`，有些 UNIX 系统的 `make` 命令不是 GNU `make`，不会查找 `GNUmakefile` 这个文件名，如果你写的 Makefile 包含 GNU `make` 的特殊语法，可以起名为 `GNUmakefile`，否则不建议用这个文件名。
+
+`main` 是这条规则的目标（Target），`main.o`、`stack.o` 和 `maze.o` 是这条规则的条件（Prerequisite）。目标和条件之间的关系是：**欲更新目标，必须首先更新它的所有条件；所有条件中只要有一个条件被更新了，目标也必须随之被更新**。所谓「更新」就是执行一遍规则中的命令列表，命令列表中的每条命令必须以一个 `Tab` 开头，注意不能是空格，Makefile 的格式不像 C 语言的缩进那么随意，对于 Makefile 中的每个以 `Tab` 开头的命令，`make` 会创建一个 Shell 进程去执行它。
+
+对于上面这个例子，`make` 执行如下步骤：
+
+1. 尝试更新 Makefile 中第一条规则的目标 `main`，第一条规则的目标称为缺省目标，只要缺省目标更新了就算完成任务了，其它工作都是为这个目的而做的。由于我们是第一次编译，`main` 文件还没生成，显然需要更新，但规则说必须先更新了 `main.o`、`stack.o` 和 `maze.o` 这三个条件，然后才能更新 `main`。
+2. 所以 `make` 会进一步查找以这三个条件为目标的规则，这些目标文件也没有生成，也需要更新，所以执行相应的命令（`gcc -c main.c`、`gcc -c stack.c` 和 `gcc -c maze.c`）更新它们。
+3. 最后执行 `gcc main.o stack.o maze.o -o main` 更新 `main`。
+
+如果没有做任何改动，再次运行 `make`：
+
+```bash
+$ make
+make: `main' is up to date.
+```
+
+`make` 会提示缺省目标已经是最新的了，不需要执行任何命令更新它。再做个实验，如果修改了 `maze.h`（比如加个无关痛痒的空格）再运行 `make`：
+
+```bash
+$ make
+gcc -c main.c
+gcc -c maze.c
+gcc main.o stack.o maze.o -o main
+```
+
+`make` 会自动选择那些受影响的源文件重新编译，不受影响的源文件则不重新编译，这是怎么做到的呢？
+
+1. `make` 仍然尝试更新缺省目标，首先检查目标 `main` 是否需要更新，这就要检查三个条件 `main.o`、`stack.o` 和 `maze.o` 是否需要更新。
+2. `make` 会进一步查找以这三个条件为目标的规则，然后发现 `main.o` 和 `maze.o` 需要更新，因为它们都有一个条件是 `maze.h`，而这个文件的修改时间比 `main.o` 和 `maze.o` 晚，所以执行相应的命令更新 `main.o` 和 `maze.o`。
+3. 既然 `main` 的三个条件中有两个被更新过了，那么 `main` 也需要更新，所以执行命令 `gcc main.o stack.o maze.o -o main` 更新 `main`。
+
+现在总结一下 Makefile 的规则，请读者结合上面的例子理解。如果一条规则的目标属于以下情况之一，就称为需要更新：
+
+- 目标没有生成。
+- 某个条件需要更新。
+- 某个条件的修改时间比目标晚。
+
+在一条规则被执行之前，规则的条件可能处于以下三种状态之一：
+
+- 需要更新。能够找到以该条件为目标的规则，并且该规则中目标需要更新。
+- 不需要更新。能够找到以该条件为目标的规则，但是该规则中目标不需要更新；或者不能找到以该条件为目标的规则，并且该条件已经生成。
+- 错误。不能找到以该条件为目标的规则，并且该条件没有生成。
+
+执行一条规则 A 的步骤如下：
+
+1. 检查它的每个条件 P：
+	- 如果 P 需要更新，就执行以P为目标的规则 B。之后，无论是否生成文件 P，都认为 P 已被更新。
+	- 如果找不到规则 B，并且文件 P 已存在，表示 P 不需要更新。
+	- 如果找不到规则 B，并且文件 P 不存在，则报错退出。
+2. 在检查完规则 A 的所有条件后，检查它的目标 T，如果属于以下情况之一，就执行它的命令列表：
+	- 文件 T 不存在。
+	- 文件 T 存在，但是某个条件的修改时间比它晚。
+	- 某个条件 P 已被更新（并不一定生成文件 P）。
+
+通常 Makefile 都会有一个 `clean` 规则，用于清除编译过程中产生的二进制文件，保留源文件：
+
+```bash
+clean:
+	@echo "cleanning project"
+	-rm main *.o
+	@echo "clean completed"
+```
+
+把这条规则添加到我们的 Makefile 末尾，然后执行这条规则：
+
+```bash
+$ make clean 
+cleanning project
+rm main *.o
+clean completed
+```
+
+如果在 `make` 的命令行中指定一个目标（例如 `clean`），则更新这个目标，如果不指定目标则更新 Makefile 中第一条规则的目标（缺省目标）。
+
+和前面介绍的规则不同，`clean` 目标不依赖于任何条件，并且执行它的命令列表不会生成 `clean` 这个文件，刚才说过，只要执行了命令列表就算更新了目标，即使目标并没有生成也算。在这个例子还演示了命令前面加 `@` 和 `-` 字符的效果：如果 `make` 执行的命令前面加了 `@` 字符，则不显示命令本身而只显示它的结果；通常 `make` 执行的命令如果出错（该命令的退出状态非 0）就立刻终止，不再执行后续命令，但如果命令前面加了 `-` 号，即使这条命令出错，`make` 也会继续执行后续命令。通常 `rm` 命令和 `mkdir` 命令前面要加 `-` 号，因为 `rm` 要删除的文件可能不存在，`mkdir` 要创建的目录可能已存在，这两个命令都有可能出错，但这种错误是应该忽略的。例如上面已经执行过一遍 `make clean`，再执行一遍就没有文件可删了，这时 `rm` 会报错，但 `make` 忽略这一错误，继续执行后面的 `echo` 命令：
+
+```bash
+$ make clean 
+cleanning project
+rm main *.o
+rm: cannot remove `main': No such file or directory
+rm: cannot remove `*.o': No such file or directory
+make: [clean] Error 1 (ignored)
+clean completed
+```
+
+读者可以把命令前面的 `@` 和 `-` 去掉再试试，对比一下结果有何不同。这里还有一个问题，如果当前目录下存在一个文件叫 `clean` 会怎么样呢？
+
+```bash
+$ touch clean
+$ make clean
+make: `clean' is up to date.
+```
+
+如果存在 `clean` 这个文件，`clean` 目标又不依赖于任何条件，`make` 就认为它不需要更新了。而我们希望把 `clean` 当作一个特殊的名字使用，不管它存在不存在都要更新，可以添一条特殊规则，把 `clean` 声明为一个伪目标：
+
+```bash
+.PHONY: clean
+```
+
+这条规则没有命令列表。类似 `.PHONY` 这种 `make` 内建的特殊目标还有很多，各有不同的用途，详见 *GNU make*。在 C 语言中要求变量和函数先声明后使用，而 Makefile 不太一样，这条规则写在 `clean:` 规则的后面也行，也能起到声明 `clean` 是伪目标的作用：
+
+```bash
+clean:
+	@echo "cleanning project"
+	-rm main *.o
+	@echo "clean completed"
+
+.PHONY: clean
+```
+
+当然写在前面也行。`gcc` 处理一个 C 程序分为预处理和编译两个阶段，类似地，`make` 处理 Makefile 的过程也分为两个阶段：
+
+1. 首先从前到后读取所有规则，建立起一个完整的依赖关系图，例如：
+
+	<p id="c22-1">图 22.1. Makefile 的依赖关系图</p>
+
+	![Makefile 的依赖关系图](./image/make.graph.png)
+
+2. 然后从缺省目标或者命令行指定的目标开始，根据依赖关系图选择适当的规则执行，执行 Makefile 中的规则和执行 C 代码不一样，并不是从前到后按顺序执行，也不是所有规则都要执行一遍，例如 `make` 缺省目标时不会更新 `clean` 目标，因为从上图可以看出，它跟缺省目标没有任何依赖关系。
+
+`clean` 目标是一个约定俗成的名字，在所有软件项目的 Makefile 中都表示清除编译生成的文件，类似这样的约定俗成的目标名字有：
+
+- `all`，执行主要的编译工作，通常用作缺省目标。
+- `install`，执行编译后的安装工作，把可执行文件、配置文件、文档等分别拷到不同的安装目录。
+- `clean`，删除编译生成的二进制文件。
+- `distclean`，不仅删除编译生成的二进制文件，也删除其它生成的文件，例如配置文件和格式转换后的文档，执行 `make distclean` 之后应该清除所有这些文件，只留下源文件。
+
+### 2.9.2. 隐含规则和模式规则
+
+上一节的 Makefile 写得中规中矩，比较繁琐，是为了讲清楚基本概念，其实 Makefile 有很多灵活的写法，可以写得更简洁，同时减少出错的可能。本节我们来看看这样一个例子还有哪些改进的余地。
+
+一个目标依赖的所有条件不一定非得写在一条规则中，也可以拆开写，例如：
+
+```bash
+main.o: main.h stack.h maze.h
+
+main.o: main.c
+	gcc -c main.c
+```
+
+就相当于：
+
+```bash
+main.o: main.c main.h stack.h maze.h
+	gcc -c main.c
+```
+
+如果一个目标拆开写多条规则，其中只有一条规则允许有命令列表，其它规则应该没有命令列表，否则 `make` 会报警告并且采用最后一条规则的命令列表。
+
+这样我们的例子可以改写成：
+
+```bash
+main: main.o stack.o maze.o
+	gcc main.o stack.o maze.o -o main
+
+main.o: main.h stack.h maze.h
+stack.o: stack.h main.h
+maze.o: maze.h main.h
+
+main.o: main.c
+	gcc -c main.c
+
+stack.o: stack.c
+	gcc -c stack.c
+
+maze.o: maze.c
+	gcc -c maze.c
+
+clean:
+	-rm main *.o
+
+.PHONY: clean
+```
+
+这不是比原来更繁琐了吗？现在可以把提出来的三条规则删去，写成：
+
+```bash
+main: main.o stack.o maze.o
+	gcc main.o stack.o maze.o -o main
+
+main.o: main.h stack.h maze.h
+stack.o: stack.h main.h
+maze.o: maze.h main.h
+
+clean:
+	-rm main *.o
+
+.PHONY: clean
+```
+
+这就比原来简单多了。可是现在 `main.o`、`stack.o` 和 `maze.o` 这三个目标连编译命令都没有了，怎么编译的呢？试试看：
+
+```bash
+$ make
+cc    -c -o main.o main.c
+cc    -c -o stack.o stack.c
+cc    -c -o maze.o maze.c
+gcc main.o stack.o maze.o -o main
+```
+
+现在解释一下前三条编译命令是怎么来。如果一个目标在 Makefile 中的所有规则都没有命令列表，`make` 会尝试在内建的隐含规则（Implicit Rule）数据库中查找适用的规则。`make` 的隐含规则数据库可以用 `make -p` 命令打印，打印出来的格式也是 Makefile 的格式，包括很多变量和规则，其中和我们这个例子有关的隐含规则有：
+
+```bash
+# default
+OUTPUT_OPTION = -o $@
+
+# default
+CC = cc
+
+# default
+COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+
+%.o: %.c
+#  commands to execute (built-in):
+        $(COMPILE.c) $(OUTPUT_OPTION) $<
+```
+
+`#` 号在 Makefile 中表示单行注释，就像 C 语言的 `//` 注释一样。`CC` 是一个 Makefile 变量，用 `CC = cc` 定义和赋值，用 `$(CC)` 取它的值，其值应该是 `cc`。Makefile 变量像 C 的宏定义一样，代表一串字符，在取值的地方展开。`cc` 是一个符号链接，通常指向 `gcc`，在有些 UNIX 系统上可能指向另外一种 C 编译器。
+
+```bash
+$ which cc
+/usr/bin/cc
+$ ls -l /usr/bin/cc
+lrwxrwxrwx 1 root root 20 2008-07-04 05:59 /usr/bin/cc -> /etc/alternatives/cc
+$ ls -l /etc/alternatives/cc
+lrwxrwxrwx 1 root root 12 2008-11-01 09:10 /etc/alternatives/cc -> /usr/bin/gcc
+```
+
+`CFLAGS` 这个变量没有定义，`$(CFLAGS)` 展开是空，`CPPFLAGS` 和 `TARGET_ARCH` 也是如此。这样 `$(COMPILE.c)` 展开应该是 `cc␣空␣空␣空␣-c`，去掉所有的 `空` 得到 `cc␣␣␣␣-c`，注意中间留下 4 个空格，所以 `%.o: %.c` 规则的命令 `$(COMPILE.c)␣$(OUTPUT_OPTION)␣$<` 展开之后是 `cc␣␣␣␣-c␣-o␣$@␣$<`，和上面的编译命令已经很接近了。
+
+`$@` 和 `$<` 是两个特殊的变量，`$@` 的取值为规则中的目标，`$<` 的取值为规则中的第一个条件。`%.o: %.c` 是一种特殊的规则，称为模式规则（Pattern Rule）。现在回顾一下整个过程，在我们的 Makefile 中以 `main.o` 为目标的规则都没有命令列表，所以 `make` 会查找隐含规则，发现隐含规则中有这样一条模式规则适用，`main.o` 符合 `%.o` 的模式，现在 `%` 就代表 `main`（称为 `main.o` 这个名字的 Stem），再替换到 `%.c` 中就是 `main.c`。所以这条模式规则相当于：
+
+```bash
+main.o: main.c
+	cc    -c -o main.o main.c
+```
+
+随后，在处理 `stack.o` 目标时又用到这条模式规则，这时又相当于：
+
+```bash
+stack.o: stack.c
+	cc    -c -o stack.o stack.c
+```
+
+`maze.o` 也同样处理。这三条规则可以由 `make` 的隐含规则推导出来，所以不必写在 Makefile 中。
+
+先前我们写 Makefile 都是以目标为中心，一个目标依赖于若干条件，现在换个角度，以条件为中心，Makefile 还可以这么写：
+
+```bash
+main: main.o stack.o maze.o
+	gcc main.o stack.o maze.o -o main
+
+main.o stack.o maze.o: main.h
+main.o maze.o: maze.h
+main.o stack.o: stack.h
+
+clean:
+	-rm main *.o
+
+.PHONY: clean
+```
+
+我们知道，写规则的目的是让 `make` 建立依赖关系图，不管怎么写，只要把所有的依赖关系都描述清楚了就行。对于多目标的规则，`make` 会拆成几条单目标的规则来处理，例如
+
+```bash
+target1 target2: prerequisite1 prerequisite2
+	command $< -o $@
+```
+
+这样一条规则相当于：
+
+```bash
+target1: prerequisite1 prerequisite2
+	command prerequisite1 -o target1
+
+target2: prerequisite1 prerequisite2
+	command prerequisite1 -o target2
+```
+
+注意两条规则的命令列表是一样的，但 `$@` 的取值不同。
+
+### 2.9.3. 变量
+
+这一节我们详细看看 Makefile 中关于变量的语法规则。先看一个简单的例子：
+
+```bash
+foo = $(bar) 
+bar = Huh? 
+
+all: 
+	@echo $(foo)
+```
+
+我们执行 `make` 将会打出 `Huh?`。当 `make` 读到 `foo = $(bar)` 时，确定 `foo` 的值是 `$(bar)`，但并不立即展开 `$(bar)`，然后读到 `bar = Huh?`，确定 `bar` 的值是 `Huh?`，然后在执行规则 `all:` 的命令列表时才需要展开 `$(foo)`，得到 `$(bar)`，再展开 `$(bar)`，得到 `Huh?`。因此，虽然 `bar` 的定义写在 `foo` 之后，`$(foo)` 展开还是能够取到 `$(bar)` 的值。
+
+这种特性有好处也有坏处。好处是我们可以把变量的值推迟到后面定义，例如：
+
+```bash
+main.o: main.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+
+CC = gcc
+CFLAGS = -O -g
+CPPFLAGS = -Iinclude
+```
+
+编译命令可以展开成 `gcc -O -g -Iinclude -c main.c`。通常把 `CFLAGS` 定义成一些编译选项，例如 `-O`、`-g` 等，而把 `CPPFLAGS` 定义成一些预处理选项，例如 `-D`、`-I` 等。用 `=` 号定义变量的延迟展开特性也有坏处，就是有可能写出无穷递归的定义，例如 `CFLAGS = $(CFLAGS) -O`，或者：
+
+```bash
+A = $(B)
+B = $(A)
+```
+
+当然，`make` 有能力检测出这样的错误而不会陷入死循环。有时候我们希望 `make` 在遇到变量定义时立即展开，可以用 `:=` 运算符，例如：
+
+```bash
+x := foo
+y := $(x) bar
+
+all: 
+	@echo "-$(y)-"
+```
+
+当 `make` 读到 `y := $(x) bar` 定义时，立即把 `$(x)` 展开，使变量 `y` 的取值是 `foo bar`，如果把这两行颠倒过来：
+
+```bash
+y := $(x) bar
+x := foo
+```
+
+那么当 `make` 读到 `y := $(x) bar` 时，`x` 还没有定义，展开为空值，所以 `y` 的取值是 `␣bar`，注意 `bar` 前面有个空格。一个变量的定义从 `=` 后面的第一个非空白字符开始（从 `$(x)` 的 `$` 开始），包括后面的所有字符，直到注释或换行之前结束。如果要定义一个变量的值是一个空格，可以这样：
+
+```bash
+nullstring := 
+space := $(nullstring) # end of the line
+```
+
+`nullstring` 的值为空，`space` 的值是一个空格，后面写个注释是为了增加可读性，如果不写注释就换行，则很难看出 `$(nullstring)` 后面有个空格。
+
+还有一个比较有用的赋值运算符是 `?=`，例如 `foo ?= $(bar)` 的意思是：如果 `foo` 没有定义过，那么 `?=` 相当于 `=`，定义 `foo` 的值是 `$(bar)`，但不立即展开；如果先前已经定义了 `foo`，则什么也不做，不会给 `foo` 重新赋值。
+
+`+=` 运算符可以给变量追加值，例如：
+
+```bash
+objects = main.o
+objects += $(foo)
+foo = foo.o bar.o
+```
+
+`object` 是用 `=` 定义的，`+=` 仍然保持 `=` 的特性，`objects` 的值是 `main.o $(foo)`（注意 `$(foo)` 前面自动添一个空格），但不立即展开，等到后面需要展开 `$(objects)` 时会展开成 `main.o foo.o bar.o`。
+
+再比如：
+
+```bash
+objects := main.o
+objects += $(foo)
+foo = foo.o bar.o
+```
+
+`object` 是用 `:=` 定义的，`+=` 保持 `:=` 的特性，`objects` 的值是 `main.o $(foo)`，立即展开得到 `main.o `（这时 `foo` 还没定义），注意 `main.o` 后面的空格仍保留。
+
+如果变量还没有定义过就直接用 `+=` 赋值，那么 `+=` 相当于 `=`。
+
+上一节我们用到了特殊变量 `$@` 和 `$<`，这两个变量的特点是不需要给它们赋值，在不同的上下文中它们自动取不同的值。常用的特殊变量有：
+
+- `$@`，表示规则中的目标。
+- `$<`，表示规则中的第一个条件。
+- `$?`，表示规则中所有比目标新的条件，组成一个列表，以空格分隔。
+- `$^`，表示规则中的所有条件，组成一个列表，以空格分隔。
+
+例如前面写过的这条规则：
+
+```bash
+main: main.o stack.o maze.o
+	gcc main.o stack.o maze.o -o main
+```
+
+可以改写成：
+
+```bash
+main: main.o stack.o maze.o
+	gcc $^ -o $@
+```
+
+这样即使以后又往条件里添加了新的目标文件，编译命令也不需要修改，减少了出错的可能。
+
+`$?` 变量也很有用，有时候希望只对更新过的条件进行操作，例如有一个库文件 `libsome.a` 依赖于几个目标文件：
+
+```bash
+libsome.a: foo.o bar.o lose.o win.o 
+	ar r libsome.a $?
+	ranlib libsome.a
+```
+
+这样，只有更新过的目标文件才需要重新打包到 `libsome.a` 中，没更新过的目标文件原本已经在 `libsome.a` 中了，不必重新打包。
+
+在上一节我们看到 `make` 的隐含规则数据库中用到了很多变量，有些变量没有定义（例如 `CFLAGS`），有些变量定义了缺省值（例如 `CC`），我们写 Makefile 时可以重新定义这些变量的值，也可以在缺省值的基础上追加。以下列举一些常用的变量，请读者体会其中的规律。
+
+- `AR`，静态库打包命令的名字，缺省值是 `ar`。
+- `ARFLAGS`，静态库打包命令的选项，缺省值是 `rv`。
+- `AS`，汇编器的名字，缺省值是 `as`。
+- `ASFLAGS`，汇编器的选项，没有定义。
+- CC，C 编译器的名字，缺省值是 `cc`。
+- CFLAGS，C 编译器的选项，没有定义。
+- CXX，C++ 编译器的名字，缺省值是 `g++`。
+- CXXFLAGS，C++ 编译器的选项，没有定义。
+- CPP，C 预处理器的名字，缺省值是 `$(CC) -E`。
+- CPPFLAGS，C 预处理器的选项，没有定义。
+- LD，链接器的名字，缺省值是 `ld`。
+- LDFLAGS，链接器的选项，没有定义。
+- TARGET_ARCH，和目标平台相关的命令行选项，没有定义。
+- OUTPUT_OPTION，输出的命令行选项，缺省值是 `-o $@`。
+- LINK.o，把`.o`文件链接在一起的命令行，缺省值是 `$(CC) $(LDFLAGS) $(TARGET_ARCH)`。
+- LINK.c，把 `.c` 文件链接在一起的命令行，缺省值是 `$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)`。
+- LINK.cc，把 `.cc` 文件（C++ 源文件）链接在一起的命令行，缺省值是 `$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)`。
+- COMPILE.c，编译 `.c` 文件的命令行，缺省值是 `$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c`。
+- COMPILE.cc，编译 `.cc` 文件的命令行，缺省值是 `$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c`。
+- RM，删除命令的名字，缺省值是 `rm -f`。
+
+### 2.9.4. 自动处理头文件的依赖关系
+
+现在我们的 Makefile 写成这样：
+
+```bash
+all: main
+
+main: main.o stack.o maze.o
+	gcc $^ -o $@
+
+main.o: main.h stack.h maze.h
+stack.o: stack.h main.h
+maze.o: maze.h main.h
+
+clean:
+	-rm main *.o
+
+.PHONY: clean
+```
+
+按照惯例，用 `all` 做缺省目标。现在还有一点比较麻烦，在写 `main.o`、`stack.o` 和 `maze.o` 这三个目标的规则时要查看源代码，找出它们依赖于哪些头文件，这很容易出错，一是因为有的头文件包含在另一个头文件中，在写规则时很容易遗漏，二是如果以后修改源代码改变了依赖关系，很可能忘记修改 Makefile 的规则。为了解决这个问题，可以用 `gcc` 的 `-M` 选项自动生成目标文件和源文件的依赖关系：
+
+```bash
+$ gcc -M main.c
+main.o: main.c /usr/include/stdio.h /usr/include/features.h \
+  /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h \
+  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-32.h \
+  /usr/lib/gcc/i486-linux-gnu/4.3.2/include/stddef.h \
+  /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
+  /usr/lib/gcc/i486-linux-gnu/4.3.2/include/stdarg.h \
+  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h main.h \
+  stack.h maze.h
+```
+
+`-M` 选项把 `stdio.h` 以及它所包含的系统头文件也找出来了，如果我们不需要输出系统头文件的依赖关系，可以用 `-MM` 选项：
+
+```bash
+$ gcc -MM *.c
+main.o: main.c main.h stack.h maze.h
+maze.o: maze.c maze.h main.h
+stack.o: stack.c stack.h main.h
+```
+
+接下来的问题是怎么把这些规则包含到 Makefile 中，GNU `make` 的官方手册建议这样写：
+
+```bash
+all: main
+
+main: main.o stack.o maze.o
+	gcc $^ -o $@
+
+clean:
+	-rm main *.o
+
+.PHONY: clean
+
+sources = main.c stack.c maze.c
+
+include $(sources:.c=.d)
+
+%.d: %.c
+	set -e; rm -f $@; \
+	$(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+```
+
+`sources` 变量包含我们要编译的所有 `.c` 文件，`$(sources:.c=.d)` 是一个变量替换语法，把 `sources` 变量中每一项的 `.c` 替换成 `.d`，所以 `include` 这一句相当于：
+
+```bash
+include main.d stack.d maze.d
+```
+
+类似于 C 语言的 `#include` 指示，这里的 `include` 表示包含三个文件 `main.d`、`stack.d` 和 `maze.d`，这三个文件也应该符合 Makefile 的语法。如果现在你的工作目录是干净的，只有 `.c` 文件、`.h` 文件和 `Makefile`，运行 `make` 的结果是：
+
+```bash
+$ make
+Makefile:13: main.d: No such file or directory
+Makefile:13: stack.d: No such file or directory
+Makefile:13: maze.d: No such file or directory
+set -e; rm -f maze.d; \
+	cc -MM  maze.c > maze.d.$$; \
+	sed 's,\(maze\)\.o[ :]*,\1.o maze.d : ,g' < maze.d.$$ > maze.d; \
+	rm -f maze.d.$$
+set -e; rm -f stack.d; \
+	cc -MM  stack.c > stack.d.$$; \
+	sed 's,\(stack\)\.o[ :]*,\1.o stack.d : ,g' < stack.d.$$ > stack.d; \
+	rm -f stack.d.$$
+set -e; rm -f main.d; \
+	cc -MM  main.c > main.d.$$; \
+	sed 's,\(main\)\.o[ :]*,\1.o main.d : ,g' < main.d.$$ > main.d; \
+	rm -f main.d.$$
+cc    -c -o main.o main.c
+cc    -c -o stack.o stack.c
+cc    -c -o maze.o maze.c
+gcc main.o stack.o maze.o -o main
+```
+
+一开始找不到 `.d` 文件，所以 `make` 会报警告。但是 `make` 会把 `include` 的文件名也当作目标来尝试更新，而这些目标适用模式规则 `%.d: %c`，所以执行它的命令列表，比如生成 `maze.d` 的命令：
+
+```bash
+set -e; rm -f maze.d; \
+	cc -MM  maze.c > maze.d.$$; \
+	sed 's,\(maze\)\.o[ :]*,\1.o maze.d : ,g' < maze.d.$$ > maze.d; \
+	rm -f maze.d.$$
+```
+
+注意，虽然在 Makefile 中这个命令写了四行，但其实是一条命令，`make` 只创建一个 Shell 进程执行这条命令，这条命令分为 5 个子命令，用 `;` 号隔开，并且为了美观，用续行符 `\` 拆成四行来写。执行步骤为：
+
+1. `set -e` 命令设置当前 Shell 进程为这样的状态：如果它执行的任何一条命令的退出状态非零则立刻终止，不再执行后续命令。
+2. 把原来的 `maze.d` 删掉。
+3. 重新生成 `maze.c` 的依赖关系，保存成文件 `maze.d.1234`（假设当前 Shell 进程的 id 是 1234）。注意，在 Makefile 中 `$` 有特殊含义，如果要表示它的字面意思则需要写两个 $，所以 Makefile 中的四个 $ 传给 Shell 变成两个 $，两个 $ 在 Shell 中表示当前进程的 id，一般用它给临时文件起名，以保证文件名唯一。
+4. 这个 `sed` 命令比较复杂，就不细讲了，主要作用是查找替换。`maze.d.1234` 的内容应该是 `maze.o: maze.c maze.h main.h`，经过 `sed` 处理之后存为 `maze.d`，其内容是 `maze.o maze.d: maze.c maze.h main.h`。
+5. 最后把临时文件 `maze.d.1234` 删掉。
+
+不管是 Makefile 本身还是被它包含的文件，只要有一个文件在 `make` 过程中被更新了，`make` 就会重新读取整个 Makefile 以及被它包含的所有文件，现在 `main.d`、`stack.d` 和 `maze.d` 都生成了，就可以正常包含进来了（假如这时还没有生成，`make` 就要报错而不是报警告了），相当于在 Makefile 中添了三条规则：
+
+```bash
+main.o main.d: main.c main.h stack.h maze.h
+maze.o maze.d: maze.c maze.h main.h
+stack.o stack.d: stack.c stack.h main.h
+```
+
+如果我在 `main.c` 中加了一行 `#include "foo.h"`，那么：
+
+1. `main.c` 的修改日期变了，根据规则 `main.o main.d: main.c main.h stack.h maze.h` 要重新生成 `main.o` 和 `main.d`。生成 `main.o` 的规则有两条：
+	
+	```
+	main.o: main.c main.h stack.h maze.h
+	%.o: %.c
+	#  commands to execute (built-in):
+	        $(COMPILE.c) $(OUTPUT_OPTION) $<
+	```
+	
+	第一条是把规则 `main.o main.d: main.c main.h stack.h maze.h` 拆开写得到的，第二条是隐含规则，因此执行 `cc` 命令重新编译 `main.o`。生成 `main.d` 的规则也有两条：
+	
+	```
+	main.d: main.c main.h stack.h maze.h
+	%.d: %.c
+		set -e; rm -f $@; \
+		$(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
+		sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+		rm -f $@.$$$$
+	```
+	
+	因此`main.d`的内容被更新为`main.o main.d: main.c main.h stack.h maze.h foo.h`。
+2. 由于 `main.d` 被 Makefile 包含，`main.d` 被更新又导致 `make` 重新读取整个 Makefile，把新的 `main.d` 包含进来，于是新的依赖关系生效了。
+
+### 2.9.5. 常用的 make 命令行选项
+
+`-n` 选项只打印要执行的命令，而不会真的执行命令，这个选项有助于我们检查 Makefile 写得是否正确，由于 Makefile 不是顺序执行的，用这个选项可以先看看命令的执行顺序，确认无误了再真正执行命令。
+
+`-C` 选项可以切换到另一个目录执行那个目录下的 Makefile，比如先退到上一级目录再执行我们的 Makefile（假设我们的源代码都放在 `testmake` 目录下）：
+
+```bash
+$ cd ..
+$ make -C testmake
+make: Entering directory `/home/akaedu/testmake'
+cc    -c -o main.o main.c
+cc    -c -o stack.o stack.c
+cc    -c -o maze.o maze.c
+gcc main.o stack.o maze.o -o main
+make: Leaving directory `/home/akaedu/testmake'
+```
+
+一些规模较大的项目会把不同的模块或子系统的源代码放在不同的子目录中，然后在每个子目录下都写一个该目录的 Makefile，然后在一个总的 Makefile 中用 `make -C` 命令执行每个子目录下的 Makefile。例如 Linux 内核源代码根目录下有 `Makefile`，子目录 `fs`、`net` 等也有各自的 `Makefile`，二级子目录 `fs/ramfs`、`net/ipv4` 等也有各自的 `Makefile`。
+
+在 `make` 命令行也可以用 `=` 或 `:=` 定义变量，如果这次编译我想加调试选项 `-g`，但我不想每次编译都加 `-g` 选项，可以在命令行定义 `CFLAGS` 变量，而不必修改 Makefile 编译完了再改回来：
+
+```bash
+$ make CFLAGS=-g
+cc -g   -c -o main.o main.c
+cc -g   -c -o stack.o stack.c
+cc -g   -c -o maze.o maze.c
+gcc main.o stack.o maze.o -o main
+```
+
+如果在 Makefile 中也定义了 `CFLAGS` 变量，则命令行的值覆盖 Makefile 中的值。
+
 ## 2.10. 指针
+
+### 2.10.1. 指针的基本概念
+
+在[第 12 章「栈与队列」](1-C-语言入门/ch12-栈与队列)讲过，堆栈有栈顶指针，队列有头指针和尾指针，这些概念中的「指针」本质上是一个整数，是数组的索引，通过指针访问数组中的某个元素。在[第 20 章「链接详解」图 20.3「间接寻址」](2-C-语言本质/ch20-链接详解#c20-3)我们又看到另外一种指针的概念，把一个变量所在的内存单元的地址保存在另外一个内存单元中，保存地址的这个内存单元称为指针，通过指针和间接寻址访问变量，这种指针在 C 语言中可以用一个指针类型的变量表示，例如某程序中定义了以下全局变量：
+
+```c
+int i;
+int *pi = &i;
+char c;
+char *pc = &c;
+```
+
+这几个变量的内存布局如下图所示，在初学阶段经常要借助于这样的图来理解指针。
+
+<p id="c23-1">图 23.1. 指针的基本概念</p>
+
+![指针的基本概念](./image/pointer.pointer0.png)
+
+这里的 `&` 是取地址运算符（Address Operator），`&i` 表示取变量 `i` 的地址，`int *pi = &i;` 表示定义一个指向 `int` 型的指针变量 `pi`，并用 `i` 的地址来初始化 `pi`。我们讲过全局变量只能用常量表达式初始化，如果定义 `int p = i;` 就错了，因为 `i` 不是常量表达式，然而用 `i` 的地址来初始化一个指针却没有错，因为 `i` 的地址是在编译链接时能确定的，而不需要到运行时才知道，`&i` 是常量表达式。后面两行代码定义了一个字符型变量 `c` 和一个指向 `c` 的字符型指针 `pc`，注意 `pi` 和 `pc` 虽然是不同类型的指针变量，但它们的内存单元都占 4 个字节，因为要保存 32 位的虚拟地址，同理，在 64 位平台上指针变量都占 8 个字节。
+
+我们知道，在同一个语句中定义多个数组，每一个都要有 `[]` 号：`int a[5], b[5];`。同样道理，在同一个语句中定义多个指针变量，每一个都要有 `*` 号，例如：
+
+```c
+int *p, *q;
+```
+
+如果写成 `int* p, q;` 就错了，这样是定义了一个整型指针 `p` 和一个整型变量 `q`，定义数组的 `[]` 号写在变量后面，而定义指针的 `*` 号写在变量前面，更容易看错。定义指针的 `*` 号前后空格都可以省，写成 `int*p,*q;` 也算对，但 `*` 号通常和类型 `int` 之间留空格而和变量名写在一起，这样看 `int *p, q;` 就很明显是定义了一个指针和一个整型变量，就不容易看错了。
+
+如果要让 `pi` 指向另一个整型变量 `j`，可以重新对 `pi` 赋值：
+
+```c
+pi = &j;
+```
+
+如果要改变 `pi` 所指向的整型变量的值，比如把变量 `j` 的值增加 10，可以写：
+
+```c
+*pi = *pi + 10;
+```
+
+这里的 `*` 号是指针间接寻址运算符（Indirection Operator），`*pi` 表示取指针 `pi` 所指向的变量的值，也称为 Dereference 操作，指针有时称为变量的引用（Reference），所以根据指针找到变量称为 Dereference。
+
+`&` 运算符的操作数必须是左值，因为只有左值才表示一个内存单元，才会有地址，运算结果是指针类型。`*` 运算符的操作数必须是指针类型，运算结果可以做左值。所以，如果表达式 `E` 可以做左值，`*&E` 和 `E` 等价，如果表达式 `E` 是指针类型，`&*E` 和 `E` 等价。
+
+指针之间可以相互赋值，也可以用一个指针初始化另一个指针，例如：
+
+```c
+int *ptri = pi;
+```
+
+或者：
+
+```c
+int *ptri;
+ptri = pi;
+```
+
+表示 **`pi` 指向哪就让 `ptri` 也指向哪**，本质上就是把变量 `pi` 所保存的地址值赋给变量 `ptri`。
+
+用一个指针给另一个指针赋值时要注意，两个指针必须是同一类型的。在我们的例子中，`pi` 是 `int *` 型的，`pc` 是 `char *` 型的，`pi = pc;` 这样赋值就是错误的。但是可以先强制类型转换然后赋值：
+
+```c
+pi = (int *)pc;
+```
+
+<p id="c23-2">图 23.2. 把 char * 指针的值赋给 int * 指针</p>
+
+![把 char * 指针的值赋给 int * 指针](./image/pointer.pointer1.png)
+
+现在 `pi` 指向的地址和 `pc` 一样，但是通过 `*pc` 只能访问到一个字节，而通过 `*pi` 可以访问到 4 个字节，后 3 个字节已经不属于变量 `c` 了，除非你很确定变量 `c` 的一个字节和后面 3 个字节组合而成的 `int` 值是有意义的，否则就不应该给 `pi` 这么赋值。因此使用指针要特别小心，很容易将指针指向错误的地址，访问这样的地址可能导致段错误，可能读到无意义的值，也可能意外改写了某些数据，使得程序在随后的运行中出错。有一种情况需要特别注意，定义一个指针类型的局部变量而没有初始化：
+
+```c
+int main(void)
+{
+	int *p;
+	...
+	*p = 0;
+	...
+}
+```
+
+我们知道，在堆栈上分配的变量初始值是不确定的，也就是说指针 `p` 所指向的内存地址是不确定的，后面用 `*p` 访问不确定的地址就会导致不确定的后果，如果导致段错误还比较容易改正，如果意外改写了数据而导致随后的运行中出错，就很难找到错误原因了。像这种指向不确定地址的指针称为「野指针」（Unbound Pointer），为避免出现野指针，在定义指针变量时就应该给它明确的初值，或者把它初始化为 `NULL`：
+
+```c
+int main(void)
+{
+	int *p = NULL;
+	...
+	*p = 0;
+	...
+}
+```
+
+`NULL` 在 C 标准库的头文件 `stddef.h` 中定义：
+
+```c
+#define NULL ((void *)0)
+```
+
+就是把地址 0 转换成指针类型，称为空指针，它的特殊之处在于，操作系统不会把任何数据保存在地址 0 及其附近，也不会把地址 0 ~ 0xfff 的页面映射到物理内存，所以任何对地址 0 的访问都会立刻导致段错误。`*p = 0;` 会导致段错误，就像放在眼前的炸弹一样很容易找到，相比之下，野指针的错误就像埋下地雷一样，更难发现和排除，这次走过去没事，下次走过去就有事。
+
+讲到这里就该讲一下 `void *` 类型了。在编程时经常需要一种通用指针，可以转换为任意其它类型的指针，任意其它类型的指针也可以转换为通用指针，最初 C 语言没有 `void *` 类型，就把 `char *` 当通用指针，需要转换时就用类型转换运算符 `()`，ANSI 在将 C 语言标准化时引入了 `void *` 类型，`void *` 指针与其它类型的指针之间可以隐式转换，而不必用类型转换运算符。注意，只能定义 `void *` 指针，而不能定义 `void` 型的变量，因为 `void *` 指针和别的指针一样都占 4 个字节，而如果定义 `void` 型变量（也就是类型暂时不确定的变量），编译器不知道该分配几个字节给变量。同样道理，`void *` 指针不能直接 Dereference，而必须先转换成别的类型的指针再做 Dereference。`void *` 指针常用于函数接口，比如：
+
+```c
+void func(void *pv)
+{
+	/* *pv = 'A' is illegal */
+	char *pchar = pv;
+	*pchar = 'A';
+}
+
+int main(void)
+{
+	char c;
+	func(&c);
+	printf("%c\n", c);
+...
+}
+```
+
+[下一章](2-C-语言本质/ch24-函数接口)讲函数接口时再详细介绍 `void *` 指针的用处。
+
+### 2.10.2. 指针类型的参数和返回值
+
+首先看以下程序：
+
+<p id="e23-1">例 23.1. 指针参数和返回值</p>
+
+```c
+#include <stdio.h>
+
+int *swap(int *px, int *py)
+{
+	int temp;
+	temp = *px;
+	*px = *py;
+	*py = temp;
+	return px;
+}
+
+int main(void)
+{
+	int i = 10, j = 20;
+	int *p = swap(&i, &j);
+	printf("now i=%d j=%d *p=%d\n", i, j, *p);
+	return 0;
+}
+```
+
+我们知道，调用函数的传参过程相当于用实参定义并初始化形参，`swap(&i, &j)` 这个调用相当于：
+
+```c
+int *px = &i;
+int *py = &j;
+```
+
+所以 `px` 和 `py` 分别指向 `main` 函数的局部变量 `i` 和 `j`，在 `swap` 函数中读写 `*px` 和 `*py` 其实是读写 `main` 函数的 `i` 和 `j`。尽管在 `swap` 函数的作用域中访问不到 `i` 和 `j` 这两个变量名，却可以通过地址访问它们，最终 `swap` 函数将 `i` 和 `j` 的值做了交换。
+
+上面的例子还演示了函数返回值是指针的情况，`return px;` 语句相当于定义了一个临时变量并用 `px` 初始化：
+
+```c
+int *tmp = px;
+```
+
+然后临时变量 `tmp` 的值成为表达式 `swap(&i, &j)` 的值，然后在 `main` 函数中又把这个值赋给了 `p`，相当于：
+
+```c
+int *p = tmp;
+```
+
+最后的结果是 `swap` 函数的 `px` 指向哪就让 `main` 函数的 `p` 指向哪。我们知道 `px` 指向 `i`，所以 `p` 也指向 `i`。
+
+#### 2.10.2.1. 习题
+
+1. 对照本节的描述，像[图 23.1「指针的基本概念」](#c23-1)那样画图理解函数的调用和返回过程。在下一章我们会看到更复杂的参数和返回值形式，在初学阶段对每个程序都要画图理解它的运行过程，只要基本概念清晰，无论多复杂的形式都应该能正确分析。
+2. 现在回头看[第 3 章「简单函数」第 3 节「形参和实参」的习题 1](1-C-语言入门/ch03-简单函数#习题)，那个程序应该怎么改？
+
+### 2.10.3. 指针与数组
+
+先看个例子，有如下语句：
+
+```c
+int a[10];
+int *pa = &a[0];
+pa++;
+```
+
+首先指针 `pa` 指向 `a[0]` 的地址，注意后缀运算符的优先级高于单目运算符，所以是取 `a[0]` 的地址，而不是取 `a` 的地址。然后 `pa++` 让 `pa` 指向下一个元素（也就是 `a[1]`），由于 `pa` 是 `int *` 指针，一个 `int` 型元素占 4 个字节，所以 `pa++` 使 `pa` 所指向的地址加 4，注意不是加 1。
+
+下面画图理解。从前面的例子我们发现，地址的具体数值其实无关紧要，关键是要说明地址之间的关系（`a[1]` 位于 `a[0]` 之后 4 个字节处）以及指针与变量之间的关系（指针保存的是变量的地址），现在我们换一种画法，省略地址的具体数值，用方框表示存储空间，用箭头表示指针和变量之间的关系。
+
+<p id="c23-3">图 23.3. 指针与数组</p>
+
+![指针与数组](./image/pointer.array.png)
+
+既然指针可以用 `++` 运算符，当然也可以用 `+`、`-` 运算符，`pa+2` 这个表达式也是有意义的，如上图所示，`pa` 指向 `a[1]`，那么 `pa+2` 指向 `a[3]`。事实上，`E1[E2]` 这种写法和 `(*((E1)+(E2)))` 是等价的，`*(pa+2)` 也可以写成 `pa[2]`，`pa` 就像数组名一样，其实数组名也没有什么特殊的，`a[2]` 之所以能取数组的第 2 个元素，是因为它等价于 `*(a+2)`，在[第 8 章「数组」第 1 节「数组的基本概念」](1-C-语言入门/ch08-数组#_1-数组的基本概念)讲过数组名做右值时自动转换成指向首元素的指针，所以 `a[2]` 和 `pa[2]` 本质上是一样的，都是通过指针间接寻址访问元素。由于 `(*((E1)+(E2)))` 显然可以写成 `(*((E2)+(E1)))`，所以 `E1[E2]` 也可以写成 `E2[E1]`，这意味着 `2[a]`、`2[pa]` 这种写法也是对的，但一般不这么写。另外，由于 `a` 做右值使用时和 `&a[0]` 是一个意思，所以 `int *pa = &a[0];` 通常不这么写，而是写成更简洁的形式 `int *pa = a;`。
+
+在[第 8 章「数组」第 1 节「数组的基本概念」](1-C-语言入门/ch08-数组#_1-数组的基本概念)还讲过 C 语言允许数组下标是负数，现在你该明白为什么这样规定了。在上面的例子中，表达式 `pa[-1]` 是合法的，它和 `a[0]` 表示同一个元素。
+
+现在猜一下，两个指针变量做比较运算（`>`、`>=`、`<`、`<=`、`==`、`!=`）表示什么意义？两个指针变量做减法运算又表示什么意义？
+
+根据什么来猜？根据[第 3 章「简单函数」第 3 节「形参和实参」](1-C-语言入门/ch03-简单函数#_3-形参和实参)讲过的 Rule of Least Surprise 原则。你理解了指针和常数加减的概念，再根据以往使用比较运算的经验，就应该猜到 `pa + 2 > pa`，`pa - 1 == a`，所以指针之间的比较运算比的是地址，C 语言正是这样规定的，不过 C 语言的规定更为严谨，只有指向同一个数组中元素的指针之间相互比较才有意义，否则没有意义。那么两个指针相减表示什么？`pa - a` 等于几？因为 `pa - 1 == a`，所以 `pa - a` 显然应该等于 1，指针相减表示两个指针之间相差的元素个数，同样只有指向同一个数组中元素的指针之间相减才有意义。两个指针相加表示什么？想不出来它能有什么意义，因此 C 语言也规定两个指针不能相加。假如 C 语言为指针相加也规定了一种意义，那就相当 Surprise 了，不符合一般的经验。无论是设计编程语言还是设计函数接口或人机界面都是这个道理，应该尽可能让用户根据以往的经验知识就能推断出该系统的基本用法。
+
+在取数组元素时用数组名和用指针的语法一样，但如果把数组名做左值使用，和指针就有区别了。例如 `pa++` 是合法的，但 `a++` 就不合法，`pa = a + 1` 是合法的，但 `a = pa + 1` 就不合法。数组名做右值时转换成指向首元素的指针，但做左值仍然表示整个数组的存储空间，而不是首元素的存储空间，数组名做左值还有一点特殊之处，不支持 `++`、赋值这些运算符，但支持取地址运算符 `&`，所以 `&a` 是合法的，我们将在[本章第 7 节「指向数组的指针与多维数组」](#7-指向数组的指针与多维数组)介绍这种语法。
+
+在函数原型中，如果参数是数组，则等价于参数是指针的形式，例如：
+
+```c
+void func(int a[10])
+{
+	...
+}
+```
+
+等价于：
+
+```c
+void func(int *a)
+{
+	...
+}
+```
+
+第一种形式方括号中的数字可以不写，仍然是等价的：
+
+```c
+void func(int a[])
+{
+	...
+}
+```
+
+参数写成指针形式还是数组形式对编译器来说没区别，都表示这个参数是指针，之所以规定两种形式是为了给读代码的人提供有用的信息，如果这个参数指向一个元素，通常写成指针的形式，如果这个参数指向一串元素中的首元素，则经常写成数组的形式。
+
+### 2.10.4. 指针与 const 限定符
+
+`const` 限定符和指针结合起来常见的情况有以下几种。
+
+```c
+const int *a;
+int const *a;
+```
+
+这两种写法是一样的，`a` 是一个指向 `const int` 型的指针，`a` 所指向的内存单元不可改写，所以 `(*a)++` 是不允许的，但 `a` 可以改写，所以 `a++` 是允许的。
+
+```c
+int * const a;
+```
+
+`a` 是一个指向 `int` 型的 `const` 指针，`*a` 是可以改写的，但 `a` 不允许改写。
+
+```c
+int const * const a;
+```
+
+`a` 是一个指向 `const int` 型的 `const` 指针，因此 `*a` 和 `a` 都不允许改写。
+
+指向非 `const` 变量的指针或者非 `const` 变量的地址可以传给指向 `const` 变量的指针，编译器可以做隐式类型转换，例如：
+
+```c
+char c = 'a';
+const char *pc = &c;
+```
+
+但是，指向 `const` 变量的指针或者 `const` 变量的地址不可以传给指向非 `const` 变量的指针，以免透过后者意外改写了前者所指向的内存单元，例如对下面的代码编译器会报警告：
+
+```c
+const char c = 'a';
+char *pc = &c;
+```
+
+即使不用 `const` 限定符也能写出功能正确的程序，但良好的编程习惯应该尽可能多地使用 `const`，因为：
+
+1. `const` 给读代码的人传达非常有用的信息。比如一个函数的参数是`const char *`，你在调用这个函数时就可以放心地传给它`char *`或`const char *`指针，而不必担心指针所指的内存单元被改写。
+2. 尽可能多地使用`const`限定符，把不该变的都声明成只读，这样可以依靠编译器检查程序中的Bug，防止意外改写数据。
+3. `const`对编译器优化是一个有用的提示，编译器也许会把`const`变量优化成常量。
+
+在[第 19 章「汇编与 C 之间的关系」第 3 节「变量的存储布局」](2-C-语言本质/ch19-汇编与-C-之间的关系#_3-变量的存储布局)我们看到，字符串字面值通常分配在 `.rodata` 段，而在[第 8 章「数组」第 4 节「字符串」](1-C-语言入门/ch08-数组?id=_4-字符串)提到，字符串字面值类似于数组名，做右值使用时自动转换成指向首元素的指针，这种指针应该是 `const char *` 型。我们知道 `printf` 函数原型的第一个参数是 `const char *` 型，可以把 `char *` 或 `const char *` 指针传给它，所以下面这些调用都是合法的：
+
+```c
+const char *p = "abcd";
+const char str1[5] = "abcd";
+char str2[5] = "abcd";
+printf(p);
+printf(str1);
+printf(str2);
+printf("abcd");
+```
+
+注意上面第一行，如果要定义一个指针指向字符串字面值，这个指针应该是 `const char *` 型，如果写成 `char *p = "abcd";` 就不好了，有隐患，例如：
+
+```c
+int main(void)
+{
+	char *p = "abcd";
+...
+	*p = 'A';
+...
+}
+```
+
+`p` 指向 `.rodata` 段，不允许改写，但编译器不会报错，在运行时会出现段错误。
+
+### 2.10.5. 指针与结构体
+
+首先定义一个结构体类型，然后定义这种类型的变量和指针：
+
+```c
+struct unit {
+	char c;
+	int num;
+};
+struct unit u;
+struct unit *p = &u;
+```
+
+要通过指针 `p` 访问结构体成员可以写成 `(*p).c` 和 `(*p).num`，为了书写方便，C 语言提供了 `->` 运算符，也可以写成 `p->c` 和 `p->num`。
+
+### 2.10.6. 指向指针的指针与指针数组
+
+指针可以指向基本类型，也可以指向复合类型，因此也可以指向另外一个指针变量，称为指向指针的指针。
+
+```c
+int i;
+int *pi = &i;
+int **ppi = &pi;
+```
+
+这样定义之后，表达式 `*ppi` 取 `pi` 的值，表达式 `**ppi` 取 `i` 的值。请读者自己画图理解 `i`、`pi`、`ppi` 这三个变量之间的关系。
+
+很自然地，也可以定义指向「指向指针的指针」的指针，但是很少用到：
+
+```c
+int ***p;
+```
+
+数组中的每个元素可以是基本类型，也可以复合类型，因此也可以是指针类型。例如定义一个数组 `a` 由 10 个元素组成，每个元素都是 `int *` 指针：
+
+```c
+int *a[10];
+```
+
+这称为指针数组。`int *a[10];` 和 `int **pa;` 之间的关系类似于 `int a[10];` 和 `int *pa;` 之间的关系：`a` 是由一种元素组成的数组，`pa` 则是指向这种元素的指针。所以，如果 `pa` 指向 `a` 的首元素：
+
+```c
+int *a[10];
+int **pa = &a[0];
+```
+
+则 `pa[0]` 和 `a[0]` 取的是同一个元素，唯一比原来复杂的地方在于这个元素是一个 `int *` 指针，而不是基本类型。
+
+我们知道 `main` 函数的标准原型应该是 `int main(int argc, char *argv[]);`。`argc` 是命令行参数的个数。而 `argv` 是一个指向指针的指针，为什么不是指针数组呢？因为前面讲过，函数原型中的 `[]` 表示指针而不表示数组，等价于 `char **argv`。那为什么要写成 `char *argv[]` 而不写成 `char **argv` 呢？这样写给读代码的人提供了有用信息，`argv` 不是指向单个指针，而是指向一个指针数组的首元素。数组中每个元素都是 `char *` 指针，指向一个命令行参数字符串。
+
+<p id="e23-2">例 23.2. 打印命令行参数</p>
+
+```c
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+	int i;
+	for(i = 0; i < argc; i++)
+		printf("argv[%d]=%s\n", i, argv[i]);
+	return 0;
+}
+```
+
+编译执行：
+
+```bash
+$ gcc main.c
+$ ./a.out a b c
+argv[0]=./a.out
+argv[1]=a
+argv[2]=b
+argv[3]=c
+$ ln -s a.out printargv
+$ ./printargv d e 
+argv[0]=./printargv
+argv[1]=d
+argv[2]=e
+```
+
+注意程序名也算一个命令行参数，所以执行 `./a.out a b c` 这个命令时，`argc` 是 4，`argv` 如下图所示：
+
+<p id="c23-4">图 23.4. argv 指针数组</p>
+
+![argv指针数组](./image/pointer.argv.png)
+
+由于 `argv[4]` 是 `NULL`，我们也可以这样循环遍历 `argv`：
+
+```c
+for(i=0; argv[i] != NULL; i++)
+```
+
+`NULL` 标识着 `argv` 的结尾，这个循环碰到 `NULL` 就结束，因而不会访问越界，这种用法很形象地称为 Sentinel，`NULL` 就像一个哨兵守卫着数组的边界。
+
+在这个例子中我们还看到，如果给程序建立符号链接，然后通过符号链接运行这个程序，就可以得到不同的 `argv[0]`。通常，程序会根据不同的命令行参数做不同的事情，例如 `ls -l` 和 `ls -R` 打印不同的文件列表，而有些程序会根据不同的 `argv[0]` 做不同的事情，例如专门针对嵌入式系统的开源项目 Busybox，将各种 Linux 命令裁剪后集于一身，编译成一个可执行文件 `busybox`，安装时将 `busybox` 程序拷到嵌入式系统的 `/bin` 目录下，同时在 `/bin`、`/sbin`、`/usr/bin`、`/usr/sbin` 等目录下创建很多指向 `/bin/busybox` 的符号链接，命名为 `cp`、`ls`、`mv`、`ifconfig` 等等，不管执行哪个命令其实最终都是在执行 `/bin/busybox`，它会根据 `argv[0]` 来区分不同的命令。
+
+#### 2.10.6.1. 习题
+
+1. 想想以下定义中的 `const` 分别起什么作用？编写程序验证你的猜测。
+	
+	```c
+	const char **p;
+	char *const *p;
+	char **const p;
+	```
+
+### 2.10.7. 指向数组的指针与多维数组
+
+指针可以指向复合类型，上一节讲了指向指针的指针，这一节学习指向数组的指针。以下定义一个指向数组的指针，该数组有 10 个 `int` 元素：
+
+```c
+int (*a)[10];
+```
+
+和上一节指针数组的定义 `int *a[10];` 相比，仅仅多了一个 `()` 括号。如何记住和区分这两种定义呢？我们可以认为 `[]` 比 `*` 有更高的优先级，如果 `a` 先和 `*` 结合则表示 `a` 是一个指针，如果 `a` 先和 `[]` 结合则表示 `a` 是一个数组。`int *a[10];` 这个定义可以拆成两句：
+
+```c
+typedef int *t;
+t a[10];
+```
+
+`t` 代表 `int *` 类型，`a` 则是由这种类型的元素组成的数组。`int (*a)[10];` 这个定义也可以拆成两句：
+
+```c
+typedef int t[10];
+t *a;
+```
+
+`t` 代表由 10 个 `int` 组成的数组类型，`a` 则是指向这种类型的指针。
+
+现在看指向数组的指针如何使用：
+
+```c
+int a[10];
+int (*pa)[10] = &a;
+```
+
+`a` 是一个数组，在 `&a` 这个表达式中，数组名做左值，取整个数组的首地址赋给指针 `pa`。 **注意，`&a[0]` 表示数组 `a` 的首元素的首地址，而 `&a` 表示数组 `a` 的首地址，显然这两个地址的数值相同，但这两个表达式的类型是两种不同的指针类型，前者的类型是 `int *`，而后者的类型是 `int (*)[10]`** 。`*pa` 就表示 `pa` 所指向的数组 `a`，所以取数组的 `a[0]` 元素可以用表达式 `(*pa)[0]`。注意到 `*pa` 可以写成 `pa[0]`，所以 `(*pa)[0]` 这个表达式也可以改写成 `pa[0][0]`，
+
+```c
+int a[] = {1,2,3,4,5};
+// []的优先级比*高
+int (*pa)[] = &a;
+
+printf("%d",a == &a[0]);
+printf("%d",pa == &a);                // ①
+
+// `&a` 表示数组 `a` 的首地址
+// `&a[0]` 表示数组 `a` 的首元素的首地址
+// &a[0] 和 &a 数值相同，类型不同
+// 同时 *(&a) =->= *(&a[0]) =->= a[0]    ②
+//
+// 根据① ② 得：
+//              *pa =->= a[0]            ③
+//
+// 取数组a首元素值：a[0]
+// pa == &a,则*pa = a
+// 则：取元素a首元素：a[0] =->= (*pa)[0] ④
+//
+// 根据③ ④ 可得：a[0] = pa[0][0]
+```
+
+
+`pa` 就像一个二维数组的名字，它表示什么含义呢？下面把 `pa` 和二维数组放在一起做个分析。
+
+`int a[5][10];` 和 `int (*pa)[10];` 之间的关系同样类似于 `int a[10];` 和 `int *pa;` 之间的关系：`a` 是由一种元素组成的数组，`pa` 则是指向这种元素的指针。所以，如果 `pa` 指向 `a` 的首元素：
+
+```c
+int a[5][10];
+int (*pa)[10] = &a[0];
+```
+
+则 `pa[0]` 和 `a[0]` 取的是同一个元素，唯一比原来复杂的地方在于这个元素是由 10 个 `int` 组成的数组，而不是基本类型。这样，我们可以把 `pa` 当成二维数组名来使用，`pa[1][2]` 和 `a[1][2]` 取的也是同一个元素，而且 `pa` 比 `a` 用起来更灵活，数组名不支持赋值、自增等运算，而指针可以支持，`pa++` 使 `pa` 跳过二维数组的一行（40 个字节），指向 `a[1]` 的首地址。
+
+#### 2.10.7.1. 习题
+
+1. 定义以下变量：
+	
+	```c
+	char a[4][3][2] = {{{'a', 'b'}, {'c', 'd'}, {'e', 'f'}},
+			   {{'g', 'h'}, {'i', 'j'}, {'k', 'l'}},
+			   {{'m', 'n'}, {'o', 'p'}, {'q', 'r'}},
+			   {{'s', 't'}, {'u', 'v'}, {'w', 'x'}}};
+	
+	char (*pa)[2] = &a[1][0];
+	char (*ppa)[3][2] = &a[1];
+	```
+	
+	要想通过`pa`或`ppa`访问数组`a`中的`'r'`元素，分别应该怎么写？
+
+### 2.10.8. 函数类型和函数指针类型
+
+在 C 语言中，函数也是一种类型，可以定义指向函数的指针。我们知道，指针变量的内存单元存放一个地址值，而函数指针存放的就是函数的入口地址（位于 `.text` 段）。下面看一个简单的例子：
+
+<p id="e23-3">例 23.3. 函数指针</p>
+
+```c
+#include <stdio.h>
+
+void say_hello(const char *str)
+{
+	printf("Hello %s\n", str);
+}
+
+int main(void)
+{
+	void (*f)(const char *) = say_hello;
+	f("Guys");
+	return 0;
+}
+```
+
+分析一下变量 `f` 的类型声明 `void (*f)(const char *)`，`f` 首先跟 `*` 号结合在一起，因此是一个指针。`(*f)` 外面是一个函数原型的格式，参数是 `const char *`，返回值是 `void`，所以 `f` 是指向这种函数的指针。而 `say_hello` 的参数是 `const char *`，返回值是 `void`，正好是这种函数，因此 `f` 可以指向 `say_hello`。注意，`say_hello` 是一种函数类型，而函数类型和数组类型类似，做右值使用时自动转换成函数指针类型，所以可以直接赋给 `f`，当然也可以写成 `void (*f)(const char *) = &say_hello;`，把函数 `say_hello` 先取地址再赋给 `f`，就不需要自动类型转换了。
+
+可以直接通过函数指针调用函数，如上面的 `f("Guys")`，也可以先用 `*f` 取出它所指的函数类型，再调用函数，即 `(*f)("Guys")`。可以这么理解：函数调用运算符 `()` 要求操作数是函数指针，所以 `f("Guys")` 是最直接的写法，而 `say_hello("Guys")` 或 `(*f)("Guys")` 则是把函数类型自动转换成函数指针然后做函数调用。
+
+下面再举几个例子区分函数类型和函数指针类型。首先定义函数类型 `F`：
+
+```c
+typedef int F(void);
+```
+
+这种类型的函数不带参数，返回值是 `int`。那么可以这样声明 `f` 和 `g`：
+
+```c
+F f, g;
+```
+
+相当于声明：
+
+```c
+int f(void);
+int g(void);
+```
+
+下面这个函数声明是错误的：
+
+```c
+F h(void);
+```
+
+因为函数可以返回 `void` 类型、标量类型、结构体、联合体，但不能返回函数类型，也不能返回数组类型。而下面这个函数声明是正确的：
+
+```c
+F *e(void);
+```
+
+函数 `e` 返回一个 `F *` 类型的函数指针。如果给 `e` 多套几层括号仍然表示同样的意思：
+
+```c
+F *((e))(void);
+```
+
+但如果把 `*` 号也套在括号里就不一样了：
+
+```c
+int (*fp)(void);
+```
+
+这样声明了一个函数指针，而不是声明一个函数。`fp` 也可以这样声明：
+
+```c
+F *fp;
+```
+
+通过函数指针调用函数和直接调用函数相比有什么好处呢？我们研究一个例子。回顾[第 7 章「结构体」第 3 节「数据类型标志」的习题 1](1-C-语言入门/ch07-结构体#习题-1)，由于结构体中多了一个类型字段，需要重新实现 `real_part`、`img_part`、`magnitude`、`angle` 这些函数，你当时是怎么实现的？大概是这样吧：
+
+```c
+double real_part(struct complex_struct z)
+{
+	if (z.t == RECTANGULAR)
+		return z.a;
+	else
+		return z.a * cos(z.b);
+}
+```
+
+现在类型字段有两种取值，`RECTANGULAR` 和 `POLAR`，每个函数都要 `if ... else ...`，如果类型字段有三种取值呢？每个函数都要 `if ... else if ... else`，或者 `switch ... case ...`。这样维护代码是不够理想的，现在我用函数指针给出一种实现：
+
+```c
+double rect_real_part(struct complex_struct z)
+{
+	return z.a;
+}
+
+double rect_img_part(struct complex_struct z)
+{
+	return z.b;
+}
+
+double rect_magnitude(struct complex_struct z)
+{
+	return sqrt(z.a * z.a + z.b * z.b);
+}
+
+double rect_angle(struct complex_struct z)
+{
+	double PI = acos(-1.0);
+
+	if (z.a > 0)
+		return atan(z.b / z.a);
+	else
+		return atan(z.b / z.a) + PI;
+}
+
+double pol_real_part(struct complex_struct z)
+{
+	return z.a * cos(z.b);
+}
+
+double pol_img_part(struct complex_struct z)
+{
+	return z.a * sin(z.b);
+}
+
+double pol_magnitude(struct complex_struct z)
+{
+	return z.a;
+}
+
+double pol_angle(struct complex_struct z)
+{
+	return z.b;
+}
+
+double (*real_part_tbl[])(struct complex_struct) = { rect_real_part, pol_real_part };
+double (*img_part_tbl[])(struct complex_struct) = { rect_img_part, pol_img_part };
+double (*magnitude_tbl[])(struct complex_struct) = { rect_magnitude, pol_magnitude };
+double (*angle_tbl[])(struct complex_struct) = { rect_angle, pol_angle };
+
+#define real_part(z) real_part_tbl[z.t](z)
+#define img_part(z) img_part_tbl[z.t](z)
+#define magnitude(z) magnitude_tbl[z.t](z)
+#define angle(z) angle_tbl[z.t](z)
+```
+
+当调用 `real_part(z)` 时，用类型字段 `z.t` 做索引，从指针数组 `real_part_tbl` 中取出相应的函数指针来调用，也可以达到 `if ... else ...` 的效果，但相比之下这种实现更好，每个函数都只做一件事情，而不必用 `if ... else ...` 兼顾好几件事情，比如 `rect_real_part` 和 `pol_real_part` 各做各的，互相独立，而不必把它们的代码都耦合到一个函数中。「低耦合，高内聚」（Low Coupling, High Cohesion）是程序设计的一条基本原则，这样可以更好地复用现有代码，使代码更容易维护。如果类型字段 `z.t` 又多了一种取值，只需要添加一组新的函数，修改函数指针数组，原有的函数仍然可以不加改动地复用。
+
+### 2.10.9. 不完全类型和复杂声明
+
+在[第 7 章「结构体」第 1 节「复合类型与结构体」](1-C-语言入门/ch07-结构体#1-复合类型与结构体)讲过算术类型、标量类型的概念，现在又学习了几种类型，我们完整地总结一下 C 语言的类型。下图出自 *Standard C*。
+
+<p id="c23-5">图 23.5. C 语言类型总结</p>
+
+![C 语言类型总结](./image/pointer.type.gif)
+
+C 语言的类型分为函数类型、对象类型和不完全类型三大类。对象类型又分为标量类型和非标量类型。指针类型属于标量类型，因此也可以做逻辑与、或、非运算的操作数和 `if`、`for`、`while` 的控制表达式，`NULL` 指针表示假，非 `NULL` 指针表示真。不完全类型是暂时没有完全定义好的类型，编译器不知道这种类型该占几个字节的存储空间，例如：
+
+```c
+struct s;
+union u;
+char str[];
+```
+
+具有不完全类型的变量可以通过多次声明组合成一个完全类型，比如数组 `str` 声明两次：
+
+```c
+char str[];
+char str[10];
+```
+
+当编译器碰到第一个声明时，认为 `str` 是一个不完全类型，碰到第二个声明时 `str` 就组合成完全类型了，如果编译器处理到程序文件的末尾仍然无法把 `str` 组合成一个完全类型，就会报错。读者可能会想，这个语法有什么用呢？为何不在第一次声明时就把 `str` 声明成完全类型？有些情况下这么做有一定的理由，比如第一个声明是写在头文件里的，第二个声明写在 `.c` 文件里，这样如果要改数组长度，只改 `.c` 文件就行了，头文件可以不用改。
+
+不完全的结构体类型有重要作用：
+
+```c
+struct s {
+	struct t *pt;
+};
+
+struct t {
+	struct s *ps;
+};
+```
+
+`struct s` 和 `struct t` 各有一个指针成员指向另一种类型。编译器从前到后依次处理，当看到 `struct s { struct t* pt; };` 时，认为 `struct t` 是一个不完全类型，`pt` 是一个指向不完全类型的指针，尽管如此，这个指针却是完全类型，因为不管什么指针都占 4 个字节存储空间，这一点很明确。然后编译器又看到 `struct t { struct s *ps; };`，这时 `struct t` 有了完整的定义，就组合成一个完全类型了，`pt` 的类型就组合成一个指向完全类型的指针。由于 `struct s` 在前面有完整的定义，所以 `struct s *ps;` 也定义了一个指向完全类型的指针。
+
+这样的类型定义是错误的：
+
+```c
+struct s {
+	struct t ot;
+};
+
+struct t {
+	struct s os;
+};
+```
+
+编译器看到 `struct s { struct t ot; };` 时，认为 `struct t` 是一个不完全类型，无法定义成员 `ot`，因为不知道它该占几个字节。所以结构体中可以递归地定义指针成员，但不能递归地定义变量成员，你可以设想一下，假如允许递归地定义变量成员，`struct s` 中有一个 `struct t`，`struct t` 中又有一个 `struct s`，`struct s` 又中有一个 `struct t`，这就成了一个无穷递归的定义。
+
+以上是两个结构体构成的递归定义，一个结构体也可以递归定义：
+
+```c
+struct s {
+	char data[6];
+	struct s* next;
+};
+```
+
+当编译器处理到第一行 `struct s {` 时，认为 `struct s` 是一个不完全类型，当处理到第三行 `struct s *next;` 时，认为 `next` 是一个指向不完全类型的指针，当处理到第四行`};` 时，`struct s` 成了一个完全类型，`next` 也成了一个指向完全类型的指针。类似这样的结构体是很多种数据结构的基本组成单元，如链表、二叉树等，我们将在后面详细介绍。下图示意了由几个 `struct s` 结构体组成的链表，这些结构体称为链表的节点（Node）。
+
+<p id="c23-6">图 23.6. 链表</p>
+
+![链表](./image/pointer.linkedlist.png)
+
+`head` 指针是链表的头指针，指向第一个节点，每个节点的 `next` 指针域指向下一个节点，最后一个节点的 `next` 指针域为 `NULL`，在图中用 0 表示。
+
+可以想像得到，如果把指针和数组、函数、结构体层层组合起来可以构成非常复杂的类型，下面看几个复杂的声明。
+
+```c
+typedef void (*sighandler_t)(int);
+sighandler_t signal(int signum, sighandler_t handler);
+```
+
+这个声明来自 `signal(2)`。`sighandler_t` 是一个函数指针，它所指向的函数带一个参数，返回值为 `void`，`signal` 是一个函数，它带两个参数，一个 `int` 参数，一个 `sighandler_t` 参数，返回值也是 `sighandler_t` 参数。如果把这两行合成一行写，就是：
+
+```c
+void (*signal(int signum, void (*handler)(int)))(int);
+```
+
+在分析复杂声明时，要借助 `typedef` 把复杂声明分解成几种基本形式：
+
+- `T *p;`，`p` 是指向 `T` 类型的指针。
+- `T a[];`，`a` 是由 `T` 类型的元素组成的数组，但有一个例外，如果 `a` 是函数的形参，则相当于 `T *a;`
+- `T1 f(T2, T3...);`，`f` 是一个函数，参数类型是 `T2`、`T3` 等等，返回值类型是 `T1`。
+
+我们分解一下这个复杂声明：
+
+```c
+int (*(*fp)(void *))[10];
+```
+
+1. `fp` 和 `*` 号括在一起，说明 `fp` 是一个指针，指向 `T1` 类型：
+
+	```c
+	typedef int (*T1(void *))[10];
+	T1 *fp;
+	```
+
+2. `T1` 应该是一个函数类型，参数是 `void *`，返回值是 `T2` 类型：
+
+	```c
+	typedef int (*T2)[10];
+	typedef T2 T1(void *);
+	T1 *fp;
+	```
+
+3. `T2` 和 `*` 号括在一起，应该也是个指针，指向 `T3` 类型：
+
+	```c
+	typedef int T3[10];
+	typedef T3 *T2;
+	typedef T2 T1(void *);
+	T1 *fp;
+	```
+	
+	显然，`T3` 是一个 `int` 数组，由 10 个元素组成。分解完毕。
+
+### 2.10.10. 指针数组和指向数组的指针
 
 ```c
 // 指针数组和指向数组的指针
@@ -10023,31 +11607,9527 @@ printf("%d",pa == &a);                // ①
 
 ## 2.11. 函数接口
 
+我们在[第 11 章「排序与查找」第 6 节「折半查找」](1-C-语言入门/ch11-排序与查找#6-折半查找)讲过，函数的调用者和函数的实现者之间订立了一个契约，在调用函数之前，调用者要为实现者提供某些条件，在函数返回时，实现者要对调用者尽到某些义务。如何描述这个契约呢？首先靠函数接口来描述，即函数名，参数，返回值，只要函数和参数的名字起得合理，参数和返回值的类型定得准确，至于这个函数怎么用，调用者单看函数接口就能猜出八九分了。函数接口并不能表达函数的全部语义，这时文档就起了重要的补充作用，函数的文档该写什么，怎么写，Man Page 为我们做了很好的榜样。
+
+函数接口一旦和指针结合起来就变得异常灵活，有五花八门的用法，但是万变不离其宗，只要像[第 23 章「指针」图 23.1「指针的基本概念」](2-C-语言本质/ch23-指针#c23-1)那样画图分析，指针的任何用法都能分析清楚，所以，如果上一章你真正学明白了，本章不用学也能自己领悟出来，之所以写这一章是为了照顾悟性不高的读者。本章把函数接口总结成几类常见的模式，对于每种模式，一方面讲函数接口怎么写，另一方面讲函数的文档怎么写。
+
+### 2.11.1. 本章的预备知识
+
+这一节介绍本章的范例代码要用的几个 C 标准库函数。我们先体会一下这几个函数的接口是怎么设计的，Man Page 是怎么写的。其它常用的 C 标准库函数将在下一章介绍。
+
+#### 2.11.1.1. strcpy 与 strncpy
+
+从现在开始我们要用到很多库函数，在学习每个库函数时一定要看 Man Page。Man Page 随时都在我们手边，想查什么只要敲一个命令就行，然而很多初学者就是不喜欢看 Man Page，宁可满世界去查书、查资料，也不愿意看Man Page。据我分析原因有三：
+
+1. 英文不好。那还是先学好了英文再学编程吧，否则即使你把这本书都学透了也一样无法胜任开发工作，因为你没有进一步学习的能力。
+2. Man Page 的语言不够友好。Man Page 不像本书这样由浅入深地讲解，而是平铺直叙，不过看习惯了就好了，每个 Man Page 都不长，多看几遍自然可以抓住重点，理清头绪。本节分析一个例子，帮助读者把握 Man Page 的语言特点。
+3. Man Page 通常没有例子。描述一个函数怎么用，一靠接口，二靠文档，而不是靠例子。函数的用法无非是本章所总结的几种模式，只要把本章学透了，你就不需要每个函数都得有个例子教你怎么用了。
+
+总之，Man Page 是一定要看的，一开始看不懂硬着头皮也要看，为了鼓励读者看 Man Page，本书不会像 *K&R* 那样把库函数总结成一个附录附在书后面。现在我们来分析 `strcpy(3)`。
+
+<p id="c24-1">图 24.1. strcpy(3)</p>
+
+![strcpy(3)](./image/interface.synopsis.png)
+
+这个 Man Page 描述了两个函数，`strcpy` 和 `strncpy`，敲命令 `man strcpy` 或者 `man strncpy` 都可以看到这个 Man Page。这两个函数的作用是把一个字符串拷贝给另一个字符串。**SYNOPSIS** 部分给出了这两个函数的原型，以及要用这些函数需要包含哪些头文件。参数 `dest`、`src` 和 `n` 都加了下划线，有时候并不想从头到尾阅读整个 Man Page，而是想查一下某个参数的含义，通过下划线和参数名就能很快找到你关心的部分。
+
+`dest` 表示 Destination，`src` 表示 Source，看名字就能猜到是把 `src` 所指向的字符串拷贝到 `dest` 所指向的内存空间。这一点从两个参数的类型也能看出来，`dest` 是 `char *` 型的，而 `src` 是 `const char *` 型的，说明 `src` 所指向的内存空间在函数中只能读不能改写，而 `dest` 所指向的内存空间在函数中是要改写的，显然改写的目的是当函数返回后调用者可以读取改写的结果。因此可以猜到 `strcpy` 函数是这样用的：
+
+```c
+char buf[10];
+strcpy(buf, "hello");
+printf(buf);
+```
+
+至于 `strncpy` 的参数 `n` 是干什么用的，单从函数接口猜不出来，就需要看下面的文档。
+
+<p id="c24-2">图 24.2. strcpy(3)</p>
+
+![strcpy(3)](./image/interface.description.png)
+
+在文档中强调了 `strcpy` 在拷贝字符串时会把结尾的 `'\0'` 也拷到 `dest` 中，因此保证了 `dest` 中是以 `'\0'` 结尾的字符串。但另外一个要注意的问题是，`strcpy` 只知道 `src` 字符串的首地址，不知道长度，它会一直拷贝到 `'\0'` 为止，所以 `dest` 所指向的内存空间要足够大，否则有可能写越界，例如：
+
+```c
+char buf[10];
+strcpy(buf, "hello world");
+```
+
+如果没有保证 `src` 所指向的内存空间以 `'\0'` 结尾，也有可能读越界，例如：
+
+```c
+char buf[10] = "abcdefghij", str[4] = "hell";
+strcpy(buf, str);
+```
+
+因为 `strcpy` 函数的实现者通过函数接口无法得知 `src` 字符串的长度和 `dest` 内存空间的大小，所以“确保不会写越界”应该是调用者的责任，调用者提供的 `dest` 参数应该指向足够大的内存空间，“确保不会读越界”也是调用者的责任，调用者提供的 `src` 参数指向的内存应该确保以 `'\0'` 结尾。
+
+此外，文档中还强调了 `src` 和 `dest` 所指向的内存空间不能有重叠。凡是有指针参数的 C 标准库函数基本上都有这条要求，每个指针参数所指向的内存空间互不重叠，例如这样调用是不允许的：
+
+```c
+char buf[10] = "hello";
+strcpy(buf, buf+1);
+```
+
+`strncpy` 的参数 `n` 指定最多从 `src` 中拷贝 `n` 个字节到 `dest` 中，换句话说，如果拷贝到 `'\0'` 就结束，如果拷贝到 `n` 个字节还没有碰到 `'\0'`，那么也结束，调用者负责提供适当的 `n` 值，以确保读写不会越界，比如让 `n` 的值等于 `dest` 所指向的内存空间的大小：
+
+```c
+char buf[10];
+strncpy(buf, "hello world", sizeof(buf));
+```
+
+然而这意味着什么呢？文档中特别用了 **Warning** 指出，这意味着 `dest` 有可能不是以 `'\0'` 结尾的。例如上面的调用，虽然把 `"hello world"` 截断到 10 个字符拷贝至 `buf` 中，但 `buf` 不是以 `'\0'` 结尾的，如果再 `printf(buf)` 就会读越界。如果你需要确保 `dest` 以 `'\0'` 结束，可以这么调用：
+
+```c
+char buf[10];
+strncpy(buf, "hello world", sizeof(buf));
+buf[sizeof(buf)-1] = '\0';
+```
+
+`strncpy` 还有一个特性，如果 `src` 字符串全部拷完了不足 `n` 个字节，那么还差多少个字节就补多少个 `'\0'`，但是正如上面所述，这并不保证 `dest` 一定以 `'\0'` 结束，当 `src` 字符串的长度大于 `n` 时，不但不补多余的 `'\0'`，连字符串的结尾 `'\0'` 也不拷贝。`strcpy(3)` 的文档已经相当友好了，为了帮助理解，还给出一个 `strncpy` 的简单实现。
+
+<p id="c24-3">图 24.3. strcpy(3)</p>
+
+![strcpy(3)](./image/interface.return.png)
+
+函数的 Man Page 都有一部分专门讲返回值的。这两个函数的返回值都是 `dest` 指针。可是为什么要返回 `dest` 指针呢？`dest` 指针本来就是调用者传过去的，再返回一遍 `dest` 指针并没有提供任何有用的信息。之所以这么规定是为了把函数调用当作一个指针类型的表达式使用，比如 `printf("%s\n", strcpy(buf, "hello"))`，一举两得，如果 `strcpy` 的返回值是 `void` 就没有这么方便了。
+
+**CONFORMING TO** 部分描述了这个函数是遵照哪些标准实现的。`strcpy` 和 `strncpy` 是 C 标准库函数，当然遵照 C99 标准。以后我们还会看到 `libc` 中有些函数属于 POSIX 标准但并不属于 C 标准，例如 `write(2)`。
+
+**NOTES** 部分给出一些提示信息。这里指出如何确保 `strncpy` 的 `dest` 以 `'\0'` 结尾，和我们上面给出的代码类似，但由于 `n` 是个变量，在执行 `buf[n - 1]= '\0';` 之前先检查一下 `n` 是否大于 0，如果 `n` 不大于 0，`buf[n - 1]` 就访问越界了，所以要避免。
+
+<p id="c24-4">图 24.4. strcpy(3)</p>
+
+![strcpy(3)](./image/interface.bugs.png)
+
+**BUGS** 部分说明了使用这些函数可能引起的 Bug，这部分一定要仔细看。用 `strcpy` 比用 `strncpy` 更加不安全，如果在调用 `strcpy` 之前不仔细检查 `src` 字符串的长度就有可能写越界，这是一个很常见的错误，例如：
+
+```c
+void foo(char *str)
+{
+	char buf[10];
+	strcpy(buf, str);
+	...
+}
+```
+
+`str` 所指向的字符串有可能超过 10 个字符而导致写越界，在[第 10 章「gdb」第 4 节「段错误」](1-C-语言入门/ch10-gdb#_4-段错误)我们看到过，这种写越界可能当时不出错，而在函数返回时出现段错误，原因是写越界覆盖了保存在栈帧上的返回地址，函数返回时跳转到非法地址，因而出错。像 `buf` 这种由调用者分配并传给函数读或写的一段内存通常称为缓冲区（Buffer），缓冲区写越界的错误称为缓冲区溢出（Buffer Overflow）。如果只是出现段错误那还不算严重，更严重的是缓冲区溢出 Bug 经常被恶意用户利用，使函数返回时跳转到一个事先设好的地址，执行事先设好的指令，如果设计得巧妙甚至可以启动一个 Shell，然后随心所欲执行任何命令，可想而知，如果一个用 `root` 权限执行的程序存在这样的 Bug，被攻陷了，后果将很严重。至于怎样巧妙设计和攻陷一个有缓冲区溢出 Bug 的程序，有兴趣的读者可以参考 *SmashStack*。
+
+##### 习题
+
+1. 自己实现一个 `strcpy` 函数，尽可能简洁，按照本书的编码风格你能用三行代码写出函数体吗？
+2. 编一个函数，输入一个字符串，要求做一个新字符串，把其中所有的一个或多个连续的空白字符都压缩为一个空格。这里所说的空白包括空格、'\t'、'\n'、'\r'。例如原来的字符串是：
+
+	```c
+	This Content hoho       is ok
+	        ok?
+	
+	        file system
+	uttered words   ok ok      ?
+	end.
+	```
+	
+	压缩了空白之后就是：
+	
+	```
+	This Content hoho is ok ok? file system uttered words ok ok ? end.
+	```
+	
+	实现该功能的函数接口要求符合下述规范：
+	
+	```
+	char *shrink_space(char *dest, const char *src, size_t n);
+	```
+	
+	各项参数和返回值的含义和 `strncpy` 类似。完成之后，为自己实现的函数写一个 Man Page。
+
+#### 2.11.1.2. malloc 与 free
+
+程序中需要动态分配一块内存时怎么办呢？可以像上一节那样定义一个缓冲区数组。这种方法不够灵活，C89 要求定义的数组是固定长度的，而程序往往在运行时才知道要动态分配多大的内存，例如：
+
+```c
+void foo(char *str, int n)
+{
+	char buf[?];
+	strncpy(buf, str, n);
+	...
+}
+```
+
+`n` 是由参数传进来的，事先不知道是多少，那么 `buf` 该定义多大呢？在[第 8 章「数组」第 1 节「数组的基本概念」](1-C-语言入门/ch08-数组#_1-数组的基本概念)讲过 C99 引入 VLA 特性，可以定义 `char buf[n+1] = {};`，这样可确保 `buf` 是以 `'\0'` 结尾的。但即使用 VLA 仍然不够灵活，VLA 是在栈上动态分配的，函数返回时就要释放，如果我们希望动态分配一块全局的内存空间，在各函数中都可以访问呢？由于全局数组无法定义成 VLA，所以仍然不能满足要求。
+
+其实在[第 20 章「链接详解」第 5 节「虚拟内存管理」](2-C-语言本质/ch20-链接详解#_5-虚拟内存管理)提过，进程有一个堆空间，C 标准库函数 `malloc` 可以在堆空间动态分配内存，它的底层通过 `brk` 系统调用向操作系统申请内存。动态分配的内存用完之后可以用 `free` 释放，更准确地说是归还给 `malloc`，这样下次调用 `malloc` 时这块内存可以再次被分配。本节学习这两个函数的用法和工作原理。
+
+```c
+#include <stdlib.h>
+
+void *malloc(size_t size);
+返回值：成功返回所分配内存空间的首地址，出错返回 NULL
+
+void free(void *ptr);
+```
+
+`malloc` 的参数 `size` 表示要分配的字节数，如果分配失败（可能是由于系统内存耗尽）则返回 `NULL`。由于 `malloc` 函数不知道用户拿到这块内存要存放什么类型的数据，所以返回通用指针 `void *`，用户程序可以转换成其它类型的指针再访问这块内存。`malloc` 函数保证它返回的指针所指向的地址满足系统的对齐要求，例如在 32 位平台上返回的指针一定对齐到 4 字节边界，以保证用户程序把它转换成任何类型的指针都能用。
+
+动态分配的内存用完之后可以用 `free` 释放掉，传给 `free` 的参数正是先前 `malloc` 返回的内存块首地址。举例如下：
+
+<p id="e24-1">例 24.1. malloc 和 free</p>
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+	int number;
+	char *msg;
+} unit_t;
+
+int main(void)
+{
+	unit_t *p = malloc(sizeof(unit_t));
+
+	if (p == NULL) {
+		printf("out of memory\n");
+		exit(1);
+	}
+	p->number = 3;
+	p->msg = malloc(20);
+	strcpy(p->msg, "Hello world!");
+	printf("number: %d\nmsg: %s\n", p->number, p->msg);
+	free(p->msg);
+	free(p);
+	p = NULL;
+
+	return 0;
+}
+```
+
+关于这个程序要注意以下几点：
+
+- `unit_t *p = malloc(sizeof(unit_t));` 这一句，等号右边是 `void *` 类型，等号左边是 `unit_t *` 类型，编译器会做隐式类型转换，我们讲过 `void *` 类型和任何指针类型之间可以相互隐式转换。
+- 虽然内存耗尽是很不常见的错误，但写程序要规范，`malloc` 之后应该判断是否成功。以后要学习的大部分系统函数都有成功的返回值和失败的返回值，每次调用系统函数都应该判断是否成功。
+- `free(p);` 之后，`p` 所指的内存空间是归还了，但是 `p` 的值并没有变，因为从 `free` 的函数接口来看根本就没法改变 `p` 的值，`p` 现在指向的内存空间已经不属于用户，换句话说，`p` 成了野指针，为避免出现野指针，我们应该在 `free(p);` 之后手动置 `p = NULL;`。
+- 应该先 `free(p->msg)`，再 `free(p)`。如果先 `free(p)`，`p` 成了野指针，就不能再通过 `p->msg` 访问内存了。
+
+上面的例子只有一个简单的顺序控制流程，分配内存，赋值，打印，释放内存，退出程序。这种情况下即使不用 `free` 释放内存也可以，因为程序退出时整个进程地址空间都会释放，包括堆空间，该进程占用的所有内存都会归还给操作系统。但如果一个程序长年累月运行（例如网络服务器程序），并且在循环或递归中调用 `malloc` 分配内存，则必须有 `free` 与之配对，分配一次就要释放一次，否则每次循环都分配内存，分配完了又不释放，就会慢慢耗尽系统内存，这种错误称为内存泄漏（Memory Leak）。另外，`malloc` 返回的指针一定要保存好，只有把它传给 `free` 才能释放这块内存，如果这个指针丢失了，就没有办法 `free` 这块内存了，也会造成内存泄漏。例如：
+
+```c
+void foo(void)
+{
+	char *p = malloc(10);
+	...
+}
+```
+
+`foo` 函数返回时要释放局部变量 `p` 的内存空间，它所指向的内存地址就丢失了，这 10 个字节也就没法释放了。内存泄漏的 Bug 很难找到，因为它不会像访问越界一样导致程序运行错误，少量内存泄漏并不影响程序的正确运行，大量的内存泄漏会使系统内存紧缺，导致频繁换页，不仅影响当前进程，而且把整个系统都拖得很慢。
+
+关于 `malloc` 和 `free` 还有一些特殊情况。`malloc(0)` 这种调用也是合法的，也会返回一个非 `NULL` 的指针，这个指针也可以传给 `free` 释放，但是不能通过这个指针访问内存。`free(NULL)` 也是合法的，不做任何事情，但是 `free` 一个野指针是不合法的，例如先调用 `malloc` 返回一个指针 `p`，然后连着调用两次 `free(p);`，则后一次调用会产生运行时错误。
+
+*K&R* 的 8.7 节给出了 `malloc` 和 `free` 的简单实现，基于环形链表。目前读者还没有学习链表，看那段代码会有点困难，我再做一些简化，图示如下，目的是让读者理解 `malloc` 和 `free` 的工作原理。`libc` 的实现比这要复杂得多，但基本工作原理也是如此。读者只要理解了基本工作原理，就很容易分析在使用 `malloc` 和 `free` 时遇到的各种 Bug 了。
+
+<p id="c24-5">图 24.5. 简单的malloc和free实现</p>
+
+![简单的 malloc 和 free 实现](./image/interface.malloc.png)
+
+图中白色背景的框表示 `malloc` 管理的空闲内存块，深色背景的框不归 `malloc` 管，可能是已经分配给用户的内存块，也可能不属于当前进程，Break 之上的地址不属于当前进程，需要通过 `brk` 系统调用向内核申请。每个内存块开头都有一个头节点，里面有一个指针字段和一个长度字段，指针字段把所有空闲块的头节点串在一起，组成一个环形链表，长度字段记录着头节点和后面的内存块加起来一共有多长，以 8 字节为单位（也就是以头节点的长度为单位）。
+
+1. 一开始堆空间由一个空闲块组成，长度为 7×8=56 字节，除头节点之外的长度为 48 字节。
+2. 调用 `malloc` 分配 8 个字节，要在这个空闲块的末尾截出 16 个字节，其中新的头节点占了 8 个字节，另外 8 个字节返回给用户使用，注意返回的指针 `p1` 指向头节点后面的内存块。
+3. 又调用 `malloc` 分配 16 个字节，又在空闲块的末尾截出 24 个字节，步骤和上一步类似。
+4. 调用 `free` 释放 `p1` 所指向的内存块，内存块（包括头节点在内）归还给了 `malloc`，现在 `malloc` 管理着两块不连续的内存，用环形链表串起来。注意这时 `p1` 成了野指针，指向不属于用户的内存，`p1` 所指向的内存地址在 Break 之下，是属于当前进程的，所以访问 `p1` 时不会出现段错误，但在访问 `p1` 时这段内存可能已经被 `malloc` 再次分配出去了，可能会读到意外改写数据。另外注意，此时如果通过 `p2` 向右写越界，有可能覆盖右边的头节点，从而破坏 `malloc` 管理的环形链表，`malloc` 就无法从一个空闲块的指针字段找到下一个空闲块了，找到哪去都不一定，全乱套了。
+5. 调用 `malloc` 分配 16 个字节，现在虽然有两个空闲块，各有 8 个字节可分配，但是这两块不连续，`malloc` 只好通过 `brk` 系统调用抬高 Break，获得新的内存空间。在 *K&R* 的实现中，每次调用 `sbrk` 函数时申请 1024×8=8192 个字节，在 Linux 系统上 `sbrk` 函数也是通过 `brk` 实现的，这里为了画图方便，我们假设每次调用 `sbrk` 申请 32 个字节，建立一个新的空闲块。
+6. 新申请的空闲块和前一个空闲块连续，因此可以合并成一个。在能合并时要尽量合并，以免空闲块越割越小，无法满足大的分配请求。
+7. 在合并后的这个空闲块末尾截出 24 个字节，新的头节点占 8 个字节，另外 16 个字节返回给用户。
+8. 调用 `free(p3)` 释放这个内存块，由于它和前一个空闲块连续，又重新合并成一个空闲块。注意，Break 只能抬高而不能降低，从内核申请到的内存以后都归 `malloc` 管了，即使调用 `free` 也不会还给内核。
+
+##### 习题
+
+1. 小练习：编写一个小程序让它耗尽系统内存。观察一下，分配了多少内存后才会出现分配失败？内存耗尽之后会怎么样？会不会死机？
+
+### 2.11.2. 传入参数与传出参数
+
+如果函数接口有指针参数，既可以把指针所指向的数据传给函数使用（称为传入参数），也可以由函数填充指针所指的内存空间，传回给调用者使用（称为传出参数），例如 `strcpy` 的 `src` 参数是传入参数，`dest` 参数是传出参数。有些函数的指针参数同时担当了这两种角色，如 `select(2)` 的 `fd_set *` 参数，既是传入参数又是传出参数，这称为 Value-result 参数。
+
+<p id="t24-1">表 24.1. 传入参数示例：`void func(const unit_t \*p);`</p>
+
+| 调用者                                                       | 实现者                                            |
+| ------------------------------------------------------------ | ------------------------------------------------- |
+| 分配 `p` 所指的内存空间在 `p` 所指的内存空间中保存数据调用函数由于有 `const` 限定符，调用者可以确信 `p` 所指的内存空间不会被改变 | 规定指针参数的类型 `unit_t *` 读取 `p` 所指的内存空间 |
+
+想一想，如果有函数接口 `void func(const int p);` 这里的 `const` 有意义吗？
+
+<p id="t24-2">表 24.2. 传出参数示例：`void func(unit_t \*p);`</p>
+
+| 调用者                                             | 实现者                                                    |
+| -------------------------------------------------- | --------------------------------------------------------- |
+| 分配 `p` 所指的内存空间调用函数读取 `p` 所指的内存空间 | 规定指针参数的类型 `unit_t *` 在 `p` 所指的内存空间中保存数据 |
+
+<p id="t24-3">表 24.3. Value-result 参数示例：void func(unit_t \*p);</p>
+
+| 调用者                                                       | 实现者                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 分配 p 所指的内存空间在 `p` 所指的内存空间保存数据调用函数读取 `p` 所指的内存空间 | 规定指针参数的类型 `unit_t *` 读取 `p` 所指的内存空间改写 `p` 所指的内存空间 |
+
+由于传出参数和 Value-result 参数的函数接口完全相同，应该在文档中说明是哪种参数。
+
+以下是一个传出参数的完整例子：
+
+<p id="e24-2">例 24.2. 传出参数</p>
+
+```c
+/* populator.h */
+#ifndef POPULATOR_H
+#define POPULATOR_H
+
+typedef struct {
+     int number;
+     char msg[20];
+} unit_t;
+
+extern void set_unit(unit_t *);
+
+#endif
+/* populator.c */
+#include <string.h>
+#include "populator.h"
+
+void set_unit(unit_t *p)
+{
+     if (p == NULL)
+          return; /* ignore NULL parameter */
+     p->number = 3;
+     strcpy(p->msg, "Hello World!");
+}
+/* main.c */
+#include <stdio.h>
+#include "populator.h"
+
+int main(void)
+{
+     unit_t u;
+
+     set_unit(&u);
+     printf("number: %d\nmsg: %s\n", u.number, u.msg);
+     return 0;
+}
+```
+
+很多系统函数对于指针参数是 `NULL` 的情况有特殊规定：如果传入参数是 `NULL` 表示取缺省值，例如 `pthread_create(3)` 的 `pthread_attr_t *` 参数，也可能表示不做特别处理，例如 `free` 的参数；如果传出参数是 `NULL` 表示调用者不需要传出值，例如 `time(2)` 的参数。这些特殊规定应该在文档中写清楚。
+
+### 2.11.3. 两层指针的参数
+
+两层指针也是指针，同样可以表示传入参数、传出参数或者 Value-result 参数，只不过该参数所指的内存空间应该解释成一个指针变量。用两层指针做传出参数的系统函数也很常见，比如 `pthread_join(3)` 的 `void **` 参数。下面看一个简单的例子。
+
+<p id="e24-3">例 24.3. 两层指针做传出参数</p>
+
+```c
+/* redirect_ptr.h */
+#ifndef REDIRECT_PTR_H
+#define REDIRECT_PTR_H
+
+extern void get_a_day(const char **);
+
+#endif
+```
+
+想一想，这里的参数指针是 `const char **`，有 `const` 限定符，却不是传入参数而是传出参数，为什么？如果是传入参数应该怎么表示？
+
+```c
+/* redirect_ptr.c */
+#include "redirect_ptr.h"
+
+static const char *msg[] = {"Sunday", "Monday", "Tuesday", "Wednesday",
+			"Thursday", "Friday", "Saturday"};
+void get_a_day(const char **pp)
+{
+     static int i = 0;
+     *pp = msg[i%7];
+     i++;
+}
+/* main.c */
+#include <stdio.h>
+#include "redirect_ptr.h"
+
+int main(void)
+{
+     const char *firstday = NULL;
+     const char *secondday = NULL;
+     get_a_day(&firstday);
+     get_a_day(&secondday);
+     printf("%s\t%s\n", firstday, secondday);
+     return 0;
+}
+```
+
+两层指针作为传出参数还有一种特别的用法，可以在函数中分配内存，调用者通过传出参数取得指向该内存的指针，比如 `getaddrinfo(3)` 的 `struct addrinfo **` 参数。一般来说，实现一个分配内存的函数就要实现一个释放内存的函数，所以 `getaddrinfo(3)` 有一个对应的 `freeaddrinfo(3)` 函数。
+
+<p id="t24-4">表 24.4. 通过参数分配内存示例：`void alloc_unit(unit_t \**pp);` `void free_unit(unit_t \*p);`</p>
+
+| 调用者                                                       | 实现者                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 分配 `pp` 所指的指针变量的空间调用 `alloc_unit` 分配内存读取 `pp` 所指的指针变量，通过后者使用 `alloc_unit` 分配的内存调用 `free_unit` 释放内存 | 规定指针参数的类型 `unit_t **` `alloc_unit` 分配 `unit_t` 的内存并初始化，为 `pp` 所指的指针变量赋值 `free_unit` 释放在 `alloc_unit` 中分配的内存 |
+
+<p id="e24-4">例 24.4. 通过两层指针参数分配内存</p>
+
+```c
+/* para_allocator.h */
+#ifndef PARA_ALLOCATOR_H
+#define PARA_ALLOCATOR_H
+
+typedef struct {
+     int number;
+     char *msg;
+} unit_t;
+
+extern void alloc_unit(unit_t **);
+extern void free_unit(unit_t *);
+
+#endif
+/* para_allocator.c */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "para_allocator.h"
+
+void alloc_unit(unit_t **pp)
+{
+     unit_t *p = malloc(sizeof(unit_t));
+     if(p == NULL) {
+	  printf("out of memory\n");
+	  exit(1);
+     }
+     p->number = 3;
+     p->msg = malloc(20);
+     strcpy(p->msg, "Hello World!");
+     *pp = p;
+}
+
+void free_unit(unit_t *p)
+{
+     free(p->msg);
+     free(p);
+}
+/* main.c */
+#include <stdio.h>
+#include "para_allocator.h"
+
+int main(void)
+{
+     unit_t *p = NULL;
+
+     alloc_unit(&p);
+     printf("number: %d\nmsg: %s\n", p->number, p->msg);
+     free_unit(p);
+     p = NULL;
+     return 0;
+}
+```
+
+思考一下，为什么在 `main` 函数中不能直接调用 `free(p)` 释放内存，而要调用 `free_unit(p)`？为什么一层指针的函数接口 `void alloc_unit(unit_t *p);` 不能分配内存，而一定要用两层指针的函数接口？
+
+总结一下，两层指针参数如果是传出的，可以有两种情况：第一种情况，传出的指针指向静态内存（比如上面的例子），或者指向已分配的动态内存（比如指向某个链表的节点）；第二种情况是在函数中动态分配内存，然后传出的指针指向这块内存空间，这种情况下调用者应该在使用内存之后调用释放内存的函数，调用者的责任是请求分配和请求释放内存，实现者的责任是完成分配内存和释放内存的操作。由于这两种情况的函数接口相同，应该在文档中说明是哪一种情况。
+
+### 2.11.4. 返回值是指针的情况
+
+返回值显然是传出的而不是传入的，如果返回值传出的是指针，和上一节通过参数传出指针类似，也分为两种情况：第一种是传出指向静态内存或已分配的动态内存的指针，例如 `localtime(3)` 和 `inet_ntoa(3)`，第二种是在函数中动态分配内存并传出指向这块内存的指针，例如 `malloc(3)`，这种情况通常还要实现一个释放内存的函数，所以有和 `malloc(3)` 对应的 `free(3)`。由于这两种情况的函数接口相同，应该在文档中说明是哪一种情况。
+
+<p id="t24-5">表 24.5. 返回指向已分配内存的指针示例：`unit_t \*func(void);`</p>
+
+| 调用者                           | 实现者                                     |
+| -------------------------------- | ------------------------------------------ |
+| 调用函数将返回值保存下来以备后用 | 规定返回值指针的类型 `unit_t *` 返回一个指针 |
+
+以下是一个完整的例子。
+
+<p id="e24-5">例 24.5. 返回指向已分配内存的指针</p>
+
+```c
+/* ret_ptr.h */
+#ifndef RET_PTR_H
+#define RET_PTR_H
+
+extern char *get_a_day(int idx);
+
+#endif
+/* ret_ptr.c */
+#include <string.h>
+#include "ret_ptr.h"
+
+static const char *msg[] = {"Sunday", "Monday", "Tuesday", "Wednesday",
+			"Thursday", "Friday", "Saturday"};
+
+char *get_a_day(int idx)
+{
+     static char buf[20];
+     strcpy(buf, msg[idx]);
+     return buf;
+}
+/* main.c */
+#include <stdio.h>
+#include "ret_ptr.h"
+
+int main(void)
+{
+     printf("%s %s\n", get_a_day(0), get_a_day(1));
+     return 0;
+}
+```
+
+这个程序的运行结果是 `Sunday Monday` 吗？请读者自己分析一下。
+
+<p id="t24-6">表 24.6. 动态分配内存并返回指针示例：`unit_t \*alloc_unit(void); void free_unit(unit_t \*p);`</p>
+
+| 调用者                                                       | 实现者                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 调用 `alloc_unit` 分配内存将返回值保存下来以备后用调用 `free_unit` 释放内存 | 规定返回值指针的类型 `unit_t *``alloc_unit` 分配内存并返回指向该内存的指针 `free_unit` 释放由 `alloc_unit` 分配的内存 |
+
+以下是一个完整的例子。
+
+<p id="e24-6">例 24.6. 动态分配内存并返回指针</p>
+
+```c
+/* ret_allocator.h */
+#ifndef RET_ALLOCATOR_H
+#define RET_ALLOCATOR_H
+
+typedef struct {
+     int number;
+     char *msg;
+} unit_t;
+
+extern unit_t *alloc_unit(void);
+extern void free_unit(unit_t *);
+
+#endif
+/* ret_allocator.c */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "ret_allocator.h"
+
+unit_t *alloc_unit(void)
+{
+     unit_t *p = malloc(sizeof(unit_t));
+     if(p == NULL) {
+	  printf("out of memory\n");
+	  exit(1);
+     }
+     p->number = 3;
+     p->msg = malloc(20);
+     strcpy(p->msg, "Hello world!");
+     return p;
+}
+
+void free_unit(unit_t *p)
+{
+     free(p->msg);
+     free(p);
+}
+/* main.c */
+#include <stdio.h>
+#include "ret_allocator.h"
+
+int main(void)
+{
+     unit_t *p = alloc_unit();
+
+     printf("number: %d\nmsg: %s\n", p->number, p->msg);
+     free_unit(p);
+     p = NULL;
+     return 0;
+}
+```
+
+思考一下，通过参数分配内存需要两层的指针，而通过返回值分配内存就只需要返回一层的指针，为什么？
+
+### 2.11.5. 回调函数
+
+如果参数是一个函数指针，调用者可以传递一个函数的地址给实现者，让实现者去调用它，这称为回调函数（Callback Function）。例如`qsort(3)`和`bsearch(3)`。
+
+<p id="t24-7">表 24.7. 回调函数示例：`void func(void (\*f)(void \*), void \*p);`</p>
+
+| 调用者                                                       | 实现者                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 提供一个回调函数，再提供一个准备传给回调函数的参数。把回调函数传给参数 `f`，把准备传给回调函数的参数按 `void *` 类型传给参数 `p` | 在适当的时候根据调用者传来的函数指针 `f` 调用回调函数，将调用者传来的参数 `p` 转交给回调函数，即调用 `f(p);` |
+
+以下是一个简单的例子。实现了一个 `repeat_three_times` 函数，可以把调用者传来的任何回调函数连续执行三次。
+
+<p id="e24-7">例 24.7. 回调函数</p>
+
+```c
+/* para_callback.h */
+#ifndef PARA_CALLBACK_H
+#define PARA_CALLBACK_H
+
+typedef void (*callback_t)(void *);
+extern void repeat_three_times(callback_t, void *);
+
+#endif
+/* para_callback.c */
+#include "para_callback.h"
+
+void repeat_three_times(callback_t f, void *para)
+{
+     f(para);
+     f(para);
+     f(para);
+}
+/* main.c */
+#include <stdio.h>
+#include "para_callback.h"
+
+void say_hello(void *str)
+{
+     printf("Hello %s\n", (const char *)str);
+}
+
+void count_numbers(void *num)
+{
+     int i;
+     for(i=1; i<=(int)num; i++)
+	  printf("%d ", i);
+     putchar('\n');
+}
+
+int main(void)
+{
+     repeat_three_times(say_hello, "Guys");
+     repeat_three_times(count_numbers, (void *)4);
+     return 0;
+}
+```
+
+回顾一下前面几节的例子，参数类型都是由实现者规定的。而本例中回调函数的参数按什么类型解释由调用者规定，对于实现者来说就是一个 `void *` 指针，实现者只负责将这个指针转交给回调函数，而不关心它到底指向什么数据类型。调用者知道自己传的参数是 `char *` 型的，那么在自己提供的回调函数中就应该知道参数要转换成 `char *` 型来解释。
+
+回调函数的一个典型应用就是实现类似 C++ 的泛型算法（Generics Algorithm）。下面实现的 `max` 函数可以在任意一组对象中找出最大值，可以是一组 `int`、一组 `char` 或者一组结构体，但是实现者并不知道怎样去比较两个对象的大小，调用者需要提供一个做比较操作的回调函数。
+
+<p id="e24-8">例 24.8. 泛型算法</p>
+
+```c
+/* generics.h */
+#ifndef GENERICS_H
+#define GENERICS_H
+
+typedef int (*cmp_t)(void *, void *);
+extern void *max(void *data[], int num, cmp_t cmp);
+
+#endif
+/* generics.c */
+#include "generics.h"
+
+void *max(void *data[], int num, cmp_t cmp)
+{
+     int i;
+     void *temp = data[0];
+     for(i=1; i<num; i++) {
+	  if(cmp(temp, data[i])<0)
+	       temp = data[i];
+     }
+     return temp;
+}
+/* main.c */
+#include <stdio.h>
+#include "generics.h"
+
+typedef struct {
+     const char *name;
+     int score;
+} student_t;
+
+int cmp_student(void *a, void *b)
+{
+     if(((student_t *)a)->score > ((student_t *)b)->score)
+	  return 1;
+     else if(((student_t *)a)->score == ((student_t *)b)->score)
+	  return 0;
+     else
+	  return -1;
+}
+
+int main(void)
+{
+     student_t list[4] = {{"Tom", 68}, {"Jerry", 72},
+		       {"Moby", 60}, {"Kirby", 89}};
+     student_t *plist[4] = {&list[0], &list[1], &list[2], &list[3]};
+     student_t *pmax = max((void **)plist, 4, cmp_student);
+     printf("%s gets the highest score %d\n", pmax->name, pmax->score);
+
+     return 0;
+}
+```
+
+`max` 函数之所以能对一组任意类型的对象进行操作，关键在于传给 `max` 的是指向对象的指针所构成的数组，而不是对象本身所构成的数组，这样 `max` 不必关心对象到底是什么类型，只需转给比较函数 `cmp`，然后根据比较结果做相应操作即可，`cmp` 是调用者提供的回调函数，调用者当然知道对象是什么类型以及如何比较。
+
+以上举例的回调函数是被同步调用的，调用者调用 `max` 函数，`max` 函数则调用 `cmp` 函数，相当于调用者间接调了自己提供的回调函数。在实际系统中，异步调用也是回调函数的一种典型用法，调用者首先将回调函数传给实现者，实现者记住这个函数，这称为**注册**一个回调函数，然后当某个事件发生时实现者再调用先前注册的函数，比如 `sigaction(2)` 注册一个信号处理函数，当信号产生时由系统调用该函数进行处理，再比如 `pthread_create(3)` 注册一个线程函数，当发生调度时系统切换到新注册的线程函数中运行，在 GUI 编程中异步回调函数更是有普遍的应用，例如为某个按钮注册一个回调函数，当用户点击按钮时调用它。
+
+以下是一个代码框架。
+
+```c
+/* registry.h */
+#ifndef REGISTRY_H
+#define REGISTRY_H
+
+typedef void (*registry_t)(void);
+extern void register_func(registry_t);
+
+#endif
+/* registry.c */
+#include <unistd.h>
+#include "registry.h"
+
+static registry_t func;
+
+void register_func(registry_t f)
+{
+     func = f;
+}
+
+static void on_some_event(void)
+{
+     ...
+     func();
+     ...
+}
+```
+
+既然参数可以是函数指针，返回值同样也可以是函数指针，因此可以有 `func()();` 这样的调用。返回函数的函数在 C 语言中很少见，在一些函数式编程语言（例如 LISP）中则很常见，基本思想是把函数也当作一种数据来操作，输入、输出和参与运算，操作函数的函数称为高阶函数（High-order Function）。
+
+#### 2.11.5.1. 习题
+
+1. *K&R* 的 5.6 节有一个 `qsort` 函数的实现，可以对一组任意类型的对象做快速排序。请读者仿照那个例子，写一个插入排序的函数和一个折半查找的函数。
+
+### 2.11.6. 可变参数
+
+到目前为止我们只见过一个带有可变参数的函数 `printf`：
+
+```c
+int printf(const char *format, ...);
+```
+
+以后还会见到更多这样的函数。现在我们实现一个简单的 `myprintf` 函数：
+
+<p id="e24-9">例 24.9. 用可变参数实现简单的 printf 函数</p>
+
+```c
+#include <stdio.h>
+#include <stdarg.h>
+
+void myprintf(const char *format, ...)
+{
+     va_list ap;
+     char c;
+
+     va_start(ap, format);
+     while (c = *format++) {
+	  switch(c) {
+	  case 'c': {
+	       /* char is promoted to int when passed through '...' */
+	       char ch = va_arg(ap, int);
+	       putchar(ch);
+	       break;
+	  }
+	  case 's': {
+	       char *p = va_arg(ap, char *);
+	       fputs(p, stdout);
+	       break;
+	  }
+	  default:
+	       putchar(c);
+	  }
+     }
+     va_end(ap);
+}
+
+int main(void)
+{
+     myprintf("c\ts\n", '1', "hello");
+     return 0;
+}
+```
+
+要处理可变参数，需要用 C 到标准库的 `va_list` 类型和 `va_start`、`va_arg`、`va_end` 宏，这些定义在 `stdarg.h` 头文件中。这些宏是如何取出可变参数的呢？我们首先对照反汇编分析在调用 `myprintf` 函数时这些参数的内存布局。
+
+```c
+     myprintf("c\ts\n", '1', "hello");
+ 80484c5:	c7 44 24 08 b0 85 04 	movl   $0x80485b0,0x8(%esp)
+ 80484cc:	08 
+ 80484cd:	c7 44 24 04 31 00 00 	movl   $0x31,0x4(%esp)
+ 80484d4:	00 
+ 80484d5:	c7 04 24 b6 85 04 08 	movl   $0x80485b6,(%esp)
+ 80484dc:	e8 43 ff ff ff       	call   8048424 <myprintf>
+```
+
+<p id="c24-6">图 24.6. myprintf 函数的参数布局</p>
+
+![myprintf 函数的参数布局](./image/interface.vaarg.png)
+
+这些参数是从右向左依次压栈的，所以第一个参数靠近栈顶，第三个参数靠近栈底。这些参数在内存中是连续存放的，每个参数都对齐到 4 字节边界。第一个和第三个参数都是指针类型，各占 4 个字节，虽然第二个参数只占一个字节，但为了使第三个参数对齐到 4 字节边界，所以第二个参数也占 4 个字节。现在给出一个 `stdarg.h` 的简单实现，这个实现出自 *Standard C Library*：
+
+<p id="e24-10">例 24.10. stdarg.h 的一种实现</p>
+
+```c
+/* stdarg.h standard header */
+#ifndef _STDARG
+#define _STDARG
+
+/* type definitions */
+typedef char *va_list;
+/* macros */
+#define va_arg(ap, T) \
+	(* (T *)(((ap) += _Bnd(T, 3U)) - _Bnd(T, 3U)))
+#define va_end(ap) (void)0
+#define va_start(ap, A) \
+	(void)((ap) = (char *)&(A) + _Bnd(A, 3U))
+#define _Bnd(X, bnd) (sizeof (X) + (bnd) & ~(bnd))
+#endif
+```
+
+这个头文件中的内部宏定义 `_Bnd(X, bnd)` 将类型或变量 `X` 的长度对齐到 `bnd+1` 字节的整数倍，例如 `_Bnd(char, 3U)` 的值是 4，`_Bnd(int, 3U)` 也是 4。
+
+在 `myprintf` 中定义的 `va_list ap;` 其实是一个指针，`va_start(ap, format)` 使 `ap` 指向 `format` 参数的下一个参数，也就是指向上图中 `esp+4` 的位置。然后 `va_arg(ap, int)` 把第二个参数的值按 `int` 型取出来，同时使 `ap` 指向第三个参数，也就是指向上图中 `esp+8` 的位置。然后 `va_arg(ap, char *)` 把第三个参数的值按 `char *` 型取出来，同时使 `ap` 指向更高的地址。`va_end(ap)` 在我们的简单实现中不起任何作用，在有些实现中可能会把 `ap` 改写成无效值，C 标准要求在函数返回前调用 `va_end`。
+
+如果把 `myprintf` 中的 `char ch = va_arg(ap, int);` 改成 `char ch = va_arg(ap, char);`，用我们这个 `stdarg.h` 的简单实现是没有问题的。但如果改用 `libc` 提供的 `stdarg.h`，在编译时会报错：
+
+```bash
+$ gcc main.c
+main.c: In function ‘myprintf’:
+main.c:33: warning: ‘char’ is promoted to ‘int’ when passed through ‘...’
+main.c:33: note: (so you should pass ‘int’ not ‘char’ to ‘va_arg’)
+main.c:33: note: if this code is reached, the program will abort
+$ ./a.out
+Illegal instruction
+```
+
+因此要求 `char` 型的可变参数必须按 `int` 型来取，这是为了与 C 标准一致，我们在[第 15 章「数据类型详解」第 3.1 节「Integer Promotion」](2-C-语言本质/ch15-数据类型详解#_31-integer-promotion)讲过 Default Argument Promotion 规则，传递 `char` 型的可变参数时要提升为 `int` 型。
+
+从 `myprintf` 的例子可以理解 `printf` 的实现原理，`printf` 函数根据第一个参数（格式化字符串）来确定后面有几个参数，分别是什么类型。保证参数的类型、个数与格式化字符串的描述相匹配是调用者的责任，实现者只管按格式化字符串的描述从栈上取数据，如果调用者传递的参数类型或个数不正确，实现者是没有办法避免错误的。
+
+还有一种方法可以确定可变参数的个数，就是在参数列表的末尾传一个 Sentinel，例如 `NULL`。`execl(3)` 就采用这种方法确定参数的个数。下面实现一个 `printlist` 函数，可以打印若干个传入的字符串。
+
+<p id="e24-11">例 24.11. 根据 Sentinel 判断可变参数的个数</p>
+
+```c
+#include <stdio.h>
+#include <stdarg.h>
+
+void printlist(int begin, ...)
+{
+     va_list ap;
+     char *p;
+
+     va_start(ap, begin);
+     p = va_arg(ap, char *);
+
+     while (p != NULL) {
+	  fputs(p, stdout);
+	  putchar('\n');
+	  p = va_arg(ap, char*);
+     }
+     va_end(ap);
+}
+
+int main(void)
+{
+     printlist(0, "hello", "world", "foo", "bar", NULL);
+     return 0;
+}
+```
+
+`printlist` 的第一个参数 `begin` 的值并没有用到，但是 C 语言规定至少要定义一个有名字的参数，因为 `va_start` 宏要用到参数列表中最后一个有名字的参数，从它的地址开始找可变参数的位置。实现者应该在文档中说明参数列表必须以 `NULL` 结尾，如果调用者不遵守这个约定，实现者是没有办法避免错误的。
+
+#### 2.11.6.1. 习题
+
+1. 实现一个功能更完整的 `printf`，能够识别 `%`，能够处理 `%d`、`%f` 对应的整数参数。在实现中不许调用 `printf(3)` 这个 Man Page 中描述的任何函数。
+
 ## 2.12. C 标准库
 
+在前面的各章中我们已经见过 C 标准库的一些用法，总结如下：
+
+- 我们最常用的是包含 `stdio.h`，使用其中声明的 `printf` 函数，这个函数在 `libc` 中实现，程序在运行时要动态链接 `libc` 共享库。
+- 在[第 3 章「简单函数」第 1 节「数学函数」](1-C-语言入门/ch03-简单函数#_1-数学函数)中用到了 `math.h` 中声明的 `sin` 和 `log` 函数，使用这些函数需要动态链接 `libm` 共享库。
+- 在[第 8 章「数组」第 2 节「数组应用实例：统计随机数」](1-C-语言入门/ch08-数组#_2-数组应用实例：统计随机数)中用到了 `stdlib.h` 中声明的 `rand` 函数，还提到了这个头文件中定义的 `RAND_MAX` 常量，在[第 8 章「数组」例 8.5「剪刀石头布」](1-C-语言入门/ch08-数组#e8-5)中用到了 `stdlib.h` 中声明的 `srand` 函数和 `time.h` 中声明的 `time` 函数。使用这些函数需要动态链接 `libc` 共享库。
+- 在[第 19 章「汇编与 C 之间的关系」第 2 节「「main 函数和启动例程」](2-C-语言本质/ch19-汇编与-C-之间的关系#_2-main-函数和启动例程)中用到了 `stdlib.h` 中声明的 `exit` 函数，使用这个函数需要动态链接 `libc` 共享库。
+- 在[第 11 章「排序与查找」第 6 节「折半查找」](1-C-语言入门/ch11-排序与查找#_6=折半查找)中用到了 `assert.h` 中定义的 `assert` 宏，在[第 21 章「预处理」第 4 节「其它预处理特性」](2-C-语言本质/ch21-预处理#_4-其它预处理特性)中我们看到了这个宏的一种实现，它的实现需要调用 `stdio.h` 和 `stdlib.h` 中声明的函数，所以使用这个宏也需要动态链接 `libc` 共享库。
+- 在[第 16 章「运算符详解」第 2.4 节「sizeof 运算符与 typedef 类型声明」](2-C-语言本质/ch16-运算符详解#_24-sizeof-运算符与-typedef-类型声明)中提到了 `size_t` 类型在 `stddef.h` 中定义，在[第 23 章「指针」第 1 节「指针的基本概念」](2-C-语言本质/ch23-指针#_1-指针的基本概念)中提到了 `NULL` 指针也在 `stddef.h` 中定义。
+- 在[第 24 章「函数接口」第 1 节「本章的预备知识」](2-C-语言本质/ch24-函数接口#_1-本章的预备知识)中介绍了 `stdlib.h` 中声明的 `malloc` 和 `free` 函数以及 `string.h` 中声明的 `strcpy` 和 `strncpy` 函数，使用这些函数需要动态链接 `libc` 共享库。
+- 在[第 24 章「函数接口」第 6 节「可变参数」](2-C-语言本质/ch24-函数接口#_6-可变参数)中介绍了 `stdarg.h` 中定义的 `va_list` 类型和 `va_arg`、`va_start`、`va_end` 等宏定义，并给出了一种实现，这些宏定义的实现并没有调用库函数，所以不依赖于某个共享库，这一点和 `assert` 不同。
+
+总结一下，Linux 平台提供的 C 标准库包括：
+
+- 一组头文件，定义了很多类型和宏，声明了很多库函数。这些头文件放在哪些目录下取决于不同的编译器，在我的系统上，`stdarg.h` 和 `stddef.h` 位于 /usr/lib/gcc/i486-linux-gnu/4.3.2/include 目录下，`stdio.h`、`stdlib.h`、`time.h`、`math.h`、`assert.h` 位于 /usr/include 目录下。C99 标准定义的头文件有 24 个，本书只介绍其中最基本、最常用的几个。
+- 一组库文件，提供了库函数的实现。大多数库函数在 `libc` 共享库中，有些库函数在另外的共享库中，例如数学函数在 `libm` 中。在[第 20 章「链接详解」第 4 节「共享库」](2-C-语言本质/ch20-链接详解#_4-共享库)讲过，通常 `libc` 共享库是 `/lib/libc.so.6`，而我的系统启用了 hwcap 机制，`libc` 共享库是 /lib/tls/i686/cmov/libc.so.6。
+
+本章介绍另外一些最基本和最常用的库函数（包括一些不属于 C 标准但在 UNIX 平台上很常用的函数），写这一章是为了介绍字符串操作和文件操作的基本概念，而不是为了写一本 C 标准库函数的参考手册，Man Page 已经是一本很好的手册了，读者学完这一章之后在开发时应该查阅 Man Page，而不是把我这一章当参考手册来翻，所以本章不会面面俱到介绍所有的库函数，对于本章讲到的函数有些也不会讲得很细，因为我假定读者经过上一章的学习再结合我讲过的基本概念已经能看懂相关的 Man Page 了。很多技术书的作者给自己的书太多定位，既想写成一本入门教程，又想写成一本参考手册，我觉得这样不好，读者过于依赖技术书就失去了看真正的手册的能力。
+
+### 2.12.1. 字符串操作函数
+
+程序按功能划分可分为数值运算、符号处理和 I/O 操作三类，符号处理程序占相当大的比例，符号处理程序无处不在，编译器、浏览器、Office 套件等程序的主要功能都是符号处理。无论多复杂的符号处理都是由各种基本的字符串操作组成的，本节介绍如何用 C 语言的库函数做字符串初始化、取长度、拷贝、连接、比较、搜索等基本操作。
+
+#### 2.12.1.1. 初始化字符串
+
+```c
+#include <string.h>
+
+void *memset(void *s, int c, size_t n);
+返回值：s 指向哪，返回的指针就指向哪
+```
+
+`memset` 函数把 `s` 所指的内存地址开始的 `n` 个字节都填充为 `c` 的值。通常 `c` 的值为 0，把一块内存区清零。例如定义 `char buf[10];`，如果它是全局变量或静态变量，则自动初始化为 0（位于 `.bss` 段），如果它是函数的局部变量，则初值不确定，可以用 `memset(buf, 0, 10)` 清零，由 `malloc` 分配的内存初值也是不确定的，也可以用 `memset` 清零。
+
+#### 2.12.1.2. 取字符串的长度
+
+```c
+#include <string.h>
+
+size_t strlen(const char *s);
+返回值：字符串的长度
+```
+
+`strlen` 函数返回 `s` 所指的字符串的长度。该函数从 `s` 所指的第一个字符开始找 `'\0'` 字符，一旦找到就返回，返回的长度不包括 `'\0'` 字符在内。例如定义 `char buf[] = "hello";`，则 `strlen(buf)` 的值是 5，但要注意，如果定义 `char buf[5] = "hello";`，则调用 `strlen(buf)` 是危险的，会造成数组访问越界。
+
+#### 2.12.1.3. 拷贝字符串
+
+在[第 24 章「函数接口」第 1 节「本章的预备知识」](2-C-语言本质/ch24-函数接口#_1-本章的预备知识)中介绍了 `strcpy` 和 `strncpy` 函数，拷贝以 `'\0'` 结尾的字符串，`strncpy` 还带一个参数指定最多拷贝多少个字节，此外，`strncpy` 并不保证缓冲区以 `'\0'` 结尾。现在介绍 `memcpy` 和 `memmove` 函数。
+
+```c
+#include <string.h>
+
+void *memcpy(void *dest, const void *src, size_t n);
+void *memmove(void *dest, const void *src, size_t n);
+返回值：dest 指向哪，返回的指针就指向哪
+```
+
+`memcpy` 函数从 `src` 所指的内存地址拷贝 `n` 个字节到 `dest` 所指的内存地址，和 `strncpy` 不同，`memcpy` 并不是遇到 `'\0'` 就结束，而是一定会拷贝完 `n` 个字节。这里的命名规律是，以 `str` 开头的函数处理以 `'\0'` 结尾的字符串，而以 `mem` 开头的函数则不关心 `'\0'` 字符，或者说这些函数并不把参数当字符串看待，因此参数的指针类型是 `void *` 而非 `char *`。
+
+`memmove` 也是从 `src` 所指的内存地址拷贝 `n` 个字节到 `dest` 所指的内存地址，虽然叫 move 但其实也是拷贝而非移动。但是和 `memcpy` 有一点不同，`memcpy` 的两个参数 `src` 和 `dest` 所指的内存区间如果重叠则无法保证正确拷贝，而 `memmove` 却可以正确拷贝。假设定义了一个数组 `char buf[20] = "hello world\n";`，如果想把其中的字符串往后移动一个字节（变成 `"hhello world\n"`），调用 `memcpy(buf + 1, buf, 13)` 是无法保证正确拷贝的：
+
+<p id="e25-1">例 25.1. 错误的 memcpy 调用</p>
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+	char buf[20] = "hello world\n";
+	memcpy(buf + 1, buf, 13);
+	printf(buf);
+	return 0;
+}
+```
+
+在我的机器上运行的结果是 `hhhllooworrd`。如果把代码中的 `memcpy` 改成 `memmove` 则可以保证正确拷贝。`memmove` 可以这样实现：
+
+```c
+void *memmove(void *dest, const void *src, size_t n)
+{
+	char temp[n];
+	int i;
+	char *d = dest;
+	const char *s = src;
+
+	for (i = 0; i < n; i++)
+		temp[i] = s[i];
+	for (i = 0; i < n; i++)
+		d[i] = temp[i];
+
+	return dest;
+}
+```
+
+借助于一个临时缓冲区 `temp`，即使 `src` 和 `dest` 所指的内存区间有重叠也能正确拷贝。思考一下，如果不借助于临时缓冲区能不能正确处理重叠内存区间的拷贝？
+
+用 `memcpy` 如果得到的结果是 `hhhhhhhhhhhhhh` 倒不奇怪，可为什么会得到 `hhhllooworrd` 这个奇怪的结果呢？根据这个结果猜测的一种可能的实现是：
+
+```c
+void *memcpy(void *dest, const void *src, size_t n)
+{
+	char *d = dest;
+	const char *s = src;
+	int *di;
+	const int *si;
+	int r = n % 4;
+	while (r--)
+		*d++ = *s++;
+	di = (int *)d;
+	si = (const int *)s;
+	n /= 4;
+	while (n--)
+		*di++ = *si++;
+
+	return dest;
+}
+```
+
+在 32 位的 x86 平台上，每次拷贝 1 个字节需要一条指令，每次拷贝4个字节也只需要一条指令，`memcpy` 函数的实现尽可能 4 个字节 4 个字节地拷贝，因而得到上述结果。
+
+> **C99 的 restrict 关键字**
+> 
+> 我们来看一个跟 `memcpy` / `memmove` 类似的问题。下面的函数将两个数组中对应的元素相加，结果保存在第三个数组中。
+> 
+> ```c
+> void vector_add(const double *x, const double *y, double *result)
+> {  
+> 	int i;  
+> 	for (i = 0; i < 64; ++i)  
+> 		result[i] = x[i] + y[i];  
+> }
+> ```
+> 
+> 如果这个函数要在多处理器的计算机上执行，编译器可以做这样的优化：把这一个循环拆成两个循环，一个处理器计算 `i` 值从 0 到 31 的循环，另一个处理器计算 `i` 值从 32 到 63 的循环，这样两个处理器可以同时工作，使计算时间缩短一半。但是这样的编译优化能保证得出正确结果吗？假如 `result` 和 `x` 所指的内存区间是重叠的，`result[0]` 其实是 `x[1]`，`result[i]` 其实是 `x[i+1]`，这两个处理器就不能各干各的事情了，因为第二个处理器的工作依赖于第一个处理器的最终计算结果，这种情况下编译优化的结果是错的。这样看来编译器是不敢随便做优化了，那么多处理器提供的并行性就无法利用，岂不可惜？为此，C99 引入 `restrict` 关键字，如果程序员把上面的函数声明为 `void vector_add(const double *restrict x, const double *restrict y, double *restrict result)`，就是告诉编译器可以放心地对这个函数做优化，程序员自己会保证这些指针所指的内存区间互不重叠。
+> 
+> 由于 `restrict` 是 C99 引入的新关键字，目前 Linux 的 Man Page 还没有更新，所以都没有 `restrict` 关键字，本书的函数原型都取自 Man Page，所以也都没有 `restrict` 关键字。但在 C99 标准中库函数的原型都在必要的地方加了 `restrict` 关键字，在 C99 中 `memcpy` 的原型是 `void *memcpy(void * restrict s1, const void * restrict s2, size_t n);`，就是告诉调用者，这个函数的实现可能会做些优化，编译器也可能会做些优化，传进来的指针不允许指向重叠的内存区间，否则结果可能是错的，而 `memmove` 的原型是 `void *memmove(void *s1, const void *s2, size_t n);`，没有 `restrict` 关键字，说明传给这个函数的指针允许指向重叠的内存区间。在 `restrict` 关键字出现之前都是用自然语言描述哪些函数的参数不允许指向重叠的内存区间，例如在 C89 标准的库函数一章开头提到，本章描述的所有函数，除非特别说明，都不应该接收两个指针参数指向重叠的内存区间，例如调用 `sprintf` 时传进来的格式化字符串和结果字符串的首地址相同，诸如此类的调用都是非法的。本书也遵循这一惯例，除非像 `memmove` 这样特别说明之外，都表示「不允许」。
+> 
+> 关于 `restrict` 关键字更详细的解释可以参考 *Began FORTRAN*。
+
+字符串的拷贝也可以用 `strdup(3)` 函数，这个函数不属于 C 标准库，是 POSIX 标准中定义的，POSIX 标准定义了 UNIX 系统的各种接口，包含 C 标准库的所有函数和很多其它的系统函数，在[第 28 章「文件与 I/O」第 2 节「C 标准 I/O 库函数与 Unbuffered I/O 函数」](3-Linux-系统编程/ch28-文件与-IO#_2-C-标准-io-库函数与-unbuffered-io-函数)将详细介绍 POSIX 标准。
+
+```c
+#include <string.h>
+
+char *strdup(const char *s);
+返回值：指向新分配的字符串
+```
+
+这个函数调用 `malloc` 动态分配内存，把字符串 `s` 拷贝到新分配的内存中然后返回。用这个函数省去了事先为新字符串分配内存的麻烦，但是用完之后要记得调用 `free` 释放新字符串的内存。
+
+#### 2.12.1.4. 连接字符串
+
+```c
+#include <string.h>
+
+char *strcat(char *dest, const char *src);
+char *strncat(char *dest, const char *src, size_t n);
+返回值：dest 指向哪，返回的指针就指向哪
+```
+
+`strcat` 把 `src` 所指的字符串连接到 `dest` 所指的字符串后面，例如：
+
+```c
+char d[10] = "foo";
+char s[10] = "bar";
+strcat(d, s);
+printf("%s %s\n", d, s);
+```
+
+调用 `strcat` 函数后，缓冲区 `s` 的内容没变，缓冲区 `d` 中保存着字符串 `"foobar"`，注意原来 `"foo"` 后面的 `'\0'` 被连接上来的字符串 `"bar"` 覆盖掉了，`"bar"` 后面的 `'\0'` 仍保留。
+
+`strcat` 和 `strcpy` 有同样的问题，调用者必须确保 `dest` 缓冲区足够大，否则会导致缓冲区溢出错误。`strncat` 函数通过参数 `n` 指定一个长度，就可以避免缓冲区溢出错误。注意这个参数 `n` 的含义和 `strncpy` 的参数 `n` 不同，它并不是缓冲区 `dest` 的长度，而是表示最多从 `src` 缓冲区中取 `n` 个字符（不包括结尾的 `'\0'`）连接到 `dest` 后面。如果 `src` 中前 `n` 个字符没有出现 `'\0'`，则取前 `n` 个字符再加一个 `'\0'` 连接到 `dest` 后面，所以 `strncat` 总是保证 `dest` 缓冲区以 `'\0'` 结尾，这一点又和 `strncpy` 不同，`strncpy` 并不保证 `dest` 缓冲区以 `'\0'` 结尾。所以，提供给 `strncat` 函数的 `dest` 缓冲区的大小至少应该是 `strlen(dest)+n+1` 个字节，才能保证不溢出。
+
+#### 2.12.1.5. 比较字符串
+
+```c
+#include <string.h>
+
+int memcmp(const void *s1, const void *s2, size_t n);
+int strcmp(const char *s1, const char *s2);
+int strncmp(const char *s1, const char *s2, size_t n);
+返回值：负值表示 s1 小于 s2，0 表示 s1 等于 s2，正值表示 s1 大于 s2
+```
+
+`memcmp` 从前到后逐个比较缓冲区 `s1` 和 `s2` 的前 `n` 个字节（不管里面有没有 `'\0'`），如果 `s1` 和 `s2` 的前 `n` 个字节全都一样就返回 0，如果遇到不一样的字节，`s1` 的字节比 `s2` 小就返回负值，`s1 `的字节比 `s2` 大就返回正值。
+
+`strcmp` 把 `s1` 和 `s2` 当字符串比较，在其中一个字符串中遇到 `'\0'` 时结束，按照上面的比较准则，`"ABC"` 比 `"abc"` 小，`"ABCD"` 比 `"ABC"` 大，`"123A9"` 比 `"123B2"` 小。
+
+`strncmp` 的比较结束条件是：要么在其中一个字符串中遇到 `'\0'` 结束（类似于 `strcmp`），要么比较完 `n` 个字符结束（类似于 `memcmp`）。例如，`strncmp("ABCD", "ABC", 3)` 的返回值是 0，`strncmp("ABCD", "ABC", 4)` 的返回值是正值。
+
+```c
+#include <strings.h>
+
+int strcasecmp(const char *s1, const char *s2);
+int strncasecmp(const char *s1, const char *s2, size_t n);
+返回值：负值表示 s1 小于 s2，0 表示 s1 等于 s2，正值表示 s1 大于 s2
+```
+
+这两个函数和 `strcmp` / `strncmp` 类似，但在比较过程中忽略大小写，大写字母 A 和小写字母 a 认为是相等的。这两个函数不属于 C 标准库，是 POSIX 标准中定义的。
+
+#### 2.12.1.6. 搜索字符串
+
+```c
+#include <string.h>
+
+char *strchr(const char *s, int c);
+char *strrchr(const char *s, int c);
+返回值：如果找到字符 c，返回字符串 s 中指向字符 c 的指针，如果找不到就返回 NULL
+```
+
+`strchr` 在字符串 `s` 中从前到后查找字符 `c`，找到字符 `c` 第一次出现的位置时就返回，返回值指向这个位置，如果找不到字符 `c` 就返回 `NULL`。`strrchr` 和 `strchr` 类似，但是从右向左找字符 `c`，找到字符 `c` 第一次出现的位置就返回，函数名中间多了一个字母 `r` 可以理解为 Right-to-left。
+
+```c
+#include <string.h>
+
+char *strstr(const char *haystack, const char *needle);
+返回值：如果找到子串，返回值指向子串的开头，如果找不到就返回 NULL
+```
+
+`strstr` 在一个长字符串中从前到后找一个子串（Substring），找到子串第一次出现的位置就返回，返回值指向子串的开头，如果找不到就返回 `NULL`。这两个参数名很形象，在干草堆 `haystack` 中找一根针 `needle`，按中文的说法叫大海捞针，显然 `haystack` 是长字符串，`needle` 是要找的子串。
+
+搜索子串有一个显而易见的算法，可以用两层的循环，外层循环把 `haystack` 中的每一个字符的位置依次假定为子串的开头，内层循环从这个位置开始逐个比较 `haystack` 和 `needle` 的每个字符是否相同。想想这个算法最多需要做多少次比较？其实有比这个算法高效得多的算法，有兴趣的读者可以参考*算法导论*。
+
+#### 2.12.1.7. 分割字符串
+
+很多文件格式或协议格式中会规定一些分隔符或者叫界定符（Delimiter），例如 `/etc/passwd`文件中保存着系统的帐号信息：
+
+```c
+$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+...
+```
+
+每条记录占一行，也就是说记录之间的分隔符是换行符，每条记录又由若干个字段组成，这些字段包括用户名、密码、用户 id、组 id、个人信息、主目录、登录 Shell，字段之间的分隔符是 `:` 号。解析这样的字符串需要根据分隔符把字符串分割成几段，C 标准库提供的 `strtok` 函数可以很方便地完成分割字符串的操作。tok 是 Token 的缩写，分割出来的每一段字符串称为一个 Token。
+
+```c
+#include <string.h>
+
+char *strtok(char *str, const char *delim);
+char *strtok_r(char *str, const char *delim, char **saveptr);
+返回值：返回指向下一个 Token 的指针，如果没有下一个 Token 了就返回 NULL
+```
+
+参数 `str` 是待分割的字符串，`delim` 是分隔符，可以指定一个或多个分隔符，`strtok` 遇到其中任何一个分隔符就会分割字符串。看下面的例子。
+
+<p id="e25-2">例 25.2. strtok</p>
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+	char str[] = "root:x::0:root:/root:/bin/bash:";
+	char *token;
+
+	token = strtok(str, ":");
+	printf("%s\n", token);
+	while ( (token = strtok(NULL, ":")) != NULL)
+		printf("%s\n", token);
+	
+	return 0;
+}
+$ ./a.out 
+root
+x
+0
+root
+/root
+/bin/bash
+```
+
+结合这个例子，`strtok` 的行为可以这样理解：冒号是分隔符，把 `"root:x::0:root:/root:/bin/bash:"` 这个字符串分隔成 `"root"`、`"x"`、`""`、`"0"`、`"root"`、`"/root"`、`"/bin/bash"`、`""` 等几个 Token，但空字符串的 Token 被忽略。第一次调用要把字符串首地址传给 `strtok` 的第一个参数，以后每次调用第一个参数只要传 `NULL` 就可以了，`strtok` 函数自己会记住上次处理到字符串的什么位置（显然这是通过 `strtok` 函数中的一个静态指针变量记住的）。
+
+用 `gdb` 跟踪这个程序，会发现 `str` 字符串被 `strtok` 不断修改，每次调用 `strtok` 把 `str` 中的一个分隔符改成 `'\0'`，分割出一个小字符串，并返回这个小字符串的首地址。
+
+```bash
+(gdb) start
+Breakpoint 1 at 0x8048415: file main.c, line 5.
+Starting program: /home/akaedu/a.out 
+main () at main.c:5
+5	{
+(gdb) n
+6		char str[] = "root:x::0:root:/root:/bin/bash:";
+(gdb) 
+9		token = strtok(str, ":");
+(gdb) display str
+1: str = "root:x::0:root:/root:/bin/bash:"
+(gdb) n
+10		printf("%s\n", token);
+1: str = "root\000x::0:root:/root:/bin/bash:"
+(gdb) 
+root
+11		while ( (token = strtok(NULL, ":")) != NULL)
+1: str = "root\000x::0:root:/root:/bin/bash:"
+(gdb) 
+12			printf("%s\n", token);
+1: str = "root\000x\000:0:root:/root:/bin/bash:"
+(gdb) 
+x
+11		while ( (token = strtok(NULL, ":")) != NULL)
+1: str = "root\000x\000:0:root:/root:/bin/bash:"
+```
+
+刚才提到在 `strtok` 函数中应该有一个静态指针变量记住上次处理到字符串中的什么位置，所以不需要每次调用时都把字符串中的当前处理位置传给 `strtok`，但是在函数中使用静态变量是不好的，以后会讲到这样的函数是不可重入的。`strtok_r` 函数则不存在这个问题，它的内部没有静态变量，调用者需要自己分配一个指针变量来维护字符串中的当前处理位置，每次调用时把这个指针变量的地址传给 `strtok_r` 的第三个参数，告诉 `strtok_r` 从哪里开始处理，`strtok_r` 返回时再把新的处理位置写回到这个指针变量中（这是一个 Value-result 参数）。`strtok_r` 末尾的r就表示可重入（Reentrant），这个函数不属于 C 标准库，是在 POSIX 标准中定义的。关于 `strtok_r` 的用法 Man Page 上有一个很好的例子：
+
+<p id="e25-3">例 25.3. strtok_r</p>
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(int argc, char *argv[])
+{
+	char *str1, *str2, *token, *subtoken;
+	char *saveptr1, *saveptr2;
+	int j;
+
+	if (argc != 4) {
+		fprintf(stderr, "Usage: %s string delim subdelim\n",
+			argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
+	for (j = 1, str1 = argv[1]; ; j++, str1 = NULL) {
+		token = strtok_r(str1, argv[2], &saveptr1);
+		if (token == NULL)
+			break;
+		printf("%d: %s\n", j, token);
+
+		for (str2 = token; ; str2 = NULL) {
+			subtoken = strtok_r(str2, argv[3], &saveptr2);
+			if (subtoken == NULL)
+				break;
+			printf(" --> %s\n", subtoken);
+		}
+	}
+
+	exit(EXIT_SUCCESS);
+}
+$ ./a.out 'a/bbb///cc;xxx:yyy:' ':;' '/'
+1: a/bbb///cc
+ --> a
+ --> bbb
+ --> cc
+2: xxx
+ --> xxx
+3: yyy
+ --> yyy
+```
+
+`a/bbb///cc;xxx:yyy:` 这个字符串有两级分隔符，一级分隔符是 `:` 号或 `;` 号，把这个字符串分割成 `a/bbb///cc`、`xxx`、`yyy` 三个子串，二级分隔符是 `/`，只有第一个子串中有二级分隔符，它被进一步分割成 `a`、`bbb`、`cc` 三个子串。由于 `strtok_r` 不使用静态变量，而是要求调用者自己保存字符串的当前处理位置，所以这个例子可以在按一级分隔符分割整个字符串的过程中穿插着用二级分隔符分割其中的每个子串。建议读者用 `gdb` 的 `display` 命令跟踪 `argv[1]`、`saveptr1` 和 `saveptr2`，以理解 `strtok_r` 函数的工作方式。
+
+Man Page 的 **BUGS** 部分指出了用 `strtok` 和 `strtok_r` 函数需要注意的问题：
+
+- 这两个函数要改写字符串以达到分割的效果
+- 这两个函数不能用于常量字符串，因为试图改写 `.rodata` 段会产生段错误
+- 在做了分割之后，字符串中的分隔符就被 `'\0'` 覆盖了
+- `strtok` 函数使用了静态变量，它不是线程安全的，必要时应该用可重入的 `strtok_r` 函数，以后再详细介绍「可重入」和「线程安全」这两个概念
+
+##### 习题
+
+1. 出于练习的目的，`strtok` 和 `strtok_r` 函数非常值得自己动手实现一遍，在这个过程中不仅可以更深刻地理解这两个函数的工作原理，也为以后理解「可重入」和「线程安全」这两个重要概念打下基础。
+
+2. 解析 URL 中的路径和查询字符串。动态网页的 URL 末尾通常带有查询，例如：
+
+	```
+	http://www.google.cn/search?complete=1&hl=zh-CN&ie=GB2312&q=linux&meta=
+	
+	http://www.baidu.com/s?wd=linux&cl=3
+	```
+	
+	比如上面第一个例子，`http://www.google.cn/search` 是路径部分，`?` 号后面的 `complete=1&hl=zh-CN&ie=GB2312&q=linux&meta=` 是查询字符串，由五个「key=value」形式的键值对（Key-Value Pair）组成，以 `&` 隔开，有些键对应的值可能是空字符串，比如这个例子中的键 `meta`。
+
+	现在要求实现一个函数，传入一个带查询字符串的 URL，首先检查输入格式的合法性，然后对 URL 进行切分，将路径部分和各键值对分别传出，请仔细设计函数接口以便传出这些字符串。如果函数中有动态分配内存的操作，还要另外实现一个释放内存的函数。完成之后，为自己设计的函数写一个 Man Page。
+
+### 2.12.2. 标准 I/O 库函数
+
+#### 2.12.2.1. 文件的基本概念
+
+我们已经多次用到了文件，例如源文件、目标文件、可执行文件、库文件等，现在学习如何用C标准库对文件进行读写操作，对文件的读写也属于 I/O 操作的一种，本节介绍的大部分函数在头文件 `stdio.h` 中声明，称为标准 I/O 库函数。
+
+文件可分为文本文件（Text File）和二进制文件（Binary File）两种，源文件是文本文件，而目标文件、可执行文件和库文件是二进制文件。文本文件是用来保存字符的，文件中的字节都是字符的某种编码（例如 ASCII 或 UTF-8），用 `cat` 命令可以查看其中的字符，用 `vi` 可以编辑其中的字符，而二进制文件不是用来保存字符的，文件中的字节表示其它含义，例如可执行文件中有些字节表示指令，有些字节表示各 Section 和 Segment 在文件中的位置，有些字节表示各 Segment 的加载地址。
+
+在[第 18 章「x86 汇编程序基础」第 5.1 节「目标文件」](2-C-语言本质/ch18-x86-汇编程序基础#_51-目标文件)中我们用 `hexdump` 命令查看过一个二进制文件。我们再做一个小实验，用 `vi` 编辑一个文件 `textfile`，在其中输入 `5678` 然后保存退出，用 `ls -l` 命令可以看到它的长度是 5：
+
+```bash
+$ ls -l textfile 
+-rw-r--r-- 1 akaedu akaedu 5 2009-03-20 10:58 textfile
+```
+
+`5678` 四个字符各占一个字节，`vi` 会自动在文件末尾加一个换行符，所以文件长度是 5。用 `od` 命令查看该文件的内容：
+
+```bash
+$ od -tx1 -tc -Ax textfile 
+000000 35 36 37 38 0a
+         5   6   7   8  \n
+000005
+```
+
+`-tx1` 选项表示将文件中的字节以十六进制的形式列出来，每组一个字节，`-tc` 选项表示将文件中的 ASCII 码以字符形式列出来。和 `hexdump` 类似，输出结果最左边的一列是文件中的地址，默认以八进制显示，`-Ax` 选项要求以十六进制显示文件中的地址。这样我们看到，这个文件中保存了 5 个字符，以 ASCII 码保存。ASCII 码的范围是 0 ~ 127，所以 ASCII 码文本文件中每个字节只用到低 7 位，最高位都是 0。以后我们会经常用到 `od` 命令。
+
+文本文件是一个模糊的概念。有些时候说文本文件是指用 `vi` 可以编辑出来的文件，例如 `/etc` 目录下的各种配置文件，这些文件中只包含 ASCII 码中的可见字符，而不包含像 `'\0'` 这种不可见字符，也不包含最高位是 1 的非 ASCII 码字节。从广义上来说，只要是专门保存字符的文件都算文本文件，包含不可见字符的也算，采用其它字符编码（例如 UTF-8 编码）的也算。
+
+#### 2.12.2.2. fopen/fclose
+
+在操作文件之前要用 `fopen` 打开文件，操作完毕要用 `fclose` 关闭文件。打开文件就是在操作系统中分配一些资源用于保存该文件的状态信息，并得到该文件的标识，以后用户程序就可以用这个标识对文件做各种操作，关闭文件则释放文件在操作系统中占用的资源，使文件的标识失效，用户程序就无法再操作这个文件了。 
+
+```c
+#include <stdio.h>
+
+FILE *fopen(const char *path, const char *mode);
+返回值：成功返回文件指针，出错返回 NULL 并设置 errno
+```
+
+`path` 是文件的路径名，`mode` 表示打开方式。如果文件打开成功，就返回一个 `FILE *` 文件指针来标识这个文件。以后调用其它函数对文件做读写操作都要提供这个指针，以指明对哪个文件进行操作。`FILE` 是 C 标准库中定义的结构体类型，其中包含该文件在内核中标识（在[第 28 章「文件与 I/O」第 2 节「C 标准 I/O 库函数与 Unbuffered I/O 函数」](3-Linux-系统编程/ch28-文件与-IO#_2-c-标准-io-库函数与-unbuffered-io-函数)将会讲到这个标识叫做文件描述符）、I/O 缓冲区和当前读写位置等信息，但调用者不必知道 `FILE` 结构体都有哪些成员，我们很快就会看到，调用者只是把文件指针在库函数接口之间传来传去，而文件指针所指的 `FILE` 结构体的成员在库函数内部维护，调用者不应该直接访问这些成员，这种编程思想在面向对象方法论中称为封装（Encapsulation）。像 `FILE *` 这样的指针称为不透明指针（Opaque Pointer）或者叫句柄（Handle），`FILE *` 指针就像一个把手（Handle），抓住这个把手就可以打开门或抽屉，但用户只能抓这个把手，而不能直接抓门或抽屉。
+
+下面说说参数 `path` 和 `mode`，`path` 可以是相对路径也可以是绝对路径，`mode` 表示打开方式是读还是写。比如 `fp = fopen("/tmp/file2", "w");` 表示打开绝对路径 `/tmp/file2`，只做写操作，`path` 也可以是相对路径，比如 `fp = fopen("file.a", "r");` 表示在当前工作目录下打开文件 `file.a`，只做读操作，再比如 `fp = fopen("../a.out", "r");` 只读打开当前工作目录上一层目录下的 `a.out`，`fp = fopen("Desktop/file3", "w");` 只写打开当前工作目录下子目录 `Desktop` 下的 `file3`。相对路径是相对于当前工作目录（Current Working Directory）的路径，每个进程都有自己的当前工作目录，Shell 进程的当前工作目录可以用 `pwd` 命令查看：
+
+```bash
+$ pwd
+/home/akaedu
+```
+
+通常 Linux 发行版都把 Shell 配置成在提示符前面显示当前工作目录，例如 `~$` 表示当前工作目录是主目录，`/etc$` 表示当前工作目录是 `/etc`。用 `cd` 命令可以改变 Shell 进程的当前工作目录。在 Shell 下敲命令启动新的进程，则该进程的当前工作目录继承自 Shell 进程的当前工作目录，该进程也可以调用 `chdir(2)` 函数改变自己的当前工作目录。
+
+`mode` 参数是一个字符串，由 `rwatb+` 六个字符组合而成，`r` 表示读，`w` 表示写，`a` 表示追加（Append），在文件末尾追加数据使文件的尺寸增大。`t` 表示文本文件，`b` 表示二进制文件，有些操作系统的文本文件和二进制文件格式不同，而在 UNIX 系统中，无论文本文件还是二进制文件都是由一串字节组成，`t` 和 `b` 没有区分，用哪个都一样，也可以省略不写。如果省略 `t` 和 `b`，`rwa+` 四个字符有以下  ： 
+
+- `"r"`：只读，文件必须已存在
+- "w"：只写，如果文件不存在则创建，如果文件已存在则把文件长度截断（Truncate）为 0 字节再重新写，也就是替换掉原来的文件内容
+- "a"：只能在文件末尾追加数据，如果文件不存在则创建
+- "r+"：允许读和写，文件必须已存在
+- "w+"：允许读和写，如果文件不存在则创建，如果文件已存在则把文件长度截断为 0 字节再重新写
+- "a+"：允许读和追加数据，如果文件不存在则创建
+
+在打开一个文件时如果出错，`fopen` 将返回 `NULL` 并设置 `errno`，`errno` 稍后介绍。在程序中应该做出错处理，通常这样写：
+
+```c
+if ( (fp = fopen("/tmp/file1", "r")) == NULL) {
+	printf("error open file /tmp/file1!\n");
+	exit(1);
+}
+```
+
+比如 `/tmp/file1` 这个文件不存在，而 `r` 打开方式又不会创建这个文件，`fopen` 就会出错返回。
+
+再说说 `fclose` 函数。
+
+```c
+#include <stdio.h>
+
+int fclose(FILE *fp);
+返回值：成功返回 0，出错返回 EOF 并设置 errno
+```
+
+把文件指针传给 `fclose` 可以关闭它所标识的文件，关闭之后该文件指针就无效了，不能再使用了。如果 `fclose` 调用出错（比如传给它一个无效的文件指针）则返回 `EOF` 并设置 `errno`，`errno` 稍后介绍，`EOF` 在 `stdio.h` 中定义：
+
+```c
+/* End of file character.
+   Some things throughout the library rely on this being -1.  */
+#ifndef EOF
+# define EOF (-1)
+#endif
+```
+
+它的值是 `-1`。`fopen` 调用应该和 `fclose` 调用配对，打开文件操作完之后一定要记得关闭。如果不调用 `fclose`，在进程退出时系统会自动关闭文件，但是不能因此就忽略 `fclose` 调用，如果写一个长年累月运行的程序（比如网络服务器程序），打开的文件都不关闭，堆积得越来越多，就会占用越来越多的系统资源。
+
+#### 2.12.2.3. stdin/stdout/stderr
+
+我们经常用 `printf` 打印到屏幕，也用过 `scanf` 读键盘输入，这些也属于 I/O 操作，但不是对文件做 I/O 操作而是对终端设备做 I/O 操作。所谓终端（Terminal）是指人机交互的设备，也就是可以接受用户输入并输出信息给用户的设备。在计算机刚诞生的年代，终端是电传打字机和打印机，现在的终端通常是键盘和显示器。终端设备和文件一样也需要先打开后操作，终端设备也有对应的路径名，`/dev/tty` 就表示和当前进程相关联的终端设备（在[第 34 章「终端、作业控制与守护进程」第 1.1 节「终端的基本概念」](3-Linux-系统编程/ch34-终端、作业控制与守护进程#_11-终端的基本概念)会讲到这叫进程的控制终端）。也就是说，`/dev/tty` 不是一个普通的文件，它不表示磁盘上的一组数据，而是表示一个设备。用 `ls` 命令查看这个文件：
+
+```bash
+$ ls -l /dev/tty
+crw-rw-rw- 1 root dialout 5, 0 2009-03-20 19:31 /dev/tty
+```
+
+开头的 `c` 表示文件类型是字符设备。中间的 `5, 0` 是它的设备号，主设备号 5，次设备号 0，主设备号标识内核中的一个设备驱动程序，次设备号标识该设备驱动程序管理的一个设备。内核通过设备号找到相应的驱动程序，完成对该设备的操作。我们知道常规文件的这一列应该显示文件尺寸，而设备文件的这一列显示设备号，这表明设备文件是没有文件尺寸这个属性的，因为设备文件在磁盘上不保存数据，对设备文件做读写操作并不是读写磁盘上的数据，而是在读写设备。UNIX 的传统是 *Everything  is a file*，键盘、显示器、串口、磁盘等设备在 `/dev` 目录下都有一个特殊的设备文件与之对应，这些设备文件也可以像普通文件一样打开、读、写和关闭，使用的函数接口是相同的。本书中不严格区分「文件」和「设备」这两个概念，遇到「文件」这个词，读者可以根据上下文理解它是指普通文件还是设备，如果需要强调是保存在磁盘上的普通文件，本书会用「常规文件」（Regular File）这个词。
+
+那为什么 `printf` 和 `scanf` 不用打开就能对终端设备进行操作呢？因为在程序启动时（在 `main` 函数还没开始执行之前）会自动把终端设备打开三次，分别赋给三个 `FILE *` 指针 `stdin`、`stdout` 和 `stderr`，这三个文件指针是 `libc` 中定义的全局变量，在 `stdio.h` 中声明，`printf` 向 `stdout` 写，而 `scanf` 从 `stdin` 读，后面我们会看到，用户程序也可以直接使用这三个文件指针。这三个文件指针的打开方式都是可读可写的，但通常 `stdin` 只用于读操作，称为标准输入（Standard Input），`stdout` 只用于写操作，称为标准输出（Standard Output），`stderr` 也只用于写操作，称为标准错误输出（Standard Error），通常程序的运行结果打印到标准输出，而错误提示（例如 `gcc` 报的警告和错误）打印到标准错误输出，所以 `fopen` 的错误处理写成这样更符合惯例：
+
+```c
+if ( (fp = fopen("/tmp/file1", "r")) == NULL) {
+	fputs("Error open file /tmp/file1\n", stderr);
+	exit(1);
+}
+```
+
+`fputs` 函数将在稍后详细介绍。不管是打印到标准输出还是打印到标准错误输出效果是一样的，都是打印到终端设备（也就是屏幕）了，那为什么还要分成标准输出和标准错误输出呢？以后我们会讲到重定向操作，可以把标准输出重定向到一个常规文件，而标准错误输出仍然对应终端设备，这样就可以把正常的运行结果和错误提示分开，而不是混在一起打印到屏幕了。
+
+#### 2.12.2.4. errno 与 perror 函数
+
+很多系统函数在错误返回时将错误原因记录在 `libc` 定义的全局变量 `errno` 中，每种错误原因对应一个错误码，请查阅 `errno(3)`的 Man Page 了解各种错误码，`errno` 在头文件 `errno.h` 中声明，是一个整型变量，所有错误码都是正整数。
+
+如果在程序中打印错误信息时直接打印 `errno` 变量，打印出来的只是一个整数值，仍然看不出是什么错误。比较好的办法是用 `perror` 或 `strerror` 函数将 `errno` 解释成字符串再打印。
+
+```c
+#include <stdio.h>
+
+void perror(const char *s);
+```
+
+`perror` 函数将错误信息打印到标准错误输出，首先打印参数 `s` 所指的字符串，然后打印 `:` 号，然后根据当前 `errno` 的值打印错误原因。例如：
+
+<p id="e25-4">例 25.4. perror</p>
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	FILE *fp = fopen("abcde", "r");
+	if (fp == NULL) {
+		perror("Open file abcde");
+		exit(1);
+	}
+	return 0;
+}
+```
+
+如果文件 `abcde` 不存在，`fopen` 返回 `-1` 并设置 `errno` 为 `ENOENT`，紧接着 `perror` 函数读取 `errno` 的值，将 `ENOENT` 解释成字符串 `No such file or directory` 并打印，最后打印的结果是 `Open file abcde: No such file or directory`。虽然 `perror` 可以打印出错误原因，传给 `perror` 的字符串参数仍然应该提供一些额外的信息，以便在看到错误信息时能够很快定位是程序中哪里出了错，如果在程序中有很多个 `fopen` 调用，每个 `fopen` 打开不同的文件，那么在每个 `fopen` 的错误处理中打印文件名就很有帮助。
+
+如果把上面的程序改成这样：
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int main(void)
+{
+	FILE *fp = fopen("abcde", "r");
+	if (fp == NULL) {
+		perror("Open file abcde");
+		printf("errno: %d\n", errno);
+		exit(1);
+	}
+	return 0;
+}
+```
+
+则 `printf` 打印的错误号并不是 `fopen` 产生的错误号，而是 `perror` 产生的错误号。`errno` 是一个全局变量，很多系统函数都会改变它，`fopen` 函数 Man Page 中的 **ERRORS** 部分描述了它可能产生的错误码，`perror` 函数的 Man Page 中没有 `ERRORS` 部分，说明它本身不产生错误码，但它调用的其它函数也有可能改变 `errno` 变量。大多数系统函数都有一个 Side Effect，就是有可能改变 `errno` 变量（当然也有少数例外，比如 `strcpy`），所以一个系统函数错误返回后应该马上检查 `errno`，在检查 `errno` 之前不能再调用其它系统函数。
+
+`strerror` 函数可以根据错误号返回错误原因字符串。
+
+```c
+#include <string.h>
+
+char *strerror(int errnum);
+返回值：错误码 errnum 所对应的字符串
+```
+
+这个函数返回指向静态内存的指针。以后学线程库时我们会看到，有些函数的错误码并不保存在 `errno` 中，而是通过返回值返回，就不能调用 `perror` 打印错误原因了，这时 `strerror` 就派上了用场：
+
+```c
+fputs(strerror(n), stderr);
+```
+
+##### 习题
+
+1. 在系统头文件中找到各种错误码的宏定义。
+2. 做几个小练习，看看 `fopen` 出错有哪些常见的原因。
+
+	打开一个没有访问权限的文件。
+	
+	```c
+	fp = fopen("/etc/shadow", "r");
+	if (fp == NULL) {
+		perror("Open /etc/shadow");
+		exit(1);
+	}
+	```
+
+	`fopen` 也可以打开一个目录，传给 `fopen` 的第一个参数目录名末尾可以加 `/` 也可以不加 `/`，但只允许以只读方式打开。试试如果以可写的方式打开一个存在的目录会怎么样呢？
+	
+	```c
+	fp = fopen("/home/akaedu/", "r+");
+	if (fp == NULL) {
+		perror("Open /home/akaedu");
+		exit(1);
+	}
+	```
+
+	请读者自己设计几个实验，看看你还能测试出哪些错误原因？
+
+#### 2.12.2.5. 以字节为单位的 I/O 函数
+
+`fgetc` 函数从指定的文件中读一个字节，`getchar` 从标准输入读一个字节，调用 `getchar()` 相当于调用 `fgetc(stdin)`。
+
+```c
+#include <stdio.h>
+
+int fgetc(FILE *stream);
+int getchar(void);
+返回值：成功返回读到的字节，出错或者读到文件末尾时返回 EOF
+```
+
+注意在 Man Page 的函数原型中 `FILE *` 指针参数有时会起名叫 `stream`，这是因为标准 I/O 库操作的文件有时也叫做流（Stream），文件由一串字节组成，每次可以读或写其中任意数量的字节，以后介绍 TCP 协议时会对流这个概念做更详细的解释。
+
+对于 `fgetc` 函数的使用有以下几点说明：
+
+- 要用 `fgetc` 函数读一个文件，该文件的打开方式必须是可读的。
+- 系统对于每个打开的文件都记录着当前读写位置在文件中的地址（或者说距离文件开头的字节数），也叫偏移量（Offset）。当文件打开时，读写位置是 0，每调用一次 `fgetc`，读写位置向后移动一个字节，因此可以连续多次调用 `fgetc` 函数依次读取多个字节。
+- `fgetc` 成功时返回读到一个字节，本来应该是 unsigned char 型的，但由于函数原型中返回值是 int 型，所以这个字节要转换成 int 型再返回，那为什么要规定返回值是 int 型呢？因为出错或读到文件末尾时 `fgetc` 将返回 `EOF`，即 `-1`，保存在 int 型的返回值中是 0xffffffff，如果读到字节 0xff，由 unsigned char 型转换为 int 型是 0x000000ff，只有规定返回值是 int 型才能把这两种情况区分开，如果规定返回值是 unsigned char 型，那么当返回值是 0xff 时无法区分到底是 `EOF` 还是字节 0xff。如果需要保存 `fgetc` 的返回值，一定要保存在 `int` 型变量中，如果写成 `unsigned char c = fgetc(fp);`，那么根据 `c` 的值又无法区分 `EOF` 和 0xff 字节了。注意，`fgetc` 读到文件末尾时返回 `EOF`，只是用这个返回值表示已读到文件末尾，并不是说每个文件末尾都有一个字节是 `EOF`（根据上面的分析，EOF 并不是一个字节）。
+
+`fputc` 函数向指定的文件写一个字节，`putchar` 向标准输出写一个字节，调用 `putchar(c)` 相当于调用 `fputc(c, stdout)`。
+
+```c
+#include <stdio.h>
+
+int fputc(int c, FILE *stream);
+int putchar(int c);
+
+返回值：成功返回写入的字节，出错返回 EOF
+```
+
+对于 `fputc` 函数的使用也要说明几点： 
+
+- 要用 `fputc` 函数写一个文件，该文件的打开方式必须是可写的（包括追加）。
+- 每调用一次 `fputc`，读写位置向后移动一个字节，因此可以连续多次调用 `fputc` 函数依次写入多个字节。但如果文件是以追加方式打开的，每次调用 `fputc` 时总是将读写位置移到文件末尾然后把要写入的字节追加到后面。
+
+下面的例子演示了这四个函数的用法，从键盘读入一串字符写到一个文件中，再从这个文件中读出这些字符打印到屏幕上。
+
+<p id="e25-5">例 25.5. 用 fputc/fget 读写文件和终端</p>
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	FILE *fp;
+	int ch;
+
+	if ( (fp = fopen("file2", "w+")) == NULL) {
+		perror("Open file file2\n");
+		exit(1);
+	}
+	while ( (ch = getchar()) != EOF)
+		fputc(ch, fp);
+	rewind(fp);
+	while ( (ch = fgetc(fp)) != EOF)
+		putchar(ch);
+	fclose(fp);
+	return 0;
+}
+```
+
+从终端设备读有点特殊。当调用 `getchar()` 或 `fgetc(stdin)` 时，如果用户没有输入字符，`getchar` 函数就阻塞等待，所谓阻塞是指这个函数调用不返回，也就不能执行后面的代码，这个进程阻塞了，操作系统可以调度别的进程执行。从终端设备读还有一个特点，用户输入一般字符并不会使 `getchar` 函数返回，仍然阻塞着，只有当用户输入回车或者到达文件末尾时 `getchar` 才返回<sup>[34]</sup>。这个程序的执行过程分析如下：
+
+> <sup>[34]</sup> 这些特性取决于终端的工作模式，终端可以配置成一次一行的模式，也可以配置成一次一个字符的模式，默认是一次一行的模式（本书的实验都是在这种模式下做的），关于终端的配置可参考 *APUE2e*。
+
+```bash
+$ ./a.out
+hello（输入 hello 并回车，这时第一次调用 getchar 返回，读取字符 h 存到文件中，然后连续调用 getchar 五次，读取 ello 和换行符存到文件中，第 7 次调用 getchar 又阻塞了）
+hey（输入 hey 并回车，第七次调用 getchar 返回，读取字符 h 存到文件中，然后连续调用 getchar 三次，读取 ey 和换行符存到文件中，第 11 次调用 getchar 又阻塞了）
+（这时输入 Ctrl-D，第 11 次调用 getchar 返回 EOF，跳出循环，进入下一个循环，回到文件开头，把文件内容一个字节一个字节读出来打印，直到文件结束）
+hello
+hey
+```
+
+从终端设备输入时有两种方法表示文件结束，一种方法是在一行的开头输入 Ctrl-D（如果不在一行的开头则需要连续输入两次 Ctrl-D），另一种方法是利用 Shell 的 Heredoc 语法：
+
+```bash
+$ ./a.out <<END
+> hello
+> hey
+> END
+hello
+hey
+```
+
+`<<END` 表示从下一行开始是标准输入，直到某一行开头出现 `END` 时结束。`<<` 后面的结束符可以任意指定，不一定得是 `END`，只要和输入的内容能区分开就行。
+
+在上面的程序中，第一个 `while` 循环结束时 `fp` 所指文件的读写位置在文件末尾，然后调用 `rewind` 函数把读写位置移到文件开头，再进入第二个 `while` 循环从头读取文件内容。
+
+##### 习题
+
+1. 编写一个简单的文件复制程序。
+	
+	```bash
+	$ ./mycp dir1/fileA dir2/fileB
+	```
+	
+	运行这个程序可以把 `dir1/fileA` 文件拷贝到 `dir2/fileB` 文件。注意各种出错处理。
+
+2. 虽然我说 `getchar` 要读到换行符才返回，但上面的程序并没有提供证据支持我的说法，如果看成每敲一个键 `getchar` 就返回一次，也能解释程序的运行结果。请写一个小程序证明 `getchar` 确实是读到换行符才返回的。
+
+#### 2.12.2.6. 操作读写位置的函数
+
+我们在上一节的例子中看到 `rewind` 函数把读写位置移到文件开头，本节介绍另外两个操作读写位置的函数，`fseek` 可以任意移动读写位置，`ftell` 可以返回当前的读写位置。
+
+```c
+#include <stdio.h>
+
+int fseek(FILE *stream, long offset, int whence);
+返回值：成功返回 0，出错返回 -1 并设置 errno
+
+long ftell(FILE *stream);
+返回值：成功返回当前读写位置，出错返回 -1 并设置 errno
+
+void rewind(FILE *stream);
+```
+
+`fseek` 的 `whence` 和 `offset` 参数共同决定了读写位置移动到何处，`whence` 参数的含义如下：
+
+- `SEEK_SET`：从文件开头移动 `offset` 个字节
+- `SEEK_CUR`：从当前位置移动 `offset` 个字节
+- `SEEK_END`：从文件末尾移动 `offset` 个字节
+
+`offset` 可正可负，负值表示向前（向文件开头的方向）移动，正值表示向后（向文件末尾的方向）移动，如果向前移动的字节数超过了文件开头则出错返回，如果向后移动的字节数超过了文件末尾，再次写入时将增大文件尺寸，从原来的文件末尾到 `fseek` 移动之后的读写位置之间的字节都是 0。
+
+先前我们创建过一个文件 `textfile`，其中有五个字节，`5678` 加一个换行符，现在我们拿这个文件做实验。
+
+<p id="e25-6">例 25.6. fseek</p>
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	FILE* fp;
+	if ( (fp = fopen("textfile","r+")) == NULL) {
+		perror("Open file textfile");
+		exit(1);
+	}
+	if (fseek(fp, 10, SEEK_SET) != 0) {
+		perror("Seek file textfile");
+		exit(1);
+	}
+	fputc('K', fp);
+	fclose(fp);
+	return 0;
+}
+```
+
+运行这个程序，然后查看文件 `textfile` 的内容：
+
+```bash
+$ ./a.out 
+$ od -tx1 -tc -Ax textfile 
+000000 35 36 37 38 0a 00 00 00 00 00 4b
+         5   6   7   8  \n  \0  \0  \0  \0  \0   K
+00000b
+```
+
+`fseek(fp, 10, SEEK_SET)` 将读写位置移到第 10 个字节处（其实是第 11 个字节，从 0 开始数），然后在该位置写入一个字符 K，这样 `textfile` 文件就变长了，从第 5 到第 9 个字节自动被填充为 0。
+
+#### 2.12.2.7. 以字符串为单位的 I/O 函数
+
+`fgets` 从指定的文件中读一行字符到调用者提供的缓冲区中，`gets` 从标准输入读一行字符到调用者提供的缓冲区中。
+
+```c
+#include <stdio.h>
+
+char *fgets(char *s, int size, FILE *stream);
+char *gets(char *s);
+返回值：成功时 s 指向哪返回的指针就指向哪，出错或者读到文件末尾时返回 NULL
+```
+
+`gets` 函数无需解释，Man Page 的 **BUGS** 部分已经说得很清楚了：Never use gets()。`gets` 函数的存在只是为了兼容以前的程序，我们写的代码都不应该调用这个函数。`gets` 函数的接口设计得很有问题，就像 `strcpy` 一样，用户提供一个缓冲区，却不能指定缓冲区的大小，很可能导致缓冲区溢出错误，这个函数比 `strcpy` 更加危险，`strcpy` 的输入和输出都来自程序内部，只要程序员小心一点就可以避免出问题，而 `gets` 读取的输入直接来自程序外部，用户可能通过标准输入提供任意长的字符串，程序员无法避免 `gets` 函数导致的缓冲区溢出错误，所以唯一的办法就是不要用它。
+
+现在说说 `fgets` 函数，参数 `s` 是缓冲区的首地址，`size` 是缓冲区的长度，该函数从 `stream` 所指的文件中读取以 `'\n'` 结尾的一行（包括 `'\n'` 在内）存到缓冲区 `s` 中，并且在该行末尾添加一个 `'\0'` 组成完整的字符串。
+
+如果文件中的一行太长，`fgets` 从文件中读了 `size-1` 个字符还没有读到 `'\n'`，就把已经读到的 `size-1` 个字符和一个 `'\0'` 字符存入缓冲区，文件中剩下的半行可以在下次调用 `fgets` 时继续读。
+
+如果一次 `fgets` 调用在读入若干个字符后到达文件末尾，则将已读到的字符串加上 `'\0'` 存入缓冲区并返回，如果再次调用 `fgets` 则返回 `NULL`，可以据此判断是否读到文件末尾。
+
+注意，对于 `fgets` 来说，`'\n'` 是一个特别的字符，而 `'\0'` 并无任何特别之处，如果读到 `'\0'` 就当作普通字符读入。如果文件中存在 `'\0'` 字符（或者说 0x00 字节），调用 `fgets` 之后就无法判断缓冲区中的 `'\0'` 究竟是从文件读上来的字符还是由 `fgets` 自动添加的结束符，所以 `fgets` 只适合读文本文件而不适合读二进制文件，并且文本文件中的所有字符都应该是可见字符，不能有 `'\0'`。
+
+`fputs` 向指定的文件写入一个字符串，`puts` 向标准输出写入一个字符串。
+
+```c
+#include <stdio.h>
+
+int fputs(const char *s, FILE *stream);
+int puts(const char *s);
+返回值：成功返回一个非负整数，出错返回 EOF
+```
+
+缓冲区 `s` 中保存的是以 `'\0'` 结尾的字符串，`fputs` 将该字符串写入文件 `stream`，但并不写入结尾的 `'\0'`。与 `fgets` 不同的是，`fputs` 并不关心的字符串中的 `'\n'` 字符，字符串中可以有 `'\n'` 也可以没有 `'\n'`。`puts` 将字符串 `s` 写到标准输出（不包括结尾的 `'\0'`），然后自动写一个 `'\n'` 到标准输出。
+
+##### 习题
+
+1. 用 `fgets`/`fputs` 写一个拷贝文件的程序，根据本节对 `fgets` 函数的分析，应该只能拷贝文本文件，试试用它拷贝二进制文件会出什么问题。
+
+#### 2.12.2.8. 以记录为单位的 I/O 函数
+
+```c
+#include <stdio.h>
+
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
+返回值：读或写的记录数，成功时返回的记录数等于 nmemb，
+出错或读到文件末尾时返回的记录数小于 nmemb，也可能返回 0
+```
+
+`fread` 和 `fwrite` 用于读写记录，这里的记录是指一串固定长度的字节，比如一个 int、一个结构体或者一个定长数组。参数 `size` 指出一条记录的长度，而 `nmemb` 指出要读或写多少条记录，这些记录在 `ptr` 所指的内存空间中连续存放，共占 `size * nmemb` 个字节，`fread` 从文件 `stream` 中读出 `size * nmemb` 个字节保存到 `ptr` 中，而 `fwrite` 把 `ptr` 中的 `size * nmemb` 个字节写到文件 `stream` 中。
+
+`nmemb` 是请求读或写的记录数，`fread` 和 `fwrite` 返回的记录数有可能小于 `nmemb` 指定的记录数。例如当前读写位置距文件末尾只有一条记录的长度，调用 `fread` 时指定 `nmemb` 为 2，则返回值为 1。如果当前读写位置已经在文件末尾了，或者读文件时出错了，则 `fread` 返回 0。如果写文件时出错了，则 `fwrite` 的返回值小于 `nmemb` 指定的值。下面的例子由两个程序组成，一个程序把结构体保存到文件中，另一个程序和从文件中读出结构体。
+
+<p id="e25-7">例 25.7. fread/fwrite</p>
+
+```c
+/* writerec.c */
+#include <stdio.h>
+#include <stdlib.h>
+
+struct record {
+	char name[10];
+	int age;
+};
+
+int main(void)
+{
+	struct record array[2] = {{"Ken", 24}, {"Knuth", 28}};
+	FILE *fp = fopen("recfile", "w");
+	if (fp == NULL) {
+		perror("Open file recfile");
+		exit(1);
+	}
+	fwrite(array, sizeof(struct record), 2, fp);
+	fclose(fp);
+	return 0;
+}
+/* readrec.c */
+#include <stdio.h>
+#include <stdlib.h>
+
+struct record {
+	char name[10];
+	int age;
+};
+
+int main(void)
+{
+	struct record array[2];
+	FILE *fp = fopen("recfile", "r");
+	if (fp == NULL) {
+		perror("Open file recfile");
+		exit(1);
+	}
+	fread(array, sizeof(struct record), 2, fp);
+	printf("Name1: %s\tAge1: %d\n", array[0].name, array[0].age);
+	printf("Name2: %s\tAge2: %d\n", array[1].name, array[1].age);
+	fclose(fp);
+	return 0;
+}
+$ gcc writerec.c -o writerec
+$ gcc readrec.c -o readrec
+$ ./writerec
+$ od -tx1 -tc -Ax recfile 
+000000 4b 65 6e 00 00 00 00 00 00 00 00 00 18 00 00 00
+         K   e   n  \0  \0  \0  \0  \0  \0  \0  \0  \0 030  \0  \0  \0
+000010 4b 6e 75 74 68 00 00 00 00 00 00 00 1c 00 00 00
+         K   n   u   t   h  \0  \0  \0  \0  \0  \0  \0 034  \0  \0  \0
+000020
+$ ./readrec 
+Name1: Ken	Age1: 24
+Name2: Knuth	Age2: 28
+```
+
+我们把一个 `struct record` 结构体看作一条记录，由于结构体中有填充字节，每条记录占 16 字节，把两条记录写到文件中共占 32 字节。该程序生成的 `recfile` 文件是二进制文件而非文本文件，因为其中不仅保存着字符型数据，还保存着整型数据 24 和 28（在 `od` 命令的输出中以八进制显示为 030 和 034）。注意，直接在文件中读写结构体的程序是不可移植的，如果在一种平台上编译运行 `writebin.c` 程序，把生成的 `recfile` 文件拷到另一种平台并在该平台上编译运行 `readbin.c` 程序，则不能保证正确读出文件的内容，因为不同平台的大小端可能不同（因而对整型数据的存储方式不同），结构体的填充方式也可能不同（因而同一个结构体所占的字节数可能不同，`age` 成员在 `name` 成员之后的什么位置也可能不同）。
+
+#### 2.12.2.9. 格式化 I/O 函数
+
+现在该正式讲一下 `printf` 和 `scanf` 函数了，这两个函数都有很多种形式。
+
+```c
+#include <stdio.h>
+
+int printf(const char *format, ...);
+int fprintf(FILE *stream, const char *format, ...);
+int sprintf(char *str, const char *format, ...);
+int snprintf(char *str, size_t size, const char *format, ...);
+
+#include <stdarg.h>
+
+int vprintf(const char *format, va_list ap);
+int vfprintf(FILE *stream, const char *format, va_list ap);
+int vsprintf(char *str, const char *format, va_list ap);
+int vsnprintf(char *str, size_t size, const char *format, va_list ap);
+
+返回值：成功返回格式化输出的字节数（不包括字符串的结尾 '\0'），出错返回一个负值
+```
+
+`printf` 格式化打印到标准输出，而 `fprintf` 打印到指定的文件 `stream` 中。`sprintf` 并不打印到文件，而是打印到用户提供的缓冲区 `str` 中并在末尾加 `'\0'`，由于格式化后的字符串长度很难预计，所以很可能造成缓冲区溢出，用 `snprintf` 更好一些，参数 `size` 指定了缓冲区长度，如果格式化后的字符串长度超过缓冲区长度，`snprintf` 就把字符串截断到 `size-1` 字节，再加上一个 `'\0'` 写入缓冲区，也就是说 `snprintf` 保证字符串以 `'\0'` 结尾。`snprintf` 的返回值是格式化后的字符串长度（不包括结尾的 `'\0'`），如果字符串被截断，返回的是截断之前的长度，把它和实际缓冲区中的字符串长度相比较就可以知道是否发生了截断。
+
+上面列出的后四个函数在前四个函数名的前面多了个 `v`，表示可变参数不是以 `...` 的形式传进来，而是以 `va_list` 类型传进来。下面我们用 `vsnprintf` 包装出一个类似 `printf` 的带格式化字符串和可变参数的函数。
+
+<p id="e25-8">例 25.8. 实现格式化打印错误的 err_sys 函数</p>
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <stdarg.h>
+#include <string.h>
+
+#define MAXLINE 80
+
+void err_sys(const char *fmt, ...)
+{
+	int err = errno;
+	char buf[MAXLINE+1];
+	va_list ap;
+
+	va_start(ap, fmt);
+
+	vsnprintf(buf, MAXLINE, fmt, ap);
+	snprintf(buf+strlen(buf), MAXLINE-strlen(buf), ": %s", strerror(err));
+	strcat(buf, "\n");
+	fputs(buf, stderr);
+
+	va_end(ap);
+	exit(1);
+}
+
+int main(int argc, char *argv[])
+{
+	FILE *fp;
+	if (argc != 2) {
+		fputs("Usage: ./a.out pathname\n", stderr);
+		exit(1);
+	}
+	fp = fopen(argv[1], "r");
+
+	if (fp == NULL)
+		err_sys("Line %d - Open file %s", __LINE__, argv[1]);
+	printf("Open %s OK\n", argv[1]);
+	fclose(fp);
+	return 0;
+}
+```
+
+有了 `err_sys` 函数，不仅简化了 `main` 函数的代码，而且可以把 `fopen` 的错误提示打印得非常清楚，有源代码行号，有打开文件的路径名，一看就知道哪里出错了。
+
+现在总结一下 `printf` 格式化字符串中的转换说明的有哪些写法。在这里只列举几种常用的格式，其它格式请参考 Man Page。每个转换说明以 `%` 号开头，以转换字符结尾，我们以前用过的转换说明仅包含 `%` 号和转换字符，例如 `%d`、`%s`，其实在这两个字符中间还可以插入一些可选项。
+
+<p id="t25-1">表 25.1. printf 转换说明的可选项</p>
+
+| 选项 | 描述                                                         | 举例                                                         |
+| ---- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| #    | 八进制前面加 0（转换字符为 `o`），十六进制前面加 0x（转换字符为 `x`）或 0X（转换字符为 `X`）。 | `printf("%#x", 0xff)` 打印 `0xff`，`printf("%x", 0xff)` 打印 `ff`。 |
+| -    | 格式化后的内容居左，右边可以留空格。                         | 见下面的例子                                                 |
+| 宽度 | 用一个整数指定格式化后的最小长度，如果格式化后的内容没有这么长，可以在左边留空格，如果前面指定了 `-` 号就在右边留空格。宽度有一种特别的形式，不指定整数值而是写成一个 `*` 号，表示取一个 `int` 型参数作为宽度。 | `printf("-%10s-", "hello")` 打印 `-␣␣␣␣␣hello-`，`printf("-%-*s-", 10, "hello")` 打印 `-hello␣␣␣␣␣-`。 |
+| .    | 用于分隔上一条提到的最小长度和下一条要讲的精度。             | 见下面的例子                                                 |
+| 精度 | 用一个整数表示精度，对于字符串来说指定了格式化后保留的最大长度，对于浮点数来说指定了格式化后小数点右边的位数，对于整数来说指定了格式化后的最小位数。精度也可以不指定整数值而是写成一个 `*` 号，表示取下一个 `int` 型参数作为精度。 | `printf("%.4s", "hello")` 打印 `hell`，`printf("-%6.4d-", 100)`打印`-␣␣0100-`，`printf("-%*.*f-", 8, 4, 3.14)` 打印`-␣␣3.1400-`。 |
+| 字长 | 对于整型参数，`hh`、`h`、`l`、`ll` 分别表示是 `char`、`short`、`long`、`long long` 型的字长，至于是有符号数还是无符号数则取决于转换字符；对于浮点型参数，`L` 表示 `long double` 型的字长。 | `printf("%hhd", 255)` 打印 `-1`。                              |
+
+常用的转换字符有：
+
+<p id="t25-1">表 25.2. printf的转换字符</p>
+
+| 转换字符 | 描述                                                         | 举例                                                         |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| d i      | 取 `int` 型参数格式化成有符号十进制表示，如果格式化后的位数小于指定的精度，就在左边补 0。 | `printf("%.4d", 100)` 打印 `0100`。                            |
+| o u x X  | 取 `unsigned int` 型参数格式化成无符号八进制（o）、十进制（u）、十六进制（x 或 X）表示，x 表示十六进制数字用小写 abcdef，X 表示十六进制数字用大写 ABCDEF，如果格式化后的位数小于指定的精度，就在左边补 0。 | `printf("%#X", 0xdeadbeef)` 打印 `0XDEADBEEF`，`printf("%hhu", -1)` 打印 `255`。 |
+| c        | 取 `int` 型参数转换成 `unsigned char` 型，格式化成对应的 ASCII 码字符。 | `printf("%c", 256+'A')` 打印 `A`。                             |
+| s        | 取 `const char *` 型参数所指向的字符串格式化输出，遇到 `'\0'` 结束，或者达到指定的最大长度（精度）结束。 | `printf("%.4s", "hello")` 打印 `hell`。                        |
+| p        | 取 `void *` 型参数格式化成十六进制表示。相当于 `%#x`。          | `printf("%p", main)` 打印 `main` 函数的首地址 `0x80483c4`。      |
+| f        | 取 `double` 型参数格式化成 `[-]ddd.ddd` 这样的格式，小数点后的默认精度是 6 位。 | `printf("%f", 3.14)` 打印 `3.140000`，`printf("%f", 0.00000314)` 打印 `0.000003`。 |
+| e E      | 取 `double` 型参数格式化成 `[-]d.ddde±dd`（转换字符是 e）或 `[-]d.dddE±dd`（转换字符是 E）这样的格式，小数点后的默认精度是 6 位，指数至少是两位。 | `printf("%e", 3.14)` 打印 `3.140000e+00`。                     |
+| g G      | 取 `double` 型参数格式化，精度是指有效数字而非小数点后的数字，默认精度是 6。如果指数小于 -4 或大于等于精度就按 `%e`（转换字符是 g）或 `%E`（转换字符是 G）格式化，否则按 `%f` 格式化。小数部分的末尾 0 去掉，如果没有小数部分，小数点也去掉。 | `printf("%g", 3.00)` 打印 `3`，`printf("%g", 0.00001234567)` 打印 `1.23457e-05`。 |
+| %        | 格式化成一个 `%`。                                            | `printf("%%")` 打印一个 `%`。                                  |
+
+我们在[第 24 章「函数接口」第 6 节「可变参数」](2-C-语言本质/ch24-函数接口)讲过可变参数的原理，`printf` 并不知道实际参数的类型，只能按转换说明指出的参数类型从栈帧上取参数，所以如果实际参数和转换说明的类型不符，结果可能会有些意外，上面也举过几个这样的例子。另外，如果 `s` 指向一个字符串，用 `printf(s)` 打印这个字符串可能得到错误的结果，因为字符串中可能包含 `%` 号而被 `printf` 当成转换说明，`printf` 并不知道后面没有传其它参数，照样会从栈帧上取参数。所以比较保险的办法是 `printf("%s", s)`。
+
+下面看 `scanf` 函数的各种形式。
+
+```c
+#include <stdio.h>
+
+int scanf(const char *format, ...);
+int fscanf(FILE *stream, const char *format, ...);
+int sscanf(const char *str, const char *format, ...);
+
+#include <stdarg.h>
+
+int vscanf(const char *format, va_list ap);
+int vsscanf(const char *str, const char *format, va_list ap);
+int vfscanf(FILE *stream, const char *format, va_list ap);
+返回值：返回成功匹配和赋值的参数个数，成功匹配的参数可能少于所提供的赋值参数，返回 0 表示一个都不匹配，出错或者读到文件或字符串末尾时返回 EOF 并设置 errno
+```
+
+`scanf` 从标准输入读字符，按格式化字符串 `format` 中的转换说明解释这些字符，转换后赋给后面的参数，后面的参数都是传出参数，因此必须传地址而不能传值。`fscanf` 从指定的文件 `stream` 中读字符，而 `sscanf` 从指定的字符串 `str` 中读字符。后面三个以 `v` 开头的函数的可变参数不是以 `...` 的形式传进来，而是以 `va_list` 类型传进来。
+
+现在总结一下 `scanf` 的格式化字符串和转换说明，这里也只列举几种常用的格式，其它格式请参考 Man Page。`scanf` 用输入的字符去匹配格式化字符串中的字符和转换说明，如果成功匹配一个转换说明，就给一个参数赋值，如果读到文件或字符串末尾就停止，或者如果遇到和格式化字符串不匹配的地方（比如转换说明是 `%d` 却读到字符 `A`）就停止。如果遇到不匹配的地方而停止，`scanf` 的返回值可能小于赋值参数的个数，文件的读写位置指向输入中不匹配的地方，下次调用库函数读文件时可以从这个位置继续。
+
+格式化字符串中包括：
+
+- 空格或 Tab，在处理过程中被忽略。
+- 普通字符（不包括 `%`），和输入字符中的非空白字符相匹配。输入字符中的空白字符是指空格、`Tab`、`\r`、`\n`、`\v`、`\f`。
+- 转换说明，以 `%` 开头，以转换字符结尾，中间也有若干个可选项。
+
+转换说明中的可选项有：
+
+- `*` 号，表示这个转换说明只是用来匹配一段输入字符，但匹配结果并不赋给后面的参数。
+- 用一个整数指定的宽度 N。表示这个转换说明最多匹配 N 个输入字符，或者匹配到输入字符中的下一个空白字符结束。
+- 对于整型参数可以指定字长，有 `hh`、`h`、`l`、`ll`（也可以写成一个 `L`），含义和 `printf` 相同。但 `l` 和 `L` 还有一层含义，当转换字符是 `e`、`f`、`g` 时，表示赋值参数的类型是 `float *` 而非 `double *`，这一点跟 `printf` 不同（结合以前讲的类型转换规则思考一下为什么不同），这时前面加上 `l` 或 `L` 分别表示 `double *` 或 `long double *` 型。
+
+常用的转换字符有：
+
+<p id="t25-3">表 25.3. scanf 的转换字符</p>
+
+| 转换字符 | 描述                                                         |
+| -------- | ------------------------------------------------------------ |
+| d        | 匹配十进制整数（开头可以有负号），赋值参数的类型是 `int *`。  |
+| i        | 匹配整数（开头可以有负号），赋值参数的类型是 `int *`，如果输入字符以 0x 或 0X 开头则匹配十六进制整数，如果输入字符以 0 开头则匹配八进制整数。 |
+| o u x    | 匹配八进制、十进制、十六进制整数（开头可以有负号），赋值参数的类型是 `unsigned int *`。 |
+| c        | 匹配一串字符，字符的个数由宽度指定，缺省宽度是 1，赋值参数的类型是 `char *`，末尾不会添加 `'\0'`。如果输入字符的开头有空白字符，这些空白字符并不被忽略，而是保存到参数中，要想跳过开头的空白字符，可以在格式化字符串中用一个空格去匹配。 |
+| s        | 匹配一串非空白字符，从输入字符中的第一个非空白字符开始匹配到下一个空白字符之前，或者匹配到指定的宽度，赋值参数的类型是 `char *`，末尾自动添加 `'\0'`。 |
+| e f g    | 匹配符点数（开头可以有负号），赋值参数的类型是 `float *`，也可以指定 `double *` 或 `long double *` 的字长。 |
+| %        | 转换说明 `%%` 匹配一个字符 `%`，不做赋值。                      |
+
+下面几个例子出自 *K&R*。第一个例子，读取用户输入的浮点数累加起来。
+
+<p id="e25-9">例 25.9. 用 scanf 实现简单的计算器</p>
+
+```c
+#include <stdio.h>
+
+int main(void)  /* rudimentary calculator */
+{
+	double sum, v;
+
+	sum = 0;
+	while (scanf("%lf", &v) == 1)
+		printf("\t%.2f\n", sum += v);
+	return 0;
+}
+```
+
+如果我们要读取 `25 Dec 1988` 这样的日期格式，可以这样写：
+
+```c
+char *str = "25 Dec 1988";
+int day, year;
+char monthname[20];
+
+sscanf(str, "%d %s %d", &day, monthname, &year);
+```
+
+如果 `str` 中的空白字符再多一些，比如 `"  25	Dec   1998"`，仍然可以正确读取。如果格式化字符串中的空格和Tab再多一些，比如 `"%d   %s	%d  "`，也可以正确读取。`scanf` 函数是很强大的，但是要用对了不容易，需要多练习，通过练习体会空白字符的作用。
+
+如果要读取 `12/25/1998` 这样的日期格式，就需要在格式化字符串中用 `/` 匹配输入字符中的 `/`：
+
+```c
+int day, month, year;
+
+scanf("%d/%d/%d", &month, &day, &year);
+```
+
+`scanf` 把换行符也看作空白字符，仅仅当作字段之间的分隔符，如果输入中的字段个数不确定，最好是先用 `fgets` 按行读取，然后再交给 `sscanf` 处理。如果我们的程序需要同时识别以上两种日期格式，可以这样写：
+
+```c
+while (fgets(line, sizeof(line), stdin) > 0) {
+	if (sscanf(line, "%d %s %d", &day, monthname, &year) == 3)
+		printf("valid: %s\n", line); /* 25 Dec 1988 form */
+	else if (sscanf(line, "%d/%d/%d", &month, &day, &year) == 3)
+		printf("valid: %s\n", line); /* mm/dd/yy form */
+	else
+		printf("invalid: %s\n", line); /* invalid form */
+}
+```
+
+#### 2.12.2.10. C 标准库的 I/O 缓冲区
+
+用户程序调用C标准 I/O 库函数读写文件或设备，而这些库函数要通过系统调用把读写请求传给内核（以后我们会看到与 I/O 相关的系统调用），最终由内核驱动磁盘或设备完成 I/O 操作。C标准库为每个打开的文件分配一个 I/O 缓冲区以加速读写操作，通过文件的 `FILE` 结构体可以找到这个缓冲区，用户调用读写函数大多数时候都在 I/O 缓冲区中读写，只有少数时候需要把读写请求传给内核。以 `fgetc` / `fputc`为例，当用户程序第一次调用 `fgetc` 读一个字节时，`fgetc` 函数可能通过系统调用进入内核读 1K 字节到 I/O 缓冲区中，然后返回 I/O 缓冲区中的第一个字节给用户，把读写位置指向 I/O 缓冲区中的第二个字符，以后用户再调 `fgetc`，就直接从 I/O 缓冲区中读取，而不需要进内核了，当用户把这 1K 字节都读完之后，再次调用 `fgetc` 时，`fgetc` 函数会再次进入内核读 1K 字节到 I/O 缓冲区中。在这个场景中用户程序、C 标准库和内核之间的关系就像在[第 17 章「计算机体系结构基础」第 5 节「Memory Hierarchy」](2-C-语言本质/ch17-计算机体系结构基础#_5-memory-hierarchy)中 CPU、Cache 和内存之间的关系一样，C 标准库之所以会从内核预读一些数据放在 I/O 缓冲区中，是希望用户程序随后要用到这些数据，C 标准库的 I/O 缓冲区也在用户空间，直接从用户空间读取数据比进内核读数据要快得多。另一方面，用户程序调用 `fputc` 通常只是写到 I/O 缓冲区中，这样 `fputc` 函数可以很快地返回，如果 I/O 缓冲区写满了，`fputc` 就通过系统调用把 I/O 缓冲区中的数据传给内核，内核最终把数据写回磁盘。有时候用户程序希望把 I/O 缓冲区中的数据立刻传给内核，让内核写回设备，这称为 Flush 操作，对应的库函数是 `fflush`，`fclose` 函数在关闭文件之前也会做 Flush 操作。
+
+下图以 `fgets`/`fputs` 示意了 I/O 缓冲区的作用，使用 `fgets`/`fputs` 函数时在用户程序中也需要分配缓冲区（图中的 `buf1` 和 `buf2`），注意区分用户程序的缓冲区和 C 标准库的 I/O 缓冲区。
+
+<p id="c25-1">图 25.1. C 标准库的 I/O 缓冲区</p>
+
+![C 标准库的 I/O 缓冲区](./image/stdlib.buffer.png)
+
+C 标准库的 I/O 缓冲区有三种类型：全缓冲、行缓冲和无缓冲。当用户程序调用库函数做写操作时，不同类型的缓冲区具有不同的特性。
+
+- 全缓冲：如果缓冲区写满了就写回内核。常规文件通常是全缓冲的。
+- 行缓冲：如果用户程序写的数据中有换行符就把这一行写回内核，或者如果缓冲区写满了就写回内核。标准输入和标准输出对应终端设备时通常是行缓冲的。
+- 无缓冲：用户程序每次调库函数做写操作都要通过系统调用写回内核。标准错误输出通常是无缓冲的，这样用户程序产生的错误信息可以尽快输出到设备。
+
+下面通过一个简单的例子证明标准输出对应终端设备时是行缓冲的。
+
+```c
+#include <stdio.h>
+
+int main()
+{
+	printf("hello world");
+	while(1);
+	return 0;
+}
+```
+
+运行这个程序，会发现 `hello world` 并没有打印到屏幕上。用 Ctrl-C 终止它，去掉程序中的 `while(1);` 语句再试一次：
+
+```bash
+$ ./a.out
+hello world$
+```
+
+`hello world` 被打印到屏幕上，后面直接跟 Shell 提示符，中间没有换行。
+
+我们知道 `main` 函数被启动代码这样调用：`exit(main(argc, argv));`。`main` 函数 `return` 时启动代码会调用 `exit`，`exit` 函数首先关闭所有尚未关闭的 `FILE *` 指针（关闭之前要做 Flush 操作），然后通过 `_exit` 系统调用进入内核退出当前进程<sup>[35]</sup>。
+
+> <sup>[35]</sup> 其实在调 `_exit` 进内核之前还要调用户程序中通过 `atexit(3)` 注册的退出处理函数，本书不做详细介绍，读者可参考 *APUE2e*。
+
+在上面的例子中，由于标准输出是行缓冲的，`printf("hello world");` 打印的字符串中没有换行符，所以只把字符串写到标准输出的 I/O 缓冲区中而没有写回内核（写到终端设备），如果敲 Ctrl-C，进程是异常终止的，并没有调用 `exit`，也就没有机会 Flush I/O 缓冲区，因此字符串最终没有打印到屏幕上。如果把打印语句改成 `printf("hello world\n");`，有换行符，就会立刻写到终端设备，或者如果把 `while(1);` 去掉也可以写到终端设备，因为程序退出时会调用 `exit` Flush 所有 I/O 缓冲区。在本书的其它例子中，`printf` 打印的字符串末尾都有换行符，以保证字符串在 `printf` 调用结束时就写到终端设备。
+
+我们再做个实验，在程序中直接调用 `_exit` 退出。
+
+```c
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+	printf("hello world");
+	_exit(0);
+}
+```
+
+结果也不会把字符串打印到屏幕上，如果把 `_exit` 调用改成 `exit` 就可以打印到屏幕上。
+
+除了写满缓冲区、写入换行符之外，行缓冲还有一种情况会自动做 Flush 操作。如果：
+
+- 用户程序调用库函数从无缓冲的文件中读取
+- 或者从行缓冲的文件中读取，并且这次读操作会引发系统调用从内核读取数据
+
+那么在读取之前会自动 Flush 所有行缓冲。例如：
+
+```c
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+	char buf[20];
+	printf("Please input a line: ");
+	fgets(buf, 20, stdin);
+	return 0;
+}
+```
+
+虽然调用 `printf` 并不会把字符串写到设备，但紧接着调用 `fgets` 读一个行缓冲的文件（标准输入），在读取之前会自动 Flush 所有行缓冲，包括标准输出。
+
+如果用户程序不想完全依赖于自动的 Flush 操作，可以调 `fflush` 函数手动做 Flush 操作。
+
+```c
+#include <stdio.h>
+
+int fflush(FILE *stream);
+返回值：成功返回 0，出错返回 EOF 并设置 errno
+```
+
+对前面的例子再稍加改动：
+
+```c
+#include <stdio.h>
+
+int main()
+{
+	printf("hello world");
+	fflush(stdout);
+	while(1);
+}
+```
+
+虽然字符串中没有换行，但用户程序调用 `fflush` 强制写回内核，因此也能在屏幕上打印出字符串。`fflush` 函数用于确保数据写回了内核，以免进程异常终止时丢失数据。作为一个特例，调用 `fflush(NULL)` 可以对所有打开文件的 I/O 缓冲区做 Flush 操作。
+
+#### 2.12.2.11. 本节综合练习
+
+1. 编程读写一个文件 `test.txt`，每隔 1 秒向文件中写入一行记录，类似于这样：
+	
+	```
+	1 2009-7-30 15:16:42
+	2 2009-7-30 15:16:43
+	```
+	
+	该程序应该无限循环，直到按 Ctrl-C 终止。下次再启动程序时在 `test.txt` 文件末尾追加记录，并且序号能够接续上次的序号，比如：
+	
+	```bash
+	1 2009-7-30 15:16:42
+	2 2009-7-30 15:16:43
+	3 2009-7-30 15:19:02
+	4 2009-7-30 15:19:03
+	5 2009-7-30 15:19:04
+	```
+	
+	这类似于很多系统服务维护的日志文件，例如在我的机器上系统服务进程 `acpid` 维护一个日志文件 `/var/log/acpid`，就像这样：
+	
+	```bash
+	$ cat /var/log/acpid
+	[Sun Oct 26 08:44:46 2008] logfile reopened
+	[Sun Oct 26 10:11:53 2008] exiting
+	[Sun Oct 26 18:54:39 2008] starting up
+	...
+	```
+	
+	每次系统启动时 `acpid` 进程就以追加方式打开这个文件，当有事件发生时就追加一条记录，包括事件发生的时刻以及事件描述信息。
+
+	获取当前的系统时间需要调用 `time(2)` 函数，返回的结果是一个 `time_t` 类型，其实就是一个大整数，其值表示从 UTC（Coordinated Universal Time）时间 1970 年 1 月 1 日 00:00:00（称为 UNIX 系统的 Epoch 时间）到当前时刻的秒数。然后调用 `localtime(3)` 将 `time_t` 所表示的 UTC 时间转换为本地时间（我们是 +8 区，比 UTC 多 8 个小时）并转成 `struct tm` 类型，该类型的各数据成员分别表示年月日时分秒，具体用法请查阅 Man Page。调用 `sleep(3)` 函数可以指定程序睡眠多少秒。
+
+2. INI 文件是一种很常见的配置文件，很多 Windows 程序都采用这种格式的配置文件，在 Linux 系统中 Qt 程序通常也采用这种格式的配置文件。比如：
+	
+	```ini
+	;Configuration of http
+	[http]
+	domain=www.mysite.com
+	port=8080
+	cgihome=/cgi-bin
+	
+	;Configuration of db
+	[database]
+	server = mysql
+	user = myname
+	password = toopendatabase
+	```
+	
+	一个配置文件由若干个 Section 组成，由 [] 括号括起来的是 Section 名。每个 Section 下面有若干个 `key = value` 形式的键值对（Key-value Pair），等号两边可以有零个或多个空白字符（空格或 Tab），每个键值对占一行。以 ; 号开头的行是注释。每个 Section 结束时有一个或多个空行，空行是仅包含零个或多个空白字符（空格或 Tab）的行。INI 文件的最后一行后面可能有换行符也可能没有。
+	
+	现在 XML 兴起了，INI 文件显得有点土。现在要求编程把 INI 文件转换成 XML 文件。上面的例子经转换后应该变成这样：
+	
+	```xml
+	<!-- Configuration of http -->
+	<http>
+	        <domain>www.mysite.com</domain>
+	        <port>8080</port>
+	        <cgihome>/cgi-bin</cgihome>
+	</http>
+	
+	<!-- Configuration of db -->
+	<database>
+	        <server>mysql</server>
+	        <user>myname</user>
+	        <password>toopendatabase</password>
+	</database>
+	```
+
+3. 实现类似 `gcc` 的 `-M` 选项的功能，给定一个 `.c` 文件，列出它直接和间接包含的所有头文件，例如有一个 `main.c` 文件：
+	
+	```c
+	#include <errno.h>
+	#include "stack.h"
+	
+	int main()
+	{
+		return 0;
+	}
+	```
+	
+	你的程序读取这个文件，打印出其中包含的所有头文件的绝对路径：
+	
+	```bash
+	$ ./a.out main.c
+	/usr/include/errno.h
+	/usr/include/features.h
+	/usr/include/bits/errno.h
+	/usr/include/linux/errno.h
+	...
+	/home/akaedu/stack.h: cannot find
+	```
+	
+	如果有的头文件找不到，就像上面例子那样打印 `/home/akaedu/stack.h: cannot find`。首先复习一下[第 20 章「链接详解」第 2.2 节「头文件」](2-C-语言本质/ch20-链接详解#_22-头文件)讲过的头文件查找顺序，本题目不必考虑 `-I` 选项指定的目录，只在 `.c` 文件所在的目录以及系统目录 `/usr/include` 中查找。
+
+### 2.12.3. 数值字符串转换函数
+
+```c
+#include <stdlib.h>
+
+int atoi(const char *nptr);
+double atof(const char *nptr);
+返回值：转换结果
+```
+
+`atoi` 把一个字符串开头可以识别成十进制整数的部分转换成 `int` 型，相当于下面要讲的 `strtol(nptr, (char **) NULL, 10);`。例如 `atoi("123abc")` 的返回值是 123，字符串开头可以有若干空格，例如 `atoi(" -90.6-")` 的返回值是 -90。如果字符串开头没有可识别的整数，例如 `atoi("asdf")`，则返回 0，而 `atoi("0***")` 也返回 0，根据返回值并不能区分这两种情况，所以使用 `atoi` 函数不能检查出错的情况。下面要讲的 `strtol` 函数可以设置 `errno`，因此可以检查出错的情况，在严格的场合下应该用 `strtol`，而 `atoi` 用起来更简便，所以也很常用。
+
+`atof` 把一个字符串开头可以识别成浮点数的部分转换成 `double` 型，相当于下面要讲的 `strtod(nptr, (char **) NULL);`。字符串开头可以识别的浮点数格式和 C 语言的浮点数常量相同，例如 `atof("31.4 ")` 的返回值是 31.4，`atof("3.14e+1AB")` 的返回值也是 31.4。`atof` 也不能检查出错的情况，而 `strtod` 可以。
+
+```c
+#include <stdlib.h>
+
+long int strtol(const char *nptr, char **endptr, int base);
+double strtod(const char *nptr, char **endptr);
+返回值：转换结果，出错时设置 errno
+```
+
+`strtol` 是 `atoi` 的增强版，主要体现在这几方面：
+
+- 不仅可以识别十进制整数，还可以识别其它进制的整数，取决于 `base` 参数，比如 `strtol("0XDEADbeE~~", NULL, 16)` 返回 0xdeadbee 的值，`strtol("0777~~", NULL, 8)` 返回 0777 的值。
+- `endptr` 是一个传出参数，函数返回时指向后面未被识别的第一个字符。例如 `char *pos; strtol("123abc", &pos, 10);`，`strtol` 返回 123，`pos` 指向字符串中的字母 a。如果字符串开头没有可识别的整数，例如 `char *pos; strtol("ABCabc", &pos, 10);`，则 `strtol` 返回 0，`pos` 指向字符串开头，可以据此判断这种出错的情况，而这是 `atoi` 处理不了的。
+- 如果字符串中的整数值超出 `long int` 的表示范围（上溢或下溢），则 `strtol` 返回它所能表示的最大（或最小）整数，并设置 `errno` 为 `ERANGE`，例如 `strtol("0XDEADbeef~~", NULL, 16)` 返回 0x7fffffff 并设置 `errno` 为 `ERANGE`。
+
+回想一下使用 `fopen` 的套路 `if ( (fp = fopen(...)) == NULL) { 读取errno }`，`fopen` 在出错时会返回 `NULL`，因此我们知道需要读 `errno`，但 `strtol` 在成功调用时也可能返回 0x7fffffff，我们如何知道需要读 `errno` 呢？最严谨的做法是首先把 `errno`置 0，再调用 `strtol`，再查看 `errno` 是否变成了错误码。Man Page 上有一个很好的例子：
+
+<p id="e25-10">例 25.10. strtol 的出错处理</p>
+
+```c
+#include <stdlib.h>
+#include <limits.h>
+#include <stdio.h>
+#include <errno.h>
+
+int main(int argc, char *argv[])
+{
+	int base;
+	char *endptr, *str;
+	long val;
+
+	if (argc < 2) {
+		fprintf(stderr, "Usage: %s str [base]\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
+	str = argv[1];
+	base = (argc > 2) ? atoi(argv[2]) : 10;
+
+	errno = 0;    /* To distinguish success/failure after call */
+	val = strtol(str, &endptr, base);
+
+	/* Check for various possible errors */
+
+	if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
+	    || (errno != 0 && val == 0)) {
+		perror("strtol");
+		exit(EXIT_FAILURE);
+	}
+
+	if (endptr == str) {
+		fprintf(stderr, "No digits were found\n");
+		exit(EXIT_FAILURE);
+	}
+
+	/* If we got here, strtol() successfully parsed a number */
+
+	printf("strtol() returned %ld\n", val);
+
+	if (*endptr != '\0')        /* Not necessarily an error... */
+		printf("Further characters after number: %s\n", endptr);
+
+	exit(EXIT_SUCCESS);
+}
+```
+
+`strtod` 是 `atof` 的增强版，增强的功能和 `strtol` 类似。
+
+### 2.12.4. 分配内存的函数
+
+除了 `malloc` 之外，C 标准库还提供了另外两个在堆空间分配内存的函数，它们分配的内存同样由 `free` 释放。
+
+```c
+#include <stdlib.h>
+
+void *calloc(size_t nmemb, size_t size);
+void *realloc(void *ptr, size_t size);
+返回值：成功返回所分配内存空间的首地址，出错返回 NULL
+```
+
+`calloc` 的参数很像 `fread`/`fwrite` 的参数，分配 `nmemb` 个元素的内存空间，每个元素占 `size` 字节，并且 `calloc` 负责把这块内存空间用字节 0 填充，而 `malloc` 并不负责把分配的内存空间清零。
+
+有时候用 `malloc` 或 `calloc` 分配的内存空间使用了一段时间之后需要改变它的大小，一种办法是调用 `malloc` 分配一块新的内存空间，把原内存空间中的数据拷到新的内存空间，然后调用 `free` 释放原内存空间。使用 `realloc` 函数简化了这些步骤，把原内存空间的指针 `ptr` 传给 `realloc`，通过参数 `size` 指定新的大小（字节数），`realloc` 返回新内存空间的首地址，并释放原内存空间。新内存空间中的数据尽量和原来保持一致，如果 `size` 比原来小，则前 `size` 个字节不变，后面的数据被截断，如果 `size` 比原来大，则原来的数据全部保留，后面长出来的一块内存空间未初始化（`realloc` 不负责清零）。注意，参数 `ptr` 要么是 `NULL`，要么必须是先前调用 `malloc`、`calloc` 或 `realloc` 返回的指针，不能把任意指针传给 `realloc` 要求重新分配内存空间。作为两个特例，如果调用 `realloc(NULL, size)`，则相当于调用 `malloc(size)`，如果调用 `realloc(ptr, 0)`，`ptr` 不是 `NULL`，则相当于调用 `free(ptr)`。
+
+```c
+#include <alloca.h>
+
+void *alloca(size_t size);
+返回值：返回所分配内存空间的首地址，如果 size 太大导致栈空间耗尽，结果是未定义的
+```
+
+参数 `size` 是请求分配的字节数，`alloca` 函数不是在堆上分配空间，而是在调用者函数的栈帧上分配空间，类似于 C99 的变长数组，当调用者函数返回时自动释放栈帧，所以不需要 `free`。这个函数不属于 C 标准库，而是在 POSIX 标准中定义的。
+
 ## 2.13. 链表、二叉树和哈希表
+
+### 2.13.1. 链表
+
+#### 2.13.1.1. 单链表
+
+[第 23 章「指针」图 23.6「链表」](2-C-语言本质/ch23-指针#c23-6)所示的链表即单链表（Single Linked List），本节我们学习如何创建和操作这种链表。每个链表有一个头指针，通过头指针可以找到第一个节点，每个节点都可以通过指针域找到它的后继，最后一个节点的指针域为 `NULL`，表示没有后继。数组在内存中是连续存放的，而链表在内存中的布局是不规则的，我们知道访问某个数组元素 `b[n]` 时可以通过 `基地址 + n×每个元素的字节数` 得到它地址，或者说数组支持随机访问，而链表是不支持随机访问的，只能通过前一个元素的指针域得知后一个元素的地址，因此只能从头指针开始顺序访问各节点。以下代码实现了单链表的基本操作。
+
+<p id="e26-1">例 26.1. 单链表</p>
+
+```c
+/* linkedlist.h */
+#ifndef LINKEDLIST_H
+#define LINKEDLIST_H
+
+typedef struct node *link;
+struct node {
+	unsigned char item;
+	link next;
+};
+
+link make_node(unsigned char item);
+void free_node(link p);
+link search(unsigned char key);
+void insert(link p);
+void delete(link p);
+void traverse(void (*visit)(link));
+void destroy(void);
+void push(link p);
+link pop(void);
+
+#endif
+/* linkedlist.c */
+#include <stdlib.h>
+#include "linkedlist.h"
+
+static link head = NULL;
+
+link make_node(unsigned char item)
+{
+	link p = malloc(sizeof *p);
+	p->item = item;
+	p->next = NULL;
+	return p;
+}
+
+void free_node(link p)
+{
+	free(p);
+}
+
+link search(unsigned char key)
+{
+	link p;
+	for (p = head; p; p = p->next)
+		if (p->item == key)
+			return p;
+	return NULL;
+}
+
+void insert(link p)
+{
+	p->next = head;
+	head = p;
+}
+
+void delete(link p)
+{
+	link pre;
+	if (p == head) {
+		head = p->next;
+		return;
+	}
+	for (pre = head; pre; pre = pre->next)
+		if (pre->next == p) {
+			pre->next = p->next;
+			return;
+		}
+}
+
+void traverse(void (*visit)(link))
+{
+	link p;
+	for (p = head; p; p = p->next)
+		visit(p);
+}
+
+void destroy(void)
+{
+	link q, p = head;
+	head = NULL;
+	while (p) {
+		q = p;
+		p = p->next;
+		free_node(q);
+	}
+}
+
+void push(link p)
+{
+	insert(p);
+}
+
+link pop(void)
+{
+	if (head == NULL)
+		return NULL;
+	else {
+		link p = head;
+		head = head->next;
+		return p;
+	}
+}
+/* main.c */
+#include <stdio.h>
+#include "linkedlist.h"
+
+void print_item(link p)
+{
+	printf("%d\n", p->item); 
+}
+
+int main(void)
+{
+	link p = make_node(10);
+	insert(p);
+	p = make_node(5);
+	insert(p);
+	p = make_node(90);
+	insert(p);
+	p = search(5);
+	delete(p);
+	free_node(p);
+	traverse(print_item);
+	destroy();
+
+	p = make_node(100);
+	push(p);
+	p = make_node(200);
+	push(p);
+	p = make_node(250);
+	push(p);
+	while (p = pop()) {
+		print_item(p);
+		free_node(p);
+	}
+
+	return 0;
+}
+```
+
+在初始化时把头指针 `head` 初始化为 `NULL`，表示空链表。然后 `main` 函数调用 `make_node` 创建几个节点，分别调用 `insert` 插入到链表中。
+
+```c
+void insert(link p)
+{
+	p->next = head;
+	head = p;
+}
+```
+
+<p id="c26-1">图 26.1. 链表的插入操作</p>
+
+![链表的插入操作](./image/linkedlist.insert.png)
+
+正如上图所示，`insert` 函数虽然简单，其中也隐含了一种特殊情况（Special Case）的处理，当 `head` 为 `NULL` 时，执行 `insert` 操作插入第一个节点之后，`head` 指向第一个节点，而第一个节点的 `next` 指针域成为 `NULL`，这很合理，因为它也是最后一个节点。所以空链表虽然是一种特殊情况，却不需要特殊的代码来处理，和一般情况用同样的代码处理即可，这样写出来的代码更简洁，但是在读代码时要想到可能存在的特殊情况。当然，`insert` 函数传进来的参数 `p` 也可能有特殊情况，传进来的 `p` 可能是 `NULL`，甚至是野指针，本章的函数代码都假定调用者的传进来的参数是合法的，不对参数做特别检查。事实上，对指针参数做检查是不现实的，如果传进来的是 `NULL` 还可以检查一下，如果传进来的是野指针，根本无法检查它指向的内存单元是不是合法的，C 标准库的函数通常也不做这种检查，例如 `strcpy(p, NULL)` 就会引起段错误。
+
+接下来 `main` 函数调用 `search` 在链表中查找某个节点，如果找到就返回指向该节点的指针，找不到就返回 `NULL`。
+
+```c
+link search(unsigned char key)
+{
+	link p;
+	for (p = head; p; p = p->next)
+		if (p->item == key)
+			return p;
+	return NULL;
+}
+```
+
+`search` 函数其实也隐含了对于空链表这种特殊情况的处理，如果是空链表则循环体一次都不执行，直接返回 `NULL`。
+
+然后 `main` 函数调用 `delete` 从链表中摘除用 `search` 找到的节点，最后调用 `free_node` 释放它的存储空间。
+
+```c
+void delete(link p)
+{
+	link pre;
+	if (p == head) {
+		head = p->next;
+		return;
+	}
+	for (pre = head; pre; pre = pre->next)
+		if (pre->next == p) {
+			pre->next = p->next;
+			return;
+		}
+}
+```
+
+<p id="c26-2">图 26.2. 链表的删除操作</p>
+
+![链表的删除操作](./image/linkedlist.delete.png)
+
+从上图可以看出，要摘除一个节点需要首先找到它的前趋然后才能做摘除操作，而在单链表中通过某个节点只能找到它的后继而不能找到它的前趋，所以删除操作要麻烦一些，需要从第一个节点开始依次查找要摘除的节点的前趋。`delete` 操作也要处理一种特殊情况，如果要摘除的节点是链表的第一个节点，它是没有前趋的，这种情况要用特殊的代码处理，而不能和一般情况用同样的代码处理。这样很不爽，能不能把这种特殊情况转化为一般情况呢？可以把 `delete` 函数改成这样：
+
+```c
+void delete(link p)
+{
+	link *pnext;
+	for (pnext = &head; *pnext; pnext = &(*pnext)->next)
+		if (*pnext == p) {
+			*pnext = p->next;
+			return;
+		}
+}
+```
+
+<p id="c26-3">图 26.3. 消除特殊情况的链表删除操作</p>
+
+![消除特殊情况的链表删除操作](./image/linkedlist.pdelete.png)
+
+定义一个指向指针的指针 `pnext`，在 `for` 循环中 `pnext` 遍历的是指向链表中各节点的指针域，这样就把 `head` 指针和各节点的 `next` 指针统一起来了，可以在一个循环中处理。
+
+然后 `main` 函数调用 `traverse` 函数遍历整个链表，调用 `destroy` 函数销毁整个链表。请读者自己阅读这两个函数的代码。
+
+如果限定每次只在链表的头部插入和删除元素，就形成一个 LIFO 的访问序列，所以在链表头部插入和删除元素的操作实现了堆栈的 `push` 和 `pop` 操作，`main` 函数的最后几步把链表当成堆栈来操作，从打印的结果可以看到出栈的顺序和入栈是相反的。想一想，用链表实现的堆栈和[第 12 章「栈与队列」第 2 节「堆栈」](1-C-语言入门/ch12-栈与队列#_2-堆栈)中用数组实现的堆栈相比有什么优点和缺点？
+
+##### 习题
+
+1. 修改 `insert` 函数实现插入排序的功能，链表中的数据按从小到大排列，每次插入数据都要在链表中找到合适的位置再插入。在[第 11 章「排序与查找」第 6 节「折半查找」](1-C-语言入门/ch11-排序与查找?id=_6-折半查找)中我们看到，如果数组中的元素是有序排列的，可以用折半查找算法更快地找到某个元素，想一想如果链表中的节点是有序排列的，是否适用折半查找算法？为什么？
+2. 基于单链表实现队列的 `enqueue` 和 `dequeue` 操作。在链表的末尾再维护一个指针 `tail`，在 `tail` 处 `enqueue`，在 `head` 处 `dequeue`。想一想能不能反过来，在 `head` 处 `enqueue` 而在 `tail` 处 `dequeue`？
+3. 实现函数 `void reverse(void);` 将单链表反转。如下图所示。
+
+	<p id="c26-4">图 26.4. 单链表的反转</p>
+
+	![单链表的反转](./image/linkedlist.reverse.png)
+
+#### 2.13.1.2. 双向链表
+
+链表的 `delete` 操作需要首先找到要摘除的节点的前趋，而在单链表中找某个节点的前趋需要从表头开始依次查找，对于 n 个节点的链表，删除操作的时间复杂度为 O(n)。可以想像得到，如果每个节点再维护一个指向前趋的指针，删除操作就像插入操作一样容易了，时间复杂度为 O(1)，这称为双向链表（Doubly Linked List）。要实现双向链表只需在上一节代码的基础上改动两个地方。
+
+在 `linkedlist.h` 中修改链表节点的结构体定义：
+
+```c
+struct node {
+	unsigned char item;
+	link prev, next;
+};
+```
+
+在 `linkedlist.c` 中修改 `insert` 和 `delete` 函数：
+
+```c
+void insert(link p)
+{
+	p->next = head;
+	if (head)
+		head->prev = p;
+	head = p;
+	p->prev = NULL;
+}
+
+void delete(link p)
+{
+	if (p->prev)
+		p->prev->next = p->next;
+	else
+		head = p->next;
+	if (p->next)
+		p->next->prev = p->prev;
+}
+```
+
+<p id="c26-4">图 26.5. 双向链表</p>
+
+![双向链表](./image/linkedlist.doubly.png)
+
+由于引入了 `prev` 指针，`insert` 和 `delete` 函数中都有一些特殊情况需要用特殊的代码处理，不能和一般情况用同样的代码处理，这非常不爽，如果在表头和表尾各添加一个 Sentinel 节点（这两个节点只用于界定表头和表尾，不保存数据），就可以把这些特殊情况都转化为一般情况了。
+
+<p id="e26-2">例 26.2. 带 Sentinel 的双向链表</p>
+
+```c
+/* doublylinkedlist.h */
+#ifndef DOUBLYLINKEDLIST_H
+#define DOUBLYLINKEDLIST_H
+
+typedef struct node *link;
+struct node {
+	unsigned char item;
+	link prev, next;
+};
+
+link make_node(unsigned char item);
+void free_node(link p);
+link search(unsigned char key);
+void insert(link p);
+void delete(link p);
+void traverse(void (*visit)(link));
+void destroy(void);
+void enqueue(link p);
+link dequeue(void);
+
+#endif
+/* doublylinkedlist.c */
+#include <stdlib.h>
+#include "doublylinkedlist.h"
+
+struct node tailsentinel;
+struct node headsentinel = {0, NULL, &tailsentinel};
+struct node tailsentinel = {0, &headsentinel, NULL};
+
+static link head = &headsentinel;
+static link tail = &tailsentinel;
+
+link make_node(unsigned char item)
+{
+	link p = malloc(sizeof *p);
+	p->item = item;
+	p->prev = p->next = NULL;
+	return p;
+}
+
+void free_node(link p)
+{
+	free(p);
+}
+
+link search(unsigned char key)
+{
+	link p;
+	for (p = head->next; p != tail; p = p->next)
+		if (p->item == key)
+			return p;
+	return NULL;
+}
+
+void insert(link p)
+{
+	p->next = head->next;
+	head->next->prev = p;
+	head->next = p;
+	p->prev = head;
+}
+
+void delete(link p)
+{
+	p->prev->next = p->next;
+	p->next->prev = p->prev;
+}
+
+void traverse(void (*visit)(link))
+{
+	link p;
+	for (p = head->next; p != tail; p = p->next)
+		visit(p);
+}
+
+void destroy(void)
+{
+	link q, p = head->next;
+	head->next = tail;
+	tail->prev = head;
+	while (p != tail) {
+		q = p;
+		p = p->next;
+		free_node(q);
+	}
+}
+
+void enqueue(link p)
+{
+	insert(p);
+}
+
+link dequeue(void)
+{
+	if (tail->prev == head)
+		return NULL;
+	else {
+		link p = tail->prev;
+		delete(p);
+		return p;
+	}
+}
+/* main.c */
+#include <stdio.h>
+#include "doublylinkedlist.h"
+
+void print_item(link p)
+{
+	printf("%d\n", p->item); 
+}
+
+int main(void)
+{
+	link p = make_node(10);
+	insert(p);
+	p = make_node(5);
+	insert(p);
+	p = make_node(90);
+	insert(p);
+	p = search(5);
+	delete(p);
+	free_node(p);
+	traverse(print_item);
+	destroy();
+
+	p = make_node(100);
+	enqueue(p);
+	p = make_node(200);
+	enqueue(p);
+	p = make_node(250);
+	enqueue(p);
+	while (p = dequeue()) {
+		print_item(p);
+		free_node(p);
+	}
+
+	return 0;
+}
+```
+
+<p id="c26-6">图 26.6. 带Sentinel的双向链表</p>
+
+![带 Sentinel 的双向链表](./image/linkedlist.sentinel.png)
+
+这个例子也实现了队列的 `enqueue` 和 `dequeue` 操作，现在每个节点有了 `prev` 指针，可以反过来在 `head` 处 `enqueue` 而在 `tail` 处 `dequeue` 了。
+
+现在结合[第 12 章「栈与队列」第 5 节「环形队列」](1-C-语言入门/ch12-栈与队列#_5-环形队列)想一想，其实用链表实现环形队列是最自然的，以前基于数组实现环形队列，我们还需要「假想」它是首尾相接的，而如果基于链表实现环形队列，我们本来就可以用指针串成首尾相接的。把上面的程序改成环形链表（Circular Linked List）也非常简单，只需要把 `doublylinkedlist.c` 中的
+
+```c
+struct node tailsentinel;
+struct node headsentinel = {0, NULL, &tailsentinel};
+struct node tailsentinel = {0, &headsentinel, NULL};
+
+static link head = &headsentinel;
+static link tail = &tailsentinel;
+```
+
+改成：
+
+```c
+struct node sentinel = {0, &sentinel, &sentinel};
+static link head = &sentinel;
+```
+
+再把 `doublylinkedlist.c` 中所有的 `tail` 替换成 `head` 即可，相当于把 `head` 和 `tail` 合二为一了。
+
+<p id="c26-7">图 26.7. 环形链表</p>
+
+![环形链表](./image/linkedlist.circular.png)
+
+#### 2.13.1.3. 静态链表
+
+回想一下我们在[第 12 章「栈与队列」 例 12.4「用广度优先搜索解迷宫问题」](1-C-语言入门/ch12-栈与队列#e12-4)中使用的数据结构，我把图重新画在下面。
+
+<p id="c26-8">图 26.8. 广度优先搜索的队列数据结构</p>
+
+![广度优先搜索的队列数据结构](./image/stackqueue.bfsqueue.png)
+
+这是一个静态分配的数组，每个数组元素都有 `row`、`col` 和 `predecessor` 三个成员，`predecessor` 成员保存一个数组下标，指向数组中的另一个元素，这其实也是链表的一种形式，称为静态链表，例如上图中的第 6、4、2、1、0 个元素串成一条链表。
+
+#### 2.13.1.4. 本节综合练习
+
+1. Josephus 是公元 1 世纪的著名历史学家，相传在一次战役中他和另外几个人被围困在山洞里，他们宁死不屈，决定站成一圈，每次数到三个人就杀一个，直到全部死光为止。Josephus 和他的一个朋友不想死，于是串通好了站在适当的位置上，最后只剩下他们俩的时候这个游戏就停止了。如果一开始的人数为 `N`，每次数到 `M` 个人就杀一个，那么要想不死应该站在什么位置呢？这个问题比较复杂，*具体数学* 的 1.3 节研究了 Josephus 问题的解，有兴趣的读者可以参考。现在我们做个比较简单的练习，用链表模拟 Josephus 他们玩的这个游戏，`N` 和 `M` 作为命令行参数传入，每个人的编号依次是 1 ~ N，打印每次被杀者的编号，打印最后一个幸存者的编号。
+
+2、在[第 25 章第 2.11 节「本节综合练习」的习题 1](2-C-语言本质/ch25-C-标准库#_211-本节综合练习) 中规定了一种日志文件的格式，每行是一条记录，由行号、日期、时间三个字段组成，由于记录是按时间先后顺序写入的，可以看作所有记录是按日期排序的，对于日期相同的记录再按时间排序。现在要求从这样的一个日志文件中读出所有记录组成一个链表，在链表中首先按时间排序，对于时间相同的记录再按日期排序，最后写回文件中。比如原文件的内容是：
+
+```bash
+1 2009-7-30 15:16:42
+2 2009-7-30 15:16:43
+3 2009-7-31 15:16:41
+4 2009-7-31 15:16:42
+5 2009-7-31 15:16:43
+6 2009-7-31 15:16:44
+```
+
+重新排序输出的文件内容是：
+
+```bash
+1 2009-7-31 15:16:41
+2 2009-7-30 15:16:42
+3 2009-7-31 15:16:42
+4 2009-7-30 15:16:43
+5 2009-7-31 15:16:43
+6 2009-7-31 15:16:44
+```
+
+### 2.13.2. 二叉树
+
+#### 2.13.2.1. 二叉树的基本概念
+
+链表的每个节点可以有一个后继，而二叉树（Binary Tree）的每个节点可以有两个后继。比如这样定义二叉树的节点：
+
+```c
+typedef struct node *link;
+struct node {
+	unsigned char item;
+	link l, r;
+};
+```
+
+这样的节点可以组织成下图所示的各种形态。
+
+<p id="c26-9">图 26.9. 二叉树的定义和举例</p>
+
+![二叉树的定义和举例](./image/linkedlist.binarytree.png)
+
+二叉树可以这样递归地定义：
+
+1. 就像链表有头指针一样，每个二叉树都有一个根指针（上图中的 `root` 指针）指向它。根指针可以是 `NULL`，表示空二叉树，或者
+2. 根指针可以指向一个节点，这个节点除了有数据成员之外还有两个指针域，这两个指针域又分别是另外两个二叉树（左子树和右子树）的根指针。
+
+上图举例示意了几种情况。
+
+- 单节点的二叉树：左子树和右子树都是空二叉树。
+- 只有左子树的二叉树：右子树是空二叉树。
+- 只有右子树的二叉树：左子树是空二叉树。
+- 一般的二叉树：左右子树都不为空。注意右侧由圈和线段组成的简化图示，以后我们都采用这种简化图示法，在圈中标上该节点数据成员的值。
+
+链表的遍历方法是显而易见的：从前到后遍历即可。二叉树是一种树状结构，如何做到把所有节点都走一遍不重不漏呢？有以下几种方法：
+
+<p id="c26-10">图 26.10. 二叉树的遍历</p>
+
+![二叉树的遍历](./image/linkedlist.binarytraverse.png)
+
+前序（Pre-order Traversal）、中序（In-order Traversal）、后序遍历（Post-order Traversal）和深度优先搜索的顺序类似，层序遍历（Level-order Traversal）和广度优先搜索的顺序类似。
+
+前序和中序遍历的结果合在一起可以唯一确定二叉树的形态，也就是说根据遍历结果可以构造出二叉树。过程如下图所示：
+
+<p id="c26-11">图 26.11. 根据前序和中序遍历结果构造二叉树</p>
+
+![根据前序和中序遍历结果构造二叉树](./image/linkedlist.constructbinary.png)
+
+想一想，根据中序和后序遍历结果能否构造二叉树？根据前序和后序遍历结果能否构造二叉树？
+
+<p id="e26-3">例 26.3. 二叉树</p>
+
+```c
+/* binarytree.h */
+#ifndef BINARYTREE_H
+#define BINARYTREE_H
+
+typedef struct node *link;
+struct node {
+     unsigned char item;
+     link l, r;
+};
+
+link init(unsigned char VLR[], unsigned char LVR[], int n);
+void pre_order(link t, void (*visit)(link));
+void in_order(link t, void (*visit)(link));
+void post_order(link t, void (*visit)(link));
+int count(link t);
+int depth(link t);
+void destroy(link t);
+
+#endif
+/* binarytree.c */
+#include <stdlib.h>
+#include "binarytree.h"
+
+static link make_node(unsigned char item)
+{
+	link p = malloc(sizeof *p);
+	p->item = item;
+	p->l = p->r = NULL;
+	return p;
+}
+
+static void free_node(link p)
+{
+	free(p);
+}
+
+link init(unsigned char VLR[], unsigned char LVR[], int n)
+{
+	link t;
+	int k;
+	if (n <= 0)
+		return NULL;
+	for (k = 0; VLR[0] != LVR[k]; k++);
+	t = make_node(VLR[0]);
+	t->l = init(VLR+1, LVR, k);
+	t->r = init(VLR+1+k, LVR+1+k, n-k-1);
+	return t;
+}
+
+void pre_order(link t, void (*visit)(link))
+{
+	if (!t)
+		return;
+	visit(t);
+	pre_order(t->l, visit);
+	pre_order(t->r, visit);
+}
+
+void in_order(link t, void (*visit)(link))
+{
+	if (!t)
+		return;
+	in_order(t->l, visit);
+	visit(t);
+	in_order(t->r, visit);
+}
+
+void post_order(link t, void (*visit)(link))
+{
+	if (!t)
+		return;
+	post_order(t->l, visit);
+	post_order(t->r, visit);
+	visit(t);
+}
+
+int count(link t)
+{
+	if (!t)
+		return 0;
+	return 1 + count(t->l) + count(t->r);
+}
+
+int depth(link t)
+{
+	int dl, dr;
+	if (!t)
+		return 0;
+	dl = depth(t->l);
+	dr = depth(t->r);
+	return 1 + (dl > dr ? dl : dr);
+}
+
+void destroy(link t)
+{
+	post_order(t, free_node);
+}
+/* main.c */
+#include <stdio.h>
+#include "binarytree.h"
+
+void print_item(link p)
+{
+	printf("%d", p->item);
+}
+
+int main()
+{
+	unsigned char pre_seq[] = { 4, 2, 1, 3, 6, 5, 7 };
+	unsigned char in_seq[] = { 1, 2, 3, 4, 5, 6, 7 };
+	link root = init(pre_seq, in_seq, 7);
+	pre_order(root, print_item);
+	putchar('\n');
+	in_order(root, print_item);
+	putchar('\n');
+	post_order(root, print_item);
+	putchar('\n');
+	printf("count=%d depth=%d\n", count(root), depth(root));
+	destroy(root);
+	return 0;
+}
+```
+
+##### 习题
+
+1. 本节描述了二叉树的递归定义，想一想单链表的递归定义应该怎么表述？请仿照本节的例子用递归实现单链表的各种操作函数：
+
+	```c
+	link init(unsigned char elements[], int n);
+	void pre_order(link t, void (*visit)(link));
+	void post_order(link t, void (*visit)(link));
+	int count(link t);
+	void destroy(link t);
+	```
+
+#### 2.13.2.2. 排序二叉树
+
+排序二叉树（BST，Binary Search Tree）具有这样的性质：对于二叉树中的任意节点，如果它有左子树或右子树，则该节点的数据成员大于左子树所有节点的数据成员，且小于右子树所有节点的数据成员。排序二叉树的中序遍历结果是从小到大排列的，其实上一节的[图 26.10「二叉树的遍历」](#c26-10)就是排序二叉树。
+
+<p id="e26-4">例 26.4. 排序二叉树</p>
+
+```c
+/* bst.h */
+#ifndef BST_H
+#define BST_H
+
+typedef struct node *link;
+struct node {
+     unsigned char item;
+     link l, r;
+};
+
+link search(link t, unsigned char key);
+link insert(link t, unsigned char key);
+link delete(link t, unsigned char key);
+void print_tree(link t);
+
+#endif
+/* bst.c */
+#include <stdlib.h>
+#include <stdio.h>
+#include "bst.h"
+
+static link make_node(unsigned char item)
+{
+	link p = malloc(sizeof *p);
+	p->item = item;
+	p->l = p->r = NULL;
+	return p;
+}
+
+static void free_node(link p)
+{
+	free(p);
+}
+
+link search(link t, unsigned char key)
+{
+	if (!t)
+		return NULL;
+	if (t->item > key)
+		return search(t->l, key);
+	if (t->item < key)
+		return search(t->r, key);
+	/* if (t->item == key) */
+	return t;
+}
+
+link insert(link t, unsigned char key)
+{
+	if (!t)
+		return make_node(key);
+	if (t->item > key) /* insert to left subtree */
+		t->l = insert(t->l, key);
+	else /* if (t->item <= key), insert to right subtree */
+		t->r = insert(t->r, key);
+	return t;
+}
+
+link delete(link t, unsigned char key)
+{
+	link p;
+	if (!t)
+		return NULL;
+	if (t->item > key) /* delete from left subtree */
+		t->l = delete(t->l, key);
+	else if (t->item < key) /* delete from right subtree */
+		t->r = delete(t->r, key);
+	else { /* if (t->item == key) */
+		if (t->l == NULL && t->r == NULL) { /* if t is leaf node */
+			free_node(t);
+			t = NULL;
+		} else if (t->l) { /* if t has left subtree */
+			/* replace t with the rightmost node in left subtree */
+			for (p = t->l; p->r; p = p->r);
+			t->item = p->item;
+			t->l = delete(t->l, t->item);
+		} else { /* if t has right subtree */
+			/* replace t with the leftmost node in right subtree */
+			for (p = t->r; p->l; p = p->l);
+			t->item = p->item;
+			t->r = delete(t->r, t->item);
+		}
+	}
+	return t;
+}
+
+void print_tree(link t)
+{
+	if (t) {
+		printf("(");
+		printf("%d", t->item);
+		print_tree(t->l);
+		print_tree(t->r);
+		printf(")");
+	} else
+		printf("()");
+}
+/* main.c */
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "bst.h"
+
+#define RANGE 100
+#define N 6
+
+void print_item(link p)
+{
+	printf("%d", p->item);
+}
+
+int main()
+{
+	int i, key;
+	link root = NULL;
+	srand(time(NULL));
+	for (i = 0; i < N; i++)
+		root = insert(root, rand() % RANGE);
+	printf("\t\\tree");
+	print_tree(root);
+	printf("\n\n");
+	while (root) {
+		key = rand() % RANGE;
+		if (search(root, key)) {
+			printf("delete %d in tree\n", key);
+			root = delete(root, key);
+			printf("\t\\tree");
+			print_tree(root);
+			printf("\n\n");
+		}
+	}
+}
+$ ./a.out
+	\tree(83(77(15()(35()()))())(86()(93()())))
+
+delete 86 in tree
+	\tree(83(77(15()(35()()))())(93()()))
+
+delete 35 in tree
+	\tree(83(77(15()())())(93()()))
+
+delete 93 in tree
+	\tree(83(77(15()())())())
+
+delete 15 in tree
+	\tree(83(77()())())
+
+delete 83 in tree
+	\tree(77()())
+
+delete 77 in tree
+	\tree()
+```
+
+程序的运行结果可以用 Greg Lee 编写的 [The Tree Preprocessor](http://www.essex.ac.uk/linguistics/clmt/latex4ling/trees/tree/) 转换成树形：
+
+```bash
+$ ./a.out | ./tree/tree
+	     83
+          ___|___
+          |     |
+          77    86
+         _|__  _|__
+         |  |  |  |
+         15       93
+        _|__     _|__
+        |  |     |  |
+           35
+          _|__
+          |  |
+
+delete 86 in tree
+	     83
+          ___|___
+          |     |
+          77    93
+         _|__  _|__
+         |  |  |  |
+         15
+        _|__
+        |  |
+           35
+          _|__
+          |  |
+
+delete 35 in tree
+	     83
+          ___|___
+          |     |
+          77    93
+         _|__  _|__
+         |  |  |  |
+         15
+        _|__
+        |  |
+
+delete 93 in tree
+	   83
+          _|__
+          |  |
+          77
+         _|__
+         |  |
+         15
+        _|__
+        |  |
+
+delete 15 in tree
+	  83
+         _|__
+         |  |
+         77
+        _|__
+        |  |
+
+delete 83 in tree
+	 77
+        _|__
+        |  |
+
+delete 77 in tree
+```
+
+### 2.13.3. 哈希表
+
+下图示意了哈希表（Hash Table）这种数据结构。
+
+<p id="c26-12">图 26.12. 哈希表</p>
+
+![哈希表](./image/linkedlist.hashtab.png)
+
+如上图所示，首先分配一个指针数组，数组的每个元素是一个链表的头指针，每个链表称为一个槽（Slot）。哪个数据应该放入哪个槽中由哈希函数决定，在这个例子中我们简单地选取哈希函数 h(x) = x % 11，这样任意数据 x 都可以映射成 0 ~ 10 之间的一个数，就是槽的编号，将数据放入某个槽的操作就是链表的插入操作。
+
+如果每个槽里至多只有一个数据，可以想像这种情况下 `search`、`insert` 和 `delete` 操作的时间复杂度都是 O(1)，但有时会有多个数据被哈希函数映射到同一个槽中，这称为碰撞（Collision），设计一个好的哈希函数可以把数据比较均匀地分布到各个槽中，尽量避免碰撞。如果能把 n 个数据比较均匀地分布到 m 个槽中，每个糟里约有 n/m 个数据，则 `search`、`insert` 和 `delete` 和操作的时间复杂度都是 O(n/m)，如果 n 和 m 的比是常数，则时间复杂度仍然是 O(1)。一般来说，要处理的数据越多，构造哈希表时分配的槽也应该越多，所以 n 和 m 成正比这个假设是成立的。
+
+请读者自己编写程序构造这样一个哈希表，并实现 `search`、`insert` 和 `delete`操作。
+
+如果用我们学过的各种数据结构来表示 n 个数据的集合，下表是 `search`、`insert` 和 `delete` 操作在平均情况下的时间复杂度比较。
+
+<p id="t26-1">表 26.1. 各种数据结构的 search、insert 和 delete 操作在平均情况下的时间复杂度比较</p>
+
+| 数据结构                 | search                         | insert | delete |
+| ------------------------ | ------------------------------ | ------ | ------ |
+| 数组                     | O(n)，有序数组折半查找是 O(lgn) | O(n)   | O(n)   |
+| 双向链表                 | O(n)                           | O(1)   | O(1)   |
+| 排序二叉树               | O(lgn)                         | O(lgn) | O(lgn) |
+| 哈希表（n 与槽数 m 成正比） | O(1)                           | O(1)   | O(1)   |
+
+#### 2.13.3.1. 习题
+
+1. 统计一个文本文件中每个单词的出现次数，然后按出现次数排序并打印输出。单词由连续的英文字母组成，不区分大小写。
+2. 实现一个函数求两个数组的交集：`size_t intersect(const int a[], size_t nmema, const int b[], size_t nmemb, int c[], size_t nmemc);`。数组元素是 32 位 int 型的。数组 `a` 有 `nmema` 个元素且各不相同，数组 `b` 有 `nmemb` 个元素且各不相同。要求找出数组 `a` 和数组 `b` 的交集保存到数组 `c` 中，`nmemc` 是数组 `c` 的最大长度，返回值表示交集中实际有多少个元素，如果交集中实际的元素数量超过了 `nmemc` 则返回 `nmemc` 个元素。数组 `a` 和数组 `b` 的元素数量可能会很大（比如上百万个），需要设计尽可能快的算法。
+
+## 2.14. 本阶段总结
+
+在这一阶段我们又学习了很多新的语法规则，首先读者应该回到[第 I 部分「C 语言入门」第 13 章「本阶段总结」](1-C-语言入门/ch13-本阶段总结)把那些知识点重新总结一遍。然后我们总结一下各种开发调试工具的用法。
+
+### 2.14.1. gcc
+
+- `-c`：编译生成目标文件（Relocatable），详见[第 19 章「汇编与 C 之间的关系」第 2 节「main 函数和启动例程」](2-C-语言本质/ch19-汇编与-C-之间的关系#_2-main-函数和启动例程)。
+- `-Dmacro[=defn]`：定义一个宏，详见[第 21 章「预处理」第 3 节「条件预处理指示」](2-C-语言本质/ch21-预处理#_3-条件预处理指示)。
+- `-E`：只做预处理而不编译，`cpp` 命令也可以达到同样的效果，详见[第 21 章「预处理」第 2.1 节「函数式宏定义」](2-C-语言本质/ch21-预处理#_21-函数式宏定义)。
+- `-g`：在生成的目标文件中添加调试信息，所谓调试信息就是源代码和指令之间的对应关系，在 `gdb` 调试和 `objdump` 反汇编时要用到这些信息，详见[第 10 章「gdb」第 1 节「单步执行和跟踪函数调用」](1-C-语言入门/ch10-gdb#_1-单步执行和跟踪函数调用)。
+- `-Idir`：`dir` 是头文件所在的目录，详见[第 20 章「链接详解」第 2.2 节「头文件」](2-C-语言本质/ch20-链接详解#_22-头文件)。
+- `-Ldir`：`dir` 是库文件所在的目录，详见[第 20 章「链接详解」第 3 节「静态库」](2-C-语言本质/ch20-链接详解#_3-静态库)。
+- `-M` 和 `-MM`：输出「`.o` 文件：`.c` 文件 `.h` 文件」这种形式的 Makefile 规则，`-MM` 的输出不包括系统头文件，详见[第 22 章「Makefile 基础」第 4 节「自动处理头文件的依赖关系」](2-C-语言本质/ch22-Makefile-基础#_4-自动处理头文件的依赖关系)。
+- `-o outfile`：`outfile` 输出文件的文件名，详见[第 19 章「汇编与 C 之间的关系」第 2 节「main 函数和启动例程」](2-C-语言本质/ch19-汇编与-C-之间的关系#_2-main-函数和启动例程)。
+- `-O?`：各种编译优化选项，详见[第 19 章「汇编与 C 之间的关系」第 6 节「volatile 限定符」](2-C-语言本质/ch19-汇编与-C-之间的关系#_6-volatile-限定符)。
+- `-print-search-dirs`：打印库文件的默认搜索路径，详见[第 20 章「链接详解」第 3 节「静态库」](2-C-语言本质/ch20-链接详解#_3-静态库)。
+- `-S`：编译生成汇编代码，详见[第 19 章「汇编与 C 之间的关系」第 2 节「main 函数和启动例程」](2-C-语言本质/ch19-汇编与-C-之间的关系#_2-main-函数和启动例程)。
+- `-v`：打印详细的编译链接过程，详见[第 19 章「汇编与 C 之间的关系」第 2 节「main 函数和启动例程」](2-C-语言本质/ch19-汇编与-C-之间的关系#_2-main-函数和启动例程)。
+- `-Wall`：打印所有的警告信息，详见[第 1 章「程序的基本概念」第 4 节「第一个程序」](1-C-语言入门/ch01-程序的基本概念#_4-第一个程序)。
+- `-Wl,options`：`options` 是传递给链接器的选项，详见[第 20 章「链接详解」第 4 节「共享库」](2-C-语言本质/ch20-链接详解#_4-共享库)。
+
+### 2.14.2. gdb
+
+1. 在[第 10 章「gdb」](1-C-语言入门/ch10-gdb)集中介绍了 `gdb` 的基本命令和调试方法。
+2. 在[第 19 章「汇编与 C 之间的关系」第 1 节「函数调用」](2-C-语言本质/ch19-汇编与-C-之间的关系#_1-函数调用)提到了 `gdb` 的指令级调试和反汇编命令。
+3. 如果一个程序由多个 `.c` 文件编译链接而成，用 `gdb` 调试时如何定位某个源文件中的某一行代码呢？在[第 20 章「链接详解」第 1 节「多目标文件的链接」](2-C-语言本质/ch20-链接详解#_1-多目标文件的链接)有介绍。
+4. 在[第 23 章「指针」第 6 节「指向指针的指针与指针数组」](2-C-语言本质/ch23-指针#_6-指向指针的指针与指针数组)提到了用 `gdb` 调试时如何给程序提供命令行参数。
+
+### 2.14.3. 其它开发调试工具
+
+1. `as`，汇编器，用法详见[第 18 章「x86 汇编程序基础」例 18.1「最简单的汇编程序」](2-C-语言本质/ch18-x86-汇编程序基础#e18-1)。
+2. `ld`，链接器，用法详见[第 18 章「x86 汇编程序基础」例 18.1「最简单的汇编程序」](2-C-语言本质/ch18-x86-汇编程序基础#e18-1)，用 `--verbose` 选项可以显示默认链接脚本，详见[第 20 章「链接详解」第 1 节「多目标文件的链接」](2-C-语言本质/ch20-链接详解#_1-多目标文件的链接)。
+3. `readelf`，读 ELF 文件信息，用法详见[第 18 章「x86 汇编程序基础」第 5.1 节「目标文件」](2-C-语言本质/ch18-x86-汇编程序基础#_51-目标文件)。
+4. `objdump`，显示目标文件中的信息，本书主要用它做反汇编，用法详见[第 18 章「x86 汇编程序基础」第 5.1 节「目标文件」](2-C-语言本质/ch18-x86-汇编程序基础#_51-目标文件)。
+5. `hexdump`，以十六进制或 ASCII 码显示一个文件，用法详见[第 18 章「x86 汇编程序基础」第 5.1 节「目标文件」](2-C-语言本质/ch18-x86-汇编程序基础#_51-目标文件)。
+6. `ar`，把目标文件打包成静态库，用法详见[第 20 章「链接详解」第 3 节「静态库」](2-C-语言本质/ch20-链接详解#_3-静态库)。
+7. `ranlib`，给 `ar` 打包的静态库建索引，用法详见[第 20 章「链接详解」第 3 节「静态库」](2-C-语言本质/ch20-链接详解#_3-静态库)。
+8. `nm`，查看符号表，用法详见[第 19 章「汇编与 C 之间的关系」第 2 节「main 函数和启动例程」](2-C-语言本质/ch19-汇编与-C-之间的关系#_2-main-函数和启动例程)。
 
 # 3. linux系统编程基础
 
 ## 3.1. 文件与 I/O
 
+从本章开始学习各种 Linux 系统函数，这些函数的用法必须结合 Linux 内核的工作原理来理解，因为系统函数正是内核提供给应用程序的接口，而要理解内核的工作原理，必须熟练掌握 C 语言，因为内核也是用 C 语言写的，我们在描述内核工作原理时必然要用「指针」、「结构体」、「链表」这些名词来组织语言，就像只有掌握了英语才能看懂英文书一样，只有学好了C语言才能看懂我描述的内核工作原理。读者看到这里应该已经熟练掌握了C语言了，所以应该有一个很好的起点了。我们在介绍C标准库时并不试图把所有库函数讲一遍，而是通过介绍一部分常用函数让读者把握库函数的基本用法，在掌握了方法之后，书上没讲的库函数读者应该自己查 Man Page 学会使用。同样，本书的第三部分也并不试图把所有的系统函数讲一遍，而是通过介绍一部分系统函数让读者理解操作系统各部分的工作原理，在有了这个基础之后就应该能够看懂 Man Page 学习其它系统函数的用法。
+
+读者可以结合 *APUE2e* 学习本书的第三部分，该书在讲解系统函数方面更加全面，但对于内核工作原理涉及得不够深入，而且假定读者具有一定的操作系统基础知识，所以并不适合初学者。该书还有一点非常不适合初学者，作者不辞劳苦，在 N 多种 UNIX 系统上做了实验，分析了它们的内核代码，把每个系统函数在各种 UNIX 系统上的不兼容特性总结得非常详细，很多开发者需要编写可移植的应用程序，一定爱死他了，但初学者看了大段大段的这种描述（某某函数在 4.2BSD 上怎么样，到 4.4BSD 又改成怎么样了，在 SVR4 上怎么样，到 Solaris 又改成怎么样了，现在 POSIX 标准是怎么统一的，还有哪些系统没有完全遵守 POSIX 标准）只会一头雾水，不看倒还明白，越看越不明白了。也正因为该书要兼顾各种 UNIX 系统，所以没法深入讲解内核的工作原理，因为每种 UNIX 系统的内核都不一样。而本书的侧重点则不同，只讲 Linux 平台的特性，只讲 Linux 内核的工作原理，涉及体系结构时只讲 x86 平台，对于初学者来说，绑定到一个明确的平台上学习就不会觉得太抽象了。当然本书的代码也会尽量兼顾可移植性，避免依赖于 Linux 平台特有的一些特性。
+
+### 3.1.1. 汇编程序的 Hello world
+
+之前我们学习了如何用 C 标准 I/O 库读写文件，本章详细讲解这些 I/O 操作是怎么实现的。所有 I/O 操作最终都是在内核中做的，以前我们用的 C 标准 I/O 库函数最终也是通过系统调用把 I/O 操作从用户空间传给内核，然后让内核去做 I/O 操作，本章和下一章会介绍内核中 I/O 子系统的工作原理。首先看一个打印 Hello  world 的汇编程序，了解 I/O 操作是怎样通过系统调用传给内核的。
+
+<p id="e28-1">例 28.1. 汇编程序的 Hello world</p>
+
+```asm6502
+.data					# section declaration
+
+msg:
+	.ascii	"Hello, world!\n"	# our dear string
+	len = . - msg			# length of our dear string
+
+.text					# section declaration
+
+			# we must export the entry point to the ELF linker or
+    .global _start	# loader. They conventionally recognize _start as their
+			# entry point. Use ld -e foo to override the default.
+
+_start:
+
+# write our string to stdout
+
+	movl	$len,%edx	# third argument: message length
+	movl	$msg,%ecx	# second argument: pointer to message to write
+	movl	$1,%ebx		# first argument: file handle (stdout)
+	movl	$4,%eax		# system call number (sys_write)
+	int	$0x80		# call kernel
+
+# and exit
+
+	movl	$0,%ebx		# first argument: exit code
+	movl	$1,%eax		# system call number (sys_exit)
+	int	$0x80		# call kernel
+```
+
+像以前一样，汇编、链接、运行：
+
+```bash
+$ as -o hello.o hello.s
+$ ld -o hello hello.o
+$ ./hello
+Hello, world!
+```
+
+这段汇编相当于以下 C 代码：
+
+```c
+#include <unistd.h>
+
+char msg[14] = "Hello, world!\n";
+#define len 14
+
+int main(void)
+{
+	write(1, msg, len);
+	_exit(0);
+}
+```
+
+`.data` 段有一个标号 `msg`，代表字符串 `"Hello, world!\n"` 的首地址，相当于 C 程序的一个全局变量。注意在 C 语言中字符串的末尾隐含有一个 `'\0'`，而汇编指示 `.ascii` 定义的字符串末尾没有隐含的 `'\0'`。汇编程序中的 `len` 代表一个常量，它的值由当前地址减去符号 `msg` 所代表的地址得到，换句话说就是字符串 `"Hello, world!\n"` 的长度。现在解释一下这行代码中的「.」，汇编器总是从前到后把汇编代码转换成目标文件，在这个过程中维护一个地址计数器，当处理到每个段的开头时把地址计数器置成 0，然后每处理一条汇编指示或指令就把地址计数器增加相应的字节数，在汇编程序中用「.」可以取出当前地址计数器的值，该值是一个常量。
+
+在 `_start` 中调了两个系统调用，第一个是 `write` 系统调用，第二个是以前讲过的 `_exit` 系统调用。在调 `write` 系统调用时，`eax` 寄存器保存着 `write` 的系统调用号 4，`ebx`、`ecx`、`edx` 寄存器分别保存着 `write` 系统调用需要的三个参数。`ebx` 保存着文件描述符，进程中每个打开的文件都用一个编号来标识，称为文件描述符，文件描述符 1 表示标准输出，对应于 C 标准 I/O 库的 `stdout`。`ecx` 保存着输出缓冲区的首地址。`edx` 保存着输出的字节数。`write` 系统调用把从 `msg` 开始的 `len` 个字节写到标准输出。
+
+C 代码中的 `write` 函数是系统调用的包装函数，其内部实现就是把传进来的三个参数分别赋给 `ebx`、`ecx`、`edx` 寄存器，然后执行 `movl $4,%eax` 和 `int $0x80` 两条指令。这个函数不可能完全用 C 代码来写，因为任何 C 代码都不会编译生成 `int` 指令，所以这个函数有可能是完全用汇编写的，也可能是用 C 内联汇编写的，甚至可能是一个宏定义（省了参数入栈出栈的步骤）。`_exit` 函数也是如此，我们讲过这些系统调用的包装函数位于 Man Page 的第 2 个 Section。
+
+### 3.1.2. C 标准 I/O 库函数与 Unbuffered I/O 函数
+
+现在看看 C 标准 I/O 库函数是如何用系统调用实现的。
+
+- `fopen(3)`：调用 `open(2)` 打开指定的文件，返回一个文件描述符（就是一个 `int` 类型的编号），分配一个 `FILE` 结构体，其中包含该文件的描述符、I/O 缓冲区和当前读写位置等信息，返回这个 `FILE` 结构体的地址。
+- `fgetc(3)`：通过传入的 `FILE *` 参数找到该文件的描述符、I/O 缓冲区和当前读写位置，判断能否从 I/O 缓冲区中读到下一个字符，如果能读到就直接返回该字符，否则调用 `read(2)`，把文件描述符传进去，让内核读取该文件的数据到 I/O 缓冲区，然后返回下一个字符。注意，对于 C 标准 I/O 库来说，打开的文件由 `FILE *` 指针标识，而对于内核来说，打开的文件由文件描述符标识，文件描述符从 `open` 系统调用获得，在使用 `read`、`write`、`close` 系统调用时都需要传文件描述符。
+- `fputc(3)`：判断该文件的 I/O 缓冲区是否有空间再存放一个字符，如果有空间则直接保存在 I/O 缓冲区中并返回，如果 I/O 缓冲区已满就调用 `write(2)`，让内核把 I/O 缓冲区的内容写回文件。
+- `fclose(3)`：如果 I/O 缓冲区中还有数据没写回文件，就调用 `write(2)` 写回文件，然后调用 `close(2)` 关闭文件，释放 `FILE` 结构体和 I/O 缓冲区。
+
+以写文件为例，C 标准 I/O 库函数（`printf(3)`、`putchar(3)`、`fputs(3)`）与系统调用 `write(2)` 的关系如下图所示。
+
+<p id="c28-1">图 28.1. 库函数与系统调用的层次关系</p>
+
+![库函数与系统调用的层次关系](./image/io.syscall.png)
+
+`open`、`read`、`write`、`close` 等系统函数称为无缓冲 I/O（Unbuffered I/O）函数，因为它们位于 C 标准库的 I/O 缓冲区的底层<sup>[36]</sup>。用户程序在读写文件时既可以调用 C 标准 I/O 库函数，也可以直接调用底层的 Unbuffered I/O 函数，那么用哪一组函数好呢？
+
+> <sup>[36]</sup> 事实上 Unbuffered I/O 这个名词是有些误导的，虽然 `write` 系统调用位于 C 标准库 I/O 缓冲区的底层，但在 `write` 的底层也可以分配一个内核 I/O 缓冲区，所以 `write` 也不一定是直接写到文件的，也可能写到内核 I/O 缓冲区中，至于究竟写到了文件中还是内核缓冲区中对于进程来说是没有差别的，如果进程 A 和进程 B 打开同一文件，进程 A 写到内核 I/O 缓冲区中的数据从进程 B 也能读到，而 C 标准库的 I/O 缓冲区则不具有这一特性（想一想为什么）。
+
+- 用 Unbuffered I/O 函数每次读写都要进内核，调一个系统调用比调一个用户空间的函数要慢很多，所以在用户空间开辟 I/O 缓冲区还是必要的，用 C 标准 I/O 库函数就比较方便，省去了自己管理 I/O 缓冲区的麻烦。
+- 用 C 标准 I/O 库函数要时刻注意 I/O 缓冲区和实际文件有可能不一致，在必要时需调用 `fflush(3)`。
+- 我们知道 UNIX 的传统是 *Everything  is a  file*，I/O 函数不仅用于读写常规文件，也用于读写设备，比如终端或网络设备。在读写设备时通常是不希望有缓冲的，例如向代表网络设备的文件写数据就是希望数据通过网络设备发送出去，而不希望只写到缓冲区里就算完事儿了，当网络设备接收到数据时应用程序也希望第一时间被通知到，所以网络编程通常直接调用 Unbuffered  I/O 函数。
+
+C 标准库函数是 C 标准的一部分，而 Unbuffered I/O 函数是 UNIX 标准的一部分，在所有支持 C 语言的平台上应该都可以用 C 标准库函数（除了有些平台的 C 编译器没有完全符合 C 标准之外），而只有在 UNIX 平台上才能使用 Unbuffered  I/O 函数，所以 C 标准 I/O 库函数在头文件 `stdio.h` 中声明，而 `read`、`write` 等函数在头文件 `unistd.h` 中声明。在支持 C 语言的非 UNIX 操作系统上，标准 I/O 库的底层可能由另外一组系统函数支持，例如 Windows 系统的底层是 Win32 API，其中读写文件的系统函数是 `ReadFile`、`WriteFile`。
+
+#### 3.1.2.1. 关于 UNIX 标准
+
+POSIX（Portable Operating System Interface）是由 IEEE 制定的标准，致力于统一各种 UNIX 系统的接口，促进各种 UNIX 系统向互相兼容的发向发展。IEEE 1003.1（也称为 POSIX.1）定义了 UNIX 系统的函数接口，既包括 C 标准库函数，也包括系统调用和其它 UNIX 库函数。POSIX.1 只定义接口而不定义实现，所以并不区分一个函数是库函数还是系统调用，至于哪些函数在用户空间实现，哪些函数在内核中实现，由操作系统的开发者决定，各种 UNIX 系统都不太一样。IEEE 1003.2 定义了 Shell 的语法和各种基本命令的选项等。本书的第三部分不仅讲解基本的系统函数接口，也顺带讲解 Shell、基本命令、帐号和权限以及系统管理的基础知识，这些内容合在一起定义了 UNIX 系统的基本特性。
+
+在 UNIX 的发展历史上主要分成 BSD 和 SYSV 两个派系，各自实现了很多不同的接口，比如 BSD 的网络编程接口是 socket，而 SYSV 的网络编程接口是基于 STREAMS 的 TLI。POSIX 在统一接口的过程中，有些接口借鉴 BSD 的，有些接口借鉴 SYSV 的，还有些接口既不是来自 BSD 也不是来自 SYSV，而是凭空发明出来的（例如本书要讲的 pthread 库就属于这种情况），通过 Man Page 的 **COMFORMING TO** 部分可以看出来一个函数接口属于哪种情况。Linux 的源代码是完全从头编写的，并不继承 BSD 或 SYSV 的源代码，没有历史的包袱，所以能比较好地遵照 POSIX 标准实现，既有 BSD 的特性也有 SYSV 的特性，此外还有一些 Linux 特有的特性，比如 `epoll(7)`，依赖于这些接口的应用程序是不可移植的，但在 Linux 系统上运行效率很高。
+
+POSIX 定义的接口有些规定是必须实现的，而另外一些是可以选择实现的。有些非 UNIX 系统也实现了 POSIX 中必须实现的部分，那么也可以声称自己是 POSIX 兼容的，然而要想声称自己是 UNIX，还必须要实现一部分在 POSIX 中规定为可选实现的接口，这由另外一个标准 SUS（Single  UNIX Specification）规定。SUS 是 POSIX 的超集，一部分在 POSIX 中规定为可选实现的接口在 SUS 中规定为必须实现，完整实现了这些接口的系统称为 XSI（X/Open System Interface）兼容的。SUS 标准由 The Open Group 维护，该组织拥有 UNIX 的注册商标（[http://www.unix.org/](http://www.unix.org/)），XSI 兼容的系统可以从该组织获得授权使用 UNIX 这个商标。
+
+现在该说说文件描述符了。每个进程在 Linux 内核中都有一个 `task_struct` 结构体来维护进程相关的信息，称为进程描述符（Process Descriptor），而在操作系统理论中称为进程控制块（PCB，Process Control Block）。`task_struct`中有一个指针指向`files_struct`结构体，称为文件描述符表，其中每个表项包含一个指向已打开的文件的指针，如下图所示。
+
+<p id="c28-2">图 28.2. 文件描述符表</p>
+
+![文件描述符表](./image/io.fd.png)
+
+至于已打开的文件在内核中用什么结构体表示，我们将在下一章详细介绍，目前我们在画图时用一个圈表示。用户程序不能直接访问内核中的文件描述符表，而只能使用文件描述符表的索引（即 0、1、2、3 这些数字），这些索引就称为文件描述符（File Descriptor），用 `int` 型变量保存。当调用 `open` 打开一个文件或创建一个新文件时，内核分配一个文件描述符并返回给用户程序，该文件描述符表项中的指针指向新打开的文件。当读写文件时，用户程序把文件描述符传给 `read` 或 `write`，内核根据文件描述符找到相应的表项，再通过表项中的指针找到相应的文件。
+
+我们知道，程序启动时会自动打开三个文件：标准输入、标准输出和标准错误输出。在 C 标准库中分别用 `FILE *` 指针 `stdin`、`stdout` 和 `stderr` 表示。这三个文件的描述符分别是 0、1、2，保存在相应的 `FILE` 结构体中。头文件 `unistd.h` 中有如下的宏定义来表示这三个文件描述符：
+
+```c
+#define STDIN_FILENO 0
+#define STDOUT_FILENO 1
+#define STDERR_FILENO 2
+```
+
+### 3.1.3. open/close
+
+`open` 函数可以打开或创建一个文件。
+
+```c
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+int open(const char *pathname, int flags);
+int open(const char *pathname, int flags, mode_t mode);
+返回值：成功返回新分配的文件描述符，出错返回 -1 并设置 errno
+```
+
+在 Man Page 中 `open` 函数有两种形式，一种带两个参数，一种带三个参数，其实在 C 代码中 `open` 函数是这样声明的：
+
+```c
+int open(const char *pathname, int flags, ...);
+```
+
+最后的可变参数可以是 0 个或 1 个，由 `flags` 参数中的标志位决定，见下面的详细说明。
+
+`pathname` 参数是要打开或创建的文件名，和 `fopen` 一样，`pathname` 既可以是相对路径也可以是绝对路径。`flags` 参数有一系列常数值可供选择，可以同时选择多个常数用按位或运算符连接起来，所以这些常数的宏定义都以 `O_` 开头，表示 or。
+
+必选项：以下三个常数中必须指定一个，且仅允许指定一个。
+
+- `O_RDONLY` 只读打开
+- `O_WRONLY` 只写打开
+- `O_RDWR` 可读可写打开
+
+以下可选项可以同时指定 0 个或多个，和必选项按位或起来作为 `flags` 参数。可选项有很多，这里只介绍一部分，其它选项可参考 `open(2)` 的 Man Page：
+
+- `O_APPEND` 表示追加。如果文件已有内容，这次打开文件所写的数据附加到文件的末尾而不覆盖原来的内容。
+- `O_CREAT` 若此文件不存在则创建它。使用此选项时需要提供第三个参数 `mode`，表示该文件的访问权限。
+- `O_EXCL` 如果同时指定了 `O_CREAT`，并且文件已存在，则出错返回。
+- `O_TRUNC` 如果文件已存在，并且以只写或可读可写方式打开，则将其长度截断（Truncate）为 0 字节。
+- `O_NONBLOCK` 对于设备文件，以 `O_NONBLOCK` 方式打开可以做非阻塞 I/O（Nonblock I/O），非阻塞 I/O 在下一节详细讲解。
+
+注意 `open` 函数与 C 标准 I/O 库的 `fopen` 函数有些细微的区别：
+
+- 以可写的方式 `fopen` 一个文件时，如果文件不存在会自动创建，而 `open` 一个文件时必须明确指定 `O_CREAT` 才会创建文件，否则文件不存在就出错返回。
+- 以 `w` 或 `w+` 方式 `fopen` 一个文件时，如果文件已存在就截断为 0 字节，而 `open` 一个文件时必须明确指定 `O_TRUNC` 才会截断文件，否则直接在原来的数据上改写。
+
+第三个参数 `mode` 指定文件权限，可以用八进制数表示，比如 0644 表示 `-rw-r--r--`，也可以用 `S_IRUSR`、`S_IWUSR` 等宏定义按位或起来表示，详见 `open(2)` 的 Man Page。要注意的是，文件权限由 `open` 的 `mode` 参数和当前进程的 `umask` 掩码共同决定。
+
+补充说明一下 Shell 的 `umask` 命令。Shell 进程的 `umask` 掩码可以用 `umask` 命令查看：
+
+```bash
+$ umask
+0022
+```
+
+用 `touch` 命令创建一个文件时，创建权限是 0666，而 `touch` 进程继承了 Shell 进程的 `umask` 掩码，所以最终的文件权限是 0666&~022=0644。
+
+```bash
+$ touch file123
+$ ls -l file123
+-rw-r--r-- 1 akaedu akaedu 0 2009-03-08 15:07 file123
+```
+
+同样道理，用 `gcc` 编译生成一个可执行文件时，创建权限是 0777，而最终的文件权限是 0777&~022=0755。
+
+```bash
+$ gcc main.c
+$ ls -l a.out
+-rwxr-xr-x 1 akaedu akaedu 6483 2009-03-08 15:07 a.out
+```
+
+我们看到的都是被 `umask` 掩码修改之后的权限，那么如何证明 `touch` 或 `gcc` 创建文件的权限本来应该是 0666 和 0777 呢？我们可以把 Shell 进程的 `umask` 改成 0，再重复上述实验：
+
+```bash
+$ umask 0
+$ touch file123
+$ rm file123 a.out
+$ touch file123
+$ ls -l file123
+-rw-rw-rw- 1 akaedu akaedu 0 2009-03-08 15:09 file123
+$ gcc main.c
+$ ls -l a.out
+-rwxrwxrwx 1 akaedu akaedu 6483 2009-03-08 15:09 a.out
+```
+
+现在我们自己写一个程序，在其中调用 `open("somefile", O_WRONLY|O_CREAT, 0664);` 创建文件，然后在 Shell 中运行并查看结果：
+
+```bash
+$ umask 022
+$ ./a.out
+$ ls -l somefile
+-rw-r--r-- 1 akaedu akaedu 6483 2009-03-08 15:11 somefile
+```
+
+不出所料，文件 `somefile` 的权限是 0664&~022=0644。有几个问题现在我没有解释：为什么被 Shell 启动的进程可以继承 Shell 进程的 `umask` 掩码？为什么 `umask` 命令可以读写 Shell 进程的 `umask` 掩码？这些问题将在[第 30 章「进程」第 1 节「引言」](3-Linux-系统编程/ch30-进程#_1-引言)解释。
+
+`close` 函数关闭一个已打开的文件：
+
+```c
+#include <unistd.h>
+
+int close(int fd);
+返回值：成功返回 0，出错返回 -1 并设置 errno
+```
+
+参数 `fd` 是要关闭的文件描述符。需要说明的是，当一个进程终止时，内核对该进程所有尚未关闭的文件描述符调用 `close` 关闭，所以即使用户程序不调用 `close`，在终止时内核也会自动关闭它打开的所有文件。但是对于一个长年累月运行的程序（比如网络服务器），打开的文件描述符一定要记得关闭，否则随着打开的文件越来越多，会占用大量文件描述符和系统资源。
+
+由 `open` 返回的文件描述符一定是该进程尚未使用的最小描述符。由于程序启动时自动打开文件描述符 0、1、2，因此第一次调用 `open` 打开文件通常会返回描述符 3，再调用 `open` 就会返回 4。可以利用这一点在标准输入、标准输出或标准错误输出上打开一个新文件，实现重定向的功能。例如，首先调用 `close` 关闭文件描述符 1，然后调用 `open` 打开一个常规文件，则一定会返回文件描述符 1，这时候标准输出就不再是终端，而是一个常规文件了，再调用 `printf` 就不会打印到屏幕上，而是写到这个文件中了。后面要讲的 `dup2` 函数提供了另外一种办法在指定的文件描述符上打开文件。
+
+#### 3.1.3.1. 习题
+
+1. 在系统头文件中查找 `flags` 和 `mode` 参数用到的这些宏定义的值是多少。把这些宏定义按位或起来是什么效果？为什么必选项只能选一个而可选项可以选多个？
+2. 请按照下述要求分别写出相应的 `open` 调用。
+
+	- 打开文件 `/home/akae.txt` 用于写操作，以追加方式打开
+	- 打开文件 `/home/akae.txt` 用于写操作，如果该文件不存在则创建它
+	- 打开文件 `/home/akae.txt` 用于写操作，如果该文件已存在则截断为 0 字节，如果该文件不存在则创建它
+	- 打开文件 `/home/akae.txt` 用于写操作，如果该文件已存在则报错退出，如果该文件不存在则创建它
+
+### 3.1.4. read/write
+
+`read` 函数从打开的设备或文件中读取数据。
+
+```c
+#include <unistd.h>
+
+ssize_t read(int fd, void *buf, size_t count);
+返回值：成功返回读取的字节数，出错返回 -1 并设置 errno，如果在调 read 之前已到达文件末尾，则这次 read 返回 0
+```
+
+参数 `count` 是请求读取的字节数，读上来的数据保存在缓冲区 `buf` 中，同时文件的当前读写位置向后移。注意这个读写位置和使用 C 标准 I/O 库时的读写位置有可能不同，这个读写位置是记在内核中的，而使用 C 标准 I/O 库时的读写位置是用户空间 I/O 缓冲区中的位置。比如用 `fgetc` 读一个字节，`fgetc` 有可能从内核中预读 1024 个字节到 I/O 缓冲区中，再返回第一个字节，这时该文件在内核中记录的读写位置是 1024，而在 `FILE` 结构体中记录的读写位置是 1。注意返回值类型是 `ssize_t`，表示有符号的 `size_t`，这样既可以返回正的字节数、0（表示到达文件末尾）也可以返回负值 -1（表示出错）。`read` 函数返回时，返回值说明了 `buf` 中前多少个字节是刚读上来的。有些情况下，实际读到的字节数（返回值）会小于请求读的字节数 `count`，例如：
+
+- 读常规文件时，在读到 `count` 个字节之前已到达文件末尾。例如，距文件末尾还有 30 个字节而请求读 100 个字节，则 `read` 返回 30，下次 `read` 将返回 0。
+- 从终端设备读，通常以行为单位，读到换行符就返回了。
+- 从网络读，根据不同的传输层协议和内核缓存机制，返回值可能小于请求的字节数，后面 socket 编程部分会详细讲解。
+
+`write` 函数向打开的设备或文件中写数据。
+
+```c
+#include <unistd.h>
+
+ssize_t write(int fd, const void *buf, size_t count);
+返回值：成功返回写入的字节数，出错返回 -1 并设置 errno
+```
+
+写常规文件时，`write` 的返回值通常等于请求写的字节数 `count`，而向终端设备或网络写则不一定。
+
+读常规文件是不会阻塞的，不管读多少字节，`read` 一定会在有限的时间内返回。从终端设备或网络读则不一定，如果从终端输入的数据没有换行符，调用 `read` 读终端设备就会阻塞，如果网络上没有接收到数据包，调用 `read` 从网络读就会阻塞，至于会阻塞多长时间也是不确定的，如果一直没有数据到达就一直阻塞在那里。同样，写常规文件是不会阻塞的，而向终端设备或网络写则不一定。
+
+现在明确一下阻塞（Block）这个概念。当进程调用一个阻塞的系统函数时，该进程被置于睡眠（Sleep）状态，这时内核调度其它进程运行，直到该进程等待的事件发生了（比如网络上接收到数据包，或者调用 `sleep` 指定的睡眠时间到了）它才有可能继续运行。与睡眠状态相对的是运行（Running）状态，在 Linux 内核中，处于运行状态的进程分为两种情况：
+
+- 正在被调度执行。CPU 处于该进程的上下文环境中，程序计数器（`eip`）里保存着该进程的指令地址，通用寄存器里保存着该进程运算过程的中间结果，正在执行该进程的指令，正在读写该进程的地址空间。
+- 就绪状态。该进程不需要等待什么事件发生，随时都可以执行，但 CPU 暂时还在执行另一个进程，所以该进程在一个就绪队列中等待被内核调度。系统中可能同时有多个就绪的进程，那么该调度谁执行呢？内核的调度算法是基于优先级和时间片的，而且会根据每个进程的运行情况动态调整它的优先级和时间片，让每个进程都能比较公平地得到机会执行，同时要兼顾用户体验，不能让和用户交互的进程响应太慢。
+
+下面这个小程序从终端读数据再写回终端。
+
+<p id="e28-2">例 28.2. 阻塞读终端</p>
+
+```c
+#include <unistd.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	char buf[10];
+	int n;
+	n = read(STDIN_FILENO, buf, 10);
+	if (n < 0) {
+		perror("read STDIN_FILENO");
+		exit(1);
+	}
+	write(STDOUT_FILENO, buf, n);
+	return 0;
+}
+```
+
+执行结果如下：
+
+```bash
+$ ./a.out 
+hello（回车）
+hello
+$ ./a.out 
+hello world（回车）
+hello worl$ d
+bash: d: command not found
+```
+
+第一次执行 `a.out` 的结果很正常，而第二次执行的过程有点特殊，现在分析一下：
+
+1. Shell 进程创建 `a.out` 进程，`a.out` 进程开始执行，而 Shell 进程睡眠等待 `a.out` 进程退出。
+2. `a.out` 调用 `read` 时睡眠等待，直到终端设备输入了换行符才从 `read` 返回，`read` 只读走 10 个字符，剩下的字符仍然保存在内核的终端设备输入缓冲区中。
+3. `a.out` 进程打印并退出，这时 Shell 进程恢复运行，Shell 继续从终端读取用户输入的命令，于是读走了终端设备输入缓冲区中剩下的字符 d 和换行符，把它当成一条命令解释执行，结果发现执行不了，没有 d 这个命令。
+
+如果在 `open` 一个设备时指定了 `O_NONBLOCK` 标志，`read`/`write` 就不会阻塞。以 `read` 为例，如果设备暂时没有数据可读就返回 -1，同时置 `errno` 为 `EWOULDBLOCK`（或者 `EAGAIN`，这两个宏定义的值相同），表示本来应该阻塞在这里（would block，虚拟语气），事实上并没有阻塞而是直接返回错误，调用者应该试着再读一次（again）。这种行为方式称为轮询（Poll），调用者只是查询一下，而不是阻塞在这里死等，这样可以同时监视多个设备：
+
+```c
+while(1) {
+	非阻塞 read (设备1);
+	if(设备1 有数据到达)
+		处理数据;
+	非阻塞 read (设备2);
+	if(设备2 有数据到达)
+		处理数据;
+	...
+}
+```
+
+如果 `read(设备1)` 是阻塞的，那么只要 `设备1` 没有数据到达就会一直阻塞在 `设备1` 的 `read` 调用上，即使 `设备2` 有数据到达也不能处理，使用非阻塞 I/O 就可以避免 `设备2` 得不到及时处理。
+
+非阻塞 I/O 有一个缺点，如果所有设备都一直没有数据到达，调用者需要反复查询做无用功，如果阻塞在那里，操作系统可以调度别的进程执行，就不会做无用功了。在使用非阻塞 I/O 时，通常不会在一个 `while` 循环中一直不停地查询（这称为 Tight Loop），而是每延迟等待一会儿来查询一下，以免做太多无用功，在延迟等待的时候可以调度其它进程执行。
+
+```c
+while(1) {
+	非阻塞 read(设备1);
+	if(设备1 有数据到达)
+		处理数据;
+	非阻塞 read(设备2);
+	if(设备2 有数据到达)
+		处理数据;
+	...
+	sleep(n);
+}
+```
+
+这样做的问题是，`设备1` 有数据到达时可能不能及时处理，最长需延迟 n 秒才能处理，而且反复查询还是做了很多无用功。以后要学习的 `select(2)` 函数可以阻塞地同时监视多个设备，还可以设定阻塞等待的超时时间，从而圆满地解决了这个问题。
+
+以下是一个非阻塞 I/O 的例子。目前我们学过的可能引起阻塞的设备只有终端，所以我们用终端来做这个实验。程序开始执行时在 0、1、2 文件描述符上自动打开的文件就是终端，但是没有 `O_NONBLOCK` 标志。所以就像[例 28.2「阻塞读终端」](#e28-2)一样，读标准输入是阻塞的。我们可以重新打开一遍设备文件 /dev/tty（表示当前终端），在打开时指定 `O_NONBLOCK` 标志。
+
+<p id="e28-2">例 28.3. 非阻塞读终端</p>
+
+```c
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MSG_TRY "try again\n"
+
+int main(void)
+{
+	char buf[10];
+	int fd, n;
+	fd = open("/dev/tty", O_RDONLY|O_NONBLOCK);
+	if(fd<0) {
+		perror("open /dev/tty");
+		exit(1);
+	}
+tryagain:
+	n = read(fd, buf, 10);
+	if (n < 0) {
+		if (errno == EAGAIN) {
+			sleep(1);
+			write(STDOUT_FILENO, MSG_TRY, strlen(MSG_TRY));
+			goto tryagain;
+		}	
+		perror("read /dev/tty");
+		exit(1);
+	}
+	write(STDOUT_FILENO, buf, n);
+	close(fd);
+	return 0;
+}
+```
+
+以下是用非阻塞 I/O 实现等待超时的例子。既保证了超时退出的逻辑又保证了有数据到达时处理延迟较小。
+
+<p id="e28-4">例 28.4. 非阻塞读终端和等待超时</p>
+
+```c
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MSG_TRY "try again\n"
+#define MSG_TIMEOUT "timeout\n"
+
+int main(void)
+{
+	char buf[10];
+	int fd, n, i;
+	fd = open("/dev/tty", O_RDONLY|O_NONBLOCK);
+	if(fd<0) {
+		perror("open /dev/tty");
+		exit(1);
+	}
+	for(i=0; i<5; i++) {
+		n = read(fd, buf, 10);
+		if(n>=0)
+			break;
+		if(errno!=EAGAIN) {
+			perror("read /dev/tty");
+			exit(1);
+		}
+		sleep(1);
+		write(STDOUT_FILENO, MSG_TRY, strlen(MSG_TRY));
+	}
+	if(i==5)
+		write(STDOUT_FILENO, MSG_TIMEOUT, strlen(MSG_TIMEOUT));
+	else
+		write(STDOUT_FILENO, buf, n);
+	close(fd);
+	return 0;
+}
+```
+
+### 3.1.5. lseek
+
+每个打开的文件都记录着当前读写位置，打开文件时读写位置是 0，表示文件开头，通常读写多少个字节就会将读写位置往后移多少个字节。但是有一个例外，如果以 `O_APPEND` 方式打开，每次写操作都会在文件末尾追加数据，然后将读写位置移到新的文件末尾。`lseek` 和标准 I/O 库的 `fseek` 函数类似，可以移动当前读写位置（或者叫偏移量）。
+
+```c
+#include <sys/types.h>
+#include <unistd.h>
+
+off_t lseek(int fd, off_t offset, int whence);
+```
+
+参数 `offset` 和 `whence` 的含义和 `fseek` 函数完全相同。只不过第一个参数换成了文件描述符。和 `fseek` 一样，偏移量允许超过文件末尾，这种情况下对该文件的下一次写操作将延长文件，中间空洞的部分读出来都是 0。
+
+若 `lseek` 成功执行，则返回新的偏移量，因此可用以下方法确定一个打开文件的当前偏移量：
+
+```c
+off_t currpos;
+currpos = lseek(fd, 0, SEEK_CUR);
+```
+
+这种方法也可用来确定文件或设备是否可以设置偏移量，常规文件都可以设置偏移量，而设备一般是不可以设置偏移量的。如果设备不支持 `lseek`，则 `lseek` 返回 -1，并将 `errno` 设置为 `ESPIPE`。注意 `fseek` 和 `lseek` 在返回值上有细微的差别，`fseek` 成功时返回 0 失败时返回 -1，要返回当前偏移量需调用 `ftell`，而 `lseek` 成功时返回当前偏移量失败时返回 -1。
+
+### 3.1.6. fcntl
+
+先前我们以 `read` 终端设备为例介绍了非阻塞 I/O，为什么我们不直接对 `STDIN_FILENO` 做非阻塞 `read`，而要重新 `open` 一遍 /dev/tty 呢？因为 `STDIN_FILENO` 在程序启动时已经被自动打开了，而我们需要在调用 `open` 时指定 `O_NONBLOCK` 标志。这里介绍另外一种办法，可以用 `fcntl` 函数改变一个已打开的文件的属性，可以重新设置读、写、追加、非阻塞等标志（这些标志称为 File Status Flag），而不必重新 `open` 文件。
+
+```c
+#include <unistd.h>
+#include <fcntl.h>
+
+int fcntl(int fd, int cmd);
+int fcntl(int fd, int cmd, long arg);
+int fcntl(int fd, int cmd, struct flock *lock);
+```
+
+这个函数和 `open` 一样，也是用可变参数实现的，可变参数的类型和个数取决于前面的 `cmd` 参数。下面的例子使用 `F_GETFL` 和 `F_SETFL` 这两种 `fcntl` 命令改变 `STDIN_FILENO` 的属性，加上 `O_NONBLOCK` 选项，实现和[例 28.3「非阻塞读终端」](#e28-3)同样的功能。
+
+<p id="e28-5">例 28.5. 用 fcntl 改变 File Status Flag</p>
+
+```c
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MSG_TRY "try again\n"
+
+int main(void)
+{
+	char buf[10];
+	int n;
+	int flags;
+	flags = fcntl(STDIN_FILENO, F_GETFL);
+	flags |= O_NONBLOCK;
+	if (fcntl(STDIN_FILENO, F_SETFL, flags) == -1) {
+		perror("fcntl");
+		exit(1);
+	}
+tryagain:
+	n = read(STDIN_FILENO, buf, 10);
+	if (n < 0) {
+		if (errno == EAGAIN) {
+			sleep(1);
+			write(STDOUT_FILENO, MSG_TRY, strlen(MSG_TRY));
+			goto tryagain;
+		}
+		perror("read stdin");
+		exit(1);
+	}
+	write(STDOUT_FILENO, buf, n);
+	return 0;
+}
+```
+
+以下程序通过命令行的第一个参数指定一个文件描述符，同时利用 Shell 的重定向功能在该描述符上打开文件，然后用 `fcntl` 的 `F_GETFL` 命令取出 File Status Flag 并打印。
+
+```c
+#include <sys/types.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[])
+{
+	int val;
+	if (argc != 2) {
+		fputs("usage: a.out <descriptor#>\n", stderr);
+		exit(1);
+	}
+	if ((val = fcntl(atoi(argv[1]), F_GETFL)) < 0) {
+		printf("fcntl error for fd %d\n", atoi(argv[1]));
+		exit(1);
+	}
+	switch(val & O_ACCMODE) {
+	case O_RDONLY:
+		printf("read only");
+		break;
+	case O_WRONLY:
+		printf("write only");
+		break;
+	case O_RDWR:            
+		printf("read write");
+		break;
+	default:
+		fputs("invalid access mode\n", stderr);
+		exit(1);
+	}
+	if (val & O_APPEND)  
+		printf(", append");
+	if (val & O_NONBLOCK)           
+		printf(", nonblocking");
+	putchar('\n');
+	return 0;
+}
+```
+
+运行该程序的几种情况解释如下。
+
+```bash
+$ ./a.out 0 < /dev/tty
+read only
+```
+
+Shell 在执行 `a.out` 时将它的标准输入重定向到 /dev/tty，并且是只读的。`argv[1]` 是 0，因此取出文件描述符 0（也就是标准输入）的 File Status Flag，用掩码 `O_ACCMODE` 取出它的读写位，结果是 `O_RDONLY`。注意，Shell 的重定向语法不属于程序的命令行参数，这个命行只有两个参数，`argv[0]` 是 "./a.out"，`argv[1]` 是 "0"，重定向由 Shell 解释，在启动程序时已经生效，程序在运行时并不知道标准输入被重定向了。
+
+```bash
+$ ./a.out 1 > temp.foo
+$ cat temp.foo
+write only
+```
+
+Shell 在执行 `a.out` 时将它的标准输出重定向到文件 `temp.foo`，并且是只写的。程序取出文件描述符 1 的 File Status Flag，发现是只写的，于是打印 `write only`，但是打印不到屏幕上而是打印到 `temp.foo` 这个文件中了。 
+
+```bash
+$ ./a.out 2 2>>temp.foo
+write only, append
+```
+
+Shell 在执行 `a.out` 时将它的标准错误输出重定向到文件 `temp.foo`，并且是只写和追加方式。程序取出文件描述符 2 的 File Status Flag，发现是只写和追加方式的。
+
+```bash
+$ ./a.out 5 5<>temp.foo
+read write
+```
+
+Shell 在执行 `a.out` 时在它的文件描述符 5 上打开文件 `temp.foo`，并且是可读可写的。程序取出文件描述符 5 的 File Status Flag，发现是可读可写的。
+
+我们看到一种新的 Shell 重定向语法，如果在 <、>、>>、<> 前面添一个数字，该数字就表示在哪个文件描述符上打开文件，例如 `2>>temp.foo` 表示将标准错误输出重定向到文件 temp.foo 并且以追加方式写入文件，注意 `2` 和 `>>` 之间不能有空格，否则 `2` 就被解释成命令行参数了。文件描述符数字还可以出现在重定向符号右边，例如：
+
+```bash
+$ command > /dev/null 2>&1
+```
+
+首先将某个命令 command 的标准输出重定向到 /dev/null，然后将该命令可能产生的错误信息（标准错误输出）也重定向到和标准输出（用 &1 标识）相同的文件，即 /dev/null，如下图所示。
+
+<p id="c28-3">图 28.3. 重定向之后的文件描述符表</p>
+
+![重定向之后的文件描述符表](./image/io.fdredirect.png)
+
+/dev/null 设备文件只有一个作用，往它里面写任何数据都被直接丢弃。因此保证了该命令执行时屏幕上没有任何输出，既不打印正常信息也不打印错误信息，让命令安静地执行，这种写法在 Shell 脚本中很常见。注意，文件描述符数字写在重定向符号右边需要加 & 号，否则就被解释成文件名了，`2>&1` 其中的 `>` 左右两边都不能有空格。
+
+除了 `F_GETFL` 和 `F_SETFL` 命令之外，`fcntl` 还有很多命令做其它操作，例如设置文件记录锁等。可以通过 `fcntl` 设置的都是当前进程如何访问设备或文件的访问控制属性，例如读、写、追加、非阻塞、加锁等，但并不设置文件或设备本身的属性，例如文件的读写权限、串口波特率等。下一节要介绍的 `ioctl` 函数用于设置某些设备本身的属性，例如串口波特率、终端窗口大小，注意区分这两个函数的作用。
+
+### 3.1.7. ioctl
+
+`ioctl` 用于向设备发控制和配置命令，有些命令也需要读写一些数据，但这些数据是不能用 `read`/`write` 读写的，称为 Out-of-band 数据。也就是说，`read`/`write` 读写的数据是 in-band 数据，是 I/O 操作的主体，而 `ioctl` 命令传送的是控制信息，其中的数据是辅助的数据。例如，在串口线上收发数据通过 `read`/`write` 操作，而串口的波特率、校验位、停止位通过 `ioctl` 设置，A/D 转换的结果通过 `read` 读取，而 A/D 转换的精度和工作频率通过 `ioctl` 设置。
+
+```c
+#include <sys/ioctl.h>
+
+int ioctl(int d, int request, ...);
+```
+
+`d` 是某个设备的文件描述符。`request` 是 `ioctl` 的命令，可变参数取决于 `request`，通常是一个指向变量或结构体的指针。若出错则返回 -1，若成功则返回其他值，返回值也是取决于 `request`。
+
+以下程序使用 `TIOCGWINSZ` 命令获得终端设备的窗口大小。
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+
+int main(void)
+{
+	struct winsize size;
+	if (isatty(STDOUT_FILENO) == 0)
+		exit(1);
+	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &size)<0) {
+		perror("ioctl TIOCGWINSZ error");
+		exit(1);
+	}
+	printf("%d rows, %d columns\n", size.ws_row, size.ws_col);
+	return 0;
+}
+```
+
+在图形界面的终端里多次改变终端窗口的大小并运行该程序，观察结果。
+
+### 3.1.8. mmap
+
+`mmap` 可以把磁盘文件的一部分直接映射到内存，这样文件中的位置直接就有对应的内存地址，对文件的读写可以直接用指针来做而不需要 `read`/`write` 函数。
+
+```c
+#include <sys/mman.h>
+
+ void *mmap(void *addr, size_t len, int prot, int flag, int filedes, off_t off);
+ int munmap(void *addr, size_t len);
+```
+
+该函数各参数的作用图示如下：
+
+<p id="c28-4">图 28.4. mmap 函数</p>
+
+![mmap函数](./image/io.mmap.png)
+
+如果 `addr` 参数为 `NULL`，内核会自己在进程地址空间中选择合适的地址建立映射。如果 `addr` 不是 `NULL`，则给内核一个提示，应该从什么地址开始映射，内核会选择 `addr` 之上的某个合适的地址开始映射。建立映射后，真正的映射首地址通过返回值可以得到。`len` 参数是需要映射的那一部分文件的长度。`off` 参数是从文件的什么位置开始映射，必须是页大小的整数倍（在 32 位体系统结构上通常是 4K）。`filedes` 是代表该文件的描述符。
+
+`prot` 参数有四种取值：
+
+- PROT_EXEC 表示映射的这一段可执行，例如映射共享库
+- PROT_READ 表示映射的这一段可读
+- PROT_WRITE 表示映射的这一段可写
+- PROT_NONE 表示映射的这一段不可访问
+
+```
+flag`参数有很多种取值，这里只讲两种，其它取值可查看`mmap(2)
+```
+
+- MAP_SHARED 多个进程对同一个文件的映射是共享的，一个进程对映射的内存做了修改，另一个进程也会看到这种变化。
+- MAP_PRIVATE 多个进程对同一个文件的映射不是共享的，一个进程对映射的内存做了修改，另一个进程并不会看到这种变化，也不会真的写到文件中去。
+
+如果 `mmap` 成功则返回映射首地址，如果出错则返回常数 `MAP_FAILED`。当进程终止时，该进程的映射内存会自动解除，也可以调用 `munmap` 解除映射。`munmap` 成功返回 0，出错返回 -1。
+
+下面做一个简单的实验。
+
+```bash
+$ vi hello
+（编辑该文件的内容为「hello」）
+$ od -tx1 -tc hello 
+0000000 68 65 6c 6c 6f 0a
+          h   e   l   l   o  \n
+0000006
+```
+
+现在用如下程序操作这个文件（注意，把 `fd` 关掉并不影响该文件已建立的映射，仍然可以对文件进行读写）。
+
+```c
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+
+int main(void)
+{
+	int *p;
+	int fd = open("hello", O_RDWR);
+	if (fd < 0) {
+		perror("open hello");
+		exit(1);
+	}
+	p = mmap(NULL, 6, PROT_WRITE, MAP_SHARED, fd, 0);
+	if (p == MAP_FAILED) {
+		perror("mmap");
+		exit(1);
+	}
+	close(fd);
+	p[0] = 0x30313233;
+	munmap(p, 6);
+	return 0;
+}
+```
+
+然后再查看这个文件的内容：
+
+```bash
+$ od -tx1 -tc hello
+ 0000000 33 32 31 30 6f 0a
+           3   2   1   0   o  \n
+ 0000006
+```
+
+请读者自己分析一下实验结果。
+
+`mmap` 函数的底层也是一个系统调用，在执行程序时经常要用到这个系统调用来映射共享库到该进程的地址空间。例如一个很简单的 hello world 程序：
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+	printf("hello world\n");
+	return 0;
+}
+```
+
+用 `strace` 命令执行该程序，跟踪该程序执行过程中用到的所有系统调用的参数及返回值：
+
+```bash
+$ strace ./a.out 
+execve("./a.out", ["./a.out"], [/* 38 vars */]) = 0
+brk(0)                                  = 0x804a000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7fca000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY)      = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=63628, ...}) = 0
+mmap2(NULL, 63628, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7fba000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/tls/i686/cmov/libc.so.6", O_RDONLY) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\260a\1"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0644, st_size=1339816, ...}) = 0
+mmap2(NULL, 1349136, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb7e70000
+mmap2(0xb7fb4000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x143) = 0xb7fb4000
+mmap2(0xb7fb7000, 9744, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xb7fb7000
+close(3)                                = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7e6f000
+set_thread_area({entry_number:-1 -> 6, base_addr:0xb7e6f6b0, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+mprotect(0xb7fb4000, 4096, PROT_READ)   = 0
+munmap(0xb7fba000, 63628)               = 0
+fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7fc9000
+write(1, "hello world\n", 12hello world
+)           = 12
+exit_group(0)                           = ?
+Process 8572 detached
+```
+
+可以看到，执行这个程序要映射共享库 `/lib/tls/i686/cmov/libc.so.6` 到进程地址空间。也可以看到，`printf` 函数的底层确实是调用 `write`。 
+
 ## 3.2. 文件系统
+
+### 3.2.1. 引言
+
+本章主要解答以下问题：
+
+1. 文件系统在内核中是如何实现的？如何呈现给用户一个树状的目录结构？如何处理用户的文件和目录操作请求？
+2. 磁盘是一种顺序的存储介质，一个树状的目录结构如何扯成一条线存到磁盘上？怎样设计文件系统的存储格式使访问磁盘的效率最高？各种文件和目录操作在磁盘上的实际效果是什么？
+
+<p id="c29-1">图 29.1. 文件系统的表示和存储</p>
+
+![文件系统的表示和存储](./image/fs.repr.png)
+
+我们首先介绍一种文件系统的存储格式——早期 Linux 广泛使用的 ext2 文件系统。现在 Linux 最常用的 ext3 文件系统也是与 ext2 兼容的，基本格式是一致的，只是多了一些扩展。然后再介绍文件系统在内核中是如何实现的。
+
+### 3.2.2. ext2 文件系统
+
+#### 3.2.2.1. 总体存储布局
+
+我们知道，一个磁盘可以划分成多个分区，每个分区必须先用格式化工具（例如某种 `mkfs` 命令）格式化成某种格式的文件系统，然后才能存储文件，格式化的过程会在磁盘上写一些管理存储布局的信息。下图是一个磁盘分区格式化成 ext2 文件系统后的存储布局。
+
+<p id="c29-2">图 29.2. ext2文件系统的总体存储布局</p>
+
+![ext2 文件系统的总体存储布局](./image/fs.ext2layout.png)
+
+文件系统中存储的最小单位是块（Block），一个块究竟多大是在格式化时确定的，例如 `mke2fs` 的 `-b` 选项可以设定块大小为 1024、2048 或 4096字节。而上图中启动块（Boot Block）的大小是确定的，就是 1KB，启动块是由 PC 标准规定的，用来存储磁盘分区信息和启动信息，任何文件系统都不能使用启动块。启动块之后才是 ext2 文件系统的开始，ext2 文件系统将整个分区划成若干个同样大小的块组（Block Group），每个块组都由以下部分组成。
+
+- 超级块（Super Block）：描述整个分区的文件系统信息，例如块大小、文件系统版本号、上次 `mount` 的时间等等。超级块在每个块组的开头都有一份拷贝。
+- 块组描述符表（GDT，Group Descriptor Table）：由很多块组描述符组成，整个分区分成多少个块组就对应有多少个块组描述符。每个块组描述符（Group Descriptor）存储一个块组的描述信息，例如在这个块组中从哪里开始是 inode 表，从哪里开始是数据块，空闲的 inode 和数据块还有多少个等等。和超级块类似，块组描述符表在每个块组的开头也都有一份拷贝，这些信息是非常重要的，一旦超级块意外损坏就会丢失整个分区的数据，一旦块组描述符意外损坏就会丢失整个块组的数据，因此它们都有多份拷贝。通常内核只用到第 0 个块组中的拷贝，当执行 `e2fsck` 检查文件系统一致性时，第 0 个块组中的超级块和块组描述符表就会拷贝到其它块组，这样当第 0 个块组的开头意外损坏时就可以用其它拷贝来恢复，从而减少损失。
+- 块位图（Block Bitmap）：一个块组中的块是这样利用的：数据块存储所有文件的数据，比如某个分区的块大小是 1024 字节，某个文件是 2049 字节，那么就需要三个数据块来存，即使第三个块只存了一个字节也需要占用一个整块；超级块、块组描述符表、块位图、inode 位图、inode 表这几部分存储该块组的描述信息。那么如何知道哪些块已经用来存储文件数据或其它描述信息，哪些块仍然空闲可用呢？块位图就是用来描述整个块组中哪些块已用哪些块空闲的，它本身占一个块，其中的每个 bit 代表本块组中的一个块，这个 bit 为 1 表示该块已用，这个 bit 为 0 表示该块空闲可用。为什么用 `df` 命令统计整个磁盘的已用空间非常快呢？因为只需要查看每个块组的块位图即可，而不需要搜遍整个分区。相反，用 `du` 命令查看一个较大目录的已用空间就非常慢，因为不可避免地要搜遍整个目录的所有文件。与此相联系的另一个问题是：在格式化一个分区时究竟会划出多少个块组呢？主要的限制在于块位图本身必须只占一个块。用 `mke2fs` 格式化时默认块大小是 1024 字节，可以用 `-b` 参数指定块大小，现在设块大小指定为b字节，那么一个块可以有 8b 个 bit，这样大小的一个块位图就可以表示 8b 个块的占用情况，因此一个块组最多可以有 8b 个块，如果整个分区有 s 个块，那么就可以有 s/(8b) 个块组。格式化时可以用 `-g` 参数指定一个块组有多少个块，但是通常不需要手动指定，`mke2fs` 工具会计算出最优的数值。
+- inode 位图（inode Bitmap）：和块位图类似，本身占一个块，其中每个 bit 表示一个 inode 是否空闲可用。
+- inode 表（inode Table）：我们知道，一个文件除了数据需要存储之外，一些描述信息也需要存储，例如文件类型（常规、目录、符号链接等），权限，文件大小，创建/修改/访问时间等，也就是 `ls -l` 命令看到的那些信息，这些信息存在 inode 中而不是数据块中。每个文件都有一个 inode，一个块组中的所有 inode 组成了 inode 表。inode 表占多少个块在格式化时就要决定并写入块组描述符中，`mke2fs` 格式化工具的默认策略是一个块组有多少个 8KB 就分配多少个 inode。由于数据块占了整个块组的绝大部分，也可以近似认为数据块有多少个 8KB 就分配多少个 inode，换句话说，如果平均每个文件的大小是 8KB，当分区存满的时候 inode 表会得到比较充分的利用，数据块也不浪费。如果这个分区存的都是很大的文件（比如电影），则数据块用完的时候 inode 会有一些浪费，如果这个分区存的都是很小的文件（比如源代码），则有可能数据块还没用完 inode 就已经用完了，数据块可能有很大的浪费。如果用户在格式化时能够对这个分区以后要存储的文件大小做一个预测，也可以用 `mke2fs` 的 `-i` 参数手动指定每多少个字节分配一个 inode。
+- 数据块（Data Block）：根据不同的文件类型有以下几种情况对于常规文件，文件的数据存储在数据块中。对于目录，该目录下的所有文件名和目录名存储在数据块中，注意文件名保存在它所在目录的数据块中，除文件名之外，`ls -l` 命令看到的其它信息都保存在该文件的 inode 中。注意这个概念：目录也是一种文件，是一种特殊类型的文件。对于符号链接，如果目标路径名较短则直接保存在 inode 中以便更快地查找，如果目标路径名较长则分配一个数据块来保存。设备文件、 FIFO 和 socket 等特殊文件没有数据块，设备文件的主设备号和次设备号保存在 inode 中。
+
+现在做几个小实验来理解这些概念。例如在 `home` 目录下 `ls -l`：
+
+```bash
+$ ls -l
+total 32
+drwxr-xr-x 114 akaedu akaedu 12288 2008-10-25 11:33 akaedu
+drwxr-xr-x 114 ftp    ftp     4096 2008-10-25 10:30 ftp
+drwx------   2 root   root   16384 2008-07-04 05:58 lost+found
+```
+
+为什么各目录的大小都是 4096 的整数倍？因为这个分区的块大小是 4096，目录的大小总是数据块的整数倍。为什么有的目录大有的目录小？因为目录的数据块保存着它下边所有文件和目录的名字，如果一个目录中的文件很多，一个块装不下这么多文件名，就可能分配更多的数据块给这个目录。再比如：
+
+```bash
+$ ls -l /dev
+...
+prw-r-----  1 syslog adm            0 2008-10-25 11:39 xconsole
+crw-rw-rw-  1 root   root      1,   5 2008-10-24 16:44 zero
+```
+
+`xconsole` 文件的类型是 `p`（表示 pipe），是一个 FIFO 文件，后面会讲到它其实是一块内核缓冲区的标识，不在磁盘上保存数据，因此没有数据块，文件大小是 0。`zero` 文件的类型是 `c`，表示字符设备文件，它代表内核中的一个设备驱动程序，也没有数据块，原本应该写文件大小的地方写了 `1, 5` 这两个数字，表示主设备号和次设备号，访问该文件时，内核根据设备号找到相应的驱动程序。再比如：
+
+```bash
+$ touch hello
+$ ln -s ./hello halo
+$ ls -l
+total 0
+lrwxrwxrwx 1 akaedu akaedu 7 2008-10-25 15:04 halo -> ./hello
+-rw-r--r-- 1 akaedu akaedu 0 2008-10-25 15:04 hello
+```
+
+文件 `hello` 是刚创建的，字节数为 0，符号链接文件 `halo` 指向 `hello`，字节数却是 7，为什么呢？其实 7 就是「./hello」这 7 个字符，符号链接文件就保存着这样一个路径名。再试试硬链接：
+
+```bash
+$ ln ./hello hello2
+$ ls -l
+total 0
+lrwxrwxrwx 1 akaedu akaedu 7 2008-10-25 15:08 halo -> ./hello
+-rw-r--r-- 2 akaedu akaedu 0 2008-10-25 15:04 hello
+-rw-r--r-- 2 akaedu akaedu 0 2008-10-25 15:04 hello2
+```
+
+`hello2` 和 `hello` 除了文件名不一样之外，别的属性都一模一样，并且 `hello` 的属性发生了变化，第二栏的数字原本是 1，现在变成 2 了。从根本上说，`hello` 和 `hello2` 是同一个文件在文件系统中的两个名字，`ls -l` 第二栏的数字是硬链接数，表示一个文件在文件系统中有几个名字（这些名字可以保存在不同目录的数据块中，或者说可以位于不同的路径下），硬链接数也保存在 inode 中。既然是同一个文件，inode 当然只有一个，所以用 `ls -l` 看它们的属性是一模一样的，因为都是从这个 inode 里读出来的。再研究一下目录的硬链接数：
+
+```bash
+$ mkdir a
+$ mkdir a/b
+$ ls -ld a
+drwxr-xr-x 3 akaedu akaedu 4096 2008-10-25 16:15 a
+$ ls -la a
+total 20
+drwxr-xr-x   3 akaedu akaedu  4096 2008-10-25 16:15 .
+drwxr-xr-x 115 akaedu akaedu 12288 2008-10-25 16:14 ..
+drwxr-xr-x   2 akaedu akaedu  4096 2008-10-25 16:15 b
+$ ls -la a/b
+total 8
+drwxr-xr-x 2 akaedu akaedu 4096 2008-10-25 16:15 .
+drwxr-xr-x 3 akaedu akaedu 4096 2008-10-25 16:15 ..
+```
+
+首先创建目录 `a`，然后在它下面创建子目录 `a/b`。目录 `a` 的硬链接数是 3，这 3 个名字分别是当前目录下的 `a`，`a` 目录下的 `.` 和 `b` 目录下的 `..`。目录 `b` 的硬链接数是 2，这两个名字分别是 `a` 目录下的 `b` 和 `b` 目录下的 `.`。注意，**目录的硬链接只能这种方式创建，用 ln 命令可以创建目录的符号链接，但不能创建目录的硬链接**。
+
+#### 3.2.2.2. 实例剖析
+
+如果要格式化一个分区来研究文件系统格式则必须有一个空闲的磁盘分区，为了方便实验，我们把一个文件当作分区来格式化，然后分析这个文件中的数据来印证上面所讲的要点。首先创建一个 1MB 的文件并清零：
+
+```bash
+$ dd if=/dev/zero of=fs count=256 bs=4K
+```
+
+我们知道 `cp` 命令可以把一个文件拷贝成另一个文件，而 `dd` 命令可以把一个文件的一部分拷贝成另一个文件。这个命令的作用是把 `/dev/zero` 文件开头的 1M（256×4K）字节拷贝成文件名为 `fs` 的文件。刚才我们看到 `/dev/zero` 是一个特殊的设备文件，它没有磁盘数据块，对它进行读操作传给设备号为 `1, 5` 的驱动程序。`/dev/zero` 这个文件可以看作是无穷大的，不管从哪里开始读，读出来的都是字节 0x00。因此这个命令拷贝了 1M 个 0x00 到 `fs` 文件。`if` 和 `of` 参数表示输入文件和输出文件，`count` 和 `bs` 参数表示拷贝多少次，每次拷多少字节。
+
+做好之后对文件 `fs` 进行格式化，也就是**把这个文件的数据块合起来看成一个1MB的磁盘分区，在这个分区上再划分出块组**。
+
+```bash
+$ mke2fs fs
+mke2fs 1.40.2 (12-Jul-2007)
+fs is not a block special device.
+Proceed anyway? (y,n) （输入 y 回车）
+Filesystem label=
+OS type: Linux
+Block size=1024 (log=0)
+Fragment size=1024 (log=0)
+128 inodes, 1024 blocks
+51 blocks (4.98%) reserved for the super user
+First data block=1
+Maximum filesystem blocks=1048576
+1 block group
+8192 blocks per group, 8192 fragments per group
+128 inodes per group
+
+Writing inode tables: done                            
+Writing superblocks and filesystem accounting information: done
+
+This filesystem will be automatically checked every 27 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.
+```
+
+格式化一个真正的分区应该指定块设备文件名，例如 `/dev/sda1`，而这个 `fs` 是常规文件而不是块设备文件，`mke2fs` 认为用户有可能是误操作了，所以给出提示，要求确认是否真的要格式化，输入 `y` 回车完成格式化。
+
+现在 `fs` 的大小仍然是 1MB，但不再是全 0 了，其中已经有了块组和描述信息。用 `dumpe2fs` 工具可以查看这个分区的超级块和块组描述符表中的信息：
+
+```bash
+$ dumpe2fs fs
+dumpe2fs 1.40.2 (12-Jul-2007)
+Filesystem volume name:   <none>
+Last mounted on:          <not available>
+Filesystem UUID:          8e1f3b7a-4d1f-41dc-8928-526e43b2fd74
+Filesystem magic number:  0xEF53
+Filesystem revision #:    1 (dynamic)
+Filesystem features:      resize_inode dir_index filetype sparse_super
+Filesystem flags:         signed directory hash 
+Default mount options:    (none)
+Filesystem state:         clean
+Errors behavior:          Continue
+Filesystem OS type:       Linux
+Inode count:              128
+Block count:              1024
+Reserved block count:     51
+Free blocks:              986
+Free inodes:              117
+First block:              1
+Block size:               1024
+Fragment size:            1024
+Reserved GDT blocks:      3
+Blocks per group:         8192
+Fragments per group:      8192
+Inodes per group:         128
+Inode blocks per group:   16
+Filesystem created:       Sun Dec 16 14:56:59 2007
+Last mount time:          n/a
+Last write time:          Sun Dec 16 14:56:59 2007
+Mount count:              0
+Maximum mount count:      30
+Last checked:             Sun Dec 16 14:56:59 2007
+Check interval:           15552000 (6 months)
+Next check after:         Fri Jun 13 14:56:59 2008
+Reserved blocks uid:      0 (user root)
+Reserved blocks gid:      0 (group root)
+First inode:              11
+Inode size:               128
+Default directory hash:   tea
+Directory Hash Seed:      6d0e58bd-b9db-41ae-92b3-4563a02a5981
+
+Group 0: (Blocks 1-1023)
+  Primary superblock at 1, Group descriptors at 2-2
+  Reserved GDT blocks at 3-5
+  Block bitmap at 6 (+5), Inode bitmap at 7 (+6)
+  Inode table at 8-23 (+7)
+  986 free blocks, 117 free inodes, 2 directories
+  Free blocks: 38-1023
+  Free inodes: 12-128
+
+128 inodes per group, 8 inodes per block, so: 16 blocks for inode table
+```
+
+根据上面讲过的知识简单计算一下，块大小是 1024 字节，1MB 的分区共有 1024 个块，第 0 个块是启动块，启动块之后才算 ext2 文件系统的开始，因此 Group 0 占据第 1 个到第 1023 个块，共 1023 个块。块位图占一个块，共有 1024×8=8192 个 bit，足够表示这 1023 个块了，因此只要一个块组就够了。默认是每 8KB 分配一个 inode，因此 1MB 的分区对应 128 个 inode，这些数据都和 `dumpe2fs` 的输出吻合。
+
+用常规文件制作而成的文件系统也可以像磁盘分区一样 `mount` 到某个目录，例如：
+
+```bash
+$ sudo mount -o loop fs /mnt
+$ cd /mnt/
+$ ls -la
+total 17
+drwxr-xr-x  3 akaedu akaedu  1024 2008-10-25 12:20 .
+drwxr-xr-x 21 root    root     4096 2008-08-18 08:54 ..
+drwx------  2 root    root    12288 2008-10-25 12:20 lost+found
+```
+
+`-o loop` 选项告诉 `mount` 这是一个常规文件而不是一个块设备文件。`mount` 会把它的数据块中的数据当作分区格式来解释。文件系统格式化之后在根目录下自动生成三个子目录：`.`，`..` 和 `lost+found`。其它子目录下的 `.` 表示当前目录，`..` 表示上一级目录，而根目录的 `.` 和 `..` 都表示根目录本身。`lost+found` 目录由 `e2fsck` 工具使用，如果在检查磁盘时发现错误，就把有错误的块挂在这个目录下，因为这些块不知道是谁的，找不到主，就放在这里「失物招领」了。
+
+现在可以在 `/mnt` 目录下添加删除文件，这些操作会自动保存到文件 `fs` 中。然后把这个分区 `umount` 下来，以确保所有的改动都保存到文件中了。
+
+```bash
+$ sudo umount /mnt
+```
+
+注意，下面的实验步骤是对新创建的文件系统做的，如果你在文件系统中添加删除过文件，跟着做下面的步骤时结果可能和我写的不太一样，不过也不影响理解。
+
+现在我们用二进制查看工具查看这个文件系统的所有字节，并且同 `dumpe2fs` 工具的输出信息相比较，就可以很好地理解文件系统的存储布局了。
+
+```bash
+$ od -tx1 -Ax fs
+000000 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+*
+000400 80 00 00 00 00 04 00 00 33 00 00 00 da 03 00 00
+000410 75 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00
+...
+```
+
+其中以**开头的行表示这一段数据全是零因此省略了。下面详细分析 `od` 输出的信息**。
+
+从 000000 开始的 1KB 是启动块，由于这不是一个真正的磁盘分区，启动块的内容全部为零。从 000400 到 0007ff 的 1KB 是超级块，对照着 `dumpe2fs` 的输出信息，详细分析如下：
+
+<p id="c29-3">图 29.3. 超级块</p>
+
+![超级块](./image/fs.sb.png)
+
+超级块中从 0004d0 到末尾的 204 个字节是填充字节，保留未用，上图未画出。注意，ext2 文件系统中各字段都是按小端存储的，如果把字节在文件中的位置看作地址，那么靠近文件开头的是低地址，存低字节。各字段的位置、长度和含义详见 *ULK*。
+
+从 000800 开始是块组描述符表，这个文件系统较小，只有一个块组描述符，对照着 `dumpe2fs` 的输出信息分析如下：
+
+```bash
+...
+Group 0: (Blocks 1-1023)
+  Primary superblock at 1, Group descriptors at 2-2
+  Reserved GDT blocks at 3-5
+  Block bitmap at 6 (+5), Inode bitmap at 7 (+6)
+  Inode table at 8-23 (+7)
+  986 free blocks, 117 free inodes, 2 directories
+  Free blocks: 38-1023
+  Free inodes: 12-128
+...
+```
+
+<p id="c29-4">图 29.4. 块组描述符</p>
+
+![块组描述符](./image/fs.gd.png)
+
+整个文件系统是 1MB，每个块是 1KB，应该有 1024 个块，除去启动块还有 1023 个块，分别编号为 1 - 1023，它们全都属于 Group  0。其中，Block 1 是超级块，接下来的块组描述符指出，块位图是 Block 6，因此中间的 Block 2 - 5 是块组描述符表，其中 Block  3 - 5 保留未用。块组描述符还指出，inode 位图是 Block 7，inode 表是从 Block 8 开始的，那么 inode 表到哪个块结束呢？由于超级块中指出每个块组有 128 个 inode，每个 inode 的大小是 128 字节，因此共占 16 个块，inode 表的范围是 Block  8 - 23。
+
+从 Block 24 开始就是数据块了。块组描述符中指出，空闲的数据块有 986 个，由于文件系统是新创建的，空闲块是连续的 Block 38 - 1023，用掉了前面的 Block 24 - 37。从块位图中可以看出，前 37 位（前 4 个字节加最后一个字节的低 5 位）都是 1，就表示 Block 1 - 37 已用：
+
+```bash
+001800 ff ff ff ff 1f 00 00 00 00 00 00 00 00 00 00 00
+001810 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+*
+001870 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80
+001880 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+*
+```
+
+在块位图中，Block 38 - 1023 对应的位都是 0（一直到 001870 那一行最后一个字节的低 7 位），接下来的位已经超出了文件系统的空间，不管是 0 还是 1 都没有意义。可见，块位图每个字节中的位应该按从低位到高位的顺序来看。以后随着文件系统的使用和添加删除文件，块位图中的 1 就变得不连续了。
+
+块组描述符指出，空闲的 inode 有 117 个，由于文件系统是新创建的，空闲的 inode 也是连续的，inode 编号从 1 到 128，空闲的 inode 编号从 12 到 128。从 inode 位图可以看出，前 11 位都是 1，表示前 11 个 inode 已用：
+
+```bash
+001c00 ff 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+001c10 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+*
+```
+
+以后随着文件系统的使用和添加删除文件，inode 位图中的 1 就变得不连续了。
+
+001c00 这一行的 128 位就表示了所有 inode，因此下面的行不管是 0 还是 1 都没有意义。已用的 11 个  ，前 10 个 inode 是被 ext2 文件系统保留的，其中第 2 个 inode 是根目录，第 11 个 inode 是 `lost+found` 目录，块组描述符也指出该组有两个目录，就是根目录和 `lost+found`。
+
+探索文件系统还有一个很有用的工具 `debugfs`，它提供一个命令行界面，可以对文件系统做各种操作，例如查看信息、恢复数据、修正文件系统中的错误。下面用 `debugfs` 打开 `fs` 文件，然后在提示符下输入 `help` 看看它都能做哪些事情：
+
+```bash
+$ debugfs fs
+debugfs 1.40.2 (12-Jul-2007)
+debugfs:  help
+```
+
+在 `debugfs` 的提示符下输入 `stat /` 命令，这时在新的一屏中显示根目录的 inode 信息：
+
+```bash
+Inode: 2   Type: directory    Mode:  0755   Flags: 0x0   Generation: 0
+User:  1000   Group:  1000   Size: 1024
+File ACL: 0    Directory ACL: 0
+Links: 3   Blockcount: 2
+Fragment:  Address: 0    Number: 0    Size: 0
+ctime: 0x4764cc3b -- Sun Dec 16 14:56:59 2007
+atime: 0x4764cc3b -- Sun Dec 16 14:56:59 2007
+mtime: 0x4764cc3b -- Sun Dec 16 14:56:59 2007
+BLOCKS:
+(0):24
+TOTAL: 1
+```
+
+按 q 退出这一屏，然后用 `quit` 命令退出 `debugfs`：
+
+```bash
+debugfs:  quit
+```
+
+把以上信息和 `od` 命令的输出对照起来分析：
+
+<p id="c29-5">图 29.5. 根目录的 inode</p>
+
+![根目录的 inode](./image/fs.rootinode.png)
+
+上图中的 `st_mode` 以八进制表示，包含了文件类型和文件权限，最高位的 4 表示文件类型为目录（各种文件类型的编码详见 stat(2)），低位的 755 表示权限。Size 是 1024，说明根目录现在只有一个数据块。Links 为 3 表示根目录有三个硬链接，分别是根目录下的 `.` 和 `..`，以及 `lost+found` 子目录下的 `..`。注意，虽然我们通常用 `/` 表示根目录，但是并没有名为 `/` 的硬链接，事实上，`/` 是路径分隔符，不能在文件名中出现。这里的 `Blockcount` 是以 512 字节为一个块来数的，并非格式化文件系统时所指定的块大小，磁盘的最小读写单位称为扇区（Sector），通常是 512 字节，所以 `Blockcount` 是磁盘的物理块数量，而非分区的逻辑块数量。根目录数据块的位置由上图中的 `Blocks[0]` 指出，也就是第 24 个块，它在文件系统中的位置是 24×0x400=0x6000，从 `od` 命令的输出中找到 006000 地址，它的格式是这样：
+
+<p id="c29-6">图 29.6. 根目录的数据块</p>
+
+![根目录的数据块](./image/fs.datablock.png)
+
+目录的数据块由许多不定长的记录组成，每条记录描述该目录下的一个文件，在上图中用框表示。第一条记录描述 inode 号为 2 的文件，也就是根目录本身，该记录的总长度为 12 字节，其中文件名的长度为 1 字节，文件类型为 2（见下表，注意此处的文件类型编码和 `st_mode` 不一致），文件名是 `.`。
+
+<p id="t29-1">表 29.1. 目录中的文件类型编码</p>
+
+| 编码 | 文件类型         |
+| ---- | ---------------- |
+| 0    | Unknown          |
+| 1    | Regular file     |
+| 2    | Directory        |
+| 3    | Character device |
+| 4    | Block device     |
+| 5    | Named pipe       |
+| 6    | Socket           |
+| 7    | Symbolic link    |
+
+第二条记录也是描述 inode 号为 2 的文件（根目录），该记录总长度为 12 字节，其中文件名的长度为 2 字节，文件类型为 2，文件名字符串是 `..`。第三条记录一直延续到该数据块的末尾，描述 inode 号为 11 的文件（`lost+found`目录），该记录的总长度为 1000 字节（和前面两条记录加起来是 1024 字节），文件类型为 2，文件名字符串是 `lost+found`，后面全是 0 字节。如果要在根目录下创建新的文件，可以把第三条记录截短，在原来的 0 字节处创建新的记录。如果该目录下的文件名太多，一个数据块不够用，则会分配新的数据块，块编号会填充到 inode 的 `Blocks[1]` 字段。
+
+`debugfs` 也提供了 `cd`、`ls` 等命令，不需要 `mount` 就可以查看这个文件系统中的目录，例如用 `ls` 查看根目录：
+
+```bash
+ 2  (12) .    2  (12) ..    11  (1000) lost+found
+```
+
+列出了 inode 号、记录长度和文件名，这些信息都是从根目录的数据块中读出来的。
+
+##### 习题
+
+1. 请读者仿照对根目录的分析，自己分析 `lost+found` 目录的 inode 和数据块的格式。
+2. `mount` 这个文件系统，在里面添加删除文件，然后 `umount` 下来，再次分析它的格式，和原来的结果比较一下看哪些字节发生了变化。
+
+#### 3.2.2.3. 数据块寻址
+
+如果一个文件有多个数据块，这些数据块很可能不是连续存放的，应该如何寻址到每个块呢？根据上面的分析，根目录的数据块是通过其inode中的索引项 `Blocks[0]` 找到的，事实上，这样的索引项一共有 15 个，从 `Blocks[0]` 到 `Blocks[14]`，每个索引项占 4 字节。前 12 个索引项都表示块编号，例如上面的例子中 `Blocks[0]` 字段保存着 24，就表示第 24 个块是该文件的数据块，如果块大小是 1KB，这样可以表示从 0 字节到 12KB 的文件。如果剩下的三个索引项 `Blocks[12]` 到 `Blocks[14]` 也是这么用的，就只能表示最大 15KB 的文件了，这是远远不够的，事实上，剩下的三个索引项都是间接索引。
+
+索引项 `Blocks[12]` 所指向的块并非数据块，而是称为间接寻址块（Indirect Block），其中存放的都是类似 `Blocks[0]` 这种索引项，再由索引项指向数据块。设块大小是 b，那么一个间接寻址块中可以存放 b/4 个索引项，指向 b/4 个数据块。所以如果把 `Blocks[0]` 到 `Blocks[12]` 都用上，最多可以表示 b/4+12 个数据块，对于块大小是 1K 的情况，最大可表示 268K 的文件。如下图所示，注意文件的数据块编号是从 0 开始的，`Blocks[0]` 指向第 0 个数据块，`Blocks[11]` 指向第 11 个数据块，`Blocks[12]` 所指向的间接寻址块的第一个索引项指向第 12 个数据块，依此类推。
+
+<p id="c29-7">图 29.7. 数据块的寻址</p>
+
+![数据块的寻址](./image/fs.datablockaddr.png)
+
+从上图可以看出，索引项 `Blocks[13]` 指向两级的间接寻址块，最多可表示 (b/4)2+b/4+12 个数据块，对于 1K 的块大小最大可表示 64.26MB 的文件。索引项 `Blocks[14]` 指向三级的间接寻址块，最多可表示 (b/4)3+(b/4)2+b/4+12 个数据块，对于 1K 的块大小最大可表示 16.06GB 的文件。
+
+可见，这种寻址方式对于访问不超过 12 个数据块的小文件是非常快的，访问文件中的任意数据只需要两次读盘操作，一次读 inode（也就是读索引项）一次读数据块。而访问大文件中的数据则需要最多五次读盘操作：inode、一级间接寻址块、二级间接寻址块、三级间接寻址块、数据块。实际上，磁盘中的 inode 和数据块往往已经被内核缓存了，读大文件的效率也不会太低。
+
+#### 3.2.2.4. 文件和目录操作的系统函数
+
+本节简要介绍一下文件和目录操作常用的系统函数，常用的文件操作命令如 `ls`、`cp`、`mv` 等也是基于这些函数实现的。本节的侧重点在于讲解这些函数的工作原理，而不是如何使用它们，理解了实现原理之后再看这些函数的用法就很简单了，请读者自己查阅 Man Page 了解其用法。
+
+`stat(2)` 函数读取文件的 inode，然后把 inode 中的各种文件属性填入一个 `struct stat` 结构体传出给调用者。`stat(1)` 命令是基于 `stat` 函数实现的。`stat` 需要根据传入的文件路径找到 inode，假设一个路径是 `/opt/file`，则查找的顺序是：
+
+1. 读出 inode 表中第 2 项，也就是根目录的 inode，从中找出根目录数据块的位置
+2. 从根目录的数据块中找出文件名为 `opt` 的记录，从记录中读出它的 inode 号
+3. 读出 `opt` 目录的 inode，从中找出它的数据块的位置
+4. 从 `opt` 目录的数据块中找出文件名为 `file` 的记录，从记录中读出它的 inode 号
+5. 读出 `file` 文件的 inode
+
+还有另外两个类似 `stat` 的函数：`fstat(2)` 函数传入一个已打开的文件描述符，传出 inode信息，`lstat(2)` 函数也是传入路径传出 inode 信息，但是和 `stat` 函数有一点不同，当文件是一个符号链接时，`stat(2)` 函数传出的是它所指向的目标文件的inode，而 `lstat` 函数传出的就是符号链接文件本身的 inode。
+
+`access(2)` 函数检查执行当前进程的用户是否有权限访问某个文件，传入文件路径和要执行的访问操作（读/写/执行），`access` 函数取出文件 inode 中的 `st_mode` 字段，比较一下访问权限，然后返回 0 表示允许访问，返回 -1 表示错误或不允许访问。
+
+`chmod(2)` 和 `fchmod(2)` 函数改变文件的访问权限，也就是修改 inode 中 的 `st_mode` 字段。这两个函数的区别类似于 `stat`/`fstat`。`chmod(1)` 命令是基于 `chmod` 函数实现的。
+
+`chown(2)`/`fchown(2)`/`lchown(2)` 改变文件的所有者和组，也就是修改 inode 中的 `User` 和 `Group` 字段，只有超级用户才能正确调用这几个函数，这几个函数之间的区别类似于 `stat`/`fstat`/`lstat`。`chown(1)` 命令是基于 `chown` 函数实现的。
+
+`utime(2)` 函数改变文件的访问时间和修改时间，也就是修改 inode 中的 `atime` 和 `mtime` 字段。`touch(1)` 命令是基于 `utime` 函数实现的。
+
+`truncate(2)` 和 `ftruncate(2)` 函数把文件截断到某个长度，如果新的长度比原来的长度短，则后面的数据被截掉了，如果新的长度比原来的长度长，则后面多出来的部分用 0 填充，这需要修改 inode 中的 `Blocks` 索引项以及块位图中相应的 bit。这两个函数的区别类似于 `stat`/`fstat`。
+
+`link(2)` 函数创建硬链接，其原理是在目录的数据块中添加一条新记录，其中的 inode 号字段和原文件相同。`symlink(2)` 函数创建一个符号链接，这需要创建一个新的 inode，其中 `st_mode` 字段的文件类型是符号链接，原文件的路径保存在 inode 中或者分配一个数据块来保存。`ln(1)` 命令是基于 `link` 和 `symlink` 函数实现的。
+
+`unlink(2)` 函数删除一个链接。如果是符号链接则释放这个符号链接的 inode 和数据块，清除 inode 位图和块位图中相应的位。如果是硬链接则从目录的数据块中清除一条文件名记录，如果当前文件的硬链接数已经是 1 了还要删除它，就同时释放它的 inode 和数据块，清除 inode 位图和块位图中相应的位，这样就真的删除文件了。`unlink(1)` 命令和 `rm(1)` 命令是基于 `unlink` 函数实现的。
+
+`rename(2)` 函数改变文件名，需要修改目录数据块中的文件名记录，如果原文件名和新文件名不在一个目录下则需要从原目录数据块中清除一条记录然后添加到新目录的数据块中。`mv(1)` 命令是基于 `rename` 函数实现的，因此在同一分区的不同目录中移动文件并不需要复制和删除文件的 inode 和数据块，只需要一个改名操作，即使要移动整个目录，这个目录下有很多子目录和文件也要随着一起移动，移动操作也只是对顶级目录的改名操作，很快就能完成。但是，如果在不同的分区之间移动文件就必须复制和删除 inode 和数据块，如果要移动整个目录，所有子目录和文件都要复制删除，这就很慢了。
+
+`readlink(2)` 函数读取一个符号链接所指向的目标路径，其原理是从符号链接的 inode 或数据块中读出保存的数据，这就是目标路径。
+
+`mkdir(2)` 函数创建新的目录，要做的操作是在它的父目录数据块中添加一条记录，然后分配新的 inode 和数据块，inode 的 `st_mode` 字段的文件类型是目录，在数据块中填两个记录，分别是 `.` 和 `..`，由于 `..` 表示父目录，因此父目录的硬链接数要加 1。`mkdir(1)` 命令是基于 `mkdir` 函数实现的。
+
+`rmdir(2)` 函数删除一个目录，这个目录必须是空的（只包含 `.` 和 `..`）才能删除，要做的操作是释放它的 inode 和数据块，清除 inode 位图和块位图中相应的位，清除父目录数据块中的记录，父目录的硬链接数要减 1。`rmdir(1)` 命令是基于 `rmdir` 函数实现的。
+
+`opendir(3)`/`readdir(3)`/`closedir(3)` 用于遍历目录数据块中的记录。`opendir` 打开一个目录，返回一个 `DIR *` 指针代表这个目录，它是一个类似 `FILE *` 指针的句柄，`closedir` 用于关闭这个句柄，把 `DIR *` 指针传给 `readdir` 读取目录数据块中的记录，每次返回一个指向 `struct dirent` 的指针，反复读就可以遍历所有记录，所有记录遍历完之后 `readdir` 返回 `NULL`。结构体 `struct dirent` 的定义如下：
+
+```bash
+struct dirent {
+	ino_t          d_ino;       /* inode number */
+	off_t          d_off;       /* offset to the next dirent */
+	unsigned short d_reclen;    /* length of this record */
+	unsigned char  d_type;      /* type of file */
+	char           d_name[256]; /* filename */
+};
+```
+
+这些字段和[图 29.6「根目录的数据块」](#e29-6)基本一致。这里的文件名 `d_name` 被库函数处理过，已经在结尾加了 '\0'，而[图 29.6「根目录的数据块」](#e29-6)中的文件名字段不保证是以 '\0' 结尾的，需要根据前面的文件名长度字段确定文件名到哪里结束。
+
+下面这个例子出自 *K&R*，作用是递归地打印出一个目录下的所有子目录和文件，类似 `ls -R`。
+
+<p id="e29-1">例 29.1. 递归列出目录中的文件列表</p>
+
+```c
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_PATH 1024
+
+/* dirwalk:  apply fcn to all files in dir */
+void dirwalk(char *dir, void (*fcn)(char *))
+{
+	char name[MAX_PATH];
+	struct dirent *dp;
+	DIR *dfd;
+
+	if ((dfd = opendir(dir)) == NULL) {
+		fprintf(stderr, "dirwalk: can't open %s\n", dir);
+		return;
+	}
+	while ((dp = readdir(dfd)) != NULL) {
+		if (strcmp(dp->d_name, ".") == 0
+		    || strcmp(dp->d_name, "..") == 0)
+			continue;    /* skip self and parent */
+		if (strlen(dir)+strlen(dp->d_name)+2 > sizeof(name))
+			fprintf(stderr, "dirwalk: name %s %s too long\n",
+				dir, dp->d_name);
+		else {
+			sprintf(name, "%s/%s", dir, dp->d_name);
+			(*fcn)(name);
+		}
+	}
+	closedir(dfd);
+}
+
+/* fsize:  print the size and name of file "name" */
+void fsize(char *name)
+{
+	struct stat stbuf;
+
+	if (stat(name, &stbuf) == -1) {
+		fprintf(stderr, "fsize: can't access %s\n", name);
+		return;
+	}
+	if ((stbuf.st_mode & S_IFMT) == S_IFDIR)
+		dirwalk(name, fsize);
+	printf("%8ld %s\n", stbuf.st_size, name);
+}
+
+int main(int argc, char **argv)
+{
+	if (argc == 1)  /* default: current directory */
+		fsize(".");
+	else
+		while (--argc > 0)
+			fsize(*++argv);
+	return 0;
+}
+```
+
+然而这个程序还是不如 `ls -R` 健壮，它有可能死循环，思考一下什么情况会导致死循环。
+
+### 3.2.3. VFS
+
+Linux 支持各种各样的文件系统格式，如 ext2、ext3、reiserfs、FAT、NTFS、iso9660 等等，不同的磁盘分区、光盘或其它存储设备都有不同的文件系统格式，然而这些文件系统都可以 `mount` 到某个目录下，使我们看到一个统一的目录树，各种文件系统上的目录和文件我们用 `ls` 命令看起来是一样的，读写操作用起来也都是一样的，这是怎么做到的呢？Linux 内核在各种不同的文件系统格式之上做了一个抽象层，使得文件、目录、读写访问等概念成为抽象层的概念，因此各种文件系统看起来用起来都一样，这个抽象层称为虚拟文件系统（VFS，Virtual  Filesystem）。上一节我们介绍了一种典型的文件系统在磁盘上的存储布局，这一节我们介绍运行时文件系统在内核中的表示。
+
+#### 3.2.3.1. 内核数据结构
+
+Linux内核的VFS子系统可以图示如下：
+
+<p id="c29-8">图 29.8. VFS</p>
+
+![VFS](./image/fs.vfs.png)
+
+在[第 28 章「文件与 I/O」](3-Linux-系统编程/ch28-文件与-IO)中讲过，每个进程在 PCB（Process Control Block）中都保存着一份文件描述符表，文件描述符就是这个表的索引，每个表项都有一个指向已打开文件的指针，现在我们明确一下：已打开的文件在内核中用 `file` 结构体表示，文件描述符表中的指针指向 `file` 结构体。
+
+在 `file` 结构体中维护 File Status Flag（`file` 结构体的成员 `f_flags`）和当前读写位置（`file` 结构体的成员 `f_pos`）。在上图中，进程 1 和进程 2 都打开同一文件，但是对应不同的 `file` 结构体，因此可以有不同的 File Status Flag 和读写位置。`file` 结构体中比较重要的成员还有 `f_count`，表示引用计数（Reference Count），后面我们会讲到，`dup`、`fork`等系统调用会导致多个文件描述符指向同一个 `file` 结构体，例如有 `fd1` 和 `fd2` 都引用同一个 `file` 结构体，那么它的引用计数就是 2，当 `close(fd1)` 时并不会释放 `file` 结构体，而只是把引用计数减到 1，如果再 `close(fd2)`，引用计数就会减到0同时释放 `file` 结构体，这才真的关闭了文件。
+
+每个 `file` 结构体都指向一个 `file_operations` 结构体，这个结构体的成员都是函数指针，指向实现各种文件操作的内核函数。比如在用户程序中 `read` 一个文件描述符，`read` 通过系统调用进入内核，然后找到这个文件描述符所指向的 `file` 结构体，找到 `file` 结构体所指向的 `file_operations` 结构体，调用它的 `read` 成员所指向的内核函数以完成用户请求。在用户程序中调用 `lseek`、`read`、`write`、`ioctl`、`open` 等函数，最终都由内核调用 `file_operations` 的各成员所指向的内核函数完成用户请求。`file_operations` 结构体中的 `release` 成员用于完成用户程序的 `close` 请求，之所以叫 `release` 而不叫 `close` 是因为它不一定真的关闭文件，而是减少引用计数，只有引用计数减到 0 才关闭文件。对于同一个文件系统上打开的常规文件来说，`read`、`write` 等文件操作的步骤和方法应该是一样的，调用的函数应该是相同的，所以图中的三个打开文件的 `file` 结构体指向同一个 `file_operations` 结构体。如果打开一个字符设备文件，那么它的 `read`、`write` 操作肯定和常规文件不一样，不是读写磁盘的数据块而是读写硬件设备，所以 `file` 结构体应该指向不同的 `file_operations` 结构体，其中的各种文件操作函数由该设备的驱动程序实现。
+
+每个 `file` 结构体都有一个指向 `dentry` 结构体的指针，「dentry」是 directory entry（目录项）的缩写。我们传给 `open`、`stat` 等函数的参数的是一个路径，例如 `/home/akaedu/a`，需要根据路径找到文件的 inode。为了减少读盘次数，内核缓存了目录的树状结构，称为 dentry cache，其中每个节点是一个 `dentry` 结构体，只要沿着路径各部分的 dentry 搜索即可，从根目录 `/` 找到 `home` 目录，然后找到 `akaedu` 目录，然后找到文件 `a`。dentry cache 只保存最近访问过的目录项，如果要找的目录项在 cache 中没有，就要从磁盘读到内存中。
+
+每个 `dentry` 结构体都有一个指针指向 `inode` 结构体。`inode` 结构体保存着从磁盘 inode 读上来的信息。在上图的例子中，有两个 dentry，分别表示 `/home/akaedu/a` 和 `/home/akaedu/b`，它们都指向同一个 inode，说明这两个文件互为硬链接。`inode` 结构体中保存着从磁盘分区的 inode 读上来信息，例如所有者、文件大小、文件类型和权限位等。每个 `inode` 结构体都有一个指向 `inode_operations` 结构体的指针，后者也是一组函数指针指向一些完成文件目录操作的内核函数。和 `file_operations` 不同，`inode_operations` 所指向的不是针对某一个文件进行操作的函数，而是影响文件和目录布局的函数，例如添加删除文件和目录、跟踪符号链接等等，属于同一文件系统的各 `inode` 结构体可以指向同一个 `inode_operations` 结构体。
+
+`inode` 结构体有一个指向 `super_block` 结构体的指针。`super_block` 结构体保存着从磁盘分区的超级块读上来的信息，例如文件系统类型、块大小等。`super_block` 结构体的 `s_root` 成员是一个指向 `dentry` 的指针，表示这个文件系统的根目录被 `mount` 到哪里，在上图的例子中这个分区被 `mount` 到 `/home` 目录下。
+
+`file`、`dentry`、`inode`、`super_block` 这几个结构体组成了 VFS 的核心概念。对于 ext2 文件系统来说，在磁盘存储布局上也有 inode 和超级块的概念，所以很容易和 VFS 中的概念建立对应关系。而另外一些文件系统格式来自非 UNIX 系统（例如 Windows 的 FAT32、NTFS），可能没有 inode 或超级块这样的概念，但为了能 `mount` 到 Linux 系统，也只好在驱动程序中硬凑一下，在 Linux 下看 FAT32 和 NTFS 分区会发现权限位是错的，所有文件都是 `rwxrwxrwx`，因为它们本来就没有 inode 和权限位的概念，这是硬凑出来的。
+
+#### 3.2.3.2. dup 和 dup2 函数
+
+`dup` 和 `dup2` 都可用来复制一个现存的文件描述符，使两个文件描述符指向同一个 `file` 结构体。如果两个文件描述符指向同一个 `file` 结构体，File Status Flag 和读写位置只保存一份在 `file` 结构体中，并且 `file` 结构体的引用计数是 2。如果两次 `open` 同一文件得到两个文件描述符，则每个描述符对应一个不同的 `file` 结构体，可以有不同的 File Status Flag 和读写位置。请注意区分这两种情况。
+
+```c
+#include <unistd.h>
+
+int dup(int oldfd);
+int dup2(int oldfd, int newfd);
+```
+
+如果调用成功，这两个函数都返回新分配或指定的文件描述符，如果出错则返回 -1。`dup` 返回的新文件描述符一定该进程未使用的最小文件描述符，这一点和 `open` 类似。`dup2` 可以用 `newfd` 参数指定新描述符的数值。如果 `newfd` 当前已经打开，则先将其关闭再做 `dup2` 操作，如果 `oldfd` 等于 `newfd`，则 `dup2` 直接返回 `newfd` 而不用先关闭 `newfd` 再复制。
+
+下面这个例子演示了 `dup` 和 `dup2` 函数的用法，请结合后面的连环画理解程序的执行过程。
+
+<p id="e29-2">例 29.2. dup 和 dup2示例程序</p>
+
+```c
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(void)
+{
+	int fd, save_fd;
+	char msg[] = "This is a test\n";
+
+	fd = open("somefile", O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
+	if(fd<0) {
+		perror("open");
+		exit(1);
+	}
+	save_fd = dup(STDOUT_FILENO);
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+	write(STDOUT_FILENO, msg, strlen(msg));
+	dup2(save_fd, STDOUT_FILENO);
+	write(STDOUT_FILENO, msg, strlen(msg));
+	close(save_fd);
+	return 0;
+}
+```
+
+<p id="c29-9">图 29.9. dup/dup2 示例程序</p>
+
+![dup/dup2 示例程序](./image/fs.dup.png)
+
+重点解释两个地方：
+
+- 第 3 幅图，要执行 `dup2(fd, 1);`，文件描述符 1 原本指向 `tty`，现在要指向新的文件 `somefile`，就把原来的关闭了，但是 `tty` 这个文件原本有两个引用计数，还有文件描述符 `save_fd` 也指向它，所以只是将引用计数减 1，并不真的关闭文件。
+- 第 5 幅图，要执行 `dup2(save_fd, 1);`，文件描述符 1 原本指向 `somefile`，现在要指向新的文件 `tty`，就把原来的关闭了，`somefile` 原本只有一个引用计数，所以这次减到 0，是真的关闭了。
 
 ## 3.3. 进程
 
+### 3.3.1. 引言
+
+我们知道，每个进程在内核中都有一个进程控制块（PCB）来维护进程相关的信息，Linux 内核的进程控制块是 `task_struct` 结构体。现在我们全面了解一下其中都有哪些信息。
+
+- 进程 id。系统中每个进程有唯一的 id，在 C 语言中用 `pid_t` 类型表示，其实就是一个非负整数。
+- 进程的状态，有运行、挂起、停止、僵尸等状态。
+- 进程切换时需要保存和恢复的一些 CPU 寄存器。
+- 描述虚拟地址空间的信息。
+- 描述控制终端的信息。
+- 当前工作目录（Current Working Directory）。
+- `umask` 掩码。
+- 文件描述符表，包含很多指向 `file` 结构体的指针。
+- 和信号相关的信息。
+- 用户 id 和组 id。
+- 控制终端、Session 和进程组。
+- 进程可以使用的资源上限（Resource Limit）。
+
+目前读者并不需要理解这些信息的细节，在随后几章中讲到某一项时会再次提醒读者它是保存在 PCB 中的。
+
+`fork` 和 `exec` 是本章要介绍的两个重要的系统调用。`fork` 的作用是根据一个现有的进程复制出一个新进程，原来的进程称为父进程（Parent Process），新进程称为子进程（Child Process）。系统中同时运行着很多进程，这些进程都是从最初只有一个进程开始一个一个复制出来的。在 Shell 下输入命令可以运行一个程序，是因为 Shell 进程在读取用户输入的命令之后会调用 `fork` 复制出一个新的 Shell 进程，然后新的 Shell 进程调用 `exec` 执行新的程序。
+
+我们知道一个程序可以多次加载到内存，成为同时运行的多个进程，例如可以同时开多个终端窗口运行 `/bin/bash`，另一方面，一个进程在调用 `exec` 前后也可以分别执行两个不同的程序，例如在 Shell 提示符下输入命令 `ls`，首先 `fork` 创建子进程，这时子进程仍在执行 `/bin/bash` 程序，然后子进程调用 `exec` 执行新的程序 `/bin/ls`，如下图所示。
+
+<p id="c30-1">图 30.1. fork/exec</p>
+
+![fork/exec](./image/process.forkexec.png)
+
+在[第 28 章「文件与 I/O」第 3 节「open/close」](3-Linux-系统编程/ch28-文件与-IO#_3-openclose)中我们做过一个实验：用 `umask` 命令设置 Shell 进程的 `umask` 掩码，然后运行程序 `a.out`，结果 `a.out` 进程的 `umask` 掩码也和 Shell 进程一样。现在可以解释了，因为 `a.out` 进程是 Shell 进程的子进程，子进程的 PCB 是根据父进程复制而来的，所以其中的 `umask` 掩码也和父进程一样。同样道理，子进程的当前工作目录也和父进程一样，所以我们可以用 `cd` 命令改变 Shell 进程的当前目录，然后用 `ls` 命令列出那个目录下的文件，`ls` 进程其实是在列自己的当前目录，而不是 Shell 进程的当前目录，只不过 `ls` 进程的当前目录正好和 Shell 进程相同。有一个例外，子进程 PCB 中的进程 id 和父进程是不同的。
+
+### 3.3.2. 环境变量
+
+先前讲过，`exec` 系统调用执行新程序时会把命令行参数和环境变量表传递给 `main` 函数，它们在整个进程地址空间中的位置如下图所示。
+
+<p id="c30-2">图 30.2. 进程地址空间</p>
+
+![进程地址空间](./image/process.addressspace.png)
+
+和命令行参数 `argv` 类似，环境变量表也是一组字符串，如下图所示。
+
+<p id="c30-3">图 30.3. 环境变量</p>
+
+![环境变量](./image/process.environ.png)
+
+`libc` 中定义的全局变量 `environ` 指向环境变量表，`environ` 没有包含在任何头文件中，所以在使用时要用 `extern` 声明。例如：
+
+<p id="e30-1">例 30.1. 打印环境变量</p>
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+	extern char **environ;
+	int i;
+	for(i=0; environ[i]!=NULL; i++)
+		printf("%s\n", environ[i]);
+	return 0;
+}
+```
+
+执行结果为
+
+```bash
+$ ./a.out 
+SSH_AGENT_PID=5717
+SHELL=/bin/bash
+DESKTOP_STARTUP_ID=
+TERM=xterm
+...
+```
+
+由于父进程在调用 `fork` 创建子进程时会把自己的环境变量表也复制给子进程，所以 `a.out` 打印的环境变量和 Shell 进程的环境变量是相同的。
+
+按照惯例，环境变量字符串都是 `name=value` 这样的形式，大多数 `name` 由大写字母加下划线组成，一般把 `name` 的部分叫做环境变量，`value` 的部分则是环境变量的值。环境变量定义了进程的运行环境，一些比较重要的环境变量的含义如下：
+
+- PATH：可执行文件的搜索路径。`ls` 命令也是一个程序，执行它不需要提供完整的路径名 `/bin/ls`，然而通常我们执行当前目录下的程序 `a.out` 却需要提供完整的路径名 `./a.out`，这是因为 `PATH` 环境变量的值里面包含了 `ls` 命令所在的目录 `/bin`，却不包含 `a.out` 所在的目录。`PATH` 环境变量的值可以包含多个目录，用 `:` 号隔开。在 Shell 中用 `echo` 命令可以查看这个环境变量的值：
+	
+	```bash
+	$ echo $PATH
+	/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+	```
+- SHELL：当前 Shell，它的值通常是 `/bin/bash`。
+- TERM：当前终端类型，在图形界面终端下它的值通常是 `xterm`，终端类型决定了一些程序的输出显示方式，比如图形界面终端可以显示汉字，而字符终端一般不行。
+- LANG：语言和 locale，决定了字符编码以及时间、货币等信息的显示格式。
+- HOME：当前用户主目录的路径，很多程序需要在主目录下保存配置文件，使得每个用户在运行该程序时都有自己的一套配置。
+
+用 `environ` 指针可以查看所有环境变量字符串，但是不够方便，如果给出 `name` 要在环境变量表中查找它对应的 `value`，可以用 `getenv` 函数。
+
+```c
+#include <stdlib.h>
+char *getenv(const char *name);
+```
+
+`getenv` 的返回值是指向 `value` 的指针，若未找到则为 `NULL`。
+
+修改环境变量可以用以下函数
+
+```c
+#include <stdlib.h>
+
+int setenv(const char *name, const char *value, int rewrite);
+void unsetenv(const char *name);
+```
+
+`putenv` 和 `setenv` 函数若成功则返回为 0，若出错则返回非 0。
+
+`setenv` 将环境变量 `name` 的值设置为 `value`。如果已存在环境变量 `name`，那么
+
+- 若 rewrite 非 0，则覆盖原来的定义；
+- 若 rewrite 为 0，则不覆盖原来的定义，也不返回错误。
+
+`unsetenv` 删除 `name` 的定义。即使 `name` 没有定义也不返回错误。
+
+<p id="e30-2">例 30.2. 修改环境变量</p>
+
+```bash
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(void)
+{
+	printf("PATH=%s\n", getenv("PATH"));
+	setenv("PATH", "hello", 1);
+	printf("PATH=%s\n", getenv("PATH"));
+	return 0;
+}
+$ ./a.out 
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+PATH=hello
+$ echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+```
+
+可以看出，Shell 进程的环境变量 `PATH` 传给了 `a.out`，然后 `a.out` 修改了 `PATH` 的值，在 `a.out` 中能打印出修改后的值，但在 Shell 进程中 `PATH` 的值没变。父进程在创建子进程时会复制一份环境变量给子进程，但此后二者的环境变量互不影响。
+
+### 3.3.3. 进程控制
+
+#### 3.3.3.1. fork 函数
+
+```c
+#include <sys/types.h>
+#include <unistd.h>
+
+pid_t fork(void);
+```
+
+`fork` 调用失败则返回 -1，调用成功的返回值见下面的解释。我们通过一个例子来理解 `fork` 是怎样创建新进程的。
+
+<p id="e30-3">例 30.3. fork</p>
+
+```c
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	pid_t pid;
+	char *message;
+	int n;
+	pid = fork();
+	if (pid < 0) {
+		perror("fork failed");
+		exit(1);
+	}
+	if (pid == 0) {
+		message = "This is the child\n";
+		n = 6;
+	} else {
+		message = "This is the parent\n";
+		n = 3;
+	}
+	for(; n > 0; n--) {
+		printf(message);
+		sleep(1);
+	}
+	return 0;
+}
+$ ./a.out 
+This is the child
+This is the parent
+This is the child
+This is the parent
+This is the child
+This is the parent
+This is the child
+$ This is the child
+This is the child
+```
+
+这个程序的运行过程如下图所示。
+
+<p id="c30-4">图 30.4. fork</p>
+
+![fork](./image/process.fork.png)
+
+1. 父进程初始化。
+2. 父进程调用 `fork`，这是一个系统调用，因此进入内核。
+3. 内核根据父进程复制出一个子进程，父进程和子进程的 PCB 信息相同，用户态代码和数据也相同。因此，**子进程现在的状态看起来和父进程一样，做完了初始化，刚调用了 fork 进入内核，还没有从内核返回**。
+4. 现在有两个一模一样的进程看起来都调用了 `fork` 进入内核等待从内核返回（实际上 `fork` 只调用了一次），此外系统中还有很多别的进程也等待从内核返回。是父进程先返回还是子进程先返回，还是这两个进程都等待，先去调度执行别的进程，这都不一定，取决于内核的调度算法。
+5. 如果某个时刻父进程被调度执行了，从内核返回后就从 `fork` 函数返回，保存在变量 `pid` 中的返回值是子进程的 id，是一个大于 0 的整数，因此执下面的 `else` 分支，然后执行 `for` 循环，打印 `"This is the parent\n"` 三次之后终止。
+6. 如果某个时刻子进程被调度执行了，从内核返回后就从 `fork` 函数返回，保存在变量 `pid` 中的返回值是 0，因此执行下面的 `if (pid == 0)` 分支，然后执行 `for` 循环，打印 `"This is the child\n"` 六次之后终止。`fork` 调用把父进程的数据复制一份给子进程，但此后二者互不影响，在这个例子中，`fork` 调用之后父进程和子进程的变量 `message` 和 `n` 被赋予不同的值，互不影响。
+7. 父进程每打印一条消息就睡眠 1 秒，这时内核调度别的进程执行，在 1 秒这么长的间隙里（对于计算机来说 1 秒很长了）子进程很有可能被调度到。同样地，子进程每打印一条消息就睡眠 1 秒，在这 1 秒期间父进程也很有可能被调度到。所以程序运行的结果基本上是父子进程交替打印，但这也不是一定的，取决于系统中其它进程的运行情况和内核的调度算法，如果系统中其它进程非常繁忙则有可能观察到不同的结果。另外，读者也可以把 `sleep(1);` 去掉看程序的运行结果如何。
+8. 这个程序是在 Shell 下运行的，因此 Shell 进程是父进程的父进程。父进程运行时 Shell 进程处于等待状态（[本章第 3.3 节 「wait 和 waitpid 函数」](#_33-wait-和-waitpid-函数)会讲到这种等待是怎么实现的），当父进程终止时 Shell 进程认为命令执行结束了，于是打印 Shell 提示符，而事实上子进程这时还没结束，所以子进程的消息打印到了 Shell 提示符后面。最后光标停在 `This is the child` 的下一行，这时用户仍然可以敲命令，即使命令不是紧跟在提示符后面，Shell 也能正确读取。
+
+`fork` 函数的特点概括起来就是「调用一次，返回两次」，在父进程中调用一次，在父进程和子进程中各返回一次。从上图可以看出，一开始是一个控制流程，调用 `fork` 之后发生了分叉，变成两个控制流程，这也就是「fork」（分叉）这个名字的由来了。子进程中 `fork` 的返回值是 0，而父进程中 `fork` 的返回值则是子进程的 id（从根本上说 `fork` 是从内核返回的，内核自有办法让父进程和子进程返回不同的值），这样当 `fork` 函数返回后，程序员可以根据返回值的不同让父进程和子进程执行不同的代码。
+
+`fork` 的返回值这样规定是有道理的。`fork` 在子进程中返回 0，子进程仍可以调用 `getpid` 函数得到自己的进程 id，也可以调用 `getppid` 函数得到父进程的 id。在父进程中用 `getpid` 可以得到自己的进程 id，然而要想得到子进程的 id，只有将 `fork` 的返回值记录下来，别无它法。
+
+`fork` 的另一个特性是所有由父进程打开的描述符都被复制到子进程中。父、子进程中相同编号的文件描述符在内核中指向同一个 `file` 结构体，也就是说，`file` 结构体的引用计数要增加。
+
+用 `gdb` 调试多进程的程序会遇到困难，`gdb` 只能跟踪一个进程（默认是跟踪父进程），而不能同时跟踪多个进程，但可以设置 `gdb` 在 `fork` 之后跟踪父进程还是子进程。以上面的程序为例：
+
+```bash
+$ gcc main.c -g
+$ gdb a.out
+GNU gdb 6.8-debian
+Copyright (C) 2008 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i486-linux-gnu"...
+(gdb) l
+2	#include <unistd.h>
+3	#include <stdio.h>
+4	#include <stdlib.h>
+5	
+6	int main(void)
+7	{
+8		pid_t pid;
+9		char *message;
+10		int n;
+11		pid = fork();
+(gdb) 
+12		if(pid<0) {
+13			perror("fork failed");
+14			exit(1);
+15		}
+16		if(pid==0) {
+17			message = "This is the child\n";
+18			n = 6;
+19		} else {
+20			message = "This is the parent\n";
+21			n = 3;
+(gdb) b 17
+Breakpoint 1 at 0x8048481: file main.c, line 17.
+(gdb) set follow-fork-mode child
+(gdb) r
+Starting program: /home/akaedu/a.out 
+This is the parent
+[Switching to process 30725]
+
+Breakpoint 1, main () at main.c:17
+17			message = "This is the child\n";
+(gdb) This is the parent
+This is the parent
+```
+
+`set follow-fork-mode child` 命令设置 `gdb` 在 `fork` 之后跟踪子进程（`set follow-fork-mode parent` 则是跟踪父进程），然后用 `run` 命令，看到的现象是父进程一直在运行，在 `(gdb)` 提示符下打印消息，而子进程被先前设的断点打断了。
+
+#### 3.3.3.2. exec 函数
+
+用 `fork` 创建子进程后执行的是和父进程相同的程序（但有可能执行不同的代码分支），子进程往往要调用一种 `exec` 函数以执行另一个程序。当进程调用一种 `exec` 函数时，该进程的用户空间代码和数据完全被新程序替换，从新程序的启动例程开始执行。调用 `exec` 并不创建新进程，所以调用 `exec` 前后该进程的 id 并未改变。
+
+其实有六种以 `exec` 开头的函数，统称 `exec `函数：
+
+```c
+#include <unistd.h>
+
+int execl(const char *path, const char *arg, ...);
+int execlp(const char *file, const char *arg, ...);
+int execle(const char *path, const char *arg, ..., char *const envp[]);
+int execv(const char *path, char *const argv[]);
+int execvp(const char *file, char *const argv[]);
+int execve(const char *path, char *const argv[], char *const envp[]);
+```
+
+这些函数如果调用成功则加载新的程序从启动代码开始执行，不再返回，如果调用出错则返回 -1，所以 `exec` 函数只有出错的返回值而没有成功的返回值。
+
+这些函数原型看起来很容易混，但只要掌握了规律就很好记。不带字母 p（表示 path）的 `exec` 函数第一个参数必须是程序的相对路径或绝对路径，例如 `"/bin/ls"` 或 `"./a.out"`，而不能是 `"ls"` 或 `"a.out"`。对于带字母 p 的函数：
+
+- 如果参数中包含 `/`，则将其视为路径名。
+- 否则视为不带路径的程序名，在 `PATH` 环境变量的目录列表中搜索这个程序。
+
+带有字母 `l`（表示 list）的 `exec` 函数要求将新程序的每个命令行参数都当作一个参数传给它，命令行参数的个数是可变的，因此函数原型中有 `...`，`...` 中的最后一个可变参数应该是 `NULL`，起 sentinel 的作用。
+
+对于带有字母 `v`（表示 vector）的函数，则应该先构造一个指向各参数的指针数组，然后将该数组的首地址当作参数传给它，数组中的最后一个指针也应该是 `NULL`，就像 `main` 函数的 `argv` 参数或者环境变量表一样。
+
+对于以 `e`（表示 environment）结尾的 `exec` 函数，可以把一份新的环境变量表传给它，其他 `exec` 函数仍使用当前的环境变量表执行新程序。
+
+`exec` 调用举例如下：
+
+```bash
+char *const ps_argv[] ={"ps", "-o", "pid,ppid,pgrp,session,tpgid,comm", NULL};
+char *const ps_envp[] ={"PATH=/bin:/usr/bin", "TERM=console", NULL};
+execl("/bin/ps", "ps", "-o", "pid,ppid,pgrp,session,tpgid,comm", NULL);
+execv("/bin/ps", ps_argv);
+execle("/bin/ps", "ps", "-o", "pid,ppid,pgrp,session,tpgid,comm", NULL, ps_envp);
+execve("/bin/ps", ps_argv, ps_envp);
+execlp("ps", "ps", "-o", "pid,ppid,pgrp,session,tpgid,comm", NULL);
+execvp("ps", ps_argv);
+```
+
+事实上，只有 `execve` 是真正的系统调用，其它五个函数最终都调用 `execve`，所以 `execve` 在 man 手册第 2 节，其它函数在 man 手册第 3 节。这些函数之间的关系如下图所示。
+
+<p id="c30-5">图 30.5. exec 函数族</p>
+
+![exec 函数族](./image/process.exec.png)
+
+一个完整的例子：
+
+```c
+#include <unistd.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	execlp("ps", "ps", "-o", "pid,ppid,pgrp,session,tpgid,comm", NULL);
+	perror("exec ps");
+	exit(1);
+}
+```
+
+执行此程序则得到：
+
+```bash
+$ ./a.out 
+  PID  PPID  PGRP  SESS TPGID COMMAND
+ 6614  6608  6614  6614  7199 bash
+ 7199  6614  7199  6614  7199 ps
+```
+
+由于 `exec` 函数只有错误返回值，只要返回了一定是出错了，所以不需要判断它的返回值，直接在后面调用 `perror` 即可。注意在调用 `execlp` 时传了两个 `"ps"` 参数，第一个 `"ps"` 是程序名，`execlp` 函数要在 `PATH` 环境变量中找到这个程序并执行它，而第二个 `"ps"` 是第一个命令行参数，`execlp` 函数并不关心它的值，只是简单地把它传给 `ps` 程序，`ps` 程序可以通过 `main` 函数的 `argv[0]` 取到这个参数。
+
+调用 `exec` 后，原来打开的文件描述符仍然是打开的<sup>[37]</sup>。利用这一点可以实现 I/O 重定向。先看一个简单的例子，把标准输入转成大写然后打印到标准输出：
+
+> 
+<sup>[37]</sup> 事实上，在每个文件描述符中有一个 close-on-exec 标志，如果该标志为 1，则调用 `exec` 时关闭这个文件描述符。该标志默认为 0，可以用 `fcntl` 函数将它置 1，本书不讨论该标志为 1 的情况。
+
+<p id="e30-4">例 30.4. upper</p>
+
+```c
+/* upper.c */
+#include <stdio.h>
+
+int main(void)
+{
+	int ch;
+	while((ch = getchar()) != EOF) {
+		putchar(toupper(ch));
+	}
+	return 0;
+}
+```
+
+运行结果如下：
+
+```bash
+$ ./upper
+hello THERE
+HELLO THERE
+（按 Ctrl-D 表示 EOF）
+$
+```
+
+使用 Shell 重定向：
+
+```bash
+$ cat file.txt
+this is the file, file.txt, it is all lower case.
+$ ./upper < file.txt
+THIS IS THE FILE, FILE.TXT, IT IS ALL LOWER CASE.
+```
+
+如果希望把待转换的文件名放在命令行参数中，而不是借助于输入重定向，我们可以利用 `upper` 程序的现有功能，再写一个包装程序 `wrapper`。
+
+<p id="e30-5">例 30.5. wrapper</p>
+
+```c
+/* wrapper.c */
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <fcntl.h>
+
+int main(int argc, char *argv[])
+{
+	int fd;
+	if (argc != 2) {
+		fputs("usage: wrapper file\n", stderr);
+		exit(1);
+	}
+	fd = open(argv[1], O_RDONLY);
+	if(fd<0) {
+		perror("open");
+		exit(1);
+	}
+	dup2(fd, STDIN_FILENO);
+	close(fd);
+	execl("./upper", "upper", NULL);
+	perror("exec ./upper");
+	exit(1);
+}
+```
+
+`wrapper` 程序将命令行参数当作文件名打开，将标准输入重定向到这个文件，然后调用 `exec` 执行 `upper` 程序，这时原来打开的文件描述符仍然是打开的，`upper` 程序只负责从标准输入读入字符转成大写，并不关心标准输入对应的是文件还是终端。运行结果如下：
+
+```bash
+$ ./wrapper file.txt
+THIS IS THE FILE, FILE.TXT, IT IS ALL LOWER CASE.
+```
+
+#### 3.3.3.3. wait 和 waitpid 函数
+
+一个进程在终止时会关闭所有文件描述符，释放在用户空间分配的内存，但它的 PCB 还保留着，内核在其中保存了一些信息：如果是正常终止则保存着退出状态，如果是异常终止则保存着导致该进程终止的信号是哪个。这个进程的父进程可以调用 `wait` 或 `waitpid` 获取这些信息，然后彻底清除掉这个进程。我们知道一个进程的退出状态可以在 Shell 中用特殊变量 `$?` 查看，因为 Shell 是它的父进程，当它终止时 Shell 调用 `wait` 或 `waitpid` 得到它的退出状态同时彻底清除掉这个进程。
+
+如果一个进程已经终止，但是它的父进程尚未调用 `wait` 或 `waitpid` 对它进行清理，这时的进程状态称为僵尸（Zombie）进程。任何进程在刚终止时都是僵尸进程，正常情况下，僵尸进程都立刻被父进程清理了，为了观察到僵尸进程，我们自己写一个不正常的程序，父进程 `fork` 出子进程，子进程终止，而父进程既不终止也不调用 `wait` 清理子进程：
+
+```c
+#include <unistd.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	pid_t pid=fork();
+	if(pid<0) {
+		perror("fork");
+		exit(1);
+	}
+	if(pid>0) { /* parent */
+		while(1);
+	}
+	/* child */
+	return 0;	  
+}
+```
+
+在后台运行这个程序，然后用 `ps` 命令查看：
+
+```bash
+$ ./a.out &
+[1] 6130
+$ ps u
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+akaedu    6016  0.0  0.3   5724  3140 pts/0    Ss   08:41   0:00 bash
+akaedu    6130 97.2  0.0   1536   284 pts/0    R    08:44  14:33 ./a.out
+akaedu    6131  0.0  0.0      0     0 pts/0    Z    08:44   0:00 [a.out] <defunct>
+akaedu    6163  0.0  0.0   2620  1000 pts/0    R+   08:59   0:00 ps u
+```
+
+在 `./a.out` 命令后面加个 `&` 表示后台运行，Shell 不等待这个进程终止就立刻打印提示符并等待用户输命令。现在 Shell 是位于前台的，用户在终端的输入会被 Shell 读取，后台进程是读不到终端输入的。第二条命令 `ps u` 是在前台运行的，在此期间 Shell 进程和 `./a.out` 进程都在后台运行，等到 `ps u` 命令结束时 Shell 进程又重新回到前台。在[第 33 章「信号」](3-Linux-系统编程/ch33-信号)和[第 34 章「终端、作业控制与守护进程」](3-Linux-系统编程/ch34-终端、作业控制与守护进程)将会进一步解释前台（Foreground）和后台（Backgroud）的概念。
+
+父进程的 pid 是 6130，子进程是僵尸进程，pid 是 6131，`ps` 命令显示僵尸进程的状态为 `Z`，在命令行一栏还显示 `<defunct>`。
+
+如果一个父进程终止，而它的子进程还存在（这些子进程或者仍在运行，或者已经是僵尸进程了），则这些子进程的父进程改为 `init` 进程。`init` 是系统中的一个特殊进程，通常程序文件是 `/sbin/init`，进程 id 是 1，在系统启动时负责启动各种系统服务，之后就负责清理子进程，只要有子进程终止，`init` 就会调用 `wait` 函数清理它。
+
+僵尸进程是不能用 `kill` 命令清除掉的，因为 `kill` 命令只是用来终止进程的，而僵尸进程已经终止了。思考一下，用什么办法可以清除掉僵尸进程？
+
+`wait` 和 `waitpid`函数的原型是：
+
+```c
+#include <sys/types.h>
+#include <sys/wait.h>
+
+pid_t wait(int *status);
+pid_t waitpid(pid_t pid, int *status, int options);
+```
+
+若调用成功则返回清理掉的子进程 id，若调用出错则返回 -1。父进程调用 `wait` 或 `waitpid` 时可能会：
+
+- 阻塞（如果它的所有子进程都还在运行）。
+- 带子进程的终止信息立即返回（如果一个子进程已终止，正等待父进程读取其终止信息）。
+- 出错立即返回（如果它没有任何子进程）。
+
+这两个函数的区别是：
+
+- 如果父进程的所有子进程都还在运行，调用 `wait` 将使父进程阻塞，而调用 `waitpid` 时如果在 `options` 参数中指定 `WNOHANG` 可以使父进程不阻塞而立即返回 0。
+- `wait` 等待第一个终止的子进程，而 `waitpid` 可以通过 `pid` 参数指定等待哪一个子进程。
+
+可见，调用 `wait` 和 `waitpid` 不仅可以获得子进程的终止信息，还可以使父进程阻塞等待子进程终止，起到进程间同步的作用。如果参数 `status` 不是空指针，则子进程的终止信息通过这个参数传出，如果只是为了同步而不关心子进程的终止信息，可以将 `status` 参数指定为 `NULL`。
+
+<p id="e30-6">例 30.6. waitpid</p>
+
+```c
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	pid_t pid;
+	pid = fork();
+	if (pid < 0) {
+		perror("fork failed");
+		exit(1);
+	}
+	if (pid == 0) {
+		int i;
+		for (i = 3; i > 0; i--) {
+			printf("This is the child\n");
+			sleep(1);
+		}
+		exit(3);
+	} else {
+		int stat_val;
+		waitpid(pid, &stat_val, 0);
+		if (WIFEXITED(stat_val))
+			printf("Child exited with code %d\n", WEXITSTATUS(stat_val));
+		else if (WIFSIGNALED(stat_val))
+			printf("Child terminated abnormally, signal %d\n", WTERMSIG(stat_val));
+	}
+	return 0;
+}
+```
+
+子进程的终止信息在一个 `int` 中包含了多个字段，用宏定义可以取出其中的每个字段：如果子进程是正常终止的，`WIFEXITED` 取出的字段值非零，`WEXITSTATUS` 取出的字段值就是子进程的退出状态；如果子进程是收到信号而异常终止的，`WIFSIGNALED` 取出的字段值非零，`WTERMSIG` 取出的字段值就是信号的编号。作为练习，请读者从头文件里查一下这些宏做了什么运算，是如何取出字段值的。
+
+##### 习题
+
+1. 请读者修改[例 30.6「waitpid」](#e30-6)的代码和实验条件，使它产生「Child terminated abnormally」的输出。
+
+### 3.3.4. 进程间通信
+
+每个进程各自有不同的用户地址空间，任何一个进程的全局变量在另一个进程中都看不到，所以进程之间要交换数据必须通过内核，在内核中开辟一块缓冲区，进程 1 把数据从用户空间拷到内核缓冲区，进程 2 再从内核缓冲区把数据读走，内核提供的这种机制称为进程间通信（IPC，InterProcess Communication）。如下图所示。
+
+<p id="c30-6">图 30.6. 进程间通信</p>
+
+![进程间通信](./image/process.ipc.png)
+
+#### 3.3.4.1. 管道
+
+管道是一种最基本的 IPC 机制，由 `pipe` 函数创建：
+
+```c
+#include <unistd.h>
+
+int pipe(int filedes[2]);
+```
+
+调用 `pipe` 函数时在内核中开辟一块缓冲区（称为管道）用于通信，它有一个读端一个写端，然后通过 `filedes` 参数传出给用户程序两个文件描述符，`filedes[0]` 指向管道的读端，`filedes[1]` 指向管道的写端（很好记，就像 0 是标准输入 1 是标准输出一样）。所以管道在用户程序看起来就像一个打开的文件，通过 `read(filedes[0]);` 或者 `write(filedes[1]);` 向这个文件读写数据其实是在读写内核缓冲区。`pipe` 函数调用成功返回 0，调用失败返回 -1。
+
+开辟了管道之后如何实现两个进程间的通信呢？比如可以按下面的步骤通信。
+
+<p id="c30-7">图 30.7. 管道</p>
+
+![管道](./image/process.pipe.png)
+
+1. 父进程调用 `pipe` 开辟管道，得到两个文件描述符指向管道的两端。
+2. 父进程调用 `fork` 创建子进程，那么子进程也有两个文件描述符指向同一管道。
+3. 父进程关闭管道读端，子进程关闭管道写端。父进程可以往管道里写，子进程可以从管道里读，管道是用环形队列实现的，数据从写端流入从读端流出，这样就实现了进程间通信。
+
+<p id="e30-7">例 30.7. 管道</p>
+
+```c
+#include <stdlib.h>
+#include <unistd.h>
+#define MAXLINE 80
+
+int main(void)
+{
+	int n;
+	int fd[2];
+	pid_t pid;
+	char line[MAXLINE];
+
+	if (pipe(fd) < 0) {
+		perror("pipe");
+		exit(1);
+	}
+	if ((pid = fork()) < 0) {
+		perror("fork");
+		exit(1);
+	}
+	if (pid > 0) { /* parent */
+		close(fd[0]);
+		write(fd[1], "hello world\n", 12);
+		wait(NULL);
+	} else {       /* child */
+		close(fd[1]);
+		n = read(fd[0], line, MAXLINE);
+		write(STDOUT_FILENO, line, n);
+	}
+	return 0;
+}
+```
+
+使用管道有一些限制：
+
+- 两个进程通过一个管道只能实现单向通信，比如上面的例子，父进程写子进程读，如果有时候也需要子进程写父进程读，就必须另开一个管道。请读者思考，如果只开一个管道，但是父进程不关闭读端，子进程也不关闭写端，双方都有读端和写端，为什么不能实现双向通信？
+- 管道的读写端通过打开的文件描述符来传递，因此要通信的两个进程必须从它们的公共祖先那里继承管道文件描述符。上面的例子是父进程把文件描述符传给子进程之后父子进程之间通信，也可以父进程 `fork` 两次，把文件描述符传给两个子进程，然后两个子进程之间通信，总之需要通过 `fork` 传递文件描述符使两个进程都能访问同一管道，它们才能通信。
+
+使用管道需要注意以下 4 种特殊情况（假设都是阻塞 I/O 操作，没有设置 `O_NONBLOCK` 标志）：
+
+1. 如果所有指向管道写端的文件描述符都关闭了（管道写端的引用计数等于 0），而仍然有进程从管道的读端读数据，那么管道中剩余的数据都被读取后，再次 `read` 会返回 0，就像读到文件末尾一样。
+2. 如果有指向管道写端的文件描述符没关闭（管道写端的引用计数大于 0），而持有管道写端的进程也没有向管道中写数据，这时有进程从管道读端读数据，那么管道中剩余的数据都被读取后，再次 `read` 会阻塞，直到管道中有数据可读了才读取数据并返回。
+3. 如果所有指向管道读端的文件描述符都关闭了（管道读端的引用计数等于 0），这时有进程向管道的写端 `write`，那么该进程会收到信号 `SIGPIPE`，通常会导致进程异常终止。在[第 33 章「信号」](3-Linux-系统编程/ch30-进程)会讲到怎样使 `SIGPIPE` 信号不终止进程。
+4. 如果有指向管道读端的文件描述符没关闭（管道读端的引用计数大于 0），而持有管道读端的进程也没有从管道中读数据，这时有进程向管道写端写数据，那么在管道被写满时再次 `write` 会阻塞，直到管道中有空位置了才写入数据并返回。
+
+管道的这四种特殊情况具有普遍意义。在[第 37 章「socket 编程」](3-Linux-系统编程/ch37-socket-编程)要讲的 TCP socket 也具有管道的这些特性。
+
+##### 习题
+
+1. 在[例 30.7「管道」](#e30-7)中，父进程只用到写端，因而把读端关闭，子进程只用到读端，因而把写端关闭，然后互相通信，不使用的读端或写端必须关闭，请读者想一想如果不关闭会有什么问题。
+2. 请读者修改[例 30.7「管道」](#e30-7)的代码和实验条件，验证我上面所说的四种特殊情况。
+
+#### 3.3.4.2. 其它 IPC 机制
+
+进程间通信必须通过内核提供的通道，而且必须有一种办法在进程中标识内核提供的某个通道，上一节讲的管道是用打开的文件描述符来标识的。如果要互相通信的几个进程没有从公共祖先那里继承文件描述符，它们怎么通信呢？内核提供一条通道不成问题，问题是如何标识这条通道才能使各进程都可以访问它？文件系统中的路径名是全局的，各进程都可以访问，因此可以用文件系统中的路径名来标识一个 IPC 通道。
+
+FIFO 和 UNIX Domain Socket 这两种 IPC 机制都是利用文件系统中的特殊文件来标识的。可以用 `mkfifo` 命令创建一个 FIFO 文件：
+
+```bash
+$ mkfifo hello
+$ ls -l hello
+prw-r--r-- 1 akaedu akaedu 0 2008-10-30 10:44 hello
+```
+
+FIFO 文件在磁盘上没有数据块，仅用来标识内核中的一条通道，各进程可以打开这个文件进行 `read`/`write`，实际上是在读写内核通道（根本原因在于这个 `file` 结构体所指向的 `read`、`write` 函数和常规文件不一样），这样就实现了进程间通信。UNIX Domain Socket 和 FIFO 的原理类似，也需要一个特殊的 socket 文件来标识内核中的通道，例如 `/var/run` 目录下有很多系统服务的 socket 文件：
+
+```bash
+$ ls -l /var/run/
+total 52
+srw-rw-rw- 1 root        root           0 2008-10-30 00:24 acpid.socket
+...
+srw-rw-rw- 1 root        root           0 2008-10-30 00:25 gdm_socket
+...
+srw-rw-rw- 1 root        root           0 2008-10-30 00:24 sdp
+...
+srwxr-xr-x 1 root        root           0 2008-10-30 00:42 synaptic.socket
+```
+
+文件类型 s 表示 socket，这些文件在磁盘上也没有数据块。UNIX Domain Socket 是目前最广泛使用的 IPC 机制，到后面讲 socket 编程时再详细介绍。
+
+现在把进程之间传递信息的各种途径（包括各种 IPC 机制）总结如下：
+
+- 父进程通过 `fork` 可以将打开文件的描述符传递给子进程
+- 子进程结束时，父进程调用 `wait` 可以得到子进程的终止信息
+- 几个进程可以在文件系统中读写某个共享文件，也可以通过给文件加锁来实现进程间同步
+- 进程之间互发信号，一般使用 `SIGUSR1` 和 `SIGUSR2` 实现用户自定义功能
+- 管道
+- FIFO
+- mmap 函数，几个进程可以映射同一内存区
+- SYS V IPC，以前的 SYS V UNIX 系统实现的 IPC 机制，包括消息队列、信号量和共享内存，现在已经基本废弃
+- UNIX Domain Socket，目前最广泛使用的 IPC 机制
+
+### 3.3.5. 练习：实现简单的 Shell
+
+用讲过的各种 C 函数实现一个简单的交互式 Shell，要求：
+
+1. 给出提示符，让用户输入一行命令，识别程序名和参数并调用适当的 `exec` 函数执行程序，待执行完成后再次给出提示符。
+2. 识别和处理以下符号：
+	- 简单的标准输入输出重定向（`<` 和 `>`）：仿照[例 30.5「wrapper」](#e30-5)，先 `dup2` 然后 `exec`。
+	- 管道（`|`）：Shell 进程先调用 `pipe` 创建一对管道描述符，然后 `fork` 出两个子进程，一个子进程关闭读端，调用 `dup2` 把写端赋给标准输出，另一个子进程关闭写端，调用 `dup2` 把读端赋给标准输入，两个子进程分别调用 `exec` 执行程序，而 Shell 进程把管道的两端都关闭，调用 `wait` 等待两个子进程终止。
+
+	你的程序应该可以处理以下命令：
+
+	```bash
+	○ls△-l△-R○>○file1○
+	○cat○<○file1○|○wc△-c○>○file1○
+	○ 表示零个或多个空格，△ 表示一个或多个空格
+	```
+
 ## 3.4. Shell 脚本
+
+### 3.4.1. Shell 的历史
+
+Shell 的作用是解释执行用户的命令，用户输入一条命令，Shell 就解释执行一条，这种方式称为交互式（Interactive），Shell 还有一种执行命令的方式称为批处理（Batch），用户事先写一个 Shell 脚本（Script），其中有很多条命令，让 Shell 一次把这些命令执行完，而不必一条一条地敲命令。Shell 脚本和编程语言很相似，也有变量和流程控制语句，但 Shell 脚本是解释执行的，不需要编译，Shell 程序从脚本中一行一行读取并执行这些命令，相当于一个用户把脚本中的命令一行一行敲到 Shell 提示符下执行。
+
+由于历史原因，UNIX 系统上有很多种 Shell：
+
+1. `sh`（Bourne Shell）：由 Steve Bourne 开发，各种 UNIX 系统都配有 `sh`。
+2. `csh`（C Shell）：由 Bill Joy 开发，随 BSD UNIX 发布，它的流程控制语句很像 C 语言，支持很多 Bourne Shell 所不支持的功能：作业控制，命令历史，命令行编辑。
+3. `ksh`（Korn Shell）：由 David Korn 开发，向后兼容 `sh` 的功能，并且添加了 `csh` 引入的新功能，是目前很多 UNIX 系统标准配置的 Shell，在这些系统上 `/bin/sh` 往往是指向 `/bin/ksh` 的符号链接。
+4. `tcsh`（TENEX C Shell）：是 `csh` 的增强版本，引入了命令补全等功能，在 FreeBSD、Mac OS X 等系统上替代了 `csh`。
+5. `bash`（Bourne Again Shell）：由 GNU 开发的 Shell，主要目标是与 POSIX 标准保持一致，同时兼顾对 `sh` 的兼容，`bash` 从 `csh` 和 `ksh` 借鉴了很多功能，是各种 Linux 发行版标准配置的 Shell，在 Linux 系统上 `/bin/sh` 往往是指向 `/bin/bash` 的符号链接<sup>[38]</sup>。虽然如此，`bash` 和 `sh` 还是有很多不同的，一方面，`bash` 扩展了一些命令和参数，另一方面，`bash` 并不完全和 `sh` 兼容，有些行为并不一致，所以 `bash` 需要模拟 `sh` 的行为：当我们通过 `sh` 这个程序名启动 `bash` 时，`bash` 可以假装自己是 `sh`，不认扩展的命令，并且行为与 `sh` 保持一致。
+
+> <sup>[38]</sup> 最新的发行版有一些变化，例如 Ubuntu 7.10 的 `/bin/sh` 是指向 `/bin/dash` 的符号链接，`dash` 也是一种类似 `bash` 的 Shell。
+> 
+> ```bash
+> $ ls /bin/sh /bin/dash -l
+> -rwxr-xr-x 1 root root 79988 2008-03-12 19:22 /bin/dash
+> lrwxrwxrwx 1 root root     4 2008-07-04 05:58 /bin/sh -> dash
+> ```
+
+文件 `/etc/shells` 给出了系统中所有已知（不一定已安装）的 Shell，除了上面提到的 Shell 之外还有很多变种。
+
+```bash
+# /etc/shells: valid login shells
+/bin/csh
+/bin/sh
+/usr/bin/es
+/usr/bin/ksh
+/bin/ksh
+/usr/bin/rc
+/usr/bin/tcsh
+/bin/tcsh
+/usr/bin/esh
+/bin/dash
+/bin/bash
+/bin/rbash
+/usr/bin/screen
+```
+
+用户的默认 Shell 设置在 `/etc/passwd` 文件中，例如下面这行对用户 mia 的设置：
+
+```bash
+mia:L2NOfqdlPrHwE:504:504:Mia Maya:/home/mia:/bin/bash
+```
+
+用户 mia 从字符终端登录或者打开图形终端窗口时就会自动执行 `/bin/bash`。如果要切换到其它 Shell，可以在命令行输入程序名，例如：
+
+```bash
+~$ sh（在 bash 提示符下输入 sh 命令）
+$（出现 sh 的提示符）
+$（按 Ctrl-d 或者输入 exit 命令）
+~$（回到 bash 提示符）
+~$（再次按 Ctrl-d 或者输入 exit 命令会退出登录或者关闭图形终端窗口）
+```
+
+本章只介绍 `bash` 和 `sh` 的用法和相关语法，不介绍其它 Shell。所以下文提到 Shell 都是指 `bash` 或 `sh`。
+
+### 3.4.2. Shell 如何执行命令
+
+#### 3.4.2.1. 执行交互式命令
+
+用户在命令行输入命令后，一般情况下 Shell 会 `fork` 并 `exec` 该命令，但是 Shell 的内建命令例外，执行内建命令相当于调用Shell进程中的一个函数，并不创建新的进程。以前学过的 `cd`、`alias`、`umask`、`exit` 等命令即是内建命令，凡是用 `which` 命令查不到程序文件所在位置的命令都是内建命令，内建命令没有单独的 man 手册，要在 man 手册中查看内建命令，应该
+
+```bash
+$ man bash-builtins
+```
+
+本节会介绍很多内建命令，如 `export`、`shift`、`if`、`eval`、`[`、`for`、`while` 等等。内建命令虽然不创建新的进程，但也会有 Exit Status，通常也用 0 表示成功非零表示失败，虽然内建命令不创建新的进程，但执行结束后也会有一个状态码，也可以用特殊变量 `$?` 读出。
+
+##### 习题
+
+1. 在完成[第 30 章第 5 节 「练习：实现简单的 Shell」](3-Linux-系统编程/ch30-进程#_5-练习：实现简单的-shell)时也许有的读者已经试过了，在自己实现的 Shell 中不能执行 `cd` 命令，因为 `cd` 是一个内建命令，没有程序文件，不能用 `exec` 执行。现在请完善该程序，实现 `cd` 命令的功能，用 `chdir(2)` 函数可以改变进程的当前工作目录。
+2. 思考一下，为什么 `cd` 命令要实现成内建命令？可不可以实现一个独立的 `cd` 程序，例如 `/bin/cd`，就像 `/bin/ls` 一样？
+
+#### 3.4.2.2. 执行脚本
+
+首先编写一个简单的脚本，保存为 `script.sh`：
+
+<p id="e31-1">例 31.1. 简单的 Shell 脚本</p>
+
+```bash
+#! /bin/sh
+
+cd ..
+ls
+```
+
+Shell 脚本中用 `#` 表示注释，相当于 C 语言的 `//` 注释。但如果 `#` 位于第一行开头，并且是 `#!`（称为 Shebang）则例外，它表示该脚本使用后面指定的解释器 `/bin/sh` 解释执行。如果把这个脚本文件加上可执行权限然后执行：
+
+```bash
+$ chmod +x script.sh
+$ ./script.sh
+```
+
+Shell 会 `fork` 一个子进程并调用 `exec` 执行 `./script.sh` 这个程序，`exec` 系统调用应该把子进程的代码段替换成 `./script.sh` 程序的代码段，并从它的 `_start` 开始执行。然而 `script.sh` 是个文本文件，根本没有代码段和 `_start` 函数，怎么办呢？其实 `exec` 还有另外一种机制，如果要执行的是一个文本文件，并且第一行用 Shebang 指定了解释器，则用解释器程序的代码段替换当前进程，并且从解释器的 `_start` 开始执行，而这个文本文件被当作命令行参数传给解释器。因此，执行上述脚本相当于执行程序
+
+```bash
+$ /bin/sh ./script.sh
+```
+
+以这种方式执行不需要 `script.sh` 文件具有可执行权限。再举个例子，比如某个 `sed` 脚本的文件名是 `script`，它的开头是
+
+```bash
+#! /bin/sed -f
+```
+
+执行 `./script` 相当于执行程序
+
+```bash
+$ /bin/sed -f ./script.sh
+```
+
+以上介绍了两种执行 Shell 脚本的方法：
+
+```bash
+$ ./script.sh
+$ sh ./script.sh
+```
+
+这两种方法本质上是一样的，执行上述脚本的步骤为：
+
+<p id="c31-1">图 31.1. Shell脚本的执行过程</p>
+
+![Shell 脚本的执行过程](./image/shellscript.shellexec.png)
+
+1. 交互 Shell（`bash`）`fork`/`exec` 一个子 Shell（`sh`）用于执行脚本，父进程 `bash` 等待子进程 `sh` 终止。
+2. `sh` 读取脚本中的 `cd ..` 命令，调用相应的函数执行内建命令，改变当前工作目录为上一级目录。
+3. `sh` 读取脚本中的 `ls` 命令，`fork`/`exec` 这个程序，列出当前工作目录下的文件，`sh` 等待 `ls` 终止。
+4. `ls` 终止后，`sh` 继续执行，读到脚本文件末尾，`sh` 终止。
+5. `sh` 终止后，`bash` 继续执行，打印提示符等待用户输入。
+
+如果将命令行下输入的命令用 `()` 括号括起来，那么也会 `fork` 出一个子 Shell 执行小括号中的命令，一行中可以输入由分号;隔开的多个命令，比如：
+
+```bash
+$ (cd ..;ls -l)
+```
+
+和上面两种方法执行 Shell 脚本的效果是相同的，`cd ..` 命令改变的是子 Shell 的 `PWD`，而不会影响到交互式 Shell。然而命令
+
+```bash
+$ cd ..;ls -l
+```
+
+则有不同的效果，`cd ..` 命令是直接在交互式 Shell 下执行的，改变交互式 Shell 的 `PWD`，然而这种方式相当于这样执行 Shell 脚本：
+
+```bash
+$ source ./script.sh
+```
+
+或者
+
+```bash
+$ . ./script.sh
+```
+
+`source` 或者 `.` 命令是 Shell 的内建命令，这种方式也不会创建子 Shell，而是直接在交互式 Shell 下逐行执行脚本中的命令。
+
+##### 习题
+
+1. 解释如下命令的执行过程：
+
+```bash
+$ (exit 2)
+$ echo $?
+2
+```
+
+### 3.4.3. Shell 的基本语法
+
+#### 3.4.3.1. 变量
+
+按照惯例，Shell 变量由全大写字母加下划线组成，有两种类型的 Shell 变量：
+
+- 环境变量：在[第 30 章「进程」第 2 节「环境变量」](3-Linux-系统编程/ch30-进程#_2-环境变量)中讲过，环境变量可以从父进程传给子进程，因此 Shell 进程的环境变量可以从当前 Shell 进程传给 `fork` 出来的子进程。用 `printenv` 命令可以显示当前 Shell 进程的环境变量。
+
+- 本地变量：只存在于当前 Shell 进程，用 `set` 命令可以显示当前 Shell 进程中定义的所有变量（包括本地变量和环境变量）和函数。
+
+环境变量是任何进程都有的概念，而本地变量是 Shell 特有的概念。在 Shell 中，环境变量和本地变量的定义和用法相似。在 Shell 中定义或赋值一个变量：
+
+```bash
+$ VARNAME=value
+```
+
+注意等号两边都不能有空格，否则会被 Shell 解释成命令和命令行参数。
+
+一个变量定义后仅存在于当前 Shell 进程，它是本地变量，用 `export` 命令可以把本地变量导出为环境变量，定义和导出环境变量通常可以一步完成：
+
+```bash
+$ export VARNAME=value
+```
+
+也可以分两步完成：
+
+```bash
+$ VARNAME=value
+$ export VARNAME
+```
+
+用 `unset` 命令可以删除已定义的环境变量或本地变量。
+
+```bash
+$ unset VARNAME
+```
+
+如果一个变量叫做 `VARNAME`，用 `${VARNAME}` 可以表示它的值，在不引起歧义的情况下也可以用 `$VARNAME` 表示它的值。通过以下例子比较这两种表示法的不同：
+
+```bash
+$ echo $SHELL
+$ echo $SHELLabc
+$ echo $SHELL abc
+$ echo ${SHELL}abc
+```
+
+注意，在定义变量时不用$，取变量值时要用 `$`。和 C 语言不同的是，Shell 变量不需要明确定义类型，事实上 Shell 变量的值都是字符串，比如我们定义 `VAR=45`，其实 `VAR` 的值是字符串 `45` 而非整数。Shell 变量不需要先定义后使用，如果对一个没有定义的变量取值，则值为空字符串。
+
+#### 3.4.3.2. 文件名代换（Globbing）：* ? []
+
+这些用于匹配的字符称为通配符（Wildcard），具体如下：
+
+<p id="">表 31.1. 通配符</p>
+
+| *          | 匹配 0 个或多个任意字符              |
+| ---------- | ---------------------------------- |
+| ?          | 匹配一个任意字符                   |
+| [若干字符] | 匹配方括号中任意一个字符的一次出现 |
+
+```bash
+$ ls /dev/ttyS*
+$ ls ch0?.doc
+$ ls ch0[0-2].doc
+$ ls ch[012][0-9].doc
+```
+
+注意，Globbing 所匹配的文件名是由 Shell 展开的，也就是说在参数还没传给程序之前已经展开了，比如上述 `ls ch0[012].doc` 命令，如果当前目录下有 `ch00.doc` 和 `ch02.doc`，则传给 `ls` 命令的参数实际上是这两个文件名，而不是一个匹配字符串。
+
+#### 3.4.3.3. 命令代换：` 或 $()
+
+由反引号括起来的也是一条命令，Shell 先执行该命令，然后将输出结果立刻代换到当前命令行中。例如定义一个变量存放 `date` 命令的输出：
+
+```bash
+$ DATE=`date`
+$ echo $DATE
+```
+
+命令代换也可以用 `$()` 表示：
+
+```bash
+$ DATE=$(date)
+```
+
+#### 3.4.3.4. 算术代换：$(())
+
+用于算术计算，`$(())` 中的 Shell 变量取值将转换成整数，例如：
+
+```bash
+$ VAR=45
+$ echo $(($VAR+3))
+```
+
+`$(())` 中只能用 `+-*/` 和 `()` 运算符，并且只能做整数运算。
+
+#### 3.4.3.5. 转义字符 \
+
+和 C 语言类似，\ 在 Shell 中被用作转义字符，用于去除紧跟其后的单个字符的特殊意义（回车除外），换句话说，紧跟其后的字符取字面值。例如：
+
+```bash
+$ echo $SHELL
+/bin/bash
+$ echo \$SHELL
+$SHELL
+$ echo \\
+\
+```
+
+比如创建一个文件名为「$ $」的文件可以这样：
+
+```bash
+$ touch \$\ \$
+```
+
+还有一个字符虽然不具有特殊含义，但是要用它做文件名也很麻烦，就是 - 号。如果要创建一个文件名以 - 号开头的文件，这样是不行的：
+
+```bash
+$ touch -hello
+touch: invalid option -- h
+Try `touch --help' for more information.
+```
+
+即使加上 `\` 转义也还是报错：
+
+```bash
+$ touch \-hello
+touch: invalid option -- h
+Try `touch --help' for more information.
+```
+
+因为各种 UNIX 命令都把 - 号开头的命令行参数当作命令的选项，而不会当作文件名。如果非要处理以 - 号开头的文件名，可以有两种办法：
+
+```bash
+$ touch ./-hello
+```
+
+或者
+
+```bash
+$ touch -- -hello
+```
+
+\ 还有一种用法，在 \ 后敲回车表示续行，Shell 并不会立刻执行命令，而是把光标移到下一行，给出一个续行提示符 >，等待用户继续输入，最后把所有的续行接到一起当作一个命令执行。例如：
+
+```bash
+$ ls \
+> -l
+（ls -l命令的输出）
+```
+
+#### 3.4.3.6. 单引号
+
+和 C 语言不一样，Shell 脚本中的单引号和双引号一样都是字符串的界定符（双引号下一节介绍），而不是字符的界定符。单引号用于保持引号内所有字符的字面值，即使引号内的 \ 和回车也不例外，但是字符串中不能出现单引号。如果引号没有配对就输入回车，Shell 会给出续行提示符，要求用户把引号配上对。例如：
+
+```bash
+$ echo '$SHELL'
+$SHELL
+$ echo 'ABC\（回车）
+> DE'（再按一次回车结束命令）
+ABC\
+DE
+```
+
+#### 3.4.3.7. 双引号
+
+双引号用于保持引号内所有字符的字面值（回车也不例外），但以下情况除外：
+
+- $ 加变量名可以取变量的值
+- 反引号仍表示命令替换
+- \\$ 表示 $ 的字面值
+- \\\` 表示 ` 的字面值
+- \" 表示 " 的字面值
+- \\\\ 表示 \ 的字面值
+- 除以上情况之外，在其它字符前面的 \ 无特殊含义，只表示字面值
+
+```bash
+$ echo "$SHELL"
+/bin/bash
+$ echo "`date`"
+Sun Apr 20 11:22:06 CEST 2003
+$ echo "I'd say: \"Go for it\""
+I'd say: "Go for it"
+$ echo "\"（回车）
+>"（再按一次回车结束命令）
+"
+
+$ echo "\\"
+\
+```
+
+### 3.4.4. bash 启动脚本
+
+启动脚本是 `bash` 启动时自动执行的脚本。用户可以把一些环境变量的设置和 `alias`、`umask` 设置放在启动脚本中，这样每次启动 Shell 时这些设置都自动生效。思考一下，`bash` 在执行启动脚本时是以 `fork` 子 Shell 方式执行的还是以 `source` 方式执行的？
+
+启动 bash 的方法不同，执行启动脚本的步骤也不相同，具体可分为以下几种情况。
+
+#### 3.4.4.1. 作为交互登录 Shell 启动，或者使用 --login 参数启动
+
+交互 Shell 是指用户在提示符下输命令的 Shell 而非执行脚本的 Shell，登录 Shell 就是在输入用户名和密码登录后得到的 Shell，比如从字符终端登录或者用 `telnet`/`ssh` 从远程登录，但是从图形界面的窗口管理器登录之后会显示桌面而不会产生登录 Shell（也不会执行启动脚本），在图形界面下打开终端窗口得到的 Shell 也不是登录 Shell。
+
+这样启动 `bash` 会自动执行以下脚本：
+
+1. 首先执行 `/etc/profile`，系统中每个用户登录时都要执行这个脚本，如果系统管理员希望某个设置对所有用户都生效，可以写在这个脚本里
+2. 然后依次查找当前用户主目录的 `~/.bash_profile`、`~/.bash_login` 和 `~/.profile` 三个文件，找到第一个存在并且可读的文件来执行，如果希望某个设置只对当前用户生效，可以写在这个脚本里，由于这个脚本在 `/etc/profile` 之后执行，`/etc/profile` 设置的一些环境变量的值在这个脚本中可以修改，也就是说，当前用户的设置可以覆盖（Override）系统中全局的设置。`~/.profile` 这个启动脚本是 `sh` 规定的，`bash` 规定首先查找以 `~/.bash_` 开头的启动脚本，如果没有则执行 `~/.profile`，是为了和 `sh` 保持一致。
+3. 顺便一提，在退出登录时会执行 `~/.bash_logout` 脚本（如果它存在的话）。
+
+#### 3.4.4.2. 以交互非登录 Shell 启动
+
+比如在图形界面下开一个终端窗口，或者在登录 Shell 提示符下再输入 `bash` 命令，就得到一个交互非登录的 Shell，这种 Shell 在启动时自动执行 `~/.bashrc` 脚本。
+
+为了使登录 Shell 也能自动执行 `~/.bashrc`，通常在 `~/.bash_profile` 中调用 `~/.bashrc`：
+
+```bash
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
+```
+
+这几行的意思是如果 `~/.bashrc` 文件存在则 `source` 它。多数 Linux 发行版在创建帐户时会自动创建 `~/.bash_profile` 和 `~/.bashrc` 脚本，`~/.bash_profile` 中通常都有上面这几行。所以，如果要在启动脚本中做某些设置，使它在图形终端窗口和字符终端的 Shell 中都起作用，最好就是在 `~/.bashrc` 中设置。
+
+下面做一个实验，在 `~/.bashrc` 文件末尾添加一行（如果这个文件不存在就创建它）：
+
+```bash
+export PATH=$PATH:/home/akaedu
+```
+
+然后关掉终端窗口重新打开，或者从字符终端 `logout` 之后重新登录，现在主目录下的程序应该可以直接输程序名运行而不必输入路径了，例如：
+
+```bash
+~$ a.out
+```
+
+就可以了，而不必
+
+```bash
+~$ ./a.out
+```
+
+为什么登录 Shell 和非登录 Shell 的启动脚本要区分开呢？最初的设计是这样考虑的，如果从字符终端或者远程登录，那么登录 Shell 是该用户的所有其它进程的父进程，也是其它子 Shell 的父进程，所以环境变量在登录 Shell 的启动脚本里设置一次就可以自动带到其它非登录 Shell 里，而 Shell 的本地变量、函数、`alias` 等设置没有办法带到子 Shell 里，需要每次启动非登录 Shell 时设置一遍，所以就需要有非登录 Shell 的启动脚本，所以一般来说在 `~/.bash_profile` 里设置环境变量，在 `~/.bashrc` 里设置本地变量、函数、`alias` 等。如果你的 Linux 带有图形系统则不能这样设置，由于从图形界面的窗口管理器登录并不会产生登录 Shell，所以环境变量也应该在 `~/.bashrc` 里设置。 
+
+#### 3.4.4.3. 非交互启动
+
+为执行脚本而 `fork` 出来的子 Shell 是非交互 Shell，启动时执行的脚本文件由环境变量 `BASH_ENV` 定义，相当于自动执行以下命令：
+
+```bash
+if [ -n "$BASH_ENV" ]; then . "$BASH_ENV"; fi
+```
+
+如果环境变量 `BASH_ENV` 的值不是空字符串，则把它的值当作启动脚本的文件名，`source` 这个脚本。
+
+#### 3.4.4.4. 以 sh 命令启动
+
+如果以 `sh` 命令启动 `bash`，`bash` 将模拟 `sh` 的行为，以 `~/.bash_` 开头的那些启动脚本就不认了。所以，如果作为交互登录 Shell 启动，或者使用 `--login` 参数启动，则依次执行以下脚本：
+
+1. `/etc/profile`
+2. `~/.profile`
+
+如果作为交互 Shell 启动，相当于自动执行以下命令：
+
+```bash
+if [ -n "$ENV" ]; then . "$ENV"; fi
+```
+
+如果作为非交互 Shell 启动，则不执行任何启动脚本。通常我们写的 Shell 脚本都以 `#! /bin/sh` 开头，都属于这种方式。
+
+### 3.4.5. Shell 脚本语法
+
+#### 3.4.5.1. 条件测试：test [
+
+命令 `test` 或 `[` 可以测试一个条件是否成立，如果测试结果为真，则该命令的 Exit Status 为 0，如果测试结果为假，则命令的 Exit Status 为 1（注意与 C 语言的逻辑表示正好相反）。例如测试两个数的大小关系：
+
+```bash
+$ VAR=2
+$ test $VAR -gt 1
+$ echo $?
+0
+$ test $VAR -gt 3
+$ echo $?
+1
+$ [ $VAR -gt 3 ]
+$ echo $?
+1
+```
+
+**虽然看起来很奇怪，但左方括号 `[` 确实是一个命令的名字，传给命令的各参数之间应该用空格隔开**，比如，`$VAR`、`-gt`、`3`、`]` 是 `[` 命令的四个参数，它们之间必须用空格隔开。命令 `test` 或 `[` 的参数形式是相同的，只不过 `test` 命令不需要 `]` 参数。以 `[` 命令为例，常见的测试命令如下表所示：
+
+<p id="t31.2">表 31.2. 测试命令</p>
+
+| `[ -d DIR ]`             | 如果 `DIR` 存在并且是一个目录则为真                            |
+| ------------------------ | ------------------------------------------------------------ |
+| `[ -f FILE ]`            | 如果 `FILE` 存在且是一个普通文件则为真                         |
+| `[ -z STRING ]`          | 如果 `STRING` 的长度为零则为真                                 |
+| `[ -n STRING ]`          | 如果 `STRING` 的长度非零则为真                                 |
+| `[ STRING1 = STRING2 ]`  | 如果两个字符串相同则为真                                     |
+| `[ STRING1 != STRING2 ]` | 如果字符串不相同则为真                                       |
+| `[ ARG1 OP ARG2 ]`       | `ARG1` 和 `ARG2` 应该是整数或者取值为整数的变量，`OP` 是 `-eq`（等于）`-ne`（不等于）`-lt`（小于）`-le`（小于等于）`-gt`（大于）`-ge`（大于等于）之中的一个 |
+
+和 C 语言类似，测试条件之间还可以做与、或、非逻辑运算：
+
+<p id="t31.3">表 31.3. 带与、或、非的测试命令</p>
+
+| `[ ! EXPR ]`         | `EXPR` 可以是上表中的任意一种测试条件，! 表示逻辑反            |
+| -------------------- | ------------------------------------------------------------ |
+| `[ EXPR1 -a EXPR2 ]` | `EXPR1` 和 `EXPR2` 可以是上表中的任意一种测试条件，`-a` 表示逻辑与 |
+| `[ EXPR1 -o EXPR2 ]` | `EXPR1` 和 `EXPR2` 可以是上表中的任意一种测试条件，`-o` 表示逻辑或 |
+
+例如：
+
+```bash
+$ VAR=abc
+$ [ -d Desktop -a $VAR = 'abc' ]
+$ echo $?
+0
+```
+
+注意，如果上例中的 `$VAR` 变量事先没有定义，则被 Shell 展开为空字符串，会造成测试条件的语法错误（展开为 `[ -d Desktop -a  = 'abc' ]`），作为一种好的 Shell 编程习惯，应该总是把变量取值放在双引号之中（展开为 `[ -d Desktop -a "" = 'abc' ]`）：
+
+```bash
+$ unset VAR
+$ [ -d Desktop -a $VAR = 'abc' ]
+bash: [: too many arguments
+$ [ -d Desktop -a "$VAR" = 'abc' ]
+$ echo $?
+1
+```
+
+#### 3.4.5.2. if/then/elif/else/fi
+
+和 C 语言类似，在 Shell 中用 `if`、`then`、`elif`、`else`、`fi` 这几条命令实现分支控制。这种流程控制语句本质上也是由若干条 Shell 命令组成的，例如先前讲过的
+
+```bash
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
+```
+
+其实是三条命令，`if [ -f ~/.bashrc ]` 是第一条，`then . ~/.bashrc` 是第二条，`fi` 是第三条。如果两条命令写在同一行则需要用 `;` 号隔开，一行只写一条命令就不需要写 `;` 号了，另外，`then` 后面有换行，但这条命令没写完，Shell 会自动续行，把下一行接在 `then` 后面当作一条命令处理。和 `[` 命令一样，要注意命令和各参数之间必须用空格隔开。`if` 命令的参数组成一条子命令，如果该子命令的 Exit Status 为 0（表示真），则执行 `then` 后面的子命令，如果 Exit Status 非 0（表示假），则执行 `elif`、`else` 或者 `fi` 后面的子命令。`if` 后面的子命令通常是测试命令，但也可以是其它命令。Shell 脚本没有 `{}`v括号，所以用 `fi` 表示 `if` 语句块的结束。见下例：
+
+```bash
+#! /bin/sh
+
+if [ -f /bin/bash ]
+then echo "/bin/bash is a file"
+else echo "/bin/bash is NOT a file"
+fi
+if :; then echo "always true"; fi
+```
+
+`:` 是一个特殊的命令，称为空命令，该命令不做任何事，但 Exit Status 总是真。此外，也可以执行 `/bin/true` 或 `/bin/false` 得到真或假的 Exit Status。再看一个例子：
+
+```bash
+#! /bin/sh
+
+echo "Is it morning? Please answer yes or no."
+read YES_OR_NO
+if [ "$YES_OR_NO" = "yes" ]; then
+  echo "Good morning!"
+elif [ "$YES_OR_NO" = "no" ]; then
+  echo "Good afternoon!"
+else
+  echo "Sorry, $YES_OR_NO not recognized. Enter yes or no."
+  exit 1
+fi
+exit 0
+```
+
+上例中的 `read` 命令的作用是等待用户输入一行字符串，将该字符串存到一个 Shell 变量中。
+
+此外，Shell 还提供了 `&&` 和 `||` 语法，和 C 语言类似，具有 Short-circuit 特性，很多 Shell 脚本喜欢写成这样：
+
+```bash
+test "$(whoami)" != 'root' && (echo you are using a non-privileged account; exit 1)
+```
+
+`&&` 相当于 `if...then...`，而 `||` 相当于 `if not...then...`。`&&` 和 `||` 用于连接两个命令，而上面讲的 `-a` 和 `-o` 仅用于在测试表达式中连接两个测试条件，要注意它们的区别，例如，
+
+```bash
+test "$VAR" -gt 1 -a "$VAR" -lt 3
+```
+
+和以下写法是等价的
+
+```bash
+test "$VAR" -gt 1 && test "$VAR" -lt 3
+```
+
+#### 3.4.5.3. case/esac
+
+`case` 命令可类比 C 语言的 `switch`/`case` 语句，`esac` 表示 `case` 语句块的结束。C 语言的 `case` 只能匹配整型或字符型常量表达式，而 Shell 脚本的 `case` 可以匹配字符串和 Wildcard，每个匹配分支可以有若干条命令，末尾必须以 `;;` 结束，执行时找到第一个匹配的分支并执行相应的命令，然后直接跳到 `esac` 之后，不需要像 C 语言一样用 `break` 跳出。
+
+```bash
+#! /bin/sh
+
+echo "Is it morning? Please answer yes or no."
+read YES_OR_NO
+case "$YES_OR_NO" in
+yes|y|Yes|YES)
+  echo "Good Morning!";;
+[nN]*)
+  echo "Good Afternoon!";;
+*)
+  echo "Sorry, $YES_OR_NO not recognized. Enter yes or no."
+  exit 1;;
+esac
+exit 0
+```
+
+使用 `case` 语句的例子可以在系统服务的脚本目录 `/etc/init.d` 中找到。这个目录下的脚本大多具有这种形式（以 `/etc/apache2` 为例）：
+
+```bash
+case $1 in
+	start)
+		...
+	;;
+	stop)
+		...
+	;;
+	reload | force-reload)
+		...
+	;;
+	restart)
+	...
+	*)
+		log_success_msg "Usage: /etc/init.d/apache2 {start|stop|restart|reload|force-reload|start-htcacheclean|stop-htcacheclean}"
+		exit 1
+	;;
+esac
+```
+
+启动 `apache2` 服务的命令是
+
+```bash
+$ sudo /etc/init.d/apache2 start
+```
+
+`$1` 是一个特殊变量，在执行脚本时自动取值为第一个命令行参数，也就是 `start`，所以进入 `start)` 分支执行相关的命令。同理，命令行参数指定为 `stop`、`reload` 或 `restart` 可以进入其它分支执行停止服务、重新加载配置文件或重新启动服务的相关命令。
+
+#### 3.4.5.4. for/do/done
+
+Shell 脚本的 `for` 循环结构和 C 语言很不一样，它类似于某些编程语言的 `foreach` 循环。例如：
+
+```bash
+#! /bin/sh
+
+for FRUIT in apple banana pear; do
+  echo "I like $FRUIT"
+done
+```
+
+`FRUIT` 是一个循环变量，第一次循环 `$FRUIT` 的取值是 `apple`，第二次取值是 `banana`，第三次取值是 `pear`。再比如，要将当前目录下的 `chap0`、`chap1`、`chap2`等文件名改为 `chap0~`、`chap1~`、`chap2~` 等（按惯例，末尾有 `~` 字符的文件名表示临时文件），这个命令可以这样写：
+
+```bash
+$ for FILENAME in chap?; do mv $FILENAME $FILENAME~; done
+```
+
+也可以这样写：
+
+```bash
+$ for FILENAME in `ls chap?`; do mv $FILENAME $FILENAME~; done
+```
+
+#### 3.4.5.5. while/do/done
+
+`while` 的用法和 C 语言类似。比如一个验证密码的脚本：
+
+```bash
+#! /bin/sh
+
+echo "Enter password:"
+read TRY
+while [ "$TRY" != "secret" ]; do
+  echo "Sorry, try again"
+  read TRY
+done
+```
+
+下面的例子通过算术运算控制循环的次数：
+
+```bash
+#! /bin/sh
+
+COUNTER=1
+while [ "$COUNTER" -lt 10 ]; do
+  echo "Here we go again"
+  COUNTER=$(($COUNTER+1))
+done
+```
+
+Shell 还有 `until` 循环，类似 C 语言的 `do...while` 循环。本章从略。
+
+##### 习题
+
+1. 把上面验证密码的程序修改一下，如果用户输错五次密码就报错退出。
+
+#### 3.4.5.6. 位置参数和特殊变量
+
+有很多特殊变量是被Shell自动赋值的，我们已经遇到了 `$?` 和 `$1`，现在总结一下：
+
+<p id="t31-4">表 31.4. 常用的位置参数和特殊变量</p>
+
+| `$0`          | 相当于 C 语言 `main` 函数的 `argv[0]`                             |
+| ------------- | ------------------------------------------------------------ |
+| `$1`、`$2`... | 这些称为位置参数（Positional Parameter），相当于 C 语言 `main` 函数的 `argv[1]`、`argv[2]`... |
+| `$#`          | 相当于 C 语言 `main` 函数的 `argc - 1`，注意这里的 `#` 后面不表示注释 |
+| `$@`          | 表示参数列表 `"$1" "$2" ...`，例如可以用在 `for` 循环中的 `in` 后面。 |
+| `$?`          | 上一条命令的 Exit Status                                      |
+| `$$`          | 当前 Shell 的进程号                                            |
+
+位置参数可以用 `shift` 命令左移。比如 `shift 3` 表示原来的 `$4` 现在变成 `$1`，原来的 `$5` 现在变成 `$2` 等等，原来的 `$1`、`$2`、`$3` 丢弃，`$0` 不移动。不带参数的 `shift` 命令相当于 `shift 1`。例如：
+
+```bash
+#! /bin/sh
+
+echo "The program $0 is now running"
+echo "The first parameter is $1"
+echo "The second parameter is $2"
+echo "The parameter list is $@"
+shift
+echo "The first parameter is $1"
+echo "The second parameter is $2"
+echo "The parameter list is $@"
+```
+
+#### 3.4.5.7. 函数
+
+和 C 语言类似，Shell 中也有函数的概念，但是函数定义中没有返回值也没有参数列表。例如：
+
+```bash
+#! /bin/sh
+
+foo(){ echo "Function foo is called";}
+echo "-=start=-"
+foo
+echo "-=end=-"
+```
+
+注意函数体的左花括号 `{` 和后面的命令之间必须有空格或换行，如果将最后一条命令和右花括号 `}` 写在同一行，命令末尾必须有 `;` 号。
+
+在定义 `foo()` 函数时并不执行函数体中的命令，就像定义变量一样，只是给 `foo` 这个名字一个定义，到后面调用 `foo` 函数的时候（注意 Shell 中的函数调用不写括号）才执行函数体中的命令。Shell 脚本中的函数必须先定义后调用，一般把函数定义都写在脚本的前面，把函数调用和其它命令写在脚本的最后（类似 C 语言中的 `main` 函数，这才是整个脚本实际开始执行命令的地方）。
+
+Shell 函数没有参数列表并不表示不能传参数，事实上，函数就像是迷你脚本，调用函数时可以传任意个参数，在函数内同样是用 `$0`、`$1`、`$2` 等变量来提取参数，函数中的位置参数相当于函数的局部变量，改变这些变量并不会影响函数外面的 `$0`、`$1`、`$2` 等变量。函数中可以用 `return` 命令返回，如果 `return` 后面跟一个数字则表示函数的 Exit Status。
+
+下面这个脚本可以一次创建多个目录，各目录名通过命令行参数传入，脚本逐个测试各目录是否存在，如果目录不存在，首先打印信息然后试着创建该目录。
+
+```bash
+#! /bin/sh
+
+is_directory()
+{
+  DIR_NAME=$1
+  if [ ! -d $DIR_NAME ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+for DIR in "$@"; do
+  if is_directory "$DIR"
+  then :
+  else
+    echo "$DIR doesn't exist. Creating it now..."
+    mkdir $DIR > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      echo "Cannot create directory $DIR"
+      exit 1
+    fi
+  fi
+done
+```
+
+注意 `is_directory()` 返回 0 表示真返回 1 表示假。
+
+### 3.4.6. Shell 脚本的调试方法
+
+Shell 提供了一些用于调试脚本的选项，如下所示：
+
+- -n：读一遍脚本中的命令但不执行，用于检查脚本中的语法错误
+- -v： 一边执行脚本，一边将执行过的脚本命令打印到标准错误输出
+- -x：提供跟踪执行信息，将执行的每一条命令和结果依次打印出来
+
+使用这些选项有三种方法，一是在命令行提供参数
+
+```bash
+$ sh -x ./script.sh
+```
+
+二是在脚本开头提供参数
+
+```bash
+#! /bin/sh -x
+```
+
+第三种方法是在脚本中用 set 命令启用或禁用参数
+
+```bash
+#! /bin/sh
+if [ -z "$1" ]; then
+  set -x
+  echo "ERROR: Insufficient Args."
+  exit 1
+  set +x
+fi
+```
+
+`set -x` 和 `set +x` 分别表示启用和禁用 `-x` 参数，这样可以只对脚本中的某一段进行跟踪调试。
+
 
 ## 3.5. 正则表达式
 
+### 3.5.1. 引言
+
+以前我们用 `grep` 在一个文件中找出包含某些字符串的行，比如在头文件中找出一个宏定义。其实 `grep` 还可以找出**符合某个模式（Pattern）的一类字符串**。例如找出所有符合 `xxxxx@xxxx.xxx` 模式的字符串（也就是 email 地址），要求 `x` 字符可以是字母、数字、下划线、小数点或减号，email 地址的每一部分可以有一个或多个 `x` 字符，例如 `abc.d@ef.com`、`1_2@987-6.54`，当然符合这个模式的不全是合法的 email 地址，但至少可以做一次初步筛选，筛掉 `a.b`、`c@d` 等肯定不是 email 地址的字符串。再比如，找出所有符合 `yyy.yyy.yyy.yyy` 模式的字符串（也就是 IP 地址），要求 y 是 0 - 9 的数字，IP 地址的每一部分可以有 1 - 3 个 y 字符。
+
+如果要用 `grep` 查找一个模式，如何表示这个模式，这一类字符串，而不是一个特定的字符串呢？从这两个简单的例子可以看出，要表示一个模式至少应该包含以下信息：
+
+- 字符类（Character Class）：如上例的 x 和 y，它们在模式中表示一个字符，但是取值范围是一类字符中的任意一个。
+- 数量限定符（Quantifier）： 邮件地址的每一部分可以有**一个或多个** x 字符，IP 地址的每一部分可以有 **1 - 3 个** y 字符
+- 各种字符类以及普通字符之间的位置关系：例如邮件地址分三部分，用普通字符 `@` 和 `.` 隔开，IP 地址分四部分，用 `.` 隔开，每一部分都可以用字符类和数量限定符描述。为了表示位置关系，还有位置限定符（Anchor）的概念，将在下面介绍。
+
+规定一些特殊语法表示字符类、数量限定符和位置关系，然后用这些特殊语法和普通字符一起表示一个模式，这就是正则表达式（Regular Expression）。例如 email 地址的正则表达式可以写成 `[a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+\.[a-zA-Z0-9_.-]+`，IP 地址的正则表达式可以写成 `[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}`。下一节介绍正则表达式的语法，我们先看看正则表达式在 `grep` 中怎么用。例如有这样一个文本文件 `testfile`：
+
+```txt
+192.168.1.1
+1234.234.04.5678
+123.4234.045.678
+abcde
+```
+
+查找其中包含 IP 地址的行：
+
+```bash
+$ egrep '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' testfile
+192.168.1.1
+1234.234.04.5678
+```
+
+`egrep` 相当于 `grep -E`，表示采用 Extended 正则表达式语法。`grep` 的正则表达式有 Basic 和 Extended 两种规范，它们之间的区别下一节再解释。另外还有 `fgrep` 命令，相当于 `grep -F`，表示只搜索固定字符串而不搜索正则表达式模式，不会按正则表达式的语法解释后面的参数。
+
+注意正则表达式参数用单引号括起来了，因为正则表达式中用到的很多特殊字符在 Shell 中也有特殊含义（例如 `\`），只有用单引号括起来才能保证这些字符原封不动地传给 `grep` 命令，而不会被 Shell 解释掉。
+
+`192.168.1.1` 符合上述模式，由三个 `.` 隔开的四段组成，每段都是 1 到 3 个数字，所以这一行被找出来了，可为什么 `1234.234.04.5678` 也被找出来了呢？因为 `grep` 找的是**包含**某一模式的行，这一行包含一个符合模式的字符串 `234.234.04.567`。相反，`123.4234.045.678` 这一行不包含符合模式的字符串，所以不会被找出来。
+
+`grep` 是一种查找过滤工具，正则表达式在 `grep`中用来查找符合模式的字符串。其实正则表达式还有一个重要的应用是验证用户输入是否合法，例如用户通过网页表单提交自己的 email 地址，就需要用程序验证一下是不是合法的 email 地址，这个工作可以在网页的 JavaScript 中做，也可以在网站后台的程序中做，例如 PHP、Perl、Python、Ruby、Java 或 C，所有这些语言都支持正则表达式，可以说，目前不支持正则表达式的编程语言实在很少见。除了编程语言之外，很多 UNIX 命令和工具也都支持正则表达式，例如 grep、vi、sed、awk、emacs 等等。「正则表达式」就像「变量」一样，它是一个广泛的概念，而不是某一种工具或编程语言的特性。
+
+### 3.5.2. 基本语法
+
+我们知道 C 的变量和 Shell 脚本变量的定义和使用方法很不相同，表达能力也不相同，C 的变量有各种类型，而 Shell 脚本变量都是字符串。同样道理，各种工具和编程语言所使用的正则表达式规范的语法并不相同，表达能力也各不相同，有的正则表达式规范引入很多扩展，能表达更复杂的模式，但各种正则表达式规范的基本概念都是相通的。本节介绍 `egrep(1)` 所使用的正则表达式，它大致上符合 POSIX 正则表达式规范，详见 `regex(7)`（看这个 man page 对你的英文绝对是很好的锻炼）。希望读者仿照上一节的例子，一边学习语法，一边用 `egrep` 命令做实验。
+
+<p id="t32-1">表 32.1. 字符类</p>
+
+| 字符        | 含义                                                       | 举例                                                         |
+| ----------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
+| `.`         | 匹配任意一个字符                                           | `abc.` 可以匹配 `abcd`、`abc9` 等                               |
+| `[]`        | 匹配括号中的任意一个字符                                   | `[abc]d` 可以匹配 `ad`、`bd` 或 `cd`                             |
+| `-`         | 在 `[]` 括号内表示字符范围                                   | `[0-9a-fA-F]` 可以匹配一位十六进制数字                      |
+| `^`         | 位于 `[]` 括号内的开头，匹配除括号中的字符之外的任意一个字符 | `[^xy]` 匹配除 `xy` 之外的任一字符，因此 `[^xy]1` 可以匹配 `a1`、`b1` 但不匹配 `x1`、`y1` |
+| `[[:xxx:]]` | `grep` 工具预定义的一些命名字符类                           | `[[:alpha:]]` 匹配一个字母，`[[:digit:]]` 匹配一个数字         |
+
+<p id="t32-2">表 32.2. 数量限定符</p>
+
+| 字符    | 含义                                         | 举例                                                         |
+| ------- | -------------------------------------------- | ------------------------------------------------------------ |
+| `?`     | 紧跟在它前面的单元应匹配零次或一次           | `[0-9]?\.[0-9]` 匹配 `0.0`、`2.3`、`.5` 等，由于 `.` 在正则表达式中是一个特殊字符，所以需要用 `\` 转义一下，取字面值 |
+| `+`     | 紧跟在它前面的单元应匹配一次或多次           | `[a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+\.[a-zA-Z0-9_.-]+` 匹配 email 地址 |
+| `*`     | 紧跟在它前面的单元应匹配零次或多次           | `[0-9][0-9]*` 匹配至少一位数字，等价于 `[0-9]+`，`[a-zA-Z_]+[a-zA-Z_0-9]*` 匹配 C 语言的标识符 |
+| `{N}`   | 紧跟在它前面的单元应精确匹配 `N` 次            | `[1-9][0-9]{2}` 匹配从 `100` 到 `999` 的整数                      |
+| `{N,}`  | 紧跟在它前面的单元应匹配至少 `N` 次            | `[1-9][0-9]{2,}`匹配三位以上（含三位）的整数                 |
+| `{,M}`  | 紧跟在它前面的单元应匹配最多 `M` 次            | `[0-9]{,1}` 相当于`[0-9]?`                                    |
+| `{N,M}` | 紧跟在它前面的单元应匹配至少 `N` 次，最多 `M` 次 | `[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}` 匹配 IP 地址   |
+
+再次注意 `grep` 找的是包含某一模式的行，而不是完全匹配某一模式的行。再举个例子，如果文本文件的内容是
+
+```txt
+aaabc
+aad
+efg
+```
+
+查找 `a*` 这个模式的结果是三行都被找出来了
+
+```bash
+$ egrep 'a*' testfile 
+aabc
+aad
+efg
+```
+
+`a*` 匹配 0 个或多个 `a`，而第三行包含 0 个`a`，所以也包含了这一模式。单独用 `a*` 这样的正则表达式做查找没什么意义，一般是把 `a*` 作为正则表达式的一部分来用。
+
+<p id="t32-3">表 32.3. 位置限定符</p>
+
+| 字符 | 含义                       | 举例                                                       |
+| ---- | -------------------------- | ---------------------------------------------------------- |
+| `^`  | 匹配行首的位置             | `^Content` 匹配位于一行开头的 `Content`                      |
+| `$`  | 匹配行末的位置             | `;$` 匹配位于一行结尾的 `;` 号，`^$` 匹配空行                  |
+| `\<` | 匹配单词开头的位置         | `\<th` 匹配 `... this`，但不匹配 `ethernet`、`tenth`          |
+| `\>` | 匹配单词结尾的位置         | `p\>` 匹配 `leap ...`，但不匹配 `parent`、`sleepy`            |
+| `\b` | 匹配单词开头或结尾的位置   | `\bat\b` 匹配 `... at ...`，但不匹配 `cat`、`atexit`、`batch` |
+| `\B` | 匹配非单词开头和结尾的位置 | `\Bat\B` 匹配 `battery`，但不匹配 `... attend`、`hat ...`     |
+
+位置限定符可以帮助 `grep` 更准确地查找，例如上一节我们用 `[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}` 查找 IP 地址，找到这两行
+
+```bash
+192.168.1.1
+1234.234.04.5678
+```
+
+如果用 `^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$` 查找，就可以把 `1234.234.04.5678` 这一行过滤掉了。
+
+<p id="t32-4">表 32.4. 其它特殊字符</p>
+
+| 字符 | 含义                                                         | 举例                                                         |
+| ---- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `\`  | 转义字符，普通字符转义为特殊字符，特殊字符转义为普通字符     | 普通字符`<`写成`\<`表示单词开头的位置，特殊字符`.`写成`\.`以及`\`写成`\\`就当作普通字符来匹配 |
+| `()` | 将正则表达式的一部分括起来组成一个单元，可以对整个单元使用数量限定符 | `([0-9]{1,3}\.){3}[0-9]{1,3}`匹配IP地址                      |
+| `|`  | 连接两个子表达式，表示或的关系                               | `n(o|either)`匹配`no`或`neither`                             |
+
+以上介绍的是 `grep` 正则表达式的 Extended 规范，Basic 规范也有这些语法，只是字符 `?+{}|()` 应解释为普通字符，要表示上述特殊含义则需要加 `\` 转义。如果用 `grep` 而不是 `egrep`，并且不加 `-E` 参数，则应该遵照 Basic 规范来写正则表达式。
+
+### 3.5.3. sed
+
+`sed` 意为流编辑器（Stream Editor），在 Shell 脚本和 Makefile 中作为过滤器使用非常普遍，也就是把前一个程序的输出引入 sed 的输入，经过一系列编辑命令转换为另一种格式输出。`sed` 和 `vi` 都源于早期 UNIX 的 `ed` 工具，所以很多 `sed` 命令和 `vi` 的末行命令是相同的。
+
+`sed` 命令行的基本格式为
+
+```bash
+sed option 'script' file1 file2 ...
+sed option -f scriptfile file1 file2 ...
+```
+
+`sed` 处理的文件既可以由标准输入重定向得到，也可以当命令行参数传入，命令行参数可以一次传入多个文件，`sed` 会依次处理。`sed` 的编辑命令可以直接当命令行参数传入，也可以写成一个脚本文件然后用 `-f` 参数指定，编辑命令的格式为
+
+```bash
+/pattern/action
+```
+
+其中 `pattern` 是正则表达式，`action` 是编辑操作。`sed` 程序一行一行读出待处理文件，如果某一行与 `pattern` 匹配，则执行相应的 `action`，如果一条命令没有 `pattern` 而只有 `action` ，这个 `action` 将作用于待处理文件的每一行。
+
+<p id="t32-5">表 32.5. 常用的 sed 命令</p>
+
+| `/pattern/p`                     | 打印匹配 `pattern` 的行                                        |
+| -------------------------------- | ------------------------------------------------------------ |
+| `/pattern/d`                     | 删除匹配 `pattern` 的行                                        |
+| `/pattern/s/pattern1/pattern2/`  | 查找符合 `pattern` 的行，将该行第一个匹配`pattern1` 的字符串替换为 `pattern2` |
+| `/pattern/s/pattern1/pattern2/g` | 查找符合 `pattern` 的行，将该行所有匹配`pattern1` 的字符串替换为 `pattern2` |
+
+使用 `p` 命令需要注意，`sed` 是把待处理文件的内容连同处理结果一起输出到标准输出的，因此 `p` 命令表示除了把文件内容打印出来之外还额外打印一遍匹配 `pattern` 的行。比如一个文件 `testfile` 的内容是
+
+```text
+123
+abc
+456
+```
+
+打印其中包含 `abc` 的行
+
+```bash
+$ sed '/abc/p' testfile
+123
+abc
+abc
+456
+```
+
+要想只输出处理结果，应加上 `-n` 选项，这种用法相当于 `grep` 命令
+
+```bash
+$ sed -n '/abc/p' testfile
+abc
+```
+
+使用 `d` 命令就不需要 `-n` 参数了，比如删除含有 `abc` 的行
+
+```bash
+$ sed '/abc/d' testfile
+123
+456
+```
+
+注意，`sed` 命令不会修改原文件，删除命令只表示某些行不打印输出，而不是从原文件中删去。
+
+使用查找替换命令时，可以把匹配 `pattern1` 的字符串复制到 `pattern2` 中，比如：
+
+```bash
+$ sed 's/bc/-&-/' testfile
+123
+a-bc-
+456
+```
+
+`pattern2` 中的 `&` 表示原文件的当前行中与 `pattern1` 相匹配的字符串，再比如：
+
+```bash
+$ sed 's/\([0-9]\)\([0-9]\)/-\1-~\2~/' testfile
+-1-~2~3
+abc
+-4-~5~6
+```
+
+`pattern2` 中的 `\1` 表示与 `pattern1` 的第一个 `()` 括号相匹配的内容，`\2` 表示与 `pattern1` 的第二个 `()` 括号相匹配的内容。`sed` 默认使用 Basic 正则表达式规范，如果指定了 `-r` 选项则使用 Extended 规范，那么 `()` 括号就不必转义了。
+
+如果 `testfile` 的内容是
+
+```html
+<html><head><title>Hello World</title>
+<body>Welcome to the world of regexp!</body></html>
+```
+
+现在要去掉所有的 HTML 标签，使输出结果为
+
+```text
+Hello World
+Welcome to the world of regexp!
+```
+
+怎么做呢？如果用下面的命令
+
+```bash
+$ sed 's/<.*>//g' testfile
+```
+
+结果是两个空行，把所有字符都过滤掉了。这是因为，正则表达式中的数量限定符会匹配尽可能长的字符串，这称为贪心的（Greedy）<sup>[39]</sup>。比如 `sed` 在处理第一行时，`<.*>` 匹配的并不是 `<html>` 或 `<head>` 这样的标签，而是
+
+```html
+<html><head><title>Hello World</title>
+```
+
+这样一整行，因为这一行开头是 `<`，中间是若干个任意字符，末尾是 `>`。那么这条命令怎么改才对呢？留给读者思考。
+
+> <sup>[39]</sup> 有些正则表达式规范支持 Non-greedy 的数量限定符，匹配尽可能短的字符串，例如在 Python 中 `*?` 和 `*` 一样表示 0 个或任意多个，但前者是 Non-greedy 的。
+
+### 3.5.4. awk
+
+`sed` 以行为单位处理文件，`awk` 比 `sed` 强的地方在于不仅能以行为单位还能以列为单位处理文件。`awk` 缺省的行分隔符是换行，缺省的列分隔符是连续的空格和 Tab，但是行分隔符和列分隔符都可以自定义，比如 `/etc/passwd` 文件的每一行有若干个字段，字段之间以 `:` 分隔，就可以重新定义 `awk` 的列分隔符为 `:` 并以列为单位处理这个文件。`awk` 实际上是一门很复杂的脚本语言，还有像 C 语言一样的分支和循环结构，但是基本用法和 `sed` 类似，`awk` 命令行的基本形式为：
+
+```bash
+awk option 'script' file1 file2 ...
+awk option -f scriptfile file1 file2 ...
+```
+
+和 `sed` 一样，`awk` 处理的文件既可以由标准输入重定向得到，也可以当命令行参数传入，编辑命令可以直接当命令行参数传入，也可以用 `-f` 参数指定一个脚本文件，编辑命令的格式为：
+
+```bash
+/pattern/{actions}
+condition{actions}
+```
+
+和 `sed` 类似，`pattern` 是正则表达式，`actions` 是一系列操作。`awk` 程序一行一行读出待处理文件，如果某一行与 `pattern` 匹配，或者满足 `condition` 条件，则执行相应的 `actions`，如果一条 `awk` 命令只有 `actions` 部分，则 `actions` 作用于待处理文件的每一行。比如文件 `testfile` 的内容表示某商店的库存量：
+
+```text
+ProductA  30
+ProductB  76
+ProductC  55
+```
+
+打印每一行的第二列:
+
+```bash
+$ awk '{print $2;}' testfile
+30
+76
+55
+```
+
+自动变量 `$1`、`$2` 分别表示第一列、第二列等，类似于 Shell 脚本的位置参数，而 `$0` 表示整个当前行。再比如，如果某种产品的库存量低于 75 则在行末标注需要订货：
+
+```bash
+$ awk '$2<75 {printf "%s\t%s\n", $0, "REORDER";} $2>=75 {print $0;}' testfile
+ProductA  30    REORDER
+ProductB  76
+ProductC  55    REORDER
+```
+
+可见 `awk` 也有和 C 语言非常相似的 `printf` 函数。`awk` 命令的 `condition` 部分还可以是两个特殊的 `condition` —— `BEGIN` 和 `END`，对于每个待处理文件，`BEGIN` 后面的 `actions` 在处理整个文件之前执行一次，`END` 后面的 `actions` 在整个文件处理完之后执行一次。
+
+`awk` 命令可以像 C 语言一样使用变量（但不需要定义变量），比如统计一个文件中的空行数
+
+```bash
+$ awk '/^ *$/ {x=x+1;} END {print x;}' testfile
+```
+
+就像 Shell 的环境变量一样，有些 `awk` 变量是预定义的有特殊含义的：
+
+<p id="t32-6">表 32.6. awk 常用的内建变量</p>
+
+| FILENAME | 当前输入文件的文件名，该变量是只读的             |
+| -------- | ------------------------------------------------ |
+| NR       | 当前行的行号，该变量是只读的，`R` 代表 record      |
+| NF       | 当前行所拥有的列数，该变量是只读的，`F` 代表 field |
+| OFS      | 输出格式的列分隔符，缺省是空格                   |
+| FS       | 输入文件的列分融符，缺省是连续的空格和 Tab        |
+| ORS      | 输出格式的行分隔符，缺省是换行符                 |
+| RS       | 输入文件的行分隔符，缺省是换行符                 |
+
+例如打印系统中的用户帐号列表
+
+```bash
+$ awk 'BEGIN {FS=":"} {print $1;}' /etc/passwd
+```
+
+`awk` 还可以像 C 语言一样使用 `if`/`else`、`while`、`for` 控制结构，此处从略。
+
+### 3.5.5. 练习：在 C 语言中使用正则表达式
+
+POSIX 规定了正则表达式的 C 语言库函数，详见 `regex(3)`。我们已经学习了很多 C 语言库函数的用法，读者应该具备自己看懂 man 手册的能力了。本章介绍了正则表达式在 `grep`、`sed`、`awk` 中的用法，学习要能够举一反三，请读者根据 `regex(3)` 自己总结正则表达式在 C 语言中的用法，写一些简单的程序，例如验证用户输入的 IP 地址或 email 地址格式是否正确。
+
 ## 3.6. 信号
+
+### 3.6.1. 信号的基本概念
+
+为了理解信号，先从我们最熟悉的场景说起：
+
+1. 用户输入命令，在 Shell 下启动一个前台进程。
+2. 用户按下 Ctrl-C，这个键盘输入产生一个硬件中断。
+3. 如果 CPU 当前正在执行这个进程的代码，则该进程的用户空间代码暂停执行，CPU 从用户态切换到内核态处理硬件中断。
+4. 终端驱动程序将 Ctrl-C 解释成一个 `SIGINT` 信号，记在该进程的 PCB 中（也可以说发送了一个 `SIGINT` 信号给该进程）。
+5. 当某个时刻要从内核返回到该进程的用户空间代码继续执行之前，首先处理 PCB 中记录的信号，发现有一个 `SIGINT` 信号待处理，而这个信号的默认处理动作是终止进程，所以直接终止进程而不再返回它的用户空间代码执行。
+
+注意，Ctrl-C 产生的信号只能发给前台进程。在[第 30 章「进程」第 3.3 节「wait 和 waitpid 函数」](3-Linux-系统编程/ch30-进程#_33-wait-和-waitpid-函数)中我们看到一个命令后面加个 `&` 可以放到后台运行，这样 Shell 不必等待进程结束就可以接受新的命令，启动新的进程。Shell 可以同时运行一个前台进程和任意多个后台进程，只有前台进程才能接到像 Ctrl-C 这种控制键产生的信号。前台进程在运行过程中用户随时可能按下 Ctrl-C 而产生一个信号，也就是说该进程的用户空间代码执行到任何地方都有可能收到 `SIGINT` 信号而终止，所以信号相对于进程的控制流程来说是异步（Asynchronous）的。
+
+用 `kill -l` 命令可以察看系统定义的信号列表：
+
+```bash
+$ kill -l
+ 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL
+ 5) SIGTRAP      6) SIGABRT      7) SIGBUS       8) SIGFPE
+ 9) SIGKILL     10) SIGUSR1     11) SIGSEGV     12) SIGUSR2
+13) SIGPIPE     14) SIGALRM     15) SIGTERM     16) SIGSTKFLT
+17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP
+21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU
+25) SIGXFSZ     26) SIGVTALRM   27) SIGPROF     28) SIGWINCH
+29) SIGIO       30) SIGPWR      31) SIGSYS      34) SIGRTMIN
+35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3  38) SIGRTMIN+4
+...
+```
+
+每个信号都有一个编号和一个宏定义名称，这些宏定义可以在 `signal.h` 中找到，例如其中有定义 `#define SIGINT 2`。编号 34 以上的是实时信号，本章只讨论编号 34 以下的信号，不讨论实时信号。这些信号各自在什么条件下产生，默认的处理动作是什么，在 `signal(7)` 中都有详细说明：
+
+```bash
+Signal     Value     Action   Comment
+-------------------------------------------------------------------------
+SIGHUP        1       Term    Hangup detected on controlling terminal
+                              or death of controlling process
+SIGINT        2       Term    Interrupt from keyboard
+SIGQUIT       3       Core    Quit from keyboard
+SIGILL        4       Core    Illegal Instruction
+...
+```
+
+上表中第一列是各信号的宏定义名称，第二列是各信号的编号，第三列是默认处理动作，`Term` 表示终止当前进程，`Core` 表示终止当前进程并且 Core Dump（下一节详细介绍什么是 Core Dump），`Ign` 表示忽略该信号，`Stop` 表示停止当前进程，`Cont` 表示继续执行先前停止的进程，表中最后一列是简要介绍，说明什么条件下产生该信号。
+
+产生信号的条件主要有：
+
+- 用户在终端按下某些键时，终端驱动程序会发送信号给前台进程，例如 Ctrl-C 产生 `SIGINT` 信号，Ctrl-\ 产生 `SIGQUIT` 信号，Ctrl-Z 产生 `SIGTSTP` 信号（可使前台进程停止，这个信号将在[第 34 章「终端、作业控制与守护进程」](3-Linux-系统编程/ch34-终端、作业控制与守护进程)详细解释）。
+- 硬件异常产生信号，这些条件由硬件检测到并通知内核，然后内核向当前进程发送适当的信号。例如当前进程执行了除以 0 的指令，CPU 的运算单元会产生异常，内核将这个异常解释为 `SIGFPE` 信号发送给进程。再比如当前进程访问了非法内存地址，，MMU 会产生异常，内核将这个异常解释为 `SIGSEGV` 信号发送给进程。
+- 一个进程调用 `kill(2)` 函数可以发送信号给另一个进程。
+- 可以用 `kill(1)` 命令发送信号给某个进程，`kill(1)` 命令也是调用 `kill(2)` 函数实现的，如果不明确指定信号则发送 `SIGTERM` 信号，该信号的默认处理动作是终止进程。
+- 当内核检测到某种软件条件发生时也可以通过信号通知进程，例如闹钟超时产生 `SIGALRM` 信号，向读端已关闭的管道写数据时产生 `SIGPIPE` 信号。
+
+如果不想按默认动作处理信号，用户程序可以调用 `sigaction(2)` 函数告诉内核如何处理某种信号（`sigaction` 函数稍后详细介绍），可选的处理动作有以下三种：
+
+1. 忽略此信号。
+2. 执行该信号的默认处理动作。
+3. 提供一个信号处理函数，要求内核在处理该信号时切换到用户态执行这个处理函数，这种方式称为捕捉（Catch）一个信号。
+
+### 3.6.2. 产生信号
+
+#### 3.6.2.1. 通过终端按键产生信号
+
+上一节讲过，`SIGINT` 的默认处理动作是终止进程，`SIGQUIT` 的默认处理动作是终止进程并且 Core Dump，现在我们来验证一下。
+
+首先解释什么是 Core Dump。当一个进程要异常终止时，可以选择把进程的用户空间内存数据全部保存到磁盘上，文件名通常是 `core`，这叫做 Core Dump。进程异常终止通常是因为有 Bug，比如非法内存访问导致段错误，事后可以用调试器检查 `core` 文件以查清错误原因，这叫做 Post-mortem Debug。一个进程允许产生多大的 `core` 文件取决于进程的 Resource Limit（这个信息保存在 PCB 中）。默认是不允许产生 `core` 文件的，因为 `core` 文件中可能包含用户密码等敏感信息，不安全。在开发调试阶段可以用 `ulimit` 命令改变这个限制，允许产生 `core` 文件。
+
+首先用 `ulimit` 命令改变 Shell 进程的 Resource Limit，允许 `core` 文件最大为 1024K：
+
+```bash
+$ ulimit -c 1024
+```
+
+然后写一个死循环程序：
+
+```c
+#include <unistd.h>
+
+int main(void)
+{
+	while(1);
+	return 0;
+}
+```
+
+前台运行这个程序，然后在终端键入 Ctrl-C 或 Ctrl-\：
+
+```bash
+$ ./a.out
+（按Ctrl-C）
+$ ./a.out
+（按 Ctrl-\）Quit (core dumped)
+$ ls -l core*
+-rw------- 1 akaedu akaedu 147456 2008-11-05 23:40 core
+```
+
+`ulimit` 命令改变了 Shell 进程的 Resource Limit，`a.out` 进程的 PCB 由 Shell 进程复制而来，所以也具有和 Shell 进程相同的 Resource Limit 值，这样就可以产生 Core Dump 了。
+
+#### 3.6.2.2. 调用系统函数向进程发信号
+
+仍以上一节的死循环程序为例，首先在后台执行这个程序，然后用 `kill` 命令给它发 `SIGSEGV` 信号。
+
+```bash
+$ ./a.out &
+[1] 7940
+$ kill -SIGSEGV 7940
+$（再次回车）
+[1]+  Segmentation fault      (core dumped) ./a.out
+```
+
+7940 是 `a.out` 进程的 id。之所以要再次回车才显示 `Segmentation fault`，是因为在 7940 进程终止掉之前已经回到了 Shell 提示符等待用户输入下一条命令，Shell 不希望 `Segmentation fault` 信息和用户的输入交错在一起，所以等用户输入命令之后才显示。指定某种信号的 `kill` 命令可以有多种写法，上面的命令还可以写成 `kill -SEGV 7940` 或 `kill -11 7940`，11 是信号 `SIGSEGV` 的编号。以往遇到的段错误都是由非法内存访问产生的，而这个程序本身没错，给它发 `SIGSEGV` 也能产生段错误。
+
+`kill` 命令是调用 `kill` 函数实现的。`kill` 函数可以给一个指定的进程发送指定的信号。`raise` 函数可以给当前进程发送指定的信号（自己给自己发信号）。
+
+```c
+#include <signal.h>
+
+int kill(pid_t pid, int signo);
+int raise(int signo);
+```
+
+这两个函数都是成功返回 0，错误返回 -1。
+
+`abort` 函数使当前进程接收到 `SIGABRT` 信号而异常终止。
+
+```c
+#include <stdlib.h>
+
+void abort(void);
+```
+
+就像 `exit` 函数一样，`abort` 函数总是会成功的，所以没有返回值。
+
+#### 3.6.2.3. 由软件条件产生信号
+
+`SIGPIPE` 是一种由软件条件产生的信号，在[例 30.7 「管道」](3-Linux-系统编程/ch30-进程#e30-7)中已经介绍过了。本节主要介绍 `alarm` 函数和 `SIGALRM` 信号。
+
+```c
+#include <unistd.h>
+
+unsigned int alarm(unsigned int seconds);
+```
+
+调用 `alarm` 函数可以设定一个闹钟，也就是告诉内核在 `seconds` 秒之后给当前进程发 `SIGALRM` 信号，该信号的默认处理动作是终止当前进程。这个函数的返回值是 0 或者是以前设定的闹钟时间还余下的秒数。打个比方，某人要小睡一觉，设定闹钟为 30 分钟之后响，20 分钟后被人吵醒了，还想多睡一会儿，于是重新设定闹钟为 15 分钟之后响，「以前设定的闹钟时间还余下的时间」就是 10 分钟。如果 `seconds` 值为 0，表示取消以前设定的闹钟，函数的返回值仍然是以前设定的闹钟时间还余下的秒数。
+
+<p id="e33-1">例 33.1. alarm</p>
+
+```c
+#include <unistd.h>
+#include <stdio.h>
+
+int main(void)
+{
+	int counter;
+	alarm(1);
+	for(counter=0; 1; counter++)
+		printf("counter=%d ", counter);
+	return 0;
+}
+```
+
+这个程序的作用是 1 秒钟之内不停地数数，1 秒钟到了就被 `SIGALRM` 信号终止。
+
+### 3.6.3. 阻塞信号
+
+#### 3.6.3.1. 信号在内核中的表示
+
+以上我们讨论了信号**产生**（Generation）的各种原因，而实际执行信号的处理动作称为信号**递达**（Delivery），信号从产生到递达之间的状态，称为信号**未决**（Pending）。进程可以选择阻塞（Block）某个信号。被阻塞的信号产生时将保持在未决状态，直到进程解除对此信号的阻塞，才执行递达的动作。注意，阻塞和忽略是不同的，只要信号被阻塞就不会递达，而忽略是在递达之后可选的一种处理动作。信号在内核中的表示可以看作是这样的：
+
+<p id="c33-1">图 33.1. 信号在内核中的表示示意图</p>
+
+![信号在内核中的表示示意图](./image/signal.internal.png)
+
+每个信号都有两个标志位分别表示阻塞和未决，还有一个函数指针表示处理动作。信号产生时，内核在进程控制块中设置该信号的未决标志，直到信号递达才清除该标志。在上图的例子中，
+
+1. `SIGHUP` 信号未阻塞也未产生过，当它递达时执行默认处理动作。
+2. `SIGINT` 信号产生过，但正在被阻塞，所以暂时不能递达。虽然它的处理动作是忽略，但在没有解除阻塞之前不能忽略这个信号，因为进程仍有机会改变处理动作之后再解除阻塞。
+3. `SIGQUIT` 信号未产生过，一旦产生 `SIGQUIT` 信号将被阻塞，它的处理动作是用户自定义函数 `sighandler`。
+
+如果在进程解除对某信号的阻塞之前这种信号产生过多次，将如何处理？POSIX.1 允许系统递送该信号一次或多次。Linux 是这样实现的：常规信号在递达之前产生多次只计一次，而实时信号在递达之前产生多次可以依次放在一个队列里。本章不讨论实时信号。从上图来看，每个信号只有一个 bit 的未决标志，非 0 即 1，不记录该信号产生了多少次，阻塞标志也是这样表示的。因此，未决和阻塞标志可以用相同的数据类型 `sigset_t` 来存储，`sigset_t` 称为信号集，这个类型可以表示每个信号的「有效」或「无效」状态，在阻塞信号集中「有效」和「无效」的含义是该信号是否被阻塞，而在未决信号集中「有效」和「无效」的含义是该信号是否处于未决状态。下一节将详细介绍信号集的各种操作。阻塞信号集也叫做当前进程的信号屏蔽字（Signal Mask），这里的「屏蔽」应该理解为阻塞而不是忽略。
+
+#### 3.6.3.2. 信号集操作函数
+
+`sigset_t` 类型对于每种信号用一个 bit 表示「有效」或「无效」状态，至于这个类型内部如何存储这些 bit 则依赖于系统实现，从使用者的角度是不必关心的，使用者只能调用以下函数来操作 `sigset_t` 变量，而不应该对它的内部数据做任何解释，比如用 `printf` 直接打印 `sigset_t` 变量是没有意义的。
+
+```c
+#include <signal.h>
+
+int sigemptyset(sigset_t *set);
+int sigfillset(sigset_t *set);
+int sigaddset(sigset_t *set, int signo);
+int sigdelset(sigset_t *set, int signo);
+int sigismember(const sigset_t *set, int signo);
+```
+
+函数 `sigemptyset` 初始化 `set` 所指向的信号集，使其中所有信号的对应 bit 清零，表示该信号集不包含任何有效信号。函数 `sigfillset` 初始化 `set` 所指向的信号集，使其中所有信号的对应 bit 置位，表示该信号集的有效信号包括系统支持的所有信号。注意，在使用 `sigset_t` 类型的变量之前，一定要调用 `sigemptyset` 或 `sigfillset` 做初始化，使信号集处于确定的状态。初始化 `sigset_t` 变量之后就可以在调用 `sigaddset` 和 `sigdelset` 在该信号集中添加或删除某种有效信号。这四个函数都是成功返回 0，出错返回 -1。`sigismember` 是一个布尔函数，用于判断一个信号集的有效信号中是否包含某种信号，若包含则返回 1，不包含则返回 0，出错返回 -1。
+
+#### 3.6.3.3. sigprocmask
+
+调用函数 `sigprocmask` 可以读取或更改进程的信号屏蔽字。
+
+```c
+#include <signal.h>
+
+int sigprocmask(int how, const sigset_t *set, sigset_t *oset);
+```
+
+返回值：若成功则为 0，若出错则为 -1
+
+如果 `oset` 是非空指针，则读取进程的当前信号屏蔽字通过 `oset` 参数传出。如果 `set` 是非空指针，则更改进程的信号屏蔽字，参数 `how` 指示如何更改。如果 `oset` 和 `set` 都是非空指针，则先将原来的信号屏蔽字备份到 `oset` 里，然后根据 `set` 和 `how` 参数更改信号屏蔽字。假设当前的信号屏蔽字为 `mask`，下表说明了 `how` 参数的可选值。
+
+<p id="t33-1">表 33.1. how 参数的含义</p>
+
+| `SIG_BLOCK`   | `set` 包含了我们希望添加到当前信号屏蔽字的信号，相当于 mask=mask\|set |
+| ------------- | ------------------------------------------------------------ |
+| `SIG_UNBLOCK` | `set` 包含了我们希望从当前信号屏蔽字中解除阻塞的信号，相当于 mask=mask&~set |
+| `SIG_SETMASK` | 设置当前信号屏蔽字为 `set` 所指向的值，相当于 mask=set          |
+
+如果调用 `sigprocmask` 解除了对当前若干个未决信号的阻塞，则在 `sigprocmask` 返回前，至少将其中一个信号递达。
+
+#### 3.6.3.4. sigpending
+
+```c
+#include <signal.h>
+
+int sigpending(sigset_t *set);
+```
+
+`sigpending` 读取当前进程的未决信号集，通过 `set` 参数传出。调用成功则返回0，出错则返回 -1。
+
+下面用刚学的几个函数做个实验。程序如下：
+
+```c
+#include <signal.h>
+#include <stdio.h>
+#include <unistd.h>
+
+void printsigset(const sigset_t *set)
+{
+	int i;
+	for (i = 1; i < 32; i++)
+		if (sigismember(set, i) == 1)
+			putchar('1');
+		else
+			putchar('0');
+	puts("");
+}
+
+int main(void)
+{
+	sigset_t s, p;
+	sigemptyset(&s);
+	sigaddset(&s, SIGINT);
+	sigprocmask(SIG_BLOCK, &s, NULL);
+	while (1) {
+		sigpending(&p);
+		printsigset(&p);
+		sleep(1);
+	}
+	return 0;
+}
+```
+
+程序运行时，每秒钟把各信号的未决状态打印一遍，由于我们阻塞了 `SIGINT` 信号，按 Ctrl-C 将会使 `SIGINT` 信号处于未决状态，按 Ctrl-\ 仍然可以终止程序，因为 `SIGQUIT` 信号没有阻塞。
+
+```bash
+$ ./a.out 
+0000000000000000000000000000000
+0000000000000000000000000000000（这时按 Ctrl-C）
+0100000000000000000000000000000
+0100000000000000000000000000000（这时按 Ctrl-\）
+Quit (core dumped)
+```
+
+### 3.6.4. 捕捉信号
+
+#### 3.6.4.1. 内核如何实现信号的捕捉
+
+如果信号的处理动作是用户自定义函数，在信号递达时就调用这个函数，这称为捕捉信号。由于信号处理函数的代码是在用户空间的，处理过程比较复杂，举例如下：
+
+1. 用户程序注册了 `SIGQUIT` 信号的处理函数 `sighandler`。
+2. 当前正在执行 `main` 函数，这时发生中断或异常切换到内核态。
+3. 在中断处理完毕后要返回用户态的 `main` 函数之前检查到有信号 `SIGQUIT` 递达。
+4. 内核决定返回用户态后不是恢复 `main` 函数的上下文继续执行，而是执行 `sighandler` 函数，`sighandler` 和 `main` 函数使用不同的堆栈空间，它们之间不存在调用和被调用的关系，是两个独立的控制流程。
+5. `sighandler` 函数返回后自动执行特殊的系统调用 `sigreturn` 再次进入内核态。
+6. 如果没有新的信号要递达，这次再返回用户态就是恢复 `main` 函数的上下文继续执行了。
+
+<p id="c33-2">图 33.2. 信号的捕捉</p>
+
+![信号的捕捉](./image/signal.catch.png)
+
+上图出自 *ULK*。
+
+#### 3.6.4.2. sigaction
+
+```c
+#include <signal.h>
+
+int sigaction(int signo, const struct sigaction *act, struct sigaction *oact);
+```
+
+`sigaction` 函数可以读取和修改与指定信号相关联的处理动作。调用成功则返回 0，出错则返回 -1。`signo` 是指定信号的编号。若 `act` 指针非空，则根据 `act` 修改该信号的处理动作。若 `oact` 指针非空，则通过 `oact` 传出该信号原来的处理动作。`act` 和 `oact` 指向 `sigaction` 结构体：
+
+```c
+struct sigaction {
+   void      (*sa_handler)(int);   /* addr of signal handler, */
+                                       /* or SIG_IGN, or SIG_DFL */
+   sigset_t sa_mask;               /* additional signals to block */
+   int      sa_flags;              /* signal options, Figure 10.16 */
+
+   /* alternate handler */
+   void     (*sa_sigaction)(int, siginfo_t *, void *);
+};
+```
+
+将 `sa_handler` 赋值为常数 `SIG_IGN` 传给 `sigaction` 表示忽略信号，赋值为常数 `SIG_DFL` 表示执行系统默认动作，赋值为一个函数指针表示用自定义函数捕捉信号，或者说向内核注册了一个信号处理函数，该函数返回值为 `void`，可以带一个 `int` 参数，通过参数可以得知当前信号的编号，这样就可以用同一个函数处理多种信号。显然，这也是一个回调函数，不是被 `main` 函数调用，而是被系统所调用。
+
+当某个信号的处理函数被调用时，内核自动将当前信号加入进程的信号屏蔽字，当信号处理函数返回时自动恢复原来的信号屏蔽字，这样就保证了在处理某个信号时，如果这种信号再次产生，那么它会被阻塞到当前处理结束为止。如果在调用信号处理函数时，除了当前信号被自动屏蔽之外，还希望自动屏蔽另外一些信号，则用 `sa_mask` 字段说明这些需要额外屏蔽的信号，当信号处理函数返回时自动恢复原来的信号屏蔽字。
+
+`sa_flags` 字段包含一些选项，本章的代码都把 `sa_flags` 设为 0，`sa_sigaction` 是实时信号的处理函数，本章不详细解释这两个字段，有兴趣的读者参考 *APUE2e*。
+
+#### 3.6.4.3. pause
+
+```c
+#include <unistd.h>
+
+int pause(void);
+```
+
+`pause` 函数使调用进程挂起直到有信号递达。如果信号的处理动作是终止进程，则进程终止，`pause` 函数没有机会返回；如果信号的处理动作是忽略，则进程继续处于挂起状态，`pause` 不返回；如果信号的处理动作是捕捉，则调用了信号处理函数之后 `pause` 返回 -1，`errno` 设置为 `EINTR`，所以 `pause` 只有出错的返回值（想想以前还学过什么函数只有出错返回值？）。错误码 `EINTR` 表示「被信号中断」。
+
+下面我们用 `alarm` 和 `pause` 实现 `sleep(3)` 函数，称为 `mysleep`。
+
+<p id="e33-2">例 33.2. mysleep</p>
+
+```c
+#include <unistd.h>
+#include <signal.h>
+#include <stdio.h>
+
+void sig_alrm(int signo)
+{
+	/* nothing to do */
+}
+
+unsigned int mysleep(unsigned int nsecs)
+{
+	struct sigaction newact, oldact;
+	unsigned int unslept;
+
+	newact.sa_handler = sig_alrm;
+	sigemptyset(&newact.sa_mask);
+	newact.sa_flags = 0;
+	sigaction(SIGALRM, &newact, &oldact);
+
+	alarm(nsecs);
+	pause();
+
+	unslept = alarm(0);
+	sigaction(SIGALRM, &oldact, NULL);
+
+	return unslept;
+}
+
+int main(void)
+{
+	while(1){
+		mysleep(2);
+		printf("Two seconds passed\n");
+	}
+	return 0;
+}
+```
+
+1. `main` 函数调用 `mysleep` 函数，后者调用 `sigaction` 注册了 `SIGALRM` 信号的处理函数 `sig_alrm`。
+2. 调用 `alarm(nsecs)` 设定闹钟。
+3. 调用 `pause` 等待，内核切换到别的进程运行。
+4. `nsecs` 秒之后，闹钟超时，内核发 `SIGALRM` 给这个进程。
+5. 从内核态返回这个进程的用户态之前处理未决信号，发现有 `SIGALRM` 信号，其处理函数是 `sig_alrm`。
+6. 切换到用户态执行 `sig_alrm` 函数，进入 `sig_alrm` 函数时 `SIGALRM` 信号被自动屏蔽，从 `sig_alrm` 函数返回时 `SIGALRM` 信号自动解除屏蔽。然后自动执行系统调用 `sigreturn` 再次进入内核，再返回用户态继续执行进程的主控制流程（`main` 函数调用的 `mysleep` 函数）。
+7. `pause` 函数返回 -1，然后调用 `alarm(0)` 取消闹钟，调用 `sigaction` 恢复 `SIGALRM` 信号以前的处理动作。
+
+以下问题留给读者思考：
+
+1. 信号处理函数 `sig_alrm` 什么都没干，为什么还要注册它作为 `SIGALRM` 的处理函数？不注册信号处理函数可以吗？
+2. 为什么在 `mysleep` 函数返回前要恢复 `SIGALRM` 信号原来的 `sigaction`？
+3. `mysleep` 函数的返回值表示什么含义？什么情况下返回非 0 值？。
+
+#### 3.6.4.4. 可重入函数
+
+当捕捉到信号时，不论进程的主控制流程当前执行到哪儿，都会先跳到信号处理函数中执行，从信号处理函数返回后再继续执行主控制流程。信号处理函数是一个单独的控制流程，因为它和主控制流程是异步的，二者不存在调用和被调用的关系，并且使用不同的堆栈空间。引入了信号处理函数使得一个进程具有多个控制流程，如果这些控制流程访问相同的全局资源（全局变量、硬件资源等），就有可能出现冲突，如下面的例子所示。
+
+<p id="c33-3">图 33.3. 不可重入函数</p>
+
+![不可重入函数](./image/signal.reentrancy.png)
+
+`main` 函数调用 `insert` 函数向一个链表 `head` 中插入节点 `node1`，插入操作分为两步，刚做完第一步的时候，因为硬件中断使进程切换到内核，再次回用户态之前检查到有信号待处理，于是切换到 `sighandler` 函数，`sighandler` 也调用 `insert` 函数向同一个链表 `head` 中插入节点 `node2`，插入操作的两步都做完之后从 `sighandler` 返回内核态，再次回到用户态就从 `main` 函数调用的 `insert` 函数中继续往下执行，先前做第一步之后被打断，现在继续做完第二步。结果是，`main` 函数和 `sighandler` 先后向链表中插入两个节点，而最后只有一个节点真正插入链表中了。
+
+像上例这样，`insert` 函数被不同的控制流程调用，有可能在第一次调用还没返回时就再次进入该函数，这称为重入，`insert` 函数访问一个全局链表，有可能因为重入而造成错乱，像这样的函数称为不可重入函数，反之，如果一个函数只访问自己的局部变量或参数，则称为可重入（`Reentrant`）函数。想一下，为什么两个不同的控制流程调用同一个函数，访问它的同一个局部变量或参数就不会造成错乱？
+
+如果一个函数符合以下条件之一则是不可重入的：
+
+- 调用了 `malloc` 或 `free`，因为 `malloc` 也是用全局链表来管理堆的。
+- 调用了标准 I/O 库函数。标准 I/O 库的很多实现都以不可重入的方式使用全局数据结构。
+
+SUS 规定有些系统函数必须以线程安全的方式实现，这里就不列了，请参考 *APUE2e*。
+
+#### 3.6.4.5. sig_atomic_t 类型与 volatile 限定符
+
+在上面的例子中，`main` 和 `sighandler` 都调用 `insert` 函数则有可能出现链表的错乱，其根本原因在于，对全局链表的插入操作要分两步完成，不是一个原子操作，假如这两步操作必定会一起做完，中间不可能被打断，就不会出现错乱了。下一节线程会讲到如何保证一个代码段以原子操作完成。
+
+现在想一下，如果对全局数据的访问只有一行代码，是不是原子操作呢？比如，`main` 和 `sighandler` 都对一个全局变量赋值，会不会出现错乱呢？比如下面的程序：
+
+```c
+long long a;
+int main(void)
+{
+	a=5;
+	return 0;
+}
+```
+
+带调试信息编译，然后带源代码反汇编：
+
+```bash
+$ gcc main.c -g
+$ objdump -dS a.out
+```
+
+其中 main 函数的指令中有：
+
+```bash
+	a=5;
+ 8048352:       c7 05 50 95 04 08 05    movl   $0x5,0x8049550
+ 8048359:       00 00 00 
+ 804835c:       c7 05 54 95 04 08 00    movl   $0x0,0x8049554
+ 8048363:       00 00 00
+```
+
+虽然 C 代码只有一行，但是在 32 位机上对一个 64 位的 `long long` 变量赋值需要两条指令完成，因此不是原子操作。同样地，读取这个变量到寄存器需要两个 32 位寄存器才放得下，也需要两条指令，不是原子操作。请读者设想一种时序，`main` 和 `sighandler`都对这个变量 `a` 赋值，最后变量 `a` 的值发生错乱。
+
+如果上述程序在 64 位机上编译执行，则有可能用一条指令完成赋值，因而是原子操作。如果 `a` 是 32 位的 `int` 变量，在 32 位机上赋值是原子操作，在 16 位机上就不是。如果在程序中需要使用一个变量，要保证对它的读写都是原子操作，应该采用什么类型呢？为了解决这些平台相关的问题，C 标准定义了一个类型 `sig_atomic_t`，在不同平台的 C 语言库中取不同的类型，例如在 32 位机上定义 `sig_atomic_t` 为 `int` 类型。
+
+在使用 `sig_atomic_t` 类型的变量时，还需要注意另一个问题。看如下的例子：
+
+```c
+#include <signal.h>
+
+sig_atomic_t a=0;
+int main(void)
+{
+	/* register a sighandler */
+	while(!a); /* wait until a changes in sighandler */
+	/* do something after signal arrives */
+	return 0;
+}
+```
+
+为了简洁，这里只写了一个代码框架来说明问题。在 `main` 函数中首先要注册某个信号的处理函数 `sighandler`，然后在一个 `while` 死循环中等待信号发生，如果有信号递达则执行 `sighandler`，在 `sighandler` 中将 `a` 改为 1，这样再次回到 `main` 函数时就可以退出 `while` 循环，执行后续处理。用上面的方法编译和反汇编这个程序，在 `main` 函数的指令中有：
+
+```asm6502
+	/* register a sighandler */
+	while(!a); /* wait until a changes in sighandler */
+ 8048352:       a1 3c 95 04 08          mov    0x804953c,%eax
+ 8048357:       85 c0                   test   %eax,%eax
+ 8048359:       74 f7                   je     8048352 <main+0xe>
+```
+
+将全局变量 `a` 从内存读到 `eax` 寄存器，对 `eax` 和 `eax` 做 AND 运算，若结果为 0 则跳回循环开头，再次从内存读变量 `a` 的值，可见这三条指令等价于 C 代码的 `while(!a);` 循环。如果在编译时加了优化选项，例如：
+
+```bash
+$ gcc main.c -O1 -g
+$ objdump -dS a.out
+```
+
+则 `main` 函数的指令中有：
+
+```asm6502
+ 8048352:       83 3d 3c 95 04 08 00    cmpl   $0x0,0x804953c
+	/* register a sighandler */
+	while(!a); /* wait until a changes in sighandler */
+ 8048359:       74 fe                   je     8048359 <main+0x15>
+```
+
+第一条指令将全局变量 `a` 的内存单元直接和0比较，如果相等，则第二条指令成了一个死循环，注意，这是一个真正的死循环：即使 `sighandler` 将 `a` 改为 1，只要没有影响 Zero 标志位，回到 `main` 函数后仍然死在第二条指令上，因为不会再次从内存读取变量 `a` 的值。
+
+是编译器优化得有错误吗？不是的。设想一下，如果程序只有单一的执行流程，只要当前执行流程没有改变 `a` 的值，`a` 的值就没有理由会变，不需要反复从内存读取，因此上面的两条指令和 `while(!a);` 循环是等价的，并且优化之后省去了每次循环读内存的操作，效率非常高。所以不能说编译器做错了，只能说**编译器无法识别程序中存在多个执行流程**。之所以程序中存在多个执行流程，是因为调用了特定平台上的特定库函数，比如 `sigaction`、`pthread_create`，这些不是 C 语言本身的规范，不归编译器管，程序员应该自己处理这些问题。C 语言提供了 `volatile` 限定符，如果将上述变量定义为 `volatile sig_atomic_t a=0;` 那么即使指定了优化选项，编译器也不会优化掉对变量 a 内存单元的读写。
+
+对于程序中存在多个执行流程访问同一全局变量的情况，`volatile` 限定符是必要的，此外，虽然程序只有单一的执行流程，但是变量属于以下情况之一的，也需要 `volatile` 限定：
+
+- 变量的内存单元中的数据不需要写操作就可以自己发生变化，每次读上来的值都可能不一样
+- 即使多次向变量的内存单元中写数据，只写不读，也并不是在做无用功，而是有特殊意义的
+
+什么样的内存单元会具有这样的特性呢？肯定不是普通的内存，而是映射到内存地址空间的硬件寄存器，例如串口的接收寄存器属于上述第一种情况，而发送寄存器属于上述第二种情况。
+
+**sig_atomic_t 类型的变量应该总是加上 volatile 限定符**，因为要使用 `sig_atomic_t` 类型的理由也正是要加 `volatile` 限定符的理由。
+
+#### 3.6.4.6. 竞态条件与 sigsuspend 函数
+
+现在重新审视[例 33.2「mysleep」](#e33-2)，设想这样的时序：
+
+1. 注册 `SIGALRM` 信号的处理函数。
+2. 调用 `alarm(nsecs)` 设定闹钟。
+3. 内核调度优先级更高的进程取代当前进程执行，并且优先级更高的进程有很多个，每个都要执行很长时间
+4. `nsecs` 秒钟之后闹钟超时了，内核发送 `SIGALRM` 信号给这个进程，处于未决状态。
+5. 优先级更高的进程执行完了，内核要调度回这个进程执行。`SIGALRM` 信号递达，执行处理函数 `sig_alrm` 之后再次进入内核。
+6. 返回这个进程的主控制流程，`alarm(nsecs)` 返回，调用 `pause()` 挂起等待。
+7. 可是 `SIGALRM` 信号已经处理完了，还等待什么呢？
+
+出现这个问题的根本原因是系统运行的时序（Timing）并不像我们写程序时所设想的那样。虽然 `alarm(nsecs)` 紧接着的下一行就是 `pause()`，但是无法保证 `pause()` 一定会在调用 `alarm(nsecs)` 之后的 `nsecs` 秒之内被调用。由于异步事件在任何时候都有可能发生（这里的异步事件指出现更高优先级的进程），如果我们写程序时考虑不周密，就可能由于时序问题而导致错误，这叫做竞态条件（Race Condition）。
+
+如何解决上述问题呢？读者可能会想到，在调用 `pause` 之前屏蔽 `SIGALRM` 信号使它不能提前递达就可以了。看看以下方法可行吗？
+
+1. 屏蔽 `SIGALRM` 信号;
+2. `alarm(nsecs);`
+3. 解除对 `SIGALRM` 信号的屏蔽;
+4. `pause();`
+
+从解除信号屏蔽到调用 `pause` 之间存在间隙，`SIGALRM` 仍有可能在这个间隙递达。要消除这个间隙，我们把解除屏蔽移到 `pause` 后面可以吗？
+
+1. 屏蔽 `SIGALRM` 信号;
+2. `alarm(nsecs);`
+3. `pause();`
+4. 解除对 `SIGALRM` 信号的屏蔽;
+
+这样更不行了，还没有解除屏蔽就调用 `pause`，`pause` 根本不可能等到 `SIGALRM` 信号。要是「解除信号屏蔽」和「挂起等待信号」这两步能合并成一个原子操作就好了，这正是 `sigsuspend` 函数的功能。`sigsuspend` 包含了 `pause` 的挂起等待功能，同时解决了竞态条件的问题，在对时序要求严格的场合下都应该调用 `sigsuspend` 而不是 `pause`。
+
+```c
+#include <signal.h>
+
+int sigsuspend(const sigset_t *sigmask);
+```
+
+和 `pause` 一样，`sigsuspend` 没有成功返回值，只有执行了一个信号处理函数之后 `sigsuspend` 才返回，返回值为 -1，`errno` 设置为 `EINTR`。
+
+调用 `sigsuspend` 时，进程的信号屏蔽字由 `sigmask` 参数指定，可以通过指定 `sigmask` 来临时解除对某个信号的屏蔽，然后挂起等待，当 `sigsuspend` 返回时，进程的信号屏蔽字恢复为原来的值，如果原来对该信号是屏蔽的，从 `sigsuspend` 返回后仍然是屏蔽的。
+
+以下用 `sigsuspend` 重新实现 `mysleep` 函数：
+
+```c
+unsigned int mysleep(unsigned int nsecs)
+{
+	struct sigaction    newact, oldact;
+	sigset_t            newmask, oldmask, suspmask;
+	unsigned int        unslept;
+
+	/* set our handler, save previous information */
+	newact.sa_handler = sig_alrm;
+	sigemptyset(&newact.sa_mask);
+	newact.sa_flags = 0;
+	sigaction(SIGALRM, &newact, &oldact);
+
+	/* block SIGALRM and save current signal mask */
+	sigemptyset(&newmask);
+	sigaddset(&newmask, SIGALRM);
+	sigprocmask(SIG_BLOCK, &newmask, &oldmask);
+
+	alarm(nsecs);
+
+	suspmask = oldmask;
+	sigdelset(&suspmask, SIGALRM);    /* make sure SIGALRM isn't blocked */
+	sigsuspend(&suspmask);            /* wait for any signal to be caught */
+
+	/* some signal has been caught,   SIGALRM is now blocked */
+
+	unslept = alarm(0);
+	sigaction(SIGALRM, &oldact, NULL);  /* reset previous action */
+
+	/* reset signal mask, which unblocks SIGALRM */
+	sigprocmask(SIG_SETMASK, &oldmask, NULL);
+	return(unslept);
+}
+```
+
+如果在调用 `mysleep` 函数时 `SIGALRM` 信号没有屏蔽：
+
+1. 调用 `sigprocmask(SIG_BLOCK, &newmask, &oldmask);` 时屏蔽 `SIGALRM`。
+2. 调用 `sigsuspend(&suspmask);` 时解除对 `SIGALRM` 的屏蔽，然后挂起等待待。
+3. `SIGALRM` 递达后 `suspend` 返回，自动恢复原来的屏蔽字，也就是再次屏蔽 `SIGALRM`。
+4. 调用 `sigprocmask(SIG_SETMASK, &oldmask, NULL);` 时再次解除对 `SIGALRM` 的屏蔽。
+
+#### 3.6.4.7. 关于SIGCHLD信号
+
+[进程一章](3-Linux-系统编程/ch30-进程)讲过用 `wait` 和 `waitpid` 函数清理僵尸进程，父进程可以阻塞等待子进程结束，也可以非阻塞地查询是否有子进程结束等待清理（也就是轮询的方式）。采用第一种方式，父进程阻塞了就不能处理自己的工作了；采用第二种方式，父进程在处理自己的工作的同时还要记得时不时地轮询一下，程序实现复杂。
+
+其实，子进程在终止时会给父进程发 `SIGCHLD` 信号，该信号的默认处理动作是忽略，父进程可以自定义 `SIGCHLD` 信号的处理函数，这样父进程只需专心处理自己的工作，不必关心子进程了，子进程终止时会通知父进程，父进程在信号处理函数中调用 `wait` 清理子进程即可。
+
+请编写一个程序完成以下功能：父进程 `fork` 出子进程，子进程调用 `exit(2)` 终止，父进程自定义 `SIGCHLD` 信号的处理函数，在其中调用 `wait` 获得子进程的退出状态并打印。 
+
+事实上，由于 UNIX 的历史原因，要想不产生僵尸进程还有另外一种办法：父进程调用 `sigaction` 将 `SIGCHLD` 的处理动作置为 `SIG_IGN`，这样 `fork` 出来的子进程在终止时会自动清理掉，不会产生僵尸进程，也不会通知父进程。系统默认的忽略动作和用户用 `sigaction` 函数自定义的忽略通常是没有区别的，但这是一个特例。此方法对于 Linux 可用，但不保证在其它 UNIX 系统上都可用。请编写程序验证这样做不会产生僵尸进程。
 
 ## 3.7. 终端、作业控制与守护进程
 
+### 3.7.1. 终端
+
+#### 3.7.1.1. 终端的基本概念
+
+在 UNIX 系统中，用户通过终端登录系统后得到一个 Shell 进程，这个终端成为 Shell 进程的控制终端（Controlling Terminal），在[第 30 章「进程」第 1 节「引言」](3-Linux-系统编程/ch30-进程#_1-引言)讲过，控制终端是保存在 PCB 中的信息，而我们知道 `fork` 会复制 PCB 中的信息，因此由 Shell 进程启动的其它进程的控制终端也是这个终端。默认情况下（没有重定向），每个进程的标准输入、标准输出和标准错误输出都指向控制终端，进程从标准输入读也就是读用户的键盘输入，进程往标准输出或标准错误输出写也就是输出到显示器上。此外在[第 33 章「信号」](3-Linux-系统编程/ch33-信号)还讲过，在控制终端输入一些特殊的控制键可以给前台进程发信号，例如 Ctrl-C 表示 `SIGINT`，Ctrl-\ 表示 `SIGQUIT`。
+
+在[第 28 章「文件与 I/O」](3-Linux-系统编程/ch28-文件与-IO)中讲过，每个进程都可以通过一个特殊的设备文件 `/dev/tty` 访问它的控制终端。事实上每个终端设备都对应一个不同的设备文件， `/dev/tty` 提供了一个通用的接口，一个进程要访问它的控制终端既可以通过 `/dev/tty` 也可以通过该终端设备所对应的设备文件来访问。`ttyname` 函数可以由文件描述符查出对应的文件名，该文件描述符必须指向一个终端设备而不能是任意文件。下面我们通过实验看一下各种不同的终端所对应的设备文件名。
+
+<p id="e34-1">例 34.1. 查看终端对应的设备文件名</p>
+
+```c
+#include <unistd.h>
+#include <stdio.h>
+
+int main()
+{
+    printf("fd 0: %s\n", ttyname(0));
+    printf("fd 1: %s\n", ttyname(1));
+    printf("fd 2: %s\n", ttyname(2));
+    return 0;
+}
+```
+
+在图形终端窗口下运行这个程序，可能会得到
+
+```bash
+$ ./a.out
+fd 0: /dev/pts/0
+fd 1: /dev/pts/0
+fd 2: /dev/pts/0
+```
+
+再开一个终端窗口运行这个程序，可能又会得到
+
+```bash
+$ ./a.out
+fd 0: /dev/pts/1
+fd 1: /dev/pts/1
+fd 2: /dev/pts/1
+```
+
+用 Ctrl-Alt-F1 切换到字符终端运行这个程序，结果是
+
+```bash
+$ ./a.out
+fd 0: /dev/tty1
+fd 1: /dev/tty1
+fd 2: /dev/tty1
+```
+
+读者可以再试试在 Ctrl-Alt-F2 的字符终端下或者在 `telnet` 或 `ssh` 登陆的网络终端下运行这个程序，看看结果是什么。
+
+#### 3.7.1.2. 终端登录过程
+
+一台 PC 通常只有一套键盘和显示器，也就是只有一套终端设备，但是可以通过 Ctrl-Alt-F1 ~ Ctrl-Alt-F6 切换到 6 个字符终端，相当于有 6 套虚拟的终端设备，它们共用同一套物理终端设备，对应的设备文件分别是 `/dev/tty1` ~ `/dev/tty6`，所以称为虚拟终端（Virtual Terminal）。设备文件 `/dev/tty0` 表示当前虚拟终端，比如切换 到Ctrl-Alt-F1 的字符终端时 `/dev/tty0` 就表示 `/dev/tty1`，切换到 Ctrl-Alt-F2 的字符终端时 `/dev/tty0` 就表示 `/dev/tty2`，就像 `/dev/tty` 一样也是一个通用的接口，但它不能表示图形终端窗口所对应的终端。
+
+再举个例子，做嵌入式开发时经常会用到串口终端，目标板的每个串口对应一个终端设备，比如 `/dev/ttyS0`、`/dev/ttyS1` 等，将主机和目标板用串口线连起来，就可以在主机上通过 Linux 的 `minicom` 或 Windows 的超级终端工具登录到目标板的系统。
+
+内核中处理终端设备的模块包括硬件驱动程序和线路规程（Line Discipline）。
+
+<p id="c34-1">图 34.1. 终端设备模块</p>
+
+![终端设备模块](./image/jobs.terminalmodule.png)
+
+硬件驱动程序负责读写实际的硬件设备，比如从键盘读入字符和把字符输出到显示器，线路规程像一个过滤器，对于某些特殊字符并不是让它直接通过，而是做特殊处理，比如在键盘上按下 Ctrl-Z，对应的字符并不会被用户程序的 `read` 读到，而是被线路规程截获，解释成 `SIGTSTP` 信号发给前台进程，通常会使该进程停止。线路规程应该过滤哪些字符和做哪些特殊处理是可以配置的。
+
+终端设备有输入和输出队列缓冲区，如下图所示。
+
+<p id="c34-2">图 34.2. 终端缓冲</p>
+
+![终端缓冲](./image/jobs.terminalqueue.png)
+
+以输入队列为例，从键盘输入的字符经线路规程过滤后进入输入队列，用户程序以先进先出的顺序从队列中读取字符，一般情况下，当输入队列满的时候再输入字符会丢失，同时系统会响铃警报。终端可以配置成回显（Echo）模式，在这种模式下，输入队列中的每个字符既送给用户程序也送给输出队列，因此我们在命令行键入字符时，该字符不仅可以被程序读取，我们也可以同时在屏幕上看到该字符的回显。
+
+现在我们来看终端登录的过程：
+
+1. 系统启动时，`init` 进程根据配置文件 `/etc/inittab` 确定需要打开哪些终端。例如配置文件中有这样一行：
+	
+	```bash
+	1:2345:respawn:/sbin/getty 9600 tty1
+	```
+	
+	和 `/etc/passwd` 类似，每个字段用 `:` 号隔开。开头的 `1` 是这一行配置的 id，通常要和 `tty` 的后缀一致，配置 `tty2` 的那一行 id 就应该是 `2`。第二个字段 `2345` 表示运行级别 2 ~ 5 都执行这个配置。最后一个字段 `/sbin/getty 9600 tty1` 是 `init` 进程要 `fork`/`exec` 的命令，打开终端 `/dev/tty1`，波特率是 9600（波特率只对串口和 Modem 终端有意义），然后提示用户输入帐号。中间的 `respawn` 字段表示 `init` 进程会监视 `getty` 进程的运行状态，一旦该进程终止，`init` 会再次 `fork`/`exec` 这个命令，所以我们从终端退出登录后会再次提示输入帐号。
+	
+	有些新的 Linux 发行版已经不用 `/etc/inittab` 这个配置文件了，例如 Ubuntu 用 `/etc/event.d` 目录下的配置文件来配置 `init`。
+
+2. `getty` 根据命令行参数打开终端设备作为它的控制终端，把文件描述符 0、1、2 都指向控制终端，然后提示用户输入帐号。用户输入帐号之后，`getty` 的任务就完成了，它再执行 `login` 程序：
+	
+	```bash
+	execle("/bin/login", "login", "-p", username, NULL, envp);
+	```
+
+3. `login` 程序提示用户输入密码（输入密码期间关闭终端的回显），然后验证帐号密码的正确性。如果密码不正确，`login` 进程终止，`init` 会重新 `fork`/`exec` 一个 `getty` 进程。如果密码正确，`login` 程序设置一些环境变量，设置当前工作目录为该用户的主目录，然后执行 Shell：
+	
+	```bash
+	execl("/bin/bash", "-bash", NULL);
+	```
+	
+	注意 `argv[0]` 参数的程序名前面加了一个 `-`，这样 `bash` 就知道自己是作为登录 Shell 启动的，执行登录 Shell 的启动脚本。从 `getty` 开始 `exec` 到 `login`，再 `exec` 到 `bash`，其实都是同一个进程，因此控制终端没变，文件描述符 0、1、2 也仍然指向控制终端。由于 `fork` 会复制 PCB 信息，所以由 Shell 启动的其它进程也都是如此。
+
+#### 3.7.1.3. 网络登录过程
+
+虚拟终端或串口终端的数目是有限的，虚拟终端一般就是 `/dev/tty1` ~ `/dev/tty6` 六个，串口终端的数目也不超过串口的数目。然而网络终端或图形终端窗口的数目却是不受限制的，这是通过伪终端（Pseudo TTY）实现的。一套伪终端由一个主设备（PTY Master）和一个从设备（PTY Slave）组成。主设备在概念上相当于键盘和显示器，只不过它不是真正的硬件而是一个内核模块，操作它的也不是用户而是另外一个进程。从设备和上面介绍的 `/dev/tty1` 这样的终端设备模块类似，只不过它的底层驱动程序不是访问硬件而是访问主设备。通过[例 34.1 「查看终端对应的设备文件名」](#e34-1)的实验结果可以看到，网络终端或图形终端窗口的 Shell 进程以及它启动的其它进程都会认为自己的控制终端是伪终端从设备，例如 `/dev/pts/0`、`/dev/pts/1` 等。下面以 `telnet` 为例说明网络登录和使用伪终端的过程。
+
+<p id="c34-3">图 34.3. 伪终端</p>
+
+![伪终端](./image/jobs.pseudotty.png)
+
+1. 用户通过 `telnet` 客户端连接服务器。如果服务器配置为独立（Standalone）模式，则在服务器监听连接请求是一个 `telnetd` 进程，它 `fork` 出一个 `telnetd` 子进程来服务客户端，父进程仍监听其它连接请求。
+
+	另外一种可能是服务器端由系统服务程序 `inetd` 或 `xinetd` 监听连接请求，`inetd` 称为 Internet Super-Server，它监听系统中的多个网络服务端口，如果连接请求的端口号和 `telnet` 服务端口号一致，则 `fork`/`exec` 一个 `telnetd` 子进程来服务客户端。`xinetd` 是 `inetd` 的升级版本，配置更为灵活。
+
+2. `telnetd` 子进程打开一个伪终端设备，然后再经过 `fork` 一分为二：父进程操作伪终端主设备，子进程将伪终端从设备作为它的控制终端，并且将文件描述符 0、1、2 指向控制终端，二者通过伪终端通信，父进程还负责和 `telnet` 客户端通信，而子进程负责用户的登录过程，提示输入帐号，然后调用 `exec` 变成 `login` 进程，提示输入密码，然后调用 `exec` 变成 Shell 进程。这个 Shell 进程认为自己的控制终端是伪终端从设备，伪终端主设备可以看作键盘显示器等硬件，而操作这个伪终端的「用户」就是父进程 `telnetd`。
+
+3. 当用户输入命令时，`telnet` 客户端将用户输入的字符通过网络发给 `telnetd` 服务器，由 `telnetd` 服务器代表用户将这些字符输入伪终端。Shell 进程并不知道自己连接的是伪终端而不是真正的键盘显示器，也不知道操作终端的「用户」其实是 `telnetd` 服务器而不是真正的用户。Shell 仍然解释执行命令，将标准输出和标准错误输出写到终端设备，这些数据最终由 `telnetd` 服务器发回给 `telnet` 客户端，然后显示给用户看。
+
+	如果 `telnet` 客户端和服务器之间的网络延迟较大，我们会观察到按下一个键之后要过几秒钟才能回显到屏幕上。这说明我们每按一个键 `telnet` 客户端都会立刻把该字符发送给服务器，然后这个字符经过伪终端主设备和从设备之后被 Shell 进程读取，同时回显到伪终端从设备，回显的字符再经过伪终端主设备、`telnetd` 服务器和网络发回给 `telnet` 客户端，显示给用户看。也许你会觉得吃惊，但真的是这样：每按一个键都要在网络上走个来回！
+
+	BSD 系列的 UNIX 在 `/dev` 目录下创建很多 `ptyXX` 和 `ttyXX` 设备文件，`XX` 由字母和数字组成，`ptyXX` 是主设备，相对应的 `ttyXX` 是从设备，伪终端的数目取决于内核配置。而在 SYS V 系列的 UNIX 上，伪终端主设备是 `/dev/ptmx`，「mx」表示 Multiplex，意思是多个主设备复用同一个设备文件，每打开一次 `/dev/ptmx`，内核就分配一个主设备，同时在 `/dev/pts` 目录下创建一个从设备文件，当终端关闭时就从 `/dev/pts` 目录下删除相应的从设备文件。Linux 同时支持上述两种伪终端，目前的标准倾向于 SYS V 的伪终端。
+
+### 3.7.2. 作业控制
+
+#### 3.7.2.1. Session 与进程组
+
+在[第 33 章「信号」第 1 节「信号的基本概念」](3-Linux-系统编程/ch33-信号#_1-信号的基本概念)中我说过「Shell 可以同时运行一个前台进程和任意多个后台进程」其实是不全面的，现在我们来研究更复杂的情况。事实上，Shell 分前后台来控制的不是进程而是作业（Job）或者进程组（Process Group）。一个前台作业可以由多个进程组成，一个后台作业也可以由多个进程组成，Shell 可以同时运行一个前台作业和任意多个后台作业，这称为作业控制（Job Control）。例如用以下命令启动 5 个进程（这个例子出自 *APUE2e*）：
+
+```bash
+$ proc1 | proc2 &
+$ proc3 | proc4 | proc5
+```
+
+其中 `proc1` 和 `proc2` 属于同一个后台进程组，`proc3`、`proc4`、`proc5` 属于同一个前台进程组，Shell 进程本身属于一个单独的进程组。这些进程组的控制终端相同，它们属于同一个 Session。当用户在控制终端输入特殊的控制键（例如 Ctrl-C）时，内核会发送相应的信号（例如 `SIGINT`）给前台进程组的所有进程。各进程、进程组、Session 的关系如下图所示。
+
+<p id="c34-4">图 34.4. Session 与进程组</p>
+
+![Session 与进程组](./image/jobs.pg.png)
+
+现在我们从 Session 和进程组的角度重新来看登录和执行命令的过程。
+
+1. `getty` 或 `telnetd` 进程在打开终端设备之前调用 `setsid` 函数创建一个新的 Session，该进程称为 Session Leader，该进程的 id 也可以看作 Session 的 id，然后该进程打开终端设备作为这个 Session 中所有进程的控制终端。在创建新 Session 的同时也创建了一个新的进程组，该进程是这个进程组的 Process Group Leader，该进程的 id 也是进程组的 id。
+2. 在登录过程中，`getty` 或 `telnetd` 进程变成 `login`，然后变成 Shell，但仍然是同一个进程，仍然是 Session Leader。
+3. 由 Shell 进程 `fork` 出的子进程本来具有和 Shell 相同的 Session、进程组和控制终端，但是 Shell 调用 `setpgid` 函数将作业中的某个子进程指定为一个新进程组的 Leader，然后调用 `setpgid` 将该作业中的其它子进程也转移到这个进程组中。如果这个进程组需要在前台运行，就调用 `tcsetpgrp` 函数将它设置为前台进程组，由于一个 Session 只能有一个前台进程组，所以 Shell 所在的进程组就自动变成后台进程组。
+
+   在上面的例子中，`proc3`、`proc4`、`proc5` 被 Shell 放到同一个前台进程组，其中有一个进程是该进程组的 Leader，Shell 调用 `wait` 等待它们运行结束。一旦它们全部运行结束，Shell 就调用 `tcsetpgrp` 函数将自己提到前台继续接受命令。但是注意，如果 `proc3`、`proc4`、`proc5` 中的某个进程又 `fork` 出子进程，子进程也属于同一进程组，但是 Shell 并不知道子进程的存在，也不会调用 `wait` 等待它结束。换句话说，`proc3 | proc4 | proc5` 是 Shell 的作业，而这个子进程不是，这是作业和进程组在概念上的区别。一旦作业运行结束，Shell 就把自己提到前台，如果原来的前台进程组还存在（如果这个子进程还没终止），则它自动变成后台进程组（回顾一下[第 30 章「进程」例 30.3「fork」](3-Linux-系统编程/ch30-进程#e30-3)）。
+
+下面看两个例子。
+
+```bash
+$ ps -o pid,ppid,pgrp,session,tpgid,comm | cat
+  PID  PPID  PGRP  SESS TPGID COMMAND
+ 6994  6989  6994  6994  8762 bash
+ 8762  6994  8762  6994  8762 ps
+ 8763  6994  8762  6994  8762 cat
+```
+
+这个作业由 `ps` 和 `cat` 两个进程组成，在前台运行。从 `PPID` 列可以看出这两个进程的父进程是 `bash`。从 `PGRP` 列可以看出，`bash` 在 id 为 6994 的进程组中，这个 id 等于 `bash` 的进程 id，所以它是进程组的 Leader，而两个子进程在 id 为 8762 的进程组中，`ps` 是这个进程组的 Leader。从 `SESS` 可以看出三个进程都在同一 Session 中，`bash` 是 Session Leader。从 `TPGID` 可以看出，前台进程组的 id 是 8762，也就是两个子进程所在的进程组。
+
+```bash
+$ ps -o pid,ppid,pgrp,session,tpgid,comm | cat &
+[1] 8835
+$   PID  PPID  PGRP  SESS TPGID COMMAND
+ 6994  6989  6994  6994  6994 bash
+ 8834  6994  8834  6994  6994 ps
+ 8835  6994  8834  6994  6994 cat
+```
+
+这个作业由 `ps` 和 `cat` 两个进程组成，在后台运行，`bash` 不等作业结束就打印提示信息 `[1] 8835` 然后给出提示符接受新的命令，`[1]` 是作业的编号，如果同时运行多个作业可以用这个编号区分，8835 是该作业中某个进程的 id。请读者自己分析 `ps` 命令的输出结果。
+
+#### 3.7.2.2. 与作业控制有关的信号
+
+我们通过实验来理解与作业控制有关的信号。
+
+```bash
+$ cat &
+[1] 9386
+$ （再次回车） 
+
+[1]+  Stopped                 cat
+```
+
+将 `cat` 放到后台运行，由于 `cat` 需要读标准输入（也就是终端输入），而后台进程是不能读终端输入的，因此内核发 `SIGTTIN` 信号给进程，该信号的默认处理动作是使进程停止。
+
+```bash
+$ jobs
+[1]+  Stopped                 cat
+$ fg %1
+cat
+hello（回车）
+hello
+^Z
+[1]+  Stopped                 cat
+```
+
+`jobs` 命令可以查看当前有哪些作业。`fg` 命令可以将某个作业提至前台运行，如果该作业的进程组正在后台运行则提至前台运行，如果该作业处于停止状态，则给进程组的每个进程发 `SIGCONT` 信号使它继续运行。参数 `%1` 表示将第 1 个作业提至前台运行。`cat` 提到前台运行后，挂起等待终端输入，当输入 `hello` 并回车后，`cat` 打印出同样的一行，然后继续挂起等待输入。如果输入 Ctrl-Z 则向所有前台进程发 `SIGTSTP` 信号，该信号的默认动作是使进程停止。
+
+```bash
+$ bg %1
+[1]+ cat &
+
+[1]+  Stopped                 cat
+```
+
+`bg` 命令可以让某个停止的作业在后台继续运行，也需要给该作业的进程组的每个进程发 `SIGCONT` 信号。`cat` 进程继续运行，又要读终端输入，然而它在后台不能读终端输入，所以又收到 `SIGTTIN` 信号而停止。
+
+```bash
+$ ps
+  PID TTY          TIME CMD
+ 6994 pts/0    00:00:05 bash
+11022 pts/0    00:00:00 cat
+11023 pts/0    00:00:00 ps
+$ kill 11022
+$ ps
+  PID TTY          TIME CMD
+ 6994 pts/0    00:00:05 bash
+11022 pts/0    00:00:00 cat
+11024 pts/0    00:00:00 ps
+$ fg %1
+cat
+Terminated
+```
+
+用 `kill` 命令给一个停止的进程发 `SIGTERM` 信号，这个信号并不会立刻处理，而要等进程准备继续运行之前处理，默认动作是终止进程。但如果给一个停止的进程发 `SIGKILL` 信号就不同了。
+
+```bash
+$ cat &
+[1] 11121
+$ ps
+  PID TTY          TIME CMD
+ 6994 pts/0    00:00:05 bash
+11121 pts/0    00:00:00 cat
+11122 pts/0    00:00:00 ps
+
+[1]+  Stopped                 cat
+$ kill -KILL 11121
+[1]+  Killed                  cat
+```
+
+`SIGKILL` 信号既不能被阻塞也不能被忽略，也不能用自定义函数捕捉，只能按系统的默认动作立刻处理。与此类似的还有 `SIGSTOP` 信号，给一个进程发 `SIGSTOP` 信号会使进程停止，这个默认的处理动作不能改变。这样保证了不管什么样的进程都能用 `SIGKILL` 终止或者用 `SIGSTOP` 停止，当系统出现异常时管理员总是有办法杀掉有问题的进程或者暂时停掉怀疑有问题的进程。
+
+上面讲了如果后台进程试图从控制终端读，会收到 `SIGTTIN` 信号而停止，如果试图向控制终端写呢？通常是允许写的。如果觉得后台进程向控制终端输出信息干扰了用户使用终端，可以设置一个终端选项禁止后台进程写。
+
+```bash
+$ cat testfile &
+[1] 11426
+$ hello
+
+[1]+  Done                    cat testfile
+$ stty tostop
+$ cat testfile &
+[1] 11428
+
+[1]+  Stopped                 cat testfile
+$ fg %1
+cat testfile
+hello
+```
+
+首先用 `stty` 命令设置终端选项，禁止后台进程写，然后启动一个后台进程准备往终端写，这时进程收到一个 `SIGTTOU` 信号，默认处理动作也是停止进程。
+
+### 3.7.3. 守护进程
+
+Linux 系统启动时会启动很多系统服务进程，例如[第 1.3 节「网络登录过程」](#_13-网络登录过程)讲的 `inetd`，这些系统服务进程没有控制终端，不能直接和用户交互。其它进程都是在用户登录或运行程序时创建，在运行结束或用户注销时终止，但系统服务进程不受用户登录注销的影响，它们一直在运行着。这种进程有一个名称叫守护进程（Daemon）。
+
+下面我们用 `ps axj` 命令查看系统中的进程。参数 `a` 表示不仅列当前用户的进程，也列出所有其他用户的进程，参数 `x` 表示不仅列有控制终端的进程，也列出所有无控制终端的进程，参数 `j` 表示列出与作业控制相关的信息。
+
+```bash
+$ ps axj
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    0     1     1     1 ?           -1 Ss       0   0:01 /sbin/init
+    0     2     0     0 ?           -1 S<       0   0:00 [kthreadd]
+    2     3     0     0 ?           -1 S<       0   0:00 [migration/0]
+    2     4     0     0 ?           -1 S<       0   0:00 [ksoftirqd/0]
+...
+    1  2373  2373  2373 ?           -1 S<s      0   0:00 /sbin/udevd --daemon
+...
+    1  4680  4680  4680 ?           -1 Ss       0   0:00 /usr/sbin/acpid -c /etc
+...
+    1  4808  4808  4808 ?           -1 Ss     102   0:00 /sbin/syslogd -u syslog
+...
+```
+
+凡是 `TPGID` 一栏写着 -1 的都是没有控制终端的进程，也就是守护进程。在 `COMMAND` 一列用 `[]` 括起来的名字表示内核线程，这些线程在内核里创建，没有用户空间代码，因此没有程序文件名和命令行，通常采用以 `k` 开头的名字，表示 Kernel。`init` 进程我们已经很熟悉了，`udevd` 负责维护 `/dev` 目录下的设备文件，`acpid` 负责电源管理，`syslogd` 负责维护` /var/log` 下的日志文件，可以看出，守护进程通常采用以 `d` 结尾的名字，表示 Daemon。
+
+创建守护进程最关键的一步是调用 `setsid` 函数创建一个新的 Session，并成为 Session Leader。
+
+```c
+#include <unistd.h>
+
+pid_t setsid(void);
+```
+
+该函数调用成功时返回新创建的 Session 的 id（其实也就是当前进程的 id），出错返回 -1。注意，调用这个函数之前，当前进程不允许是进程组的 Leader，否则该函数返回 -1。要保证当前进程不是进程组的 Leader 也很容易，只要先 `fork` 再调用 `setsid` 就行了。`fork` 创建的子进程和父进程在同一个进程组中，进程组的 Leader 必然是该组的第一个进程，所以子进程不可能是该组的第一个进程，在子进程中调用 `setsid` 就不会有问题了。
+
+成功调用该函数的结果是：
+
+- 创建一个新的 Session，当前进程成为 Session Leader，当前进程的 id 就是 Session 的 id。
+- 创建一个新的进程组，当前进程成为进程组的 Leader，当前进程的 id 就是进程组的id。
+- 如果当前进程原本有一个控制终端，则它失去这个控制终端，成为一个没有控制终端的进程。所谓失去控制终端是指，原来的控制终端仍然是打开的，仍然可以读写，但只是一个普通的打开文件而不是控制终端了。
+
+<p id="e34-2">例 34.2. 创建守护进程</p>
+
+```c
+#include <stdlib.h>
+#include <stdio.h>
+#include <fcntl.h>
+
+void daemonize(void)
+{
+	pid_t  pid;
+
+	/*
+	 * Become a session leader to lose controlling TTY.
+	 */
+	if ((pid = fork()) < 0) {
+		perror("fork");
+		exit(1);
+	} else if (pid != 0) /* parent */
+		exit(0);
+	setsid();
+
+	/*
+	 * Change the current working directory to the root.
+	 */
+	if (chdir("/") < 0) {
+		perror("chdir");
+		exit(1);
+	} 
+
+	/*
+	 * Attach file descriptors 0, 1, and 2 to /dev/null.
+	 */
+	close(0);
+	open("/dev/null", O_RDWR);
+	dup2(0, 1);
+	dup2(0, 2);
+}
+
+int main(void)
+{
+	daemonize();
+	while(1);
+}
+```
+
+为了确保调用 `setsid` 的进程不是进程组的 Leader，首先 `fork` 出一个子进程，父进程退出，然后子进程调用 `setsid` 创建新的 Session，成为守护进程。按照守护进程的惯例，通常将当前工作目录切换到根目录，将文件描述符 0、1、2 重定向到 `/dev/null`。Linux 也提供了一个库函数 `daemon(3)` 实现我们的 `daemonize` 函数的功能，它带两个参数指示要不要切换工作目录到根目录，以及要不要把文件描述符 0、1、2 重定向到 `/dev/null`。
+
+```bash
+$ ./a.out 
+$ ps
+  PID TTY          TIME CMD
+11494 pts/0    00:00:00 bash
+13271 pts/0    00:00:00 ps
+$ ps xj | grep a.out
+    1 13270 13270 13270 ?           -1 Rs    1000   0:05 ./a.out
+11494 13273 13272 11494 pts/0    13272 S+    1000   0:00 grep a.out
+（关闭终端窗口重新打开，或者注销重新登录）
+$ ps xj | grep a.out
+    1 13270 13270 13270 ?           -1 Rs    1000   0:21 ./a.out
+13282 13338 13337 13282 pts/1    13337 S+    1000   0:00 grep a.out
+$ kill 13270
+```
+
+运行这个程序，它变成一个守护进程，不再和当前终端关联。用 `ps` 命令看不到，必须运行带 `x` 参数的 `ps` 命令才能看到。另外还可以看到，用户关闭终端窗口或注销也不会影响守护进程的运行。
+
 ## 3.8. 线程
+
+### 3.8.1. 线程的概念
+
+我们知道，进程在各自独立的地址空间中运行，进程之间共享数据需要用 `mmap` 或者进程间通信机制，本节我们学习如何在一个进程的地址空间中执行多个线程。有些情况需要在一个进程中同时执行多个控制流程，这时候线程就派上了用场，比如实现一个图形界面的下载软件，一方面需要和用户交互，等待和处理用户的鼠标键盘事件，另一方面又需要同时下载多个文件，等待和处理从多个网络主机发来的数据，这些任务都需要一个「等待-处理」的循环，可以用多线程实现，一个线程专门负责与用户交互，另外几个线程每个线程负责和一个网络主机通信。
+
+以前我们讲过，`main` 函数和信号处理函数是同一个进程地址空间中的多个控制流程，多线程也是如此，但是比信号处理函数更加灵活，信号处理函数的控制流程只是在信号递达时产生，在处理完信号之后就结束，而多线程的控制流程可以长期并存，操作系统会在各线程之间调度和切换，就像在多个进程之间调度和切换一样。由于同一进程的多个线程共享同一地址空间，因此 Text  Segment、Data  Segment 是共享的，如果定义一个函数，在各线程中都可以调用，如果定义一个全局变量，在各线程中都可以访问到，除此之外，各线程还共享以下进程资源和环境：
+
+- 文件描述符表
+- 每种信号的处理方式（`SIG_IGN`、`SIG_DFL` 或者自定义的信号处理函数）
+- 当前工作目录
+- 用户 id 和组 id
+
+但有些资源是每个线程各有一份的：
+
+- 线程 id
+- 上下文，包括各种寄存器的值、程序计数器和栈指针
+- 栈空间
+- `errno` 变量
+- 信号屏蔽字
+- 调度优先级
+
+我们将要学习的线程库函数是由 POSIX 标准定义的，称为 POSIX thread 或者 pthread。在 Linux 上线程函数位于 `libpthread` 共享库中，因此在编译时要加上 `-lpthread` 选项。
+
+### 3.8.2. 线程控制
+
+#### 3.8.2.1. 创建线程
+
+```c
+#include <pthread.h>
+
+int pthread_create(pthread_t *restrict thread,
+	const pthread_attr_t *restrict attr,
+	void *(*start_routine)(void*), void *restrict arg);
+```
+
+返回值：成功返回 0，失败返回错误号。以前学过的系统函数都是成功返回 0，失败返回 -1，而错误号保存在全局变量 `errno` 中，而 pthread 库的函数都是通过返回值返回错误号，虽然每个线程也都有一个 `errno`，但这是为了兼容其它函数接口而提供的，pthread 库本身并不使用它，通过返回值返回错误码更加清晰。
+
+在一个线程中调用 pthread_create() 创建新的线程后，当前线程从 pthread_create() 返回继续往下执行，而新的线程所执行的代码由我们传给 `pthread_create` 的函数指针 `start_routine` 决定。`start_routine` 函数接收一个参数，是通过 `pthread_create` 的 `arg` 参数传递给它的，该参数的类型为 `void *`，这个指针按什么类型解释由调用者自己定义。`start_routine` 的返回值类型也是 `void *`，这个指针的含义同样由调用者自己定义。`start_routine` 返回时，这个线程就退出了，其它线程可以调用 `pthread_join` 得到 `start_routine` 的返回值，类似于父进程调用 `wait(2)` 得到子进程的退出状态，稍后详细介绍 `pthread_join`。
+
+`pthread_create` 成功返回后，新创建的线程的id被填写到 `thread` 参数所指向的内存单元。我们知道进程 id 的类型是 `pid_t`，每个进程的 id 在整个系统中是唯一的，调用 `getpid(2)` 可以获得当前进程的 id，是一个正整数值。线程 id 的类型是 `thread_t`，它只在当前进程中保证是唯一的，在不同的系统中 `thread_t` 这个类型有不同的实现，它可能是一个整数值，也可能是一个结构体，也可能是一个地址，所以不能简单地当成整数用 `printf` 打印，调用 `pthread_self(3)` 可以获得当前线程的 id。
+
+`attr` 参数表示线程属性，本章不深入讨论线程属性，所有代码例子都传 `NULL` 给 `attr` 参数，表示线程属性取缺省值，感兴趣的读者可以参考 *APUE2e*。首先看一个简单的例子：
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+pthread_t ntid;
+
+void printids(const char *s)
+{
+	pid_t      pid;
+	pthread_t  tid;
+
+	pid = getpid();
+	tid = pthread_self();
+	printf("%s pid %u tid %u (0x%x)\n", s, (unsigned int)pid,
+	       (unsigned int)tid, (unsigned int)tid);
+}
+
+void *thr_fn(void *arg)
+{
+	printids(arg);
+	return NULL;
+}
+
+int main(void)
+{
+	int err;
+
+	err = pthread_create(&ntid, NULL, thr_fn, "new thread: ");
+	if (err != 0) {
+		fprintf(stderr, "can't create thread: %s\n", strerror(err));
+		exit(1);
+	}
+	printids("main thread:");
+	sleep(1);
+
+	return 0;
+}
+```
+
+编译运行结果如下：
+
+```bash
+$ gcc main.c -lpthread
+$ ./a.out
+main thread: pid 7398 tid 3084450496 (0xb7d8fac0)
+new thread:  pid 7398 tid 3084446608 (0xb7d8eb90)
+```
+
+可知在 Linux 上，`thread_t` 类型是一个地址值，属于同一进程的多个线程调用 `getpid(2)` 可以得到相同的进程号，而调用 `pthread_self(3)` 得到的线程号各不相同。
+
+由于 `pthread_create` 的错误码不保存在 `errno` 中，因此不能直接用 `perror(3)` 打印错误信息，可以先用 `strerror(3)` 把错误码转换成错误信息再打印。
+
+如果任意一个线程调用了 `exit` 或 `_exit`，则整个进程的所有线程都终止，由于从 `main` 函数 `return` 也相当于调用 `exit`，为了防止新创建的线程还没有得到执行就终止，我们在 `main` 函数 `return` 之前延时 1 秒，这只是一种权宜之计，即使主线程等待 1 秒，内核也不一定会调度新创建的线程执行，下一节我们会看到更好的办法。
+
+思考题：主线程在一个全局变量 `ntid` 中保存了新创建的线程的 id，如果新创建的线程不调用 `pthread_self` 而是直接打印这个 `ntid`，能不能达到同样的效果？
+
+#### 3.8.2.2. 终止线程
+
+如果需要只终止某个线程而不终止整个进程，可以有三种方法：
+
+- 从线程函数 `return`。这种方法对主线程不适用，从 `main` 函数 `return` 相当于调用 `exit`。
+- 一个线程可以调用 `pthread_cancel` 终止同一进程中的另一个线程。
+- 线程可以调用 `pthread_exit` 终止自己。
+
+用 `pthread_cancel` 终止一个线程分同步和异步两种情况，比较复杂，本章不打算详细介绍，读者可以参考 *APUE2e*。下面介绍 `pthread_exit` 的和 `pthread_join` 的用法。
+
+```c
+#include <pthread.h>
+
+void pthread_exit(void *value_ptr);
+```
+
+`value_ptr` 是 `void *` 类型，和线程函数返回值的用法一样，其它线程可以调用 `pthread_join` 获得这个指针。
+
+需要注意，`pthread_exit` 或者 `return` 返回的指针所指向的内存单元必须是全局的或者是用 `malloc` 分配的，不能在线程函数的栈上分配，因为当其它线程得到这个返回指针时线程函数已经退出了。
+
+```c
+#include <pthread.h>
+
+int pthread_join(pthread_t thread, void **value_ptr);
+```
+
+返回值：成功返回 0，失败返回错误号
+
+调用该函数的线程将挂起等待，直到 id 为 `thread` 的线程终止。`thread` 线程以不同的方法终止，通过 `pthread_join` 得到的终止状态是不同的，总结如下：
+
+- 如果 `thread` 线程通过 `return` 返回，`value_ptr` 所指向的单元里存放的是 `thread` 线程函数的返回值。
+- 如果 `thread` 线程被别的线程调用 `pthread_cancel` 异常终止掉，`value_ptr` 所指向的单元里存放的是常数 `PTHREAD_CANCELED`。
+- 如果 `thread` 线程是自己调用 `pthread_exit` 终止的，`value_ptr` 所指向的单元存放的是传给 `pthread_exit` 的参数。
+
+如果对 `thread` 线程的终止状态不感兴趣，可以传 `NULL` 给 `value_ptr` 参数。
+
+看下面的例子（省略了出错处理）：
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+void *thr_fn1(void *arg)
+{
+	printf("thread 1 returning\n");
+	return (void *)1;
+}
+
+void *thr_fn2(void *arg)
+{
+	printf("thread 2 exiting\n");
+	pthread_exit((void *)2);
+}
+
+void *thr_fn3(void *arg)
+{
+	while(1) {
+		printf("thread 3 writing\n");
+		sleep(1);
+	}
+}
+
+int main(void)
+{
+	pthread_t   tid;
+	void        *tret;
+
+	pthread_create(&tid, NULL, thr_fn1, NULL);
+	pthread_join(tid, &tret);
+	printf("thread 1 exit code %d\n", (int)tret);
+
+	pthread_create(&tid, NULL, thr_fn2, NULL);
+	pthread_join(tid, &tret);
+	printf("thread 2 exit code %d\n", (int)tret);
+
+	pthread_create(&tid, NULL, thr_fn3, NULL);
+	sleep(3);
+	pthread_cancel(tid);
+	pthread_join(tid, &tret);
+	printf("thread 3 exit code %d\n", (int)tret);
+
+	return 0;
+}
+```
+
+运行结果是：
+
+```bash
+$ ./a.out 
+thread 1 returning
+thread 1 exit code 1
+thread 2 exiting
+thread 2 exit code 2
+thread 3 writing
+thread 3 writing
+thread 3 writing
+thread 3 exit code -1
+```
+
+可见在 Linux 的 pthread 库中常数 `PTHREAD_CANCELED` 的值是 -1。可以在头文件 `pthread.h` 中找到它的定义：
+
+```c
+#define PTHREAD_CANCELED ((void *) -1)
+```
+
+一般情况下，线程终止后，其终止状态一直保留到其它线程调用 `pthread_join` 获取它的状态为止。但是线程也可以被置为 detach 状态，这样的线程一旦终止就立刻回收它占用的所有资源，而不保留终止状态。不能对一个已经处于 detach 状态的线程调用 `pthread_join`，这样的调用将返回 `EINVAL`。对一个尚未 detach 的线程调用 `pthread_join` 或 `pthread_detach` 都可以把该线程置为 detach 状态，也就是说，不能对同一线程调用两次 `pthread_join`，或者如果已经对一个线程调用了 `pthread_detach` 就不能再调用 `pthread_join` 了。
+
+```c
+#include <pthread.h>
+
+int pthread_detach(pthread_t tid);
+```
+
+返回值：成功返回 0，失败返回错误号。
+
+### 3.8.3. 线程间同步
+
+#### 3.8.3.1. mutex
+
+多个线程同时访问共享数据时可能会冲突，这跟前面讲信号时所说的可重入性是同样的问题。比如两个线程都要把某个全局变量增加 1，这个操作在某平台需要三条指令完成：
+
+1. 从内存读变量值到寄存器
+2. 寄存器的值加 1
+3. 将寄存器的值写回内存
+
+假设两个线程在多处理器平台上同时执行这三条指令，则可能导致下图所示的结果，最后变量只加了一次而非两次。
+
+<p id="c35-1">图 35.1. 并行访问冲突</p>
+
+![并行访问冲突](./image/thread.corrupt.png)
+
+思考一下，如果这两个线程在单处理器平台上执行，能够避免这样的问题吗？
+
+我们通过一个简单的程序观察这一现象。上图所描述的现象从理论上是存在这种可能的，但实际运行程序时很难观察到，为了使现象更容易观察到，我们把上述三条指令做的事情用更多条指令来做：
+
+```c
+		val = counter;
+		printf("%x: %d\n", (unsigned int)pthread_self(), val + 1);
+		counter = val + 1;
+```
+
+我们在「读取变量的值」和「把变量的新值保存回去」这两步操作之间插入一个 `printf` 调用，它会执行 `write` 系统调用进内核，为内核调度别的线程执行提供了一个很好的时机。我们在一个循环中重复上述操作几千次，就会观察到访问冲突的现象。
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+#define NLOOP 5000
+
+int counter;                /* incremented by threads */
+
+void *doit(void *);
+
+int main(int argc, char **argv)
+{
+	pthread_t tidA, tidB;
+
+	pthread_create(&tidA, NULL, &doit, NULL);
+	pthread_create(&tidB, NULL, &doit, NULL);
+
+        /* wait for both threads to terminate */
+	pthread_join(tidA, NULL);
+	pthread_join(tidB, NULL);
+
+	return 0;
+}
+
+void *doit(void *vptr)
+{
+	int    i, val;
+
+	/*
+	 * Each thread fetches, prints, and increments the counter NLOOP times.
+	 * The value of the counter should increase monotonically.
+	 */
+
+	for (i = 0; i < NLOOP; i++) {
+		val = counter;
+		printf("%x: %d\n", (unsigned int)pthread_self(), val + 1);
+		counter = val + 1;
+	}
+
+	return NULL;
+}
+```
+
+我们创建两个线程，各自把 `counter` 增加 5000 次，正常情况下最后 `counter` 应该等于 10000，但事实上每次运行该程序的结果都不一样，有时候数到 5000 多，有时候数到 6000 多。
+
+```bash
+$ ./a.out
+b76acb90: 1
+b76acb90: 2
+b76acb90: 3
+b76acb90: 4
+b76acb90: 5
+b7eadb90: 1
+b7eadb90: 2
+b7eadb90: 3
+b7eadb90: 4
+b7eadb90: 5
+b76acb90: 6
+b76acb90: 7
+b7eadb90: 6
+b76acb90: 8
+...
+```
+
+对于多线程的程序，访问冲突的问题是很普遍的，解决的办法是引入互斥锁（Mutex，Mutual Exclusive Lock），获得锁的线程可以完成「读-修改-写」的操作，然后释放锁给其它线程，没有获得锁的线程只能等待而不能访问共享数据，这样「读-修改-写」三步操作组成一个原子操作，要么都执行，要么都不执行，不会执行到中间被打断，也不会在其它处理器上并行做这个操作。
+
+Mutex 用 `pthread_mutex_t` 类型的变量表示，可以这样初始化和销毁：
+
+```c
+#include <pthread.h>
+
+int pthread_mutex_destroy(pthread_mutex_t *mutex);
+int pthread_mutex_init(pthread_mutex_t *restrict mutex,
+       const pthread_mutexattr_t *restrict attr);
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+```
+
+返回值：成功返回 0，失败返回错误号。
+
+`pthread_mutex_init` 函数对 Mutex 做初始化，参数 `attr` 设定 Mutex 的属性，如果 `attr` 为 `NULL` 则表示缺省属性，本章不详细介绍 Mutex 属性，感兴趣的读者可以参考 *APUE2e*。用 `pthread_mutex_init` 函数初始化的 Mutex 可以用 `pthread_mutex_destroy` 销毁。如果 Mutex 变量是静态分配的（全局变量或 `static` 变量），也可以用宏定义 `PTHREAD_MUTEX_INITIALIZER` 来初始化，相当于用 `pthread_mutex_init` 初始化并且 `attr` 参数为 `NULL`。Mutex 的加锁和解锁操作可以用下列函数：
+
+```c
+#include <pthread.h>
+
+int pthread_mutex_lock(pthread_mutex_t *mutex);
+int pthread_mutex_trylock(pthread_mutex_t *mutex);
+int pthread_mutex_unlock(pthread_mutex_t *mutex);
+```
+
+返回值：成功返回 0，失败返回错误号。
+
+一个线程可以调用 pthread_mutex_lock 获得 Mutex，如果这时另一个线程已经调用 pthread_mutex_lock 获得了该 Mutex，则当前线程需要挂起等待，直到另一个线程调用 pthread_mutex_unlock 释放 Mutex，当前线程被唤醒，才能获得该 Mutex 并继续执行。
+
+如果一个线程既想获得锁，又不想挂起等待，可以调用 pthread_mutex_trylock，如果 Mutex 已经被另一个线程获得，这个函数会失败返回 EBUSY，而不会使线程挂起等待。
+
+现在我们用 Mutex 解决先前的问题：
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+#define NLOOP 5000
+
+int counter;                /* incremented by threads */
+pthread_mutex_t counter_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+void *doit(void *);
+
+int main(int argc, char **argv)
+{
+	pthread_t tidA, tidB;
+
+	pthread_create(&tidA, NULL, doit, NULL);
+	pthread_create(&tidB, NULL, doit, NULL);
+
+        /* wait for both threads to terminate */
+	pthread_join(tidA, NULL);
+	pthread_join(tidB, NULL);
+
+	return 0;
+}
+
+void *doit(void *vptr)
+{
+	int     i, val;
+
+	/*
+	 * Each thread fetches, prints, and increments the counter NLOOP times.
+	 * The value of the counter should increase monotonically.
+	 */
+
+	for (i = 0; i < NLOOP; i++) {
+		pthread_mutex_lock(&counter_mutex);
+
+		val = counter;
+		printf("%x: %d\n", (unsigned int)pthread_self(), val + 1);
+		counter = val + 1;
+
+		pthread_mutex_unlock(&counter_mutex);
+	}
+
+	return NULL;
+}
+```
+
+这样运行结果就正常了，每次运行都能数到 10000。
+
+看到这里，读者一定会好奇：Mutex 的两个基本操作 lock 和 unlock 是如何实现的呢？假设 Mutex 变量的值为 1 表示互斥锁空闲，这时某个进程调用 lock 可以获得锁，而 Mutex 的值为 0 表示互斥锁已经被某个线程获得，其它线程再调用 lock 只能挂起等待。那么 lock 和 unlock 的伪代码如下：
+
+```c
+lock:
+	if(mutex > 0){
+		mutex = 0;
+		return 0;
+	} else
+		挂起等待;
+	goto lock;
+
+unlock:
+	mutex = 1;
+	唤醒等待 Mutex 的线程;
+	return 0;
+```
+
+unlock 操作中唤醒等待线程的步骤可以有不同的实现，可以只唤醒一个等待线程，也可以唤醒所有等待该 Mutex 的线程，然后让被唤醒的这些线程去竞争获得这个 Mutex，竞争失败的线程继续挂起等待。
+
+细心的读者应该已经看出问题了：对 Mutex 变量的读取、判断和修改不是原子操作。如果两个线程同时调用 lock，这时 Mutex 是 1，两个线程都判断 mutex>0 成立，然后其中一个线程置 mutex=0，而另一个线程并不知道这一情况，也置 mutex=0，于是两个线程都以为自己获得了锁。
+
+为了实现互斥锁操作，大多数体系结构都提供了 swap 或 exchange 指令，该指令的作用是把寄存器和内存单元的数据相交换，由于只有一条指令，保证了原子性，即使是多处理器平台，访问内存的总线周期也有先后，一个处理器上的交换指令执行时另一个处理器的交换指令只能等待总线周期。现在我们把 lock 和 unlock 的伪代码改一下（以 x86 的 xchg 指令为例）：
+
+```c
+lock:
+	movb $0, %al
+	xchgb %al, mutex
+	if(al 寄存器的内容 > 0){
+		return 0;
+	} else
+		挂起等待;
+	goto lock;
+
+unlock:
+	movb $1, mutex
+	唤醒等待 Mutex 的线程;
+	return 0;
+```
+
+unlock 中的释放锁操作同样只用一条指令实现，以保证它的原子性。
+
+也许还有读者好奇，「挂起等待」和「唤醒等待线程」的操作如何实现？每个 Mutex 有一个等待队列，一个线程要在 Mutex 上挂起等待，首先在把自己加入等待队列中，然后置线程状态为睡眠，然后调用调度器函数切换到别的线程。一个线程要唤醒等待队列中的其它线程，只需从等待队列中取出一项，把它的状态从睡眠改为就绪，加入就绪队列，那么下次调度器函数执行时就有可能切换到被唤醒的线程。
+
+一般情况下，如果同一个线程先后两次调用 lock，在第二次调用时，由于锁已经被占用，该线程会挂起等待别的线程释放锁，然而锁正是被自己占用着的，该线程又被挂起而没有机会释放锁，因此就永远处于挂起等待状态了，这叫做死锁（Deadlock）。另一种典型的死锁情形是这样：线程 A 获得了锁 1，线程 B 获得了锁 2，这时线程 A 调用 lock 试图获得锁 2，结果是需要挂起等待线程 B 释放锁 2，而这时线程 B 也调用 lock 试图获得锁 1，结果是需要挂起等待线程 A 释放锁 1，于是线程 A 和 B 都永远处于挂起状态了。不难想象，如果涉及到更多的线程和更多的锁，有没有可能死锁的问题将会变得复杂和难以判断。
+
+写程序时应该尽量避免同时获得多个锁，如果一定有必要这么做，则有一个原则：如果所有线程在需要多个锁时都按相同的先后顺序（常见的是按 Mutex 变量的地址顺序）获得锁，则不会出现死锁。比如一个程序中用到锁1、锁2、锁3，它们所对应的 Mutex 变量的地址是锁1<锁2<锁3，那么所有线程在需要同时获得 2 个或 3 个锁时都应该按锁1、锁2、锁3 的顺序获得。如果要为所有的锁确定一个先后顺序比较困难，则应该尽量使用 pthread_mutex_trylock 调用代替 pthread_mutex_lock 调用，以免死锁。
+
+#### 3.8.3.2. Condition Variable
+
+线程间的同步还有这样一种情况：线程 A 需要等某个条件成立才能继续往下执行，现在这个条件不成立，线程 A 就阻塞等待，而线程 B 在执行过程中使这个条件成立了，就唤醒线程 A 继续执行。在 pthread 库中通过条件变量（Condition Variable）来阻塞等待一个条件，或者唤醒等待这个条件的线程。Condition Variable 用 `pthread_cond_t` 类型的变量表示，可以这样初始化和销毁：
+
+```c
+#include <pthread.h>
+
+int pthread_cond_destroy(pthread_cond_t *cond);
+int pthread_cond_init(pthread_cond_t *restrict cond,
+       const pthread_condattr_t *restrict attr);
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+```
+
+返回值：成功返回 0，失败返回错误号。
+
+和 Mutex 的初始化和销毁类似，`pthread_cond_init` 函数初始化一个 Condition Variable，`attr` 参数为 `NULL` 则表示缺省属性，`pthread_cond_destroy` 函数销毁一个 Condition Variable。如果 Condition Variable 是静态分配的，也可以用宏定义 `PTHEAD_COND_INITIALIZER` 初始化，相当于用 `pthread_cond_init` 函数初始化并且 `attr` 参数为 `NULL`。Condition Variable 的操作可以用下列函数：
+
+```c
+#include <pthread.h>
+
+int pthread_cond_timedwait(pthread_cond_t *restrict cond,
+       pthread_mutex_t *restrict mutex,
+       const struct timespec *restrict abstime);
+int pthread_cond_wait(pthread_cond_t *restrict cond,
+       pthread_mutex_t *restrict mutex);
+int pthread_cond_broadcast(pthread_cond_t *cond);
+int pthread_cond_signal(pthread_cond_t *cond);
+```
+
+返回值：成功返回 0，失败返回错误号。
+
+可见，一个 Condition Variable 总是和一个 Mutex 搭配使用的。一个线程可以调用 `pthread_cond_wait` 在一个 Condition Variable 上阻塞等待，这个函数做以下三步操作：
+
+1. 释放 Mutex
+2. 阻塞等待
+3. 当被唤醒时，重新获得 Mutex 并返回
+
+`pthread_cond_timedwait` 函数还有一个额外的参数可以设定等待超时，如果到达了 `abstime` 所指定的时刻仍然没有别的线程来唤醒当前线程，就返回 `ETIMEDOUT`。一个线程可以调用 `pthread_cond_signal` 唤醒在某个 Condition Variable 上等待的另一个线程，也可以调用 `pthread_cond_broadcast` 唤醒在这个 Condition Variable 上等待的所有线程。
+
+下面的程序演示了一个生产者-消费者的例子，生产者生产一个结构体串在链表的表头上，消费者从表头取走结构体。
+
+```c
+#include <stdlib.h>
+#include <pthread.h>
+#include <stdio.h>
+
+struct msg {
+	struct msg *next;
+	int num;
+};
+
+struct msg *head;
+pthread_cond_t has_product = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+void *consumer(void *p)
+{
+	struct msg *mp;
+
+	for (;;) {
+		pthread_mutex_lock(&lock);
+		while (head == NULL)
+			pthread_cond_wait(&has_product, &lock);
+		mp = head;
+		head = mp->next;
+		pthread_mutex_unlock(&lock);
+		printf("Consume %d\n", mp->num);
+		free(mp);
+		sleep(rand() % 5);
+	}
+}
+
+void *producer(void *p)
+{
+	struct msg *mp;
+	for (;;) {
+		mp = malloc(sizeof(struct msg));
+		mp->num = rand() % 1000 + 1;
+		printf("Produce %d\n", mp->num);
+		pthread_mutex_lock(&lock);
+		mp->next = head;
+		head = mp;
+		pthread_mutex_unlock(&lock);
+		pthread_cond_signal(&has_product);
+		sleep(rand() % 5);
+	}
+}
+
+int main(int argc, char *argv[]) 
+{
+	pthread_t pid, cid;  
+
+	srand(time(NULL));
+	pthread_create(&pid, NULL, producer, NULL);
+	pthread_create(&cid, NULL, consumer, NULL);
+	pthread_join(pid, NULL);
+	pthread_join(cid, NULL);
+	return 0;
+}
+```
+
+执行结果如下：
+
+```bash
+$ ./a.out 
+Produce 744
+Consume 744
+Produce 567
+Produce 881
+Consume 881
+Produce 911
+Consume 911
+Consume 567
+Produce 698
+Consume 698
+```
+
+##### 习题
+
+1. 在本节的例子中，生产者和消费者访问链表的顺序是 LIFO 的，请修改程序，把访问顺序改成 FIFO。
+
+#### 3.8.3.3. Semaphore
+
+Mutex 变量是非 0 即 1 的，可看作一种资源的可用数量，初始化时 Mutex 是 1，表示有一个可用资源，加锁时获得该资源，将 Mutex 减到 0，表示不再有可用资源，解锁时释放该资源，将 Mutex 重新加到 1，表示又有了一个可用资源。
+
+信号量（Semaphore）和 Mutex 类似，表示可用资源的数量，和 Mutex 不同的是这个数量可以大于 1。
+
+本节介绍的是 POSIX semaphore 库函数，详见 sem_overview(7)，这种信号量不仅可用于同一进程的线程间同步，也可用于不同进程间的同步。
+
+```c
+#include <semaphore.h>
+
+int sem_init(sem_t *sem, int pshared, unsigned int value);
+int sem_wait(sem_t *sem);
+int sem_trywait(sem_t *sem);
+int sem_post(sem_t * sem);
+int sem_destroy(sem_t * sem);
+```
+
+semaphore 变量的类型为 sem_t，sem_init() 初始化一个 semaphore 变量，value 参数表示可用资源的数量，pshared 参数为 0 表示信号量用于同一进程的线程间同步，本节只介绍这种情况。在用完 semaphore 变量之后应该调用 sem_destroy() 释放与 semaphore 相关的资源。
+
+调用 sem_wait() 可以获得资源，使 semaphore 的值减 1，如果调用 sem_wait() 时 semaphore 的值已经是 0，则挂起等待。如果不希望挂起等待，可以调用 sem_trywait()。调用 sem_post() 可以释放资源，使 semaphore 的值加 1，同时唤醒挂起等待的线程。
+
+上一节生产者——消费者的例子是基于链表的，其空间可以动态分配，现在基于固定大小的环形队列重写这个程序：
+
+```c
+#include <stdlib.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <semaphore.h>
+
+#define NUM 5
+int queue[NUM];
+sem_t blank_number, product_number;
+
+void *producer(void *arg) 
+{
+	int p = 0;
+	while (1) {
+		sem_wait(&blank_number);
+		queue[p] = rand() % 1000 + 1;
+		printf("Produce %d\n", queue[p]);
+		sem_post(&product_number);
+		p = (p+1)%NUM;
+		sleep(rand()%5);
+	}
+}
+
+void *consumer(void *arg) 
+{
+	int c = 0;
+	while (1) {
+		sem_wait(&product_number);
+		printf("Consume %d\n", queue[c]);
+		queue[c] = 0;
+		sem_post(&blank_number);
+		c = (c+1)%NUM;
+		sleep(rand()%5);
+	}
+}
+
+int main(int argc, char *argv[]) 
+{
+	pthread_t pid, cid;  
+
+	sem_init(&blank_number, 0, NUM);
+	sem_init(&product_number, 0, 0);
+	pthread_create(&pid, NULL, producer, NULL);
+	pthread_create(&cid, NULL, consumer, NULL);
+	pthread_join(pid, NULL);
+	pthread_join(cid, NULL);
+	sem_destroy(&blank_number);
+	sem_destroy(&product_number);
+	return 0;
+}
+```
+
+##### 习题
+
+1. 本节和上一节的例子给出一个重要的提示：用 Condition Variable 可以实现 Semaphore。请用 Condition Variable 实现 Semaphore，然后用自己实现的 Semaphore 重写本节的程序。
+
+#### 3.8.3.4. 其它线程间同步机制
+
+如果共享数据是只读的，那么各线程读到的数据应该总是一致的，不会出现访问冲突。只要有一个线程可以改写数据，就必须考虑线程间同步的问题。由此引出了读者写者锁（Reader-Writer   Lock）的概念，Reader 之间并不互斥，可以同时读共享数据，而 Writer 是独占的（exclusive），在 Writer 修改数据时其它 Reader 或 Writer 不能访问数据，可见 Reader-Writer Lock 比 Mutex 具有更好的并发性。
+
+用挂起等待的方式解决访问冲突不见得是最好的办法，因为这样毕竟会影响系统的并发性，在某些情况下解决访问冲突的问题可以尽量避免挂起某个线程，例如 Linux 内核的 Seqlock、RCU（read-copy-update）等机制。
+
+关于这些同步机制的细节，有兴趣的读者可以参考 *APUE2e*。
+
+### 3.8.4. 编程练习
+
+哲学家就餐问题。这是由计算机科学家 Dijkstra 提出的经典死锁场景。
+
+原版的故事里有五个哲学家（不过我们写的程序可以有 N 个哲学家），这些哲学家们只做两件事——思考和吃饭，他们思考的时候不需要任何共享资源，但是吃饭的时候就必须使用餐具，而餐桌上的餐具是有限的，原版的故事里，餐具是叉子，吃饭的时候要用两把叉子把面条从碗里捞出来。很显然把叉子换成筷子会更合理，所以：一个哲学家需要两根筷子才能吃饭。
+
+现在引入问题的关键：这些哲学家很穷，只买得起五根筷子。他们坐成一圈，两个人的中间放一根筷子。哲学家吃饭的时候必须同时得到左手边和右手边的筷子。如果他身边的任何一位正在使用筷子，那他只有等着。
+
+假设哲学家的编号是 A、B、C、D、E，筷子编号是 1、2、3、4、5，哲学家和筷子围成一圈如下图所示：
+
+<p id="c35-2">图 35.2. 哲学家问题</p>
+
+![哲学家问题](./image/thread.philosopher.png)
+
+每个哲学家都是一个单独的线程，每个线程循环做以下动作：思考 rand()%10 秒，然后先拿左手边的筷子再拿右手边的筷子（筷子这种资源可以用 mutex 表示），有任何一边拿不到就一直等着，全拿到就吃饭 rand()%10 秒，然后放下筷子。
+
+编写程序仿真哲学家就餐的场景：
+
+```c
+Philosopher A fetches chopstick 5
+Philosopher B fetches chopstick 1
+Philosopher B fetches chopstick 2
+Philosopher D fetches chopstick 3
+Philosopher B releases chopsticks 1 2
+Philosopher A fetches chopstick 1
+Philosopher C fetches chopstick 2
+Philosopher A releases chopsticks 5 1
+...
+```
+
+分析一下，这个过程有没有可能产生死锁？调用 usleep(3) 函数可以实现微秒级的延时，试着用 usleep(3) 加快仿真的速度，看能不能观察到死锁现象。然后修改上述算法避免产生死锁。 
 
 ## 3.9. TCP/IP 协议基础
 
+### 3.9.1. TCP/IP 协议栈与数据包封装
+
+TCP/IP 网络协议栈分为应用层（Application）、传输层（Transport）、网络层（Network）和链路层（Link）四层。如下图所示（该图出自 *TCPIP*）。
+
+<p id="c36-1">图 36.1. TCP/IP 协议栈</p>
+
+![TCP/IP 协议栈](./image/tcpip.stack.png)
+
+两台计算机通过 TCP/IP 协议通讯的过程如下所示（该图出自 *TCPIP*）。
+
+<p id="c36-2">图 36.2. TCP/IP 通讯过程</p>
+
+![TCP/IP 通讯过程](./image/tcpip.transferlan.png)
+
+传输层及其以下的机制由内核提供，应用层由用户进程提供（后面将介绍如何使用 socket API 编写应用程序），应用程序对通讯数据的含义进行解释，而传输层及其以下处理通讯的细节，将数据从一台计算机通过一定的路径发送到另一台计算机。应用层数据通过协议栈发到网络上时，每层协议都要加上一个数据首部（header），称为封装（Encapsulation），如下图所示（该图出自 *TCPIP*）。
+
+<p id="c36-3">图 36.3. TCP/IP 数据包的封装</p>
+
+![TCP/IP 数据包的封装](./image/tcpip.datagram.png)
+
+不同的协议层对数据包有不同的称谓，在传输层叫做段（segment），在网络层叫做数据报（datagram），在链路层叫做帧（frame）。数据封装成帧后发到传输介质上，到达目的主机后每层协议再剥掉相应的首部，最后将应用层数据交给应用程序处理。
+
+上图对应两台计算机在同一网段中的情况，如果两台计算机在不同的网段中，那么数据从一台计算机到另一台计算机传输过程中要经过一个或多个路由器，如下图所示（该图出自 *TCPIP*）。
+
+<p id="c36-4">图 36.4. 跨路由器通讯过程</p>
+
+![跨路由器通讯过程](./image/tcpip.transferovernet.png)
+
+其实在链路层之下还有物理层，指的是电信号的传递方式，比如现在以太网通用的网线（双绞线）、早期以太网采用的的同轴电缆（现在主要用于有线电视）、光纤等都属于物理层的概念。物理层的能力决定了最大传输速率、传输距离、抗干扰性等。集线器（Hub）是工作在物理层的网络设备，用于双绞线的连接和信号中继（将已衰减的信号再次放大使之传得更远）。
+
+链路层有以太网、令牌环网等标准，链路层负责网卡设备的驱动、帧同步（就是说从网线上检测到什么信号算作新帧的开始）、冲突检测（如果检测到冲突就自动重发）、数据差错校验等工作。交换机是工作在链路层的网络设备，可以在不同的链路层网络之间转发数据帧（比如十兆以太网和百兆以太网之间、以太网和令牌环网之间），由于不同链路层的帧格式不同，交换机要将进来的数据包拆掉链路层首部重新封装之后再转发。
+
+网络层的 IP 协议是构成 Internet 的基础。Internet 上的主机通过IP地址来标识，Internet 上有大量路由器负责根据 IP 地址选择合适的路径转发数据包，数据包从 Internet 上的源主机到目的主机往往要经过十多个路由器。路由器是工作在第三层的网络设备，同时兼有交换机的功能，可以在不同的链路层接口之间转发数据包，因此路由器需要将进来的数据包拆掉网络层和链路层两层首部并重新封装。IP 协议不保证传输的可靠性，数据包在传输过程中可能丢失，可靠性可以在上层协议或应用程序中提供支持。
+
+网络层负责点到点（point-to-point）的传输（这里的「点」指主机或路由器），而传输层负责端到端（end-to-end）的传输（这里的「端」指源主机和目的主机）。传输层可选择 TCP 或 UDP 协议。TCP 是一种面向连接的、可靠的协议，有点像打电话，双方拿起电话互通身份之后就建立了连接，然后说话就行了，这边说的话那边保证听得到，并且是按说话的顺序听到的，说完话挂机断开连接。也就是说 TCP 传输的双方需要首先建立连接，之后由 TCP 协议保证数据收发的可靠性，丢失的数据包自动重发，上层应用程序收到的总是可靠的数据流，通讯之后关闭连接。UDP 协议不面向连接，也不保证可靠性，有点像寄信，写好信放到邮筒里，既不能保证信件在邮递过程中不会丢失，也不能保证信件是按顺序寄到目的地的。使用 UDP 协议的应用程序需要自己完成丢包重发、消息排序等工作。
+
+目的主机收到数据包后，如何经过各层协议栈最后到达应用程序呢？整个过程如下图所示（该图出自 *TCPIP*）。
+
+<p id="c36-5">图 36.5. Multiplexing 过程</p>
+
+![Multiplexing 过程](./image/tcpip.multiplex.png)
+
+以太网驱动程序首先根据以太网首部中的「上层协议」字段确定该数据帧的有效载荷（payload，指除去协议首部之外实际传输的数据）是 IP、ARP 还是 RARP 协议的数据报，然后交给相应的协议处理。假如是 IP 数据报，IP 协议再根据 IP 首部中的「上层协议」字段确定该数据报的有效载荷是 TCP、UDP、ICMP 还是 IGMP，然后交给相应的协议处理。假如是 TCP 段或 UDP 段，TCP 或 UDP 协议再根据 TCP 首部或 UDP 首部的「端口号」字段确定应该将应用层数据交给哪个用户进程。IP 地址是标识网络中不同主机的地址，而端口号就是同一台主机上标识不同进程的地址，IP 地址和端口号合起来标识网络中唯一的进程。
+
+注意，虽然 IP、ARP 和 RARP 数据报都需要以太网驱动程序来封装成帧，但是从功能上划分，ARP 和 RARP 属于链路层，IP 属于网络层。虽然 ICMP、IGMP、TCP、UDP 的数据都需要 IP 协议来封装成数据报，但是从功能上划分，ICMP、IGMP 与 IP 同属于网络层，TCP 和 UDP 属于传输层。本文对 RARP、ICMP、IGMP 协议不做进一步介绍，有兴趣的读者可以看参考资料。
+
+### 3.9.2. 以太网(RFC 894)帧格式
+
+以太网的帧格式如下所示（该图出自 *TCPIP*）：
+
+<p id="c36-6">图 36.6. 以太网帧格式</p>
+
+![以太网帧格式](./image/tcpip.ethernetformat.png)
+
+其中的源地址和目的地址是指网卡的硬件地址（也叫 MAC 地址），长度是 48 位，是在网卡出厂时固化的。用 ifconfig 命令看一下，「HWaddr  00:15:F2:14:9E:3F」部分就是硬件地址。协议字段有三种值，分别对应 IP、ARP、RARP。帧末尾是 CRC 校验码。
+
+以太网帧中的数据长度规定最小 46 字节，最大 1500 字节，ARP 和 RARP 数据包的长度不够 46 字节，要在后面补填充位。最大值 1500 称为以太网的最大传输单元（MTU），不同的网络类型有不同的 MTU，如果一个数据包从以太网路由到拨号链路上，数据包长度大于拨号链路的 MTU 了，则需要对数据包进行分片（fragmentation）。ifconfig 命令的输出中也有「MTU:1500」。注意，MTU 这个概念指数据帧中有效载荷的最大长度，不包括帧首部的长度。
+
+### 3.9.3. ARP 数据报格式
+
+在网络通讯时，源主机的应用程序知道目的主机的 IP 地址和端口号，却不知道目的主机的硬件地址，而数据包首先是被网卡接收到再去处理上层协议的，如果接收到的数据包的硬件地址与本机不符，则直接丢弃。因此在通讯前必须获得目的主机的硬件地址。ARP 协议就起到这个作用。源主机发出 ARP 请求，询问「IP 地址是 192.168.0.1 的主机的硬件地址是多少」，并将这个请求广播到本地网段（以太网帧首部的硬件地址填 FF:FF:FF:FF:FF:FF 表示广播），目的主机接收到广播的 ARP 请求，发现其中的 IP 地址与本机相符，则发送一个 ARP 应答数据包给源主机，将自己的硬件地址填写在应答包中。
+
+每台主机都维护一个 ARP 缓存表，可以用 arp -a 命令查看。缓存表中的表项有过期时间（一般为 20 分钟），如果 20 分钟内没有再次使用某个表项，则该表项失效，下次还要发 ARP 请求来获得目的主机的硬件地址。想一想，为什么表项要有过期时间而不是一直有效？
+
+ARP 数据报的格式如下所示（该图出自 *TCPIP*）：
+
+<p id="c36-7">图 36.7. ARP 数据报格式</p>
+
+![ARP 数据报格式](./image/tcpip.arpformat.png)
+
+注意到源 MAC 地址、目的 MAC 地址在以太网首部和 ARP 请求中各出现一次，对于链路层为以太网的情况是多余的，但如果链路层是其它类型的网络则有可能是必要的。硬件类型指链路层网络类型，1 为以太网，协议类型指要转换的地址类型，0x0800 为 IP 地址，后面两个地址长度对于以太网地址和 IP 地址分别为 6 和 4（字节），op 字段为 1 表示 ARP 请求，op 字段为 2 表示 ARP 应答。
+
+下面举一个具体的例子。
+
+请求帧如下（为了清晰在每行的前面加了字节计数，每行 16 个字节）：
+
+```
+以太网首部（14 字节）
+ 0000: ff ff ff ff ff ff 00 05 5d 61 58 a8 08 06
+ ARP帧（28 字节）
+ 0000:                                           00 01
+ 0010: 08 00 06 04 00 01 00 05 5d 61 58 a8 c0 a8 00 37
+ 0020: 00 00 00 00 00 00 c0 a8 00 02
+ 填充位（18 字节）
+ 0020:                               00 77 31 d2 50 10
+ 0030: fd 78 41 d3 00 00 00 00 00 00 00 00
+```
+
+以太网首部：目的主机采用广播地址，源主机的 MAC 地址是 00:05:5d:61:58:a8，上层协议类型 0x0806 表示 ARP。
+
+ARP 帧：硬件类型 0x0001 表示以太网，协议类型 0x0800 表示 IP 协议，硬件地址（MAC 地址）长度为 6，协议地址（IP 地址）长度为 4，op 为 0x0001 表示请求目的主机的 MAC 地址，源主机 MAC 地址为 00:05:5d:61:58:a8，源主机 IP 地址为 c0  a8 00 37（192.168.0.55），目的主机 MAC地址全 0 待填写，目的主机 IP 地址为 c0 a8 00  02（192.168.0.2）。
+
+由于以太网规定最小数据长度为 46 字节，ARP 帧长度只有 28 字节，因此有 18 字节填充位，填充位的内容没有定义，与具体实现相关。
+
+应答帧如下：
+
+```
+以太网首部
+ 0000: 00 05 5d 61 58 a8 00 05 5d a1 b8 40 08 06
+ ARP 帧
+ 0000:                                           00 01
+ 0010: 08 00 06 04 00 02 00 05 5d a1 b8 40 c0 a8 00 02
+ 0020: 00 05 5d 61 58 a8 c0 a8 00 37
+ 填充位
+ 0020:                               00 77 31 d2 50 10
+ 0030: fd 78 41 d3 00 00 00 00 00 00 00 00
+```
+
+以太网首部：目的主机的 MAC 地址是 00:05:5d:61:58:a8，源主机的 MAC 地址是 00:05:5d:a1:b8:40，上层协议类型 0x0806 表示 ARP。
+
+ARP 帧：硬件类型 0x0001 表示以太网，协议类型 0x0800 表示 IP 协议，硬件地址（MAC 地址）长度为 6，协议地址（IP 地址）长度为 4，op 为 0x0002 表示应答，源主机 MAC 地址为 00:05:5d:a1:b8:40，源主机 IP 地址为 c0  a8 00 02（192.168.0.2），目的主机 MAC 地址为 00:05:5d:61:58:a8，目的主机 IP 地址为 c0 a8 00  37（192.168.0.55）。
+
+#### 3.9.3.1. 思考题
+
+如果源主机和目的主机不在同一网段，ARP 请求的广播帧无法穿过路由器，源主机如何与目的主机通信？
+
+### 3.9.4. IP 数据报格式
+
+IP 数据报的格式如下（这里只讨论 IPv4）（该图出自 *TCPIP*）：
+
+<p id="c36-8">图 36.8. IP 数据报格式</p>
+
+![IP 数据报格式](./image/tcpip.ipformat.png)
+
+IP 数据报的首部长度和数据长度都是可变长的，但总是 4 字节的整数倍。对于 IPv4，4 位版本字段是 4。4 位首部长度的数值是以 4 字节为单位的，最小值为 5，也就是说首部长度最小是 4x5=20 字节，也就是不带任何选项的 IP 首部，4 位能表示的最大值是 15，也就是说首部长度最大是 60 字节。8 位 TOS 字段有 3 个位用来指定 IP 数据报的优先级（目前已经废弃不用），还有 4 个位表示可选的服务类型（最小延迟、最大呑吐量、最大可靠性、最小成本），还有一个位总是 0。总长度是整个数据报（包括 IP 首部和 IP 层 payload）的字节数。每传一个 IP 数据报，16 位的标识加 1，可用于分片和重新组装数据报。3 位标志和 13 位片偏移用于分片。TTL（Time  to  live）是这样用的：源主机为数据包设定一个生存时间，比如 64，每过一个路由器就把该值减 1，如果减到 0 就表示路由已经太长了仍然找不到目的主机的网络，就丢弃该包，因此这个生存时间的单位不是秒，而是跳（hop）。协议字段指示上层协议是 TCP、UDP、ICMP 还是 IGMP。然后是校验和，只校验 IP 首部，数据的校验由更高层协议负责。IPv4 的 IP 地址长度为 32 位。选项字段的解释从略。
+
+想一想，前面讲了以太网帧中的最小数据长度为 46 字节，不足 46 字节的要用填充字节补上，那么如何界定这 46 字节里前多少个字节是 IP、ARP 或 RARP 数据报而后面是填充字节？
+
+### 3.9.5. IP 地址与路由
+
+IPv4 的 IP 地址长度为 4 字节，通常采用点分十进制表示法（dotted  decimal  representation）例如 0xc0a80002 表示为 192.168.0.2。Internet 被各种路由器和网关设备分隔成很多网段，为了标识不同的网段，需要把 32 位的 IP 地址划分成网络号和主机号两部分，网络号相同的各主机位于同一网段，相互间可以直接通信，网络号不同的主机之间通信则需要通过路由器转发。
+
+过去曾经提出一种划分网络号和主机号的方案，把所有 IP 地址分为五类，如下图所示（该图出自 *TCPIP*）。
+
+<p id="c36-9">图 36.9. IP 地址类</p>
+
+![IP 地址类](./image/tcpip.addressclass.png)
+
+| 类别 | 起始      | 结束            |
+| ---- | --------- | --------------- |
+| B类  | 128.0.0.0 | 191.255.255.255 |
+| C类  | 192.0.0.0 | 223.255.255.255 |
+| D类  | 224.0.0.0 | 239.255.255.255 |
+| E类  | 240.0.0.0 | 247.255.255.255 |
+
+一个 A 类网络可容纳的地址数量最大，一个 B 类网络的地址数量是 65536，一个 C 类网络的地址数量是 256。D 类地址用作多播地址，E 类地址保留未用。
+
+随着 Internet 的飞速发展，这种划分方案的局限性很快显现出来，大多数组织都申请 B 类网络地址，导致 B 类地址很快就分配完了，而 A 类却浪费了大量地址。这种方式对网络的划分是 flat 的而不是层级结构（hierarchical）的，Internet 上的每个路由器都必须掌握所有网络的信息，随着大量 C 类网络的出现，路由器需要检索的路由表越来越庞大，负担越来越重。
+
+针对这种情况提出了新的划分方案，称为 CIDR（Classless  Interdomain Routing）。网络号和主机号的划分需要用一个额外的子网掩码（subnet  mask）来表示，而不能由IP地址本身的数值决定，也就是说，网络号和主机号的划分与这个 IP 地址是 A 类、B 类还是 C 类无关，因此称为 Classless 的。这样，多个子网就可以汇总（summarize）成一个 Internet 上的网络，例如，有 8 个站点都申请了 C 类网络，本来网络号是 24 位的，但是这 8 个站点通过同一个 ISP（Internet service provider）连到 Internet 上，它们网络号的高 21 位是相同的，只有低三位不同，这 8 个站点就可以汇总，在 Internet 上只需要一个路由表项，数据包通过 Internet 上的路由器到达 ISP，然后在 ISP 这边再通过次级的路由器选路到某个站点。
+
+下面举两个例子：
+
+<p id="t36-1">表 36.1. 划分子网的例子 1</p>
+
+| IP 地址       | 140.252.20.68               | 8C FC 14 44 |
+| ------------ | --------------------------- | ----------- |
+| 子网掩码     | 255.255.255.0               | FF FF FF 00 |
+| 网络号       | 140.252.20.0                | 8C FC 14 00 |
+| 子网地址范围 | 140.252.20.0~140.252.20.255 |             |
+
+<p id="t36-1">表 36.2. 划分子网的例子 2</p>
+
+| IP 地址       | 140.252.20.68               | 8C FC 14 44 |
+| ------------ | --------------------------- | ----------- |
+| 子网掩码     | 255.255.255.240             | FF FF FF F0 |
+| 网络号       | 140.252.20.64               | 8C FC 14 40 |
+| 子网地址范围 | 140.252.20.64~140.252.20.79 |             |
+
+可见，IP 地址与子网掩码做与运算可以得到网络号，主机号从全 0 到全 1 就是子网的地址范围。IP 地址和子网掩码还有一种更简洁的表示方法，例如 140.252.20.68/24，表示 IP 地址为 140.252.20.68，子网掩码的高 24 位是 1，也就是 255.255.255.0。
+
+如果一个组织内部组建局域网，IP 地址只用于局域网内的通信，而不直接连到 Internet 上，理论上使用任意的 IP 地址都可以，但是 RFC 1918 规定了用于组建局域网的私有 IP 地址，这些地址不会出现在 Internet 上，如下表所示。
+
+- `10.*`，前 8 位是网络号，共 16,777,216 个地址
+- `172.16.*` 到 `172.31.*`，前 12 位是网络号，共 1,048,576 个地址
+- `192.168.*`，前 16 位是网络号，共 65,536 个地址
+
+使用私有 IP 地址的局域网主机虽然没有 Internet 的 IP 地址，但也可以通过代理服务器或 NAT（网络地址转换）等技术连到 Internet 上。
+
+除了私有 IP 地址之外，还有几种特殊的 IP 地址。`127.*` 的 IP 地址用于本机环回（loop back）测试，通常是 127.0.0.1。loopback 是系统中一种特殊的网络设备，如果发送数据包的目的地址是环回地址，或者与本机其它网络设备的 IP 地址相同，则数据包不会发送到网络介质上，而是通过环回设备再发回给上层协议和应用程序，主要用于测试。如下图所示（该图出自 *TCPIP*）。
+
+<p id="c36-10">图 36.10. loopback 设备</p>
+
+![loopback 设备](./image/tcpip.loopback.png)
+
+还有一些不能用作主机 IP 地址的特殊地址：
+
+- 目的地址为 255.255.255.255，表示本网络内部广播，路由器不转发这样的广播数据包。
+- 主机号全为 0 的地址只表示网络而不能表示某个主机，如 192.168.10.0（假设子网掩码为 255.255.255.0）。
+- 目的地址的主机号为全 1，表示广播至某个网络的所有主机，例如目的地址 192.168.10.255 表示广播至 192.168.10.0 网络（假设子网掩码为 255.255.255.0）。
+
+下面介绍路由的过程，首先正式定义几个名词：
+
+- 路由（名词）：数据包从源地址到目的地址所经过的路径，由一系列路由节点组成。
+- 路由（动词）：某个路由节点为数据报选择投递方向的选路过程。
+- 路由节点：一个具有路由能力的主机或路由器，它维护一张路由表，通过查询路由表来决定向哪个接口发送数据包。
+- 接口：路由节点与某个网络相连的网卡接口。
+- 路由表：由很多路由条目组成，每个条目都指明去往某个网络的数据包应该经由哪个接口发送，其中最后一条是缺省路由条目。
+- 路由条目：路由表中的一行，每个条目主要由目的网络地址、子网掩码、下一跳地址、发送接口四部分组成，如果要发送的数据包的目的网络地址匹配路由表中的某一行，就按规定的接口发送到下一跳地址。
+- 缺省路由条目：路由表中的最后一行，主要由下一跳地址和发送接口两部分组成，当目的地址与路由表中其它行都不匹配时，就按缺省路由条目规定的接口发送到下一跳地址。
+
+假设某主机上的网络接口配置和路由表如下：
+
+```bash
+$ ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:0C:29:C2:8D:7E
+          inet addr:192.168.10.223  Bcast:192.168.10.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:10 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:100
+          RX bytes:0 (0.0 b)  TX bytes:420 (420.0 b)
+          Interrupt:10 Base address:0x10a0
+
+eth1      Link encap:Ethernet  HWaddr 00:0C:29:C2:8D:88
+          inet addr:192.168.56.136  Bcast:192.168.56.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:603 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:110 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:100
+          RX bytes:55551 (54.2 Kb)  TX bytes:7601 (7.4 Kb)
+          Interrupt:9 Base address:0x10c0
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:37 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:37 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:3020 (2.9 Kb)  TX bytes:3020 (2.9 Kb)
+$ route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.10.0    *               255.255.255.0   U     0      0        0 eth0
+192.168.56.0    *               255.255.255.0   U     0      0        0 eth1
+127.0.0.0       *               255.0.0.0       U     0      0        0 lo
+default         192.168.10.1    0.0.0.0         UG    0      0        0 eth0
+```
+
+这台主机有两个网络接口，一个网络接口连到 192.168.10.0/24 网络，另一个网络接口连到 192.168.56.0/24 网络。路由表的 Destination 是目的网络地址，Genmask 是子网掩码，Gateway 是下一跳地址，Iface 是发送接口，Flags 中的 U 标志表示此条目有效（可以禁用某些条目），G 标志表示此条目的下一跳地址是某个路由器的地址，没有 G 标志的条目表示目的网络地址是与本机接口直接相连的网络，不必经路由器转发，因此下一跳地址处记为 `*` 号。
+
+如果要发送的数据包的目的地址是 192.168.56.3，跟第一行的子网掩码做与运算得到 192.168.56.0，与第一行的目的网络地址不符，再跟第二行的子网掩码做与运算得到 192.168.56.0，正是第二行的目的网络地址，因此从 eth1 接口发送出去，由于 192.168.56.0/24 正是与 eth1 接口直接相连的网络，因此可以直接发到目的主机，不需要经路由器转发。
+
+如果要发送的数据包的目的地址是 202.10.1.2，跟前三行路由表条目都不匹配，那么就要按缺省路由条目，从 eth0 接口发出去，首先发往 192.168.10.1 路由器，再让路由器根据它的路由表决定下一跳地址。
+
+### 3.9.6. UDP 段格式
+
+下图是 UDP 的段格式（该图出自 *TCPIP*）。
+
+<p id="c36-11">图 36.11. UDP 段格式</p>
+
+![UDP段格式](./image/tcpip.udpformat.png)
+
+下面分析一帧基于 UDP 的 TFTP 协议帧。
+
+```
+以太网首部
+ 0000: 00 05 5d 67 d0 b1 00 05 5d 61 58 a8 08 00 
+ IP首部
+ 0000:                                           45 00
+ 0010: 00 53 93 25 00 00 80 11 25 ec c0 a8 00 37 c0 a8
+ 0020: 00 01
+ UDP首部
+ 0020：      05 d4 00 45 00 3f ac 40
+ TFTP协议
+ 0020:                               00 01 'c'':''\''q'
+ 0030: 'w''e''r''q''.''q''w''e'00 'n''e''t''a''s''c''i'
+ 0040: 'i'00 'b''l''k''s''i''z''e'00 '5''1''2'00 't''i'
+ 0050: 'm''e''o''u''t'00 '1''0'00 't''s''i''z''e'00 '0'
+ 0060: 00
+```
+
+以太网首部：源 MAC 地址是 00:05:5d:61:58:a8，目的 MAC 地址是 00:05:5d:67:d0:b1，上层协议类型 0x0800 表示 IP。
+
+IP 首部：每一个字节 0x45 包含 4 位版本号和 4 位首部长度，版本号为 4，即 IPv4，首部长度为 5，说明 IP 首部不带有选项字段。服务类型为 0，没有使用服务。16 位总长度字段（包括 IP 首部和 IP 层 payload 的长度）为 0x0053，即 83 字节，加上以太网首部 14 字节可知整个帧长度是 97 字节。IP 报标识是 0x9325，标志字段和片偏移字段设置为 0x0000，就是 DF=0 允许分片，MF=0 此数据报没有更多分片，没有分片偏移。TTL 是 0x80，也就是 128。上层协议 0x11 表示 UDP 协议。IP 首部校验和为 0x25ec，源主机 IP 是 c0  a8 00 37（192.168.0.55），目的主机 IP 是 c0 a8 00 01（192.168.0.1）。
+
+UDP 首部：源端口号 0x05d4（1492）是客户端的端口号，目的端口号 0x0045（69）是 TFTP 服务的 well-known 端口号。UDP 报长度为 0x003f，即 63 字节，包括 UDP 首部和 UDP 层 payload 的长度。UDP 首部和 UDP 层 payload 的校验和为 0xac40。
+
+TFTP 是基于文本的协议，各字段之间用字节 0 分隔，开头的 00 01 表示请求读取一个文件，接下来的各字段是：
+
+```bat
+c:\qwerq.qwe
+ netascii
+ blksize 512
+ timeout 10
+ tsize 0
+```
+
+一般的网络通信都是像 TFTP 协议这样，通信的双方分别是客户端和服务器，客户端主动发起请求（上面的例子就是客户端发起的请求帧），而服务器被动地等待、接收和应答请求。客户端的 IP 地址和端口号唯一标识了该主机上的 TFTP 客户端进程，服务器的 IP 地址和端口号唯一标识了该主机上的 TFTP 服务进程，由于客户端是主动发起请求的一方，它必须知道服务器的 IP 地址和 TFTP 服务进程的端口号，所以，一些常见的网络协议有默认的服务器端口，例如 HTTP 服务默认 TCP 协议的 80 端口，FTP 服务默认 TCP 协议的 21 端口，TFTP 服务默认 UDP 协议的 69 端口（如上例所示）。在使用客户端程序时，必须指定服务器的主机名或 IP 地址，如果不明确指定端口号则采用默认端口，请读者查阅 ftp、tftp 等程序的 man page 了解如何指定端口号。/etc/services 中列出了所有 well-known 的服务端口和对应的传输层协议，这是由 IANA（Internet Assigned Numbers Authority）规定的，其中有些服务既可以用 TCP 也可以用 UDP，为了清晰，IANA 规定这样的服务采用相同的 TCP 或 UDP 默认端口号，而另外一些 TCP 和 UDP 的相同端口号却对应不同的服务。
+
+很多服务有 well-known 的端口号，然而客户端程序的端口号却不必是 well-known 的，往往是每次运行客户端程序时由系统自动分配一个空闲的端口号，用完就释放掉，称为 ephemeral 的端口号，想想这是为什么。
+
+前面提过，UDP 协议不面向连接，也不保证传输的可靠性，例如：
+
+- 发送端的 UDP 协议层只管把应用层传来的数据封装成段交给 IP 协议层就算完成任务了，如果因为网络故障该段无法发到对方，UDP 协议层也不会给应用层返回任何错误信息。
+- 接收端的 UDP 协议层只管把收到的数据根据端口号交给相应的应用程序就算完成任务了，如果发送端发来多个数据包并且在网络上经过不同的路由，到达接收端时顺序已经错乱了，UDP 协议层也不保证按发送时的顺序交给应用层。
+- 通常接收端的 UDP 协议层将收到的数据放在一个固定大小的缓冲区中等待应用程序来提取和处理，如果应用程序提取和处理的速度很慢，而发送端发送的速度很快，就会丢失数据包，UDP 协议层并不报告这种错误。
+
+因此，使用 UDP 协议的应用程序必须考虑到这些可能的问题并实现适当的解决方案，例如等待应答、超时重发、为数据包编号、流量控制等。一般使用 UDP 协议的应用程序实现都比较简单，只是发送一些对可靠性要求不高的消息，而不发送大量的数据。例如，基于 UDP 的 TFTP 协议一般只用于传送小文件（所以才叫 trivial 的 ftp），而基于 TCP 的 FTP 协议适用于各种文件的传输。下面看 TCP 协议如何用面向连接的服务来代替应用程序解决传输的可靠性问题。
+
+### 3.9.7. TCP协议
+
+#### 3.9.7.1. 段格式
+
+TCP 的段格式如下图所示（该图出自 *TCPIP*）。
+
+<p id="c36-12">图 36.12. TCP 段格式</p>
+
+![TCP段格式](./image/tcpip.tcpformat.png)
+
+和 UDP 协议一样也有源端口号和目的端口号，通讯的双方由 IP 地址和端口号标识。32 位序号、32 位确认序号、窗口大小稍后详细解释。4 位首部长度和 IP 协议头类似，表示 TCP 协议头的长度，以 4 字节为单位，因此 TCP 协议头最长可以是 4x15=60 字节，如果没有选项字段，TCP 协议头最短 20 字节。URG、ACK、PSH、RST、SYN、FIN 是六个控制位，本节稍后将解释 SYN、ACK、FIN、RST 四个位，其它位的解释从略。16 位检验和将 TCP 协议头和数据都计算在内。紧急指针和各种选项的解释从略。
+
+#### 3.9.7.2. 通讯时序
+
+下图是一次 TCP 通讯的时序图。
+
+<p id="c36-13">图 36.13. TCP 连接建立断开</p>
+
+![TCP 连接建立断开](./image/tcpip.tcpconnection.png)
+
+在这个例子中，首先客户端主动发起连接、发送请求，然后服务器端响应请求，然后客户端主动关闭连接。两条竖线表示通讯的两端，从上到下表示时间的先后顺序，注意，数据从一端传到网络的另一端也需要时间，所以图中的箭头都是斜的。双方发送的段按时间顺序编号为 1-10，各段中的主要信息在箭头上标出，例如段 2 的箭头上标着 SYN,  8000(0), ACK 1001, <mss  1024>，表示该段中的 SYN 位置 1，32 位序号是 8000，该段不携带有效载荷（数据字节数为 0），ACK 位置 1，32 位确认序号是 1001，带有一个 mss 选项值为 1024。
+
+建立连接的过程：
+
+1. 客户端发出段 1，SYN 位表示连接请求。序号是 1000，这个序号在网络通讯中用作临时的地址，每发一个数据字节，这个序号要加 1，这样在接收端可以根据序号排出数据包的正确顺序，也可以发现丢包的情况，另外，规定 SYN 位和 FIN 位也要占一个序号，这次虽然没发数据，但是由于发了 SYN 位，因此下次再发送应该用序号 1001。mss 表示最大段尺寸，如果一个段太大，封装成帧后超过了链路层的最大帧长度，就必须在 IP 层分片，为了避免这种情况，客户端声明自己的最大段尺寸，建议服务器端发来的段不要超过这个长度。
+2. 服务器发出段 2，也带有 SYN 位，同时置 ACK 位表示确认，确认序号是 1001，表示「我接收到序号 1000 及其以前所有的段，请你下次发送序号为 1001 的段」，也就是应答了客户端的连接请求，同时也给客户端发出一个连接请求，同时声明最大尺寸为 1024。
+3. 客户端发出段 3，对服务器的连接请求进行应答，确认序号是 8001。
+
+在这个过程中，客户端和服务器分别给对方发了连接请求，也应答了对方的连接请求，其中服务器的请求和应答在一个段中发出，因此一共有三个段用于建立连接，称为「三方握手（three-way-handshake）」。在建立连接的同时，双方协商了一些信息，例如双方发送序号的初始值、最大段尺寸等。
+
+在 TCP 通讯中，如果一方收到另一方发来的段，读出其中的目的端口号，发现本机并没有任何进程使用这个端口，就会应答一个包含 RST 位的段给另一方。例如，服务器并没有任何进程使用 8080 端口，我们却用 telnet 客户端去连接它，服务器收到客户端发来的 SYN 段就会应答一个 RST 段，客户端的 telnet 程序收到 RST 段后报告错误 Connection  refused：
+
+```bash
+$ telnet 192.168.0.200 8080
+Trying 192.168.0.200...
+telnet: Unable to connect to remote host: Connection refused
+```
+
+数据传输的过程：
+
+1. 客户端发出段 4，包含从序号 1001 开始的 20 个字节数据。
+2. 服务器发出段 5，确认序号为 1021，对序号为 1001-1020 的数据表示确认收到，同时请求发送序号 1021 开始的数据，服务器在应答的同时也向客户端发送从序号 8001 开始的 10 个字节数据，这称为 piggyback。
+3. 客户端发出段 6，对服务器发来的序号为 8001-8010 的数据表示确认收到，请求发送序号 8011开始的数据。
+
+在数据传输过程中，ACK 和确认序号是非常重要的，应用程序交给 TCP协议发送的数据会暂存在 TCP 层的发送缓冲区中，发出数据包给对方之后，只有收到对方应答的 ACK 段才知道该数据包确实发到了对方，可以从发送缓冲区中释放掉了，如果因为网络故障丢失了数据包或者丢失了对方发回的 ACK 段，经过等待超时后 TCP 协议自动将发送缓冲区中的数据包重发。
+
+这个例子只描述了最简单的一问一答的情景，实际的 TCP 数据传输过程可以收发很多数据段，虽然典型的情景是客户端主动请求服务器被动应答，但也不是必须如此，事实上 TCP 协议为应用层提供了全双工（full-duplex）的服务，双方都可以**主动甚至同时**给对方发送数据。
+
+如果通讯过程只能采用一问一答的方式，收和发两个方向不能同时传输，在同一时间只允许一个方向的数据传输，则称为半双工（half-duplex），假设某种面向连接的协议是半双工的，则只需要一套序号就够了，不需要通讯双方各自维护一套序号，想一想为什么。
+
+关闭连接的过程：
+
+1. 客户端发出段 7，FIN 位表示关闭连接的请求。
+2. 服务器发出段 8，应答客户端的关闭连接请求。
+3. 服务器发出段 9，其中也包含 FIN 位，向客户端发送关闭连接请求。
+4. 客户端发出段 10，应答服务器的关闭连接请求。
+
+建立连接的过程是三方握手，而关闭连接通常需要 4 个段，服务器的应答和关闭连接请求通常不合并在一个段中，因为有连接半关闭的情况，这种情况下客户端关闭连接之后就不能再发送数据给服务器了，但是服务器还可以发送数据给客户端，直到服务器也关闭连接为止，稍后会看到这样的例子。
+
+#### 3.9.7.3. 流量控制
+
+介绍 UDP 时我们描述了这样的问题：如果发送端发送的速度较快，接收端接收到数据后处理的速度较慢，而接收缓冲区的大小是固定的，就会丢失数据。TCP 协议通过滑动窗口（Sliding Window）机制解决这一问题。看下图的通讯过程。
+
+<p id="c36-14">图 36.14. 滑动窗口</p>
+
+![滑动窗口](./image/tcpip.slidingwindow.png)
+
+1. 发送端发起连接，声明最大段尺寸是 1460，初始序号是 0，窗口大小是 4K，表示「我的接收缓冲区还有 4K 字节空闲，你发的数据不要超过 4K」。接收端应答连接请求，声明最大段尺寸是 1024，初始序号是 8000，窗口大小是 6K。发送端应答，三方握手结束。
+2. 发送端发出段 4-9，每个段带 1K 的数据，发送端根据窗口大小知道接收端的缓冲区满了，因此停止发送数据。
+3. 接收端的应用程序提走2K数据，接收缓冲区又有了 2K 空闲，接收端发出段 10，在应答已收到 6K 数据的同时声明窗口大小为 2K。
+4. 接收端的应用程序又提走 2K 数据，接收缓冲区有 4K 空闲，接收端发出段 11，重新声明窗口大小为 4K。
+5. 发送端发出段 12-13，每个段带 2K 数据，段 13 同时还包含 FIN 位。
+6. 接收端应答接收到的 2K 数据（6145-8192），再加上 FIN 位占一个序号 8193，因此应答序号是 8194，连接处于半关闭状态，接收端同时声明窗口大小为 2K。
+7. 接收端的应用程序提走 2K 数据，接收端重新声明窗口大小为 4K。
+8. 接收端的应用程序提走剩下的 2K 数据，接收缓冲区全空，接收端重新声明窗口大小为 6K。
+9. 接收端的应用程序在提走全部数据后，决定关闭连接，发出段 17 包含 FIN 位，发送端应答，连接完全关闭。
+
+上图在接收端用小方块表示 1K 数据，实心的小方块表示已接收到的数据，虚线框表示接收缓冲区，因此套在虚线框中的空心小方块表示窗口大小，从图中可以看出，随着应用程序提走数据，虚线框是向右滑动的，因此称为滑动窗口。
+
+从这个例子还可以看出，发送端是 1K 1K 地发送数据，而接收端的应用程序可以 2K 2K 地提走数据，当然也有可能一次提走 3K 或 6K 数据，或者一次只提走几个字节的数据，也就是说，应用程序所看到的数据是一个整体，或说是一个流（stream），在底层通讯中这些数据可能被拆成很多数据包来发送，但是一个数据包有多少字节对应用程序是不可见的，因此 TCP 协议是面向流的协议。而 UDP 是面向消息的协议，每个 UDP 段都是一条消息，应用程序必须以消息为单位提取数据，不能一次提取任意字节的数据，这一点和 TCP 是很不同的。
+
 ## 3.10. socket 编程
+
+socket 这个词可以表示很多概念：
+
+- 在 TCP/IP 协议中，「IP 地址 + TCP 或 UDP 端口号」唯一标识网络通讯中的一个进程，「IP 地址 + 端口号」就称为 socket。
+- 在 TCP 协议中，建立连接的两个进程各自有一个 socket 来标识，那么这两个 socket 组成的 socket pair 就唯一标识一个连接。socket 本身有「插座」的意思，因此用来描述网络连接的一对一关系。
+- TCP/IP 协议最早在 BSD UNIX 上实现，为 TCP/IP 协议设计的应用层编程接口称为 socket API。
+
+本节的主要内容是 socket API，主要介绍 TCP 协议的函数接口，最后简要介绍 UDP 协议和 UNIX Domain Socket 的函数接口。
+
+### 3.10.1. 预备知识
+
+#### 3.10.1.1. 网络字节序
+
+我们已经知道，内存中的多字节数据相对于内存地址有大端和小端之分，磁盘文件中的多字节数据相对于文件中的偏移地址也有大端小端之分。网络数据流同样有大端小端之分，那么如何定义网络数据流的地址呢？发送主机通常将发送缓冲区中的数据按内存地址从低到高的顺序发出，接收主机把从网络上接到的字节依次保存在接收缓冲区中，也是按内存地址从低到高的顺序保存，因此，网络数据流的地址应这样规定：先发出的数据是低地址，后发出的数据是高地址。
+
+TCP/IP 协议规定，网络数据流应采用大端字节序，即低地址高字节。例如上一节的 UDP 段格式，地址 0-1 是 16 位的源端口号，如果这个端口号是 1000（0x3e8），则地址 0 是 0x03，地址 1 是 0xe8，也就是先发 0x03，再发 0xe8，这 16 位在发送主机的缓冲区中也应该是低地址存 0x03，高地址存 0xe8。但是，如果发送主机是小端字节序的，这 16 位被解释成 0xe803，而不是 1000。因此，发送主机把 1000 填到发送缓冲区之前需要做字节序的转换。同样地，接收主机如果是小端字节序的，接到 16 位的源端口号也要做字节序的转换。如果主机是大端字节序的，发送和接收都不需要做转换。同理，32 位的 IP 地址也要考虑网络字节序和主机字节序的问题。
+
+为使网络程序具有可移植性，使同样的 C 代码在大端和小端计算机上编译后都能正常运行，可以调用以下库函数做网络字节序和主机字节序的转换。
+
+```c
+#include <arpa/inet.h>
+
+uint32_t htonl(uint32_t hostlong);
+uint16_t htons(uint16_t hostshort);
+uint32_t ntohl(uint32_t netlong);
+uint16_t ntohs(uint16_t netshort);
+```
+
+这些函数名很好记，h 表示 host，n 表示 network，l 表示 32 位长整数，s 表示 16 位短整数。例如 htonl 表示将 32 位的长整数从主机字节序转换为网络字节序，例如将 IP 地址转换后准备发送。如果主机是小端字节序，这些函数将参数做相应的大小端转换然后返回，如果主机是大端字节序，这些函数不做转换，将参数原封不动地返回。
+
+#### 3.10.1.2. socket 地址的数据类型及相关函数
+
+socket API 是一层抽象的网络编程接口，适用于各种底层网络协议，如 IPv4、IPv6，以及后面要讲的 UNIX Domain Socket。然而，各种网络协议的地址格式并不相同，如下图所示：
+
+<p id="c37-1">图 37.1. sockaddr 数据结构</p>
+
+![sockaddr 数据结构](./image/socket.sockaddr.png)
+
+IPv4 和 IPv6 的地址格式定义在 `netinet/in.h` 中，IPv4 地址用 sockaddr_in 结构体表示，包括 16 位端口号和 32 位 IP 地址，IPv6 地址用 sockaddr_in6 结构体表示，包括 16 位端口号、128 位 IP 地址和一些控制字段。UNIX Domain Socket 的地址格式定义在 `sys/un.h` 中，用 sockaddr_un 结构体表示。各种 socket 地址结构体的开头都是相同的，前 16 位表示整个结构体的长度（并不是所有 UNIX 的实现都有长度字段，如 Linux 就没有），后 16 位表示地址类型。IPv4、IPv6 和 UNIX  Domain  Socket 的地址类型分别定义为常数 AF_INET、AF_INET6、AF_UNIX。这样，只要取得某种 sockaddr 结构体的首地址，不需要知道具体是哪种类型的 sockaddr 结构体，就可以根据地址类型字段确定结构体中的内容。因此，socket API 可以接受各种类型的 sockaddr 结构体指针做参数，例如 bind、accept、connect 等函数，这些函数的参数应该设计成 `void *` 类型以便接受各种类型的指针，但是 socket API 的实现早于 ANSI C 标准化，那时还没有 `void *` 类型，因此这些函数的参数都用 `struct sockaddr *` 类型表示，在传递参数之前要强制类型转换一下，例如：
+
+```c
+struct sockaddr_in servaddr;
+/* initialize servaddr */
+bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+```
+
+本节只介绍基于 IPv4 的 socket 网络编程，sockaddr_in 中的成员 struct in_addr sin_addr 表示 32 位的 IP 地址。但是我们通常用点分十进制的字符串表示 IP 地址，以下函数可以在字符串表示和 in_addr 表示之间转换。
+
+字符串转 in_addr 的函数：
+
+```c
+#include <arpa/inet.h>
+
+int inet_aton(const char *strptr, struct in_addr *addrptr);
+in_addr_t inet_addr(const char *strptr);
+int inet_pton(int family, const char *strptr, void *addrptr);
+```
+
+in_addr 转字符串的函数：
+
+```c
+char *inet_ntoa(struct in_addr inaddr);
+const char *inet_ntop(int family, const void *addrptr, char *strptr, size_t len);
+```
+
+其中 inet_pton 和 inet_ntop 不仅可以转换 IPv4 的 in_addr，还可以转换 IPv6 的 in6_addr，因此函数接口是 `void *addrptr`。
+
+### 3.10.2. 基于 TCP 协议的网络程序
+
+下图是基于 TCP 协议的客户端/服务器程序的一般流程：
+
+<p id="c37-2">图 37.2. TCP 协议通讯流程</p>
+
+![TCP 协议通讯流程](./image/socket.tcpflowchart.png)
+
+服务器调用 socket()、bind()、listen() 完成初始化后，调用 accept() 阻塞等待，处于监听端口的状态，客户端调用 socket() 初始化后，调用 connect() 发出 SYN 段并阻塞等待服务器应答，服务器应答一个 SYN-ACK 段，客户端收到后从 connect() 返回，同时应答一个 ACK 段，服务器收到后从 accept() 返回。
+
+数据传输的过程：
+
+建立连接后，TCP 协议提供全双工的通信服务，但是一般的客户端/服务器程序的流程是由客户端主动发起请求，服务器被动处理请求，一问一答的方式。因此，服务器从 accept() 返回后立刻调用 read()，读 socket 就像读管道一样，如果没有数据到达就阻塞等待，这时客户端调用 write() 发送请求给服务器，服务器收到后从 read() 返回，对客户端的请求进行处理，在此期间客户端调用 read() 阻塞等待服务器的应答，服务器调用 write() 将处理结果发回给客户端，再次调用 read() 阻塞等待下一条请求，客户端收到后从 read() 返回，发送下一条请求，如此循环下去。
+
+如果客户端没有更多的请求了，就调用 close() 关闭连接，就像写端关闭的管道一样，服务器的 read() 返回 0，这样服务器就知道客户端关闭了连接，也调用 close() 关闭连接。注意，任何一方调用 close() 后，连接的两个传输方向都关闭，不能再发送数据了。如果一方调用 shutdown() 则连接处于半关闭状态，仍可接收对方发来的数据。
+
+在学习 socket API 时要注意应用程序和 TCP 协议层是如何交互的： **应用程序调用某个 socket 函数时 TCP 协议层完成什么动作，比如调用 connect() 会发出 SYN 段**，应用程序如何知道 TCP 协议层的状态变化，比如从某个阻塞的 socket 函数返回就表明 TCP 协议收到了某些段，再比如 read() 返回 0 就表明收到了 FIN 段
+
+#### 3.10.2.1. 最简单的 TCP 网络程序
+
+下面通过最简单的客户端/服务器程序的实例来学习 socket API。
+
+server.c 的作用是从客户端读字符，然后将每个字符转换为大写并回送给客户端。
+
+```c
+/* server.c */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+#define MAXLINE 80
+#define SERV_PORT 8000
+
+int main(void)
+{
+	struct sockaddr_in servaddr, cliaddr;
+	socklen_t cliaddr_len;
+	int listenfd, connfd;
+	char buf[MAXLINE];
+	char str[INET_ADDRSTRLEN];
+	int i, n;
+
+	listenfd = socket(AF_INET, SOCK_STREAM, 0);
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	servaddr.sin_port = htons(SERV_PORT);
+    
+	bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+
+	listen(listenfd, 20);
+
+	printf("Accepting connections ...\n");
+	while (1) {
+		cliaddr_len = sizeof(cliaddr);
+		connfd = accept(listenfd, 
+				(struct sockaddr *)&cliaddr, &cliaddr_len);
+	  
+		n = read(connfd, buf, MAXLINE);
+		printf("received from %s at PORT %d\n",
+		       inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
+		       ntohs(cliaddr.sin_port));
+    
+		for (i = 0; i < n; i++)
+			buf[i] = toupper(buf[i]);
+		write(connfd, buf, n);
+		close(connfd);
+	}
+}
+```
+
+下面介绍程序中用到的 socket API，这些函数都在 `sys/socket.h` 中。
+
+```c
+int socket(int family, int type, int protocol);
+```
+
+socket() 打开一个网络通讯端口，如果成功的话，就像 open() 一样返回一个文件描述符，应用程序可以像读写文件一样用 read/write 在网络上收发数据，如果 socket() 调用出错则返回 -1。对于 IPv4，family 参数指定为 AF_INET。对于 TCP 协议，type 参数指定为 SOCK_STREAM，表示面向流的传输协议。如果是 UDP 协议，则 type 参数指定为 SOCK_DGRAM，表示面向数据报的传输协议。protocol 参数的介绍从略，指定为 0 即可。
+
+```c
+int bind(int sockfd, const struct sockaddr *myaddr, socklen_t addrlen);
+```
+
+服务器程序所监听的网络地址和端口号通常是固定不变的，客户端程序得知服务器程序的地址和端口号后就可以向服务器发起连接，因此服务器需要调用 bind 绑定一个固定的网络地址和端口号。bind() 成功返回 0，失败返回 -1。
+
+bind() 的作用是将参数 sockfd 和 myaddr 绑定在一起，使 sockfd 这个用于网络通讯的文件描述符监听 myaddr 所描述的地址和端口号。前面讲过，`struct sockaddr *` 是一个通用指针类型，myaddr 参数实际上可以接受多种协议的 sockaddr 结构体，而它们的长度各不相同，所以需要第三个参数 addrlen 指定结构体的长度。我们的程序中对 myaddr 参数是这样初始化的：
+
+```c
+bzero(&servaddr, sizeof(servaddr));
+servaddr.sin_family = AF_INET;
+servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+servaddr.sin_port = htons(SERV_PORT);
+```
+
+首先将整个结构体清零，然后设置地址类型为 AF_INET，网络地址为 INADDR_ANY，这个宏表示本地的任意 IP 地址，因为服务器可能有多个网卡，每个网卡也可能绑定多个 IP 地址，这样设置可以在所有的 IP 地址上监听，直到与某个客户端建立了连接时才确定下来到底用哪个 IP 地址，端口号为 SERV_PORT，我们定义为 8000。
+
+```c
+int listen(int sockfd, int backlog);
+```
+
+典型的服务器程序可以同时服务于多个客户端，当有客户端发起连接时，服务器调用的 accept() 返回并接受这个连接，如果有大量的客户端发起连接而服务器来不及处理，尚未 accept 的客户端就处于连接等待状态，listen() 声明 sockfd 处于监听状态，并且最多允许有 backlog 个客户端处于连接待状态，如果接收到更多的连接请求就忽略。listen() 成功返回 0，失败返回 -1。
+
+```c
+int accept(int sockfd, struct sockaddr *cliaddr, socklen_t *addrlen);
+```
+
+三方握手完成后，服务器调用 accept() 接受连接，如果服务器调用 accept() 时还没有客户端的连接请求，就阻塞等待直到有客户端连接上来。cliaddr 是一个传出参数，accept() 返回时传出客户端的地址和端口号。addrlen 参数是一个传入传出参数（value-result   argument），传入的是调用者提供的缓冲区 cliaddr 的长度以避免缓冲区溢出问题，传出的是客户端地址结构体的实际长度（有可能没有占满调用者提供的缓冲区）。如果给 cliaddr 参数传 NULL，表示不关心客户端的地址。
+
+我们的服务器程序结构是这样的：
+
+```c
+while (1) {
+	cliaddr_len = sizeof(cliaddr);
+	connfd = accept(listenfd, 
+			(struct sockaddr *)&cliaddr, &cliaddr_len);
+	n = read(connfd, buf, MAXLINE);
+	...
+	close(connfd);
+}
+```
+
+整个是一个 while 死循环，每次循环处理一个客户端连接。由于 cliaddr_len 是传入传出参数，每次调用 accept() 之前应该重新赋初值。accept() 的参数 listenfd 是先前的监听文件描述符，而 accept() 的返回值是另外一个文件描述符 connfd，之后与客户端之间就通过这个 connfd 通讯，最后关闭 connfd 断开连接，而不关闭 listenfd，再次回到循环开头 listenfd 仍然用作 accept 的参数。accept() 成功返回一个文件描述符，出错返回 -1。
+
+client.c 的作用是从命令行参数中获得一个字符串发给服务器，然后接收服务器返回的字符串并打印。
+
+```c
+/* client.c */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+#define MAXLINE 80
+#define SERV_PORT 8000
+
+int main(int argc, char *argv[])
+{
+	struct sockaddr_in servaddr;
+	char buf[MAXLINE];
+	int sockfd, n;
+	char *str;
+    
+	if (argc != 2) {
+		fputs("usage: ./client message\n", stderr);
+		exit(1);
+	}
+	str = argv[1];
+    
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
+	servaddr.sin_port = htons(SERV_PORT);
+    
+	connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+
+	write(sockfd, str, strlen(str));
+
+	n = read(sockfd, buf, MAXLINE);
+	printf("Response from server:\n");
+	write(STDOUT_FILENO, buf, n);
+
+	close(sockfd);
+	return 0;
+}
+```
+
+由于客户端不需要固定的端口号，因此不必调用 bind()，客户端的端口号由内核自动分配。注意，客户端不是不允许调用 bind()，只是没有必要调用 bind() 固定一个端口号，服务器也不是必须调用 bind()，但如果服务器不调用 bind()，内核会自动给服务器分配监听端口，每次启动服务器时端口号都不一样，客户端要连接服务器就会遇到麻烦。
+
+```c
+int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen);
+```
+
+客户端需要调用 connect() 连接服务器，connect 和 bind 的参数形式一致，区别在于 bind 的参数是自己的地址，而 connect 的参数是对方的地址。connect() 成功返回 0，出错返回 -1。
+
+先编译运行服务器: 
+
+```bash
+$ ./server
+ Accepting connections ...
+```
+
+然后在另一个终端里用 netstat 命令查看：
+
+```bash
+$ netstat -apn|grep 8000
+ tcp        0      0 0.0.0.0:8000            0.0.0.0:*               LISTEN     8148/server
+```
+
+可以看到 server 程序监听 8000 端口，IP 地址还没确定下来。现在编译运行客户端：
+
+```bash
+$ ./client abcd
+Response from server:
+ABCD
+```
+
+回到 server 所在的终端，看看 server 的输出：
+
+```bash
+$ ./server
+ Accepting connections ...
+ received from 127.0.0.1 at PORT 59757
+```
+
+可见客户端的端口号是自动分配的。现在把客户端所连接的服务器 IP 改为其它主机的 IP，试试两台主机的通讯。
+
+再做一个小实验，在客户端的 connect() 代码之后插一个 `while(1);` 死循环，使客户端和服务器都处于连接中的状态，用 `netstat` 命令查看：
+
+```bash
+$ ./server &
+[1] 8343
+$ Accepting connections ...
+./client abcd &
+[2] 8344
+$ netstat -apn|grep 8000
+tcp        0      0 0.0.0.0:8000            0.0.0.0:*               LISTEN     8343/server         
+tcp        0      0 127.0.0.1:44406         127.0.0.1:8000          ESTABLISHED8344/client         
+tcp        0      0 127.0.0.1:8000          127.0.0.1:44406         ESTABLISHED8343/server
+```
+
+应用程序中的一个 socket 文件描述符对应一个 socket pair，也就是 `源地址:源端口号和目的地址:目的端口号`，也对应一个 TCP 连接。
+
+<p id="t37-1">表 37.1. client 和 server 的 socket 状态</p>
+
+| socket 文件描述符     | 源地址:源端口号 | 目的地址:目的端口号 | 状态        |
+| -------------------- | --------------- | ------------------- | ----------- |
+| server.c 中的 listenfd | 0.0.0.0:8000    | 0.0.0.0:*           | LISTEN      |
+| server.c 中的 connfd   | 127.0.0.1:8000  | 127.0.0.1:44406     | ESTABLISHED |
+| client.c 中的 sockfd   | 127.0.0.1:44406 | 127.0.0.1:8000      | ESTABLISHED |
+
+#### 3.10.2.2. 错误处理与读写控制
+
+上面的例子不仅功能简单，而且简单到几乎没有什么错误处理，我们知道，系统调用不能保证每次都成功，必须进行出错处理，这样一方面可以保证程序逻辑正常，另一方面可以迅速得到故障信息。
+
+为使错误处理的代码不影响主程序的可读性，我们把与 socket 相关的一些系统函数加上错误处理代码包装成新的函数，做成一个模块 wrap.c：
+
+```c
+#include <stdlib.h>
+#include <errno.h>
+#include <sys/socket.h>
+
+void perr_exit(const char *s)
+{
+	perror(s);
+	exit(1);
+}
+
+int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
+{
+	int n;
+
+again:
+	if ( (n = accept(fd, sa, salenptr)) < 0) {
+		if ((errno == ECONNABORTED) || (errno == EINTR))
+			goto again;
+		else
+			perr_exit("accept error");
+	}
+	return n;
+}
+
+void Bind(int fd, const struct sockaddr *sa, socklen_t salen)
+{
+	if (bind(fd, sa, salen) < 0)
+		perr_exit("bind error");
+}
+
+void Connect(int fd, const struct sockaddr *sa, socklen_t salen)
+{
+	if (connect(fd, sa, salen) < 0)
+		perr_exit("connect error");
+}
+
+void Listen(int fd, int backlog)
+{
+	if (listen(fd, backlog) < 0)
+		perr_exit("listen error");
+}
+
+int Socket(int family, int type, int protocol)
+{
+	int n;
+
+	if ( (n = socket(family, type, protocol)) < 0)
+		perr_exit("socket error");
+	return n;
+}
+
+ssize_t Read(int fd, void *ptr, size_t nbytes)
+{
+	ssize_t n;
+
+again:
+	if ( (n = read(fd, ptr, nbytes)) == -1) {
+		if (errno == EINTR)
+			goto again;
+		else
+			return -1;
+	}
+	return n;
+}
+
+ssize_t Write(int fd, const void *ptr, size_t nbytes)
+{
+	ssize_t n;
+
+again:
+	if ( (n = write(fd, ptr, nbytes)) == -1) {
+		if (errno == EINTR)
+			goto again;
+		else
+			return -1;
+	}
+	return n;
+}
+
+void Close(int fd)
+{
+	if (close(fd) == -1)
+		perr_exit("close error");
+}
+```
+
+慢系统调用 accept、read 和 write 被信号中断时应该重试。connect 虽然也会阻塞，但是被信号中断时不能立刻重试。对于 accept，如果 errno 是 ECONNABORTED，也应该重试。详细解释见参考资料。
+
+TCP 协议是面向流的，read 和 write 调用的返回值往往小于参数指定的字节数。对于 read 调用，如果接收缓冲区中有 20 字节，请求读 100 个字节，就会返回 20。对于 write 调用，如果请求写 100 个字节，而发送缓冲区中只有 20 个字节的空闲位置，那么 write 会阻塞，直到把 100 个字节全部交给发送缓冲区才返回，但如果 socket 文件描述符有 O_NONBLOCK 标志，则 write 不阻塞，直接返回 20。为避免这些情况干扰主程序的逻辑，确保读写我们所请求的字节数，我们实现了两个包装函数 Readn 和 Writen，也放在 wrap.c 中：
+
+```c
+ssize_t Readn(int fd, void *vptr, size_t n)
+{
+	size_t  nleft;
+	ssize_t nread;
+	char   *ptr;
+
+	ptr = vptr;
+	nleft = n;
+	while (nleft > 0) {
+		if ( (nread = read(fd, ptr, nleft)) < 0) {
+			if (errno == EINTR)
+				nread = 0;
+			else
+				return -1;
+		} else if (nread == 0)
+			break;
+
+		nleft -= nread;
+		ptr += nread;
+	}
+	return n - nleft;
+}
+
+ssize_t Writen(int fd, const void *vptr, size_t n)
+{
+	size_t nleft;
+	ssize_t nwritten;
+	const char *ptr;
+
+	ptr = vptr;
+	nleft = n;
+	while (nleft > 0) {
+		if ( (nwritten = write(fd, ptr, nleft)) <= 0) {
+			if (nwritten < 0 && errno == EINTR)
+				nwritten = 0;
+			else
+				return -1;
+		}
+
+		nleft -= nwritten;
+		ptr += nwritten;
+	}
+	return n;
+}
+```
+
+如果应用层协议的各字段长度固定，用 readn 来读是非常方便的。例如设计一种客户端上传文件的协议，规定前 12 字节表示文件名，超过 12 字节的文件名截断，不足 12 字节的文件名用 `'\0'` 补齐，从第 13 字节开始是文件内容，上传完所有文件内容后关闭连接，服务器可以先调用 readn 读 12 个字节，根据文件名创建文件，然后在一个循环中调用 read 读文件内容并存盘，循环结束的条件是 read 返回 0。
+
+字段长度固定的协议往往不够灵活，难以适应新的变化。比如，以前 DOS 的文件名是 8 字节主文件名加 `.` 加 3 字节扩展名，不超过 12 字节，但是现代操作系统的文件名可以长得多，12 字节就不够用了。那么制定一个新版本的协议规定文件名字段为 256 字节怎么样？这样又造成很大的浪费，因为大多数文件名都很短，需要用大量的 `'\0'` 补齐 256 字节，而且新版本的协议和老版本的程序无法兼容，如果已经有很多人在用老版本的程序了，会造成遵循新协议的程序与老版本程序的互操作性（Interoperability）问题。如果新版本的协议要添加新的字段，比如规定前 12 字节是文件名，从 13 到 16 字节是文件类型说明，从第 17 字节开始才是文件内容，同样会造成和老版本的程序无法兼容的问题。
+
+现在重新看看上一节的 TFTP 协议是如何避免上述问题的：TFTP 协议的各字段是可变长的，以 `'\0'` 为分隔符，文件名可以任意长，再看 blksize 等几个选项字段，TFTP 协议并没有规定从第 m 字节到第 n 字节是 blksize 的值，而是把选项的描述信息「blksize」与它的值「512」一起做成一个可变长的字段，这样，以后添加新的选项仍然可以和老版本的程序兼容（老版本的程序只要忽略不认识的选项就行了）。
+
+因此，常见的应用层协议都是带有可变长字段的，字段之间的分隔符用换行的比用 `'\0'` 的更常见，例如本节后面要介绍的 HTTP 协议。可变长字段的协议用 Readn 来读就很不方便了，为此我们实现一个类似于 fgets 的 readline 函数，也放在 wrap.c 中：
+
+```c
+static ssize_t my_read(int fd, char *ptr)
+{
+	static int read_cnt;
+	static char *read_ptr;
+	static char read_buf[100];
+
+	if (read_cnt <= 0) {
+	again:
+		if ( (read_cnt = read(fd, read_buf, sizeof(read_buf))) < 0) {
+			if (errno == EINTR)
+				goto again;
+			return -1;
+		} else if (read_cnt == 0)
+			return 0;
+		read_ptr = read_buf;
+	}
+	read_cnt--;
+	*ptr = *read_ptr++;
+	return 1;
+}
+
+ssize_t Readline(int fd, void *vptr, size_t maxlen)
+{
+	ssize_t n, rc;
+	char    c, *ptr;
+
+	ptr = vptr;
+	for (n = 1; n < maxlen; n++) {
+		if ( (rc = my_read(fd, &c)) == 1) {
+			*ptr++ = c;
+			if (c  == '\n')
+				break;
+		} else if (rc == 0) {
+			*ptr = 0;
+			return n - 1;
+		} else
+			return -1;
+	}
+	*ptr  = 0;
+	return n;
+}
+```
+
+##### 习题
+
+1. 请读者自己写出 wrap.c 的头文件 wrap.h，后面的网络程序代码都要用到这个头文件。
+2. 修改 server.c 和 client.c，添加错误处理。
+
+#### 3.10.2.3. 把 client 改为交互式输入
+
+目前实现的 client 每次运行只能从命令行读取一个字符串发给服务器，再从服务器收回来，现在我们把它改成交互式的，不断从终端接受用户输入并和 server 交互。 
+
+```c
+/* client.c */
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include "wrap.h"
+
+#define MAXLINE 80
+#define SERV_PORT 8000
+
+int main(int argc, char *argv[])
+{
+	struct sockaddr_in servaddr;
+	char buf[MAXLINE];
+	int sockfd, n;
+    
+	sockfd = Socket(AF_INET, SOCK_STREAM, 0);
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
+	servaddr.sin_port = htons(SERV_PORT);
+    
+	Connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+
+	while (fgets(buf, MAXLINE, stdin) != NULL) {
+		Write(sockfd, buf, strlen(buf));
+		n = Read(sockfd, buf, MAXLINE);
+		if (n == 0)
+			printf("the other side has been closed.\n");
+		else
+			Write(STDOUT_FILENO, buf, n);
+	}
+
+	Close(sockfd);
+	return 0;
+}
+```
+
+编译并运行 server 和 client，看看是否达到了你预想的结果。 
+
+```bash
+$ ./client
+haha1
+HAHA1 
+haha2
+the other side has been closed.
+haha3
+$
+```
+
+这时 server 仍在运行，但是 client 的运行结果并不正确。原因是什么呢？仔细查看 server.c 可以发现，server 对每个请求只处理一次，应答后就关闭连接，client 不能继续使用这个连接发送数据。但是 client 下次循环时又调用 write 发数据给 server，write 调用只负责把数据交给 TCP 发送缓冲区就可以成功返回了，所以不会出错，而 server 收到数据后应答一个 RST 段，client 收到 RST 段后无法立刻通知应用层，只把这个状态保存在 TCP 协议层。client 下次循环又调用 write 发数据给 server，由于 TCP 协议层已经处于 RST 状态了，因此不会将数据发出，而是发一个 SIGPIPE 信号给应用层，SIGPIPE 信号的缺省处理动作是终止程序，所以看到上面的现象。
+
+为了避免 client 异常退出，上面的代码应该在判断对方关闭了连接后 break 出循环，而不是继续 write。另外，有时候代码中需要连续多次调用 write，可能还来不及调用 read 得知对方已关闭了连接就被 SIGPIPE 信号终止掉了，这就需要在初始化时调用 sigaction 处理 SIGPIPE 信号，如果 SIGPIPE 信号没有导致进程异常退出，write 返回 -1 并且 errno 为 EPIPE。
+
+另外，我们需要修改 server，使它可以多次处理同一客户端的请求。
+
+```c
+/* server.c */
+#include <stdio.h>
+#include <string.h>
+#include <netinet/in.h>
+#include "wrap.h"
+
+#define MAXLINE 80
+#define SERV_PORT 8000
+
+int main(void)
+{
+	struct sockaddr_in servaddr, cliaddr;
+	socklen_t cliaddr_len;
+	int listenfd, connfd;
+	char buf[MAXLINE];
+	char str[INET_ADDRSTRLEN];
+	int i, n;
+
+	listenfd = Socket(AF_INET, SOCK_STREAM, 0);
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	servaddr.sin_port = htons(SERV_PORT);
+    
+	Bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+
+	Listen(listenfd, 20);
+
+	printf("Accepting connections ...\n");
+	while (1) {
+		cliaddr_len = sizeof(cliaddr);
+		connfd = Accept(listenfd, 
+				(struct sockaddr *)&cliaddr, &cliaddr_len);
+		while (1) {
+			n = Read(connfd, buf, MAXLINE);
+			if (n == 0) {
+				printf("the other side has been closed.\n");
+				break;
+			}
+			printf("received from %s at PORT %d\n",
+			       inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
+			       ntohs(cliaddr.sin_port));
+    
+			for (i = 0; i < n; i++)
+				buf[i] = toupper(buf[i]);
+			Write(connfd, buf, n);
+		}
+		Close(connfd);
+	}
+}
+```
+
+经过上面的修改后，客户端和服务器可以进行多次交互了。我们知道，服务器通常是要同时服务多个客户端的，运行上面的 server 和 client 之后，再开一个终端运行 client 试试，新的 client 能得到服务吗？想想为什么。
+
+#### 3.10.2.4. 使用 fork 并发处理多个 client 的请求
+
+怎么解决这个问题？网络服务器通常用 fork 来同时服务多个客户端，父进程专门负责监听端口，每次 accept 一个新的客户端连接就 fork 出一个子进程专门服务这个客户端。但是子进程退出时会产生僵尸进程，父进程要注意处理 SIGCHLD 信号和调用 wait 清理僵尸进程。
+
+以下给出代码框架，完整的代码请读者自己完成。
+
+```c
+listenfd = socket(...);
+bind(listenfd, ...);
+listen(listenfd, ...); 
+while (1) {
+	connfd = accept(listenfd, ...);
+	n = fork();
+	if (n == -1) {
+		perror("call to fork");
+		exit(1);
+	} else if (n == 0) {
+		close(listenfd);
+		while (1) {
+			read(connfd, ...);
+			...
+			write(connfd, ...);
+		}
+		close(connfd);
+		exit(0);
+	} else
+		close(connfd);
+}
+```
+
+#### 3.10.2.5. setsockopt
+
+现在做一个测试，首先启动 server，然后启动 client，然后用 Ctrl-C 使 server 终止，这时马上再运行 server，结果是：
+
+```bash
+$ ./server
+ bind error: Address already in use
+```
+
+这是因为，虽然 server 的应用程序终止了，但 TCP 协议层的连接并没有完全断开，因此不能再次监听同样的 server 端口。我们用 netstat 命令查看一下：
+
+```bash
+$ netstat -apn |grep 8000
+ tcp        1      0 127.0.0.1:33498         127.0.0.1:8000          CLOSE_WAIT 10830/client        
+ tcp        0      0 127.0.0.1:8000          127.0.0.1:33498         FIN_WAIT2  -
+```
+
+server 终止时，socket 描述符会自动关闭并发 FIN 段给 client，client 收到 FIN 后处于 CLOSE_WAIT 状态，但是 client 并没有终止，也没有关闭 socket 描述符，因此不会发 FIN 给 server，因此 server 的 TCP 连接处于 FIN_WAIT2 状态。
+
+现在用 Ctrl-C 把 client 也终止掉，再观察现象：
+
+```bash
+$ netstat -apn |grep 8000
+ tcp        0      0 127.0.0.1:8000          127.0.0.1:44685         TIME_WAIT  -
+ $ ./server
+ bind error: Address already in use
+```
+
+client 终止时自动关闭 socket 描述符，server 的 TCP 连接收到 client 发的 FIN 段后处于 TIME_WAIT 状态。TCP 协议规定，主动关闭连接的一方要处于 TIME_WAIT 状态，等待两个 MSL（maximum segment lifetime）的时间后才能回到 CLOSED 状态，因为我们先 Ctrl-C 终止了 server，所以 server 是主动关闭连接的一方，在 TIME_WAIT 期间仍然不能再次监听同样的 server 端口。MSL 在 RFC1122 中规定为两分钟，但是各操作系统的实现不同，在 Linux 上一般经过半分钟后就可以再次启动 server 了。至于为什么要规定 TIME_WAIT 的时间请读者参考 *UNP* 2.7 节。
+
+在 server 的 TCP 连接没有完全断开之前不允许重新监听是不合理的，因为，TCP 连接没有完全断开指的是 connfd（127.0.0.1:8000）没有完全断开，而我们重新监听的是 listenfd（0.0.0.0:8000），虽然是占用同一个端口，但 IP 地址不同，connfd 对应的是与某个客户端通讯的一个具体的 IP 地址，而 listenfd 对应的是 wildcard address。解决这个问题的方法是使用 setsockopt() 设置 socket 描述符的选项 SO_REUSEADDR 为 1，表示允许创建端口号相同但 IP 地址不同的多个 socket 描述符。在 server 代码的 socket() 和 bind() 调用之间插入如下代码：
+
+```c
+int opt = 1;
+setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+```
+
+有关 setsockopt 可以设置的其它选项请参考 *UNP* 第 7 章。
+
+#### 3.10.2.6. 使用 select
+
+select 是网络程序中很常用的一个系统调用，它可以同时监听多个阻塞的文件描述符（例如多个网络连接），哪个有数据到达就处理哪个，这样，不需要 fork 和多进程就可以实现并发服务的 server。
+
+```c
+/* server.c */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <netinet/in.h>
+#include "wrap.h"
+
+#define MAXLINE 80
+#define SERV_PORT 8000
+
+int main(int argc, char **argv)
+{
+	int i, maxi, maxfd, listenfd, connfd, sockfd;
+	int nready, client[FD_SETSIZE];
+	ssize_t n;
+	fd_set rset, allset;
+	char buf[MAXLINE];
+	char str[INET_ADDRSTRLEN];
+	socklen_t cliaddr_len;
+	struct sockaddr_in	cliaddr, servaddr;
+
+	listenfd = Socket(AF_INET, SOCK_STREAM, 0);
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family      = AF_INET;
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	servaddr.sin_port        = htons(SERV_PORT);
+
+	Bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+
+	Listen(listenfd, 20);
+
+	maxfd = listenfd;		/* initialize */
+	maxi = -1;			/* index into client[] array */
+	for (i = 0; i < FD_SETSIZE; i++)
+		client[i] = -1;	/* -1 indicates available entry */
+	FD_ZERO(&allset);
+	FD_SET(listenfd, &allset);
+
+	for ( ; ; ) {
+		rset = allset;	/* structure assignment */
+		nready = select(maxfd+1, &rset, NULL, NULL, NULL);
+		if (nready < 0)
+			perr_exit("select error");
+
+		if (FD_ISSET(listenfd, &rset)) { /* new client connection */
+			cliaddr_len = sizeof(cliaddr);
+			connfd = Accept(listenfd, (struct sockaddr *)&cliaddr, &cliaddr_len);
+
+			printf("received from %s at PORT %d\n",
+			       inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
+			       ntohs(cliaddr.sin_port));
+
+			for (i = 0; i < FD_SETSIZE; i++)
+				if (client[i] < 0) {
+					client[i] = connfd; /* save descriptor */
+					break;
+				}
+			if (i == FD_SETSIZE) {
+				fputs("too many clients\n", stderr);
+				exit(1);
+			}
+
+			FD_SET(connfd, &allset);	/* add new descriptor to set */
+			if (connfd > maxfd)
+				maxfd = connfd; /* for select */
+			if (i > maxi)
+				maxi = i;	/* max index in client[] array */
+
+			if (--nready == 0)
+				continue;	/* no more readable descriptors */
+		}
+
+		for (i = 0; i <= maxi; i++) {	/* check all clients for data */
+			if ( (sockfd = client[i]) < 0)
+				continue;
+			if (FD_ISSET(sockfd, &rset)) {
+				if ( (n = Read(sockfd, buf, MAXLINE)) == 0) {
+					/* connection closed by client */
+					Close(sockfd);
+					FD_CLR(sockfd, &allset);
+					client[i] = -1;
+				} else {
+					int j;
+					for (j = 0; j < n; j++)
+						buf[j] = toupper(buf[j]);
+					Write(sockfd, buf, n);
+				}
+
+				if (--nready == 0)
+					break;	/* no more readable descriptors */
+			}
+		}
+	}
+}
+```
+
+### 3.10.3. 基于 UDP 协议的网络程序
+
+下图是典型的 UDP 客户端/服务器通讯过程（该图出自 *UNPv13e*）。
+
+<p id="c37-3">图 37.3. UDP 通讯流程</p>
+
+![UDP 通讯流程](./image/socket.udpflowchart.png)
+
+以下是简单的 UDP 服务器和客户端程序。
+
+```c
+/* server.c */
+#include <stdio.h>
+#include <string.h>
+#include <netinet/in.h>
+#include "wrap.h"
+
+#define MAXLINE 80
+#define SERV_PORT 8000
+
+int main(void)
+{
+	struct sockaddr_in servaddr, cliaddr;
+	socklen_t cliaddr_len;
+	int sockfd;
+	char buf[MAXLINE];
+	char str[INET_ADDRSTRLEN];
+	int i, n;
+
+	sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	servaddr.sin_port = htons(SERV_PORT);
+    
+	Bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+
+	printf("Accepting connections ...\n");
+	while (1) {
+		cliaddr_len = sizeof(cliaddr);
+		n = recvfrom(sockfd, buf, MAXLINE, 0, (struct sockaddr *)&cliaddr, &cliaddr_len);
+		if (n == -1)
+			perr_exit("recvfrom error");
+		printf("received from %s at PORT %d\n",
+		       inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
+		       ntohs(cliaddr.sin_port));
+    
+		for (i = 0; i < n; i++)
+			buf[i] = toupper(buf[i]);
+		n = sendto(sockfd, buf, n, 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
+		if (n == -1)
+			perr_exit("sendto error");
+	}
+}
+/* client.c */
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include "wrap.h"
+
+#define MAXLINE 80
+#define SERV_PORT 8000
+
+int main(int argc, char *argv[])
+{
+	struct sockaddr_in servaddr;
+	int sockfd, n;
+	char buf[MAXLINE];
+	char str[INET_ADDRSTRLEN];
+	socklen_t servaddr_len;
+    
+	sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
+	servaddr.sin_port = htons(SERV_PORT);
+    
+	while (fgets(buf, MAXLINE, stdin) != NULL) {
+		n = sendto(sockfd, buf, strlen(buf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
+		if (n == -1)
+			perr_exit("sendto error");
+
+		n = recvfrom(sockfd, buf, MAXLINE, 0, NULL, 0);
+		if (n == -1)
+			perr_exit("recvfrom error");
+	  
+		Write(STDOUT_FILENO, buf, n);
+	}
+
+	Close(sockfd);
+	return 0;
+}
+```
+
+由于 UDP 不需要维护连接，程序逻辑简单了很多，但是 UDP 协议是不可靠的，实际上有很多保证通讯可靠性的机制需要在应用层实现。
+
+编译运行 server，在两个终端里各开一个 client 与 server 交互，看看 server 是否具有并发服务的能力。用 Ctrl-C 关闭 server，然后再运行 server，看此时 client 还能否和 server 联系上。和前面 TCP 程序的运行结果相比较，体会无连接的含义。
+
+### 3.10.4. UNIX Domain Socket IPC
+
+socket API 原本是为网络通讯设计的，但后来在 socket 的框架上发展出一种 IPC 机制，就是 UNIX Domain Socket。虽然网络 socket 也可用于同一台主机的进程间通讯（通过 loopback 地址 127.0.0.1），但是 UNIX Domain Socket用于 IPC 更有效率：不需要经过网络协议栈，不需要打包拆包、计算校验和、维护序号和应答等，只是将应用层数据从一个进程拷贝到另一个进程。这是因为，IPC 机制本质上是可靠的通讯，而网络协议是为不可靠的通讯设计的。UNIX  Domain Socket 也提供面向流和面向数据包两种 API 接口，类似于 TCP 和 UDP，但是面向消息的 UNIX Domain Socket 也是可靠的，消息既不会丢失也不会顺序错乱。
+
+UNIX Domain Socket 是全双工的，API 接口语义丰富，相比其它 IPC 机制有明显的优越性，目前已成为使用最广泛的 IPC 机制，比如 X Window 服务器和 GUI 程序之间就是通过 UNIX Domain Socket通讯的。
+
+使用 UNIX  Domain Socket 的过程和网络 socket 十分相似，也要先调用 socket() 创建一个 socket 文件描述符，address family 指定为 AF_UNIX，type 可以选择 SOCK_DGRAM 或 SOCK_STREAM，protocol 参数仍然指定为 0 即可。
+
+UNIX Domain Socket 与网络 socket 编程最明显的不同在于地址格式不同，用结构体 sockaddr_un 表示，网络编程的 socket 地址是 IP 地址加端口号，而 UNIX Domain Socket 的地址是一个 socket 类型的文件在文件系统中的路径，这个 socket 文件由 bind() 调用创建，如果调用 bind() 时该文件已存在，则 bind() 错误返回。
+
+以下程序将 UNIX Domain Socket 绑定到一个地址。
+
+```c
+#include <stdlib.h>
+#include <stdio.h>
+#include <stddef.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+
+int main(void)
+{
+	int fd, size;
+	struct sockaddr_un un;
+
+	memset(&un, 0, sizeof(un));
+	un.sun_family = AF_UNIX;
+	strcpy(un.sun_path, "foo.socket");
+	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+		perror("socket error");
+		exit(1);
+	}
+	size = offsetof(struct sockaddr_un, sun_path) + strlen(un.sun_path);
+	if (bind(fd, (struct sockaddr *)&un, size) < 0) {
+		perror("bind error");
+		exit(1);
+	}
+	printf("UNIX domain socket bound\n");
+	exit(0);
+}
+```
+
+注意程序中的 offsetof 宏，它在 stddef.h 头文件中定义：
+
+```c
+#define offsetof(TYPE, MEMBER) ((int)&((TYPE *)0)->MEMBER)
+```
+
+offsetof(struct sockaddr_un, sun_path) 就是取 sockaddr_un 结构体的 sun_path 成员在结构体中的偏移，也就是从结构体的第几个字节开始是 sun_path 成员。想一想，这个宏是如何实现这一功能的？
+
+该程序的运行结果如下。
+
+```bash
+$ ./a.out
+UNIX domain socket bound
+$ ls -l foo.socket
+srwxrwxr-x 1 user        0 Aug 22 12:43 foo.socket
+$ ./a.out
+bind error: Address already in use
+$ rm foo.socket
+$ ./a.out
+UNIX domain socket bound
+```
+
+以下是服务器的 listen 模块，与网络 socket 编程类似，在 bind 之后要 listen，表示通过 bind 的地址（也就是 socket 文件）提供服务。
+
+```c
+#include <stddef.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <errno.h>
+
+#define QLEN 10
+
+/*
+ * Create a server endpoint of a connection.
+ * Returns fd if all OK, <0 on error.
+ */
+int serv_listen(const char *name)
+{
+	int                 fd, len, err, rval;
+	struct sockaddr_un  un;
+
+	/* create a UNIX domain stream socket */
+	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+		return(-1);
+	unlink(name);   /* in case it already exists */
+
+	/* fill in socket address structure */
+	memset(&un, 0, sizeof(un));
+	un.sun_family = AF_UNIX;
+	strcpy(un.sun_path, name);
+	len = offsetof(struct sockaddr_un, sun_path) + strlen(name);
+
+	/* bind the name to the descriptor */
+	if (bind(fd, (struct sockaddr *)&un, len) < 0) {
+		rval = -2;
+		goto errout;
+	}
+	if (listen(fd, QLEN) < 0) { /* tell kernel we're a server */
+		rval = -3;
+		goto errout;
+	}
+	return(fd);
+
+errout:
+	err = errno;
+	close(fd);
+	errno = err;
+	return(rval);
+}
+```
+
+以下是服务器的 accept 模块，通过 accept 得到客户端地址也应该是一个 socket 文件，如果不是 socket 文件就返回错误码，如果是 socket 文件，在建立连接后这个文件就没有用了，调用 unlink 把它删掉，通过传出参数 uidptr 返回客户端程序的 user id。
+
+```c
+#include <stddef.h>
+#include <sys/stat.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <errno.h>
+
+int serv_accept(int listenfd, uid_t *uidptr)
+{
+	int                 clifd, len, err, rval;
+	time_t              staletime;
+	struct sockaddr_un  un;
+	struct stat         statbuf;
+
+	len = sizeof(un);
+	if ((clifd = accept(listenfd, (struct sockaddr *)&un, &len)) < 0)
+		return(-1);     /* often errno=EINTR, if signal caught */
+
+	/* obtain the client's uid from its calling address */
+	len -= offsetof(struct sockaddr_un, sun_path); /* len of pathname */
+	un.sun_path[len] = 0;           /* null terminate */
+
+	if (stat(un.sun_path, &statbuf) < 0) {
+		rval = -2;
+		goto errout;
+	}
+
+	if (S_ISSOCK(statbuf.st_mode) == 0) {
+		rval = -3;      /* not a socket */
+		goto errout;
+	}
+
+	if (uidptr != NULL)
+		*uidptr = statbuf.st_uid;   /* return uid of caller */
+	unlink(un.sun_path);        /* we're done with pathname now */
+	return(clifd);
+
+errout:
+	err = errno;
+	close(clifd);
+	errno = err;
+	return(rval);
+}
+```
+
+以下是客户端的 connect 模块，与网络 socket 编程不同的是，UNIX Domain Socket 客户端一般要显式调用 bind 函数，而不依赖系统自动分配的地址。客户端 bind 一个自己指定的 socket 文件名的好处是，该文件名可以包含客户端的 pid 以便服务器区分不同的客户端。
+
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <sys/stat.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <errno.h>
+
+#define CLI_PATH    "/var/tmp/"      /* +5 for pid = 14 chars */
+
+/*
+ * Create a client endpoint and connect to a server.
+ * Returns fd if all OK, <0 on error.
+ */
+int cli_conn(const char *name)
+{
+	int                fd, len, err, rval;
+	struct sockaddr_un un;
+
+	/* create a UNIX domain stream socket */
+	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+		return(-1);
+
+	/* fill socket address structure with our address */
+	memset(&un, 0, sizeof(un));
+	un.sun_family = AF_UNIX;
+	sprintf(un.sun_path, "%s%05d", CLI_PATH, getpid());
+	len = offsetof(struct sockaddr_un, sun_path) + strlen(un.sun_path);
+
+	unlink(un.sun_path);        /* in case it already exists */
+	if (bind(fd, (struct sockaddr *)&un, len) < 0) {
+		rval = -2;
+		goto errout;
+	}
+
+	/* fill socket address structure with server's address */
+	memset(&un, 0, sizeof(un));
+	un.sun_family = AF_UNIX;
+	strcpy(un.sun_path, name);
+	len = offsetof(struct sockaddr_un, sun_path) + strlen(name);
+	if (connect(fd, (struct sockaddr *)&un, len) < 0) {
+		rval = -4;
+		goto errout;
+	}
+	return(fd);
+
+errout:
+	err = errno;
+	close(fd);
+	errno = err;
+	return(rval);
+}
+```
+
+下面是自己动手时间，请利用以上模块编写完整的客户端/服务器通讯的程序。
+
+### 3.10.5. 练习：实现简单的 Web 服务器
+
+实现一个简单的 Web 服务器 myhttpd。服务器程序启动时要读取配置文件 /etc/myhttpd.conf，其中需要指定服务器监听的端口号和服务目录，例如：
+
+```conf
+Port=80
+Directory=/var/www
+```
+
+注意，1024 以下的端口号需要超级用户才能开启服务。如果你的系统中已经安装了某种 Web 服务器（例如 Apache），应该为 myhttpd 选择一个不同的端口号。当浏览器向服务器请求文件时，服务器就从服务目录（例如 /var/www）中找出这个文件，加上 HTTP 协议头一起发给浏览器。但是，如果浏览器请求的文件是可执行的则称为 CGI 程序，服务器并不是将这个文件发给浏览器，而是在服务器端执行这个程序，将它的标准输出发给浏览器，服务器不发送完整的 HTTP 协议头，CGI 程序自己负责输出一部分 HTTP 协议头。
+
+#### 3.10.5.1. 基本 HTTP 协议
+
+打开浏览器，输入服务器 IP，例如 http://192.168.0.3 ，如果端口号不是 80，例如是 8000，则输入 http://192.168.0.3:8000 。这时浏览器向服务器发送的 HTTP 协议头如下：
+
+```
+GET / HTTP/1.1
+Host: 192.168.0.3:8000
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.6) Gecko/20061201 Firefox/2.0.0.6 (Ubuntu-feisty)
+Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+Accept-Language: en-us,en;q=0.5
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 300
+Connection: keep-alive
+```
+
+注意，其中每一行的末尾都是回车加换行（C 语言的 "\r\n"），第一行是 GET 请求和协议版本，其余几行选项字段我们不讨论，**HTTP协议头的最后有一个空行，也是回车加换行**。
+
+我们实现的 Web 服务器只要能正确解析第一行就行了，这是一个 GET 请求，请求的是服务目录的根目录 `/`（在本例中实际上是 `/var/www`），Web 服务器应该把该目录下的索引页（默认是 index.html）发给浏览器，也就是把 `/var/www/index.html` 发给浏览器。假如该文件的内容如下（HTML 文件没必要以 "\r\n" 换行，以 "\n" 换行就可以了）：
+
+```html
+<html>
+<head><title>Test Page</title></head>
+<body>
+	<p>Test OK</p>
+	<img src='mypic.jpg'>
+</body>
+</html>
+```
+
+显示一行字和一幅图片，图片的相对路径（相对当前的 index.html 文件的路径）是 mypic.jpg，也就是 /var/www/mypic.jpg，如果用绝对路径表示应该是：
+
+```html
+<img src='/mypic.jpg'>
+```
+
+服务器应按如下格式应答浏览器：
+
+```html
+HTTP/1.1 200 OK
+Content-Type: text/html
+
+<html>
+<head><title>Test Page</title></head>
+<body>
+	<p>Test OK</p>
+	<img src='mypic.jpg'>
+</body>
+</html>
+```
+
+服务器应答的 HTTP 头也是每行末尾以回车加换行结束，最后跟一个空行的回车加换行。
+
+HTTP 头的第一行是协议版本和应答码，200 表示成功，后面的消息 OK 其实可以随意写，浏览器是不关心的，主要是为了调试时给开发人员看的。虽然网络协议最终是程序与程序之间的对话，但是在开发过程中却是人与程序之间的对话，一个设计透明的网络协议可以提供很多直观的信息给开发人员，因此，很多应用层网络协议，如 HTTP、FTP、SMTP、POP3 等都是基于文本的协议，为的是透明性（transparency）。
+
+HTTP 头的第二行表示即将发送的文件的类型（称为 MIME 类型），这里是 text/html，纯文本文件是 text/plain，图片则是 image/jpg、image/png 等。
+
+然后就发送文件的内容，发送完毕之后主动关闭连接，这样浏览器就知道文件发送完了。这一点比较特殊：通常网络通信都是客户端主动发起连接，主动发起请求，主动关闭连接，服务器只是被动地处理各种情况，而 HTTP 协议规定服务器主动关闭连接（有些 Web 服务器可以配置成 Keep-Alive 的，我们不讨论这种情况）。
+
+浏览器收到 index.html 之后，发现其中有一个图片文件，就会再发一个 GET 请求（HTTP 协议头其余部分略）：
+
+```
+GET /mypic.jpg HTTP/1.1
+```
+
+一个较大的网页中可能有很多图片，浏览器可能在下载网页的同时就开很多线程下载图片，因此，**服务器即使对同一个客户端也需要提供并行服务的能力**。服务器收到这个请求应该把图片发过去然后关闭连接：
+
+```html
+HTTP/1.1 200 OK
+Content-Type: image/jpg
+
+（这里是 mypic.jpg 的二进制数据）
+```
+
+这时浏览器就应该显示出完整的网页了。
+
+如果浏览器请求的文件在服务器上找不到，要应答一个 404 错误页面，例如：
+
+```html
+HTTP/1.1 404 Not Found
+Content-Type: text/html
+
+<html><body>request file not found</body></html>
+```
+
+#### 3.10.5.2. 执行 CGI 程序
+
+如果浏览器请求的是一个可执行文件（不管是什么样的可执行文件，即使是 shell 脚本也一样），那么服务器并不把这个文件本身发给浏览器，而是把它的执行结果标准输出发给浏览器。例如一个 shell 脚本 `/var/www/myscript.sh`（注意一定要加可执行权限）：
+
+```bash
+#!/bin/sh
+echo "Content-Type: text/html"
+echo
+echo "<html><body>Hello world!</body></html>"
+```
+
+这样浏览器收到的是：
+
+```html
+HTTP/1.1 200 OK
+Content-Type: text/html
+
+<html><body>Hello world!</body></html>
+```
+
+总结一下服务器的处理步骤：
+
+1. 解析浏览器的请求，在服务目录中查找相应的文件，如果找不到该文件就返回 404 错误页面
+2. 如果找到了浏览器请求的文件，用 stat(2) 检查它是否可执行
+3. 如果该文件可执行：
+	1. 发送 HTTP/1.1 200 OK 给客户端
+	2. fork(2)，然后用 dup2(2) 重定向子进程的标准输出到客户端 socket
+	3. 在子进程中 exec(3) 该 CGI 程序
+	4. 关闭连接
+4. 如果该文件不可执行：
+	1. 发送 HTTP/1.1 200 OK 给客户端
+	2. 如果是一个图片文件，根据图片的扩展名发送相应的 Content-Type 给客户端
+	3. 如果不是图片文件，这里我们简化处理，都当作 Content-Type: text/html
+	4. 简单的 HTTP 协议头有这两行就足够了，再发一个空行表示结束
+	5. 读取文件的内容发送到客户端
+	6. 关闭连接
 
 # 4. 参考资料
 

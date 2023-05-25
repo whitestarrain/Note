@@ -113,29 +113,31 @@
   $ go env
   ```
 
-## 1.3. 开发环境
+## 1.3. 主流项目结构
 
-### 1.3.1. Go Playground
+## 1.4. 开发环境
+
+### 1.4.1. Go Playground
 
 - 一般小规模运行代码 或则希望把自己运行代码分享给其他人 
 - 可以使用The Go Playground，这是一个可以在线运行Go的环境
 - [链接](https://play.golang.org/ )
 
-### 1.3.2. GoLand
+### 1.4.2. GoLand
 
 - jetbrains公司开发的软件
 
-### 1.3.3. VSCode
+### 1.4.3. VSCode
 
 - go插件
 
-### 1.3.4. Neovim+LSP
+### 1.4.4. Neovim+LSP
 
 - [个人配置](https://github.com/whitestarrain/dotfiles)
 
-## 1.4. 了解常用系统命令
+## 1.5. 了解常用系统命令
 
-### 1.4.1. 总括
+### 1.5.1. 总括
 
 ```
 go help
@@ -192,7 +194,7 @@ Additional help topics:
 Use "go help <topic>" for more information about that topic.
 ```
 
-### 1.4.2. go env
+### 1.5.2. go env
 
 - 查看本地go环境变量
 - 官方的说明文档
@@ -221,7 +223,7 @@ Use "go help <topic>" for more information about that topic.
   For more about environment variables, see 'go help environment'.
   ```
 
-### 1.4.3. go get
+### 1.5.3. go get
 
 - 用于动态获取远程仓库中的代码包及其依赖，并进行安装。
 - 这个命令实际上分为两步：
@@ -264,11 +266,11 @@ Use "go help <topic>" for more information about that topic.
   go get github.com/foo@e3702bed2
   ```
 
-### 1.4.4. go run
+### 1.5.4. go run
 
 - 直接从源码文件运行编译任务并执行编译文件。
 
-### 1.4.5. go build
+### 1.5.5. go build
 
 - 说明：这个命令主要用来编译代码
   - Go 是一门编译型语言，因此需要将源码编译为二进制文件之后才能执行
@@ -296,7 +298,7 @@ Use "go help <topic>" for more information about that topic.
 - 忽略文件：
   - go build 会忽略目录下以“_”或“.”开头的 go 文件。
 
-### 1.4.6. go clean
+### 1.5.6. go clean
 
 - 移除当前源码包和关联源码包里面编译生成的文件。
 - 参数
@@ -307,19 +309,19 @@ Use "go help <topic>" for more information about that topic.
   - `-cache`： 删除所有`go build`命令的缓存
   - `-testcache`： 删除当前包所有的测试结果
 
-### 1.4.7. go fmt
+### 1.5.7. go fmt
 
 - Go 语言有标准的书写风格，不按照此风格的代码将不能编译通过，
 - 为了减少浪费在排版上的时间，go fmt 命令可以帮你格式化你写好的代码文件，使你写代码的时候不需要关心格式
 - 你只需要在写完之后执行 go fmt filename.go，你的代码就被修改成了标准格式。
 
-### 1.4.8. go install
+### 1.5.8. go install
 
 - 编译和安装包及其依赖。在内部实际上分成了两步操作：
   - 第一步是生成结果文件(可执行文件或者包)
   - 第二步会把编译好的结果移到`$GOPATH/bin`
 
-### 1.4.9. go test
+### 1.5.9. go test
 
 - 说明：读取源码目录下面名为 *_test.go 的文件，生成并自动运行测试用的可执行文件。
 - 参数
@@ -331,7 +333,7 @@ Use "go help <topic>" for more information about that topic.
   -v - 显示测试的详细命令。
   ```
 
-### 1.4.10. go tool
+### 1.5.10. go tool
 
 - 一些有用的工具集合。常用的有：
 
@@ -340,7 +342,7 @@ Use "go help <topic>" for more information about that topic.
   go tool vet directory|file # 用来分析当前目录的代码是否都是正确的代码，例如函数里面提前 return 导致出现了无用代码之类的。
   ```
 
-### 1.4.11. go doc
+### 1.5.11. go doc
 
 - 说明
   - 为 go 程序自动提取和生成文档，或者查看某个 package 的文档。

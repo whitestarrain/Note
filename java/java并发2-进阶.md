@@ -1287,6 +1287,10 @@ public final void acquire(int arg) {
 
 [异常线程处理](https://mp.weixin.qq.com/s?__biz=Mzg3NjU3NTkwMQ==&mid=2247505057&idx=1&sn=621ebc409b589478e2e05388e079d8c0&source=41#wechat_redirect)
 
+## 14.10. jdk线程池实现和线程复用原理
+
+TODO: 线程复用及线程池原理
+
 # 15. ThreadLocal
 
 待做

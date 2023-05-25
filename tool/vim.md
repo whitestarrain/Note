@@ -458,6 +458,7 @@
   :highlight
   :redir END
   ```
+- 输出所有highlight到buffer: `:runtime syntax/hitest.vim`
 
 # 4. vim插件
 
@@ -845,6 +846,8 @@ You can remove all the `^M` characters by running the following:
 Where `^M` is entered by holding down Ctrl and typing v followed by m, and then releasing Ctrl. This is sometimes abbreviated as `^V^M`, but note that you must enter it as described in the previous sentence, rather than typing it out literally.
 
 This expression will replace all occurrences of `^M` with the empty string (i.e. nothing). I use this to get rid of `^M` in files copied from Windows to Unix (Solaris, Linux, OSX).
+
+- window上，如果有^M符号，编译不会报错，但会导致lsp各种毛病。命令行模式Ctrl-v-m 可以打出这个符号
 
 # 8. vim启动过程
 
