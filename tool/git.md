@@ -327,7 +327,30 @@
 - `git am --signoff < patch_path` 打补丁
   > (使用-s或--signoff选项，可以commit信息中加入Signed-off-by信息)
 
-## 1.15. gitignore
+## 1.15. 清理
+
+- `git clean` 用来清理未track的文件
+- `git clean -n` 是一次clean的演习, 告诉你哪些文件会被删除. 记住他不会真正的删除文件, 只是一个提醒
+- `git clean -f` 删除当前目录下所有没有track过的文件. 他不会删除.gitignore文件里面指定的文件夹和文件, 不管这些文件有没有被track过
+- `git clean -f <path>` 删除指定路径下的没有被track过的文件
+- `git clean -df` 删除当前目录下没有被track过的文件和文件夹
+- `git clean -xf` 删除当前目录下所有没有track过的文件. 不管他是否是.gitignore文件里面指定的文件夹和文件
+- `git reset --hard`和`git clean -f`: 结合使用能让工作目录完全回退到最近一次commit的时候
+
+## 1.16. 错误二分查找代码
+
+- `git bisect start [start_hash] [end_hash]` 开始二分查找
+- 最开始从中间的提交开始，本地测试后确定代码又没有问题，执行下面命令。
+  - `git bisect good` 表示当前版本没有问题，就会往后取，切到后半的中点
+  - `git bisect bad` 表示当前版本有问题，就会往前取，切到前半的中点
+- 不断重复，找到第一个引入错误的提交
+
+  ```
+  b47892 is the first bad commit
+  ```
+- 然后退出二分查找： `git bisect reset`
+
+## 1.17. gitignore
 
 ```
   # 此为注释 – 将被 Git 忽略
@@ -356,7 +379,7 @@
   !/fileTemplates/includes/File Header.java
 ```
 
-## 1.16. .gitattributes
+## 1.18. .gitattributes
 
 - .gitattributes示例
 
@@ -383,14 +406,14 @@
   git add --renormalize .
   ```
 
-## 1.17. 别名
+## 1.19. 别名
 
 - `git config --global alias.st status` /*设置st为status的别名，git st即为git status*/
 - `git config --global alias.unstage 'reset HEAD'`
 - `git config --global alias.last 'log -1'` /*最后一次提交信息*/
 - `git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"`
 
-## 1.18. 工具
+## 1.20. 工具
 
 - tig
   - 使用
@@ -406,7 +429,7 @@
 
 - gitk:图形化工具
 
-## 1.19. 常见问题
+## 1.21. 常见问题
 
 - git乱码：
   - 右键->option->text
