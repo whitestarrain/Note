@@ -195,6 +195,202 @@
   - *Standard C* 和 *Standard C Library* 是对 C89 及其修订版本的阐释（可惜作者没有随 C99 更新这两本书），比 C 标准更容易看懂
   - 另外，参考 *C99 Rationale* 也有助于加深对 C 标准的理解。
 
+### 1.1.6. C 标准库和 glibc
+
+> 更详细的内容看后续的链接
+
+#### 1.1.6.1. 标准库
+
+- C 标准主要由两部分组成
+  - 一部分描述 C 的语法
+  - 另一部分描述 C 标准库。
+    - C 标准库定义了一组标准头文件，每个头文件中包含一些相关的函数、变量、类型声明和宏定义。
+    - 要在一个平台上支持 C 语言，不仅要实现 C 编译器，还要实现 C 标准库，这样的实现才算符合 C 标准。
+    - 不符合 C 标准的实现也是存在的，例如很多单片机的 C 语言开发工具中只有 C 编译器而没有完整的 C 标准库。
+
+- 在 Linux 平台上最广泛使用的 C 函数库是 `glibc`
+  - 其中包括 C 标准库的实现，也包括本书第三部分介绍的所有系统函数
+  - 几乎所有 C 程序都要调用 glibc 的库函数，所以 glibc 是 Linux 平台 C 程序运行的基础
+  - glibc 提供一组头文件和一组库文件
+    - 最基本、最常用的 C 标准库函数和系统函数在 `libc.so` 库文件中，几乎所有 C 程序的运行都依赖于 libc.so
+    - 有些做数学计算的 C 程序依赖于 `libm.so`
+    - 以后我们还会看到多线程的 C 程序依赖于 `libpthread.so`
+  - 以后我说 `libc` 时专指 `libc.so` 这个库文件，而说 glibc 时指的是 glibc 提供的所有库文件。
+
+- glibc 并不是 Linux 平台唯一的基础 C 函数库，也有人在开发别的 C 函数库，比如适用于嵌入式系统的 uClibc。
+
+#### 1.1.6.2. 头文件与库文件简单说明。
+
+- 头文件与库文件
+  - 头文件中有函数的申明，库文件实现函数的定义。
+  - 对于头文件和库的区别我们可以这样理解：
+    - 就是头文件提供的是一个函数的声明，并没有这个函数具体代码
+    - 而库就是存放这个函数的具体实现代码。
+
+- 库文件通过头文件向外导出接口。用户通过头文件找到库文件中。
+  - 比如，printf函数。
+  - 使用时应包括stdio.h，打开stdio.h你只能看到，printf这个函数的申明,
+  - 却看不到printf具体是怎么实现的，而函数的实现在相应的C库中。
+  - 而库文件一般是以二进制形式而不是C源文件形式提供给用户使用的。
+  - 程序中包括了stdio.h这个头文件。
+  - 链接器就能根据头件中的信息找到printf这个函数的实现并链接进这个程序代码段里
+
+- 示例：
+
+  ```bash
+  root in 🌐 VM-24-11-centos in /
+  ❯ locate libc.so
+  /usr/lib64/libc.so
+  /usr/lib64/libc.so.6
+  /var/lib/docker/overlay2/bd05ddb08555807ce9c55ecb62060e2ff3a872540d5062b55237449dddd56a3f/diff/usr/lib64/libc.so.6
+
+  root in 🌐 VM-24-11-centos in /
+  ❯ locate stdio.h
+  /opt/rh/devtoolset-8/root/usr/include/c++/8/tr1/stdio.h
+  /usr/include/stdio.h
+  /usr/include/bits/stdio.h
+  /usr/include/c++/4.8.2/tr1/stdio.h
+
+  root in 🌐 VM-24-11-centos in /
+  ❯ nm -D /usr/lib64/libc-2.28.so  | grep " printf"
+  0000000000056800 T printf
+  0000000000055da0 T printf_size
+  0000000000056750 T printf_size_info
+  ```
+
+#### 1.1.6.3. 标准库，libc和glibc
+
+- libc 和 glibc 都是 linux 下的 C 函数库。
+  - libc 是 Linux 下的 ANSI C 函数库;
+  - glibc 是 Linux 下的 GNU C 函数库。
+  - **libc 函数库 和 glibc 函数库，都有对应的 `libc.so`** 
+
+- [ANSI C](https://zh.wikipedia.org/wiki/ANSI_C)共包括15个头文件。
+  - 1995年，*Normative Addendum 1* （NA1）批准了3个头文件（`iso646.h`、`wchar.h`和`wctype.h`）增加到C标准函数库中。
+  - [C99](https://zh.wikipedia.org/wiki/C99)标准增加了6个头文件（`complex.h`、`fenv.h`、`inttypes.h`、`stdbool.h`、`stdint.h`和`tgmath.h`）。
+  - [C11](https://zh.wikipedia.org/wiki/C11)标准中又新增了5个头文件（`stdalign.h`、`stdatomic.h`、`stdnoreturn.h`、`threads.h`和`uchar.h`）。
+  - 至此，C标准函数库共有29个头文件：
+
+  |       名字        | 源自 |                             描述                             |
+  | :---------------: | :--: | :----------------------------------------------------------: |
+  |   `<assert.h>`    |      | 包含[断言](https://zh.wikipedia.org/wiki/斷言_(程式))，被用来在程序的调试版本中帮助检测逻辑错误以及其他类型的bug。 |
+  |   `<complex.h>`   | C99  | 一组操作[复数](https://zh.wikipedia.org/wiki/复数_(数学))的函数。 |
+  |    `<ctype.h>`    |      | 定义了一组函数，用来根据类型来给字符分类，或者进行大小写转换，而不关心所使用的字符集（通常是[ASCII](https://zh.wikipedia.org/wiki/ASCII)或其扩展[字符集](https://zh.wikipedia.org/wiki/字符集)，也有[EBCDIC](https://zh.wikipedia.org/wiki/EBCDIC)）。 |
+  |    `<errno.h>`    |      |                用来测试由库函数报的错误代码。                |
+  |    `<fenv.h>`     | C99  | 定义了一组用来控制[浮点数](https://zh.wikipedia.org/wiki/浮点数)环境的函数。 |
+  |    `<float.h>`    |      | 定义了用于[浮点数](https://zh.wikipedia.org/wiki/浮点数)库特定实现的宏常量。 |
+  |  `<inttypes.h>`   | C99  |                   定义精确的宽度整数类型。                   |
+  |   `<iso646.h>`    | NA1  | 定义几个等效于C中某些运算符的宏。用于使用[ISO 646](https://zh.wikipedia.org/wiki/ISO_646)变体字符集进行编程。 |
+  |   `<limits.h>`    |      | 定义了用于[整数](https://zh.wikipedia.org/wiki/整数)库特定实现属性的宏常量。 |
+  |   `<locale.h>`    |      |                    定义C语言本地化函数。                     |
+  |    `<math.h>`     |      |                     定义C语言数学函数。                      |
+  |   `<setjmp.h>`    |      | 定义了[宏](https://zh.wikipedia.org/wiki/巨集)`setjmp`和`longjmp`，在非局部跳转的时候使用。 |
+  |   `<signal.h>`    |      |                   定义C语言信号处理函数。                    |
+  |  `<stdalign.h>`   | C11  |            用于查询和指定对象的数据结构对齐方式。            |
+  |   `<stdarg.h>`    |      |            用于查询和指定对象的数据结构对齐方式。            |
+  |  `<stdatomic.h>`  | C11  |            用于查询和指定对象的数据结构对齐方式。            |
+  |   `<stdbool.h>`   | C99  |                      定义布尔数据类型。                      |
+  |   `<stddef.h>`    |      | 定义了几个常见的类型与[宏](https://zh.wikipedia.org/wiki/巨集)。 |
+  |   `<stdint.h>`    | C99  |                   定义精确的宽度整数类型。                   |
+  |    `<stdio.h>`    |      |                      定义输入输出函数。                      |
+  |   `<stdlib.h>`    |      | 定义数值转换函数，伪随机数生成函数，动态内存分配函数，过程控制函数。 |
+  | `<stdnoreturn.h>` | C11  |           For specifying non-returning functions.            |
+  |   `<string.h>`    |      |                  定义C语言字符串处理函数。                   |
+  |   `<tgmath.h>`    | C99  |         Defines type-generic mathematical functions.         |
+  |   `<threads.h>`   | C11  | Defines functions for managing multiple threads as well as mutexes and condition variables. |
+  |    `<time.h>`     |      |           Defines date and time handling functions           |
+  |    `<uchar.h>`    | C11  | Types and functions for manipulating [Unicode](https://zh.wikipedia.org/wiki/Unicode) characters. |
+  |    `<wchar.h>`    | NA1  |           Defines wide string handling functions.            |
+  |   `<wctype.h>`    | NA1  | Defines set of functions used to classify wide characters by their types or to convert between upper and lower case |
+
+- glibc 是 linux 下面 C 标准库的实现，即 GNU C Library。
+  - glibc 本身是 GNU 旗下的 C 标准库，后来逐渐成为了 Linux 的标准 C 库，
+  - 而 Linux 下原来的标准 C 库 Linux libc 逐渐不再被维护。
+- Linux 下面的标准 C 库不仅仅只有这一个，
+  - 例如 uclibc、klibc，以及上面的 Linux libc，
+  - 但是 glibc 无疑是用的最多的。`glibc 在 /lib 目录下的 .so 文件是 libc.so.6`。
+  - 主流的 Debian、Ubuntu、RedHat、CentOS 等用的 C 标准库都默认是 glibc（或者是其变种）
+  - 例如：在 C 代码中直接使用 fopen 函数就能打开文件，这是因为其在调用了系统中的 sys_open 系统调用，而 fopen 就是通过 glibc 来完成中间的处理过程的。
+
+- eglibc 
+  - 是一种变种的 glibc 标准 C 库，这里的 e 是 Embedded 的意思。
+  - eglibc 主要特性是为了更好的支持嵌入式架构，可以支持不同的 shell （包括嵌入式），
+  - 但它是二进制兼容 glibc 的，就是说如果代码之前依赖 eglibc 库，那么换成 glibc 后也不需要重新编译。
+  - ubuntu 系统用的就是 eglibc（而不是 glibc），可以用 ldd -version 或者在 （32位系统）/lib/i386-linux-gnu/libc.so.6 （64位系统）/lib/x86_64-linux-gnu/libc.so.6 看看，可以显示 eglibc/glibc 的版本信息。
+
+#### 1.1.6.4. glib
+
+- glib 和 glibc 基本上没有太大的联系，都是 C 编程需要调用的库而已。
+- glib 是 GTK+ 库和 GNOME 的基础，可以在多个平台下使用，如 Linux、Unix、Windows 等。
+- glib 是 GTK+ 库的基础库，它由基础类型、对核心应用的支持、实用功能、数据类型和对象系统五个部分组成，是一个综合用途的实用的轻量级 C 程序库。它提供 C 语言常用的数据结构的定义、相关的处理函数，有趣而使用的宏，可移植的封装和一些运行时机能（如事件循环、线程、动态调用、对象系统等的 API）。
+- GNOME 也是需要依靠 glib 库的，是图形化相关的库，不再此记述。
+
+#### 1.1.6.5. libstdc++ 和 glibc
+
+- libstdc++ 与 gcc 是捆绑在一起的，也就是说安装了 gcc 的时候会把 libstdc++ 装上。
+- 相比 glibc，libstdc++ 虽然提供了 C++ 程序的标准库，它并不与内核打交道。
+- 对于系统级别的事件，libstdc++ 首先是会与 glibc 交互，才能和内核通信，
+- 说白了 C++ 在 C 的基础上，libstdc++ 就需要在 glibc 的支持。
+
+#### 1.1.6.6. glibc 版本太低问题
+
+- libc.so.6: version `GLIBC_2.24′ not found`: glibc 版本太低了，需要升级
+- 一般 glibc 的 .so 文件是在 /lib64/libc.so，查看系统 glibc 库版本可使用如下命令：
+
+  ```bash
+  strings /lib64/libc.so | grep GLIBC
+  ```
+- 检查 libc.so 的结构，
+  - 可以发现其是用软链的，这也就提供了多版本 glibc 的可能，
+  - 高版本的 glibc 需要在官网上下载源码进行编译：http://ftp.gnu.org/gnu/glibc/
+  - 若不是软链，内部也可能指定了实际的libc版本
+
+    ```bash
+    root in 🌐 VM-24-11-centos in /
+    ❯ ls -lh /usr/lib64/libc.so
+    -rw-r--r-- 1 root root 253 Apr  6 10:00 /usr/lib64/libc.so
+
+    root in 🌐 VM-24-11-centos in /
+    ❯ cat /usr/lib64/libc.so
+    /* GNU ld script
+      Use the shared library, but some functions are only in
+      the static library, so try that secondarily.  */
+    OUTPUT_FORMAT(elf64-x86-64)
+    GROUP ( /lib64/libc.so.6 /usr/lib64/libc_nonshared.a  AS_NEEDED ( /lib64/ld-linux-x86-64.so.2 ) )
+    ```
+
+- 以2.32版本为例
+
+  ```bash
+  tar -zxvf glibc-2.32.tar.gz
+  cd glibc-2.32
+  mkdir build
+  cd build
+  ../configure --prefix=/opt/glibc-2.32
+  make
+  make install
+  ```
+
+- 编译安装完后，
+  - 可以建立软链接到安装目录里生成的 /opt/libc-2.32/lib/libc-2.32.so，
+  - 也可以复制 .so 文件到 /lib64 中，方便多版本软链切换。
+
+  ```
+  sudo rm -rf /lib64/libc.so.6
+  sudo ln -s /opt/glibc-2.32/lib/glib-2.32.so /lib64/libc.so.6
+  ```
+
+- 注意：删除 libc.so.6 之后可能导致系统命令不可用的情况，可使用一下方法解决：
+
+  ```bash
+  LD_PRELOAD=/opt/glibc-2.32/lib/libc-2.32.so ln -s /opt/glibc-2.32/lib/libc-2.32.so /lib64/libc.so.6
+  ```
+
+- 如果上述更新失败可使用如下命令还原：
+
+  ```bash
+  LD_PRELOAD=/lib64/libc-2.17.so ln -s /lib64/libc-2.17.so /lib64/libc.so.6
+  ```
 
 ## 1.2. 常量、变量和表达式
 
@@ -752,26 +948,6 @@ Side Effect 这个概念也适用于运算符组成的表达式。比如 `a + b`
 程序第一行的 `#` 号（Pound Sign，Number Sign 或 Hash Sign）和 `include` 表示包含一个头文件（Header File），后面尖括号（Angel Bracket）中就是文件名（这些头文件通常位于 /usr/include 目录下）。头文件中声明了我们程序中使用的库函数，根据先声明后使用的原则，要使用 `printf` 函数必须包含 `stdio.h`，要使用数学函数必须包含 `math.h`，如果什么库函数都不使用就不必包含任何头文件，例如写一个程序 `int main(void){int a;a=2;return 0;}`，不需要包含头文件就可以编译通过，当然这个程序什么也做不了。
 
 使用 `math.h` 中声明的库函数还有一点特殊之处，`gcc` 命令行必须加 `-lm` 选项，因为数学函数位于 `libm.so` 库文件中（这些库文件通常位于 /lib 目录下），`-lm` 选项告诉编译器，我们程序中用到的数学函数要到这个库文件里找。本书用到的大部分库函数（例如 `printf`）位于 `libc.so` 库文件中，使用 `libc.so` 中的库函数在编译时不需要加 `-lc`选项，当然加了也不算错，因为这个选项是`gcc` 的默认选项。关于头文件和库函数目前理解这么多就可以了，到 [第 20 章「链接详解」]() 再详细解释。
-
-#### 1.3.1.1. C 标准库和 glibc
-
-- C 标准主要由两部分组成
-  - 一部分描述 C 的语法
-  - 另一部分描述 C 标准库。
-    - C 标准库定义了一组标准头文件，每个头文件中包含一些相关的函数、变量、类型声明和宏定义。
-    - 要在一个平台上支持 C 语言，不仅要实现 C 编译器，还要实现 C 标准库，这样的实现才算符合 C 标准。
-    - 不符合 C 标准的实现也是存在的，例如很多单片机的 C 语言开发工具中只有 C 编译器而没有完整的 C 标准库。
-
-- 在 Linux 平台上最广泛使用的 C 函数库是 `glibc`
-  - 其中包括 C 标准库的实现，也包括本书第三部分介绍的所有系统函数
-  - 几乎所有 C 程序都要调用 glibc 的库函数，所以 glibc 是 Linux 平台 C 程序运行的基础
-  - glibc 提供一组头文件和一组库文件
-    - 最基本、最常用的 C 标准库函数和系统函数在 libc.so 库文件中，几乎所有 C 程序的运行都依赖于 libc.so
-    - 有些做数学计算的 C 程序依赖于 libmso
-    - 以后我们还会看到多线程的 C 程序依赖于 libpthread.so
-  - 以后我说 libc 时专指 libc.so 这个库文件，而说 glibc 时指的是 glibc 提供的所有库文件。
-
-- glibc 并不是 Linux 平台唯一的基础 C 函数库，也有人在开发别的 C 函数库，比如适用于嵌入式系统的 uClibc。
 
 ### 1.3.2. 自定义函数
 
@@ -21141,4 +21317,6 @@ Content-Type: text/html
 - [x] [C语言菜鸟教程](https://www.runoob.com/cprogramming/c-environment-setup.html)
 - [ ] [Neovim C Cpp Lsp Integration Tips](https://ttys3.dev/post/neovim-c-cpp-lsp-integration-tips)
 - [x] [理清gcc、libc、libstdc++的关系](https://blog.csdn.net/fuhanghang/article/details/113886318)
+- [ ] [头文件和库文件-静态库和动态库 ](https://www.cnblogs.com/guojun-junguo/p/10429568.html)
+- [x] [关于linux系统里glibc库的一些记述](http://fsemouse.com/wordpress/2021/01/19/%E5%85%B3%E4%BA%8Elinux%E7%B3%BB%E7%BB%9F%E9%87%8Cglibc%E5%BA%93%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E8%BF%B0/)
 
