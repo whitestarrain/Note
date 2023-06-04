@@ -39,3 +39,7 @@
     stable-x86_64-pc-windows-msvc (default)
     rustc 1.57.0 (f1edd0429 2021-11-29)
   ```
+
+# 参考资料
+
+- **[Rust语言圣经(Rust Course)](https://course.rs/about-book.html)**
