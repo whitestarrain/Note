@@ -720,9 +720,9 @@
   
   int main(void)
   {
-  	double pi = 3.1416;
-  	printf("sin(pi/2)=%f\nln1=%f\n", sin(pi/2), log(1.0));
-  	return 0;
+    double pi = 3.1416;
+    printf("sin(pi/2)=%f\nln1=%f\n", sin(pi/2), log(1.0));
+    return 0;
   }
 ```
 
@@ -780,10 +780,10 @@ Side Effect 这个概念也适用于运算符组成的表达式。比如 `a + b`
 ```c
 int main(void)
 {
-	int hour = 11;
-	int minute = 59;
-	printf("%d and %d hours\n", hour, minute / 60);
-	return 0;
+    int hour = 11;
+    int minute = 59;
+    printf("%d and %d hours\n", hour, minute / 60);
+    return 0;
 }
 ```
 
@@ -823,15 +823,15 @@ $ echo $?
   
   void newline(void)
   {
-  	printf("\n");
+    printf("\n");
   }
   
   int main(void)
   {
-  	printf("First Line.\n");
-  	newline();
-  	printf("Second Line.\n");
-  	return 0;
+    printf("First Line.\n");
+    newline();
+    printf("Second Line.\n");
+    return 0;
   }
 ```
 
@@ -850,12 +850,12 @@ Second Line.
 ```c
 int main(void)
 {
-	printf("First Line.\n");
-	newline();
-	newline();
-	newline();
-	printf("Second Line.\n");
-	return 0;
+    printf("First Line.\n");
+    newline();
+    newline();
+    newline();
+    printf("Second Line.\n");
+    return 0;
 }
 ```
 
@@ -868,23 +868,23 @@ int main(void)
   
   void newline(void)
   {
-  	printf("\n");
+    printf("\n");
   }
   
   void threeline(void)
   {
-  	newline();
-  	newline();
-  	newline();
+    newline();
+    newline();
+    newline();
   }
   
   int main(void)
   {
-  	printf("Three lines:\n");
-  	threeline();
-  	printf("Another three lines.\n");
-  	threeline();
-  	return 0;
+    printf("Three lines:\n");
+    threeline();
+    printf("Another three lines.\n");
+    threeline();
+    return 0;
   }
 ```
 
@@ -921,17 +921,17 @@ void threeline(void);
   
   int main(void)
   {
-  	...
+    ...
   }
   
   void newline(void)
   {
-  	...
+    ...
   }
   
   void threeline(void)
   {
-  	...
+    ...
   }
 ```
 
@@ -946,23 +946,23 @@ void threeline(void);
   
   int main(void)
   {
-  	printf("Three lines:\n");
-  	threeline();
-  	printf("Another three lines.\n");
-  	threeline();
-  	return 0;
+    printf("Three lines:\n");
+    threeline();
+    printf("Another three lines.\n");
+    threeline();
+    return 0;
   }
   
   void newline(void)
   {
-  	printf("\n");
+    printf("\n");
   }
   
   void threeline(void)
   {
-  	newline();
-  	newline();
-  	newline();
+    newline();
+    newline();
+    newline();
   }
 ```
 
@@ -987,13 +987,13 @@ main.c:6: warning: previous implicit declaration of ‘threeline’ was here
   
   void print_time(int hour, int minute)
   {
-  	printf("%d:%d\n", hour, minute);
+    printf("%d:%d\n", hour, minute);
   }
   
   int main(void)
   {
-  	print_time(23, 59);
-  	return 0;
+    print_time(23, 59);
+    return 0;
   }
 ```
 
@@ -1002,7 +1002,7 @@ main.c:6: warning: previous implicit declaration of ‘threeline’ was here
 ```c
 void print_time(int hour, minute)
 {
-	printf("%d:%d\n", hour, minute);
+    printf("%d:%d\n", hour, minute);
 }
 ```
 
@@ -1024,14 +1024,14 @@ printf("pi\n");
 ```c
 void print_time(int hour, int minute)
 {
-	printf("%d:%d\n", hour, minute);
+    printf("%d:%d\n", hour, minute);
 }
 
 int main(void)
 {
-	int h = 23, m = 59;
-	print_time(h, m);
-	return 0;
+    int h = 23, m = 59;
+    print_time(h, m);
+    return 0;
 }
 ```
 
@@ -1093,7 +1093,7 @@ int main(void)
   return 0;
 }
 ```
-	
+    
 `main` 函数中定义了局部变量 `hour`，`print_time` 函数中也有参数 `hour`，虽然它们名称相同，但仍然是两个不同的变量，代表不同的存储单元。`main` 函数的局部变量 `minute` 和 `print_time` 函数的参数 `minute` 也是如此。
 
 2. **每次调用函数时局部变量都表示不同的存储空间**。局部变量在每次函数调用时分配存储空间，在每次函数返回时释放存储空间，例如调用 `print_time(23, 59)` 时分配 `hour` 和 `minute` 两个变量的存储空间，在里面分别存上 `23` 和 `59`，函数返回时释放它们的存储空间，下次再调用 `print_time(12, 20)` 时又分配 `hour` 和 `minute` 的存储空间，在里面分别存上 `12` 和 `20`。
@@ -1109,14 +1109,14 @@ int main(void)
   
   void print_time(void)
   {
-  	printf("%d:%d in print_time\n", hour, minute);
+    printf("%d:%d in print_time\n", hour, minute);
   }
   
   int main(void)
   {
-  	print_time();
-  	printf("%d:%d in main\n", hour, minute);
-  	return 0;
+    print_time();
+    printf("%d:%d in main\n", hour, minute);
+    return 0;
   }
 ```
 
@@ -1162,16 +1162,16 @@ int hour = minute / 60;
   
   void foo(void)
   {
-  	int i;
-  	printf("%d\n", i);
-  	i = 777;
+    int i;
+    printf("%d\n", i);
+    i = 777;
   }
   
   int main(void)
   {
-  	foo();
-  	foo();
-  	return 0;
+    foo();
+    foo();
+    return 0;
   }
 ```
 
@@ -1189,10 +1189,10 @@ int hour = minute / 60;
 ```c
 int main(void)
 {
-	foo();
-	printf("hello\n");
-	foo();
-	return 0;
+    foo();
+    printf("hello\n");
+    foo();
+    return 0;
 }
 ```
 
@@ -1213,9 +1213,9 @@ hello
 ```c
 int main(void)
 {
-	void print_time(int, int);
-	print_time(23, 59);
-	return 0;
+    void print_time(int, int);
+    print_time(23, 59);
+    return 0;
 }
 ```
 
@@ -1233,7 +1233,7 @@ int main(void)
 
 ```c
 if (x != 0) {
-	printf("x is nonzero.\n");
+    printf("x is nonzero.\n");
 }
 ```
 
@@ -1272,7 +1272,7 @@ if (x != 0) {
 
 ```c
 if (x != 0)
-	printf("x is nonzero.\n");
+    printf("x is nonzero.\n");
 ```
 
 语句块中也可以定义局部变量，例如：
@@ -1280,13 +1280,13 @@ if (x != 0)
 ```c
 void foo(void)
 {
-	int i = 0;
-	{
-		int i = 1;
-		int j = 2;
-		printf("i=%d, j=%d\n", i, j);
-	}
-	printf("i=%d\n", i); /* cannot access j here */
+    int i = 0;
+    {
+        int i = 1;
+        int j = 2;
+        printf("i=%d, j=%d\n", i, j);
+    }
+    printf("i=%d\n", i); /* cannot access j here */
 }
 ```
 
@@ -1298,9 +1298,9 @@ if 语句还可以带一个 else 子句（Clause），例如：
 
 ```c
 if (x % 2 == 0)
-	printf("x is even.\n");
+    printf("x is even.\n");
 else
-	printf("x is odd.\n");
+    printf("x is odd.\n");
 ```
 
 这里的 `%` 是取模（Modulo）运算符，`x%2` 表示 `x` 除以 `2` 所得的余数（Remainder），C 语言规定 `%` 运算符的两个操作数必须是整型的。两个正数相除取余数很好理解，如果操作数中有负数，结果应该是正是负呢？C99 规定，如果 `a` 和 `b` 是整型，`b` 不等于 `0`，则表达式`(a/b)*b+a%b` 的值总是等于 `a`，再结合[第 2 章「常量、变量和表达式」第 5 节「表达式」](1-C-语言入门/ch02-常量、变量和表达式#_5-表达式)讲过的整数除法运算要 Truncate Toward Zero，可以得到一个结论：**% 运算符的结果总是与被除数同号**（想一想为什么）。其它编程语言对取模运算的规定各不相同，也有规定结果和除数同号的，也有不做明确规定的。
@@ -1310,10 +1310,10 @@ else
 ```c
 void print_parity(int x)
 {
-	if (x % 2 == 0)
-		printf("x is even.\n");
-	else
-		printf("x is odd.\n");
+    if (x % 2 == 0)
+        printf("x is even.\n");
+    else
+        printf("x is odd.\n");
 }
 ```
 
@@ -1334,23 +1334,23 @@ print_parity(18);
 
 ```c
 if (x > 0)
-	printf("x is positive.\n");
+    printf("x is positive.\n");
 else if (x < 0)
-	printf("x is negative.\n");
+    printf("x is negative.\n");
 else
-	printf("x is zero.\n");
+    printf("x is zero.\n");
 ```
 
 也可以这样：
 
 ```c
 if (x > 0) {
-	printf("x is positive.\n");
+    printf("x is positive.\n");
 } else {
-	if (x < 0)
-		printf("x is negative.\n");
-	else
-		printf("x is zero.\n");
+    if (x < 0)
+        printf("x is negative.\n");
+    else
+        printf("x is zero.\n");
 }
 ```
 
@@ -1358,30 +1358,30 @@ if (x > 0) {
 
 ```c
 if (A)
-	if (B)
-		C;
+    if (B)
+        C;
 else
-	D;
+    D;
 ```
 
 也可以理解成
 
 ```c
 if (A)
-	if (B)
-		C;
-	else
-		D;
+    if (B)
+        C;
+    else
+        D;
 ```
 
 在[第 2 章「常量、变量和表达式」第 1 节「继续 Hello World」](1-C-语言入门/ch02-常量、变量和表达式#_1-继续-Hello-World)讲过，C 代码的缩进只是为了程序员看起来方便，实际上对编译器不起任何作用，你的代码不管写成上面哪一种缩进格式，在编译器看起来都是一样的。那么编译器到底按哪种方式理解呢？也就是说，`else` 到底是和 `if (A)` 配对还是和 `if (B)` 配对？很多编程语言的语法都有这个问题，称为 Dangling-else 问题。C 语言规定，**else 总是和它上面最近的一个 if 配对**，因此应该理解成 `else` 和 `if (B)` 配对，也就是按第二种方式理解。如果你写成上面第一种缩进的格式就很危险了：你看到的是这样，而编译器理解的却是那样。如果你希望编译器按第一种方式理解，应该明确加上 `{}`：
 
 ```c
 if (A) {
-	if (B)
-		C;
+    if (B)
+        C;
 } else
-	D;
+    D;
 ```
 
 顺便提一下，浮点型的精度有限，不适合用 `==` 运算符做精确比较。以下代码可以说明问题：
@@ -1390,9 +1390,9 @@ if (A) {
 double i = 20.0;
 double j = i / 7.0;
 if (j * 7.0 == i)
-	printf("Equal.\n");
+    printf("Equal.\n");
 else
-	printf("Unequal.\n");
+    printf("Unequal.\n");
 ```
 
 不同平台的浮点数实现有很多不同之处，在我的平台上运行这段程序结果为 `Unequal`，即使在你的平台上运行结果为 `Equal`，你再把 `i` 改成其它值试试，总有些值会使得结果为 `Unequal`。等学习了[第 14 章「计算机中数的表示」第 4 节「浮点数」](2-C-语言本质/ch14-计算机中数的表示#_4-浮点数)，你就知道为什么浮点型不能做精确比较了。
@@ -1403,9 +1403,9 @@ else
 
 ```c
 if (a < b) {
-	if (b < c) {
-		printf("b is between a and c.\n");
-	}
+    if (b < c) {
+        printf("b is between a and c.\n");
+    }
 }
 ```
 
@@ -1413,7 +1413,7 @@ if (a < b) {
 
 ```c
 if (a < b && b < c) {
-	printf("b is between a and c.\n");
+    printf("b is between a and c.\n");
 }
 ```
 
@@ -1540,11 +1540,11 @@ default： 语句列表
   
   void print_logarithm(double x)
   {
-  	if (x <= 0.0) {
-  		printf("Positive numbers only, please.\n");
-  		return;
-  	}
-  	printf("The log of x is %f", log(x));
+    if (x <= 0.0) {
+        printf("Positive numbers only, please.\n");
+        return;
+    }
+    printf("The log of x is %f", log(x));
   }
 ```
 
@@ -1555,10 +1555,10 @@ default： 语句列表
 ```c
 int is_even(int x)
 {
-	if (x % 2 == 0)
-		return 1;
-	else
-		return 0;
+    if (x % 2 == 0)
+        return 1;
+    else
+        return 0;
 }
 ```
 
@@ -1567,9 +1567,9 @@ int is_even(int x)
 ```c
 int i = 19;
 if (is_even(i)) {
-	/* do something */
+    /* do something */
 } else {
-	/* do some other thing */
+    /* do some other thing */
 }
 ```
 
@@ -1578,7 +1578,7 @@ if (is_even(i)) {
 ```c
 int is_even(int x)
 {
-	return !(x % 2);
+    return !(x % 2);
 }
 ```
 
@@ -1588,9 +1588,9 @@ int is_even(int x)
 int 临时变量 = !(x % 2);
 函数退出，局部变量 x 的存储空间释放;
 if (临时变量) { /* 临时变量用完就释放 */
-	/* do something */
+    /* do something */
 } else {
-	/* do some other thing */
+    /* do some other thing */
 }
 ```
 
@@ -1607,14 +1607,14 @@ is_even(20) = 1;
 ```c
 void foo(int x, int y)
 {
-	if (x >= 0 || y >= 0) {
-		printf("both x and y are positive.\n");
-		return;
-	} else if (x < 0 || y < 0) {
-		printf("both x and y are negetive.\n");
-		return;
-	}
-	printf("x has a different sign from y.\n");
+    if (x >= 0 || y >= 0) {
+        printf("both x and y are positive.\n");
+        return;
+    } else if (x < 0 || y < 0) {
+        printf("both x and y are negetive.\n");
+        return;
+    }
+    printf("x has a different sign from y.\n");
 }
 ```
 
@@ -1623,11 +1623,11 @@ void foo(int x, int y)
 ```c
 int absolute_value(int x)
 {
-	if (x < 0) {
-		return -x;
-	} else if (x > 0) {
-		return x;
-	}
+    if (x < 0) {
+        return -x;
+    } else if (x > 0) {
+        return x;
+    }
 }
 ```
 
@@ -1660,7 +1660,7 @@ int absolute_value(int x)
 ```c
 double distance(double x1, double y1, double x2, double y2)
 {
-	return 0.0;
+    return 0.0;
 }
 ```
 
@@ -1669,8 +1669,8 @@ double distance(double x1, double y1, double x2, double y2)
 ```c
 int main(void)
 {
-	printf("distance is %f\n", distance(1.0, 2.0, 4.0, 6.0));
-	return 0;
+    printf("distance is %f\n", distance(1.0, 2.0, 4.0, 6.0));
+    return 0;
 }
 ```
 
@@ -1679,11 +1679,11 @@ int main(void)
 ```c
 double distance(double x1, double y1, double x2, double y2)
 {
-	double dx = x2 - x1;
-	double dy = y2 - y1;
-	printf("dx is %f\ndy is %f\n", dx, dy);
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    printf("dx is %f\ndy is %f\n", dx, dy);
 
-	return 0.0;
+    return 0.0;
 }
 ```
 
@@ -1692,10 +1692,10 @@ double distance(double x1, double y1, double x2, double y2)
 ```c
 double distance(double x1, double y1, double x2, double y2)
 {
-	double dx = x2 - x1;
-	double dy = y2 - y1;
-	/* printf("dx is %f\ndy is %f\n", dx, dy); */
-	return 0.0;
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    /* printf("dx is %f\ndy is %f\n", dx, dy); */
+    return 0.0;
 }
 ```
 
@@ -1704,12 +1704,12 @@ double distance(double x1, double y1, double x2, double y2)
 ```c
 double distance(double x1, double y1, double x2, double y2)
 {
-	double dx = x2 - x1;
-	double dy = y2 - y1;
-	double dsquared = dx * dx + dy * dy;
-	printf("dsquared is %f\n", dsquared);
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    double dsquared = dx * dx + dy * dy;
+    printf("dsquared is %f\n", dsquared);
 
-	return 0.0;
+    return 0.0;
 }
 ```
 
@@ -1723,18 +1723,18 @@ double distance(double x1, double y1, double x2, double y2)
   
   double distance(double x1, double y1, double x2, double y2)
   {
-  	double dx = x2 - x1;
-  	double dy = y2 - y1;
-  	double dsquared = dx * dx + dy * dy;
-  	double result = sqrt(dsquared);
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    double dsquared = dx * dx + dy * dy;
+    double result = sqrt(dsquared);
   
-  	return result;
+    return result;
   }
   
   int main(void)
   {
-  	printf("distance is %f\n", distance(1.0, 2.0, 4.0, 6.0));
-  	return 0;
+    printf("distance is %f\n", distance(1.0, 2.0, 4.0, 6.0));
+    return 0;
   }
 ```
 
@@ -1745,7 +1745,7 @@ double distance(double x1, double y1, double x2, double y2)
 ```c
 double distance(double x1, double y1, double x2, double y2)
 {
-	return sqrt((x2-x1) * (x2-x1) + (y2-y1) * (y2-y1));
+    return sqrt((x2-x1) * (x2-x1) + (y2-y1) * (y2-y1));
 }
 ```
 
@@ -1756,7 +1756,7 @@ double distance(double x1, double y1, double x2, double y2)
 ```c
 double area(double radius)
 {
-	return 3.1416 * radius * radius;
+    return 3.1416 * radius * radius;
 }
 ```
 
@@ -1778,7 +1778,7 @@ double result = area(distance(1.0, 2.0, 4.0, 6.0));
 ```c
 double area_point(double x1, double y1, double x2, double y2)
 {
-	return area(distance(x1, y1, x2, y2));
+    return area(distance(x1, y1, x2, y2));
 }
 ```
 
@@ -1787,11 +1787,11 @@ double area_point(double x1, double y1, double x2, double y2)
 ```c
 double area_point(double x1, double y1, double x2, double y2)
 {
-	double dx = x2 - x1;
-	double dy = y2 - y1;
-	double radius = sqrt(dx * dx + dy * dy);
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    double radius = sqrt(dx * dx + dy * dy);
 
-	return 3.1416 * radius * radius;
+    return 3.1416 * radius * radius;
 }
 ```
 
@@ -1820,8 +1820,8 @@ n! = n · (n-1)!
 ```c
 int factorial(int n)
 {
-	if (n == 0)
-		return 1;
+    if (n == 0)
+        return 1;
 }
 ```
 
@@ -1830,13 +1830,13 @@ int factorial(int n)
 ```c
 int factorial(int n)
 {
-	if (n == 0)
-		return 1;
-	else {
-		int recurse = factorial(n-1);
-		int result = n * recurse;
-		return result;
-	}
+    if (n == 0)
+        return 1;
+    else {
+        int recurse = factorial(n-1);
+        int result = n * recurse;
+        return result;
+    }
 }
 ```
 
@@ -1879,9 +1879,9 @@ int result = n * recurse;
 ```c
 int factorial(int n)
 {
-	int recurse = factorial(n-1);
-	int result = n * recurse;
-	return result;
+    int recurse = factorial(n-1);
+    int result = n * recurse;
+    return result;
 }
 ```
 
@@ -1915,12 +1915,12 @@ int factorial(int n)
 ```c
 int factorial(int n)
 {
-	int result = 1;
-	while (n > 0) {
-		result = result * n;
-		n = n - 1;
-	}
-	return result;
+    int result = 1;
+    while (n > 0) {
+        result = result * n;
+        n = n - 1;
+    }
+    return result;
 }
 ```
 
@@ -1940,11 +1940,11 @@ int factorial(int n)
 
 ```c
 while (n != 1) {
-	if (n % 2 == 0) {
-		n = n / 2;
-	} else {
-		n = n * 3 + 1;
-	}
+    if (n % 2 == 0) {
+        n = n / 2;
+    } else {
+        n = n * 3 + 1;
+    }
 }
 ```
 
@@ -1963,14 +1963,14 @@ while (n != 1) {
 ```c
 int factorial(int n)
 {
-	int result = 1;
-	int i = 1;
-	do {
-		result = result * i;
-		i = i + 1;
-	} while (i <= n);
+    int result = 1;
+    int i = 1;
+    do {
+        result = result * i;
+        i = i + 1;
+    } while (i <= n);
 
-	return result;
+    return result;
 }
 ```
 
@@ -1989,8 +1989,8 @@ for (控制表达式1; 控制表达式2; 控制表达式3) 语句
 ```
 控制表达式 1;
 while (控制表达式 2) {
-	语句
-	控制表达式 3;
+    语句
+    控制表达式 3;
 }
 ```
 
@@ -2001,11 +2001,11 @@ while (控制表达式 2) {
 ```c
 int factorial(int n)
 {
-	int result = 1;
-	int i;
-	for(i = 1; i <= n; ++i)
-		result = result * i;
-	return result;
+    int result = 1;
+    int i;
+    for(i = 1; i <= n; ++i)
+        result = result * i;
+    return result;
 }
 ```
 
@@ -2026,10 +2026,10 @@ C99 规定了一种新的 `for` 循环语法，在`控制表达式1` 的位置�
 ```c
 int factorial(int n)
 {
-	int result = 1;
-	for(int i = 1; i <= n; i++)
-		result = result * i;
-	return result;
+    int result = 1;
+    for(int i = 1; i <= n; i++)
+        result = result * i;
+    return result;
 }
 ```
 
@@ -2046,25 +2046,25 @@ int factorial(int n)
   
   int is_prime(int n)
   {
-  	int i;
-  	for (i = 2; i < n; i++)
-  		if (n % i == 0)
-  			break;
-  	if (i == n)
-  		return 1;
-  	else
-  		return 0;
+    int i;
+    for (i = 2; i < n; i++)
+        if (n % i == 0)
+            break;
+    if (i == n)
+        return 1;
+    else
+        return 0;
   }
   
   int main(void)
   {
-  	int i;
-  	for (i = 1; i <= 100; i++) {
-  		if (!is_prime(i))
-  			continue;
-  		printf("%d\n", i);
-  	}
-  	return 0;
+    int i;
+    for (i = 1; i <= 100; i++) {
+        if (!is_prime(i))
+            continue;
+        printf("%d\n", i);
+    }
+    return 0;
   }
 ```
 
@@ -2083,15 +2083,15 @@ int factorial(int n)
   
   int main(void)
   {
-  	int i, j;
-  	for (i = 1; i <= 100; i++) {
-  		for (j = 2; j < i; j++)
-  			if (i % j == 0)
-  				break;
-  		if (j == i)
-  			printf("%d\n", i);
-  	}
-  	return 0;
+    int i, j;
+    for (i = 1; i <= 100; i++) {
+        for (j = 2; j < i; j++)
+            if (i % j == 0)
+                break;
+        if (j == i)
+            printf("%d\n", i);
+    }
+    return 0;
   }
 ```
 
@@ -2106,28 +2106,28 @@ int factorial(int n)
   
   int main(void)
   {
-  	int i, j;
-  	for (i=1; i<=9; i++) {
-  		for (j=1; j<=9; j++)
-  			printf("%d  ", i*j);
-  		printf("\n");
-  	}
-  	return 0;
+    int i, j;
+    for (i=1; i<=9; i++) {
+        for (j=1; j<=9; j++)
+            printf("%d  ", i*j);
+        printf("\n");
+    }
+    return 0;
   }
 ```
 
 内循环每次打印一个数，数与数之间用两个空格隔开，外循环每次打印一行。结果如下：
 
 ```bash
-1	2	3	4	5	6	7	8	9
-2	4	6	8	10	12	14	16	18
-3	6	9	12	15	18	21	24	27
-4	8	12	16	20	24	28	32	36
-5	10	15	20	25	30	35	40	45
-6	12	18	24	30	36	42	48	54
-7	14	21	28	35	42	49	56	63
-8	16	24	32	40	48	56	64	72
-9	18	27	36	45	54	63	72	81
+1   2   3   4   5   6   7   8   9
+2   4   6   8   10  12  14  16  18
+3   6   9   12  15  18  21  24  27
+4   8   12  16  20  24  28  32  36
+5   10  15  20  25  30  35  40  45
+6   12  18  24  30  36  42  48  54
+7   14  21  28  35  42  49  56  63
+8   16  24  32  40  48  56  64  72
+9   18  27  36  45  54  63  72  81
 ```
 
 结果有一位数的有两位数的，这个表格很不整齐，如果把打印语句改为 `printf("%d\t", i*j);` 就整齐了，所以 `Tab` 字符称为制表符。
@@ -2138,13 +2138,13 @@ int factorial(int n)
 
 ```c
 for (...)
-	for (...) {
-		...
-		if (出现错误条件)
-			goto error;
-	}
+    for (...) {
+        ...
+        if (出现错误条件)
+            goto error;
+    }
 error:
-	出错处理;
+    出错处理;
 ```
 
 这里的 `error:` 叫做标号（Label），任何语句前面都可以加若干个标号，每个标号的命名也要遵循标识符的命名规则。
@@ -2154,18 +2154,18 @@ error:
 ```c
 int cond = 0; /* bool variable indicating error condition */
 for (...) {
-	for (...) {
-		...
-		if (出现错误条件) {
-			cond = 1;
-			break;
-		}
-	}
-	if (cond)
-		break;
+    for (...) {
+        ...
+        if (出现错误条件) {
+            cond = 1;
+            break;
+        }
+    }
+    if (cond)
+        break;
 }
 if (cond)
-	出错处理;
+    出错处理;
 ```
 
 > <sup>[11]</sup> C 标准库函数 `setjmp` 和 `longjmp` 配合起来可以实现函数间的跳转，但只能从被调用的函数跳回到它的直接或间接调用者（同时从栈空间弹出一个或多个栈帧），而不能从一个函数跳转到另一个和它毫不相干的函数中。`setjmp/longjmp` 函数主要也是用于出错处理，比如函数 `A` 调用函数 `B`，函数 `B` 调用函数 `C`，如果在 `C` 中出现某个错误条件，使得函数 `B` 和 `C` 继续执行下去都没有意义了，可以利用 `setjmp/longjmp` 机制快速返回到函数 `A` 做出错处理，本书不详细介绍这种机制，有兴趣的读者可参考 *APUE2e*。
@@ -2251,7 +2251,7 @@ switch (控制表达式) {
 
 ```c
 struct complex_struct {
-	double x, y;
+    double x, y;
 };
 ```
 
@@ -2261,7 +2261,7 @@ struct complex_struct {
 
 ```c
 struct complex_struct {
-	double x, y;
+    double x, y;
 } z1, z2;
 ```
 
@@ -2275,7 +2275,7 @@ struct complex_struct z3, z4;
 
 ```c
 struct {
-	double x, y;
+    double x, y;
 } z1, z2;
 ```
 
@@ -2290,16 +2290,16 @@ struct {
   
   int main(void)
   {
-  	struct complex_struct { double x, y; } z;
-  	double x = 3.0;	
-  	z.x = x;
-  	z.y = 4.0;
-  	if (z.y < 0)
-  		printf("z=%f%fi\n", z.x, z.y);
-  	else
-  		printf("z=%f+%fi\n", z.x, z.y);
+    struct complex_struct { double x, y; } z;
+    double x = 3.0; 
+    z.x = x;
+    z.y = 4.0;
+    if (z.y < 0)
+        printf("z=%f%fi\n", z.x, z.y);
+    else
+        printf("z=%f+%fi\n", z.x, z.y);
   
-  	return 0;
+    return 0;
   }
 ```
 
@@ -2312,8 +2312,8 @@ struct complex_struct { double x, y; };
 
 int main(void)
 {
-	struct complex_struct z;
-	...
+    struct complex_struct z;
+    ...
 }
 ```
 
@@ -2381,9 +2381,9 @@ z1 = z2;
 ```c
 struct complex_struct add_complex(struct complex_struct z1, struct complex_struct z2)
 {
-	z1.x = z1.x + z2.x;
-	z1.y = z1.y + z2.y;
-	return z1;
+    z1.x = z1.x + z2.x;
+    z1.y = z1.y + z2.y;
+    return z1;
 }
 ```
 
@@ -2416,27 +2416,27 @@ z = add_complex(z, z);
   #include <math.h>
   
   struct complex_struct {
-  	double x, y;
+    double x, y;
   };
   
   double real_part(struct complex_struct z)
   {
-  	return z.x;
+    return z.x;
   }
   
   double img_part(struct complex_struct z)
   {
-  	return z.y;
+    return z.y;
   }
   
   double magnitude(struct complex_struct z)
   {
-  	return sqrt(z.x * z.x + z.y * z.y);
+    return sqrt(z.x * z.x + z.y * z.y);
   }
   
   double angle(struct complex_struct z)
   {
-  	return atan2(z.y, z.x);
+    return atan2(z.y, z.x);
   }
 ```
 
@@ -2445,18 +2445,18 @@ z = add_complex(z, z);
 ```c
 struct complex_struct make_from_real_img(double x, double y)
 {
-	struct complex_struct z;
-	z.x = x;
-	z.y = y;
-	return z;
+    struct complex_struct z;
+    z.x = x;
+    z.y = y;
+    return z;
 }
 
 struct complex_struct make_from_mag_ang(double r, double A)
 {
-	struct complex_struct z;
-	z.x = r * cos(A);
-	z.y = r * sin(A);
-	return z;
+    struct complex_struct z;
+    z.x = r * cos(A);
+    z.y = r * sin(A);
+    return z;
 }
 ```
 
@@ -2465,26 +2465,26 @@ struct complex_struct make_from_mag_ang(double r, double A)
 ```c
 struct complex_struct add_complex(struct complex_struct z1, struct complex_struct z2)
 {
-	return make_from_real_img(real_part(z1) + real_part(z2),
-				  img_part(z1) + img_part(z2));
+    return make_from_real_img(real_part(z1) + real_part(z2),
+                  img_part(z1) + img_part(z2));
 }
 
 struct complex_struct sub_complex(struct complex_struct z1, struct complex_struct z2)
 {
-	return make_from_real_img(real_part(z1) - real_part(z2),
-				  img_part(z1) - img_part(z2));
+    return make_from_real_img(real_part(z1) - real_part(z2),
+                  img_part(z1) - img_part(z2));
 }
 
 struct complex_struct mul_complex(struct complex_struct z1, struct complex_struct z2)
 {
-	return make_from_mag_ang(magnitude(z1) * magnitude(z2),
-				 angle(z1) + angle(z2));
+    return make_from_mag_ang(magnitude(z1) * magnitude(z2),
+                 angle(z1) + angle(z2));
 }
 
 struct complex_struct div_complex(struct complex_struct z1, struct complex_struct z2)
 {
-	return make_from_mag_ang(magnitude(z1) / magnitude(z2),
-				 angle(z1) - angle(z2));
+    return make_from_mag_ang(magnitude(z1) / magnitude(z2),
+                 angle(z1) - angle(z2));
 }
 ```
 
@@ -2494,42 +2494,42 @@ struct complex_struct div_complex(struct complex_struct z1, struct complex_struc
   #include <math.h>
   
   struct complex_struct {
-  	double r, A;
+    double r, A;
   };
   
   double real_part(struct complex_struct z)
   {
-  	return z.r * cos(z.A);
+    return z.r * cos(z.A);
   }
   
   double img_part(struct complex_struct z)
   {
-  	return z.r * sin(z.A);
+    return z.r * sin(z.A);
   }
   
   double magnitude(struct complex_struct z)
   {
-  	return z.r;
+    return z.r;
   }
   
   double angle(struct complex_struct z)
   {
-  	return z.A;
+    return z.A;
   }
   
   struct complex_struct make_from_real_img(double x, double y)
   {
-  	struct complex_struct z;
-  	z.A = atan2(y, x);
-  	z.r = sqrt(x * x + y * y);
+    struct complex_struct z;
+    z.A = atan2(y, x);
+    z.r = sqrt(x * x + y * y);
   }
   
   struct complex_struct make_from_mag_ang(double r, double A)
   {
-  	struct complex_struct z;
-  	z.r = r;
-  	z.A = A;
-  	return z;
+    struct complex_struct z;
+    z.r = r;
+    z.A = A;
+    return z;
   }
 ```
 
@@ -2552,8 +2552,8 @@ struct complex_struct div_complex(struct complex_struct z1, struct complex_struc
 ```c
 enum coordinate_type { RECTANGULAR, POLAR };
 struct complex_struct {
-	enum coordinate_type t;
-	double a, b;
+    enum coordinate_type t;
+    double a, b;
 };
 ```
 
@@ -2570,10 +2570,10 @@ enum coordinate_type { RECTANGULAR = 1, POLAR };
 ```c
 int main(void)
 {
-	enum coordinate_type { RECTANGULAR = 1, POLAR };
-	int RECTANGULAR;
-	printf("%d %d\n", RECTANGULAR, POLAR);
-	return 0;
+    enum coordinate_type { RECTANGULAR = 1, POLAR };
+    int RECTANGULAR;
+    printf("%d %d\n", RECTANGULAR, POLAR);
+    return 0;
 }
 ```
 
@@ -2582,20 +2582,20 @@ int main(void)
 ```c
 struct complex_struct make_from_real_img(double x, double y)
 {
-	struct complex_struct z;
-	z.t = RECTANGULAR;
-	z.a = x;
-	z.b = y;
-	return z;
+    struct complex_struct z;
+    z.t = RECTANGULAR;
+    z.a = x;
+    z.b = y;
+    return z;
 }
 
 struct complex_struct make_from_mag_ang(double r, double A)
 {
-	struct complex_struct z;
-	z.t = POLAR;
-	z.a = r;
-	z.b = A;
-	return z;
+    struct complex_struct z;
+    z.t = POLAR;
+    z.a = r;
+    z.b = A;
+    return z;
 }
 ```
 
@@ -2605,8 +2605,8 @@ struct complex_struct make_from_mag_ang(double r, double A)
 
 ```c
 struct segment {
-	struct complex_struct start;
-	struct complex_struct end;
+    struct complex_struct start;
+    struct complex_struct end;
 };
 ```
 
@@ -2658,7 +2658,7 @@ int count[4];
 
 ```c
 struct complex_struct {
-	double x, y;
+    double x, y;
 } a[4];
 ```
 
@@ -2666,8 +2666,8 @@ struct complex_struct {
 
 ```c
 struct {
-	double x, y;
-	int count[4];
+    double x, y;
+    int count[4];
 } s;
 ```
 
@@ -2727,11 +2727,11 @@ int count[4] = { [2] = 3 };
   
   int main(void)
   {
-  	int count[4] = { 3, 2, }, i;
+    int count[4] = { 3, 2, }, i;
   
-  	for (i = 0; i < 4; i++)
-  		printf("count[%d]=%d\n", i, count[i]);
-  	return 0;
+    for (i = 0; i < 4; i++)
+        printf("count[%d]=%d\n", i, count[i]);
+    return 0;
   }
 ```
 
@@ -2755,7 +2755,7 @@ a = b;
 ```c
 void foo(int a[5])
 {
-	...
+    ...
 }
 ```
 
@@ -2791,24 +2791,24 @@ int x = rand() % 10;
   
   void gen_random(int upper_bound)
   {
-  	int i;
-  	for (i = 0; i < N; i++)
-  		a[i] = rand() % upper_bound;
+    int i;
+    for (i = 0; i < N; i++)
+        a[i] = rand() % upper_bound;
   }
   
   void print_random()
   {
-  	int i;
-  	for (i = 0; i < N; i++)
-  		printf("%d ", a[i]);
-  	printf("\n");
+    int i;
+    for (i = 0; i < N; i++)
+        printf("%d ", a[i]);
+    printf("\n");
   }
   
   int main(void)
   {
-  	gen_random(10);
-  	print_random();
-  	return 0;
+    gen_random(10);
+    print_random();
+    return 0;
   }
 ```
 
@@ -2854,9 +2854,9 @@ int main(void)
   
   int main(void)
   {
-  	int RECTANGULAR;
-  	printf("%d %d\n", RECTANGULAR, POLAR);
-  	return 0;
+    int RECTANGULAR;
+    printf("%d %d\n", RECTANGULAR, POLAR);
+    return 0;
   }
 ```
 
@@ -2881,30 +2881,30 @@ int main(void)
   
   void gen_random(int upper_bound)
   {
-  	int i;
-  	for (i = 0; i < N; i++)
-  		a[i] = rand() % upper_bound;
+    int i;
+    for (i = 0; i < N; i++)
+        a[i] = rand() % upper_bound;
   }
   
   int howmany(int value)
   {
-  	int count = 0, i;
-  	for (i = 0; i < N; i++)
-  		if (a[i] == value)
-  			++count;
-  	return count;
+    int count = 0, i;
+    for (i = 0; i < N; i++)
+        if (a[i] == value)
+            ++count;
+    return count;
   }
   
   int main(void)
   {
-  	int i;
+    int i;
   
-  	gen_random(10);
-  	printf("value\thow many\n");
-  	for (i = 0; i < 10; i++)
-  		printf("%d\t%d\n", i, howmany(i));
+    gen_random(10);
+    printf("value\thow many\n");
+    for (i = 0; i < 10; i++)
+        printf("%d\t%d\n", i, howmany(i));
   
-  	return 0;
+    return 0;
   }
 ```
 
@@ -2934,9 +2934,9 @@ value    how many
 ```c
 int main(void)
 {
-	int howmanyones = howmany(1);
-	int howmanytwos = howmany(2);
-	...
+    int howmanyones = howmany(1);
+    int howmanytwos = howmany(2);
+    ...
 }
 ```
 
@@ -2945,12 +2945,12 @@ int main(void)
 ```c
 int main(void)
 {
-	int i, histogram[10];
+    int i, histogram[10];
 
-	gen_random(10);
-	for (i = 0; i < 10; i++)
-		histogram[i] = howmany(i);
-	...
+    gen_random(10);
+    for (i = 0; i < 10; i++)
+        histogram[i] = howmany(i);
+    ...
 }
 ```
 
@@ -2961,12 +2961,12 @@ int main(void)
 ```c
 int main(void)
 {
-	int i, histogram[10] = {0};
+    int i, histogram[10] = {0};
 
-	gen_random(10);
-	for (i = 0; i < N; i++)
-		histogram[a[i]]++;
-	...
+    gen_random(10);
+    for (i = 0; i < N; i++)
+        histogram[a[i]]++;
+    ...
 }
 ```
 
@@ -3080,8 +3080,8 @@ int a[3][2] = { 1, 2, 3, 4, 5 };
 
 ```c
 int a[][2] = { { 1, 2 },
-		{ 3, 4 },
-		{ 5, } };
+        { 3, 4 },
+        { 5, } };
 ```
 
 **注意，除了第一维的长度可以由编译器自动计算而不需要指定，其余各维都必须明确指定长度** 。利用 C99 的新特性也可以做 Memberwise Initialization，例如：
@@ -3094,12 +3094,12 @@ int a[3][2] = { [0][1] = 9, [2][1] = 8 };
 
 ```c
 struct complex_struct {
-	double x, y;
+    double x, y;
 } a[4] = { [0].x = 8.0 };
 
 struct {
-	double x, y;
-	int count[4];
+    double x, y;
+    int count[4];
 } s = { .count[2] = 9 };
 ```
 
@@ -3112,19 +3112,19 @@ struct {
   
   void print_day(int day)
   {
-  	char days[8][10] = { "", "Monday", "Tuesday",
-  			     "Wednesday", "Thursday", "Friday",
-  			     "Saturday", "Sunday" };
+    char days[8][10] = { "", "Monday", "Tuesday",
+                 "Wednesday", "Thursday", "Friday",
+                 "Saturday", "Sunday" };
   
-  	if (day < 1 || day > 7)
-  		printf("Illegal day number!\n");
-  	printf("%s\n", days[day]);
+    if (day < 1 || day > 7)
+        printf("Illegal day number!\n");
+    printf("%s\n", days[day]);
   }
   
   int main(void)
   {
-  	print_day(2);
-  	return 0;
+    print_day(2);
+    return 0;
   }
 ```
 
@@ -3147,30 +3147,30 @@ struct {
   
   int main(void)
   {
-  	char gesture[3][10] = { "scissor", "stone", "cloth" };
-  	int man, computer, result, ret;
+    char gesture[3][10] = { "scissor", "stone", "cloth" };
+    int man, computer, result, ret;
   
-  	srand(time(NULL));
-  	while (1) {
-  		computer = rand() % 3;
-  	  	printf("\nInput your gesture (0-scissor 1-stone 2-cloth):\n");
-  		ret = scanf("%d", &man);
-  	  	if (ret != 1 || man < 0 || man > 2) {
-  			printf("Invalid input! Please input 0, 1 or 2.\n");
-  			continue;
-  		}
-  		printf("Your gesture: %s\tComputer's gesture: %s\n", 
-  			gesture[man], gesture[computer]);
+    srand(time(NULL));
+    while (1) {
+        computer = rand() % 3;
+        printf("\nInput your gesture (0-scissor 1-stone 2-cloth):\n");
+        ret = scanf("%d", &man);
+        if (ret != 1 || man < 0 || man > 2) {
+            printf("Invalid input! Please input 0, 1 or 2.\n");
+            continue;
+        }
+        printf("Your gesture: %s\tComputer's gesture: %s\n", 
+            gesture[man], gesture[computer]);
   
-  		result = (man - computer + 4) % 3 - 1;
-  		if (result > 0)
-  			printf("You win!\n");
-  		else if (result == 0)
-  			printf("Draw!\n");
-  		else
-  			printf("You lose!\n");
-  	}
-  	return 0;
+        result = (man - computer + 4) % 3 - 1;
+        if (result > 0)
+            printf("You win!\n");
+        else if (result == 0)
+            printf("Draw!\n");
+        else
+            printf("You lose!\n");
+    }
+    return 0;
   }
 ```
 
@@ -3220,137 +3220,137 @@ struct {
 一是缺少空白字符，代码密度太大，看着很费劲。二是没有缩进，看不出来哪个 `{` 和哪个 `}` 配对，像这么短的代码还能凑合着看，如果代码超过一屏就完全没法看了。*CodingStyle* 中关于空白字符并没有特别规定，因为基本上所有的 C 代码风格对于空白字符的规定都差不多，主要有以下几条。
 
 1. 关键字 `if`、`while`、`for` 与其后的控制表达式的(括号之间插入一个空格分隔，但括号内的表达式应紧贴括号。例如：
-	
-	```c
-	while␣(1);
-	```
-	
+    
+    ```c
+    while␣(1);
+    ```
+    
 2. 双目运算符的两侧各插入一个空格分隔，单目运算符和操作数之间不加空格，例如 `i␣=␣i␣+␣1`、`++i`、`!(i␣<␣1)`、`-x`、`&a[1]` 等。
 3. 后缀运算符和操作数之间也不加空格，例如取结构体成员 `s.a`、函数调用 `foo(arg1)`、取数组成员 `a[i]`。
 4. `,` 号和 `;` 号之后要加空格，这是英文的书写习惯，例如 `for␣(i␣=␣1;␣i␣<␣10;␣i++)`、`foo(arg1,␣arg2)`。
 5. 以上关于双目运算符和后缀运算符的规则并没有严格要求，有时候为了突出优先级也可以写得更紧凑一些，例如 `for␣(i=1;␣i<10;␣i++)`、`distance␣=␣sqrt(x*x␣+␣y*y)` 等。但是省略的空格一定不要误导了读代码的人，例如 `a||b␣&&␣c` 很容易让人理解成错误的优先级。
 6. 由于 UNIX 系统标准的字符终端是 24 行 80 列的，接近或大于 80 个字符的较长语句要折行写，折行后用空格和上面的表达式或参数对齐，例如：
-	
-	```c
-	if␣(sqrt(x*x␣+␣y*y)␣>␣5.0
-	    &&␣x␣<␣0.0
-	    &&␣y␣>␣0.0)
-	```
-	
-	再比如：
-	
-	```c
-	foo(sqrt(x*x␣+␣y*y),
-	    a[i-1]␣+␣b[i-1]␣+␣c[i-1])
-	```
-	
+    
+    ```c
+    if␣(sqrt(x*x␣+␣y*y)␣>␣5.0
+        &&␣x␣<␣0.0
+        &&␣y␣>␣0.0)
+    ```
+    
+    再比如：
+    
+    ```c
+    foo(sqrt(x*x␣+␣y*y),
+        a[i-1]␣+␣b[i-1]␣+␣c[i-1])
+    ```
+    
 7. 较长的字符串可以断成多个字符串然后分行书写，例如：
-	
-	```c
-	printf("This is such a long sentence that "
-	       "it cannot be held within a line\n");
-	```
-	
-	C 编译器会自动把相邻的多个字符串接在一起，以上两个字符串相当于一个字符串 `"This is such a long sentence that it cannot be held within a line\n"`。
+    
+    ```c
+    printf("This is such a long sentence that "
+           "it cannot be held within a line\n");
+    ```
+    
+    C 编译器会自动把相邻的多个字符串接在一起，以上两个字符串相当于一个字符串 `"This is such a long sentence that it cannot be held within a line\n"`。
 8. 有的人喜欢在变量定义语句中用 `Tab` 字符，使变量名对齐，这样看起来很美观。
-	
-	```c
-	       →int    →a, b;
-	       →double →c;
-	```
-	
+    
+    ```c
+           →int    →a, b;
+           →double →c;
+    ```
+    
 
 内核代码风格关于缩进的规则有以下几条。
 
 1. 要用缩进体现出语句块的层次关系，使用 `Tab` 字符缩进，不能用空格代替 `Tab`。在标准的字符终端上一个 `Tab` 看起来是 8 个空格的宽度，如果你的文本编辑器可以设置 `Tab` 的显示宽度是几个空格，建议也设成 8，这样大的缩进使代码看起来非常清晰。如果有的行用空格做缩进，有的行用 `Tab` 做缩进，甚至空格和 `Tab` 混用，那么一旦改变了文本编辑器的 `Tab` 显示宽度就会看起来非常混乱，所以内核代码风格规定只能用 `Tab` 做缩进，不能用空格代替 `Tab`。
 2. `if/else`、`while`、`do/while`、`for`、`switch` 这些可以带语句块的语句，语句块的 `{` 或 `}` 应该和关键字写在同一行，用空格隔开，而不是单独占一行。例如应该这样写：
-	
-	```c
-	if␣(...)␣{
-	       →语句列表
-	}␣else␣if␣(...)␣{
-	       →语句列表
-	}
-	```
-	
-	但很多人习惯这样写：
-	
-	```c
-	if␣(...)
-	{
-	       →语句列表
-	}
-	else␣if␣(...)
-	{
-	       →语句列表
-	}
-	```
-	
-	内核的写法和 *K&R* 一致，好处是不必占太多行，使得一屏能显示更多代码。这两种写法用得都很广泛，只要在同一个项目中能保持统一就可以了。
+    
+    ```c
+    if␣(...)␣{
+           →语句列表
+    }␣else␣if␣(...)␣{
+           →语句列表
+    }
+    ```
+    
+    但很多人习惯这样写：
+    
+    ```c
+    if␣(...)
+    {
+           →语句列表
+    }
+    else␣if␣(...)
+    {
+           →语句列表
+    }
+    ```
+    
+    内核的写法和 *K&R* 一致，好处是不必占太多行，使得一屏能显示更多代码。这两种写法用得都很广泛，只要在同一个项目中能保持统一就可以了。
 3. 函数定义的 `{` 和 `}` 单独占一行，这一点和语句块的规定不同，例如：
-	
-	```c
-	int␣foo(int␣a,␣int␣b)
-	{
-	       →语句列表
-	}
-	```
-	
+    
+    ```c
+    int␣foo(int␣a,␣int␣b)
+    {
+           →语句列表
+    }
+    ```
+    
 4. `switch` 和语句块里的 `case`、`default` 对齐写，也就是说语句块里的 `case`、`default` 标号相对于 `switch` 不往里缩进，但标号下的语句要往里缩进。例如：
-	
-	```c
-	      →switch␣(c)␣{
-	      →case 'A':
-	      →       →语句列表
-	      →case 'B':
-	      →       →语句列表
-	      →default:
-	      →       →语句列表
-	      →}
-	```
-	
-	用于 `goto` 语句的自定义标号应该顶头写不缩进，而不管标号下的语句缩进到第几层。
-	
+    
+    ```c
+          →switch␣(c)␣{
+          →case 'A':
+          →       →语句列表
+          →case 'B':
+          →       →语句列表
+          →default:
+          →       →语句列表
+          →}
+    ```
+    
+    用于 `goto` 语句的自定义标号应该顶头写不缩进，而不管标号下的语句缩进到第几层。
+    
 5. 代码中每个逻辑段落之间应该用一个空行分隔开。例如每个函数定义之间应该插入一个空行，头文件、全局变量定义和函数定义之间也应该插入空行，例如：
-	
-	```c
-	#include <stdio.h>
-	#include <stdlib.h>
-	
-	int g;
-	double h;
-	
-	int foo(void)
-	{
-	       →语句列表
-	}
-	
-	int bar(int a)
-	{
-	       →语句列表
-	}
-	
-	int main(void)
-	{
-	       →语句列表
-	}
-	```
-	
+    
+    ```c
+    #include <stdio.h>
+    #include <stdlib.h>
+    
+    int g;
+    double h;
+    
+    int foo(void)
+    {
+           →语句列表
+    }
+    
+    int bar(int a)
+    {
+           →语句列表
+    }
+    
+    int main(void)
+    {
+           →语句列表
+    }
+    ```
+    
 6. 一个函数的语句列表如果很长，也可以根据相关性分成若干组，用空行分隔。这条规定不是严格要求，通常把变量定义组成一组，后面加空行，`return` 语句之前加空行，例如：
-	
-	```c
-	int main(void)
-	{
-	       →int    →a, b;
-	       →double →c;
-	
-	       →语句组1
-	
-	       →语句组2
-	
-	       →return 0;
-	}
-	```
+    
+    ```c
+    int main(void)
+    {
+           →int    →a, b;
+           →double →c;
+    
+           →语句组1
+    
+           →语句组2
+    
+           →return 0;
+    }
+    ```
 
 ### 1.9.2. 注释
 
@@ -3375,192 +3375,192 @@ struct {
 使用注释的场合主要有以下几种。
 
 1. 整个源文件的顶部注释。说明此模块的相关信息，例如文件名、作者和版本历史等，顶头写不缩进。例如内核源代码目录下的 `kernel/sched.c` 文件的开头：
-	
-	```
-	/*
-	 *  kernel/sched.c
-	 *
-	 *  Kernel scheduler and related syscalls
-	 *
-	 *  Copyright (C) 1991-2002  Linus Torvalds
-	 *
-	 *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and
-	 *              make semaphores SMP safe
-	 *  1998-11-19  Implemented schedule_timeout() and related stuff
-	 *              by Andrea Arcangeli
-	 *  2002-01-04  New ultra-scalable O(1) scheduler by Ingo Molnar:
-	 *              hybrid priority-list and round-robin design with
-	 *              an array-switch method of distributing timeslices
-	 *              and per-CPU runqueues.  Cleanups and useful suggestions
-	 *              by Davide Libenzi, preemptible kernel bits by Robert Love.
-	 *  2003-09-03  Interactivity tuning by Con Kolivas.
-	 *  2004-04-02  Scheduler domains code by Nick Piggin
-	 */
-	```
-	
+    
+    ```
+    /*
+     *  kernel/sched.c
+     *
+     *  Kernel scheduler and related syscalls
+     *
+     *  Copyright (C) 1991-2002  Linus Torvalds
+     *
+     *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and
+     *              make semaphores SMP safe
+     *  1998-11-19  Implemented schedule_timeout() and related stuff
+     *              by Andrea Arcangeli
+     *  2002-01-04  New ultra-scalable O(1) scheduler by Ingo Molnar:
+     *              hybrid priority-list and round-robin design with
+     *              an array-switch method of distributing timeslices
+     *              and per-CPU runqueues.  Cleanups and useful suggestions
+     *              by Davide Libenzi, preemptible kernel bits by Robert Love.
+     *  2003-09-03  Interactivity tuning by Con Kolivas.
+     *  2004-04-02  Scheduler domains code by Nick Piggin
+     */
+    ```
+    
 2. 函数注释。说明此函数的功能、参数、返回值、错误码等，写在函数定义上侧，和此函数定义之间不留空行，顶头写不缩进。
 3. 相对独立的语句组注释。对这一组语句做特别说明，写在语句组上侧，和此语句组之间不留空行，与当前语句组的缩进一致。
 4. 代码行右侧的简短注释。对当前代码行做特别说明，一般为单行注释，和代码之间至少用一个空格隔开，一个源文件中所有的右侧注释最好能上下对齐。尽管[第 2 章「常量、变量和表达式」第 1 节「继续 Hello World」例 2.1「带更多注释的Hello World」](1-C-语言入门/ch02-常量、变量和表达式#e2-1)讲过注释可以穿插在一行代码中间，但不建议这么写。内核源代码目录下的 `lib/radix-tree.c` 文件中的一个函数包含了上述三种注释：
-	
-	```c
-	/**
-	 *      radix_tree_insert    -    insert into a radix tree
-	 *      @root:          radix tree root
-	 *      @index:         index key
-	 *      @item:          item to insert
-	 *
-	 *      Insert an item into the radix tree at position @index.
-	 */
-	int radix_tree_insert(struct radix_tree_root *root,
-	                        unsigned long index, void *item)
-	{
-	        struct radix_tree_node *node = NULL, *slot;
-	        unsigned int height, shift;
-	        int offset;
-	        int error;
-	
-	        /* Make sure the tree is high enough.  */
-	        if ((!index && !root->rnode) ||
-	                        index > radix_tree_maxindex(root->height)) {
-	                error = radix_tree_extend(root, index);
-	                if (error)
-	                        return error;
-	        }
-	
-	        slot = root->rnode;
-	        height = root->height;
-	        shift = (height-1) * RADIX_TREE_MAP_SHIFT;
-	
-	        offset = 0;                     /* uninitialised var warning */
-	        do {
-	                if (slot == NULL) {
-	                        /* Have to add a child node.  */
-	                        if (!(slot = radix_tree_node_alloc(root)))
-	                                return -ENOMEM;
-	                        if (node) {
-	                                node->slots[offset] = slot;
-	                                node->count++;
-	                        } else
-	                                root->rnode = slot;
-	                }
-	
-	                /* Go a level down */
-	                offset = (index >> shift) & RADIX_TREE_MAP_MASK;
-	                node = slot;
-	                slot = node->slots[offset];
-	                shift -= RADIX_TREE_MAP_SHIFT;
-	                height--;
-	        } while (height > 0);
-	
-	        if (slot != NULL)
-	                return -EEXIST;
-	
-	        BUG_ON(!node);
-	        node->count++;
-	        node->slots[offset] = item;
-	        BUG_ON(tag_get(node, 0, offset));
-	        BUG_ON(tag_get(node, 1, offset));
-	
-	        return 0;
-	}
-	```
-	
-	*CodingStyle* 中特别指出，函数内的注释要尽可能少用。写注释主要是为了说明你的代码「能做什么」（比如函数接口定义），而不是为了说明「怎样做」，只要代码写得足够清晰，「怎样做」是一目了然的，如果你需要用注释才能解释清楚，那就表示你的代码可读性很差，除非是特别需要提醒注意的地方才使用函数内注释。
+    
+    ```c
+    /**
+     *      radix_tree_insert    -    insert into a radix tree
+     *      @root:          radix tree root
+     *      @index:         index key
+     *      @item:          item to insert
+     *
+     *      Insert an item into the radix tree at position @index.
+     */
+    int radix_tree_insert(struct radix_tree_root *root,
+                            unsigned long index, void *item)
+    {
+            struct radix_tree_node *node = NULL, *slot;
+            unsigned int height, shift;
+            int offset;
+            int error;
+    
+            /* Make sure the tree is high enough.  */
+            if ((!index && !root->rnode) ||
+                            index > radix_tree_maxindex(root->height)) {
+                    error = radix_tree_extend(root, index);
+                    if (error)
+                            return error;
+            }
+    
+            slot = root->rnode;
+            height = root->height;
+            shift = (height-1) * RADIX_TREE_MAP_SHIFT;
+    
+            offset = 0;                     /* uninitialised var warning */
+            do {
+                    if (slot == NULL) {
+                            /* Have to add a child node.  */
+                            if (!(slot = radix_tree_node_alloc(root)))
+                                    return -ENOMEM;
+                            if (node) {
+                                    node->slots[offset] = slot;
+                                    node->count++;
+                            } else
+                                    root->rnode = slot;
+                    }
+    
+                    /* Go a level down */
+                    offset = (index >> shift) & RADIX_TREE_MAP_MASK;
+                    node = slot;
+                    slot = node->slots[offset];
+                    shift -= RADIX_TREE_MAP_SHIFT;
+                    height--;
+            } while (height > 0);
+    
+            if (slot != NULL)
+                    return -EEXIST;
+    
+            BUG_ON(!node);
+            node->count++;
+            node->slots[offset] = item;
+            BUG_ON(tag_get(node, 0, offset));
+            BUG_ON(tag_get(node, 1, offset));
+    
+            return 0;
+    }
+    ```
+    
+    *CodingStyle* 中特别指出，函数内的注释要尽可能少用。写注释主要是为了说明你的代码「能做什么」（比如函数接口定义），而不是为了说明「怎样做」，只要代码写得足够清晰，「怎样做」是一目了然的，如果你需要用注释才能解释清楚，那就表示你的代码可读性很差，除非是特别需要提醒注意的地方才使用函数内注释。
 5. 复杂的结构体定义比函数更需要注释。例如内核源代码目录下的 `kernel/sched.c` 文件中定义了这样一个结构体：
-	
-	```c
-	/*
-	 * This is the main, per-CPU runqueue data structure.
-	 *
-	 * Locking rule: those places that want to lock multiple runqueues
-	 * (such as the load balancing or the thread migration code), lock
-	 * acquire operations must be ordered by ascending &runqueue.
-	 */
-	struct runqueue {
-	        spinlock_t lock;
-	
-	        /*
-	         * nr_running and cpu_load should be in the same cacheline because
-	         * remote CPUs use both these fields when doing load calculation.
-	         */
-	        unsigned long nr_running;
-	#ifdef CONFIG_SMP
-	        unsigned long cpu_load[3];
-	#endif
-	        unsigned long long nr_switches;
-	
-	        /*
-	         * This is part of a global counter where only the total sum
-	         * over all CPUs matters. A task can increase this counter on
-	         * one CPU and if it got migrated afterwards it may decrease
-	         * it on another CPU. Always updated under the runqueue lock:
-	         */
-	        unsigned long nr_uninterruptible;
-	
-	        unsigned long expired_timestamp;
-	        unsigned long long timestamp_last_tick;
-	        task_t *curr, *idle;
-	        struct mm_struct *prev_mm;
-	        prio_array_t *active, *expired, arrays[2];
-	        int best_expired_prio;
-	        atomic_t nr_iowait;
-	
-	#ifdef CONFIG_SMP
-	        struct sched_domain *sd;
-	
-	        /* For active balancing */
-	        int active_balance;
-	        int push_cpu;
-	
-	        task_t *migration_thread;
-	        struct list_head migration_queue;
-	        int cpu;
-	#endif
-	
-	#ifdef CONFIG_SCHEDSTATS
-	        /* latency stats */
-	        struct sched_info rq_sched_info;
-	
-	        /* sys_sched_yield() stats */
-	        unsigned long yld_exp_empty;
-	        unsigned long yld_act_empty;
-	        unsigned long yld_both_empty;
-	        unsigned long yld_cnt;
-	
-	        /* schedule() stats */
-	        unsigned long sched_switch;
-	        unsigned long sched_cnt;
-	        unsigned long sched_goidle;
-	
-	        /* try_to_wake_up() stats */
-	        unsigned long ttwu_cnt;
-	        unsigned long ttwu_local;
-	#endif
-	};
-	```
-	
+    
+    ```c
+    /*
+     * This is the main, per-CPU runqueue data structure.
+     *
+     * Locking rule: those places that want to lock multiple runqueues
+     * (such as the load balancing or the thread migration code), lock
+     * acquire operations must be ordered by ascending &runqueue.
+     */
+    struct runqueue {
+            spinlock_t lock;
+    
+            /*
+             * nr_running and cpu_load should be in the same cacheline because
+             * remote CPUs use both these fields when doing load calculation.
+             */
+            unsigned long nr_running;
+    #ifdef CONFIG_SMP
+            unsigned long cpu_load[3];
+    #endif
+            unsigned long long nr_switches;
+    
+            /*
+             * This is part of a global counter where only the total sum
+             * over all CPUs matters. A task can increase this counter on
+             * one CPU and if it got migrated afterwards it may decrease
+             * it on another CPU. Always updated under the runqueue lock:
+             */
+            unsigned long nr_uninterruptible;
+    
+            unsigned long expired_timestamp;
+            unsigned long long timestamp_last_tick;
+            task_t *curr, *idle;
+            struct mm_struct *prev_mm;
+            prio_array_t *active, *expired, arrays[2];
+            int best_expired_prio;
+            atomic_t nr_iowait;
+    
+    #ifdef CONFIG_SMP
+            struct sched_domain *sd;
+    
+            /* For active balancing */
+            int active_balance;
+            int push_cpu;
+    
+            task_t *migration_thread;
+            struct list_head migration_queue;
+            int cpu;
+    #endif
+    
+    #ifdef CONFIG_SCHEDSTATS
+            /* latency stats */
+            struct sched_info rq_sched_info;
+    
+            /* sys_sched_yield() stats */
+            unsigned long yld_exp_empty;
+            unsigned long yld_act_empty;
+            unsigned long yld_both_empty;
+            unsigned long yld_cnt;
+    
+            /* schedule() stats */
+            unsigned long sched_switch;
+            unsigned long sched_cnt;
+            unsigned long sched_goidle;
+    
+            /* try_to_wake_up() stats */
+            unsigned long ttwu_cnt;
+            unsigned long ttwu_local;
+    #endif
+    };
+    ```
+    
 6. 复杂的宏定义和变量声明也需要注释。例如内核源代码目录下的 `include/linux/jiffies.h` 文件中的定义：
-	
-	```c
-	/* TICK_USEC_TO_NSEC is the time between ticks in nsec assuming real ACTHZ and  */
-	/* a value TUSEC for TICK_USEC (can be set bij adjtimex)                */
-	#define TICK_USEC_TO_NSEC(TUSEC) (SH_DIV (TUSEC * USER_HZ * 1000, ACTHZ, 8))
-	
-	/* some arch's have a small-data section that can be accessed register-relative
-	 * but that can only take up to, say, 4-byte variables. jiffies being part of
-	 * an 8-byte variable may not be correctly accessed unless we force the issue
-	 */
-	#define __jiffy_data  __attribute__((section(".data")))
-	
-	/*
-	 * The 64-bit value is not volatile - you MUST NOT read it
-	 * without sampling the sequence number in xtime_lock.
-	 * get_jiffies_64() will do this for you as appropriate.
-	 */
-	extern u64 __jiffy_data jiffies_64;
-	extern unsigned long volatile __jiffy_data jiffies;
-	```
-	
+    
+    ```c
+    /* TICK_USEC_TO_NSEC is the time between ticks in nsec assuming real ACTHZ and  */
+    /* a value TUSEC for TICK_USEC (can be set bij adjtimex)                */
+    #define TICK_USEC_TO_NSEC(TUSEC) (SH_DIV (TUSEC * USER_HZ * 1000, ACTHZ, 8))
+    
+    /* some arch's have a small-data section that can be accessed register-relative
+     * but that can only take up to, say, 4-byte variables. jiffies being part of
+     * an 8-byte variable may not be correctly accessed unless we force the issue
+     */
+    #define __jiffy_data  __attribute__((section(".data")))
+    
+    /*
+     * The 64-bit value is not volatile - you MUST NOT read it
+     * without sampling the sequence number in xtime_lock.
+     * get_jiffies_64() will do this for you as appropriate.
+     */
+    extern u64 __jiffy_data jiffies_64;
+    extern unsigned long volatile __jiffy_data jiffies;
+    ```
+    
 ### 1.9.3. 标识符命名
 
 标识符命名应遵循以下原则：
@@ -3568,9 +3568,9 @@ struct {
 1. 标识符命名要清晰明了，可以使用完整的单词和易于理解的缩写。短的单词可以通过去元音形成缩写，较长的单词可以取单词的头几个字母形成缩写。看别人的代码看多了就可以总结出一些缩写惯例，例如 `count` 写成 `cnt`，`block` 写成 `blk`，`length` 写成 `len`，`window` 写成 `win`，`message` 写成 `msg`，`number` 写成 `nr`，`temporary` 可以写成 `temp`，也可以进一步写成 `tmp`，最有意思的是 `internationalization` 写成 `i18n`，词根 `trans` 经常缩写成 `x`，例如 `transmit` 写成 `xmt`。我就不多举例了，请读者在看代码时自己注意总结和积累。
 2. 内核编码风格规定变量、函数和类型采用全小写加下划线的方式命名，常量（比如宏定义和枚举常量）采用全大写加下划线的方式命名，比如上一节举例的函数名 `radix_tree_insert`、类型名 `struct radix_tree_root`、常量名 `RADIX_TREE_MAP_SHIFT` 等。
 
-	微软发明了一种变量命名法叫匈牙利命名法（Hungarian notation），在变量名中用前缀表示类型，例如 `iCnt`（i 表示 int）、`pMsg`（p 表示 pointer）、`lpszText`（lpsz 表示 long pointer to a zero-ended string）等。Linus 在 *CodingStyle* 中毫不客气地讽刺了这种写法：*Encoding  the type of a function into the name (so-called Hungarian notation) is  brain damaged - the compiler knows the types anyway and can check those,  and it only confuses the programmer.  No wonder MicroSoft makes buggy  programs.* 代码风格本来就是一个很有争议的问题，如果你接受本章介绍的内核编码风格（也是本书所有范例代码的风格），就不要使用大小写混合的变量命名方式<sup>[19]</sup>，更不要使用匈牙利命名法。
+    微软发明了一种变量命名法叫匈牙利命名法（Hungarian notation），在变量名中用前缀表示类型，例如 `iCnt`（i 表示 int）、`pMsg`（p 表示 pointer）、`lpszText`（lpsz 表示 long pointer to a zero-ended string）等。Linus 在 *CodingStyle* 中毫不客气地讽刺了这种写法：*Encoding  the type of a function into the name (so-called Hungarian notation) is  brain damaged - the compiler knows the types anyway and can check those,  and it only confuses the programmer.  No wonder MicroSoft makes buggy  programs.* 代码风格本来就是一个很有争议的问题，如果你接受本章介绍的内核编码风格（也是本书所有范例代码的风格），就不要使用大小写混合的变量命名方式<sup>[19]</sup>，更不要使用匈牙利命名法。
 
-	> <sup>[19]</sup> 大小写混合的命名方式是 Modern C++ 风格所提倡的，在 C++ 代码中很普遍，称为 CamelCase，大概是因为有高有低像驼峰一样。
+    > <sup>[19]</sup> 大小写混合的命名方式是 Modern C++ 风格所提倡的，在 C++ 代码中很普遍，称为 CamelCase，大概是因为有高有低像驼峰一样。
 
 3. 全局变量和全局函数的命名一定要详细，不惜多用几个单词多写几个下划线，例如函数名`radix_tree_insert`，因为它们在整个项目的许多源文件中都会用到，必须让使用者明确这个变量或函数是干什么用的。局部变量和只在一个源文件中调用的内部函数的命名可以简略一些，但不能太短。尽量不要使用单个字母做变量名，只有一个例外：用 `i`、`j`、`k` 做循环变量是可以的。
 4. 针对中国程序员的一条特别规定：禁止用汉语拼音做标识符，可读性极差。
@@ -3598,29 +3598,29 @@ indent 工具可以把代码格式化成某种风格，例如把[本章第 1 节
   #include <time.h>
   int main(void)
   {
-  	char gesture[3][10] = { "scissor", "stone", "cloth" };
-  	int man, computer, result, ret;
-  	srand(time(NULL));
-  	while (1) {
-  		computer = rand() % 3;
-  		printf
-  		    ("\nInput your gesture (0-scissor 1-stone 2-cloth):\n");
-  		ret = scanf("%d", &man);
-  		if (ret != 1 || man < 0 || man > 2) {
-  			printf("Invalid input! Please input 0, 1 or 2.\n");
-  			continue;
-  		}
-  		printf("Your gesture: %s\tComputer's gesture: %s\n",
-  		       gesture[man], gesture[computer]);
-  		result = (man - computer + 4) % 3 - 1;
-  		if (result > 0)
-  			printf("You win!\n");
-  		else if (result == 0)
-  			printf("Draw!\n");
-  		else
-  			printf("You lose!\n");
-  	}
-  	return 0;
+    char gesture[3][10] = { "scissor", "stone", "cloth" };
+    int man, computer, result, ret;
+    srand(time(NULL));
+    while (1) {
+        computer = rand() % 3;
+        printf
+            ("\nInput your gesture (0-scissor 1-stone 2-cloth):\n");
+        ret = scanf("%d", &man);
+        if (ret != 1 || man < 0 || man > 2) {
+            printf("Invalid input! Please input 0, 1 or 2.\n");
+            continue;
+        }
+        printf("Your gesture: %s\tComputer's gesture: %s\n",
+               gesture[man], gesture[computer]);
+        result = (man - computer + 4) % 3 - 1;
+        if (result > 0)
+            printf("You win!\n");
+        else if (result == 0)
+            printf("Draw!\n");
+        else
+            printf("You lose!\n");
+    }
+    return 0;
   }
 ```
 
@@ -3643,19 +3643,19 @@ indent 工具可以把代码格式化成某种风格，例如把[本章第 1 节
   
   int add_range(int low, int high)
   {
-  	int i, sum;
-  	for (i = low; i <= high; i++)
-  		sum = sum + i;
-  	return sum;
+    int i, sum;
+    for (i = low; i <= high; i++)
+        sum = sum + i;
+    return sum;
   }
   
   int main(void)
   {
-  	int result[100];
-  	result[0] = add_range(1, 10);
-  	result[1] = add_range(1, 100);
-  	printf("result[0]=%d\nresult[1]=%d\n", result[0], result[1]);
-  	return 0;
+    int result[100];
+    result[0] = add_range(1, 10);
+    result[1] = add_range(1, 100);
+    printf("result[0]=%d\nresult[1]=%d\n", result[0], result[1]);
+    return 0;
   }
 ```
 
@@ -3738,15 +3738,15 @@ list -- List specified function or line
 
 ```bash
 (gdb) list 1
-1	#include <stdio.h>
-2	
-3	int add_range(int low, int high)
-4	{
-5		int i, sum;
-6		for (i = low; i <= high; i++)
-7			sum = sum + i;
-8		return sum;
-9	}
+1   #include <stdio.h>
+2   
+3   int add_range(int low, int high)
+4   {
+5       int i, sum;
+6       for (i = low; i <= high; i++)
+7           sum = sum + i;
+8       return sum;
+9   }
 10
 ```
 
@@ -3760,13 +3760,13 @@ list -- List specified function or line
 
 ```bash
 (gdb) （直接回车）
-11	int main(void)
-12	{
-13		int result[100];
-14		result[0] = add_range(1, 10);
-15		result[1] = add_range(1, 100);
-16		printf("result[0]=%d\nresult[1]=%d\n", result[0], result[1]);
-17		return 0;
+11  int main(void)
+12  {
+13      int result[100];
+14      result[0] = add_range(1, 10);
+15      result[1] = add_range(1, 100);
+16      printf("result[0]=%d\nresult[1]=%d\n", result[0], result[1]);
+17      return 0;
 18
 ```
 
@@ -3774,15 +3774,15 @@ list -- List specified function or line
 
 ```bash
 (gdb) l add_range
-1	#include <stdio.h>
-2	
-3	int add_range(int low, int high)
-4	{
-5		int i, sum;
-6		for (i = low; i <= high; i++)
-7			sum = sum + i;
-8		return sum;
-9	}
+1   #include <stdio.h>
+2   
+3   int add_range(int low, int high)
+4   {
+5       int i, sum;
+6       for (i = low; i <= high; i++)
+7           sum = sum + i;
+8       return sum;
+9   }
 10
 ```
 
@@ -3799,8 +3799,8 @@ $ mv main.c mian.c
 $ gdb main
 ...
 (gdb) l
-5	main.c: No such file or directory.
-	in main.c
+5   main.c: No such file or directory.
+    in main.c
 ```
 
 可见 `gcc` 的 `-g` 选项并不是把源代码嵌入到可执行文件中的，在调试时也需要源文件。现在把源代码恢复原样，我们继续调试。首先用 `start` 命令开始执行程序：
@@ -3812,7 +3812,7 @@ $ gdb main
 Breakpoint 1 at 0x80483ad: file main.c, line 14.
 Starting program: /home/akaedu/main 
 main () at main.c:14
-14		result[0] = add_range(1, 10);
+14      result[0] = add_range(1, 10);
 (gdb)
 ```
 
@@ -3820,13 +3820,13 @@ main () at main.c:14
 
 ```bash
 (gdb) n
-15		result[1] = add_range(1, 100);
+15      result[1] = add_range(1, 100);
 (gdb) （直接回车）
-16		printf("result[0]=%d\nresult[1]=%d\n", result[0], result[1]);
+16      printf("result[0]=%d\nresult[1]=%d\n", result[0], result[1]);
 (gdb) （直接回车）
 result[0]=55
 result[1]=5105
-17		return 0;
+17      return 0;
 ```
 
 用 `n` 命令依次执行两行赋值语句和一行打印语句，在执行打印语句时结果立刻打出来了，然后停在 `return` 语句之前等待我们发命令。虽然我们完全控制了程序的执行，但仍然看不出哪里错了，因为错误不在 `main` 函数中而在 `add_range` 函数中，现在用 `start` 命令重新来过，这次用 `step` 命令（简写为 `s`）钻进 `add_range` 函数中去跟踪执行：
@@ -3839,10 +3839,10 @@ Start it from the beginning? (y or n) y
 Breakpoint 2 at 0x80483ad: file main.c, line 14.
 Starting program: /home/akaedu/main 
 main () at main.c:14
-14		result[0] = add_range(1, 10);
+14      result[0] = add_range(1, 10);
 (gdb) s
 add_range (low=1, high=10) at main.c:6
-6		for (i = low; i <= high; i++)
+6       for (i = low; i <= high; i++)
 ```
 
 这次停在了 `add_range` 函数中变量定义之后的第一条语句处。在函数中有几种查看状态的办法，`backtrace` 命令（简写为 `bt`）可以查看函数调用的栈帧：
@@ -3866,7 +3866,7 @@ sum = 0
 ```bash
   (gdb) f 1
   #1  0x080483c1 in main () at main.c:14
-  14		result[0] = add_range(1, 10);
+  14        result[0] = add_range(1, 10);
   (gdb) i locals 
   result = {0, 0, 0, 0, 0, 0, 134513196, 225011984, -1208685768, -1081160480, 
   ...
@@ -3877,13 +3877,13 @@ sum = 0
 
 ```bash
 (gdb) s
-7			sum = sum + i;
+7           sum = sum + i;
 (gdb) （直接回车）
-6		for (i = low; i <= high; i++)
+6       for (i = low; i <= high; i++)
 (gdb) （直接回车）
-7			sum = sum + i;
+7           sum = sum + i;
 (gdb) （直接回车）
-6		for (i = low; i <= high; i++)
+6       for (i = low; i <= high; i++)
 (gdb) p sum
 $1 = 3
 ```
@@ -3894,7 +3894,7 @@ $1 = 3
 (gdb) finish
 Run till exit from #0  add_range (low=1, high=10) at main.c:6
 0x080483c1 in main () at main.c:14
-14		result[0] = add_range(1, 10);
+14      result[0] = add_range(1, 10);
 Value returned is $2 = 55
 ```
 
@@ -3902,7 +3902,7 @@ Value returned is $2 = 55
 
 ```bash
 (gdb) s
-15		result[1] = add_range(1, 100);
+15      result[1] = add_range(1, 100);
 (gdb) p result
 $3 = {55, 0, 0, 0, 0, 0, 134513196, 225011984, -1208685768, -1081160480, 
 ...
@@ -3914,7 +3914,7 @@ $3 = {55, 0, 0, 0, 0, 0, 134513196, 225011984, -1208685768, -1081160480,
 ```bash
   (gdb) s
   add_range (low=1, high=100) at main.c:6
-  6		for (i = low; i <= high; i++)
+  6     for (i = low; i <= high; i++)
   (gdb) bt
   #0  add_range (low=1, high=100) at main.c:6
   #1  0x080483db in main () at main.c:15
@@ -3930,14 +3930,14 @@ $3 = {55, 0, 0, 0, 0, 0, 134513196, 225011984, -1208685768, -1081160480,
 (gdb) finish
 Run till exit from #0  add_range (low=1, high=100) at main.c:6
 0x080483db in main () at main.c:15
-15		result[1] = add_range(1, 100);
+15      result[1] = add_range(1, 100);
 Value returned is $4 = 5050
 (gdb) n
-16		printf("result[0]=%d\nresult[1]=%d\n", result[0], result[1]);
+16      printf("result[0]=%d\nresult[1]=%d\n", result[0], result[1]);
 (gdb) （直接回车）
 result[0]=55
 result[1]=5050
-17		return 0;
+17      return 0;
 ```
 
 这样结果就对了。修改变量的值除了用 `set` 命令之外也可以用 `print` 命令，因为 `print` 命令后面跟的是表达式，而我们知道赋值和函数调用也都是表达式，所以也可以用 `print` 命令修改变量的值或者调用函数：
@@ -3981,16 +3981,16 @@ $6 = 13
   
   int main(void)
   {
-  	int sum = 0, i = 0;
-  	char input[5];
+    int sum = 0, i = 0;
+    char input[5];
   
-  	while (1) {
-  		scanf("%s", input);
-  		for (i = 0; input[i] != '\0'; i++)
-  			sum = sum*10 + input[i] - '0';
-  		printf("input=%d\n", sum);
-  	}
-  	return 0;
+    while (1) {
+        scanf("%s", input);
+        for (i = 0; input[i] != '\0'; i++)
+            sum = sum*10 + input[i] - '0';
+        printf("input=%d\n", sum);
+    }
+    return 0;
   }
 ```
 
@@ -4016,7 +4016,7 @@ $ gdb main
 Breakpoint 1 at 0x80483b5: file main.c, line 5.
 Starting program: /home/akaedu/main 
 main () at main.c:5
-5		int sum = 0, i = 0;
+5       int sum = 0, i = 0;
 ```
 
 有了上一次的经验，`sum` 被列为重点怀疑对象，我们可以用 `display` 命令使得每次停下来的时候都显示当前 `sum` 的值，然后继续往下走：
@@ -4025,11 +4025,11 @@ main () at main.c:5
 (gdb) display sum
 1: sum = -1208103488
 (gdb) n
-9			scanf("%s", input);
+9           scanf("%s", input);
 1: sum = 0
 (gdb) 
 123
-10			for (i = 0; input[i] != '\0'; i++)
+10          for (i = 0; input[i] != '\0'; i++)
 1: sum = 0
 ```
 
@@ -4037,16 +4037,16 @@ main () at main.c:5
 
 ```bash
 (gdb) l
-5		int sum = 0, i;
-6		char input[5];
-7	
-8		while (1) {
-9			scanf("%s", input);
-10			for (i = 0; input[i] != '\0'; i++)
-11				sum = sum*10 + input[i] - '0';
-12			printf("input=%d\n", sum);
-13		}
-14		return 0;
+5       int sum = 0, i;
+6       char input[5];
+7   
+8       while (1) {
+9           scanf("%s", input);
+10          for (i = 0; input[i] != '\0'; i++)
+11              sum = sum*10 + input[i] - '0';
+12          printf("input=%d\n", sum);
+13      }
+14      return 0;
 (gdb) b 9
 Breakpoint 2 at 0x80483bc: file main.c, line 9.
 ```
@@ -4059,7 +4059,7 @@ Continuing.
 input=123
 
 Breakpoint 2, main () at main.c:9
-9			scanf("%s", input);
+9           scanf("%s", input);
 1: sum = 123
 ```
 
@@ -4068,7 +4068,7 @@ Breakpoint 2, main () at main.c:9
 ```bash
 (gdb) n
 234
-10			for (i = 0; input[i] != '\0'; i++)
+10          for (i = 0; input[i] != '\0'; i++)
 1: sum = 123
 ```
 
@@ -4080,7 +4080,7 @@ Breakpoint 3 at 0x8048411: file main.c, line 12.
 (gdb) i breakpoints
 Num     Type           Disp Enb Address    What
 2       breakpoint     keep y   0x080483c3 in main at main.c:9
-	breakpoint already hit 1 time
+    breakpoint already hit 1 time
 3       breakpoint     keep y   0x08048411 in main at main.c:12
 ```
 
@@ -4118,7 +4118,7 @@ Breakpoint 5 at 0x80483c3: file main.c, line 9.
 (gdb) i breakpoints 
 Num     Type           Disp Enb Address    What
 5       breakpoint     keep y   0x080483c3 in main at main.c:9
-	stop only if sum != 0
+    stop only if sum != 0
 (gdb) r
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -4127,7 +4127,7 @@ Starting program: /home/akaedu/main
 input=123
 
 Breakpoint 5, main () at main.c:9
-9			scanf("%s", input);
+9           scanf("%s", input);
 1: sum = 123
 ```
 
@@ -4160,17 +4160,17 @@ Breakpoint 5, main () at main.c:9
   
   int main(void)
   {
-  	int sum = 0, i = 0;
-  	char input[5];
+    int sum = 0, i = 0;
+    char input[5];
   
-  	while (1) {
-  		sum = 0;
-  		scanf("%s", input);
-  		for (i = 0; input[i] != '\0'; i++)
-  			sum = sum*10 + input[i] - '0';
-  		printf("input=%d\n", sum);
-  	}
-  	return 0;
+    while (1) {
+        sum = 0;
+        scanf("%s", input);
+        for (i = 0; input[i] != '\0'; i++)
+            sum = sum*10 + input[i] - '0';
+        printf("input=%d\n", sum);
+    }
+    return 0;
   }
 ```
 
@@ -4197,14 +4197,14 @@ $ gdb main
 Breakpoint 1 at 0x80483b5: file main.c, line 5.
 Starting program: /home/akaedu/main 
 main () at main.c:5
-5		int sum = 0, i = 0;
+5       int sum = 0, i = 0;
 (gdb) n
-9			sum = 0;
+9           sum = 0;
 (gdb) （直接回车）
-10			scanf("%s", input);
+10          scanf("%s", input);
 (gdb) （直接回车）
 12345
-11			for (i = 0; input[i] != '\0'; i++)
+11          for (i = 0; input[i] != '\0'; i++)
 (gdb) p input
 $1 = "12345"
 ```
@@ -4213,7 +4213,7 @@ $1 = "12345"
 
 ```bash
 (gdb) x/7b input
-0xbfb8f0a7:	0x31	0x32	0x33	0x34	0x35	0x00	0x00
+0xbfb8f0a7: 0x31    0x32    0x33    0x34    0x35    0x00    0x00
 ```
 
 `x` 命令打印指定存储单元的内容。`7b` 是打印格式，`b` 表示每个字节一组，`7` 表示打印 7 组<sup>[22]</sup>，从 `input` 数组的第一个字节开始连续打印 7 个字节。前 5 个字节是 `input` 数组的存储单元，打印的正是十六进制 ASCII 码的 `'1'` 到 `'5'`，第 6 个字节是写出界的 `'\0'`。根据运行结果，前 4 个字符转成数字都没错，第 5 个错了，也就是 `i` 从 0 到 3 的循环都没错，我们设一个条件断点从 `i` 等于 4 开始单步调试：
@@ -4222,23 +4222,23 @@ $1 = "12345"
 
 ```bash
 (gdb) l
-6		char input[5];
-7	
-8		while (1) {
-9			sum = 0;
-10			scanf("%s", input);
-11			for (i = 0; input[i] != '\0'; i++)
-12				sum = sum*10 + input[i] - '0';
-13			printf("input=%d\n", sum);
-14		}
-15		return 0;
+6       char input[5];
+7   
+8       while (1) {
+9           sum = 0;
+10          scanf("%s", input);
+11          for (i = 0; input[i] != '\0'; i++)
+12              sum = sum*10 + input[i] - '0';
+13          printf("input=%d\n", sum);
+14      }
+15      return 0;
 (gdb) b 12 if i == 4
 Breakpoint 2 at 0x80483e6: file main.c, line 12.
 (gdb) c
 Continuing.
 
 Breakpoint 2, main () at main.c:12
-12				sum = sum*10 + input[i] - '0';
+12              sum = sum*10 + input[i] - '0';
 (gdb) p sum
 $2 = 1234
 ```
@@ -4247,20 +4247,20 @@ $2 = 1234
 
 ```bash
 (gdb) x/7b input
-0xbfb8f0a7:	0x31	0x32	0x33	0x34	0x35	0x04	0x00
+0xbfb8f0a7: 0x31    0x32    0x33    0x34    0x35    0x04    0x00
 ```
 
 `input[4]` 的确是 `0x35`，产生 123407 还有另外一种可能，就是在下一次循环中 123450 不是加上而是减去一个数得到 123407。可现在不是到字符串末尾了吗？怎么会有下一次循环呢？注意到循环控制条件是 `input[i] != '\0'`，而本来应该是 `0x00` 的位置现在莫名其妙地变成了 `0x04`，因此循环不会结束。继续单步：
 
 ```bash
 (gdb) n
-11			for (i = 0; input[i] != '\0'; i++)
+11          for (i = 0; input[i] != '\0'; i++)
 (gdb) p sum
 $3 = 12345
 (gdb) n
-12				sum = sum*10 + input[i] - '0';
+12              sum = sum*10 + input[i] - '0';
 (gdb) x/7b input
-0xbfb8f0a7:	0x31	0x32	0x33	0x34	0x35	0x05	0x00
+0xbfb8f0a7: 0x31    0x32    0x33    0x34    0x35    0x05    0x00
 ```
 
 进入下一次循环，原来的 `0x04` 又莫名其妙地变成了 `0x05`，这是怎么回事？这个暂时解释不了，但 123407 这个结果可以解释了，是 `12345*10+0x05-0x30` 得到的，虽然多循环了一次，但下次一定会退出循环了，因为 `0x05` 的后面是 `'\0'`。
@@ -4274,14 +4274,14 @@ Delete all breakpoints? (y or n) y
 Breakpoint 1 at 0x80483b5: file main.c, line 5.
 Starting program: /home/akaedu/main 
 main () at main.c:5
-5		int sum = 0, i = 0;
+5       int sum = 0, i = 0;
 (gdb) n
-9			sum = 0;
+9           sum = 0;
 (gdb) （直接回车）
-10			scanf("%s", input);
+10          scanf("%s", input);
 (gdb) （直接回车）
 12345
-11			for (i = 0; input[i] != '\0'; i++)
+11          for (i = 0; input[i] != '\0'; i++)
 (gdb) watch input[5]
 Hardware watchpoint 2: input[5]
 (gdb) i watchpoints 
@@ -4294,7 +4294,7 @@ Hardware watchpoint 2: input[5]
 Old value = 0 '\0'
 New value = 1 '\001'
 0x0804840c in main () at main.c:11
-11			for (i = 0; input[i] != '\0'; i++)
+11          for (i = 0; input[i] != '\0'; i++)
 (gdb) c
 Continuing.
 Hardware watchpoint 2: input[5]
@@ -4302,7 +4302,7 @@ Hardware watchpoint 2: input[5]
 Old value = 1 '\001'
 New value = 2 '\002'
 0x0804840c in main () at main.c:11
-11			for (i = 0; input[i] != '\0'; i++)
+11          for (i = 0; input[i] != '\0'; i++)
 (gdb) c
 Continuing.
 Hardware watchpoint 2: input[5]
@@ -4310,7 +4310,7 @@ Hardware watchpoint 2: input[5]
 Old value = 2 '\002'
 New value = 3 '\003'
 0x0804840c in main () at main.c:11
-11			for (i = 0; input[i] != '\0'; i++)
+11          for (i = 0; input[i] != '\0'; i++)
 ```
 
 已经很明显了，每次都是回到 `for` 循环开头的时候改变了 `input[5]` 的值，而且是每次加 1，而循环变量 `i` 正是在每次回到循环开头之前加 1，原来 `input[5]` 就是变量 `i` 的存储单元，换句话说，`i` 的存储单元是紧跟在 `input` 数组后面的。
@@ -4319,17 +4319,17 @@ New value = 3 '\003'
 
 ```c
 while (1) {
-	sum = 0;
-	scanf("%s", input);
-	for (i = 0; input[i] != '\0'; i++) {
-		if (input[i] < '0' || input[i] > '9') {
-			printf("Invalid input!\n");
-			sum = -1;
-			break;
-		}
-		sum = sum*10 + input[i] - '0';
-	}
-	printf("input=%d\n", sum);
+    sum = 0;
+    scanf("%s", input);
+    for (i = 0; input[i] != '\0'; i++) {
+        if (input[i] < '0' || input[i] > '9') {
+            printf("Invalid input!\n");
+            sum = -1;
+            break;
+        }
+        sum = sum*10 + input[i] - '0';
+    }
+    printf("input=%d\n", sum);
 }
 ```
 
@@ -4374,9 +4374,9 @@ input=23
   
   int main(void)
   {
-  	int man = 0;
-  	scanf("%d", man);
-  	return 0;
+    int man = 0;
+    scanf("%d", man);
+    return 0;
   }
 ```
 
@@ -4408,20 +4408,20 @@ input=23
   
   int main(void)
   {
-  	int sum = 0, i = 0;
-  	char input[5];
+    int sum = 0, i = 0;
+    char input[5];
   
-  	scanf("%s", input);
-  	for (i = 0; input[i] != '\0'; i++) {
-  		if (input[i] < '0' || input[i] > '9') {
-  			printf("Invalid input!\n");
-  			sum = -1;
-  			break;
-  		}
-  		sum = sum*10 + input[i] - '0';
-  	}
-  	printf("input=%d\n", sum);
-  	return 0;
+    scanf("%s", input);
+    for (i = 0; input[i] != '\0'; i++) {
+        if (input[i] < '0' || input[i] > '9') {
+            printf("Invalid input!\n");
+            sum = -1;
+            break;
+        }
+        sum = sum*10 + input[i] - '0';
+    }
+    printf("input=%d\n", sum);
+    return 0;
   }
 ```
 
@@ -4457,14 +4457,14 @@ input=-1
 
 Program received signal SIGSEGV, Segmentation fault.
 0x0804848e in main () at main.c:19
-19	}
+19  }
 (gdb) l
-14			}
-15			sum = sum*10 + input[i] - '0';
-16		}
-17		printf("input=%d\n", sum);
-18		return 0;
-19	}
+14          }
+15          sum = sum*10 + input[i] - '0';
+16      }
+17      printf("input=%d\n", sum);
+18      return 0;
+19  }
 ```
 
 `gdb` 指出，段错误发生在第 19 行。可是这一行什么都没有啊，只有表示 `main` 函数结束的 `}` 括号。这可以算是一条规律，**如果某个函数的局部变量发生访问越界，有可能并不立即产生段错误，而是在函数返回时产生段错误**。
@@ -4515,12 +4515,12 @@ Program received signal SIGSEGV, Segmentation fault.
 ```c
 void sort(void)
 {
-	a[0] = 1;
-	a[1] = 2;
-	a[2] = 3;
-	a[3] = 4;
-	a[4] = 5;
-	a[5] = 6;
+    a[0] = 1;
+    a[1] = 2;
+    a[2] = 3;
+    a[3] = 4;
+    a[4] = 5;
+    a[5] = 6;
 }
 ```
 
@@ -4550,26 +4550,26 @@ void sort(void)
 
   void insertion_sort(void)
   {
-  	int i, j, key;
-  	for (j = 1; j < LEN; j++) {
-  		printf("%d, %d, %d, %d, %d\n",
-  		       a[0], a[1], a[2], a[3], a[4]);
-  		key = a[j];
-  		i = j - 1;
-  		while (i >= 0 && a[i] > key) {
-  			a[i+1] = a[i];
-  			i--;
-  		}
-  		a[i+1] = key;
-  	}
-  	printf("%d, %d, %d, %d, %d\n",
-  	       a[0], a[1], a[2], a[3], a[4]);
+    int i, j, key;
+    for (j = 1; j < LEN; j++) {
+        printf("%d, %d, %d, %d, %d\n",
+               a[0], a[1], a[2], a[3], a[4]);
+        key = a[j];
+        i = j - 1;
+        while (i >= 0 && a[i] > key) {
+            a[i+1] = a[i];
+            i--;
+        }
+        a[i+1] = key;
+    }
+    printf("%d, %d, %d, %d, %d\n",
+           a[0], a[1], a[2], a[3], a[4]);
   }
 
   int main(void)
   {
-  	insertion_sort();
-  	return 0;
+    insertion_sort();
+    return 0;
   }
 ```
 
@@ -4606,16 +4606,16 @@ void sort(void)
 ```c
 void insertion_sort(void)                //执行时间
 {
-	int i, j, key;
-	for (j = 1; j < LEN; j++) {
-		key = a[j];                          //c1
-		i = j - 1;                           //c2
-		while (i >= 0 && a[i] > key) {
-			a[i+1] = a[i];                   //c3
-			i--;                             //c4
-		}
-		a[i+1] = key;                        //c5
-	}
+    int i, j, key;
+    for (j = 1; j < LEN; j++) {
+        key = a[j];                          //c1
+        i = j - 1;                           //c2
+        while (i >= 0 && a[i] > key) {
+            a[i+1] = a[i];                   //c3
+            i--;                             //c4
+        }
+        a[i+1] = key;                        //c5
+    }
 }
 ```
 
@@ -4673,51 +4673,51 @@ void insertion_sort(void)                //执行时间
 
   void merge(int start, int mid, int end)
   {
-  	int n1 = mid - start + 1;
-  	int n2 = end - mid;
-  	int left[n1], right[n2];
-  	int i, j, k;
+    int n1 = mid - start + 1;
+    int n2 = end - mid;
+    int left[n1], right[n2];
+    int i, j, k;
 
-  	for (i = 0; i < n1; i++) /* left holds a[start..mid] */
-  		left[i] = a[start+i];
-  	for (j = 0; j < n2; j++) /* right holds a[mid+1..end] */
-  		right[j] = a[mid+1+j];
+    for (i = 0; i < n1; i++) /* left holds a[start..mid] */
+        left[i] = a[start+i];
+    for (j = 0; j < n2; j++) /* right holds a[mid+1..end] */
+        right[j] = a[mid+1+j];
 
-  	i = j = 0;
-  	k = start;
-  	while (i < n1 && j < n2)
-  		if (left[i] < right[j])
-  			a[k++] = left[i++];
-  		else
-  			a[k++] = right[j++];
+    i = j = 0;
+    k = start;
+    while (i < n1 && j < n2)
+        if (left[i] < right[j])
+            a[k++] = left[i++];
+        else
+            a[k++] = right[j++];
 
-  	while (i < n1) /* left[] is not exhausted */
-  		a[k++] = left[i++];
-  	while (j < n2) /* right[] is not exhausted */
-  		a[k++] = right[j++];
+    while (i < n1) /* left[] is not exhausted */
+        a[k++] = left[i++];
+    while (j < n2) /* right[] is not exhausted */
+        a[k++] = right[j++];
   }
 
   void sort(int start, int end)
   {
-  	int mid;
-  	if (start < end) {
-  		mid = (start + end) / 2;
-  		printf("sort (%d-%d, %d-%d) %d %d %d %d %d %d %d %d\n",
-  		       start, mid, mid+1, end,
-  		       a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
-  		sort(start, mid);
-  		sort(mid+1, end);
-  		merge(start, mid, end);
-  		printf("merge (%d-%d, %d-%d) to %d %d %d %d %d %d %d %d\n",
-  		       start, mid, mid+1, end,
-  		       a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
-  	}
+    int mid;
+    if (start < end) {
+        mid = (start + end) / 2;
+        printf("sort (%d-%d, %d-%d) %d %d %d %d %d %d %d %d\n",
+               start, mid, mid+1, end,
+               a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+        sort(start, mid);
+        sort(mid+1, end);
+        merge(start, mid, end);
+        printf("merge (%d-%d, %d-%d) to %d %d %d %d %d %d %d %d\n",
+               start, mid, mid+1, end,
+               a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+    }
   }
 
   int main(void)
   {
-  	sort(0, LEN-1);
-  	return 0;
+    sort(0, LEN-1);
+    return 0;
   }
 ```
 
@@ -4785,19 +4785,19 @@ merge (0-3, 4-7) to 1 2 2 3 4 5 6 7
 
   int indexof(char letter)
   {
-  	int i = 0;
-  	while (a[i] != '\0') {
-  		if (a[i] == letter)
-  			return i;
-  		i++;
-  	}
-  	return -1;
+    int i = 0;
+    while (a[i] != '\0') {
+        if (a[i] == letter)
+            return i;
+        i++;
+    }
+    return -1;
   }
 
   int main(void)
   {
-  	printf("%d %d\n", indexof('o'), indexof('z'));
-  	return 0;
+    printf("%d %d\n", indexof('o'), indexof('z'));
+    return 0;
   }
 ```
 
@@ -4817,24 +4817,24 @@ merge (0-3, 4-7) to 1 2 2 3 4 5 6 7
 
   int binarysearch(int number)
   {
-  	int mid, start = 0, end = LEN - 1;
+    int mid, start = 0, end = LEN - 1;
 
-  	while (start <= end) {
-  		mid = (start + end) / 2;
-  		if (a[mid] < number)
-  			start = mid + 1;
-  		else if (a[mid] > number)
-  			end = mid - 1;
-  		else
-  			return mid;
-  	}
-  	return -1;
+    while (start <= end) {
+        mid = (start + end) / 2;
+        if (a[mid] < number)
+            start = mid + 1;
+        else if (a[mid] > number)
+            end = mid - 1;
+        else
+            return mid;
+    }
+    return -1;
   }
 
   int main(void)
   {
-  	printf("%d\n", binarysearch(5));
-  	return 0;
+    printf("%d\n", binarysearch(5));
+    return 0;
   }
 ```
 
@@ -4847,36 +4847,36 @@ merge (0-3, 4-7) to 1 2 2 3 4 5 6 7
 ```c
 int binarysearch(int number)
 {
-	int mid, start = 0, end = LEN - 1;
+    int mid, start = 0, end = LEN - 1;
 
-	/* 假定 a 是排好序的 */
-	/* mustbe(start, end, number)，
-	 * 因为 a[start..end] 就是整个数组 a[0..LEN-1] */
-	while (start <= end) {
-	/* mustbe(start, end, number)，因为一开始进入循环时是正确的，
-	 * 每次循环也都维护了这个条件 */
-		mid = (start + end) / 2;
-		if (a[mid] < number)
-			/* 既然 a 是排好序的，a[start..mid] 应该都比 number 小，
-			 * 所以 mustbe(mid+1, end, number) */
-			start = mid + 1;
-			/* 维护了 mustbe(start, end, number) */
-		else if (a[mid] > number)
-			/* 既然 a 是排好序的，a[mid..end] 应该都比 number 大，
-			 * 所以 mustbe(start, mid-1, number) */
-			end = mid - 1;
-			/* 维护了 mustbe(start, end, number) */
-		else
-			/* a[mid] == number，说明找到了 */
-			return mid;
-	}
-	/*
-	 * mustbe(start, end, number) 一直被循环维护着，到这里应该仍然成立，
-	 * 在 a[start..end] 范围之外一定不存在 number，
-	 * 但现在 a[start..end] 是空序列，在这个范围之外的正是整个数组 a，
-	 * 因此整个数组 a 中都不存在 number
-	 */
-	return -1;
+    /* 假定 a 是排好序的 */
+    /* mustbe(start, end, number)，
+     * 因为 a[start..end] 就是整个数组 a[0..LEN-1] */
+    while (start <= end) {
+    /* mustbe(start, end, number)，因为一开始进入循环时是正确的，
+     * 每次循环也都维护了这个条件 */
+        mid = (start + end) / 2;
+        if (a[mid] < number)
+            /* 既然 a 是排好序的，a[start..mid] 应该都比 number 小，
+             * 所以 mustbe(mid+1, end, number) */
+            start = mid + 1;
+            /* 维护了 mustbe(start, end, number) */
+        else if (a[mid] > number)
+            /* 既然 a 是排好序的，a[mid..end] 应该都比 number 大，
+             * 所以 mustbe(start, mid-1, number) */
+            end = mid - 1;
+            /* 维护了 mustbe(start, end, number) */
+        else
+            /* a[mid] == number，说明找到了 */
+            return mid;
+    }
+    /*
+     * mustbe(start, end, number) 一直被循环维护着，到这里应该仍然成立，
+     * 在 a[start..end] 范围之外一定不存在 number，
+     * 但现在 a[start..end] 是空序列，在这个范围之外的正是整个数组 a，
+     * 因此整个数组 a 中都不存在 number
+     */
+    return -1;
 }
 ```
 
@@ -4895,60 +4895,60 @@ int binarysearch(int number)
   
   int is_sorted(void)
   {
-  	int i;
-  	for (i = 1; i < LEN; i++)
-  		if (a[i-1] > a[i])
-  			return 0;
-  	return 1;
+    int i;
+    for (i = 1; i < LEN; i++)
+        if (a[i-1] > a[i])
+            return 0;
+    return 1;
   }
   
   int mustbe(int start, int end, int number)
   {
-  	int i;
-  	for (i = 0; i < start; i++)
-  		if (a[i] == number)
-  			return 0;
-  	for (i = end+1; i < LEN; i++)
-  		if (a[i] == number)
-  			return 0;
-  	return 1;
+    int i;
+    for (i = 0; i < start; i++)
+        if (a[i] == number)
+            return 0;
+    for (i = end+1; i < LEN; i++)
+        if (a[i] == number)
+            return 0;
+    return 1;
   }
   
   int contains(int n)
   {
-  	int i;
-  	for (i = 0; i < LEN; i++)
-  		if (a[i] == n)
-  			return 1;
-  	return 0;
+    int i;
+    for (i = 0; i < LEN; i++)
+        if (a[i] == n)
+            return 1;
+    return 0;
   }
   
   int binarysearch(int number)
   {
-  	int mid, start = 0, end = LEN - 1;
+    int mid, start = 0, end = LEN - 1;
   
-  	assert(is_sorted()); /* Precondition */
-  	while (start <= end) {
-  		assert(mustbe(start, end, number)); /* Maintenance */
-  		mid = (start + end) / 2;
-  		if (a[mid] < number)
-  			start = mid + 1;
-  		else if (a[mid] > number)
-  			end = mid - 1;
-  		else {
-  			assert(mid >= start && mid <= end
-  			       && a[mid] == number) /* Postcondition 1 */
-  			return mid;
-  		}
-  	}
-  	assert(!contains(number)); /* Postcondition 2 */
-  	return -1;
+    assert(is_sorted()); /* Precondition */
+    while (start <= end) {
+        assert(mustbe(start, end, number)); /* Maintenance */
+        mid = (start + end) / 2;
+        if (a[mid] < number)
+            start = mid + 1;
+        else if (a[mid] > number)
+            end = mid - 1;
+        else {
+            assert(mid >= start && mid <= end
+                   && a[mid] == number) /* Postcondition 1 */
+            return mid;
+        }
+    }
+    assert(!contains(number)); /* Postcondition 2 */
+    return -1;
   }
   
   int main(void)
   {
-  	printf("%d\n", binarysearch(5));
-  	return 0;
+    printf("%d\n", binarysearch(5));
+    return 0;
   }
 ```
 
@@ -4997,30 +4997,30 @@ Aborted
   
   void push(char c)
   {
-  	stack[top++] = c;
+    stack[top++] = c;
   }
   
   char pop(void)
   {
-  	return stack[--top];
+    return stack[--top];
   }
   
   int is_empty(void)
   {
-  	return top == 0;
+    return top == 0;
   }
   
   int main(void)
   {
-  	push('a');
-  	push('b');
-  	push('c');
-  	
-  	while(!is_empty())
-  		putchar(pop());
-  	putchar('\n');
+    push('a');
+    push('b');
+    push('c');
+    
+    while(!is_empty())
+        putchar(pop());
+    putchar('\n');
   
-  	return 0;
+    return 0;
   }
 ```
 
@@ -5045,7 +5045,7 @@ Aborted
   void print_backward(int pos)
   {
        if(pos == LEN)
-  	  return;
+      return;
        print_backward(pos+1);
        putchar(buf[pos]);
   }
@@ -5063,7 +5063,7 @@ Aborted
 
 ```c
 for (i = LEN-1; i >= 0; i--)
-	putchar(buf[i]);
+    putchar(buf[i]);
 ```
 
 对于数组来说确实没必要搞这么复杂，因为数组既可以从前向后访问也可以从后向前访问，甚至可以随机访问，但有些数据结构的访问并没有这么自由，下一节你就会看到这样的数据结构。
@@ -5074,11 +5074,11 @@ for (i = LEN-1; i >= 0; i--)
 
 ```c
 int maze[5][5] = {
-	0, 1, 0, 0, 0,
-	0, 1, 0, 1, 0,
-	0, 0, 0, 0, 0,
-	0, 1, 1, 1, 0,
-	0, 0, 0, 1, 0,
+    0, 1, 0, 0, 0,
+    0, 1, 0, 1, 0,
+    0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0,
+    0, 0, 0, 1, 0,
 };
 ```
 
@@ -5097,90 +5097,90 @@ int maze[5][5] = {
   
   void push(struct point p)
   {
-  	stack[top++] = p;
+    stack[top++] = p;
   }
   
   struct point pop(void)
   {
-  	return stack[--top];
+    return stack[--top];
   }
   
   int is_empty(void)
   {
-  	return top == 0;
+    return top == 0;
   }
   
   int maze[MAX_ROW][MAX_COL] = {
-  	0, 1, 0, 0, 0,
-  	0, 1, 0, 1, 0,
-  	0, 0, 0, 0, 0,
-  	0, 1, 1, 1, 0,
-  	0, 0, 0, 1, 0,
+    0, 1, 0, 0, 0,
+    0, 1, 0, 1, 0,
+    0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0,
+    0, 0, 0, 1, 0,
   };
   
   void print_maze(void)
   {
-  	int i, j;
-  	for (i = 0; i < MAX_ROW; i++) {
-  		for (j = 0; j < MAX_COL; j++)
-  			printf("%d ", maze[i][j]);
-  		putchar('\n');
-  	}
-  	printf("*********\n");
+    int i, j;
+    for (i = 0; i < MAX_ROW; i++) {
+        for (j = 0; j < MAX_COL; j++)
+            printf("%d ", maze[i][j]);
+        putchar('\n');
+    }
+    printf("*********\n");
   }
   
   struct point predecessor[MAX_ROW][MAX_COL] = {
-  	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
-  	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
-  	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
-  	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
-  	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+    {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+    {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+    {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+    {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+    {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
   };
   
   void visit(int row, int col, struct point pre)
   {
-  	struct point visit_point = { row, col };
-  	maze[row][col] = 2;
-  	predecessor[row][col] = pre;
-  	push(visit_point);
+    struct point visit_point = { row, col };
+    maze[row][col] = 2;
+    predecessor[row][col] = pre;
+    push(visit_point);
   }
   
   int main(void)
   {
-  	struct point p = { 0, 0 };
+    struct point p = { 0, 0 };
   
-  	maze[p.row][p.col] = 2;
-  	push(p);	
-  	
-  	while (!is_empty()) {
-  		p = pop();
-  		if (p.row == MAX_ROW - 1  /* goal */
-  		    && p.col == MAX_COL - 1)
-  			break;
-  		if (p.col+1 < MAX_COL     /* right */
-  		    && maze[p.row][p.col+1] == 0)
-  			visit(p.row, p.col+1, p);
-  		if (p.row+1 < MAX_ROW     /* down */
-  		    && maze[p.row+1][p.col] == 0)
-  			visit(p.row+1, p.col, p);
-  		if (p.col-1 >= 0          /* left */
-  		    && maze[p.row][p.col-1] == 0)
-  			visit(p.row, p.col-1, p);
-  		if (p.row-1 >= 0          /* up */
-  		    && maze[p.row-1][p.col] == 0)
-  			visit(p.row-1, p.col, p);
-  		print_maze();
-  	}
-  	if (p.row == MAX_ROW - 1 && p.col == MAX_COL - 1) {
-  		printf("(%d, %d)\n", p.row, p.col);
-  		while (predecessor[p.row][p.col].row != -1) {
-  			p = predecessor[p.row][p.col];
-  			printf("(%d, %d)\n", p.row, p.col);
-  		}
-  	} else
-  		printf("No path!\n");
+    maze[p.row][p.col] = 2;
+    push(p);    
+    
+    while (!is_empty()) {
+        p = pop();
+        if (p.row == MAX_ROW - 1  /* goal */
+            && p.col == MAX_COL - 1)
+            break;
+        if (p.col+1 < MAX_COL     /* right */
+            && maze[p.row][p.col+1] == 0)
+            visit(p.row, p.col+1, p);
+        if (p.row+1 < MAX_ROW     /* down */
+            && maze[p.row+1][p.col] == 0)
+            visit(p.row+1, p.col, p);
+        if (p.col-1 >= 0          /* left */
+            && maze[p.row][p.col-1] == 0)
+            visit(p.row, p.col-1, p);
+        if (p.row-1 >= 0          /* up */
+            && maze[p.row-1][p.col] == 0)
+            visit(p.row-1, p.col, p);
+        print_maze();
+    }
+    if (p.row == MAX_ROW - 1 && p.col == MAX_COL - 1) {
+        printf("(%d, %d)\n", p.row, p.col);
+        while (predecessor[p.row][p.col].row != -1) {
+            p = predecessor[p.row][p.col];
+            printf("(%d, %d)\n", p.row, p.col);
+        }
+    } else
+        printf("No path!\n");
   
-  	return 0;
+    return 0;
   }
 ```
 
@@ -5303,21 +5303,21 @@ int maze[5][5] = {
 ```c
 将起点标记为已走过并压栈;
 while (栈非空) {
-	从栈顶弹出一个点 p;
-	if (p 这个点是终点)
-		break;
-	否则沿右、下、左、上四个方向探索相邻的点
-	if (和 p 相邻的点有路可走，并且还没走过)
-		将相邻的点标记为已走过并压栈，它的前趋就是 p 点;
+    从栈顶弹出一个点 p;
+    if (p 这个点是终点)
+        break;
+    否则沿右、下、左、上四个方向探索相邻的点
+    if (和 p 相邻的点有路可走，并且还没走过)
+        将相邻的点标记为已走过并压栈，它的前趋就是 p 点;
 }
 if (p 点是终点) {
-	打印p 点的座标;
-	while (p 点有前趋) {
-		p 点 = p 点的前趋;
-		打印 p 点的座标;
-	}
+    打印p 点的座标;
+    while (p 点有前趋) {
+        p 点 = p 点的前趋;
+        打印 p 点的座标;
+    }
 } else
-	没有路线可以到达终点;
+    没有路线可以到达终点;
 ```
 
 我在 `while` 循环的末尾插了打印语句，每探索一步都打印出当前迷宫的状态（标记了哪些点），从打印结果可以看出这种搜索算法的特点是：每次探索完各个方向相邻的点之后，取其中一个相邻的点走下去，一直走到无路可走了再退回来，取另一个相邻的点再走下去。这称为深度优先搜索（DFS，Depth  First Search）。探索迷宫和堆栈变化的过程如下图所示。
@@ -5354,81 +5354,81 @@ if (p 点是终点) {
   
   void enqueue(struct point p)
   {
-  	queue[tail++] = p;
+    queue[tail++] = p;
   }
   
   struct point dequeue(void)
   {
-  	return queue[head++];
+    return queue[head++];
   }
   
   int is_empty(void)
   {
-  	return head == tail;
+    return head == tail;
   }
   
   int maze[MAX_ROW][MAX_COL] = {
-  	0, 1, 0, 0, 0,
-  	0, 1, 0, 1, 0,
-  	0, 0, 0, 0, 0,
-  	0, 1, 1, 1, 0,
-  	0, 0, 0, 1, 0,
+    0, 1, 0, 0, 0,
+    0, 1, 0, 1, 0,
+    0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0,
+    0, 0, 0, 1, 0,
   };
   
   void print_maze(void)
   {
-  	int i, j;
-  	for (i = 0; i < MAX_ROW; i++) {
-  		for (j = 0; j < MAX_COL; j++)
-  			printf("%d ", maze[i][j]);
-  		putchar('\n');
-  	}
-  	printf("*********\n");
+    int i, j;
+    for (i = 0; i < MAX_ROW; i++) {
+        for (j = 0; j < MAX_COL; j++)
+            printf("%d ", maze[i][j]);
+        putchar('\n');
+    }
+    printf("*********\n");
   }
   
   void visit(int row, int col)
   {
-  	struct point visit_point = { row, col, head-1 };
-  	maze[row][col] = 2;
-  	enqueue(visit_point);
+    struct point visit_point = { row, col, head-1 };
+    maze[row][col] = 2;
+    enqueue(visit_point);
   }
   
   int main(void)
   {
-  	struct point p = { 0, 0, -1 };
+    struct point p = { 0, 0, -1 };
   
-  	maze[p.row][p.col] = 2;
-  	enqueue(p);
-  	
-  	while (!is_empty()) {
-  		p = dequeue();
-  		if (p.row == MAX_ROW - 1  /* goal */
-  		    && p.col == MAX_COL - 1)
-  			break;
-  		if (p.col+1 < MAX_COL     /* right */
-  		    && maze[p.row][p.col+1] == 0)
-  			visit(p.row, p.col+1);
-  		if (p.row+1 < MAX_ROW     /* down */
-  		    && maze[p.row+1][p.col] == 0)
-  			visit(p.row+1, p.col);
-  		if (p.col-1 >= 0          /* left */
-  		    && maze[p.row][p.col-1] == 0)
-  			visit(p.row, p.col-1);
-  		if (p.row-1 >= 0          /* up */
-  		    && maze[p.row-1][p.col] == 0)
-  			visit(p.row-1, p.col);
-  		print_maze();
-  	}
-  	if (p.row == MAX_ROW - 1 && p.col == MAX_COL - 1) {
-  		printf("(%d, %d)\n", p.row, p.col);
-  		while (p.predecessor != -1) {
-  			p = queue[p.predecessor];
-  			printf("(%d, %d)\n", p.row, p.col);
-  		}
-  	} else
-  		printf("No path!\n");
+    maze[p.row][p.col] = 2;
+    enqueue(p);
+    
+    while (!is_empty()) {
+        p = dequeue();
+        if (p.row == MAX_ROW - 1  /* goal */
+            && p.col == MAX_COL - 1)
+            break;
+        if (p.col+1 < MAX_COL     /* right */
+            && maze[p.row][p.col+1] == 0)
+            visit(p.row, p.col+1);
+        if (p.row+1 < MAX_ROW     /* down */
+            && maze[p.row+1][p.col] == 0)
+            visit(p.row+1, p.col);
+        if (p.col-1 >= 0          /* left */
+            && maze[p.row][p.col-1] == 0)
+            visit(p.row, p.col-1);
+        if (p.row-1 >= 0          /* up */
+            && maze[p.row-1][p.col] == 0)
+            visit(p.row-1, p.col);
+        print_maze();
+    }
+    if (p.row == MAX_ROW - 1 && p.col == MAX_COL - 1) {
+        printf("(%d, %d)\n", p.row, p.col);
+        while (p.predecessor != -1) {
+            p = queue[p.predecessor];
+            printf("(%d, %d)\n", p.row, p.col);
+        }
+    } else
+        printf("No path!\n");
   
-  	return 0;
+    return 0;
   }
 ```
 
@@ -5560,21 +5560,21 @@ int head = 0, tail = 0;
 ```c
 将起点标记为已走过并入队;
 while (队列非空) {
-	出队一个点 p;
-	if (p 这个点是终点)
-		break;
-	否则沿右、下、左、上四个方向探索相邻的点
-	if (和 p 相邻的点有路可走，并且还没走过)
-		将相邻的点标记为已走过并入队，它的前趋就是刚出队的 p 点;
+    出队一个点 p;
+    if (p 这个点是终点)
+        break;
+    否则沿右、下、左、上四个方向探索相邻的点
+    if (和 p 相邻的点有路可走，并且还没走过)
+        将相邻的点标记为已走过并入队，它的前趋就是刚出队的 p 点;
 }
 if (p 点是终点) {
-	打印 p 点的座标;
-	while (p 点有前趋) {
-		p 点 = p 点的前趋;
-		打印 p 点的座标;
-	}
+    打印 p 点的座标;
+    while (p 点有前趋) {
+        p 点 = p 点的前趋;
+        打印 p 点的座标;
+    }
 } else
-	没有路线可以到达终点;
+    没有路线可以到达终点;
 ```
 
 从打印的搜索过程可以看出，这个算法的特点是沿各个方向同时展开搜索，每个可以走通的方向轮流往前走一步，这称为广度优先搜索（BFS，Breadth First Search）。探索迷宫和队列变化的过程如下图所示。
@@ -5913,24 +5913,24 @@ long double 型通常是比 double 型精度更高的类型，但各平台的实
 在一个表达式中，凡是可以使用 int 或 unsigned int 类型做右值的地方也都可以使用有符号或无符号的 char 型、short 型和 Bit-field。如果原始类型的取值范围都能用 int 型表示，则其类型被提升为 int，如果原始类型的取值范围用 int 型表示不了，则提升为 unsigned int 型，这称为 Integer Promotion。做 Integer Promotion 只影响上述几种类型的值，对其它类型无影响。C99 规定 Integer Promotion 适用于以下几种情况：
 
 1. 如果一个函数的形参类型未知，例如使用了 Old Style C 风格的函数声明（详见[第 3 章「简单函数」第 2 节「自定义函数」](1-C-语言入门/ch03-简单函数#_2-自定义函数)），或者函数的参数列表中有 ...，那么调用函数时要对相应的实参做 Integer Promotion，此外，相应的实参如果是 float 型的也要被提升为 double 型，这条规则称为 Default Argument Promotion。我们知道 `printf` 的参数列表中有 `...`，除了第一个形参之外，其它形参的类型都是未知的，比如有这样的代码：
-	
-	```c
-	char ch = 'A';
-	printf("%c", ch);
-	```
-	
-	`ch` 要被提升为 int 型之后再传给 `printf`。
+    
+    ```c
+    char ch = 'A';
+    printf("%c", ch);
+    ```
+    
+    `ch` 要被提升为 int 型之后再传给 `printf`。
 
 2. 算术运算中的类型转换。有符号或无符号的 char 型、short 型和 Bit-field 在做算术运算之前首先要做 Integer Promotion，然后才能参与计算。例如：
-	
-	```c
-	unsigned char c1 = 255, c2 = 2;
-	int n = c1 + c2;
-	```
-	
-	计算表达式 `c1 + c2` 的过程其实是先把 `c1` 和 `c2` 提升为 int 型然后再相加（unsigned char 的取值范围是 0 ~ 255，完全可以用 int 表示，所以提升为 int 就可以了，不需要提升为 unsigned int），整个表达式的值也是 int 型，最后的结果是 257。假如没有这个提升的过程，`c1 + c2` 就溢出了，溢出会得到什么结果是 Undefined，在大多数平台上会把进位截掉，得到的结果应该是 1。
+    
+    ```c
+    unsigned char c1 = 255, c2 = 2;
+    int n = c1 + c2;
+    ```
+    
+    计算表达式 `c1 + c2` 的过程其实是先把 `c1` 和 `c2` 提升为 int 型然后再相加（unsigned char 的取值范围是 0 ~ 255，完全可以用 int 表示，所以提升为 int 就可以了，不需要提升为 unsigned int），整个表达式的值也是 int 型，最后的结果是 257。假如没有这个提升的过程，`c1 + c2` 就溢出了，溢出会得到什么结果是 Undefined，在大多数平台上会把进位截掉，得到的结果应该是 1。
 
-	除了 + 号之外还有哪些运算符在计算之前需要做 Integer Promotion 呢？我们在下一小节先介绍 Usual Arithmetic Conversion 规则，然后再解答这个问题。
+    除了 + 号之外还有哪些运算符在计算之前需要做 Integer Promotion 呢？我们在下一小节先介绍 Usual Arithmetic Conversion 规则，然后再解答这个问题。
 
 #### 2.2.3.2. Usual Arithmetic Conversion
 
@@ -5940,10 +5940,10 @@ long double 型通常是比 double 型精度更高的类型，但各平台的实
 2. 否则，如果有一边的类型是 double，则把另一边也转成 double。
 3. 否则，如果有一边的类型是 float，则把另一边也转成 float。
 4. 否则，两边应该都是整型，首先按上一小节讲过的规则对 `a` 和 `b` 做 Integer Promotion，然后如果类型仍不相同，则需要继续转换。首先我们规定 char、short、int、long、long long 的转换级别（Integer Conversion Rank）一个比一个高，同一类型的有符号和无符号数具有相同的 Rank。转换规则如下：
-	1. 如果两边都是有符号数，或者都是无符号数，那么较低 Rank 的类型转换成较高 Rank 的类型。例如 unsigned int 和 unsigned long 做算术运算时都转成 unsigned long。
-	2. 否则，如果一边是无符号数另一边是有符号数，无符号数的 Rank 不低于有符号数的 Rank，则把有符号数转成另一边的无符号类型。例如 unsigned long 和 int 做算术运算时都转成 unsigned long，unsigned long 和 long 做算术运算时也都转成 unsigned long。
-	3. 剩下的情况是：一边有符号另一边无符号，并且无符号数的 Rank 低于有符号数的 Rank。这时又分为两种情况，如果这个有符号数类型能够覆盖这个无符号数类型的取值范围，则把无符号数转成另一边的有符号类型。例如遵循 LP64 的平台上 unsigned int 和 long 在做算术运算时都转成 long。
-	4. 否则，也就是这个有符号数类型不足以覆盖这个无符号数类型的取值范围，则把两边都转成有符号数的 Rank 对应的无符号类型。例如在遵循 ILP32 的平台上 unsigned int 和 long 在做算术运算时都转成 unsigned long。
+    1. 如果两边都是有符号数，或者都是无符号数，那么较低 Rank 的类型转换成较高 Rank 的类型。例如 unsigned int 和 unsigned long 做算术运算时都转成 unsigned long。
+    2. 否则，如果一边是无符号数另一边是有符号数，无符号数的 Rank 不低于有符号数的 Rank，则把有符号数转成另一边的无符号类型。例如 unsigned long 和 int 做算术运算时都转成 unsigned long，unsigned long 和 long 做算术运算时也都转成 unsigned long。
+    3. 剩下的情况是：一边有符号另一边无符号，并且无符号数的 Rank 低于有符号数的 Rank。这时又分为两种情况，如果这个有符号数类型能够覆盖这个无符号数类型的取值范围，则把无符号数转成另一边的有符号类型。例如遵循 LP64 的平台上 unsigned int 和 long 在做算术运算时都转成 long。
+    4. 否则，也就是这个有符号数类型不足以覆盖这个无符号数类型的取值范围，则把两边都转成有符号数的 Rank 对应的无符号类型。例如在遵循 ILP32 的平台上 unsigned int 和 long 在做算术运算时都转成 unsigned long。
 
 可见有符号和无符号整数的转换规则是十分复杂的，虽然这是有明确规定的，不属于阴暗角落，但为了程序的可读性不应该依赖这些规则来写代码。我讲这些规则，不是为了让你用，而是为了让你了解有符号数和无符号数混用会非常麻烦，从而避免触及这些规则，并且在程序出错时记得往这上面找原因。所以这些规则不需要牢记，但要知道有这么回事，以便在用到的时候能找到我书上的这一段。
 
@@ -6082,53 +6082,53 @@ unsigned int i = ~c;
 如果要对一个整数中的某些位进行操作，怎样表示这些位在整数中的位置呢？可以用掩码（Mask）来表示。比如掩码 `0x0000ff00` 表示对一个 32 位整数的 8 ~ 15 位进行操作，举例如下。
 
 1. 取出 8 ~ 15 位。
-	
-	```c
-	unsigned int a, b, mask = 0x0000ff00;
-	a = 0x12345678;
-	b = (a & mask) >> 8; /* 0x00000056 */
-	```
-	
-	这样也可以达到同样的效果：
-	
-	```c
-	b = (a >> 8) & ~(~0U << 8);
-	```
-	
+    
+    ```c
+    unsigned int a, b, mask = 0x0000ff00;
+    a = 0x12345678;
+    b = (a & mask) >> 8; /* 0x00000056 */
+    ```
+    
+    这样也可以达到同样的效果：
+    
+    ```c
+    b = (a >> 8) & ~(~0U << 8);
+    ```
+    
 2. 将 8 ~ 15 位清 0。
-	
-	```c
-	unsigned int a, b, mask = 0x0000ff00;
-	a = 0x12345678;
-	b = a & ~mask; /* 0x12340078 */
-	```
-	
+    
+    ```c
+    unsigned int a, b, mask = 0x0000ff00;
+    a = 0x12345678;
+    b = a & ~mask; /* 0x12340078 */
+    ```
+    
 3. 将 8 ~ 15 位置 1。
-	
-	```c
-	unsigned int a, b, mask = 0x0000ff00;
-	a = 0x12345678;
-	b = a | mask; /* 0x1234ff78 */
-	```
+    
+    ```c
+    unsigned int a, b, mask = 0x0000ff00;
+    a = 0x12345678;
+    b = a | mask; /* 0x1234ff78 */
+    ```
 
 #### 2.3.1.4. 异或运算的一些特性
 
 1. 一个数和自己做异或的结果是 0。如果需要一个常数 0，x86 平台的编译器可能会生成这样的指令：`xorl %eax, %eax`。不管 `eax` 寄存器里的值原来是多少，做异或运算都能得到 0，这条指令比同样效果的 `movl $0, %eax` 指令快，因为前者只需要在 CPU 内部计算，而后者需要访问内存，在[下一章第 5 节「Memory Hierarchy」](2-C-语言本质/ch17-计算机体系结构基础#_5-memory-hierarchy)详细介绍。
 2. 从异或的真值表可以看出，不管是 0 还是 1，和 0 做异或保持原值不变，和 1 做异或得到原值的相反值。可以利用这个特性配合掩码实现某些位的翻转，例如：
-	
-	```c
-	unsigned int a, b, mask = 1U << 6;
-	a = 0x12345678;
-	b = a ^ mask; /* flip the 6th bit */
-	```
+    
+    ```c
+    unsigned int a, b, mask = 1U << 6;
+    a = 0x12345678;
+    b = a ^ mask; /* flip the 6th bit */
+    ```
 3. 如果 a1 ^ a2 ^ a3 ^ ... ^ an 的结果是 1，则表示 a1、a2、a3...an 之中 1 的个数为奇数个，否则为偶数个。这条性质可用于奇偶校验（Parity Check），比如在串口通信过程中，每个字节的数据都计算一个校验位，数据和校验位一起发送出去，这样接收方可以根据校验位粗略地判断接收到的数据是否有误。
 4. x ^ x ^ y == y，因为 x ^ x == 0，0 ^ y == y。这个性质有什么用呢？我们来看这样一个问题：交换两个变量的值，不得借助额外的存储空间，所以就不能采用 `temp = a; a = b; b = temp;` 的办法了。利用位运算可以这样做交换：
-	
-	```c
-	a = a ^ b;
-	b = b ^ a;
-	a = a ^ b;
-	```
+    
+    ```c
+    a = a ^ b;
+    b = b ^ a;
+    a = a ^ b;
+    ```
 
 分析一下这个过程。为了避免混淆，把 a 和 b 的初值分别记为 a<sub>0</sub> 和 b<sub>0</sub>。第一行，`a = a<sub>0</sub> ^ b<sub>0</sub>`；第二行，把 a 的新值代入，得到 `b = b<sub>0</sub> ^ a<sub>0</sub> ^ b<sub>0</sub>`，等号右边的 b<sub>0</sub> 相当于上面公式中的 x，a<sub>0</sub> 相当于 y，所以结果为 a<sub>0</sub>；第三行，把 a 和 b 的新值代入，得到 `a = a<sub>0</sub> ^ b<sub>0</sub> ^ a<sub>0</sub>`，结果为 b<sub>0</sub>。注意这个过程不能把同一个变量自己跟自己交换，而利用中间变量 `temp` 则可以交换。
 
@@ -6152,9 +6152,9 @@ unsigned int i = ~c;
 
 ```c
 if (表达式1)
-	return 表达式2;
+    return 表达式2;
 else
-	return 表达式3;
+    return 表达式3;
 ```
 
 `表达式1` 相当于 `if` 语句的控制表达式，因此它的值必须是标量类型，而 `表达式2`和 `表达式3` 相当于同一个函数在不同情况下的返回值，因此它们的类型要求一致，也要做 Usual Arithmetic Conversion。
@@ -6164,7 +6164,7 @@ else
 ```c
 int max(int a, int b)
 {
-	return (a > b) ? a : b;
+    return (a > b) ? a : b;
 }
 ```
 
@@ -6234,30 +6234,30 @@ a = (++a)+(++a)+(++a)+(++a);
 1. 调用一个函数时，在所有准备工作做完之后、函数调用开始之前是 Sequence Point。比如调用 `foo(f(), g())` 时，`foo`、`f()`、`g()` 这三个表达式哪个先求值哪个后求值是 Unspecified，但是必须都求值完了才能做最后的函数调用，所以 `f()`和`g()` 的 Side Effect 按什么顺序发生不一定，但必定在这些 Side Effect 全部作用完之后才开始调用 `foo` 函数。
 2. 条件运算符 `?:`、逗号运算符、逻辑与 `&&`、逻辑或 `||` 的第一个操作数求值之后是 Sequence Point。我们刚讲过条件运算符和逗号运算符，条件运算符要根据 `表达式1` 的值是否为真决定下一步求 `表达式2` 还是 `表达式3` 的值，如果决定求 `表达式2` 的值，`表达式3` 就不会被求值了，反之也一样，`,` 运算符也是这样，`表达式1` 求值结束才继续求 `表达式2` 的值。<br>
    逻辑与和逻辑或早在[第 4 章「分支语句」第 3 节「布尔代数」](1-C-语言入门/ch04-分支语句#_3-布尔代数)就讲了，但在初学阶段我一直回避它们的操作数求值顺序问题。这两个运算符和条件运算符类似，先求左操作数的值，然后根据这个值是否为真，右操作数可能被求值，也可能不被求值。比如[第 8 章例 8.5 「剪刀石头布」](1-C-语言入门/ch08-数组#e8-5)这个程序中的这几句：
-	
-	```c
-	ret = scanf("%d", &man);
-	if (ret != 1 || man < 0 || man > 2) {
-		printf("Invalid input! Please input 0, 1 or 2.\n");
-		continue;
-	}
-	```
+    
+    ```c
+    ret = scanf("%d", &man);
+    if (ret != 1 || man < 0 || man > 2) {
+        printf("Invalid input! Please input 0, 1 or 2.\n");
+        continue;
+    }
+    ```
 
-	其实可以写得更简单（类似于 *K&R* 的简洁风格）：
-	
-	```c
-	if (scanf("%d", &man) != 1 || man < 0 || man > 2) {
-		printf("Invalid input! Please input 0, 1 or 2.\n");
-		continue;
-	}
-	```
-	
-	这个控制表达式的求值顺序是：先求 `scanf("%d", &man) = 1` 的值，如果 `scanf` 调用失败，则返回值不等于 1 成立，`||` 运算有一个操作数为真则整个表达式为真，这时直接执行下一句 `printf`，根本不会再去求 `man < 0` 或 `man > 2` 的值；如果 `scanf` 调用成功，则读入的数保存在变量 `man` 中，并且返回值等于 1，那么说它不等于 1 就不成立了，第一个 `||` 运算的左操作数为假，就会去求右操作数 `man < 0` 的值作为整个表达式的值，这时变量 `man` 的值正是 `scanf` 读上来的值，我们判断它是否在 [0, 2] 之间，如果 `man < 0` 不成立，则整个表达式 `scanf("%d", &man) != 1 || man < 0 ` 的值为假，也就是第二个 `||` 运算的左操作数为假，所以最后求右操作数 `man > 2` 的值作为整个表达式的值。
-	`&&` 运算与此类似，`a && b` 的计算过程是：首先求表达式 `a` 的值，如果 `a` 的值是假则整个表达式的值是假，不会再去求 `b` 的值；如果 `a` 的值是真，则下一步求 `b` 的值作为整个表达式的值。所以，`a && b` 相当于 「if a then b」，而 `a || b` 相当于「if not a then b」。这种特性称为 Short-circuit，很多人喜欢利用 Short-circuit 特性简化代码。
+    其实可以写得更简单（类似于 *K&R* 的简洁风格）：
+    
+    ```c
+    if (scanf("%d", &man) != 1 || man < 0 || man > 2) {
+        printf("Invalid input! Please input 0, 1 or 2.\n");
+        continue;
+    }
+    ```
+    
+    这个控制表达式的求值顺序是：先求 `scanf("%d", &man) = 1` 的值，如果 `scanf` 调用失败，则返回值不等于 1 成立，`||` 运算有一个操作数为真则整个表达式为真，这时直接执行下一句 `printf`，根本不会再去求 `man < 0` 或 `man > 2` 的值；如果 `scanf` 调用成功，则读入的数保存在变量 `man` 中，并且返回值等于 1，那么说它不等于 1 就不成立了，第一个 `||` 运算的左操作数为假，就会去求右操作数 `man < 0` 的值作为整个表达式的值，这时变量 `man` 的值正是 `scanf` 读上来的值，我们判断它是否在 [0, 2] 之间，如果 `man < 0` 不成立，则整个表达式 `scanf("%d", &man) != 1 || man < 0 ` 的值为假，也就是第二个 `||` 运算的左操作数为假，所以最后求右操作数 `man > 2` 的值作为整个表达式的值。
+    `&&` 运算与此类似，`a && b` 的计算过程是：首先求表达式 `a` 的值，如果 `a` 的值是假则整个表达式的值是假，不会再去求 `b` 的值；如果 `a` 的值是真，则下一步求 `b` 的值作为整个表达式的值。所以，`a && b` 相当于 「if a then b」，而 `a || b` 相当于「if not a then b」。这种特性称为 Short-circuit，很多人喜欢利用 Short-circuit 特性简化代码。
 3. 在一个完整的声明末尾是 Sequence Point，所谓完整的声明是指这个声明不是另外一个声明的一部分。比如声明 `int a[10], b[20];`，在 `a[10]` 末尾是 Sequence Point，在 `b[20]` 末尾也是。
 4. 在一个完整的表达式末尾是 Sequence Point，所谓完整的表达式是指这个表达式不是另外一个表达式的一部分。所以如果有 `f(); g();` 这样两条语句，`f()` 和 `g()` 是两个完整的表达式，`f()` 的 Side Effect 必定在 `g()` 之前发生。
 5. 在库函数即将返回时是 Sequence Point。这条规则似乎可以包含在上一条规则里面，因为函数返回时必然会结束掉一个完整的表达式。而事实上很多库函数是以宏定义的形式实现的（[第 21 章第 2.1 节「函数式宏定义」]()），并不是真正的函数，所以才需要有这条规则。
-	还有两种 Sequence Point 和某些 C 标准库函数的执行过程相关，此处从略，有兴趣的读者可参考 [C99]()的 Annex C。
+    还有两种 Sequence Point 和某些 C 标准库函数的执行过程相关，此处从略，有兴趣的读者可参考 [C99]()的 Annex C。
 
 现在可以分析一下本节开头的例子了。`a = (++a)+(++a)+(++a)+(++a);` 的结果之所以是 Undefined，因为在这个表达式中有五个 Side Effect 都在改变 `a` 的值，这些 Side Effect 按什么顺序发生不一定，只知道在整个表达式求值结束时一定都发生了。比如现在求第二个 `++a` 的值，这时第一个、第三个、第四个 `++a` 的 Side Effect 发生了没有，`a` 的值被加过几次了，这些都不确定，所以第二个 `++a` 的值也不确定。这行代码用不同平台的不同编译器来编译结果是不同的，甚至在同一平台上用同一编译器的不同版本来编译也可能不同。
 
@@ -6293,13 +6293,13 @@ a = (++a)+(++a)+(++a)+(++a);
 #### 2.3.4.1. 习题
 
 1. 以下代码得到的 `sum` 是 `0xffff`，对吗？
-	
-	```c
-	int i = 0;
-	unsigned int sum = 0;
-	for (; i < 16; i++)
-		sum = sum + 1U<<i;
-	```
+    
+    ```c
+    int i = 0;
+    unsigned int sum = 0;
+    for (; i < 16; i++)
+        sum = sum + 1U<<i;
+    ```
 
 ## 2.4. 计算机体系结构基础
 
@@ -6451,20 +6451,20 @@ MMU 除了做地址转换之外，还提供内存保护机制。各种体系结�
 
 ```asm6502
   #PURPOSE: Simple program that exits and returns a
-  #	  status code back to the Linux kernel
+  #   status code back to the Linux kernel
   #
   #INPUT:   none
   #
   #OUTPUT:  returns a status code. This can be viewed
-  #	  by typing
+  #   by typing
   #
-  #	  echo $?
+  #   echo $?
   #
-  #	  after running the program
+  #   after running the program
   #
   #VARIABLES:
-  #	  %eax holds the system call number
-  #	  %ebx holds the return status
+  #   %eax holds the system call number
+  #   %ebx holds the return status
   #
    .section .data
   
@@ -6577,7 +6577,7 @@ x86 的特殊寄存器有 `ebp`、`esp`、`eip`、`eflags`。`eip` 是程序计�
 
 ```asm6502
   #PURPOSE: This program finds the maximum number of a
-  #	  set of data items.
+  #   set of data items.
   #
   #VARIABLES: The registers have the following uses:
   #
@@ -6591,32 +6591,32 @@ x86 的特殊寄存器有 `ebp`、`esp`、`eip`、`eflags`。`eip` 是程序计�
   # to terminate the data
   #
    .section .data
-  data_items: 		#These are the data items
+  data_items:       #These are the data items
    .long 3,67,34,222,45,75,54,34,44,33,22,11,66,0
   
    .section .text
    .globl _start
   _start:
-   movl $0, %edi  	# move 0 into the index register
+   movl $0, %edi    # move 0 into the index register
    movl data_items(,%edi,4), %eax # load the first byte of data
-   movl %eax, %ebx 	# since this is the first item, %eax is
-  			# the biggest
+   movl %eax, %ebx  # since this is the first item, %eax is
+            # the biggest
   
-  start_loop: 		# start loop
-   cmpl $0, %eax  	# check to see if we've hit the end
+  start_loop:       # start loop
+   cmpl $0, %eax    # check to see if we've hit the end
    je loop_exit
-   incl %edi 		# load next value
+   incl %edi        # load next value
    movl data_items(,%edi,4), %eax
-   cmpl %ebx, %eax 	# compare values
-   jle start_loop 	# jump to loop beginning if the new
-   			# one isn't bigger
-   movl %eax, %ebx 	# move the value as the largest
-   jmp start_loop 	# jump to loop beginning
+   cmpl %ebx, %eax  # compare values
+   jle start_loop   # jump to loop beginning if the new
+            # one isn't bigger
+   movl %eax, %ebx  # move the value as the largest
+   jmp start_loop   # jump to loop beginning
   
   loop_exit:
    # %ebx is the status code for the _exit system call
    # and it already has the maximum number
-   movl $1, %eax  	#1 is the _exit() syscall
+   movl $1, %eax    #1 is the _exit() syscall
    int $0x80
   ```
   
@@ -6938,23 +6938,23 @@ max.o:     file format elf32-i386
 Disassembly of section .text:
 
 00000000 <_start>:
-   0:	bf 00 00 00 00       	mov    $0x0,%edi
-   5:	8b 04 bd 00 00 00 00 	mov    0x0(,%edi,4),%eax
-   c:	89 c3                	mov    %eax,%ebx
+   0:   bf 00 00 00 00          mov    $0x0,%edi
+   5:   8b 04 bd 00 00 00 00    mov    0x0(,%edi,4),%eax
+   c:   89 c3                   mov    %eax,%ebx
 
 0000000e <start_loop>:
-   e:	83 f8 00             	cmp    $0x0,%eax
-  11:	74 10                	je     23 <loop_exit>
-  13:	47                   	inc    %edi
-  14:	8b 04 bd 00 00 00 00 	mov    0x0(,%edi,4),%eax
-  1b:	39 d8                	cmp    %ebx,%eax
-  1d:	7e ef                	jle    e <start_loop>
-  1f:	89 c3                	mov    %eax,%ebx
-  21:	eb eb                	jmp    e <start_loop>
+   e:   83 f8 00                cmp    $0x0,%eax
+  11:   74 10                   je     23 <loop_exit>
+  13:   47                      inc    %edi
+  14:   8b 04 bd 00 00 00 00    mov    0x0(,%edi,4),%eax
+  1b:   39 d8                   cmp    %ebx,%eax
+  1d:   7e ef                   jle    e <start_loop>
+  1f:   89 c3                   mov    %eax,%ebx
+  21:   eb eb                   jmp    e <start_loop>
 
 00000023 <loop_exit>:
-  23:	b8 01 00 00 00       	mov    $0x1,%eax
-  28:	cd 80                	int    $0x80
+  23:   b8 01 00 00 00          mov    $0x1,%eax
+  28:   cd 80                   int    $0x80
 ```
 
 左边是机器指令的字节，右边是反汇编结果。显然，所有的符号都被替换成地址了，比如 `je     23`，注意没有加 `$` 的数表示内存地址，而不表示立即数。这条指令后面的 `<loop_exit>` 并不是指令的一部分，而是反汇编器从 `.symtab` 和 `.strtab` 中查到的符号名称，写在后面是为了有更好的可读性。目前所有指令中用到的符号地址都是相对地址，下一步链接器要修改这些指令，把其中的地址都改成加载时的内存地址，这些指令才能正确执行。
@@ -7058,34 +7058,34 @@ max:     file format elf32-i386
 Disassembly of section .text:
 
 08048074 <_start>:
- 8048074:	bf 00 00 00 00       	mov    $0x0,%edi
- 8048079:	8b 04 bd a0 90 04 08 	mov    0x80490a0(,%edi,4),%eax
- 8048080:	89 c3                	mov    %eax,%ebx
+ 8048074:   bf 00 00 00 00          mov    $0x0,%edi
+ 8048079:   8b 04 bd a0 90 04 08    mov    0x80490a0(,%edi,4),%eax
+ 8048080:   89 c3                   mov    %eax,%ebx
 
 08048082 <start_loop>:
- 8048082:	83 f8 00             	cmp    $0x0,%eax
- 8048085:	74 10                	je     8048097 <loop_exit>
- 8048087:	47                   	inc    %edi
- 8048088:	8b 04 bd a0 90 04 08 	mov    0x80490a0(,%edi,4),%eax
- 804808f:	39 d8                	cmp    %ebx,%eax
- 8048091:	7e ef                	jle    8048082 <start_loop>
- 8048093:	89 c3                	mov    %eax,%ebx
- 8048095:	eb eb                	jmp    8048082 <start_loop>
+ 8048082:   83 f8 00                cmp    $0x0,%eax
+ 8048085:   74 10                   je     8048097 <loop_exit>
+ 8048087:   47                      inc    %edi
+ 8048088:   8b 04 bd a0 90 04 08    mov    0x80490a0(,%edi,4),%eax
+ 804808f:   39 d8                   cmp    %ebx,%eax
+ 8048091:   7e ef                   jle    8048082 <start_loop>
+ 8048093:   89 c3                   mov    %eax,%ebx
+ 8048095:   eb eb                   jmp    8048082 <start_loop>
 
 08048097 <loop_exit>:
- 8048097:	b8 01 00 00 00       	mov    $0x1,%eax
- 804809c:	cd 80                	int    $0x80
+ 8048097:   b8 01 00 00 00          mov    $0x1,%eax
+ 804809c:   cd 80                   int    $0x80
 ```
 
 指令中的相对地址都改成绝对地址了。我们仔细检查一下改了哪些地方。首先看跳转指令，原来目标文件的指令是这样：
 
 ```asm6502
 ...
-  11:	74 10                	je     23 <loop_exit>
+  11:   74 10                   je     23 <loop_exit>
 ...
-  1d:	7e ef                	jle    e <start_loop>
+  1d:   7e ef                   jle    e <start_loop>
 ...
-  21:	eb eb                	jmp    e <start_loop>
+  21:   eb eb                   jmp    e <start_loop>
 ...
 ```
 
@@ -7093,11 +7093,11 @@ Disassembly of section .text:
 
 ```asm6502
 ...
- 8048085:	74 10                	je     8048097 <loop_exit>
+ 8048085:   74 10                   je     8048097 <loop_exit>
 ...
- 8048091:	7e ef                	jle    8048082 <start_loop>
+ 8048091:   7e ef                   jle    8048082 <start_loop>
 ...
- 8048095:	eb eb                	jmp    8048082 <start_loop>
+ 8048095:   eb eb                   jmp    8048082 <start_loop>
 ...
 ```
 
@@ -7107,9 +7107,9 @@ Disassembly of section .text:
 
 ```asm6502
 ...
-   5:	8b 04 bd 00 00 00 00 	mov    0x0(,%edi,4),%eax
+   5:   8b 04 bd 00 00 00 00    mov    0x0(,%edi,4),%eax
 ...
-  14:	8b 04 bd 00 00 00 00 	mov    0x0(,%edi,4),%eax
+  14:   8b 04 bd 00 00 00 00    mov    0x0(,%edi,4),%eax
 ...
 ```
 
@@ -7117,9 +7117,9 @@ Disassembly of section .text:
 
 ```asm6502
 ...
- 8048079:	8b 04 bd a0 90 04 08 	mov    0x80490a0(,%edi,4),%eax
+ 8048079:   8b 04 bd a0 90 04 08    mov    0x80490a0(,%edi,4),%eax
 ...
- 8048088:	8b 04 bd a0 90 04 08 	mov    0x80490a0(,%edi,4),%eax
+ 8048088:   8b 04 bd a0 90 04 08    mov    0x80490a0(,%edi,4),%eax
 ...
 ```
 
@@ -7150,19 +7150,19 @@ Relocation section '.rel.text' at offset 0x2b0 contains 2 entries:
 ```c
 int bar(int c, int d)
 {
-	int e = c + d;
-	return e;
+    int e = c + d;
+    return e;
 }
 
 int foo(int a, int b)
 {
-	return bar(a, b);
+    return bar(a, b);
 }
 
 int main(void)
 {
-	foo(2, 3);
-	return 0;
+    foo(2, 3);
+    return 0;
 }
 ```
 
@@ -7175,61 +7175,61 @@ $ objdump -dS a.out
 08048394 <bar>:
 int bar(int c, int d)
 {
- 8048394:	55                   	push   %ebp
- 8048395:	89 e5                	mov    %esp,%ebp
- 8048397:	83 ec 10             	sub    $0x10,%esp
-	int e = c + d;
- 804839a:	8b 55 0c             	mov    0xc(%ebp),%edx
- 804839d:	8b 45 08             	mov    0x8(%ebp),%eax
- 80483a0:	01 d0                	add    %edx,%eax
- 80483a2:	89 45 fc             	mov    %eax,-0x4(%ebp)
-	return e;
- 80483a5:	8b 45 fc             	mov    -0x4(%ebp),%eax
+ 8048394:   55                      push   %ebp
+ 8048395:   89 e5                   mov    %esp,%ebp
+ 8048397:   83 ec 10                sub    $0x10,%esp
+    int e = c + d;
+ 804839a:   8b 55 0c                mov    0xc(%ebp),%edx
+ 804839d:   8b 45 08                mov    0x8(%ebp),%eax
+ 80483a0:   01 d0                   add    %edx,%eax
+ 80483a2:   89 45 fc                mov    %eax,-0x4(%ebp)
+    return e;
+ 80483a5:   8b 45 fc                mov    -0x4(%ebp),%eax
 }
- 80483a8:	c9                   	leave  
- 80483a9:	c3                   	ret    
+ 80483a8:   c9                      leave  
+ 80483a9:   c3                      ret    
 
 080483aa <foo>:
 
 int foo(int a, int b)
 {
- 80483aa:	55                   	push   %ebp
- 80483ab:	89 e5                	mov    %esp,%ebp
- 80483ad:	83 ec 08             	sub    $0x8,%esp
-	return bar(a, b);
- 80483b0:	8b 45 0c             	mov    0xc(%ebp),%eax
- 80483b3:	89 44 24 04          	mov    %eax,0x4(%esp)
- 80483b7:	8b 45 08             	mov    0x8(%ebp),%eax
- 80483ba:	89 04 24             	mov    %eax,(%esp)
- 80483bd:	e8 d2 ff ff ff       	call   8048394 <bar>
+ 80483aa:   55                      push   %ebp
+ 80483ab:   89 e5                   mov    %esp,%ebp
+ 80483ad:   83 ec 08                sub    $0x8,%esp
+    return bar(a, b);
+ 80483b0:   8b 45 0c                mov    0xc(%ebp),%eax
+ 80483b3:   89 44 24 04             mov    %eax,0x4(%esp)
+ 80483b7:   8b 45 08                mov    0x8(%ebp),%eax
+ 80483ba:   89 04 24                mov    %eax,(%esp)
+ 80483bd:   e8 d2 ff ff ff          call   8048394 <bar>
 }
- 80483c2:	c9                   	leave  
- 80483c3:	c3                   	ret    
+ 80483c2:   c9                      leave  
+ 80483c3:   c3                      ret    
 
 080483c4 <main>:
 
 int main(void)
 {
- 80483c4:	8d 4c 24 04          	lea    0x4(%esp),%ecx
- 80483c8:	83 e4 f0             	and    $0xfffffff0,%esp
- 80483cb:	ff 71 fc             	pushl  -0x4(%ecx)
- 80483ce:	55                   	push   %ebp
- 80483cf:	89 e5                	mov    %esp,%ebp
- 80483d1:	51                   	push   %ecx
- 80483d2:	83 ec 08             	sub    $0x8,%esp
-	foo(2, 3);
- 80483d5:	c7 44 24 04 03 00 00 	movl   $0x3,0x4(%esp)
- 80483dc:	00 
- 80483dd:	c7 04 24 02 00 00 00 	movl   $0x2,(%esp)
- 80483e4:	e8 c1 ff ff ff       	call   80483aa <foo>
-	return 0;
- 80483e9:	b8 00 00 00 00       	mov    $0x0,%eax
+ 80483c4:   8d 4c 24 04             lea    0x4(%esp),%ecx
+ 80483c8:   83 e4 f0                and    $0xfffffff0,%esp
+ 80483cb:   ff 71 fc                pushl  -0x4(%ecx)
+ 80483ce:   55                      push   %ebp
+ 80483cf:   89 e5                   mov    %esp,%ebp
+ 80483d1:   51                      push   %ecx
+ 80483d2:   83 ec 08                sub    $0x8,%esp
+    foo(2, 3);
+ 80483d5:   c7 44 24 04 03 00 00    movl   $0x3,0x4(%esp)
+ 80483dc:   00 
+ 80483dd:   c7 04 24 02 00 00 00    movl   $0x2,(%esp)
+ 80483e4:   e8 c1 ff ff ff          call   80483aa <foo>
+    return 0;
+ 80483e9:   b8 00 00 00 00          mov    $0x0,%eax
 }
- 80483ee:	83 c4 08             	add    $0x8,%esp
- 80483f1:	59                   	pop    %ecx
- 80483f2:	5d                   	pop    %ebp
- 80483f3:	8d 61 fc             	lea    -0x4(%ecx),%esp
- 80483f6:	c3                   	ret   
+ 80483ee:   83 c4 08                add    $0x8,%esp
+ 80483f1:   59                      pop    %ecx
+ 80483f2:   5d                      pop    %ebp
+ 80483f3:   8d 61 fc                lea    -0x4(%ecx),%esp
+ 80483f6:   c3                      ret   
 ...
 ```
 
@@ -7241,63 +7241,63 @@ int main(void)
   (gdb) start
   ...
   main () at main.c:14
-  14		foo(2, 3);
+  14        foo(2, 3);
   (gdb) s
   foo (a=2, b=3) at main.c:9
-  9		return bar(a, b);
+  9     return bar(a, b);
   (gdb) s
   bar (c=2, d=3) at main.c:3
-  3		int e = c + d;
+  3     int e = c + d;
   (gdb) disassemble 
   Dump of assembler code for function bar:
-  0x08048394 <bar+0>:	push   %ebp
-  0x08048395 <bar+1>:	mov    %esp,%ebp
-  0x08048397 <bar+3>:	sub    $0x10,%esp
-  0x0804839a <bar+6>:	mov    0xc(%ebp),%edx
-  0x0804839d <bar+9>:	mov    0x8(%ebp),%eax
-  0x080483a0 <bar+12>:	add    %edx,%eax
-  0x080483a2 <bar+14>:	mov    %eax,-0x4(%ebp)
-  0x080483a5 <bar+17>:	mov    -0x4(%ebp),%eax
-  0x080483a8 <bar+20>:	leave  
-  0x080483a9 <bar+21>:	ret    
+  0x08048394 <bar+0>:   push   %ebp
+  0x08048395 <bar+1>:   mov    %esp,%ebp
+  0x08048397 <bar+3>:   sub    $0x10,%esp
+  0x0804839a <bar+6>:   mov    0xc(%ebp),%edx
+  0x0804839d <bar+9>:   mov    0x8(%ebp),%eax
+  0x080483a0 <bar+12>:  add    %edx,%eax
+  0x080483a2 <bar+14>:  mov    %eax,-0x4(%ebp)
+  0x080483a5 <bar+17>:  mov    -0x4(%ebp),%eax
+  0x080483a8 <bar+20>:  leave  
+  0x080483a9 <bar+21>:  ret    
   End of assembler dump.
   (gdb) si
-  0x0804839d	3		int e = c + d;
+  0x0804839d    3       int e = c + d;
   (gdb) si
-  0x080483a0	3		int e = c + d;
+  0x080483a0    3       int e = c + d;
   (gdb) si
-  0x080483a2	3		int e = c + d;
+  0x080483a2    3       int e = c + d;
   (gdb) si
-  4		return e;
+  4     return e;
   (gdb) si
-  5	}
+  5 }
   (gdb) bt
   #0  bar (c=2, d=3) at main.c:5
   #1  0x080483c2 in foo (a=2, b=3) at main.c:9
   #2  0x080483e9 in main () at main.c:14
   (gdb) info registers 
-  eax            0x5	5
-  ecx            0xbff1c440	-1074674624
-  edx            0x3	3
-  ebx            0xb7fe6ff4	-1208061964
-  esp            0xbff1c3f4	0xbff1c3f4
-  ebp            0xbff1c404	0xbff1c404
-  esi            0x8048410	134513680
-  edi            0x80482e0	134513376
-  eip            0x80483a8	0x80483a8 <bar+20>
-  eflags         0x200206	[ PF IF ID ]
-  cs             0x73	115
-  ss             0x7b	123
-  ds             0x7b	123
-  es             0x7b	123
-  fs             0x0	0
-  gs             0x33	51
+  eax            0x5    5
+  ecx            0xbff1c440 -1074674624
+  edx            0x3    3
+  ebx            0xb7fe6ff4 -1208061964
+  esp            0xbff1c3f4 0xbff1c3f4
+  ebp            0xbff1c404 0xbff1c404
+  esi            0x8048410  134513680
+  edi            0x80482e0  134513376
+  eip            0x80483a8  0x80483a8 <bar+20>
+  eflags         0x200206   [ PF IF ID ]
+  cs             0x73   115
+  ss             0x7b   123
+  ds             0x7b   123
+  es             0x7b   123
+  fs             0x0    0
+  gs             0x33   51
   (gdb) x/20 $esp
-  0xbff1c3f4:	0x00000000	0xbff1c6f7	0xb7efbdae	0x00000005
-  0xbff1c404:	0xbff1c414	0x080483c2	0x00000002	0x00000003
-  0xbff1c414:	0xbff1c428	0x080483e9	0x00000002	0x00000003
-  0xbff1c424:	0xbff1c440	0xbff1c498	0xb7ea3685	0x08048410
-  0xbff1c434:	0x080482e0	0xbff1c498	0xb7ea3685	0x00000001
+  0xbff1c3f4:   0x00000000  0xbff1c6f7  0xb7efbdae  0x00000005
+  0xbff1c404:   0xbff1c414  0x080483c2  0x00000002  0x00000003
+  0xbff1c414:   0xbff1c428  0x080483e9  0x00000002  0x00000003
+  0xbff1c424:   0xbff1c440  0xbff1c498  0xb7ea3685  0x08048410
+  0xbff1c434:   0x080482e0  0xbff1c498  0xb7ea3685  0x00000001
   (gdb)
 ```
 
@@ -7312,13 +7312,13 @@ int main(void)
 图中每个小方格表示 4 个字节的内存单元，例如 `b: 3` 这个小方格占的内存地址是 `0xbf822d20 ~ 0xbf822d23`，我把地址写在每个小方格的下边界线上，是为了强调该地址是内存单元的起始地址。我们从 `main` 函数的这里开始看起：
 
 ```asm6502
-	foo(2, 3);
- 80483d5:	c7 44 24 04 03 00 00 	movl   $0x3,0x4(%esp)
- 80483dc:	00 
- 80483dd:	c7 04 24 02 00 00 00 	movl   $0x2,(%esp)
- 80483e4:	e8 c1 ff ff ff       	call   80483aa <foo>
-	return 0;
- 80483e9:	b8 00 00 00 00       	mov    $0x0,%eax
+    foo(2, 3);
+ 80483d5:   c7 44 24 04 03 00 00    movl   $0x3,0x4(%esp)
+ 80483dc:   00 
+ 80483dd:   c7 04 24 02 00 00 00    movl   $0x2,(%esp)
+ 80483e4:   e8 c1 ff ff ff          call   80483aa <foo>
+    return 0;
+ 80483e9:   b8 00 00 00 00          mov    $0x0,%eax
 ```
 
 要调用函数 `foo` 先要把参数准备好，第二个参数保存在 `esp+4` 指向的内存位置，第一个参数保存在 `esp` 指向的内存位置，可见参数是从右向左依次压栈的。然后执行 `call` 指令，这个指令有两个作用：
@@ -7331,20 +7331,20 @@ int main(void)
 ```asm6502
 int foo(int a, int b)
 {
- 80483aa:	55                   	push   %ebp
- 80483ab:	89 e5                	mov    %esp,%ebp
- 80483ad:	83 ec 08             	sub    $0x8,%esp
+ 80483aa:   55                      push   %ebp
+ 80483ab:   89 e5                   mov    %esp,%ebp
+ 80483ad:   83 ec 08                sub    $0x8,%esp
 ```
 
 `push %ebp` 指令把 `ebp` 寄存器的值压栈，同时把 `esp` 的值减 4。`esp` 的值现在是 0xbf822d14，下一条指令把这个值传送给 `ebp` 寄存器。这两条指令合起来是把原来 `ebp` 的值保存在栈上，然后又给 `ebp` 赋了新值。在每个函数的栈帧中，`ebp` 指向栈底，而 `esp` 指向栈顶，在函数执行过程中 `esp` 随着压栈和出栈操作随时变化，而 `ebp` 是不动的，函数的参数和局部变量都是通过 `ebp` 的值加上一个偏移量来访问，例如 `foo` 函数的参数 `a` 和 `b` 分别通过 `ebp+8` 和 `ebp+12` 来访问。所以下面的指令把参数 `a` 和 `b` 再次压栈，为调用 `bar` 函数做准备，然后把返回地址压栈，调用 `bar` 函数：
 
 ```asm6502
-	return bar(a, b);
- 80483b0:	8b 45 0c             	mov    0xc(%ebp),%eax
- 80483b3:	89 44 24 04          	mov    %eax,0x4(%esp)
- 80483b7:	8b 45 08             	mov    0x8(%ebp),%eax
- 80483ba:	89 04 24             	mov    %eax,(%esp)
- 80483bd:	e8 d2 ff ff ff       	call   8048394 <bar>
+    return bar(a, b);
+ 80483b0:   8b 45 0c                mov    0xc(%ebp),%eax
+ 80483b3:   89 44 24 04             mov    %eax,0x4(%esp)
+ 80483b7:   8b 45 08                mov    0x8(%ebp),%eax
+ 80483ba:   89 04 24                mov    %eax,(%esp)
+ 80483bd:   e8 d2 ff ff ff          call   8048394 <bar>
 ```
 
 现在看 `bar` 函数的指令：
@@ -7352,14 +7352,14 @@ int foo(int a, int b)
 ```asm6502
 int bar(int c, int d)
 {
- 8048394:	55                   	push   %ebp
- 8048395:	89 e5                	mov    %esp,%ebp
- 8048397:	83 ec 10             	sub    $0x10,%esp
-	int e = c + d;
- 804839a:	8b 55 0c             	mov    0xc(%ebp),%edx
- 804839d:	8b 45 08             	mov    0x8(%ebp),%eax
- 80483a0:	01 d0                	add    %edx,%eax
- 80483a2:	89 45 fc             	mov    %eax,-0x4(%ebp)
+ 8048394:   55                      push   %ebp
+ 8048395:   89 e5                   mov    %esp,%ebp
+ 8048397:   83 ec 10                sub    $0x10,%esp
+    int e = c + d;
+ 804839a:   8b 55 0c                mov    0xc(%ebp),%edx
+ 804839d:   8b 45 08                mov    0x8(%ebp),%eax
+ 80483a0:   01 d0                   add    %edx,%eax
+ 80483a2:   89 45 fc                mov    %eax,-0x4(%ebp)
 ```
 
 这次又把 `foo` 函数的 `ebp` 压栈保存，然后给 `ebp` 赋了新值，指向 `bar` 函数栈帧的栈底，通过 `ebp+8` 和 `ebp+12` 分别可以访问参数 `c` 和 `d`。`bar` 函数还有一个局部变量 `e`，可以通过 `ebp-4` 来访问。所以后面几条指令的意思是把参数 `c` 和 `d` 取出来存在寄存器中做加法，计算结果保存在 `eax` 寄存器中，再把 `eax` 寄存器存回局部变量 `e` 的内存单元。
@@ -7369,11 +7369,11 @@ int bar(int c, int d)
 现在看 `bar` 函数的返回指令：
 
 ```asm6502
-	return e;
- 80483a5:	8b 45 fc             	mov    -0x4(%ebp),%eax
+    return e;
+ 80483a5:   8b 45 fc                mov    -0x4(%ebp),%eax
 }
- 80483a8:	c9                   	leave  
- 80483a9:	c3                   	ret
+ 80483a8:   c9                      leave  
+ 80483a9:   c3                      ret
 ```
 
 `bar` 函数有一个 `int` 型的返回值，这个返回值是通过 `eax` 寄存器传递的，所以首先把 `e` 的值读到 `eax` 寄存器中。然后执行 `leave` 指令，这个指令是函数开头的 `push %ebp` 和 `mov %esp,%ebp` 的逆操作：
@@ -7389,8 +7389,8 @@ int bar(int c, int d)
 地址 0x80483c2 处是 `foo` 函数的返回指令：
 
 ```asm6502
- 80483c2:	c9                   	leave  
- 80483c3:	c3                   	ret
+ 80483c2:   c9                      leave  
+ 80483c3:   c3                      ret
 ```
 
 重复同样的过程，又返回到了 `main` 函数。注意函数调用和返回过程中的这些规则：
@@ -7498,38 +7498,38 @@ main:     file format elf32-i386
 Disassembly of section .init:
 
 08048274 <_init>:
- 8048274:	55                   	push   %ebp
- 8048275:	89 e5                	mov    %esp,%ebp
- 8048277:	53                   	push   %ebx
+ 8048274:   55                      push   %ebp
+ 8048275:   89 e5                   mov    %esp,%ebp
+ 8048277:   53                      push   %ebx
 ...
 Disassembly of section .text:
 
 080482e0 <_start>:
- 80482e0:	31 ed                	xor    %ebp,%ebp
- 80482e2:	5e                   	pop    %esi
- 80482e3:	89 e1                	mov    %esp,%ecx
+ 80482e0:   31 ed                   xor    %ebp,%ebp
+ 80482e2:   5e                      pop    %esi
+ 80482e3:   89 e1                   mov    %esp,%ecx
 ...
 08048394 <bar>:
- 8048394:	55                   	push   %ebp
- 8048395:	89 e5                	mov    %esp,%ebp
- 8048397:	83 ec 10             	sub    $0x10,%esp
+ 8048394:   55                      push   %ebp
+ 8048395:   89 e5                   mov    %esp,%ebp
+ 8048397:   83 ec 10                sub    $0x10,%esp
 ...
 080483aa <foo>:
- 80483aa:	55                   	push   %ebp
- 80483ab:	89 e5                	mov    %esp,%ebp
- 80483ad:	83 ec 08             	sub    $0x8,%esp
+ 80483aa:   55                      push   %ebp
+ 80483ab:   89 e5                   mov    %esp,%ebp
+ 80483ad:   83 ec 08                sub    $0x8,%esp
 ...
 080483c4 <main>:
- 80483c4:	8d 4c 24 04          	lea    0x4(%esp),%ecx
- 80483c8:	83 e4 f0             	and    $0xfffffff0,%esp
- 80483cb:	ff 71 fc             	pushl  -0x4(%ecx)
+ 80483c4:   8d 4c 24 04             lea    0x4(%esp),%ecx
+ 80483c8:   83 e4 f0                and    $0xfffffff0,%esp
+ 80483cb:   ff 71 fc                pushl  -0x4(%ecx)
 ...
 Disassembly of section .fini:
 
 0804849c <_fini>:
- 804849c:	55                   	push   %ebp
- 804849d:	89 e5                	mov    %esp,%ebp
- 804849f:	53                   	push   %ebx
+ 804849c:   55                      push   %ebp
+ 804849d:   89 e5                   mov    %esp,%ebp
+ 804849f:   53                      push   %ebx
 ```
 
 `crt1.o` 中的未定义符号 `main` 在 `main.o` 中定义了，所以链接在一起就没问题了。`crt1.o` 还有一个未定义符号 `__libc_start_main` 在其它几个目标文件中也没有定义，所以在可执行文件 `main` 中仍然是个未定义符号。这个符号是在 `libc` 中定义的，`libc` 并不像其它目标文件一样链接到可执行文件 `main` 中，而是在运行时做动态链接：
@@ -7589,7 +7589,7 @@ exit(main(argc, argv));
  
  int main(void)
  {
- 	exit(4);
+    exit(4);
  }
 ```
 
@@ -7627,13 +7627,13 @@ $ echo $?
   
   int main(void)
   {
-  	static int a = 40;
-  	char b[] = "Hello world";
-  	register int c = 50;
+    static int a = 40;
+    char b[] = "Hello world";
+    register int c = 50;
   
-  	printf("Hello world %d\n", c);
+    printf("Hello world %d\n", c);
   
-  	return 0;
+    return 0;
   }
 ```
 
@@ -7681,7 +7681,7 @@ $ hexdump -C a.out
 
 ```c
 const char helloworld[] = {'H', 'e', 'l', 'l', 'o', ' ',
-		 	'w', 'o', 'r', 'l', 'd', ' ', '%', 'd', '\n', '\0'};
+            'w', 'o', 'r', 'l', 'd', ' ', '%', 'd', '\n', '\0'};
 ```
 
 程序加载运行时，`.rodata` 段和 `.text` 段通常合并到一个 Segment 中，操作系统将这个 Segment 的页面只读保护起来，防止意外的改写。这一点从 `readelf` 的输出也可以看出来：
@@ -7793,20 +7793,20 @@ $ objdump -dS a.out
   
   int main(int argc, char** argv)
   {
-  	struct {
-  		char a;
-  		short b;
-  		int c;
-  		char d;
-  	} s;
+    struct {
+        char a;
+        short b;
+        int c;
+        char d;
+    } s;
   
-  	s.a = 1;
-  	s.b = 2;
-  	s.c = 3;
-  	s.d = 4;
-  	printf("%u\n", sizeof(s));
+    s.a = 1;
+    s.b = 2;
+    s.c = 3;
+    s.d = 4;
+    printf("%u\n", sizeof(s));
   
-  	return 0;
+    return 0;
   }
 ```
 
@@ -7837,10 +7837,10 @@ $ objdump -dS a.out
 
 ```c
 struct {
-	char a;
-	char d;
-	short b;
-	int c;
+    char a;
+    char d;
+    short b;
+    int c;
 } s;
 ```
 
@@ -7848,10 +7848,10 @@ struct {
 
 ```c
 struct {
-	char a;
-	short b;
-	int c;
-	char d;
+    char a;
+    short b;
+    int c;
+    char d;
 } __attribute__((packed)) s;
 ```
 
@@ -7865,23 +7865,23 @@ struct {
   #include <stdio.h>
   
   typedef struct {
-  	unsigned int one:1;
-  	unsigned int two:3;
-  	unsigned int three:10;
-  	unsigned int four:5;
-  	unsigned int :2;
-  	unsigned int five:8;
-  	unsigned int six:8;
+    unsigned int one:1;
+    unsigned int two:3;
+    unsigned int three:10;
+    unsigned int four:5;
+    unsigned int :2;
+    unsigned int five:8;
+    unsigned int six:8;
   } demo_type;
   
   int main(void)
   {
-  	demo_type s = { 1, 5, 513, 17, 129, 0x81 };
-  	printf("sizeof demo_type = %u\n", sizeof(demo_type));
-  	printf("values: s=%u,%u,%u,%u,%u,%u\n",
-  	       s.one, s.two, s.three, s.four, s.five, s.six);
+    demo_type s = { 1, 5, 513, 17, 129, 0x81 };
+    printf("sizeof demo_type = %u\n", sizeof(demo_type));
+    printf("values: s=%u,%u,%u,%u,%u,%u\n",
+           s.one, s.two, s.three, s.four, s.five, s.six);
   
-  	return 0;
+    return 0;
   }
 ```
 
@@ -7901,30 +7901,30 @@ Bit-field 成员的类型可以是 int 或 unsigned int，表示有符号数或�
   #include <stdio.h>
   
   typedef union {
-  	struct {
-  		unsigned int one:1;
-  		unsigned int two:3;
-  		unsigned int three:10;
-  		unsigned int four:5;
-  		unsigned int :2;
-  		unsigned int five:8;
-  		unsigned int six:8;
-  	} bitfield;
-  	unsigned char byte[8];
+    struct {
+        unsigned int one:1;
+        unsigned int two:3;
+        unsigned int three:10;
+        unsigned int four:5;
+        unsigned int :2;
+        unsigned int five:8;
+        unsigned int six:8;
+    } bitfield;
+    unsigned char byte[8];
   } demo_type;
   
   int main(void)
   {
-  	demo_type u = {{ 1, 5, 513, 17, 129, 0x81 }};
-  	printf("sizeof demo_type = %u\n", sizeof(demo_type));
-  	printf("values: u=%u,%u,%u,%u,%u,%u\n",
-  	       u.bitfield.one, u.bitfield.two, u.bitfield.three,
-  	       u.bitfield.four, u.bitfield.five, u.bitfield.six);
-  	printf("hex dump of u: %x %x %x %x %x %x %x %x \n",
-  	       u.byte[0], u.byte[1], u.byte[2], u.byte[3],
-  	       u.byte[4], u.byte[5], u.byte[6], u.byte[7]);
+    demo_type u = {{ 1, 5, 513, 17, 129, 0x81 }};
+    printf("sizeof demo_type = %u\n", sizeof(demo_type));
+    printf("values: u=%u,%u,%u,%u,%u,%u\n",
+           u.bitfield.one, u.bitfield.two, u.bitfield.three,
+           u.bitfield.four, u.bitfield.five, u.bitfield.six);
+    printf("hex dump of u: %x %x %x %x %x %x %x %x \n",
+           u.byte[0], u.byte[1], u.byte[2], u.byte[3],
+           u.byte[4], u.byte[5], u.byte[6], u.byte[7]);
   
-  	return 0;
+    return 0;
   }
 ```
 
@@ -7941,18 +7941,18 @@ C 语言简洁易读，容易组织规模较大的代码，而汇编效率高，
 
 ```asm6502
 __asm__("movl $1, %eax\n\t"
-	"movl $4, %ebx\n\t"
-	"int $0x80");
+    "movl $4, %ebx\n\t"
+    "int $0x80");
 ```
 
 通常 C 代码中的内联汇编需要和 C 的变量建立关联，需要用到完整的内联汇编格式：
 
 ```asm6502
 __asm__(assembler template 
-	: output operands                  /* optional */
-	: input operands                   /* optional */
-	: list of clobbered registers      /* optional */
-	);
+    : output operands                  /* optional */
+    : input operands                   /* optional */
+    : list of clobbered registers      /* optional */
+    );
 ```
 
 这种格式由四部分组成，第一部分是汇编指令，和上面的例子一样，第二部分和第三部分是约束条件，第二部分指示汇编指令的运算结果要输出到哪些 C 操作数中，C 操作数应该是左值表达式，第三部分指示汇编指令需要从哪些 C 操作数获得输入，第四部分是在汇编指令中被修改过的寄存器列表，指示编译器哪些寄存器的值在执行这条 `__asm__` 语句时会改变。后三个部分都是可选的，如果有就填写，没有就空着只写个 `:` 号。例如：
@@ -7966,14 +7966,14 @@ __asm__(assembler template
   {
           int a = 10, b;
   
-  	__asm__("movl %1, %%eax\n\t"
-  		"movl %%eax, %0\n\t"
-  		:"=r"(b)        /* output */
-  		:"r"(a)         /* input */
-  		:"%eax"         /* clobbered register */
-  		);
-  	printf("Result: %d, %d\n", a, b);
-  	return 0;
+    __asm__("movl %1, %%eax\n\t"
+        "movl %%eax, %0\n\t"
+        :"=r"(b)        /* output */
+        :"r"(a)         /* input */
+        :"%eax"         /* clobbered register */
+        );
+    printf("Result: %d, %d\n", a, b);
+    return 0;
   }
 ```
 
@@ -8014,14 +8014,14 @@ unsigned char buf[3];
 
 int main(void)
 {
-	buf[0] = recv;
-	buf[1] = recv;
-	buf[2] = recv;
-	send = ~buf[0];
-	send = ~buf[1];
-	send = ~buf[2];
+    buf[0] = recv;
+    buf[1] = recv;
+    buf[2] = recv;
+    send = ~buf[0];
+    send = ~buf[1];
+    send = ~buf[2];
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -8149,17 +8149,17 @@ int top = -1;
 
 void push(char c)
 {
-	stack[++top] = c;
+    stack[++top] = c;
 }
 
 char pop(void)
 {
-	return stack[top--];
+    return stack[top--];
 }
 
 int is_empty(void)
 {
-	return top == -1;
+    return top == -1;
 }
 ```
 
@@ -8173,15 +8173,15 @@ int a, b = 1;
 
 int main(void)
 {
-	push('a');
-	push('b');
-	push('c');
-	
-	while(!is_empty())
-		putchar(pop());
-	putchar('\n');
+    push('a');
+    push('b');
+    push('c');
+    
+    while(!is_empty())
+        putchar(pop());
+    putchar('\n');
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -8222,7 +8222,7 @@ using internal linker script:
 ==================================================
 /* Script for -z combreloc: combine and sort reloc sections */
 OUTPUT_FORMAT("elf32-i386", "elf32-i386",
-	      "elf32-i386")
+          "elf32-i386")
 OUTPUT_ARCH(i386)
 ENTRY(_start)
 ...
@@ -8332,15 +8332,15 @@ extern int is_empty(void);
 
 int main(void)
 {
-	push('a');
-	push('b');
-	push('c');
-	
-	while(!is_empty())
-		putchar(pop());
-	putchar('\n');
+    push('a');
+    push('b');
+    push('c');
+    
+    while(!is_empty())
+        putchar(pop());
+    putchar('\n');
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -8380,17 +8380,17 @@ extern int top;
 
 int main(void)
 {
-	push('a');
-	push('b');
-	push('c');
-	printf("%d\n", top);
-	
-	while(!is_empty())
-		putchar(pop());
-	putchar('\n');
-	printf("%d\n", top);
+    push('a');
+    push('b');
+    push('c');
+    printf("%d\n", top);
+    
+    while(!is_empty())
+        putchar(pop());
+    putchar('\n');
+    printf("%d\n", top);
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -8399,22 +8399,22 @@ int main(void)
 ```c
 int main(void)
 {
-	void push(char);
-	char pop(void);
-	int is_empty(void);
-	extern int top;
+    void push(char);
+    char pop(void);
+    int is_empty(void);
+    extern int top;
 
-	push('a');
-	push('b');
-	push('c');
-	printf("%d\n", top);
-	
-	while(!is_empty())
-		putchar(pop());
-	putchar('\n');
-	printf("%d\n", top);
+    push('a');
+    push('b');
+    push('c');
+    printf("%d\n", top);
+    
+    while(!is_empty())
+        putchar(pop());
+    putchar('\n');
+    printf("%d\n", top);
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -8429,17 +8429,17 @@ static int top = -1;
 
 void push(char c)
 {
-	stack[++top] = c;
+    stack[++top] = c;
 }
 
 char pop(void)
 {
-	return stack[top--];
+    return stack[top--];
 }
 
 int is_empty(void)
 {
-	return top == -1;
+    return top == -1;
 }
 ```
 
@@ -8470,15 +8470,15 @@ extern int is_empty(void);
 
 int main(void)
 {
-	push('a');
-	push('b');
-	push('c');
-	
-	while(!is_empty())
-		putchar(pop());
-	putchar('\n');
+    push('a');
+    push('b');
+    push('c');
+    
+    while(!is_empty())
+        putchar(pop());
+    putchar('\n');
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -8638,7 +8638,7 @@ extern int top;
 
 void push(char c)
 {
-	stack[++top] = c;
+    stack[++top] = c;
 }
 /* pop.c */
 extern char stack[512];
@@ -8646,14 +8646,14 @@ extern int top;
 
 char pop(void)
 {
-	return stack[top--];
+    return stack[top--];
 }
 /* is_empty.c */
 extern int top;
 
 int is_empty(void)
 {
-	return top == -1;
+    return top == -1;
 }
 /* stack.h */
 #ifndef STACK_H
@@ -8668,8 +8668,8 @@ extern int is_empty(void);
 
 int main(void)
 {
-	push('a');
-	return 0;
+    push('a');
+    return 0;
 }
 ```
 
@@ -8785,21 +8785,21 @@ extern int top;
 
 void push(char c)
 {
-   0:	55                   	push   %ebp
-   1:	89 e5                	mov    %esp,%ebp
-   3:	83 ec 04             	sub    $0x4,%esp
-   6:	8b 45 08             	mov    0x8(%ebp),%eax
-   9:	88 45 fc             	mov    %al,-0x4(%ebp)
-	stack[++top] = c;
-   c:	a1 00 00 00 00       	mov    0x0,%eax
-  11:	83 c0 01             	add    $0x1,%eax
-  14:	a3 00 00 00 00       	mov    %eax,0x0
-  19:	8b 15 00 00 00 00    	mov    0x0,%edx
-  1f:	0f b6 45 fc          	movzbl -0x4(%ebp),%eax
-  23:	88 82 00 00 00 00    	mov    %al,0x0(%edx)
+   0:   55                      push   %ebp
+   1:   89 e5                   mov    %esp,%ebp
+   3:   83 ec 04                sub    $0x4,%esp
+   6:   8b 45 08                mov    0x8(%ebp),%eax
+   9:   88 45 fc                mov    %al,-0x4(%ebp)
+    stack[++top] = c;
+   c:   a1 00 00 00 00          mov    0x0,%eax
+  11:   83 c0 01                add    $0x1,%eax
+  14:   a3 00 00 00 00          mov    %eax,0x0
+  19:   8b 15 00 00 00 00       mov    0x0,%edx
+  1f:   0f b6 45 fc             movzbl -0x4(%ebp),%eax
+  23:   88 82 00 00 00 00       mov    %al,0x0(%edx)
 }
-  29:	c9                   	leave  
-  2a:	c3                   	ret
+  29:   c9                      leave  
+  2a:   c3                      ret
 ```
 
 指令中凡是用到 `stack` 和 `top` 的地址都用 0x0 表示，准备在重定位时修改。再看 `readelf` 输出的 `.rel.text` 段的信息：
@@ -8865,36 +8865,36 @@ extern int top;
 
 void push(char c)
 {
-   0:	55                   	push   %ebp
-   1:	89 e5                	mov    %esp,%ebp
-   3:	53                   	push   %ebx
-   4:	83 ec 04             	sub    $0x4,%esp
-   7:	e8 fc ff ff ff       	call   8 <push+0x8>
-   c:	81 c3 02 00 00 00    	add    $0x2,%ebx
-  12:	8b 45 08             	mov    0x8(%ebp),%eax
-  15:	88 45 f8             	mov    %al,-0x8(%ebp)
-	stack[++top] = c;
-  18:	8b 83 00 00 00 00    	mov    0x0(%ebx),%eax
-  1e:	8b 00                	mov    (%eax),%eax
-  20:	8d 50 01             	lea    0x1(%eax),%edx
-  23:	8b 83 00 00 00 00    	mov    0x0(%ebx),%eax
-  29:	89 10                	mov    %edx,(%eax)
-  2b:	8b 83 00 00 00 00    	mov    0x0(%ebx),%eax
-  31:	8b 08                	mov    (%eax),%ecx
-  33:	8b 93 00 00 00 00    	mov    0x0(%ebx),%edx
-  39:	0f b6 45 f8          	movzbl -0x8(%ebp),%eax
-  3d:	88 04 0a             	mov    %al,(%edx,%ecx,1)
+   0:   55                      push   %ebp
+   1:   89 e5                   mov    %esp,%ebp
+   3:   53                      push   %ebx
+   4:   83 ec 04                sub    $0x4,%esp
+   7:   e8 fc ff ff ff          call   8 <push+0x8>
+   c:   81 c3 02 00 00 00       add    $0x2,%ebx
+  12:   8b 45 08                mov    0x8(%ebp),%eax
+  15:   88 45 f8                mov    %al,-0x8(%ebp)
+    stack[++top] = c;
+  18:   8b 83 00 00 00 00       mov    0x0(%ebx),%eax
+  1e:   8b 00                   mov    (%eax),%eax
+  20:   8d 50 01                lea    0x1(%eax),%edx
+  23:   8b 83 00 00 00 00       mov    0x0(%ebx),%eax
+  29:   89 10                   mov    %edx,(%eax)
+  2b:   8b 83 00 00 00 00       mov    0x0(%ebx),%eax
+  31:   8b 08                   mov    (%eax),%ecx
+  33:   8b 93 00 00 00 00       mov    0x0(%ebx),%edx
+  39:   0f b6 45 f8             movzbl -0x8(%ebp),%eax
+  3d:   88 04 0a                mov    %al,(%edx,%ecx,1)
 }
-  40:	83 c4 04             	add    $0x4,%esp
-  43:	5b                   	pop    %ebx
-  44:	5d                   	pop    %ebp
-  45:	c3                   	ret    
+  40:   83 c4 04                add    $0x4,%esp
+  43:   5b                      pop    %ebx
+  44:   5d                      pop    %ebp
+  45:   c3                      ret    
 
 Disassembly of section .text.__i686.get_pc_thunk.bx:
 
 00000000 <__i686.get_pc_thunk.bx>:
-   0:	8b 1c 24             	mov    (%esp),%ebx
-   3:	c3                   	ret
+   0:   8b 1c 24                mov    (%esp),%ebx
+   3:   c3                      ret
 ```
 
 指令中用到的 `stack` 和 `top` 的地址不再以 0x0 表示，而是以 `0x0(%ebx)` 表示，但其中还是留有 0x0 准备做进一步修改。再看 `readelf` 输出的 `.rel.text` 段：
@@ -8923,41 +8923,41 @@ extern int top;
 
 void push(char c)
 {
- 47c:	55                   	push   %ebp
- 47d:	89 e5                	mov    %esp,%ebp
- 47f:	53                   	push   %ebx
- 480:	83 ec 04             	sub    $0x4,%esp
- 483:	e8 ef ff ff ff       	call   477 <__i686.get_pc_thunk.bx>
- 488:	81 c3 6c 1b 00 00    	add    $0x1b6c,%ebx
- 48e:	8b 45 08             	mov    0x8(%ebp),%eax
- 491:	88 45 f8             	mov    %al,-0x8(%ebp)
-	stack[++top] = c;
- 494:	8b 83 f4 ff ff ff    	mov    -0xc(%ebx),%eax
- 49a:	8b 00                	mov    (%eax),%eax
- 49c:	8d 50 01             	lea    0x1(%eax),%edx
- 49f:	8b 83 f4 ff ff ff    	mov    -0xc(%ebx),%eax
- 4a5:	89 10                	mov    %edx,(%eax)
- 4a7:	8b 83 f4 ff ff ff    	mov    -0xc(%ebx),%eax
- 4ad:	8b 08                	mov    (%eax),%ecx
- 4af:	8b 93 f8 ff ff ff    	mov    -0x8(%ebx),%edx
- 4b5:	0f b6 45 f8          	movzbl -0x8(%ebp),%eax
- 4b9:	88 04 0a             	mov    %al,(%edx,%ecx,1)
+ 47c:   55                      push   %ebp
+ 47d:   89 e5                   mov    %esp,%ebp
+ 47f:   53                      push   %ebx
+ 480:   83 ec 04                sub    $0x4,%esp
+ 483:   e8 ef ff ff ff          call   477 <__i686.get_pc_thunk.bx>
+ 488:   81 c3 6c 1b 00 00       add    $0x1b6c,%ebx
+ 48e:   8b 45 08                mov    0x8(%ebp),%eax
+ 491:   88 45 f8                mov    %al,-0x8(%ebp)
+    stack[++top] = c;
+ 494:   8b 83 f4 ff ff ff       mov    -0xc(%ebx),%eax
+ 49a:   8b 00                   mov    (%eax),%eax
+ 49c:   8d 50 01                lea    0x1(%eax),%edx
+ 49f:   8b 83 f4 ff ff ff       mov    -0xc(%ebx),%eax
+ 4a5:   89 10                   mov    %edx,(%eax)
+ 4a7:   8b 83 f4 ff ff ff       mov    -0xc(%ebx),%eax
+ 4ad:   8b 08                   mov    (%eax),%ecx
+ 4af:   8b 93 f8 ff ff ff       mov    -0x8(%ebx),%edx
+ 4b5:   0f b6 45 f8             movzbl -0x8(%ebp),%eax
+ 4b9:   88 04 0a                mov    %al,(%edx,%ecx,1)
 }
- 4bc:	83 c4 04             	add    $0x4,%esp
- 4bf:	5b                   	pop    %ebx
- 4c0:	5d                   	pop    %ebp
- 4c1:	c3                   	ret    
- 4c2:	90                   	nop    
- 4c3:	90                   	nop    
+ 4bc:   83 c4 04                add    $0x4,%esp
+ 4bf:   5b                      pop    %ebx
+ 4c0:   5d                      pop    %ebp
+ 4c1:   c3                      ret    
+ 4c2:   90                      nop    
+ 4c3:   90                      nop    
 ...
 ```
 
 和先前的结果不同，指令中的 `0x0(%ebx)` 被修改成 `-0xc(%ebx)` 和 `-0x8(%ebx)`，而不是修改成绝对地址。所以共享库各段的加载地址并没有定死，可以加载到任意位置，因为指令中没有使用绝对地址，因此称为位置无关代码。另外，注意这几条指令：
 
 ```asm6502
- 494:	8b 83 f4 ff ff ff    	mov    -0xc(%ebx),%eax
- 49a:	8b 00                	mov    (%eax),%eax
- 49c:	8d 50 01             	lea    0x1(%eax),%edx
+ 494:   8b 83 f4 ff ff ff       mov    -0xc(%ebx),%eax
+ 49a:   8b 00                   mov    (%eax),%eax
+ 49c:   8d 50 01                lea    0x1(%eax),%edx
 ```
 
 和先前的指令对比一下：
@@ -8987,10 +8987,10 @@ $ ./main
 
 ```bash
 $ ldd main
-	linux-gate.so.1 =>  (0xb7f5c000)
-	libstack.so => not found
-	libc.so.6 => /lib/tls/i686/cmov/libc.so.6 (0xb7dcf000)
-	/lib/ld-linux.so.2 (0xb7f42000)
+    linux-gate.so.1 =>  (0xb7f5c000)
+    libstack.so => not found
+    libc.so.6 => /lib/tls/i686/cmov/libc.so.6 (0xb7dcf000)
+    /lib/ld-linux.so.2 (0xb7f42000)
 ```
 
 `ldd` 模拟运行一遍 `main`，在运行过程中做动态链接，从而得知这个可执行文件依赖于哪些共享库，每个共享库都在什么路径下，加载到进程地址空间的什么地址。`/lib/ld-linux.so.2` 是动态链接器，它的路径是在编译链接时指定的，我们在[上章第 2 节「main 函数和启动例程」](2-C-语言本质/ch19-汇编与-C-之间的关系?id=_2-main-函数和启动例程)讲过 `gcc` 在做链接时用 `-dynamic-linker` 指定动态链接器的路径，它也像其它共享库一样加载到进程的地址空间中。`libc.so.6` 的路径 `/lib/tls/i686/cmov/libc.so.6` 是由动态链接器 `ld-linux.so.2` 在做动态链接时搜索到的，而 `libstack.so` 的路径没有找到。`linux-gate.so.1` 这个共享库其实并不存在于文件系统中，它是由内核虚拟出来的共享库，所以它没有对应的路径，它负责处理系统调用。总之，共享库的搜索路径由动态链接器决定，从 `ld.so(8)` 的 Man Page 可以查到共享库路径的搜索顺序：
@@ -9043,10 +9043,10 @@ $ sudo ldconfig -v
 
 ```bash
 $ ldd main
-	linux-gate.so.1 =>  (0xb809c000)
-	libstack.so => /home/akaedu/somedir/libstack.so (0xb806a000)
-	libc.so.6 => /lib/tls/i686/cmov/libc.so.6 (0xb7f0c000)
-	/lib/ld-linux.so.2 (0xb8082000)
+    linux-gate.so.1 =>  (0xb809c000)
+    libstack.so => /home/akaedu/somedir/libstack.so (0xb806a000)
+    libc.so.6 => /lib/tls/i686/cmov/libc.so.6 (0xb7f0c000)
+    /lib/ld-linux.so.2 (0xb8082000)
 ```
 
 第三种方法就是把 `libstack.so` 拷到 `/usr/lib` 或 `/lib` 目录，这样可以确保动态链接器能找到这个共享库。
@@ -9082,14 +9082,14 @@ $ objdump -dS main
 Disassembly of section .plt:
 
 080483a8 <__gmon_start__@plt-0x10>:
- 80483a8:	ff 35 f8 9f 04 08    	pushl  0x8049ff8
- 80483ae:	ff 25 fc 9f 04 08    	jmp    *0x8049ffc
- 80483b4:	00 00                	add    %al,(%eax)
+ 80483a8:   ff 35 f8 9f 04 08       pushl  0x8049ff8
+ 80483ae:   ff 25 fc 9f 04 08       jmp    *0x8049ffc
+ 80483b4:   00 00                   add    %al,(%eax)
 ...
 080483d8 <push@plt>:
- 80483d8:	ff 25 08 a0 04 08    	jmp    *0x804a008
- 80483de:	68 10 00 00 00       	push   $0x10
- 80483e3:	e9 c0 ff ff ff       	jmp    80483a8 <_init+0x30>
+ 80483d8:   ff 25 08 a0 04 08       jmp    *0x804a008
+ 80483de:   68 10 00 00 00          push   $0x10
+ 80483e3:   e9 c0 ff ff ff          jmp    80483a8 <_init+0x30>
 
 Disassembly of section .text:
 ...
@@ -9100,16 +9100,16 @@ Disassembly of section .text:
 
 int main(void)
 {
- 80484a4:	8d 4c 24 04          	lea    0x4(%esp),%ecx
- 80484a8:	83 e4 f0             	and    $0xfffffff0,%esp
- 80484ab:	ff 71 fc             	pushl  -0x4(%ecx)
- 80484ae:	55                   	push   %ebp
- 80484af:	89 e5                	mov    %esp,%ebp
- 80484b1:	51                   	push   %ecx
- 80484b2:	83 ec 04             	sub    $0x4,%esp
-	push('a');
- 80484b5:	c7 04 24 61 00 00 00 	movl   $0x61,(%esp)
- 80484bc:	e8 17 ff ff ff       	call   80483d8 <push@plt>
+ 80484a4:   8d 4c 24 04             lea    0x4(%esp),%ecx
+ 80484a8:   83 e4 f0                and    $0xfffffff0,%esp
+ 80484ab:   ff 71 fc                pushl  -0x4(%ecx)
+ 80484ae:   55                      push   %ebp
+ 80484af:   89 e5                   mov    %esp,%ebp
+ 80484b1:   51                      push   %ecx
+ 80484b2:   83 ec 04                sub    $0x4,%esp
+    push('a');
+ 80484b5:   c7 04 24 61 00 00 00    movl   $0x61,(%esp)
+ 80484bc:   e8 17 ff ff ff          call   80483d8 <push@plt>
 ...
 ```
 
@@ -9122,9 +9122,9 @@ $ gdb main
 Breakpoint 1 at 0x80484b5: file main.c, line 7.
 Starting program: /home/akaedu/somedir/main 
 main () at main.c:7
-7		push('a');
+7       push('a');
 (gdb) si
-0x080484bc	7		push('a');
+0x080484bc  7       push('a');
 (gdb) si
 0x080483d8 in push@plt ()
 Current language:  auto; currently asm
@@ -9134,7 +9134,7 @@ Current language:  auto; currently asm
 
 ```bash
 (gdb) x 0x804a008
-0x804a008 <_GLOBAL_OFFSET_TABLE_+20>:	0x080483de
+0x804a008 <_GLOBAL_OFFSET_TABLE_+20>:   0x080483de
 ```
 
 原来就是下一条指令 `push   $0x10` 的地址。继续跟踪下去：
@@ -9158,7 +9158,7 @@ Current language:  auto; currently asm
 (gdb) finish
 Run till exit from #0  0xb806a080 in ?? () from /lib/ld-linux.so.2
 main () at main.c:8
-8		return 0;
+8       return 0;
 Current language:  auto; currently c
 ```
 
@@ -9166,9 +9166,9 @@ Current language:  auto; currently c
 
 ```bash
 (gdb) x 0x804a008
-0x804a008 <_GLOBAL_OFFSET_TABLE_+20>:	0xb803f47c
+0x804a008 <_GLOBAL_OFFSET_TABLE_+20>:   0xb803f47c
 (gdb) x 0xb803f47c
-0xb803f47c <push>:	0x53e58955
+0xb803f47c <push>:  0x53e58955
 ```
 
 动态链接器已经把 `push` 函数的地址存在这里了，所以下次再调用 `push` 函数就可以直接从 `jmp    *0x804a008` 指令跳到它的地址，而不必再进入 `/lib/ld-linux.so.2` 做动态链接了。
@@ -9361,32 +9361,32 @@ bff0e000-bff23000 rw-p bffeb000 00:00 0          [stack]
 
 1. 把[第 2 章「常量、变量和表达式」第 2 节「常量」](1-C-语言入门/ch02-常量、变量和表达式#_2-常量)提到过的三连符替换成相应的单字符。
 2. 把用`\`字符续行的多行代码接成一行。例如：
-	
-	```c
-	#define STR "hello, "\
-			"world"
-	```
-	
-	经过这个预处理步骤之后接成一行：
-	
-	```c
-	#define STR "hello, "		"world"
-	```
-	
-	这种续行的写法要求`\`后面紧跟换行，中间不能有其它空白字符。
+    
+    ```c
+    #define STR "hello, "\
+            "world"
+    ```
+    
+    经过这个预处理步骤之后接成一行：
+    
+    ```c
+    #define STR "hello, "       "world"
+    ```
+    
+    这种续行的写法要求`\`后面紧跟换行，中间不能有其它空白字符。
 3. 把注释（不管是单行注释还是多行注释）都替换成一个空格。
 4. 经过以上两步之后去掉了一些换行，有的换行在续行过程中去掉了，有的换行在多行注释之中，也随着注释一起去掉了，剩下的代码行称为逻辑代码行。然后预处理器把逻辑代码行划分成 Token和空白字符，这时的 Token 称为预处理 Token，包括标识符、整数常量、浮点数常量、字符常量、字符串、运算符和其它符号。继续上面的例子，两个源代码行被接成一个逻辑代码行，然后这个逻辑代码行被划分成 Token 和空白字符：`#`，`define`，空格，`STR`，空格，`"hello, "`，Tab，Tab，`"world"`。
 5. 在 Token 中识别出预处理指示，做相应的预处理动作，如果遇到 `#include` 预处理指示，则把相应的源文件包含进来，并对源文件做以上 1 - 4 步预处理。如果遇到宏定义则做宏展开。
-	我们早在[第 8 章「数组」第 2 节「数组应用实例：统计随机数」](1-C-语言入门/ch08-数组#_2-数组应用实例：统计随机数)就认识了预处理指示这个概念，现在给出它的严格定义。一条预处理指示由一个逻辑代码行组成，以 `#` 开头，后面跟若干个预处理 Token，在预处理指示中允许使用的空白字符只有空格和 Tab。
+    我们早在[第 8 章「数组」第 2 节「数组应用实例：统计随机数」](1-C-语言入门/ch08-数组#_2-数组应用实例：统计随机数)就认识了预处理指示这个概念，现在给出它的严格定义。一条预处理指示由一个逻辑代码行组成，以 `#` 开头，后面跟若干个预处理 Token，在预处理指示中允许使用的空白字符只有空格和 Tab。
 6. 找出字符常量或字符串中的转义序列，用相应的字节来替换它，比如把 `\n` 替换成字节 `0x0a`。
 7. 把相邻的字符串连接起来。继续上面的例子，如果代码中有：
-	
-	```c
-	printf(
-		STR);
-	```
+    
+    ```c
+    printf(
+        STR);
+    ```
 
-	经过第 4 步处理划分成以下 Token：`printf`，`(`，换行，Tab，`STR`，`)`，`;`，换行。经过第 5 步宏展开后变成以下 Token：`printf`，`(`，换行，Tab，`"hello, "`，Tab，Tab，`"world"`，`)`，`;`，换行。然后把相邻的字符串连接起来，变成以下 Token：`printf`，`(`，换行，Tab，`"hello, world"`，`)`，`;`，换行。
+    经过第 4 步处理划分成以下 Token：`printf`，`(`，换行，Tab，`STR`，`)`，`;`，换行。经过第 5 步宏展开后变成以下 Token：`printf`，`(`，换行，Tab，`"hello, "`，Tab，Tab，`"world"`，`)`，`;`，换行。然后把相邻的字符串连接起来，变成以下 Token：`printf`，`(`，换行，Tab，`"hello, world"`，`)`，`;`，换行。
 8. 经过以上处理之后，把空白字符丢掉，把 Token 交给 C 编译器做语法解析，这时就不再是预处理 Token，而称为 C Token了。这里丢掉的空白字符包括空格、换行、水平 Tab、垂直 Tab、分页符。继续上面的例子，最后交给 C 编译器做语法解析的 Token 是：`printf`，`(`，`"hello, world"`，`)`，`;`。注意，把一个预处理指示写成多行要用 `\` 续行，因为根据定义，一条预处理指示只能由一个逻辑代码行组成，而把 C 代码写成多行则不需要用 `\` 续行，因为换行在 C 代码中只不过是一种空白字符，在做语法解析时所有空白字符都已经丢掉了。
 
 ### 2.8.2. 宏定义
@@ -9431,13 +9431,13 @@ int a[] = { 9, 3, 5, 2, 1, 0, 8, 7, 6, 4 };
 
 int max(int n)
 {
-	return n == 0 ? a[0] : MAX(a[n], max(n-1));
+    return n == 0 ? a[0] : MAX(a[n], max(n-1));
 }
 
 int main(void)
 {
-	max(9);
-	return 0;
+    max(9);
+    return 0;
 }
 ```
 
@@ -9463,7 +9463,7 @@ int main(void)
                 device_set_wakeup_enable(dev,val);
 
 if (n > 0)
-	device_init_wakeup(d, v);
+    device_init_wakeup(d, v);
 ```
 
 这样宏展开之后，函数体的第二条语句不在 `if` 条件中。那么简单地用 `{ ... }` 括起来组成一个语句块不行吗？
@@ -9474,9 +9474,9 @@ if (n > 0)
                 device_set_wakeup_enable(dev,val); }
 
 if (n > 0)
-	device_init_wakeup(d, v);
+    device_init_wakeup(d, v);
 else
-	continue;
+    continue;
 ```
 
 问题出在 `device_init_wakeup(d, v);` 末尾的 `;` 号，如果不允许写这个 `;` 号，看起来不像个函数调用，可如果写了这个 `;` 号，宏展开之后就有语法错误，`if` 语句被这个 `;` 号结束掉了，没法跟 `else` 配对。因此，`do { ... } while(0)` 是一种比较好的解决办法。
@@ -9527,20 +9527,20 @@ static inline void down_read(struct rw_semaphore *sem)
 ```c
 inline int MAX(int a, int b)
 {
-	return a > b ? a : b;
+    return a > b ? a : b;
 }
 
 int a[] = { 9, 3, 5, 2, 1, 0, 8, 7, 6, 4 };
 
 int max(int n)
 {
-	return n == 0 ? a[0] : MAX(a[n], max(n-1));
+    return n == 0 ? a[0] : MAX(a[n], max(n-1));
 }
 
 int main(void)
 {
-	max(9);
-	return 0;
+    max(9);
+    return 0;
 }
 ```
 
@@ -9626,7 +9626,7 @@ int max(int n)
 
 ```c
 #define STR(s) # s
-STR(hello 	world)
+STR(hello   world)
 ```
 
 用 `cpp` 命令预处理之后是 `"hello␣world"`，自动用 `"` 号把实参括起来成为一个字符串，并且实参中的连续多个空白字符被替换成一个空格。
@@ -9636,7 +9636,7 @@ STR(hello 	world)
 ```c
 #define STR(s) #s
 fputs(STR(strncmp("ab\"c\0d", "abc", '\4"')
-	== 0) STR(: @\n), s);
+    == 0) STR(: @\n), s);
 ```
 
 预处理之后是 `fputs("strncmp(\"ab\\\"c\\0d\", \"abc\", '\\4\"') == 0" ": @\n", s);`，注意如果实参中包含字符常量或字符串，则宏展开之后字符串的界定符 `"` 要替换成 `\"`，字符常量或字符串中的 `\` 和 `"` 字符要替换成 `\\` 和 `\"`。
@@ -9661,7 +9661,7 @@ CONCAT(con, cat)
 ```c
 #define showlist(...) printf(#__VA_ARGS__)
 #define report(test, ...) ((test)?printf(#test):\
-	printf(__VA_ARGS__))
+    printf(__VA_ARGS__))
 showlist(The first, second, and third items.);
 report(x>y, "x is %d but y is %d", x, y);
 ```
@@ -9808,87 +9808,87 @@ t(t(g)(0) + t)(1);
 1. 手动编辑代码，在前面添一行 `#define MACHINE 8086`。这样做的缺点是难以管理，如果这个项目中有很多源文件都需要定义 `MACHINE`，每次要为 8086 平台编译就得把这些定义全部改成 8086，每次要为 68000 平台编译就得把这些定义全部改成 68000。
 2. 在所有需要配置的源文件开头包含一个头文件，在头文件中定义 `#define MACHINE 8086`，这样只需要改一个头文件就可以影响所有包含它的源文件。通常这个头文件由配置工具生成，比如在 Linux 内核源代码的目录下运行 `make menuconfig` 命令可以出来一个配置菜单，在其中配置的选项会自动转换成头文件 `include/linux/autoconf.h` 中的宏定义。
 
-	举一个具体的例子，在内核配置菜单中用回车键和方向键进入 `Device Drivers ---> Network device support`，然后用空格键选中 `Network device support`（菜单项左边的 `[ ]` 括号内会出现一个 `*` 号），然后保存退出，会生成一个名为 `.config` 的隐藏文件，其内容类似于：
+    举一个具体的例子，在内核配置菜单中用回车键和方向键进入 `Device Drivers ---> Network device support`，然后用空格键选中 `Network device support`（菜单项左边的 `[ ]` 括号内会出现一个 `*` 号），然后保存退出，会生成一个名为 `.config` 的隐藏文件，其内容类似于：
 
-	```c
-	...
-	#
-	# Network device support
-	#
-	CONFIG_NETDEVICES=y
-	# CONFIG_DUMMY is not set
-	# CONFIG_BONDING is not set
-	# CONFIG_EQUALIZER is not set
-	# CONFIG_TUN is not set
-	...
-	```
+    ```c
+    ...
+    #
+    # Network device support
+    #
+    CONFIG_NETDEVICES=y
+    # CONFIG_DUMMY is not set
+    # CONFIG_BONDING is not set
+    # CONFIG_EQUALIZER is not set
+    # CONFIG_TUN is not set
+    ...
+    ```
 
-	然后运行 `make` 命令编译内核，这时根据 `.config` 文件生成头文件 `include/linux/autoconf.h`，其内容类似于：
+    然后运行 `make` 命令编译内核，这时根据 `.config` 文件生成头文件 `include/linux/autoconf.h`，其内容类似于：
 
-	```c
-	...
-	/*
-	 * Network device support
-	 */
-	#define CONFIG_NETDEVICES 1
-	#undef CONFIG_DUMMY
-	#undef CONFIG_BONDING
-	#undef CONFIG_EQUALIZER
-	#undef CONFIG_TUN
-	...
-	```
+    ```c
+    ...
+    /*
+     * Network device support
+     */
+    #define CONFIG_NETDEVICES 1
+    #undef CONFIG_DUMMY
+    #undef CONFIG_BONDING
+    #undef CONFIG_EQUALIZER
+    #undef CONFIG_TUN
+    ...
+    ```
 
-	上面的代码用 `#undef` 确保取消一些宏的定义，如果先前没有定义过 `CONFIG_DUMMY`，用 `#undef CONFIG_DUMMY` 取消它的定义没有任何作用，也不算错。
+    上面的代码用 `#undef` 确保取消一些宏的定义，如果先前没有定义过 `CONFIG_DUMMY`，用 `#undef CONFIG_DUMMY` 取消它的定义没有任何作用，也不算错。
 
-	`include/linux/autoconf.h` 被另一个头文件 `include/linux/config.h` 所包含，通常内核代码包含后一个头文件，例如 `net/core/sock.c`：
+    `include/linux/autoconf.h` 被另一个头文件 `include/linux/config.h` 所包含，通常内核代码包含后一个头文件，例如 `net/core/sock.c`：
 
-	```c
-	...
-	#include <linux/config.h>
-	...
-	int sock_setsockopt(struct socket *sock, int level, int optname,
-	                    char __user *optval, int optlen)
-	{
-	...
-	#ifdef CONFIG_NETDEVICES
-	                case SO_BINDTODEVICE:
-	                {
-				...
-	                }
-	#endif
-	...
-	```
-	
-	再比如`drivers/isdn/i4l/isdn_common.c`：
-	
-	```
-	...
-	#include <linux/config.h>
-	...
-	static int
-	isdn_ioctl(struct inode *inode, struct file *file, uint cmd, ulong arg)
-	{
-	...
-	#ifdef CONFIG_NETDEVICES
-	                        case IIOCNETGPN:
-	                                /* Get peer phone number of a connected
-	                                 * isdn network interface */
-	                                if (arg) {
-	                                        if (copy_from_user(&phone, argp, sizeof(phone)))
-	                                                return -EFAULT;
-	                                        return isdn_net_getpeer(&phone, argp);
-	                                } else
-	                                        return -EINVAL;
-	#endif
-	...
-	#ifdef CONFIG_NETDEVICES
-	                        case IIOCNETAIF:
-	...
-	#endif                          /* CONFIG_NETDEVICES */
-	...
-	```
-	
-	这样，在配置菜单中所做的配置通过条件预处理最终决定了哪些代码被编译到内核中。`#ifdef` 或 `#if` 可以嵌套使用，但预处理指示通常都顶头写不缩进，为了区分嵌套的层次，可以像上面的代码中最后一行那样，在 `#endif` 处用注释写清楚它结束的是哪个 `#if` 或 `#ifdef`。
+    ```c
+    ...
+    #include <linux/config.h>
+    ...
+    int sock_setsockopt(struct socket *sock, int level, int optname,
+                        char __user *optval, int optlen)
+    {
+    ...
+    #ifdef CONFIG_NETDEVICES
+                    case SO_BINDTODEVICE:
+                    {
+                ...
+                    }
+    #endif
+    ...
+    ```
+    
+    再比如`drivers/isdn/i4l/isdn_common.c`：
+    
+    ```
+    ...
+    #include <linux/config.h>
+    ...
+    static int
+    isdn_ioctl(struct inode *inode, struct file *file, uint cmd, ulong arg)
+    {
+    ...
+    #ifdef CONFIG_NETDEVICES
+                            case IIOCNETGPN:
+                                    /* Get peer phone number of a connected
+                                     * isdn network interface */
+                                    if (arg) {
+                                            if (copy_from_user(&phone, argp, sizeof(phone)))
+                                                    return -EFAULT;
+                                            return isdn_net_getpeer(&phone, argp);
+                                    } else
+                                            return -EINVAL;
+    #endif
+    ...
+    #ifdef CONFIG_NETDEVICES
+                            case IIOCNETAIF:
+    ...
+    #endif                          /* CONFIG_NETDEVICES */
+    ...
+    ```
+    
+    这样，在配置菜单中所做的配置通过条件预处理最终决定了哪些代码被编译到内核中。`#ifdef` 或 `#if` 可以嵌套使用，但预处理指示通常都顶头写不缩进，为了区分嵌套的层次，可以像上面的代码中最后一行那样，在 `#endif` 处用注释写清楚它结束的是哪个 `#if` 或 `#ifdef`。
 3. 要定义一个宏不一定非得在代码中用 `#define` 定义，早在[第 11 章「排序与查找」第 6 节「折半查找」](1-C-语言入门/ch11-排序与查找#_6-折半查找)我们就见过用 `gcc` 的 `-D` 选项定义一个宏 `NDEBUG`。对于上面的例子，我们需要给 `MACHINE` 定义一个值，可以写成类似这样的命令：`gcc -c -DMACHINE=8086 main.c`。这种办法需要给每个编译命令都加上适当的选项，和第 2 种方法相比似乎也很麻烦，第 2 种方法在头文件中只写一次宏定义就可以在很多源文件中生效，第 3 种方法能不能做到「只写一次到处生效」呢？等以后学习了 Makefile 就有办法了。
 
 最后通过下面的例子说一下  `#if`  后面的表达式：
@@ -9913,17 +9913,17 @@ C 标准规定了几个特殊的宏，在不同的地方使用可以自动展开
 
 ```c
 /* assert.h standard header */
-#undef assert	/* remove existing definition */
+#undef assert   /* remove existing definition */
 
 #ifdef NDEBUG
-	#define assert(test)	((void)0)
-#else		/* NDEBUG not defined */
-	void _Assert(char *);
-	/* macros */
-	#define _STR(x) _VAL(x)
-	#define _VAL(x) #x
-	#define assert(test)	((test) ? (void)0 \
-		: _Assert(__FILE__ ":" _STR(__LINE__) " " #test))
+    #define assert(test)    ((void)0)
+#else       /* NDEBUG not defined */
+    void _Assert(char *);
+    /* macros */
+    #define _STR(x) _VAL(x)
+    #define _VAL(x) #x
+    #define assert(test)    ((test) ? (void)0 \
+        : _Assert(__FILE__ ":" _STR(__LINE__) " " #test))
 #endif
 ```
 
@@ -9935,10 +9935,10 @@ C 标准规定了几个特殊的宏，在不同的地方使用可以自动展开
 #include <stdlib.h>
 
 void _Assert(char *mesg)
-{		/* print assertion message and abort */
-	fputs(mesg, stderr);
-	fputs(" -- assertion failed\n", stderr);
-	abort();
+{       /* print assertion message and abort */
+    fputs(mesg, stderr);
+    fputs(" -- assertion failed\n", stderr);
+    abort();
 }
 ```
 
@@ -9952,8 +9952,8 @@ void _Assert(char *mesg)
 
 int main(void)
 {
-	assert(2>3);
-	return 0;
+    assert(2>3);
+    return 0;
 }
 ```
 
@@ -9975,14 +9975,14 @@ Aborted
 
 void myfunc(void)
 {
-	printf("%s\n", __func__);
+    printf("%s\n", __func__);
 }
 
 int main(void)
 {
-	myfunc();
-	printf("%s\n", __func__);
-	return 0;
+    myfunc();
+    printf("%s\n", __func__);
+    return 0;
 }
 $ gcc main.c
 $ ./a.out 
@@ -10004,57 +10004,57 @@ main
 #include "maze.h"
 
 struct point predecessor[MAX_ROW][MAX_COL] = {
-	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
-	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
-	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
-	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
-	{{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+    {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+    {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+    {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+    {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
+    {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
 };
 
 void visit(int row, int col, struct point pre)
 {
-	struct point visit_point = { row, col };
-	maze[row][col] = 2;
-	predecessor[row][col] = pre;
-	push(visit_point);
+    struct point visit_point = { row, col };
+    maze[row][col] = 2;
+    predecessor[row][col] = pre;
+    push(visit_point);
 }
 
 int main(void)
 {
-	struct point p = { 0, 0 };
+    struct point p = { 0, 0 };
 
-	maze[p.row][p.col] = 2;
-	push(p);	
-	
-	while (!is_empty()) {
-		p = pop();
-		if (p.row == MAX_ROW - 1  /* goal */
-		    && p.col == MAX_COL - 1)
-			break;
-		if (p.col+1 < MAX_COL     /* right */
-		    && maze[p.row][p.col+1] == 0)
-			visit(p.row, p.col+1, p);
-		if (p.row+1 < MAX_ROW     /* down */
-		    && maze[p.row+1][p.col] == 0)
-			visit(p.row+1, p.col, p);
-		if (p.col-1 >= 0          /* left */
-		    && maze[p.row][p.col-1] == 0)
-			visit(p.row, p.col-1, p);
-		if (p.row-1 >= 0          /* up */
-		    && maze[p.row-1][p.col] == 0)
-			visit(p.row-1, p.col, p);
-		print_maze();
-	}
-	if (p.row == MAX_ROW - 1 && p.col == MAX_COL - 1) {
-		printf("(%d, %d)\n", p.row, p.col);
-		while (predecessor[p.row][p.col].row != -1) {
-			p = predecessor[p.row][p.col];
-			printf("(%d, %d)\n", p.row, p.col);
-		}
-	} else
-		printf("No path!\n");
+    maze[p.row][p.col] = 2;
+    push(p);    
+    
+    while (!is_empty()) {
+        p = pop();
+        if (p.row == MAX_ROW - 1  /* goal */
+            && p.col == MAX_COL - 1)
+            break;
+        if (p.col+1 < MAX_COL     /* right */
+            && maze[p.row][p.col+1] == 0)
+            visit(p.row, p.col+1, p);
+        if (p.row+1 < MAX_ROW     /* down */
+            && maze[p.row+1][p.col] == 0)
+            visit(p.row+1, p.col, p);
+        if (p.col-1 >= 0          /* left */
+            && maze[p.row][p.col-1] == 0)
+            visit(p.row, p.col-1, p);
+        if (p.row-1 >= 0          /* up */
+            && maze[p.row-1][p.col] == 0)
+            visit(p.row-1, p.col, p);
+        print_maze();
+    }
+    if (p.row == MAX_ROW - 1 && p.col == MAX_COL - 1) {
+        printf("(%d, %d)\n", p.row, p.col);
+        while (predecessor[p.row][p.col].row != -1) {
+            p = predecessor[p.row][p.col];
+            printf("(%d, %d)\n", p.row, p.col);
+        }
+    } else
+        printf("No path!\n");
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -10084,17 +10084,17 @@ static int top = 0;
 
 void push(item_t p)
 {
-	stack[top++] = p;
+    stack[top++] = p;
 }
 
 item_t pop(void)
 {
-	return stack[--top];
+    return stack[--top];
 }
 
 int is_empty(void)
 {
-	return top == 0;
+    return top == 0;
 }
 /* stack.h */
 #ifndef STACK_H
@@ -10117,22 +10117,22 @@ extern int is_empty(void);
 #include "maze.h"
 
 int maze[MAX_ROW][MAX_COL] = {
-	0, 1, 0, 0, 0,
-	0, 1, 0, 1, 0,
-	0, 0, 0, 0, 0,
-	0, 1, 1, 1, 0,
-	0, 0, 0, 1, 0,
+    0, 1, 0, 0, 0,
+    0, 1, 0, 1, 0,
+    0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0,
+    0, 0, 0, 1, 0,
 };
 
 void print_maze(void)
 {
-	int i, j;
-	for (i = 0; i < MAX_ROW; i++) {
-		for (j = 0; j < MAX_COL; j++)
-			printf("%d ", maze[i][j]);
-		putchar('\n');
-	}
-	printf("*********\n");
+    int i, j;
+    for (i = 0; i < MAX_ROW; i++) {
+        for (j = 0; j < MAX_COL; j++)
+            printf("%d ", maze[i][j]);
+        putchar('\n');
+    }
+    printf("*********\n");
 }
 /* maze.h */
 #ifndef MAZE_H
@@ -10176,16 +10176,16 @@ $ gcc main.o stack.o maze.o -o main
 
 ```bash
 main: main.o stack.o maze.o
-	gcc main.o stack.o maze.o -o main
+    gcc main.o stack.o maze.o -o main
 
 main.o: main.c main.h stack.h maze.h
-	gcc -c main.c
+    gcc -c main.c
 
 stack.o: stack.c stack.h main.h
-	gcc -c stack.c
+    gcc -c stack.c
 
 maze.o: maze.c maze.h main.h
-	gcc -c maze.c
+    gcc -c maze.c
 ```
 
 然后在这个目录下运行 `make` 编译：
@@ -10202,16 +10202,16 @@ gcc main.o stack.o maze.o -o main
 
 ```bash
 target ... : prerequisites ... 
-	command1
-	command2
-	...
+    command1
+    command2
+    ...
 ```
 
 例如：
 
 ```bash
 main: main.o stack.o maze.o
-	gcc main.o stack.o maze.o -o main
+    gcc main.o stack.o maze.o -o main
 ```
 
 > <sup>[33]</sup> 只要符合本章所描述的语法的文件我们都叫它 Makefile，而它的文件名则不一定是 `Makefile`。事实上，执行 `make` 命令时，是按照 `GNUmakefile`、`makefile`、`Makefile` 的顺序找到第一个存在的文件并执行它，不过还是建议使用 `Makefile` 做文件名。除了GNU `make`，有些 UNIX 系统的 `make` 命令不是 GNU `make`，不会查找 `GNUmakefile` 这个文件名，如果你写的 Makefile 包含 GNU `make` 的特殊语法，可以起名为 `GNUmakefile`，否则不建议用这个文件名。
@@ -10261,21 +10261,21 @@ gcc main.o stack.o maze.o -o main
 执行一条规则 A 的步骤如下：
 
 1. 检查它的每个条件 P：
-	- 如果 P 需要更新，就执行以P为目标的规则 B。之后，无论是否生成文件 P，都认为 P 已被更新。
-	- 如果找不到规则 B，并且文件 P 已存在，表示 P 不需要更新。
-	- 如果找不到规则 B，并且文件 P 不存在，则报错退出。
+    - 如果 P 需要更新，就执行以P为目标的规则 B。之后，无论是否生成文件 P，都认为 P 已被更新。
+    - 如果找不到规则 B，并且文件 P 已存在，表示 P 不需要更新。
+    - 如果找不到规则 B，并且文件 P 不存在，则报错退出。
 2. 在检查完规则 A 的所有条件后，检查它的目标 T，如果属于以下情况之一，就执行它的命令列表：
-	- 文件 T 不存在。
-	- 文件 T 存在，但是某个条件的修改时间比它晚。
-	- 某个条件 P 已被更新（并不一定生成文件 P）。
+    - 文件 T 不存在。
+    - 文件 T 存在，但是某个条件的修改时间比它晚。
+    - 某个条件 P 已被更新（并不一定生成文件 P）。
 
 通常 Makefile 都会有一个 `clean` 规则，用于清除编译过程中产生的二进制文件，保留源文件：
 
 ```bash
 clean:
-	@echo "cleanning project"
-	-rm main *.o
-	@echo "clean completed"
+    @echo "cleanning project"
+    -rm main *.o
+    @echo "clean completed"
 ```
 
 把这条规则添加到我们的 Makefile 末尾，然后执行这条规则：
@@ -10319,9 +10319,9 @@ make: `clean' is up to date.
 
 ```bash
 clean:
-	@echo "cleanning project"
-	-rm main *.o
-	@echo "clean completed"
+    @echo "cleanning project"
+    -rm main *.o
+    @echo "clean completed"
 
 .PHONY: clean
 ```
@@ -10330,9 +10330,9 @@ clean:
 
 1. 首先从前到后读取所有规则，建立起一个完整的依赖关系图，例如：
 
-	<p id="c22-1">图 22.1. Makefile 的依赖关系图</p>
+    <p id="c22-1">图 22.1. Makefile 的依赖关系图</p>
 
-	![Makefile 的依赖关系图](./image/make.graph.png)
+    ![Makefile 的依赖关系图](./image/make.graph.png)
 
 2. 然后从缺省目标或者命令行指定的目标开始，根据依赖关系图选择适当的规则执行，执行 Makefile 中的规则和执行 C 代码不一样，并不是从前到后按顺序执行，也不是所有规则都要执行一遍，例如 `make` 缺省目标时不会更新 `clean` 目标，因为从上图可以看出，它跟缺省目标没有任何依赖关系。
 
@@ -10353,14 +10353,14 @@ clean:
 main.o: main.h stack.h maze.h
 
 main.o: main.c
-	gcc -c main.c
+    gcc -c main.c
 ```
 
 就相当于：
 
 ```bash
 main.o: main.c main.h stack.h maze.h
-	gcc -c main.c
+    gcc -c main.c
 ```
 
 如果一个目标拆开写多条规则，其中只有一条规则允许有命令列表，其它规则应该没有命令列表，否则 `make` 会报警告并且采用最后一条规则的命令列表。
@@ -10369,23 +10369,23 @@ main.o: main.c main.h stack.h maze.h
 
 ```bash
 main: main.o stack.o maze.o
-	gcc main.o stack.o maze.o -o main
+    gcc main.o stack.o maze.o -o main
 
 main.o: main.h stack.h maze.h
 stack.o: stack.h main.h
 maze.o: maze.h main.h
 
 main.o: main.c
-	gcc -c main.c
+    gcc -c main.c
 
 stack.o: stack.c
-	gcc -c stack.c
+    gcc -c stack.c
 
 maze.o: maze.c
-	gcc -c maze.c
+    gcc -c maze.c
 
 clean:
-	-rm main *.o
+    -rm main *.o
 
 .PHONY: clean
 ```
@@ -10394,14 +10394,14 @@ clean:
 
 ```bash
 main: main.o stack.o maze.o
-	gcc main.o stack.o maze.o -o main
+    gcc main.o stack.o maze.o -o main
 
 main.o: main.h stack.h maze.h
 stack.o: stack.h main.h
 maze.o: maze.h main.h
 
 clean:
-	-rm main *.o
+    -rm main *.o
 
 .PHONY: clean
 ```
@@ -10450,14 +10450,14 @@ lrwxrwxrwx 1 root root 12 2008-11-01 09:10 /etc/alternatives/cc -> /usr/bin/gcc
 
 ```bash
 main.o: main.c
-	cc    -c -o main.o main.c
+    cc    -c -o main.o main.c
 ```
 
 随后，在处理 `stack.o` 目标时又用到这条模式规则，这时又相当于：
 
 ```bash
 stack.o: stack.c
-	cc    -c -o stack.o stack.c
+    cc    -c -o stack.o stack.c
 ```
 
 `maze.o` 也同样处理。这三条规则可以由 `make` 的隐含规则推导出来，所以不必写在 Makefile 中。
@@ -10466,14 +10466,14 @@ stack.o: stack.c
 
 ```bash
 main: main.o stack.o maze.o
-	gcc main.o stack.o maze.o -o main
+    gcc main.o stack.o maze.o -o main
 
 main.o stack.o maze.o: main.h
 main.o maze.o: maze.h
 main.o stack.o: stack.h
 
 clean:
-	-rm main *.o
+    -rm main *.o
 
 .PHONY: clean
 ```
@@ -10482,17 +10482,17 @@ clean:
 
 ```bash
 target1 target2: prerequisite1 prerequisite2
-	command $< -o $@
+    command $< -o $@
 ```
 
 这样一条规则相当于：
 
 ```bash
 target1: prerequisite1 prerequisite2
-	command prerequisite1 -o target1
+    command prerequisite1 -o target1
 
 target2: prerequisite1 prerequisite2
-	command prerequisite1 -o target2
+    command prerequisite1 -o target2
 ```
 
 注意两条规则的命令列表是一样的，但 `$@` 的取值不同。
@@ -10506,7 +10506,7 @@ foo = $(bar)
 bar = Huh? 
 
 all: 
-	@echo $(foo)
+    @echo $(foo)
 ```
 
 我们执行 `make` 将会打出 `Huh?`。当 `make` 读到 `foo = $(bar)` 时，确定 `foo` 的值是 `$(bar)`，但并不立即展开 `$(bar)`，然后读到 `bar = Huh?`，确定 `bar` 的值是 `Huh?`，然后在执行规则 `all:` 的命令列表时才需要展开 `$(foo)`，得到 `$(bar)`，再展开 `$(bar)`，得到 `Huh?`。因此，虽然 `bar` 的定义写在 `foo` 之后，`$(foo)` 展开还是能够取到 `$(bar)` 的值。
@@ -10515,7 +10515,7 @@ all:
 
 ```bash
 main.o: main.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+    $(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 CC = gcc
 CFLAGS = -O -g
@@ -10536,7 +10536,7 @@ x := foo
 y := $(x) bar
 
 all: 
-	@echo "-$(y)-"
+    @echo "-$(y)-"
 ```
 
 当 `make` 读到 `y := $(x) bar` 定义时，立即把 `$(x)` 展开，使变量 `y` 的取值是 `foo bar`，如果把这两行颠倒过来：
@@ -10590,14 +10590,14 @@ foo = foo.o bar.o
 
 ```bash
 main: main.o stack.o maze.o
-	gcc main.o stack.o maze.o -o main
+    gcc main.o stack.o maze.o -o main
 ```
 
 可以改写成：
 
 ```bash
 main: main.o stack.o maze.o
-	gcc $^ -o $@
+    gcc $^ -o $@
 ```
 
 这样即使以后又往条件里添加了新的目标文件，编译命令也不需要修改，减少了出错的可能。
@@ -10606,8 +10606,8 @@ main: main.o stack.o maze.o
 
 ```bash
 libsome.a: foo.o bar.o lose.o win.o 
-	ar r libsome.a $?
-	ranlib libsome.a
+    ar r libsome.a $?
+    ranlib libsome.a
 ```
 
 这样，只有更新过的目标文件才需要重新打包到 `libsome.a` 中，没更新过的目标文件原本已经在 `libsome.a` 中了，不必重新打包。
@@ -10643,14 +10643,14 @@ libsome.a: foo.o bar.o lose.o win.o
 all: main
 
 main: main.o stack.o maze.o
-	gcc $^ -o $@
+    gcc $^ -o $@
 
 main.o: main.h stack.h maze.h
 stack.o: stack.h main.h
 maze.o: maze.h main.h
 
 clean:
-	-rm main *.o
+    -rm main *.o
 
 .PHONY: clean
 ```
@@ -10685,10 +10685,10 @@ stack.o: stack.c stack.h main.h
 all: main
 
 main: main.o stack.o maze.o
-	gcc $^ -o $@
+    gcc $^ -o $@
 
 clean:
-	-rm main *.o
+    -rm main *.o
 
 .PHONY: clean
 
@@ -10697,10 +10697,10 @@ sources = main.c stack.c maze.c
 include $(sources:.c=.d)
 
 %.d: %.c
-	set -e; rm -f $@; \
-	$(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
+    set -e; rm -f $@; \
+    $(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
+    sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+    rm -f $@.$$$$
 ```
 
 `sources` 变量包含我们要编译的所有 `.c` 文件，`$(sources:.c=.d)` 是一个变量替换语法，把 `sources` 变量中每一项的 `.c` 替换成 `.d`，所以 `include` 这一句相当于：
@@ -10717,17 +10717,17 @@ Makefile:13: main.d: No such file or directory
 Makefile:13: stack.d: No such file or directory
 Makefile:13: maze.d: No such file or directory
 set -e; rm -f maze.d; \
-	cc -MM  maze.c > maze.d.$$; \
-	sed 's,\(maze\)\.o[ :]*,\1.o maze.d : ,g' < maze.d.$$ > maze.d; \
-	rm -f maze.d.$$
+    cc -MM  maze.c > maze.d.$$; \
+    sed 's,\(maze\)\.o[ :]*,\1.o maze.d : ,g' < maze.d.$$ > maze.d; \
+    rm -f maze.d.$$
 set -e; rm -f stack.d; \
-	cc -MM  stack.c > stack.d.$$; \
-	sed 's,\(stack\)\.o[ :]*,\1.o stack.d : ,g' < stack.d.$$ > stack.d; \
-	rm -f stack.d.$$
+    cc -MM  stack.c > stack.d.$$; \
+    sed 's,\(stack\)\.o[ :]*,\1.o stack.d : ,g' < stack.d.$$ > stack.d; \
+    rm -f stack.d.$$
 set -e; rm -f main.d; \
-	cc -MM  main.c > main.d.$$; \
-	sed 's,\(main\)\.o[ :]*,\1.o main.d : ,g' < main.d.$$ > main.d; \
-	rm -f main.d.$$
+    cc -MM  main.c > main.d.$$; \
+    sed 's,\(main\)\.o[ :]*,\1.o main.d : ,g' < main.d.$$ > main.d; \
+    rm -f main.d.$$
 cc    -c -o main.o main.c
 cc    -c -o stack.o stack.c
 cc    -c -o maze.o maze.c
@@ -10738,9 +10738,9 @@ gcc main.o stack.o maze.o -o main
 
 ```bash
 set -e; rm -f maze.d; \
-	cc -MM  maze.c > maze.d.$$; \
-	sed 's,\(maze\)\.o[ :]*,\1.o maze.d : ,g' < maze.d.$$ > maze.d; \
-	rm -f maze.d.$$
+    cc -MM  maze.c > maze.d.$$; \
+    sed 's,\(maze\)\.o[ :]*,\1.o maze.d : ,g' < maze.d.$$ > maze.d; \
+    rm -f maze.d.$$
 ```
 
 注意，虽然在 Makefile 中这个命令写了四行，但其实是一条命令，`make` 只创建一个 Shell 进程执行这条命令，这条命令分为 5 个子命令，用 `;` 号隔开，并且为了美观，用续行符 `\` 拆成四行来写。执行步骤为：
@@ -10762,26 +10762,26 @@ stack.o stack.d: stack.c stack.h main.h
 如果我在 `main.c` 中加了一行 `#include "foo.h"`，那么：
 
 1. `main.c` 的修改日期变了，根据规则 `main.o main.d: main.c main.h stack.h maze.h` 要重新生成 `main.o` 和 `main.d`。生成 `main.o` 的规则有两条：
-	
-	```
-	main.o: main.c main.h stack.h maze.h
-	%.o: %.c
-	#  commands to execute (built-in):
-	        $(COMPILE.c) $(OUTPUT_OPTION) $<
-	```
-	
-	第一条是把规则 `main.o main.d: main.c main.h stack.h maze.h` 拆开写得到的，第二条是隐含规则，因此执行 `cc` 命令重新编译 `main.o`。生成 `main.d` 的规则也有两条：
-	
-	```
-	main.d: main.c main.h stack.h maze.h
-	%.d: %.c
-		set -e; rm -f $@; \
-		$(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
-		sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-		rm -f $@.$$$$
-	```
-	
-	因此`main.d`的内容被更新为`main.o main.d: main.c main.h stack.h maze.h foo.h`。
+    
+    ```
+    main.o: main.c main.h stack.h maze.h
+    %.o: %.c
+    #  commands to execute (built-in):
+            $(COMPILE.c) $(OUTPUT_OPTION) $<
+    ```
+    
+    第一条是把规则 `main.o main.d: main.c main.h stack.h maze.h` 拆开写得到的，第二条是隐含规则，因此执行 `cc` 命令重新编译 `main.o`。生成 `main.d` 的规则也有两条：
+    
+    ```
+    main.d: main.c main.h stack.h maze.h
+    %.d: %.c
+        set -e; rm -f $@; \
+        $(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
+        sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+        rm -f $@.$$$$
+    ```
+    
+    因此`main.d`的内容被更新为`main.o main.d: main.c main.h stack.h maze.h foo.h`。
 2. 由于 `main.d` 被 Makefile 包含，`main.d` 被更新又导致 `make` 重新读取整个 Makefile，把新的 `main.d` 包含进来，于是新的依赖关系生效了。
 
 ### 2.9.5. 常用的 make 命令行选项
@@ -10890,10 +10890,10 @@ pi = (int *)pc;
 ```c
 int main(void)
 {
-	int *p;
-	...
-	*p = 0;
-	...
+    int *p;
+    ...
+    *p = 0;
+    ...
 }
 ```
 
@@ -10902,10 +10902,10 @@ int main(void)
 ```c
 int main(void)
 {
-	int *p = NULL;
-	...
-	*p = 0;
-	...
+    int *p = NULL;
+    ...
+    *p = 0;
+    ...
 }
 ```
 
@@ -10922,16 +10922,16 @@ int main(void)
 ```c
 void func(void *pv)
 {
-	/* *pv = 'A' is illegal */
-	char *pchar = pv;
-	*pchar = 'A';
+    /* *pv = 'A' is illegal */
+    char *pchar = pv;
+    *pchar = 'A';
 }
 
 int main(void)
 {
-	char c;
-	func(&c);
-	printf("%c\n", c);
+    char c;
+    func(&c);
+    printf("%c\n", c);
 ...
 }
 ```
@@ -10949,19 +10949,19 @@ int main(void)
 
 int *swap(int *px, int *py)
 {
-	int temp;
-	temp = *px;
-	*px = *py;
-	*py = temp;
-	return px;
+    int temp;
+    temp = *px;
+    *px = *py;
+    *py = temp;
+    return px;
 }
 
 int main(void)
 {
-	int i = 10, j = 20;
-	int *p = swap(&i, &j);
-	printf("now i=%d j=%d *p=%d\n", i, j, *p);
-	return 0;
+    int i = 10, j = 20;
+    int *p = swap(&i, &j);
+    printf("now i=%d j=%d *p=%d\n", i, j, *p);
+    return 0;
 }
 ```
 
@@ -11026,7 +11026,7 @@ pa++;
 ```c
 void func(int a[10])
 {
-	...
+    ...
 }
 ```
 
@@ -11035,7 +11035,7 @@ void func(int a[10])
 ```c
 void func(int *a)
 {
-	...
+    ...
 }
 ```
 
@@ -11044,7 +11044,7 @@ void func(int *a)
 ```c
 void func(int a[])
 {
-	...
+    ...
 }
 ```
 
@@ -11110,9 +11110,9 @@ printf("abcd");
 ```c
 int main(void)
 {
-	char *p = "abcd";
+    char *p = "abcd";
 ...
-	*p = 'A';
+    *p = 'A';
 ...
 }
 ```
@@ -11125,8 +11125,8 @@ int main(void)
 
 ```c
 struct unit {
-	char c;
-	int num;
+    char c;
+    int num;
 };
 struct unit u;
 struct unit *p = &u;
@@ -11176,10 +11176,10 @@ int **pa = &a[0];
 
 int main(int argc, char *argv[])
 {
-	int i;
-	for(i = 0; i < argc; i++)
-		printf("argv[%d]=%s\n", i, argv[i]);
-	return 0;
+    int i;
+    for(i = 0; i < argc; i++)
+        printf("argv[%d]=%s\n", i, argv[i]);
+    return 0;
 }
 ```
 
@@ -11218,12 +11218,12 @@ for(i=0; argv[i] != NULL; i++)
 #### 2.10.6.1. 习题
 
 1. 想想以下定义中的 `const` 分别起什么作用？编写程序验证你的猜测。
-	
-	```c
-	const char **p;
-	char *const *p;
-	char **const p;
-	```
+    
+    ```c
+    const char **p;
+    char *const *p;
+    char **const p;
+    ```
 
 ### 2.10.7. 指向数组的指针与多维数组
 
@@ -11296,18 +11296,18 @@ int (*pa)[10] = &a[0];
 #### 2.10.7.1. 习题
 
 1. 定义以下变量：
-	
-	```c
-	char a[4][3][2] = {{{'a', 'b'}, {'c', 'd'}, {'e', 'f'}},
-			   {{'g', 'h'}, {'i', 'j'}, {'k', 'l'}},
-			   {{'m', 'n'}, {'o', 'p'}, {'q', 'r'}},
-			   {{'s', 't'}, {'u', 'v'}, {'w', 'x'}}};
-	
-	char (*pa)[2] = &a[1][0];
-	char (*ppa)[3][2] = &a[1];
-	```
-	
-	要想通过`pa`或`ppa`访问数组`a`中的`'r'`元素，分别应该怎么写？
+    
+    ```c
+    char a[4][3][2] = {{{'a', 'b'}, {'c', 'd'}, {'e', 'f'}},
+               {{'g', 'h'}, {'i', 'j'}, {'k', 'l'}},
+               {{'m', 'n'}, {'o', 'p'}, {'q', 'r'}},
+               {{'s', 't'}, {'u', 'v'}, {'w', 'x'}}};
+    
+    char (*pa)[2] = &a[1][0];
+    char (*ppa)[3][2] = &a[1];
+    ```
+    
+    要想通过`pa`或`ppa`访问数组`a`中的`'r'`元素，分别应该怎么写？
 
 ### 2.10.8. 函数类型和函数指针类型
 
@@ -11320,14 +11320,14 @@ int (*pa)[10] = &a[0];
 
 void say_hello(const char *str)
 {
-	printf("Hello %s\n", str);
+    printf("Hello %s\n", str);
 }
 
 int main(void)
 {
-	void (*f)(const char *) = say_hello;
-	f("Guys");
-	return 0;
+    void (*f)(const char *) = say_hello;
+    f("Guys");
+    return 0;
 }
 ```
 
@@ -11389,10 +11389,10 @@ F *fp;
 ```c
 double real_part(struct complex_struct z)
 {
-	if (z.t == RECTANGULAR)
-		return z.a;
-	else
-		return z.a * cos(z.b);
+    if (z.t == RECTANGULAR)
+        return z.a;
+    else
+        return z.a * cos(z.b);
 }
 ```
 
@@ -11401,47 +11401,47 @@ double real_part(struct complex_struct z)
 ```c
 double rect_real_part(struct complex_struct z)
 {
-	return z.a;
+    return z.a;
 }
 
 double rect_img_part(struct complex_struct z)
 {
-	return z.b;
+    return z.b;
 }
 
 double rect_magnitude(struct complex_struct z)
 {
-	return sqrt(z.a * z.a + z.b * z.b);
+    return sqrt(z.a * z.a + z.b * z.b);
 }
 
 double rect_angle(struct complex_struct z)
 {
-	double PI = acos(-1.0);
+    double PI = acos(-1.0);
 
-	if (z.a > 0)
-		return atan(z.b / z.a);
-	else
-		return atan(z.b / z.a) + PI;
+    if (z.a > 0)
+        return atan(z.b / z.a);
+    else
+        return atan(z.b / z.a) + PI;
 }
 
 double pol_real_part(struct complex_struct z)
 {
-	return z.a * cos(z.b);
+    return z.a * cos(z.b);
 }
 
 double pol_img_part(struct complex_struct z)
 {
-	return z.a * sin(z.b);
+    return z.a * sin(z.b);
 }
 
 double pol_magnitude(struct complex_struct z)
 {
-	return z.a;
+    return z.a;
 }
 
 double pol_angle(struct complex_struct z)
 {
-	return z.b;
+    return z.b;
 }
 
 double (*real_part_tbl[])(struct complex_struct) = { rect_real_part, pol_real_part };
@@ -11486,11 +11486,11 @@ char str[10];
 
 ```c
 struct s {
-	struct t *pt;
+    struct t *pt;
 };
 
 struct t {
-	struct s *ps;
+    struct s *ps;
 };
 ```
 
@@ -11500,11 +11500,11 @@ struct t {
 
 ```c
 struct s {
-	struct t ot;
+    struct t ot;
 };
 
 struct t {
-	struct s os;
+    struct s os;
 };
 ```
 
@@ -11514,8 +11514,8 @@ struct t {
 
 ```c
 struct s {
-	char data[6];
-	struct s* next;
+    char data[6];
+    struct s* next;
 };
 ```
 
@@ -11554,29 +11554,29 @@ int (*(*fp)(void *))[10];
 
 1. `fp` 和 `*` 号括在一起，说明 `fp` 是一个指针，指向 `T1` 类型：
 
-	```c
-	typedef int (*T1(void *))[10];
-	T1 *fp;
-	```
+    ```c
+    typedef int (*T1(void *))[10];
+    T1 *fp;
+    ```
 
 2. `T1` 应该是一个函数类型，参数是 `void *`，返回值是 `T2` 类型：
 
-	```c
-	typedef int (*T2)[10];
-	typedef T2 T1(void *);
-	T1 *fp;
-	```
+    ```c
+    typedef int (*T2)[10];
+    typedef T2 T1(void *);
+    T1 *fp;
+    ```
 
 3. `T2` 和 `*` 号括在一起，应该也是个指针，指向 `T3` 类型：
 
-	```c
-	typedef int T3[10];
-	typedef T3 *T2;
-	typedef T2 T1(void *);
-	T1 *fp;
-	```
-	
-	显然，`T3` 是一个 `int` 数组，由 10 个元素组成。分解完毕。
+    ```c
+    typedef int T3[10];
+    typedef T3 *T2;
+    typedef T2 T1(void *);
+    T1 *fp;
+    ```
+    
+    显然，`T3` 是一个 `int` 数组，由 10 个元素组成。分解完毕。
 
 ### 2.10.10. 指针数组和指向数组的指针
 
@@ -11704,9 +11704,9 @@ buf[sizeof(buf)-1] = '\0';
 ```c
 void foo(char *str)
 {
-	char buf[10];
-	strcpy(buf, str);
-	...
+    char buf[10];
+    strcpy(buf, str);
+    ...
 }
 ```
 
@@ -11717,28 +11717,28 @@ void foo(char *str)
 1. 自己实现一个 `strcpy` 函数，尽可能简洁，按照本书的编码风格你能用三行代码写出函数体吗？
 2. 编一个函数，输入一个字符串，要求做一个新字符串，把其中所有的一个或多个连续的空白字符都压缩为一个空格。这里所说的空白包括空格、'\t'、'\n'、'\r'。例如原来的字符串是：
 
-	```c
-	This Content hoho       is ok
-	        ok?
-	
-	        file system
-	uttered words   ok ok      ?
-	end.
-	```
-	
-	压缩了空白之后就是：
-	
-	```
-	This Content hoho is ok ok? file system uttered words ok ok ? end.
-	```
-	
-	实现该功能的函数接口要求符合下述规范：
-	
-	```
-	char *shrink_space(char *dest, const char *src, size_t n);
-	```
-	
-	各项参数和返回值的含义和 `strncpy` 类似。完成之后，为自己实现的函数写一个 Man Page。
+    ```c
+    This Content hoho       is ok
+            ok?
+    
+            file system
+    uttered words   ok ok      ?
+    end.
+    ```
+    
+    压缩了空白之后就是：
+    
+    ```
+    This Content hoho is ok ok? file system uttered words ok ok ? end.
+    ```
+    
+    实现该功能的函数接口要求符合下述规范：
+    
+    ```
+    char *shrink_space(char *dest, const char *src, size_t n);
+    ```
+    
+    各项参数和返回值的含义和 `strncpy` 类似。完成之后，为自己实现的函数写一个 Man Page。
 
 #### 2.11.1.2. malloc 与 free
 
@@ -11747,9 +11747,9 @@ void foo(char *str)
 ```c
 void foo(char *str, int n)
 {
-	char buf[?];
-	strncpy(buf, str, n);
-	...
+    char buf[?];
+    strncpy(buf, str, n);
+    ...
 }
 ```
 
@@ -11778,27 +11778,27 @@ void free(void *ptr);
 #include <string.h>
 
 typedef struct {
-	int number;
-	char *msg;
+    int number;
+    char *msg;
 } unit_t;
 
 int main(void)
 {
-	unit_t *p = malloc(sizeof(unit_t));
+    unit_t *p = malloc(sizeof(unit_t));
 
-	if (p == NULL) {
-		printf("out of memory\n");
-		exit(1);
-	}
-	p->number = 3;
-	p->msg = malloc(20);
-	strcpy(p->msg, "Hello world!");
-	printf("number: %d\nmsg: %s\n", p->number, p->msg);
-	free(p->msg);
-	free(p);
-	p = NULL;
+    if (p == NULL) {
+        printf("out of memory\n");
+        exit(1);
+    }
+    p->number = 3;
+    p->msg = malloc(20);
+    strcpy(p->msg, "Hello world!");
+    printf("number: %d\nmsg: %s\n", p->number, p->msg);
+    free(p->msg);
+    free(p);
+    p = NULL;
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -11814,8 +11814,8 @@ int main(void)
 ```c
 void foo(void)
 {
-	char *p = malloc(10);
-	...
+    char *p = malloc(10);
+    ...
 }
 ```
 
@@ -11937,7 +11937,7 @@ extern void get_a_day(const char **);
 #include "redirect_ptr.h"
 
 static const char *msg[] = {"Sunday", "Monday", "Tuesday", "Wednesday",
-			"Thursday", "Friday", "Saturday"};
+            "Thursday", "Friday", "Saturday"};
 void get_a_day(const char **pp)
 {
      static int i = 0;
@@ -11993,8 +11993,8 @@ void alloc_unit(unit_t **pp)
 {
      unit_t *p = malloc(sizeof(unit_t));
      if(p == NULL) {
-	  printf("out of memory\n");
-	  exit(1);
+      printf("out of memory\n");
+      exit(1);
      }
      p->number = 3;
      p->msg = malloc(20);
@@ -12054,7 +12054,7 @@ extern char *get_a_day(int idx);
 #include "ret_ptr.h"
 
 static const char *msg[] = {"Sunday", "Monday", "Tuesday", "Wednesday",
-			"Thursday", "Friday", "Saturday"};
+            "Thursday", "Friday", "Saturday"};
 
 char *get_a_day(int idx)
 {
@@ -12109,8 +12109,8 @@ unit_t *alloc_unit(void)
 {
      unit_t *p = malloc(sizeof(unit_t));
      if(p == NULL) {
-	  printf("out of memory\n");
-	  exit(1);
+      printf("out of memory\n");
+      exit(1);
      }
      p->number = 3;
      p->msg = malloc(20);
@@ -12185,7 +12185,7 @@ void count_numbers(void *num)
 {
      int i;
      for(i=1; i<=(int)num; i++)
-	  printf("%d ", i);
+      printf("%d ", i);
      putchar('\n');
 }
 
@@ -12220,8 +12220,8 @@ void *max(void *data[], int num, cmp_t cmp)
      int i;
      void *temp = data[0];
      for(i=1; i<num; i++) {
-	  if(cmp(temp, data[i])<0)
-	       temp = data[i];
+      if(cmp(temp, data[i])<0)
+           temp = data[i];
      }
      return temp;
 }
@@ -12237,17 +12237,17 @@ typedef struct {
 int cmp_student(void *a, void *b)
 {
      if(((student_t *)a)->score > ((student_t *)b)->score)
-	  return 1;
+      return 1;
      else if(((student_t *)a)->score == ((student_t *)b)->score)
-	  return 0;
+      return 0;
      else
-	  return -1;
+      return -1;
 }
 
 int main(void)
 {
      student_t list[4] = {{"Tom", 68}, {"Jerry", 72},
-		       {"Moby", 60}, {"Kirby", 89}};
+               {"Moby", 60}, {"Kirby", 89}};
      student_t *plist[4] = {&list[0], &list[1], &list[2], &list[3]};
      student_t *pmax = max((void **)plist, 4, cmp_student);
      printf("%s gets the highest score %d\n", pmax->name, pmax->score);
@@ -12319,21 +12319,21 @@ void myprintf(const char *format, ...)
 
      va_start(ap, format);
      while (c = *format++) {
-	  switch(c) {
-	  case 'c': {
-	       /* char is promoted to int when passed through '...' */
-	       char ch = va_arg(ap, int);
-	       putchar(ch);
-	       break;
-	  }
-	  case 's': {
-	       char *p = va_arg(ap, char *);
-	       fputs(p, stdout);
-	       break;
-	  }
-	  default:
-	       putchar(c);
-	  }
+      switch(c) {
+      case 'c': {
+           /* char is promoted to int when passed through '...' */
+           char ch = va_arg(ap, int);
+           putchar(ch);
+           break;
+      }
+      case 's': {
+           char *p = va_arg(ap, char *);
+           fputs(p, stdout);
+           break;
+      }
+      default:
+           putchar(c);
+      }
      }
      va_end(ap);
 }
@@ -12349,12 +12349,12 @@ int main(void)
 
 ```c
      myprintf("c\ts\n", '1', "hello");
- 80484c5:	c7 44 24 08 b0 85 04 	movl   $0x80485b0,0x8(%esp)
- 80484cc:	08 
- 80484cd:	c7 44 24 04 31 00 00 	movl   $0x31,0x4(%esp)
- 80484d4:	00 
- 80484d5:	c7 04 24 b6 85 04 08 	movl   $0x80485b6,(%esp)
- 80484dc:	e8 43 ff ff ff       	call   8048424 <myprintf>
+ 80484c5:   c7 44 24 08 b0 85 04    movl   $0x80485b0,0x8(%esp)
+ 80484cc:   08 
+ 80484cd:   c7 44 24 04 31 00 00    movl   $0x31,0x4(%esp)
+ 80484d4:   00 
+ 80484d5:   c7 04 24 b6 85 04 08    movl   $0x80485b6,(%esp)
+ 80484dc:   e8 43 ff ff ff          call   8048424 <myprintf>
 ```
 
 <p id="c24-6">图 24.6. myprintf 函数的参数布局</p>
@@ -12374,10 +12374,10 @@ int main(void)
 typedef char *va_list;
 /* macros */
 #define va_arg(ap, T) \
-	(* (T *)(((ap) += _Bnd(T, 3U)) - _Bnd(T, 3U)))
+    (* (T *)(((ap) += _Bnd(T, 3U)) - _Bnd(T, 3U)))
 #define va_end(ap) (void)0
 #define va_start(ap, A) \
-	(void)((ap) = (char *)&(A) + _Bnd(A, 3U))
+    (void)((ap) = (char *)&(A) + _Bnd(A, 3U))
 #define _Bnd(X, bnd) (sizeof (X) + (bnd) & ~(bnd))
 #endif
 ```
@@ -12419,9 +12419,9 @@ void printlist(int begin, ...)
      p = va_arg(ap, char *);
 
      while (p != NULL) {
-	  fputs(p, stdout);
-	  putchar('\n');
-	  p = va_arg(ap, char*);
+      fputs(p, stdout);
+      putchar('\n');
+      p = va_arg(ap, char*);
      }
      va_end(ap);
 }
@@ -12509,10 +12509,10 @@ void *memmove(void *dest, const void *src, size_t n);
 
 int main(void)
 {
-	char buf[20] = "hello world\n";
-	memcpy(buf + 1, buf, 13);
-	printf(buf);
-	return 0;
+    char buf[20] = "hello world\n";
+    memcpy(buf + 1, buf, 13);
+    printf(buf);
+    return 0;
 }
 ```
 
@@ -12521,17 +12521,17 @@ int main(void)
 ```c
 void *memmove(void *dest, const void *src, size_t n)
 {
-	char temp[n];
-	int i;
-	char *d = dest;
-	const char *s = src;
+    char temp[n];
+    int i;
+    char *d = dest;
+    const char *s = src;
 
-	for (i = 0; i < n; i++)
-		temp[i] = s[i];
-	for (i = 0; i < n; i++)
-		d[i] = temp[i];
+    for (i = 0; i < n; i++)
+        temp[i] = s[i];
+    for (i = 0; i < n; i++)
+        d[i] = temp[i];
 
-	return dest;
+    return dest;
 }
 ```
 
@@ -12542,20 +12542,20 @@ void *memmove(void *dest, const void *src, size_t n)
 ```c
 void *memcpy(void *dest, const void *src, size_t n)
 {
-	char *d = dest;
-	const char *s = src;
-	int *di;
-	const int *si;
-	int r = n % 4;
-	while (r--)
-		*d++ = *s++;
-	di = (int *)d;
-	si = (const int *)s;
-	n /= 4;
-	while (n--)
-		*di++ = *si++;
+    char *d = dest;
+    const char *s = src;
+    int *di;
+    const int *si;
+    int r = n % 4;
+    while (r--)
+        *d++ = *s++;
+    di = (int *)d;
+    si = (const int *)s;
+    n /= 4;
+    while (n--)
+        *di++ = *si++;
 
-	return dest;
+    return dest;
 }
 ```
 
@@ -12568,9 +12568,9 @@ void *memcpy(void *dest, const void *src, size_t n)
 > ```c
 > void vector_add(const double *x, const double *y, double *result)
 > {  
-> 	int i;  
-> 	for (i = 0; i < 64; ++i)  
-> 		result[i] = x[i] + y[i];  
+>   int i;  
+>   for (i = 0; i < 64; ++i)  
+>       result[i] = x[i] + y[i];  
 > }
 > ```
 > 
@@ -12696,15 +12696,15 @@ char *strtok_r(char *str, const char *delim, char **saveptr);
 
 int main(void)
 {
-	char str[] = "root:x::0:root:/root:/bin/bash:";
-	char *token;
+    char str[] = "root:x::0:root:/root:/bin/bash:";
+    char *token;
 
-	token = strtok(str, ":");
-	printf("%s\n", token);
-	while ( (token = strtok(NULL, ":")) != NULL)
-		printf("%s\n", token);
-	
-	return 0;
+    token = strtok(str, ":");
+    printf("%s\n", token);
+    while ( (token = strtok(NULL, ":")) != NULL)
+        printf("%s\n", token);
+    
+    return 0;
 }
 $ ./a.out 
 root
@@ -12724,26 +12724,26 @@ root
 Breakpoint 1 at 0x8048415: file main.c, line 5.
 Starting program: /home/akaedu/a.out 
 main () at main.c:5
-5	{
+5   {
 (gdb) n
-6		char str[] = "root:x::0:root:/root:/bin/bash:";
+6       char str[] = "root:x::0:root:/root:/bin/bash:";
 (gdb) 
-9		token = strtok(str, ":");
+9       token = strtok(str, ":");
 (gdb) display str
 1: str = "root:x::0:root:/root:/bin/bash:"
 (gdb) n
-10		printf("%s\n", token);
+10      printf("%s\n", token);
 1: str = "root\000x::0:root:/root:/bin/bash:"
 (gdb) 
 root
-11		while ( (token = strtok(NULL, ":")) != NULL)
+11      while ( (token = strtok(NULL, ":")) != NULL)
 1: str = "root\000x::0:root:/root:/bin/bash:"
 (gdb) 
-12			printf("%s\n", token);
+12          printf("%s\n", token);
 1: str = "root\000x\000:0:root:/root:/bin/bash:"
 (gdb) 
 x
-11		while ( (token = strtok(NULL, ":")) != NULL)
+11      while ( (token = strtok(NULL, ":")) != NULL)
 1: str = "root\000x\000:0:root:/root:/bin/bash:"
 ```
 
@@ -12758,31 +12758,31 @@ x
 
 int main(int argc, char *argv[])
 {
-	char *str1, *str2, *token, *subtoken;
-	char *saveptr1, *saveptr2;
-	int j;
+    char *str1, *str2, *token, *subtoken;
+    char *saveptr1, *saveptr2;
+    int j;
 
-	if (argc != 4) {
-		fprintf(stderr, "Usage: %s string delim subdelim\n",
-			argv[0]);
-		exit(EXIT_FAILURE);
-	}
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s string delim subdelim\n",
+            argv[0]);
+        exit(EXIT_FAILURE);
+    }
 
-	for (j = 1, str1 = argv[1]; ; j++, str1 = NULL) {
-		token = strtok_r(str1, argv[2], &saveptr1);
-		if (token == NULL)
-			break;
-		printf("%d: %s\n", j, token);
+    for (j = 1, str1 = argv[1]; ; j++, str1 = NULL) {
+        token = strtok_r(str1, argv[2], &saveptr1);
+        if (token == NULL)
+            break;
+        printf("%d: %s\n", j, token);
 
-		for (str2 = token; ; str2 = NULL) {
-			subtoken = strtok_r(str2, argv[3], &saveptr2);
-			if (subtoken == NULL)
-				break;
-			printf(" --> %s\n", subtoken);
-		}
-	}
+        for (str2 = token; ; str2 = NULL) {
+            subtoken = strtok_r(str2, argv[3], &saveptr2);
+            if (subtoken == NULL)
+                break;
+            printf(" --> %s\n", subtoken);
+        }
+    }
 
-	exit(EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 $ ./a.out 'a/bbb///cc;xxx:yyy:' ':;' '/'
 1: a/bbb///cc
@@ -12810,15 +12810,15 @@ Man Page 的 **BUGS** 部分指出了用 `strtok` 和 `strtok_r` 函数需要注
 
 2. 解析 URL 中的路径和查询字符串。动态网页的 URL 末尾通常带有查询，例如：
 
-	```
-	http://www.google.cn/search?complete=1&hl=zh-CN&ie=GB2312&q=linux&meta=
-	
-	http://www.baidu.com/s?wd=linux&cl=3
-	```
-	
-	比如上面第一个例子，`http://www.google.cn/search` 是路径部分，`?` 号后面的 `complete=1&hl=zh-CN&ie=GB2312&q=linux&meta=` 是查询字符串，由五个「key=value」形式的键值对（Key-Value Pair）组成，以 `&` 隔开，有些键对应的值可能是空字符串，比如这个例子中的键 `meta`。
+    ```
+    http://www.google.cn/search?complete=1&hl=zh-CN&ie=GB2312&q=linux&meta=
+    
+    http://www.baidu.com/s?wd=linux&cl=3
+    ```
+    
+    比如上面第一个例子，`http://www.google.cn/search` 是路径部分，`?` 号后面的 `complete=1&hl=zh-CN&ie=GB2312&q=linux&meta=` 是查询字符串，由五个「key=value」形式的键值对（Key-Value Pair）组成，以 `&` 隔开，有些键对应的值可能是空字符串，比如这个例子中的键 `meta`。
 
-	现在要求实现一个函数，传入一个带查询字符串的 URL，首先检查输入格式的合法性，然后对 URL 进行切分，将路径部分和各键值对分别传出，请仔细设计函数接口以便传出这些字符串。如果函数中有动态分配内存的操作，还要另外实现一个释放内存的函数。完成之后，为自己设计的函数写一个 Man Page。
+    现在要求实现一个函数，传入一个带查询字符串的 URL，首先检查输入格式的合法性，然后对 URL 进行切分，将路径部分和各键值对分别传出，请仔细设计函数接口以便传出这些字符串。如果函数中有动态分配内存的操作，还要另外实现一个释放内存的函数。完成之后，为自己设计的函数写一个 Man Page。
 
 ### 2.12.2. 标准 I/O 库函数
 
@@ -12883,8 +12883,8 @@ $ pwd
 
 ```c
 if ( (fp = fopen("/tmp/file1", "r")) == NULL) {
-	printf("error open file /tmp/file1!\n");
-	exit(1);
+    printf("error open file /tmp/file1!\n");
+    exit(1);
 }
 ```
 
@@ -12926,8 +12926,8 @@ crw-rw-rw- 1 root dialout 5, 0 2009-03-20 19:31 /dev/tty
 
 ```c
 if ( (fp = fopen("/tmp/file1", "r")) == NULL) {
-	fputs("Error open file /tmp/file1\n", stderr);
-	exit(1);
+    fputs("Error open file /tmp/file1\n", stderr);
+    exit(1);
 }
 ```
 
@@ -12955,12 +12955,12 @@ void perror(const char *s);
 
 int main(void)
 {
-	FILE *fp = fopen("abcde", "r");
-	if (fp == NULL) {
-		perror("Open file abcde");
-		exit(1);
-	}
-	return 0;
+    FILE *fp = fopen("abcde", "r");
+    if (fp == NULL) {
+        perror("Open file abcde");
+        exit(1);
+    }
+    return 0;
 }
 ```
 
@@ -12975,13 +12975,13 @@ int main(void)
 
 int main(void)
 {
-	FILE *fp = fopen("abcde", "r");
-	if (fp == NULL) {
-		perror("Open file abcde");
-		printf("errno: %d\n", errno);
-		exit(1);
-	}
-	return 0;
+    FILE *fp = fopen("abcde", "r");
+    if (fp == NULL) {
+        perror("Open file abcde");
+        printf("errno: %d\n", errno);
+        exit(1);
+    }
+    return 0;
 }
 ```
 
@@ -13007,27 +13007,27 @@ fputs(strerror(n), stderr);
 1. 在系统头文件中找到各种错误码的宏定义。
 2. 做几个小练习，看看 `fopen` 出错有哪些常见的原因。
 
-	打开一个没有访问权限的文件。
-	
-	```c
-	fp = fopen("/etc/shadow", "r");
-	if (fp == NULL) {
-		perror("Open /etc/shadow");
-		exit(1);
-	}
-	```
+    打开一个没有访问权限的文件。
+    
+    ```c
+    fp = fopen("/etc/shadow", "r");
+    if (fp == NULL) {
+        perror("Open /etc/shadow");
+        exit(1);
+    }
+    ```
 
-	`fopen` 也可以打开一个目录，传给 `fopen` 的第一个参数目录名末尾可以加 `/` 也可以不加 `/`，但只允许以只读方式打开。试试如果以可写的方式打开一个存在的目录会怎么样呢？
-	
-	```c
-	fp = fopen("/home/akaedu/", "r+");
-	if (fp == NULL) {
-		perror("Open /home/akaedu");
-		exit(1);
-	}
-	```
+    `fopen` 也可以打开一个目录，传给 `fopen` 的第一个参数目录名末尾可以加 `/` 也可以不加 `/`，但只允许以只读方式打开。试试如果以可写的方式打开一个存在的目录会怎么样呢？
+    
+    ```c
+    fp = fopen("/home/akaedu/", "r+");
+    if (fp == NULL) {
+        perror("Open /home/akaedu");
+        exit(1);
+    }
+    ```
 
-	请读者自己设计几个实验，看看你还能测试出哪些错误原因？
+    请读者自己设计几个实验，看看你还能测试出哪些错误原因？
 
 #### 2.12.2.5. 以字节为单位的 I/O 函数
 
@@ -13075,20 +13075,20 @@ int putchar(int c);
 
 int main(void)
 {
-	FILE *fp;
-	int ch;
+    FILE *fp;
+    int ch;
 
-	if ( (fp = fopen("file2", "w+")) == NULL) {
-		perror("Open file file2\n");
-		exit(1);
-	}
-	while ( (ch = getchar()) != EOF)
-		fputc(ch, fp);
-	rewind(fp);
-	while ( (ch = fgetc(fp)) != EOF)
-		putchar(ch);
-	fclose(fp);
-	return 0;
+    if ( (fp = fopen("file2", "w+")) == NULL) {
+        perror("Open file file2\n");
+        exit(1);
+    }
+    while ( (ch = getchar()) != EOF)
+        fputc(ch, fp);
+    rewind(fp);
+    while ( (ch = fgetc(fp)) != EOF)
+        putchar(ch);
+    fclose(fp);
+    return 0;
 }
 ```
 
@@ -13123,12 +13123,12 @@ hey
 ##### 习题
 
 1. 编写一个简单的文件复制程序。
-	
-	```bash
-	$ ./mycp dir1/fileA dir2/fileB
-	```
-	
-	运行这个程序可以把 `dir1/fileA` 文件拷贝到 `dir2/fileB` 文件。注意各种出错处理。
+    
+    ```bash
+    $ ./mycp dir1/fileA dir2/fileB
+    ```
+    
+    运行这个程序可以把 `dir1/fileA` 文件拷贝到 `dir2/fileB` 文件。注意各种出错处理。
 
 2. 虽然我说 `getchar` 要读到换行符才返回，但上面的程序并没有提供证据支持我的说法，如果看成每敲一个键 `getchar` 就返回一次，也能解释程序的运行结果。请写一个小程序证明 `getchar` 确实是读到换行符才返回的。
 
@@ -13166,18 +13166,18 @@ void rewind(FILE *stream);
 
 int main(void)
 {
-	FILE* fp;
-	if ( (fp = fopen("textfile","r+")) == NULL) {
-		perror("Open file textfile");
-		exit(1);
-	}
-	if (fseek(fp, 10, SEEK_SET) != 0) {
-		perror("Seek file textfile");
-		exit(1);
-	}
-	fputc('K', fp);
-	fclose(fp);
-	return 0;
+    FILE* fp;
+    if ( (fp = fopen("textfile","r+")) == NULL) {
+        perror("Open file textfile");
+        exit(1);
+    }
+    if (fseek(fp, 10, SEEK_SET) != 0) {
+        perror("Seek file textfile");
+        exit(1);
+    }
+    fputc('K', fp);
+    fclose(fp);
+    return 0;
 }
 ```
 
@@ -13254,44 +13254,44 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
 #include <stdlib.h>
 
 struct record {
-	char name[10];
-	int age;
+    char name[10];
+    int age;
 };
 
 int main(void)
 {
-	struct record array[2] = {{"Ken", 24}, {"Knuth", 28}};
-	FILE *fp = fopen("recfile", "w");
-	if (fp == NULL) {
-		perror("Open file recfile");
-		exit(1);
-	}
-	fwrite(array, sizeof(struct record), 2, fp);
-	fclose(fp);
-	return 0;
+    struct record array[2] = {{"Ken", 24}, {"Knuth", 28}};
+    FILE *fp = fopen("recfile", "w");
+    if (fp == NULL) {
+        perror("Open file recfile");
+        exit(1);
+    }
+    fwrite(array, sizeof(struct record), 2, fp);
+    fclose(fp);
+    return 0;
 }
 /* readrec.c */
 #include <stdio.h>
 #include <stdlib.h>
 
 struct record {
-	char name[10];
-	int age;
+    char name[10];
+    int age;
 };
 
 int main(void)
 {
-	struct record array[2];
-	FILE *fp = fopen("recfile", "r");
-	if (fp == NULL) {
-		perror("Open file recfile");
-		exit(1);
-	}
-	fread(array, sizeof(struct record), 2, fp);
-	printf("Name1: %s\tAge1: %d\n", array[0].name, array[0].age);
-	printf("Name2: %s\tAge2: %d\n", array[1].name, array[1].age);
-	fclose(fp);
-	return 0;
+    struct record array[2];
+    FILE *fp = fopen("recfile", "r");
+    if (fp == NULL) {
+        perror("Open file recfile");
+        exit(1);
+    }
+    fread(array, sizeof(struct record), 2, fp);
+    printf("Name1: %s\tAge1: %d\n", array[0].name, array[0].age);
+    printf("Name2: %s\tAge2: %d\n", array[1].name, array[1].age);
+    fclose(fp);
+    return 0;
 }
 $ gcc writerec.c -o writerec
 $ gcc readrec.c -o readrec
@@ -13303,8 +13303,8 @@ $ od -tx1 -tc -Ax recfile
          K   n   u   t   h  \0  \0  \0  \0  \0  \0  \0 034  \0  \0  \0
 000020
 $ ./readrec 
-Name1: Ken	Age1: 24
-Name2: Knuth	Age2: 28
+Name1: Ken  Age1: 24
+Name2: Knuth    Age2: 28
 ```
 
 我们把一个 `struct record` 结构体看作一条记录，由于结构体中有填充字节，每条记录占 16 字节，把两条记录写到文件中共占 32 字节。该程序生成的 `recfile` 文件是二进制文件而非文本文件，因为其中不仅保存着字符型数据，还保存着整型数据 24 和 28（在 `od` 命令的输出中以八进制显示为 030 和 034）。注意，直接在文件中读写结构体的程序是不可移植的，如果在一种平台上编译运行 `writebin.c` 程序，把生成的 `recfile` 文件拷到另一种平台并在该平台上编译运行 `readbin.c` 程序，则不能保证正确读出文件的内容，因为不同平台的大小端可能不同（因而对整型数据的存储方式不同），结构体的填充方式也可能不同（因而同一个结构体所占的字节数可能不同，`age` 成员在 `name` 成员之后的什么位置也可能不同）。
@@ -13348,35 +13348,35 @@ int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 
 void err_sys(const char *fmt, ...)
 {
-	int err = errno;
-	char buf[MAXLINE+1];
-	va_list ap;
+    int err = errno;
+    char buf[MAXLINE+1];
+    va_list ap;
 
-	va_start(ap, fmt);
+    va_start(ap, fmt);
 
-	vsnprintf(buf, MAXLINE, fmt, ap);
-	snprintf(buf+strlen(buf), MAXLINE-strlen(buf), ": %s", strerror(err));
-	strcat(buf, "\n");
-	fputs(buf, stderr);
+    vsnprintf(buf, MAXLINE, fmt, ap);
+    snprintf(buf+strlen(buf), MAXLINE-strlen(buf), ": %s", strerror(err));
+    strcat(buf, "\n");
+    fputs(buf, stderr);
 
-	va_end(ap);
-	exit(1);
+    va_end(ap);
+    exit(1);
 }
 
 int main(int argc, char *argv[])
 {
-	FILE *fp;
-	if (argc != 2) {
-		fputs("Usage: ./a.out pathname\n", stderr);
-		exit(1);
-	}
-	fp = fopen(argv[1], "r");
+    FILE *fp;
+    if (argc != 2) {
+        fputs("Usage: ./a.out pathname\n", stderr);
+        exit(1);
+    }
+    fp = fopen(argv[1], "r");
 
-	if (fp == NULL)
-		err_sys("Line %d - Open file %s", __LINE__, argv[1]);
-	printf("Open %s OK\n", argv[1]);
-	fclose(fp);
-	return 0;
+    if (fp == NULL)
+        err_sys("Line %d - Open file %s", __LINE__, argv[1]);
+    printf("Open %s OK\n", argv[1]);
+    fclose(fp);
+    return 0;
 }
 ```
 
@@ -13469,12 +13469,12 @@ int vfscanf(FILE *stream, const char *format, va_list ap);
 
 int main(void)  /* rudimentary calculator */
 {
-	double sum, v;
+    double sum, v;
 
-	sum = 0;
-	while (scanf("%lf", &v) == 1)
-		printf("\t%.2f\n", sum += v);
-	return 0;
+    sum = 0;
+    while (scanf("%lf", &v) == 1)
+        printf("\t%.2f\n", sum += v);
+    return 0;
 }
 ```
 
@@ -13488,7 +13488,7 @@ char monthname[20];
 sscanf(str, "%d %s %d", &day, monthname, &year);
 ```
 
-如果 `str` 中的空白字符再多一些，比如 `"  25	Dec   1998"`，仍然可以正确读取。如果格式化字符串中的空格和Tab再多一些，比如 `"%d   %s	%d  "`，也可以正确读取。`scanf` 函数是很强大的，但是要用对了不容易，需要多练习，通过练习体会空白字符的作用。
+如果 `str` 中的空白字符再多一些，比如 `"  25    Dec   1998"`，仍然可以正确读取。如果格式化字符串中的空格和Tab再多一些，比如 `"%d   %s   %d  "`，也可以正确读取。`scanf` 函数是很强大的，但是要用对了不容易，需要多练习，通过练习体会空白字符的作用。
 
 如果要读取 `12/25/1998` 这样的日期格式，就需要在格式化字符串中用 `/` 匹配输入字符中的 `/`：
 
@@ -13502,12 +13502,12 @@ scanf("%d/%d/%d", &month, &day, &year);
 
 ```c
 while (fgets(line, sizeof(line), stdin) > 0) {
-	if (sscanf(line, "%d %s %d", &day, monthname, &year) == 3)
-		printf("valid: %s\n", line); /* 25 Dec 1988 form */
-	else if (sscanf(line, "%d/%d/%d", &month, &day, &year) == 3)
-		printf("valid: %s\n", line); /* mm/dd/yy form */
-	else
-		printf("invalid: %s\n", line); /* invalid form */
+    if (sscanf(line, "%d %s %d", &day, monthname, &year) == 3)
+        printf("valid: %s\n", line); /* 25 Dec 1988 form */
+    else if (sscanf(line, "%d/%d/%d", &month, &day, &year) == 3)
+        printf("valid: %s\n", line); /* mm/dd/yy form */
+    else
+        printf("invalid: %s\n", line); /* invalid form */
 }
 ```
 
@@ -13534,9 +13534,9 @@ C 标准库的 I/O 缓冲区有三种类型：全缓冲、行缓冲和无缓冲�
 
 int main()
 {
-	printf("hello world");
-	while(1);
-	return 0;
+    printf("hello world");
+    while(1);
+    return 0;
 }
 ```
 
@@ -13563,8 +13563,8 @@ hello world$
 
 int main()
 {
-	printf("hello world");
-	_exit(0);
+    printf("hello world");
+    _exit(0);
 }
 ```
 
@@ -13583,10 +13583,10 @@ int main()
 
 int main()
 {
-	char buf[20];
-	printf("Please input a line: ");
-	fgets(buf, 20, stdin);
-	return 0;
+    char buf[20];
+    printf("Please input a line: ");
+    fgets(buf, 20, stdin);
+    return 0;
 }
 ```
 
@@ -13608,9 +13608,9 @@ int fflush(FILE *stream);
 
 int main()
 {
-	printf("hello world");
-	fflush(stdout);
-	while(1);
+    printf("hello world");
+    fflush(stdout);
+    while(1);
 }
 ```
 
@@ -13619,97 +13619,97 @@ int main()
 #### 2.12.2.11. 本节综合练习
 
 1. 编程读写一个文件 `test.txt`，每隔 1 秒向文件中写入一行记录，类似于这样：
-	
-	```
-	1 2009-7-30 15:16:42
-	2 2009-7-30 15:16:43
-	```
-	
-	该程序应该无限循环，直到按 Ctrl-C 终止。下次再启动程序时在 `test.txt` 文件末尾追加记录，并且序号能够接续上次的序号，比如：
-	
-	```bash
-	1 2009-7-30 15:16:42
-	2 2009-7-30 15:16:43
-	3 2009-7-30 15:19:02
-	4 2009-7-30 15:19:03
-	5 2009-7-30 15:19:04
-	```
-	
-	这类似于很多系统服务维护的日志文件，例如在我的机器上系统服务进程 `acpid` 维护一个日志文件 `/var/log/acpid`，就像这样：
-	
-	```bash
-	$ cat /var/log/acpid
-	[Sun Oct 26 08:44:46 2008] logfile reopened
-	[Sun Oct 26 10:11:53 2008] exiting
-	[Sun Oct 26 18:54:39 2008] starting up
-	...
-	```
-	
-	每次系统启动时 `acpid` 进程就以追加方式打开这个文件，当有事件发生时就追加一条记录，包括事件发生的时刻以及事件描述信息。
+    
+    ```
+    1 2009-7-30 15:16:42
+    2 2009-7-30 15:16:43
+    ```
+    
+    该程序应该无限循环，直到按 Ctrl-C 终止。下次再启动程序时在 `test.txt` 文件末尾追加记录，并且序号能够接续上次的序号，比如：
+    
+    ```bash
+    1 2009-7-30 15:16:42
+    2 2009-7-30 15:16:43
+    3 2009-7-30 15:19:02
+    4 2009-7-30 15:19:03
+    5 2009-7-30 15:19:04
+    ```
+    
+    这类似于很多系统服务维护的日志文件，例如在我的机器上系统服务进程 `acpid` 维护一个日志文件 `/var/log/acpid`，就像这样：
+    
+    ```bash
+    $ cat /var/log/acpid
+    [Sun Oct 26 08:44:46 2008] logfile reopened
+    [Sun Oct 26 10:11:53 2008] exiting
+    [Sun Oct 26 18:54:39 2008] starting up
+    ...
+    ```
+    
+    每次系统启动时 `acpid` 进程就以追加方式打开这个文件，当有事件发生时就追加一条记录，包括事件发生的时刻以及事件描述信息。
 
-	获取当前的系统时间需要调用 `time(2)` 函数，返回的结果是一个 `time_t` 类型，其实就是一个大整数，其值表示从 UTC（Coordinated Universal Time）时间 1970 年 1 月 1 日 00:00:00（称为 UNIX 系统的 Epoch 时间）到当前时刻的秒数。然后调用 `localtime(3)` 将 `time_t` 所表示的 UTC 时间转换为本地时间（我们是 +8 区，比 UTC 多 8 个小时）并转成 `struct tm` 类型，该类型的各数据成员分别表示年月日时分秒，具体用法请查阅 Man Page。调用 `sleep(3)` 函数可以指定程序睡眠多少秒。
+    获取当前的系统时间需要调用 `time(2)` 函数，返回的结果是一个 `time_t` 类型，其实就是一个大整数，其值表示从 UTC（Coordinated Universal Time）时间 1970 年 1 月 1 日 00:00:00（称为 UNIX 系统的 Epoch 时间）到当前时刻的秒数。然后调用 `localtime(3)` 将 `time_t` 所表示的 UTC 时间转换为本地时间（我们是 +8 区，比 UTC 多 8 个小时）并转成 `struct tm` 类型，该类型的各数据成员分别表示年月日时分秒，具体用法请查阅 Man Page。调用 `sleep(3)` 函数可以指定程序睡眠多少秒。
 
 2. INI 文件是一种很常见的配置文件，很多 Windows 程序都采用这种格式的配置文件，在 Linux 系统中 Qt 程序通常也采用这种格式的配置文件。比如：
-	
-	```ini
-	;Configuration of http
-	[http]
-	domain=www.mysite.com
-	port=8080
-	cgihome=/cgi-bin
-	
-	;Configuration of db
-	[database]
-	server = mysql
-	user = myname
-	password = toopendatabase
-	```
-	
-	一个配置文件由若干个 Section 组成，由 [] 括号括起来的是 Section 名。每个 Section 下面有若干个 `key = value` 形式的键值对（Key-value Pair），等号两边可以有零个或多个空白字符（空格或 Tab），每个键值对占一行。以 ; 号开头的行是注释。每个 Section 结束时有一个或多个空行，空行是仅包含零个或多个空白字符（空格或 Tab）的行。INI 文件的最后一行后面可能有换行符也可能没有。
-	
-	现在 XML 兴起了，INI 文件显得有点土。现在要求编程把 INI 文件转换成 XML 文件。上面的例子经转换后应该变成这样：
-	
-	```xml
-	<!-- Configuration of http -->
-	<http>
-	        <domain>www.mysite.com</domain>
-	        <port>8080</port>
-	        <cgihome>/cgi-bin</cgihome>
-	</http>
-	
-	<!-- Configuration of db -->
-	<database>
-	        <server>mysql</server>
-	        <user>myname</user>
-	        <password>toopendatabase</password>
-	</database>
-	```
+    
+    ```ini
+    ;Configuration of http
+    [http]
+    domain=www.mysite.com
+    port=8080
+    cgihome=/cgi-bin
+    
+    ;Configuration of db
+    [database]
+    server = mysql
+    user = myname
+    password = toopendatabase
+    ```
+    
+    一个配置文件由若干个 Section 组成，由 [] 括号括起来的是 Section 名。每个 Section 下面有若干个 `key = value` 形式的键值对（Key-value Pair），等号两边可以有零个或多个空白字符（空格或 Tab），每个键值对占一行。以 ; 号开头的行是注释。每个 Section 结束时有一个或多个空行，空行是仅包含零个或多个空白字符（空格或 Tab）的行。INI 文件的最后一行后面可能有换行符也可能没有。
+    
+    现在 XML 兴起了，INI 文件显得有点土。现在要求编程把 INI 文件转换成 XML 文件。上面的例子经转换后应该变成这样：
+    
+    ```xml
+    <!-- Configuration of http -->
+    <http>
+            <domain>www.mysite.com</domain>
+            <port>8080</port>
+            <cgihome>/cgi-bin</cgihome>
+    </http>
+    
+    <!-- Configuration of db -->
+    <database>
+            <server>mysql</server>
+            <user>myname</user>
+            <password>toopendatabase</password>
+    </database>
+    ```
 
 3. 实现类似 `gcc` 的 `-M` 选项的功能，给定一个 `.c` 文件，列出它直接和间接包含的所有头文件，例如有一个 `main.c` 文件：
-	
-	```c
-	#include <errno.h>
-	#include "stack.h"
-	
-	int main()
-	{
-		return 0;
-	}
-	```
-	
-	你的程序读取这个文件，打印出其中包含的所有头文件的绝对路径：
-	
-	```bash
-	$ ./a.out main.c
-	/usr/include/errno.h
-	/usr/include/features.h
-	/usr/include/bits/errno.h
-	/usr/include/linux/errno.h
-	...
-	/home/akaedu/stack.h: cannot find
-	```
-	
-	如果有的头文件找不到，就像上面例子那样打印 `/home/akaedu/stack.h: cannot find`。首先复习一下[第 20 章「链接详解」第 2.2 节「头文件」](2-C-语言本质/ch20-链接详解#_22-头文件)讲过的头文件查找顺序，本题目不必考虑 `-I` 选项指定的目录，只在 `.c` 文件所在的目录以及系统目录 `/usr/include` 中查找。
+    
+    ```c
+    #include <errno.h>
+    #include "stack.h"
+    
+    int main()
+    {
+        return 0;
+    }
+    ```
+    
+    你的程序读取这个文件，打印出其中包含的所有头文件的绝对路径：
+    
+    ```bash
+    $ ./a.out main.c
+    /usr/include/errno.h
+    /usr/include/features.h
+    /usr/include/bits/errno.h
+    /usr/include/linux/errno.h
+    ...
+    /home/akaedu/stack.h: cannot find
+    ```
+    
+    如果有的头文件找不到，就像上面例子那样打印 `/home/akaedu/stack.h: cannot find`。首先复习一下[第 20 章「链接详解」第 2.2 节「头文件」](2-C-语言本质/ch20-链接详解#_22-头文件)讲过的头文件查找顺序，本题目不必考虑 `-I` 选项指定的目录，只在 `.c` 文件所在的目录以及系统目录 `/usr/include` 中查找。
 
 ### 2.12.3. 数值字符串转换函数
 
@@ -13751,42 +13751,42 @@ double strtod(const char *nptr, char **endptr);
 
 int main(int argc, char *argv[])
 {
-	int base;
-	char *endptr, *str;
-	long val;
+    int base;
+    char *endptr, *str;
+    long val;
 
-	if (argc < 2) {
-		fprintf(stderr, "Usage: %s str [base]\n", argv[0]);
-		exit(EXIT_FAILURE);
-	}
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s str [base]\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
 
-	str = argv[1];
-	base = (argc > 2) ? atoi(argv[2]) : 10;
+    str = argv[1];
+    base = (argc > 2) ? atoi(argv[2]) : 10;
 
-	errno = 0;    /* To distinguish success/failure after call */
-	val = strtol(str, &endptr, base);
+    errno = 0;    /* To distinguish success/failure after call */
+    val = strtol(str, &endptr, base);
 
-	/* Check for various possible errors */
+    /* Check for various possible errors */
 
-	if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
-	    || (errno != 0 && val == 0)) {
-		perror("strtol");
-		exit(EXIT_FAILURE);
-	}
+    if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
+        || (errno != 0 && val == 0)) {
+        perror("strtol");
+        exit(EXIT_FAILURE);
+    }
 
-	if (endptr == str) {
-		fprintf(stderr, "No digits were found\n");
-		exit(EXIT_FAILURE);
-	}
+    if (endptr == str) {
+        fprintf(stderr, "No digits were found\n");
+        exit(EXIT_FAILURE);
+    }
 
-	/* If we got here, strtol() successfully parsed a number */
+    /* If we got here, strtol() successfully parsed a number */
 
-	printf("strtol() returned %ld\n", val);
+    printf("strtol() returned %ld\n", val);
 
-	if (*endptr != '\0')        /* Not necessarily an error... */
-		printf("Further characters after number: %s\n", endptr);
+    if (*endptr != '\0')        /* Not necessarily an error... */
+        printf("Further characters after number: %s\n", endptr);
 
-	exit(EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 ```
 
@@ -13834,8 +13834,8 @@ void *alloca(size_t size);
 
 typedef struct node *link;
 struct node {
-	unsigned char item;
-	link next;
+    unsigned char item;
+    link next;
 };
 
 link make_node(unsigned char item);
@@ -13857,78 +13857,78 @@ static link head = NULL;
 
 link make_node(unsigned char item)
 {
-	link p = malloc(sizeof *p);
-	p->item = item;
-	p->next = NULL;
-	return p;
+    link p = malloc(sizeof *p);
+    p->item = item;
+    p->next = NULL;
+    return p;
 }
 
 void free_node(link p)
 {
-	free(p);
+    free(p);
 }
 
 link search(unsigned char key)
 {
-	link p;
-	for (p = head; p; p = p->next)
-		if (p->item == key)
-			return p;
-	return NULL;
+    link p;
+    for (p = head; p; p = p->next)
+        if (p->item == key)
+            return p;
+    return NULL;
 }
 
 void insert(link p)
 {
-	p->next = head;
-	head = p;
+    p->next = head;
+    head = p;
 }
 
 void delete(link p)
 {
-	link pre;
-	if (p == head) {
-		head = p->next;
-		return;
-	}
-	for (pre = head; pre; pre = pre->next)
-		if (pre->next == p) {
-			pre->next = p->next;
-			return;
-		}
+    link pre;
+    if (p == head) {
+        head = p->next;
+        return;
+    }
+    for (pre = head; pre; pre = pre->next)
+        if (pre->next == p) {
+            pre->next = p->next;
+            return;
+        }
 }
 
 void traverse(void (*visit)(link))
 {
-	link p;
-	for (p = head; p; p = p->next)
-		visit(p);
+    link p;
+    for (p = head; p; p = p->next)
+        visit(p);
 }
 
 void destroy(void)
 {
-	link q, p = head;
-	head = NULL;
-	while (p) {
-		q = p;
-		p = p->next;
-		free_node(q);
-	}
+    link q, p = head;
+    head = NULL;
+    while (p) {
+        q = p;
+        p = p->next;
+        free_node(q);
+    }
 }
 
 void push(link p)
 {
-	insert(p);
+    insert(p);
 }
 
 link pop(void)
 {
-	if (head == NULL)
-		return NULL;
-	else {
-		link p = head;
-		head = head->next;
-		return p;
-	}
+    if (head == NULL)
+        return NULL;
+    else {
+        link p = head;
+        head = head->next;
+        return p;
+    }
 }
 /* main.c */
 #include <stdio.h>
@@ -13936,35 +13936,35 @@ link pop(void)
 
 void print_item(link p)
 {
-	printf("%d\n", p->item); 
+    printf("%d\n", p->item); 
 }
 
 int main(void)
 {
-	link p = make_node(10);
-	insert(p);
-	p = make_node(5);
-	insert(p);
-	p = make_node(90);
-	insert(p);
-	p = search(5);
-	delete(p);
-	free_node(p);
-	traverse(print_item);
-	destroy();
+    link p = make_node(10);
+    insert(p);
+    p = make_node(5);
+    insert(p);
+    p = make_node(90);
+    insert(p);
+    p = search(5);
+    delete(p);
+    free_node(p);
+    traverse(print_item);
+    destroy();
 
-	p = make_node(100);
-	push(p);
-	p = make_node(200);
-	push(p);
-	p = make_node(250);
-	push(p);
-	while (p = pop()) {
-		print_item(p);
-		free_node(p);
-	}
+    p = make_node(100);
+    push(p);
+    p = make_node(200);
+    push(p);
+    p = make_node(250);
+    push(p);
+    while (p = pop()) {
+        print_item(p);
+        free_node(p);
+    }
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -13973,8 +13973,8 @@ int main(void)
 ```c
 void insert(link p)
 {
-	p->next = head;
-	head = p;
+    p->next = head;
+    head = p;
 }
 ```
 
@@ -13989,11 +13989,11 @@ void insert(link p)
 ```c
 link search(unsigned char key)
 {
-	link p;
-	for (p = head; p; p = p->next)
-		if (p->item == key)
-			return p;
-	return NULL;
+    link p;
+    for (p = head; p; p = p->next)
+        if (p->item == key)
+            return p;
+    return NULL;
 }
 ```
 
@@ -14004,16 +14004,16 @@ link search(unsigned char key)
 ```c
 void delete(link p)
 {
-	link pre;
-	if (p == head) {
-		head = p->next;
-		return;
-	}
-	for (pre = head; pre; pre = pre->next)
-		if (pre->next == p) {
-			pre->next = p->next;
-			return;
-		}
+    link pre;
+    if (p == head) {
+        head = p->next;
+        return;
+    }
+    for (pre = head; pre; pre = pre->next)
+        if (pre->next == p) {
+            pre->next = p->next;
+            return;
+        }
 }
 ```
 
@@ -14026,12 +14026,12 @@ void delete(link p)
 ```c
 void delete(link p)
 {
-	link *pnext;
-	for (pnext = &head; *pnext; pnext = &(*pnext)->next)
-		if (*pnext == p) {
-			*pnext = p->next;
-			return;
-		}
+    link *pnext;
+    for (pnext = &head; *pnext; pnext = &(*pnext)->next)
+        if (*pnext == p) {
+            *pnext = p->next;
+            return;
+        }
 }
 ```
 
@@ -14051,9 +14051,9 @@ void delete(link p)
 2. 基于单链表实现队列的 `enqueue` 和 `dequeue` 操作。在链表的末尾再维护一个指针 `tail`，在 `tail` 处 `enqueue`，在 `head` 处 `dequeue`。想一想能不能反过来，在 `head` 处 `enqueue` 而在 `tail` 处 `dequeue`？
 3. 实现函数 `void reverse(void);` 将单链表反转。如下图所示。
 
-	<p id="c26-4">图 26.4. 单链表的反转</p>
+    <p id="c26-4">图 26.4. 单链表的反转</p>
 
-	![单链表的反转](./image/linkedlist.reverse.png)
+    ![单链表的反转](./image/linkedlist.reverse.png)
 
 #### 2.13.1.2. 双向链表
 
@@ -14063,8 +14063,8 @@ void delete(link p)
 
 ```c
 struct node {
-	unsigned char item;
-	link prev, next;
+    unsigned char item;
+    link prev, next;
 };
 ```
 
@@ -14073,21 +14073,21 @@ struct node {
 ```c
 void insert(link p)
 {
-	p->next = head;
-	if (head)
-		head->prev = p;
-	head = p;
-	p->prev = NULL;
+    p->next = head;
+    if (head)
+        head->prev = p;
+    head = p;
+    p->prev = NULL;
 }
 
 void delete(link p)
 {
-	if (p->prev)
-		p->prev->next = p->next;
-	else
-		head = p->next;
-	if (p->next)
-		p->next->prev = p->prev;
+    if (p->prev)
+        p->prev->next = p->next;
+    else
+        head = p->next;
+    if (p->next)
+        p->next->prev = p->prev;
 }
 ```
 
@@ -14106,8 +14106,8 @@ void delete(link p)
 
 typedef struct node *link;
 struct node {
-	unsigned char item;
-	link prev, next;
+    unsigned char item;
+    link prev, next;
 };
 
 link make_node(unsigned char item);
@@ -14134,73 +14134,73 @@ static link tail = &tailsentinel;
 
 link make_node(unsigned char item)
 {
-	link p = malloc(sizeof *p);
-	p->item = item;
-	p->prev = p->next = NULL;
-	return p;
+    link p = malloc(sizeof *p);
+    p->item = item;
+    p->prev = p->next = NULL;
+    return p;
 }
 
 void free_node(link p)
 {
-	free(p);
+    free(p);
 }
 
 link search(unsigned char key)
 {
-	link p;
-	for (p = head->next; p != tail; p = p->next)
-		if (p->item == key)
-			return p;
-	return NULL;
+    link p;
+    for (p = head->next; p != tail; p = p->next)
+        if (p->item == key)
+            return p;
+    return NULL;
 }
 
 void insert(link p)
 {
-	p->next = head->next;
-	head->next->prev = p;
-	head->next = p;
-	p->prev = head;
+    p->next = head->next;
+    head->next->prev = p;
+    head->next = p;
+    p->prev = head;
 }
 
 void delete(link p)
 {
-	p->prev->next = p->next;
-	p->next->prev = p->prev;
+    p->prev->next = p->next;
+    p->next->prev = p->prev;
 }
 
 void traverse(void (*visit)(link))
 {
-	link p;
-	for (p = head->next; p != tail; p = p->next)
-		visit(p);
+    link p;
+    for (p = head->next; p != tail; p = p->next)
+        visit(p);
 }
 
 void destroy(void)
 {
-	link q, p = head->next;
-	head->next = tail;
-	tail->prev = head;
-	while (p != tail) {
-		q = p;
-		p = p->next;
-		free_node(q);
-	}
+    link q, p = head->next;
+    head->next = tail;
+    tail->prev = head;
+    while (p != tail) {
+        q = p;
+        p = p->next;
+        free_node(q);
+    }
 }
 
 void enqueue(link p)
 {
-	insert(p);
+    insert(p);
 }
 
 link dequeue(void)
 {
-	if (tail->prev == head)
-		return NULL;
-	else {
-		link p = tail->prev;
-		delete(p);
-		return p;
-	}
+    if (tail->prev == head)
+        return NULL;
+    else {
+        link p = tail->prev;
+        delete(p);
+        return p;
+    }
 }
 /* main.c */
 #include <stdio.h>
@@ -14208,35 +14208,35 @@ link dequeue(void)
 
 void print_item(link p)
 {
-	printf("%d\n", p->item); 
+    printf("%d\n", p->item); 
 }
 
 int main(void)
 {
-	link p = make_node(10);
-	insert(p);
-	p = make_node(5);
-	insert(p);
-	p = make_node(90);
-	insert(p);
-	p = search(5);
-	delete(p);
-	free_node(p);
-	traverse(print_item);
-	destroy();
+    link p = make_node(10);
+    insert(p);
+    p = make_node(5);
+    insert(p);
+    p = make_node(90);
+    insert(p);
+    p = search(5);
+    delete(p);
+    free_node(p);
+    traverse(print_item);
+    destroy();
 
-	p = make_node(100);
-	enqueue(p);
-	p = make_node(200);
-	enqueue(p);
-	p = make_node(250);
-	enqueue(p);
-	while (p = dequeue()) {
-		print_item(p);
-		free_node(p);
-	}
+    p = make_node(100);
+    enqueue(p);
+    p = make_node(200);
+    enqueue(p);
+    p = make_node(250);
+    enqueue(p);
+    while (p = dequeue()) {
+        print_item(p);
+        free_node(p);
+    }
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -14315,8 +14315,8 @@ static link head = &sentinel;
 ```c
 typedef struct node *link;
 struct node {
-	unsigned char item;
-	link l, r;
+    unsigned char item;
+    link l, r;
 };
 ```
 
@@ -14382,77 +14382,77 @@ void destroy(link t);
 
 static link make_node(unsigned char item)
 {
-	link p = malloc(sizeof *p);
-	p->item = item;
-	p->l = p->r = NULL;
-	return p;
+    link p = malloc(sizeof *p);
+    p->item = item;
+    p->l = p->r = NULL;
+    return p;
 }
 
 static void free_node(link p)
 {
-	free(p);
+    free(p);
 }
 
 link init(unsigned char VLR[], unsigned char LVR[], int n)
 {
-	link t;
-	int k;
-	if (n <= 0)
-		return NULL;
-	for (k = 0; VLR[0] != LVR[k]; k++);
-	t = make_node(VLR[0]);
-	t->l = init(VLR+1, LVR, k);
-	t->r = init(VLR+1+k, LVR+1+k, n-k-1);
-	return t;
+    link t;
+    int k;
+    if (n <= 0)
+        return NULL;
+    for (k = 0; VLR[0] != LVR[k]; k++);
+    t = make_node(VLR[0]);
+    t->l = init(VLR+1, LVR, k);
+    t->r = init(VLR+1+k, LVR+1+k, n-k-1);
+    return t;
 }
 
 void pre_order(link t, void (*visit)(link))
 {
-	if (!t)
-		return;
-	visit(t);
-	pre_order(t->l, visit);
-	pre_order(t->r, visit);
+    if (!t)
+        return;
+    visit(t);
+    pre_order(t->l, visit);
+    pre_order(t->r, visit);
 }
 
 void in_order(link t, void (*visit)(link))
 {
-	if (!t)
-		return;
-	in_order(t->l, visit);
-	visit(t);
-	in_order(t->r, visit);
+    if (!t)
+        return;
+    in_order(t->l, visit);
+    visit(t);
+    in_order(t->r, visit);
 }
 
 void post_order(link t, void (*visit)(link))
 {
-	if (!t)
-		return;
-	post_order(t->l, visit);
-	post_order(t->r, visit);
-	visit(t);
+    if (!t)
+        return;
+    post_order(t->l, visit);
+    post_order(t->r, visit);
+    visit(t);
 }
 
 int count(link t)
 {
-	if (!t)
-		return 0;
-	return 1 + count(t->l) + count(t->r);
+    if (!t)
+        return 0;
+    return 1 + count(t->l) + count(t->r);
 }
 
 int depth(link t)
 {
-	int dl, dr;
-	if (!t)
-		return 0;
-	dl = depth(t->l);
-	dr = depth(t->r);
-	return 1 + (dl > dr ? dl : dr);
+    int dl, dr;
+    if (!t)
+        return 0;
+    dl = depth(t->l);
+    dr = depth(t->r);
+    return 1 + (dl > dr ? dl : dr);
 }
 
 void destroy(link t)
 {
-	post_order(t, free_node);
+    post_order(t, free_node);
 }
 /* main.c */
 #include <stdio.h>
@@ -14460,23 +14460,23 @@ void destroy(link t)
 
 void print_item(link p)
 {
-	printf("%d", p->item);
+    printf("%d", p->item);
 }
 
 int main()
 {
-	unsigned char pre_seq[] = { 4, 2, 1, 3, 6, 5, 7 };
-	unsigned char in_seq[] = { 1, 2, 3, 4, 5, 6, 7 };
-	link root = init(pre_seq, in_seq, 7);
-	pre_order(root, print_item);
-	putchar('\n');
-	in_order(root, print_item);
-	putchar('\n');
-	post_order(root, print_item);
-	putchar('\n');
-	printf("count=%d depth=%d\n", count(root), depth(root));
-	destroy(root);
-	return 0;
+    unsigned char pre_seq[] = { 4, 2, 1, 3, 6, 5, 7 };
+    unsigned char in_seq[] = { 1, 2, 3, 4, 5, 6, 7 };
+    link root = init(pre_seq, in_seq, 7);
+    pre_order(root, print_item);
+    putchar('\n');
+    in_order(root, print_item);
+    putchar('\n');
+    post_order(root, print_item);
+    putchar('\n');
+    printf("count=%d depth=%d\n", count(root), depth(root));
+    destroy(root);
+    return 0;
 }
 ```
 
@@ -14484,13 +14484,13 @@ int main()
 
 1. 本节描述了二叉树的递归定义，想一想单链表的递归定义应该怎么表述？请仿照本节的例子用递归实现单链表的各种操作函数：
 
-	```c
-	link init(unsigned char elements[], int n);
-	void pre_order(link t, void (*visit)(link));
-	void post_order(link t, void (*visit)(link));
-	int count(link t);
-	void destroy(link t);
-	```
+    ```c
+    link init(unsigned char elements[], int n);
+    void pre_order(link t, void (*visit)(link));
+    void post_order(link t, void (*visit)(link));
+    int count(link t);
+    void destroy(link t);
+    ```
 
 #### 2.13.2.2. 排序二叉树
 
@@ -14522,78 +14522,78 @@ void print_tree(link t);
 
 static link make_node(unsigned char item)
 {
-	link p = malloc(sizeof *p);
-	p->item = item;
-	p->l = p->r = NULL;
-	return p;
+    link p = malloc(sizeof *p);
+    p->item = item;
+    p->l = p->r = NULL;
+    return p;
 }
 
 static void free_node(link p)
 {
-	free(p);
+    free(p);
 }
 
 link search(link t, unsigned char key)
 {
-	if (!t)
-		return NULL;
-	if (t->item > key)
-		return search(t->l, key);
-	if (t->item < key)
-		return search(t->r, key);
-	/* if (t->item == key) */
-	return t;
+    if (!t)
+        return NULL;
+    if (t->item > key)
+        return search(t->l, key);
+    if (t->item < key)
+        return search(t->r, key);
+    /* if (t->item == key) */
+    return t;
 }
 
 link insert(link t, unsigned char key)
 {
-	if (!t)
-		return make_node(key);
-	if (t->item > key) /* insert to left subtree */
-		t->l = insert(t->l, key);
-	else /* if (t->item <= key), insert to right subtree */
-		t->r = insert(t->r, key);
-	return t;
+    if (!t)
+        return make_node(key);
+    if (t->item > key) /* insert to left subtree */
+        t->l = insert(t->l, key);
+    else /* if (t->item <= key), insert to right subtree */
+        t->r = insert(t->r, key);
+    return t;
 }
 
 link delete(link t, unsigned char key)
 {
-	link p;
-	if (!t)
-		return NULL;
-	if (t->item > key) /* delete from left subtree */
-		t->l = delete(t->l, key);
-	else if (t->item < key) /* delete from right subtree */
-		t->r = delete(t->r, key);
-	else { /* if (t->item == key) */
-		if (t->l == NULL && t->r == NULL) { /* if t is leaf node */
-			free_node(t);
-			t = NULL;
-		} else if (t->l) { /* if t has left subtree */
-			/* replace t with the rightmost node in left subtree */
-			for (p = t->l; p->r; p = p->r);
-			t->item = p->item;
-			t->l = delete(t->l, t->item);
-		} else { /* if t has right subtree */
-			/* replace t with the leftmost node in right subtree */
-			for (p = t->r; p->l; p = p->l);
-			t->item = p->item;
-			t->r = delete(t->r, t->item);
-		}
-	}
-	return t;
+    link p;
+    if (!t)
+        return NULL;
+    if (t->item > key) /* delete from left subtree */
+        t->l = delete(t->l, key);
+    else if (t->item < key) /* delete from right subtree */
+        t->r = delete(t->r, key);
+    else { /* if (t->item == key) */
+        if (t->l == NULL && t->r == NULL) { /* if t is leaf node */
+            free_node(t);
+            t = NULL;
+        } else if (t->l) { /* if t has left subtree */
+            /* replace t with the rightmost node in left subtree */
+            for (p = t->l; p->r; p = p->r);
+            t->item = p->item;
+            t->l = delete(t->l, t->item);
+        } else { /* if t has right subtree */
+            /* replace t with the leftmost node in right subtree */
+            for (p = t->r; p->l; p = p->l);
+            t->item = p->item;
+            t->r = delete(t->r, t->item);
+        }
+    }
+    return t;
 }
 
 void print_tree(link t)
 {
-	if (t) {
-		printf("(");
-		printf("%d", t->item);
-		print_tree(t->l);
-		print_tree(t->r);
-		printf(")");
-	} else
-		printf("()");
+    if (t) {
+        printf("(");
+        printf("%d", t->item);
+        print_tree(t->l);
+        print_tree(t->r);
+        printf(")");
+    } else
+        printf("()");
 }
 /* main.c */
 #include <stdio.h>
@@ -14606,57 +14606,57 @@ void print_tree(link t)
 
 void print_item(link p)
 {
-	printf("%d", p->item);
+    printf("%d", p->item);
 }
 
 int main()
 {
-	int i, key;
-	link root = NULL;
-	srand(time(NULL));
-	for (i = 0; i < N; i++)
-		root = insert(root, rand() % RANGE);
-	printf("\t\\tree");
-	print_tree(root);
-	printf("\n\n");
-	while (root) {
-		key = rand() % RANGE;
-		if (search(root, key)) {
-			printf("delete %d in tree\n", key);
-			root = delete(root, key);
-			printf("\t\\tree");
-			print_tree(root);
-			printf("\n\n");
-		}
-	}
+    int i, key;
+    link root = NULL;
+    srand(time(NULL));
+    for (i = 0; i < N; i++)
+        root = insert(root, rand() % RANGE);
+    printf("\t\\tree");
+    print_tree(root);
+    printf("\n\n");
+    while (root) {
+        key = rand() % RANGE;
+        if (search(root, key)) {
+            printf("delete %d in tree\n", key);
+            root = delete(root, key);
+            printf("\t\\tree");
+            print_tree(root);
+            printf("\n\n");
+        }
+    }
 }
 $ ./a.out
-	\tree(83(77(15()(35()()))())(86()(93()())))
+    \tree(83(77(15()(35()()))())(86()(93()())))
 
 delete 86 in tree
-	\tree(83(77(15()(35()()))())(93()()))
+    \tree(83(77(15()(35()()))())(93()()))
 
 delete 35 in tree
-	\tree(83(77(15()())())(93()()))
+    \tree(83(77(15()())())(93()()))
 
 delete 93 in tree
-	\tree(83(77(15()())())())
+    \tree(83(77(15()())())())
 
 delete 15 in tree
-	\tree(83(77()())())
+    \tree(83(77()())())
 
 delete 83 in tree
-	\tree(77()())
+    \tree(77()())
 
 delete 77 in tree
-	\tree()
+    \tree()
 ```
 
 程序的运行结果可以用 Greg Lee 编写的 [The Tree Preprocessor](http://www.essex.ac.uk/linguistics/clmt/latex4ling/trees/tree/) 转换成树形：
 
 ```bash
 $ ./a.out | ./tree/tree
-	     83
+         83
           ___|___
           |     |
           77    86
@@ -14670,7 +14670,7 @@ $ ./a.out | ./tree/tree
           |  |
 
 delete 86 in tree
-	     83
+         83
           ___|___
           |     |
           77    93
@@ -14684,7 +14684,7 @@ delete 86 in tree
           |  |
 
 delete 35 in tree
-	     83
+         83
           ___|___
           |     |
           77    93
@@ -14695,7 +14695,7 @@ delete 35 in tree
         |  |
 
 delete 93 in tree
-	   83
+       83
           _|__
           |  |
           77
@@ -14706,7 +14706,7 @@ delete 93 in tree
         |  |
 
 delete 15 in tree
-	  83
+      83
          _|__
          |  |
          77
@@ -14714,7 +14714,7 @@ delete 15 in tree
         |  |
 
 delete 83 in tree
-	 77
+     77
         _|__
         |  |
 
@@ -14805,33 +14805,33 @@ delete 77 in tree
 <p id="e28-1">例 28.1. 汇编程序的 Hello world</p>
 
 ```asm6502
-.data					# section declaration
+.data                   # section declaration
 
 msg:
-	.ascii	"Hello, world!\n"	# our dear string
-	len = . - msg			# length of our dear string
+    .ascii  "Hello, world!\n"   # our dear string
+    len = . - msg           # length of our dear string
 
-.text					# section declaration
+.text                   # section declaration
 
-			# we must export the entry point to the ELF linker or
-    .global _start	# loader. They conventionally recognize _start as their
-			# entry point. Use ld -e foo to override the default.
+            # we must export the entry point to the ELF linker or
+    .global _start  # loader. They conventionally recognize _start as their
+            # entry point. Use ld -e foo to override the default.
 
 _start:
 
 # write our string to stdout
 
-	movl	$len,%edx	# third argument: message length
-	movl	$msg,%ecx	# second argument: pointer to message to write
-	movl	$1,%ebx		# first argument: file handle (stdout)
-	movl	$4,%eax		# system call number (sys_write)
-	int	$0x80		# call kernel
+    movl    $len,%edx   # third argument: message length
+    movl    $msg,%ecx   # second argument: pointer to message to write
+    movl    $1,%ebx     # first argument: file handle (stdout)
+    movl    $4,%eax     # system call number (sys_write)
+    int $0x80       # call kernel
 
 # and exit
 
-	movl	$0,%ebx		# first argument: exit code
-	movl	$1,%eax		# system call number (sys_exit)
-	int	$0x80		# call kernel
+    movl    $0,%ebx     # first argument: exit code
+    movl    $1,%eax     # system call number (sys_exit)
+    int $0x80       # call kernel
 ```
 
 像以前一样，汇编、链接、运行：
@@ -14853,8 +14853,8 @@ char msg[14] = "Hello, world!\n";
 
 int main(void)
 {
-	write(1, msg, len);
-	_exit(0);
+    write(1, msg, len);
+    _exit(0);
 }
 ```
 
@@ -15024,10 +15024,10 @@ int close(int fd);
 1. 在系统头文件中查找 `flags` 和 `mode` 参数用到的这些宏定义的值是多少。把这些宏定义按位或起来是什么效果？为什么必选项只能选一个而可选项可以选多个？
 2. 请按照下述要求分别写出相应的 `open` 调用。
 
-	- 打开文件 `/home/akae.txt` 用于写操作，以追加方式打开
-	- 打开文件 `/home/akae.txt` 用于写操作，如果该文件不存在则创建它
-	- 打开文件 `/home/akae.txt` 用于写操作，如果该文件已存在则截断为 0 字节，如果该文件不存在则创建它
-	- 打开文件 `/home/akae.txt` 用于写操作，如果该文件已存在则报错退出，如果该文件不存在则创建它
+    - 打开文件 `/home/akae.txt` 用于写操作，以追加方式打开
+    - 打开文件 `/home/akae.txt` 用于写操作，如果该文件不存在则创建它
+    - 打开文件 `/home/akae.txt` 用于写操作，如果该文件已存在则截断为 0 字节，如果该文件不存在则创建它
+    - 打开文件 `/home/akae.txt` 用于写操作，如果该文件已存在则报错退出，如果该文件不存在则创建它
 
 ### 3.1.4. read/write
 
@@ -15074,15 +15074,15 @@ ssize_t write(int fd, const void *buf, size_t count);
 
 int main(void)
 {
-	char buf[10];
-	int n;
-	n = read(STDIN_FILENO, buf, 10);
-	if (n < 0) {
-		perror("read STDIN_FILENO");
-		exit(1);
-	}
-	write(STDOUT_FILENO, buf, n);
-	return 0;
+    char buf[10];
+    int n;
+    n = read(STDIN_FILENO, buf, 10);
+    if (n < 0) {
+        perror("read STDIN_FILENO");
+        exit(1);
+    }
+    write(STDOUT_FILENO, buf, n);
+    return 0;
 }
 ```
 
@@ -15108,13 +15108,13 @@ bash: d: command not found
 
 ```c
 while(1) {
-	非阻塞 read (设备1);
-	if(设备1 有数据到达)
-		处理数据;
-	非阻塞 read (设备2);
-	if(设备2 有数据到达)
-		处理数据;
-	...
+    非阻塞 read (设备1);
+    if(设备1 有数据到达)
+        处理数据;
+    非阻塞 read (设备2);
+    if(设备2 有数据到达)
+        处理数据;
+    ...
 }
 ```
 
@@ -15124,14 +15124,14 @@ while(1) {
 
 ```c
 while(1) {
-	非阻塞 read(设备1);
-	if(设备1 有数据到达)
-		处理数据;
-	非阻塞 read(设备2);
-	if(设备2 有数据到达)
-		处理数据;
-	...
-	sleep(n);
+    非阻塞 read(设备1);
+    if(设备1 有数据到达)
+        处理数据;
+    非阻塞 read(设备2);
+    if(设备2 有数据到达)
+        处理数据;
+    ...
+    sleep(n);
 }
 ```
 
@@ -15152,27 +15152,27 @@ while(1) {
 
 int main(void)
 {
-	char buf[10];
-	int fd, n;
-	fd = open("/dev/tty", O_RDONLY|O_NONBLOCK);
-	if(fd<0) {
-		perror("open /dev/tty");
-		exit(1);
-	}
+    char buf[10];
+    int fd, n;
+    fd = open("/dev/tty", O_RDONLY|O_NONBLOCK);
+    if(fd<0) {
+        perror("open /dev/tty");
+        exit(1);
+    }
 tryagain:
-	n = read(fd, buf, 10);
-	if (n < 0) {
-		if (errno == EAGAIN) {
-			sleep(1);
-			write(STDOUT_FILENO, MSG_TRY, strlen(MSG_TRY));
-			goto tryagain;
-		}	
-		perror("read /dev/tty");
-		exit(1);
-	}
-	write(STDOUT_FILENO, buf, n);
-	close(fd);
-	return 0;
+    n = read(fd, buf, 10);
+    if (n < 0) {
+        if (errno == EAGAIN) {
+            sleep(1);
+            write(STDOUT_FILENO, MSG_TRY, strlen(MSG_TRY));
+            goto tryagain;
+        }   
+        perror("read /dev/tty");
+        exit(1);
+    }
+    write(STDOUT_FILENO, buf, n);
+    close(fd);
+    return 0;
 }
 ```
 
@@ -15192,30 +15192,30 @@ tryagain:
 
 int main(void)
 {
-	char buf[10];
-	int fd, n, i;
-	fd = open("/dev/tty", O_RDONLY|O_NONBLOCK);
-	if(fd<0) {
-		perror("open /dev/tty");
-		exit(1);
-	}
-	for(i=0; i<5; i++) {
-		n = read(fd, buf, 10);
-		if(n>=0)
-			break;
-		if(errno!=EAGAIN) {
-			perror("read /dev/tty");
-			exit(1);
-		}
-		sleep(1);
-		write(STDOUT_FILENO, MSG_TRY, strlen(MSG_TRY));
-	}
-	if(i==5)
-		write(STDOUT_FILENO, MSG_TIMEOUT, strlen(MSG_TIMEOUT));
-	else
-		write(STDOUT_FILENO, buf, n);
-	close(fd);
-	return 0;
+    char buf[10];
+    int fd, n, i;
+    fd = open("/dev/tty", O_RDONLY|O_NONBLOCK);
+    if(fd<0) {
+        perror("open /dev/tty");
+        exit(1);
+    }
+    for(i=0; i<5; i++) {
+        n = read(fd, buf, 10);
+        if(n>=0)
+            break;
+        if(errno!=EAGAIN) {
+            perror("read /dev/tty");
+            exit(1);
+        }
+        sleep(1);
+        write(STDOUT_FILENO, MSG_TRY, strlen(MSG_TRY));
+    }
+    if(i==5)
+        write(STDOUT_FILENO, MSG_TIMEOUT, strlen(MSG_TIMEOUT));
+    else
+        write(STDOUT_FILENO, buf, n);
+    close(fd);
+    return 0;
 }
 ```
 
@@ -15269,28 +15269,28 @@ int fcntl(int fd, int cmd, struct flock *lock);
 
 int main(void)
 {
-	char buf[10];
-	int n;
-	int flags;
-	flags = fcntl(STDIN_FILENO, F_GETFL);
-	flags |= O_NONBLOCK;
-	if (fcntl(STDIN_FILENO, F_SETFL, flags) == -1) {
-		perror("fcntl");
-		exit(1);
-	}
+    char buf[10];
+    int n;
+    int flags;
+    flags = fcntl(STDIN_FILENO, F_GETFL);
+    flags |= O_NONBLOCK;
+    if (fcntl(STDIN_FILENO, F_SETFL, flags) == -1) {
+        perror("fcntl");
+        exit(1);
+    }
 tryagain:
-	n = read(STDIN_FILENO, buf, 10);
-	if (n < 0) {
-		if (errno == EAGAIN) {
-			sleep(1);
-			write(STDOUT_FILENO, MSG_TRY, strlen(MSG_TRY));
-			goto tryagain;
-		}
-		perror("read stdin");
-		exit(1);
-	}
-	write(STDOUT_FILENO, buf, n);
-	return 0;
+    n = read(STDIN_FILENO, buf, 10);
+    if (n < 0) {
+        if (errno == EAGAIN) {
+            sleep(1);
+            write(STDOUT_FILENO, MSG_TRY, strlen(MSG_TRY));
+            goto tryagain;
+        }
+        perror("read stdin");
+        exit(1);
+    }
+    write(STDOUT_FILENO, buf, n);
+    return 0;
 }
 ```
 
@@ -15304,35 +15304,35 @@ tryagain:
 
 int main(int argc, char *argv[])
 {
-	int val;
-	if (argc != 2) {
-		fputs("usage: a.out <descriptor#>\n", stderr);
-		exit(1);
-	}
-	if ((val = fcntl(atoi(argv[1]), F_GETFL)) < 0) {
-		printf("fcntl error for fd %d\n", atoi(argv[1]));
-		exit(1);
-	}
-	switch(val & O_ACCMODE) {
-	case O_RDONLY:
-		printf("read only");
-		break;
-	case O_WRONLY:
-		printf("write only");
-		break;
-	case O_RDWR:            
-		printf("read write");
-		break;
-	default:
-		fputs("invalid access mode\n", stderr);
-		exit(1);
-	}
-	if (val & O_APPEND)  
-		printf(", append");
-	if (val & O_NONBLOCK)           
-		printf(", nonblocking");
-	putchar('\n');
-	return 0;
+    int val;
+    if (argc != 2) {
+        fputs("usage: a.out <descriptor#>\n", stderr);
+        exit(1);
+    }
+    if ((val = fcntl(atoi(argv[1]), F_GETFL)) < 0) {
+        printf("fcntl error for fd %d\n", atoi(argv[1]));
+        exit(1);
+    }
+    switch(val & O_ACCMODE) {
+    case O_RDONLY:
+        printf("read only");
+        break;
+    case O_WRONLY:
+        printf("write only");
+        break;
+    case O_RDWR:            
+        printf("read write");
+        break;
+    default:
+        fputs("invalid access mode\n", stderr);
+        exit(1);
+    }
+    if (val & O_APPEND)  
+        printf(", append");
+    if (val & O_NONBLOCK)           
+        printf(", nonblocking");
+    putchar('\n');
+    return 0;
 }
 ```
 
@@ -15405,15 +15405,15 @@ int ioctl(int d, int request, ...);
 
 int main(void)
 {
-	struct winsize size;
-	if (isatty(STDOUT_FILENO) == 0)
-		exit(1);
-	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &size)<0) {
-		perror("ioctl TIOCGWINSZ error");
-		exit(1);
-	}
-	printf("%d rows, %d columns\n", size.ws_row, size.ws_col);
-	return 0;
+    struct winsize size;
+    if (isatty(STDOUT_FILENO) == 0)
+        exit(1);
+    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &size)<0) {
+        perror("ioctl TIOCGWINSZ error");
+        exit(1);
+    }
+    printf("%d rows, %d columns\n", size.ws_row, size.ws_col);
+    return 0;
 }
 ```
 
@@ -15474,21 +15474,21 @@ $ od -tx1 -tc hello
 
 int main(void)
 {
-	int *p;
-	int fd = open("hello", O_RDWR);
-	if (fd < 0) {
-		perror("open hello");
-		exit(1);
-	}
-	p = mmap(NULL, 6, PROT_WRITE, MAP_SHARED, fd, 0);
-	if (p == MAP_FAILED) {
-		perror("mmap");
-		exit(1);
-	}
-	close(fd);
-	p[0] = 0x30313233;
-	munmap(p, 6);
-	return 0;
+    int *p;
+    int fd = open("hello", O_RDWR);
+    if (fd < 0) {
+        perror("open hello");
+        exit(1);
+    }
+    p = mmap(NULL, 6, PROT_WRITE, MAP_SHARED, fd, 0);
+    if (p == MAP_FAILED) {
+        perror("mmap");
+        exit(1);
+    }
+    close(fd);
+    p[0] = 0x30313233;
+    munmap(p, 6);
+    return 0;
 }
 ```
 
@@ -15510,8 +15510,8 @@ $ od -tx1 -tc hello
 
 int main(void)
 {
-	printf("hello world\n");
-	return 0;
+    printf("hello world\n");
+    return 0;
 }
 ```
 
@@ -15956,11 +15956,11 @@ debugfs:  quit
 
 ```bash
 struct dirent {
-	ino_t          d_ino;       /* inode number */
-	off_t          d_off;       /* offset to the next dirent */
-	unsigned short d_reclen;    /* length of this record */
-	unsigned char  d_type;      /* type of file */
-	char           d_name[256]; /* filename */
+    ino_t          d_ino;       /* inode number */
+    off_t          d_off;       /* offset to the next dirent */
+    unsigned short d_reclen;    /* length of this record */
+    unsigned char  d_type;      /* type of file */
+    char           d_name[256]; /* filename */
 };
 ```
 
@@ -15983,51 +15983,51 @@ struct dirent {
 /* dirwalk:  apply fcn to all files in dir */
 void dirwalk(char *dir, void (*fcn)(char *))
 {
-	char name[MAX_PATH];
-	struct dirent *dp;
-	DIR *dfd;
+    char name[MAX_PATH];
+    struct dirent *dp;
+    DIR *dfd;
 
-	if ((dfd = opendir(dir)) == NULL) {
-		fprintf(stderr, "dirwalk: can't open %s\n", dir);
-		return;
-	}
-	while ((dp = readdir(dfd)) != NULL) {
-		if (strcmp(dp->d_name, ".") == 0
-		    || strcmp(dp->d_name, "..") == 0)
-			continue;    /* skip self and parent */
-		if (strlen(dir)+strlen(dp->d_name)+2 > sizeof(name))
-			fprintf(stderr, "dirwalk: name %s %s too long\n",
-				dir, dp->d_name);
-		else {
-			sprintf(name, "%s/%s", dir, dp->d_name);
-			(*fcn)(name);
-		}
-	}
-	closedir(dfd);
+    if ((dfd = opendir(dir)) == NULL) {
+        fprintf(stderr, "dirwalk: can't open %s\n", dir);
+        return;
+    }
+    while ((dp = readdir(dfd)) != NULL) {
+        if (strcmp(dp->d_name, ".") == 0
+            || strcmp(dp->d_name, "..") == 0)
+            continue;    /* skip self and parent */
+        if (strlen(dir)+strlen(dp->d_name)+2 > sizeof(name))
+            fprintf(stderr, "dirwalk: name %s %s too long\n",
+                dir, dp->d_name);
+        else {
+            sprintf(name, "%s/%s", dir, dp->d_name);
+            (*fcn)(name);
+        }
+    }
+    closedir(dfd);
 }
 
 /* fsize:  print the size and name of file "name" */
 void fsize(char *name)
 {
-	struct stat stbuf;
+    struct stat stbuf;
 
-	if (stat(name, &stbuf) == -1) {
-		fprintf(stderr, "fsize: can't access %s\n", name);
-		return;
-	}
-	if ((stbuf.st_mode & S_IFMT) == S_IFDIR)
-		dirwalk(name, fsize);
-	printf("%8ld %s\n", stbuf.st_size, name);
+    if (stat(name, &stbuf) == -1) {
+        fprintf(stderr, "fsize: can't access %s\n", name);
+        return;
+    }
+    if ((stbuf.st_mode & S_IFMT) == S_IFDIR)
+        dirwalk(name, fsize);
+    printf("%8ld %s\n", stbuf.st_size, name);
 }
 
 int main(int argc, char **argv)
 {
-	if (argc == 1)  /* default: current directory */
-		fsize(".");
-	else
-		while (--argc > 0)
-			fsize(*++argv);
-	return 0;
+    if (argc == 1)  /* default: current directory */
+        fsize(".");
+    else
+        while (--argc > 0)
+            fsize(*++argv);
+    return 0;
 }
 ```
 
@@ -16086,22 +16086,22 @@ int dup2(int oldfd, int newfd);
 
 int main(void)
 {
-	int fd, save_fd;
-	char msg[] = "This is a test\n";
+    int fd, save_fd;
+    char msg[] = "This is a test\n";
 
-	fd = open("somefile", O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
-	if(fd<0) {
-		perror("open");
-		exit(1);
-	}
-	save_fd = dup(STDOUT_FILENO);
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
-	write(STDOUT_FILENO, msg, strlen(msg));
-	dup2(save_fd, STDOUT_FILENO);
-	write(STDOUT_FILENO, msg, strlen(msg));
-	close(save_fd);
-	return 0;
+    fd = open("somefile", O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
+    if(fd<0) {
+        perror("open");
+        exit(1);
+    }
+    save_fd = dup(STDOUT_FILENO);
+    dup2(fd, STDOUT_FILENO);
+    close(fd);
+    write(STDOUT_FILENO, msg, strlen(msg));
+    dup2(save_fd, STDOUT_FILENO);
+    write(STDOUT_FILENO, msg, strlen(msg));
+    close(save_fd);
+    return 0;
 }
 ```
 
@@ -16168,11 +16168,11 @@ int main(void)
 
 int main(void)
 {
-	extern char **environ;
-	int i;
-	for(i=0; environ[i]!=NULL; i++)
-		printf("%s\n", environ[i]);
-	return 0;
+    extern char **environ;
+    int i;
+    for(i=0; environ[i]!=NULL; i++)
+        printf("%s\n", environ[i]);
+    return 0;
 }
 ```
 
@@ -16192,11 +16192,11 @@ TERM=xterm
 按照惯例，环境变量字符串都是 `name=value` 这样的形式，大多数 `name` 由大写字母加下划线组成，一般把 `name` 的部分叫做环境变量，`value` 的部分则是环境变量的值。环境变量定义了进程的运行环境，一些比较重要的环境变量的含义如下：
 
 - PATH：可执行文件的搜索路径。`ls` 命令也是一个程序，执行它不需要提供完整的路径名 `/bin/ls`，然而通常我们执行当前目录下的程序 `a.out` 却需要提供完整的路径名 `./a.out`，这是因为 `PATH` 环境变量的值里面包含了 `ls` 命令所在的目录 `/bin`，却不包含 `a.out` 所在的目录。`PATH` 环境变量的值可以包含多个目录，用 `:` 号隔开。在 Shell 中用 `echo` 命令可以查看这个环境变量的值：
-	
-	```bash
-	$ echo $PATH
-	/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
-	```
+    
+    ```bash
+    $ echo $PATH
+    /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+    ```
 - SHELL：当前 Shell，它的值通常是 `/bin/bash`。
 - TERM：当前终端类型，在图形界面终端下它的值通常是 `xterm`，终端类型决定了一些程序的输出显示方式，比如图形界面终端可以显示汉字，而字符终端一般不行。
 - LANG：语言和 locale，决定了字符编码以及时间、货币等信息的显示格式。
@@ -16237,10 +16237,10 @@ void unsetenv(const char *name);
 
 int main(void)
 {
-	printf("PATH=%s\n", getenv("PATH"));
-	setenv("PATH", "hello", 1);
-	printf("PATH=%s\n", getenv("PATH"));
-	return 0;
+    printf("PATH=%s\n", getenv("PATH"));
+    setenv("PATH", "hello", 1);
+    printf("PATH=%s\n", getenv("PATH"));
+    return 0;
 }
 $ ./a.out 
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
@@ -16274,26 +16274,26 @@ pid_t fork(void);
 
 int main(void)
 {
-	pid_t pid;
-	char *message;
-	int n;
-	pid = fork();
-	if (pid < 0) {
-		perror("fork failed");
-		exit(1);
-	}
-	if (pid == 0) {
-		message = "This is the child\n";
-		n = 6;
-	} else {
-		message = "This is the parent\n";
-		n = 3;
-	}
-	for(; n > 0; n--) {
-		printf(message);
-		sleep(1);
-	}
-	return 0;
+    pid_t pid;
+    char *message;
+    int n;
+    pid = fork();
+    if (pid < 0) {
+        perror("fork failed");
+        exit(1);
+    }
+    if (pid == 0) {
+        message = "This is the child\n";
+        n = 6;
+    } else {
+        message = "This is the parent\n";
+        n = 3;
+    }
+    for(; n > 0; n--) {
+        printf(message);
+        sleep(1);
+    }
+    return 0;
 }
 $ ./a.out 
 This is the child
@@ -16341,27 +16341,27 @@ There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
 and "show warranty" for details.
 This GDB was configured as "i486-linux-gnu"...
 (gdb) l
-2	#include <unistd.h>
-3	#include <stdio.h>
-4	#include <stdlib.h>
-5	
-6	int main(void)
-7	{
-8		pid_t pid;
-9		char *message;
-10		int n;
-11		pid = fork();
+2   #include <unistd.h>
+3   #include <stdio.h>
+4   #include <stdlib.h>
+5   
+6   int main(void)
+7   {
+8       pid_t pid;
+9       char *message;
+10      int n;
+11      pid = fork();
 (gdb) 
-12		if(pid<0) {
-13			perror("fork failed");
-14			exit(1);
-15		}
-16		if(pid==0) {
-17			message = "This is the child\n";
-18			n = 6;
-19		} else {
-20			message = "This is the parent\n";
-21			n = 3;
+12      if(pid<0) {
+13          perror("fork failed");
+14          exit(1);
+15      }
+16      if(pid==0) {
+17          message = "This is the child\n";
+18          n = 6;
+19      } else {
+20          message = "This is the parent\n";
+21          n = 3;
 (gdb) b 17
 Breakpoint 1 at 0x8048481: file main.c, line 17.
 (gdb) set follow-fork-mode child
@@ -16371,7 +16371,7 @@ This is the parent
 [Switching to process 30725]
 
 Breakpoint 1, main () at main.c:17
-17			message = "This is the child\n";
+17          message = "This is the child\n";
 (gdb) This is the parent
 This is the parent
 ```
@@ -16435,9 +16435,9 @@ execvp("ps", ps_argv);
 
 int main(void)
 {
-	execlp("ps", "ps", "-o", "pid,ppid,pgrp,session,tpgid,comm", NULL);
-	perror("exec ps");
-	exit(1);
+    execlp("ps", "ps", "-o", "pid,ppid,pgrp,session,tpgid,comm", NULL);
+    perror("exec ps");
+    exit(1);
 }
 ```
 
@@ -16465,11 +16465,11 @@ $ ./a.out
 
 int main(void)
 {
-	int ch;
-	while((ch = getchar()) != EOF) {
-		putchar(toupper(ch));
-	}
-	return 0;
+    int ch;
+    while((ch = getchar()) != EOF) {
+        putchar(toupper(ch));
+    }
+    return 0;
 }
 ```
 
@@ -16505,21 +16505,21 @@ THIS IS THE FILE, FILE.TXT, IT IS ALL LOWER CASE.
 
 int main(int argc, char *argv[])
 {
-	int fd;
-	if (argc != 2) {
-		fputs("usage: wrapper file\n", stderr);
-		exit(1);
-	}
-	fd = open(argv[1], O_RDONLY);
-	if(fd<0) {
-		perror("open");
-		exit(1);
-	}
-	dup2(fd, STDIN_FILENO);
-	close(fd);
-	execl("./upper", "upper", NULL);
-	perror("exec ./upper");
-	exit(1);
+    int fd;
+    if (argc != 2) {
+        fputs("usage: wrapper file\n", stderr);
+        exit(1);
+    }
+    fd = open(argv[1], O_RDONLY);
+    if(fd<0) {
+        perror("open");
+        exit(1);
+    }
+    dup2(fd, STDIN_FILENO);
+    close(fd);
+    execl("./upper", "upper", NULL);
+    perror("exec ./upper");
+    exit(1);
 }
 ```
 
@@ -16542,16 +16542,16 @@ THIS IS THE FILE, FILE.TXT, IT IS ALL LOWER CASE.
 
 int main(void)
 {
-	pid_t pid=fork();
-	if(pid<0) {
-		perror("fork");
-		exit(1);
-	}
-	if(pid>0) { /* parent */
-		while(1);
-	}
-	/* child */
-	return 0;	  
+    pid_t pid=fork();
+    if(pid<0) {
+        perror("fork");
+        exit(1);
+    }
+    if(pid>0) { /* parent */
+        while(1);
+    }
+    /* child */
+    return 0;     
 }
 ```
 
@@ -16610,28 +16610,28 @@ pid_t waitpid(pid_t pid, int *status, int options);
 
 int main(void)
 {
-	pid_t pid;
-	pid = fork();
-	if (pid < 0) {
-		perror("fork failed");
-		exit(1);
-	}
-	if (pid == 0) {
-		int i;
-		for (i = 3; i > 0; i--) {
-			printf("This is the child\n");
-			sleep(1);
-		}
-		exit(3);
-	} else {
-		int stat_val;
-		waitpid(pid, &stat_val, 0);
-		if (WIFEXITED(stat_val))
-			printf("Child exited with code %d\n", WEXITSTATUS(stat_val));
-		else if (WIFSIGNALED(stat_val))
-			printf("Child terminated abnormally, signal %d\n", WTERMSIG(stat_val));
-	}
-	return 0;
+    pid_t pid;
+    pid = fork();
+    if (pid < 0) {
+        perror("fork failed");
+        exit(1);
+    }
+    if (pid == 0) {
+        int i;
+        for (i = 3; i > 0; i--) {
+            printf("This is the child\n");
+            sleep(1);
+        }
+        exit(3);
+    } else {
+        int stat_val;
+        waitpid(pid, &stat_val, 0);
+        if (WIFEXITED(stat_val))
+            printf("Child exited with code %d\n", WEXITSTATUS(stat_val));
+        else if (WIFSIGNALED(stat_val))
+            printf("Child terminated abnormally, signal %d\n", WTERMSIG(stat_val));
+    }
+    return 0;
 }
 ```
 
@@ -16680,29 +16680,29 @@ int pipe(int filedes[2]);
 
 int main(void)
 {
-	int n;
-	int fd[2];
-	pid_t pid;
-	char line[MAXLINE];
+    int n;
+    int fd[2];
+    pid_t pid;
+    char line[MAXLINE];
 
-	if (pipe(fd) < 0) {
-		perror("pipe");
-		exit(1);
-	}
-	if ((pid = fork()) < 0) {
-		perror("fork");
-		exit(1);
-	}
-	if (pid > 0) { /* parent */
-		close(fd[0]);
-		write(fd[1], "hello world\n", 12);
-		wait(NULL);
-	} else {       /* child */
-		close(fd[1]);
-		n = read(fd[0], line, MAXLINE);
-		write(STDOUT_FILENO, line, n);
-	}
-	return 0;
+    if (pipe(fd) < 0) {
+        perror("pipe");
+        exit(1);
+    }
+    if ((pid = fork()) < 0) {
+        perror("fork");
+        exit(1);
+    }
+    if (pid > 0) { /* parent */
+        close(fd[0]);
+        write(fd[1], "hello world\n", 12);
+        wait(NULL);
+    } else {       /* child */
+        close(fd[1]);
+        n = read(fd[0], line, MAXLINE);
+        write(STDOUT_FILENO, line, n);
+    }
+    return 0;
 }
 ```
 
@@ -16771,16 +16771,16 @@ srwxr-xr-x 1 root        root           0 2008-10-30 00:42 synaptic.socket
 
 1. 给出提示符，让用户输入一行命令，识别程序名和参数并调用适当的 `exec` 函数执行程序，待执行完成后再次给出提示符。
 2. 识别和处理以下符号：
-	- 简单的标准输入输出重定向（`<` 和 `>`）：仿照[例 30.5「wrapper」](#e30-5)，先 `dup2` 然后 `exec`。
-	- 管道（`|`）：Shell 进程先调用 `pipe` 创建一对管道描述符，然后 `fork` 出两个子进程，一个子进程关闭读端，调用 `dup2` 把写端赋给标准输出，另一个子进程关闭写端，调用 `dup2` 把读端赋给标准输入，两个子进程分别调用 `exec` 执行程序，而 Shell 进程把管道的两端都关闭，调用 `wait` 等待两个子进程终止。
+    - 简单的标准输入输出重定向（`<` 和 `>`）：仿照[例 30.5「wrapper」](#e30-5)，先 `dup2` 然后 `exec`。
+    - 管道（`|`）：Shell 进程先调用 `pipe` 创建一对管道描述符，然后 `fork` 出两个子进程，一个子进程关闭读端，调用 `dup2` 把写端赋给标准输出，另一个子进程关闭写端，调用 `dup2` 把读端赋给标准输入，两个子进程分别调用 `exec` 执行程序，而 Shell 进程把管道的两端都关闭，调用 `wait` 等待两个子进程终止。
 
-	你的程序应该可以处理以下命令：
+    你的程序应该可以处理以下命令：
 
-	```bash
-	○ls△-l△-R○>○file1○
-	○cat○<○file1○|○wc△-c○>○file1○
-	○ 表示零个或多个空格，△ 表示一个或多个空格
-	```
+    ```bash
+    ○ls△-l△-R○>○file1○
+    ○cat○<○file1○|○wc△-c○>○file1○
+    ○ 表示零个或多个空格，△ 表示一个或多个空格
+    ```
 
 ## 3.4. Shell 脚本
 
@@ -17361,21 +17361,21 @@ exit 0
 
 ```bash
 case $1 in
-	start)
-		...
-	;;
-	stop)
-		...
-	;;
-	reload | force-reload)
-		...
-	;;
-	restart)
-	...
-	*)
-		log_success_msg "Usage: /etc/init.d/apache2 {start|stop|restart|reload|force-reload|start-htcacheclean|stop-htcacheclean}"
-		exit 1
-	;;
+    start)
+        ...
+    ;;
+    stop)
+        ...
+    ;;
+    reload | force-reload)
+        ...
+    ;;
+    restart)
+    ...
+    *)
+        log_success_msg "Usage: /etc/init.d/apache2 {start|stop|restart|reload|force-reload|start-htcacheclean|stop-htcacheclean}"
+        exit 1
+    ;;
 esac
 ```
 
@@ -17937,8 +17937,8 @@ $ ulimit -c 1024
 
 int main(void)
 {
-	while(1);
-	return 0;
+    while(1);
+    return 0;
 }
 ```
 
@@ -18010,11 +18010,11 @@ unsigned int alarm(unsigned int seconds);
 
 int main(void)
 {
-	int counter;
-	alarm(1);
-	for(counter=0; 1; counter++)
-		printf("counter=%d ", counter);
-	return 0;
+    int counter;
+    alarm(1);
+    for(counter=0; 1; counter++)
+        printf("counter=%d ", counter);
+    return 0;
 }
 ```
 
@@ -18096,27 +18096,27 @@ int sigpending(sigset_t *set);
 
 void printsigset(const sigset_t *set)
 {
-	int i;
-	for (i = 1; i < 32; i++)
-		if (sigismember(set, i) == 1)
-			putchar('1');
-		else
-			putchar('0');
-	puts("");
+    int i;
+    for (i = 1; i < 32; i++)
+        if (sigismember(set, i) == 1)
+            putchar('1');
+        else
+            putchar('0');
+    puts("");
 }
 
 int main(void)
 {
-	sigset_t s, p;
-	sigemptyset(&s);
-	sigaddset(&s, SIGINT);
-	sigprocmask(SIG_BLOCK, &s, NULL);
-	while (1) {
-		sigpending(&p);
-		printsigset(&p);
-		sleep(1);
-	}
-	return 0;
+    sigset_t s, p;
+    sigemptyset(&s);
+    sigaddset(&s, SIGINT);
+    sigprocmask(SIG_BLOCK, &s, NULL);
+    while (1) {
+        sigpending(&p);
+        printsigset(&p);
+        sleep(1);
+    }
+    return 0;
 }
 ```
 
@@ -18199,35 +18199,35 @@ int pause(void);
 
 void sig_alrm(int signo)
 {
-	/* nothing to do */
+    /* nothing to do */
 }
 
 unsigned int mysleep(unsigned int nsecs)
 {
-	struct sigaction newact, oldact;
-	unsigned int unslept;
+    struct sigaction newact, oldact;
+    unsigned int unslept;
 
-	newact.sa_handler = sig_alrm;
-	sigemptyset(&newact.sa_mask);
-	newact.sa_flags = 0;
-	sigaction(SIGALRM, &newact, &oldact);
+    newact.sa_handler = sig_alrm;
+    sigemptyset(&newact.sa_mask);
+    newact.sa_flags = 0;
+    sigaction(SIGALRM, &newact, &oldact);
 
-	alarm(nsecs);
-	pause();
+    alarm(nsecs);
+    pause();
 
-	unslept = alarm(0);
-	sigaction(SIGALRM, &oldact, NULL);
+    unslept = alarm(0);
+    sigaction(SIGALRM, &oldact, NULL);
 
-	return unslept;
+    return unslept;
 }
 
 int main(void)
 {
-	while(1){
-		mysleep(2);
-		printf("Two seconds passed\n");
-	}
-	return 0;
+    while(1){
+        mysleep(2);
+        printf("Two seconds passed\n");
+    }
+    return 0;
 }
 ```
 
@@ -18274,8 +18274,8 @@ SUS 规定有些系统函数必须以线程安全的方式实现，这里就不�
 long long a;
 int main(void)
 {
-	a=5;
-	return 0;
+    a=5;
+    return 0;
 }
 ```
 
@@ -18289,7 +18289,7 @@ $ objdump -dS a.out
 其中 main 函数的指令中有：
 
 ```bash
-	a=5;
+    a=5;
  8048352:       c7 05 50 95 04 08 05    movl   $0x5,0x8049550
  8048359:       00 00 00 
  804835c:       c7 05 54 95 04 08 00    movl   $0x0,0x8049554
@@ -18308,18 +18308,18 @@ $ objdump -dS a.out
 sig_atomic_t a=0;
 int main(void)
 {
-	/* register a sighandler */
-	while(!a); /* wait until a changes in sighandler */
-	/* do something after signal arrives */
-	return 0;
+    /* register a sighandler */
+    while(!a); /* wait until a changes in sighandler */
+    /* do something after signal arrives */
+    return 0;
 }
 ```
 
 为了简洁，这里只写了一个代码框架来说明问题。在 `main` 函数中首先要注册某个信号的处理函数 `sighandler`，然后在一个 `while` 死循环中等待信号发生，如果有信号递达则执行 `sighandler`，在 `sighandler` 中将 `a` 改为 1，这样再次回到 `main` 函数时就可以退出 `while` 循环，执行后续处理。用上面的方法编译和反汇编这个程序，在 `main` 函数的指令中有：
 
 ```asm6502
-	/* register a sighandler */
-	while(!a); /* wait until a changes in sighandler */
+    /* register a sighandler */
+    while(!a); /* wait until a changes in sighandler */
  8048352:       a1 3c 95 04 08          mov    0x804953c,%eax
  8048357:       85 c0                   test   %eax,%eax
  8048359:       74 f7                   je     8048352 <main+0xe>
@@ -18336,8 +18336,8 @@ $ objdump -dS a.out
 
 ```asm6502
  8048352:       83 3d 3c 95 04 08 00    cmpl   $0x0,0x804953c
-	/* register a sighandler */
-	while(!a); /* wait until a changes in sighandler */
+    /* register a sighandler */
+    while(!a); /* wait until a changes in sighandler */
  8048359:       74 fe                   je     8048359 <main+0x15>
 ```
 
@@ -18399,35 +18399,35 @@ int sigsuspend(const sigset_t *sigmask);
 ```c
 unsigned int mysleep(unsigned int nsecs)
 {
-	struct sigaction    newact, oldact;
-	sigset_t            newmask, oldmask, suspmask;
-	unsigned int        unslept;
+    struct sigaction    newact, oldact;
+    sigset_t            newmask, oldmask, suspmask;
+    unsigned int        unslept;
 
-	/* set our handler, save previous information */
-	newact.sa_handler = sig_alrm;
-	sigemptyset(&newact.sa_mask);
-	newact.sa_flags = 0;
-	sigaction(SIGALRM, &newact, &oldact);
+    /* set our handler, save previous information */
+    newact.sa_handler = sig_alrm;
+    sigemptyset(&newact.sa_mask);
+    newact.sa_flags = 0;
+    sigaction(SIGALRM, &newact, &oldact);
 
-	/* block SIGALRM and save current signal mask */
-	sigemptyset(&newmask);
-	sigaddset(&newmask, SIGALRM);
-	sigprocmask(SIG_BLOCK, &newmask, &oldmask);
+    /* block SIGALRM and save current signal mask */
+    sigemptyset(&newmask);
+    sigaddset(&newmask, SIGALRM);
+    sigprocmask(SIG_BLOCK, &newmask, &oldmask);
 
-	alarm(nsecs);
+    alarm(nsecs);
 
-	suspmask = oldmask;
-	sigdelset(&suspmask, SIGALRM);    /* make sure SIGALRM isn't blocked */
-	sigsuspend(&suspmask);            /* wait for any signal to be caught */
+    suspmask = oldmask;
+    sigdelset(&suspmask, SIGALRM);    /* make sure SIGALRM isn't blocked */
+    sigsuspend(&suspmask);            /* wait for any signal to be caught */
 
-	/* some signal has been caught,   SIGALRM is now blocked */
+    /* some signal has been caught,   SIGALRM is now blocked */
 
-	unslept = alarm(0);
-	sigaction(SIGALRM, &oldact, NULL);  /* reset previous action */
+    unslept = alarm(0);
+    sigaction(SIGALRM, &oldact, NULL);  /* reset previous action */
 
-	/* reset signal mask, which unblocks SIGALRM */
-	sigprocmask(SIG_SETMASK, &oldmask, NULL);
-	return(unslept);
+    /* reset signal mask, which unblocks SIGALRM */
+    sigprocmask(SIG_SETMASK, &oldmask, NULL);
+    return(unslept);
 }
 ```
 
@@ -18527,28 +18527,28 @@ fd 2: /dev/tty1
 现在我们来看终端登录的过程：
 
 1. 系统启动时，`init` 进程根据配置文件 `/etc/inittab` 确定需要打开哪些终端。例如配置文件中有这样一行：
-	
-	```bash
-	1:2345:respawn:/sbin/getty 9600 tty1
-	```
-	
-	和 `/etc/passwd` 类似，每个字段用 `:` 号隔开。开头的 `1` 是这一行配置的 id，通常要和 `tty` 的后缀一致，配置 `tty2` 的那一行 id 就应该是 `2`。第二个字段 `2345` 表示运行级别 2 ~ 5 都执行这个配置。最后一个字段 `/sbin/getty 9600 tty1` 是 `init` 进程要 `fork`/`exec` 的命令，打开终端 `/dev/tty1`，波特率是 9600（波特率只对串口和 Modem 终端有意义），然后提示用户输入帐号。中间的 `respawn` 字段表示 `init` 进程会监视 `getty` 进程的运行状态，一旦该进程终止，`init` 会再次 `fork`/`exec` 这个命令，所以我们从终端退出登录后会再次提示输入帐号。
-	
-	有些新的 Linux 发行版已经不用 `/etc/inittab` 这个配置文件了，例如 Ubuntu 用 `/etc/event.d` 目录下的配置文件来配置 `init`。
+    
+    ```bash
+    1:2345:respawn:/sbin/getty 9600 tty1
+    ```
+    
+    和 `/etc/passwd` 类似，每个字段用 `:` 号隔开。开头的 `1` 是这一行配置的 id，通常要和 `tty` 的后缀一致，配置 `tty2` 的那一行 id 就应该是 `2`。第二个字段 `2345` 表示运行级别 2 ~ 5 都执行这个配置。最后一个字段 `/sbin/getty 9600 tty1` 是 `init` 进程要 `fork`/`exec` 的命令，打开终端 `/dev/tty1`，波特率是 9600（波特率只对串口和 Modem 终端有意义），然后提示用户输入帐号。中间的 `respawn` 字段表示 `init` 进程会监视 `getty` 进程的运行状态，一旦该进程终止，`init` 会再次 `fork`/`exec` 这个命令，所以我们从终端退出登录后会再次提示输入帐号。
+    
+    有些新的 Linux 发行版已经不用 `/etc/inittab` 这个配置文件了，例如 Ubuntu 用 `/etc/event.d` 目录下的配置文件来配置 `init`。
 
 2. `getty` 根据命令行参数打开终端设备作为它的控制终端，把文件描述符 0、1、2 都指向控制终端，然后提示用户输入帐号。用户输入帐号之后，`getty` 的任务就完成了，它再执行 `login` 程序：
-	
-	```bash
-	execle("/bin/login", "login", "-p", username, NULL, envp);
-	```
+    
+    ```bash
+    execle("/bin/login", "login", "-p", username, NULL, envp);
+    ```
 
 3. `login` 程序提示用户输入密码（输入密码期间关闭终端的回显），然后验证帐号密码的正确性。如果密码不正确，`login` 进程终止，`init` 会重新 `fork`/`exec` 一个 `getty` 进程。如果密码正确，`login` 程序设置一些环境变量，设置当前工作目录为该用户的主目录，然后执行 Shell：
-	
-	```bash
-	execl("/bin/bash", "-bash", NULL);
-	```
-	
-	注意 `argv[0]` 参数的程序名前面加了一个 `-`，这样 `bash` 就知道自己是作为登录 Shell 启动的，执行登录 Shell 的启动脚本。从 `getty` 开始 `exec` 到 `login`，再 `exec` 到 `bash`，其实都是同一个进程，因此控制终端没变，文件描述符 0、1、2 也仍然指向控制终端。由于 `fork` 会复制 PCB 信息，所以由 Shell 启动的其它进程也都是如此。
+    
+    ```bash
+    execl("/bin/bash", "-bash", NULL);
+    ```
+    
+    注意 `argv[0]` 参数的程序名前面加了一个 `-`，这样 `bash` 就知道自己是作为登录 Shell 启动的，执行登录 Shell 的启动脚本。从 `getty` 开始 `exec` 到 `login`，再 `exec` 到 `bash`，其实都是同一个进程，因此控制终端没变，文件描述符 0、1、2 也仍然指向控制终端。由于 `fork` 会复制 PCB 信息，所以由 Shell 启动的其它进程也都是如此。
 
 #### 3.7.1.3. 网络登录过程
 
@@ -18560,15 +18560,15 @@ fd 2: /dev/tty1
 
 1. 用户通过 `telnet` 客户端连接服务器。如果服务器配置为独立（Standalone）模式，则在服务器监听连接请求是一个 `telnetd` 进程，它 `fork` 出一个 `telnetd` 子进程来服务客户端，父进程仍监听其它连接请求。
 
-	另外一种可能是服务器端由系统服务程序 `inetd` 或 `xinetd` 监听连接请求，`inetd` 称为 Internet Super-Server，它监听系统中的多个网络服务端口，如果连接请求的端口号和 `telnet` 服务端口号一致，则 `fork`/`exec` 一个 `telnetd` 子进程来服务客户端。`xinetd` 是 `inetd` 的升级版本，配置更为灵活。
+    另外一种可能是服务器端由系统服务程序 `inetd` 或 `xinetd` 监听连接请求，`inetd` 称为 Internet Super-Server，它监听系统中的多个网络服务端口，如果连接请求的端口号和 `telnet` 服务端口号一致，则 `fork`/`exec` 一个 `telnetd` 子进程来服务客户端。`xinetd` 是 `inetd` 的升级版本，配置更为灵活。
 
 2. `telnetd` 子进程打开一个伪终端设备，然后再经过 `fork` 一分为二：父进程操作伪终端主设备，子进程将伪终端从设备作为它的控制终端，并且将文件描述符 0、1、2 指向控制终端，二者通过伪终端通信，父进程还负责和 `telnet` 客户端通信，而子进程负责用户的登录过程，提示输入帐号，然后调用 `exec` 变成 `login` 进程，提示输入密码，然后调用 `exec` 变成 Shell 进程。这个 Shell 进程认为自己的控制终端是伪终端从设备，伪终端主设备可以看作键盘显示器等硬件，而操作这个伪终端的「用户」就是父进程 `telnetd`。
 
 3. 当用户输入命令时，`telnet` 客户端将用户输入的字符通过网络发给 `telnetd` 服务器，由 `telnetd` 服务器代表用户将这些字符输入伪终端。Shell 进程并不知道自己连接的是伪终端而不是真正的键盘显示器，也不知道操作终端的「用户」其实是 `telnetd` 服务器而不是真正的用户。Shell 仍然解释执行命令，将标准输出和标准错误输出写到终端设备，这些数据最终由 `telnetd` 服务器发回给 `telnet` 客户端，然后显示给用户看。
 
-	如果 `telnet` 客户端和服务器之间的网络延迟较大，我们会观察到按下一个键之后要过几秒钟才能回显到屏幕上。这说明我们每按一个键 `telnet` 客户端都会立刻把该字符发送给服务器，然后这个字符经过伪终端主设备和从设备之后被 Shell 进程读取，同时回显到伪终端从设备，回显的字符再经过伪终端主设备、`telnetd` 服务器和网络发回给 `telnet` 客户端，显示给用户看。也许你会觉得吃惊，但真的是这样：每按一个键都要在网络上走个来回！
+    如果 `telnet` 客户端和服务器之间的网络延迟较大，我们会观察到按下一个键之后要过几秒钟才能回显到屏幕上。这说明我们每按一个键 `telnet` 客户端都会立刻把该字符发送给服务器，然后这个字符经过伪终端主设备和从设备之后被 Shell 进程读取，同时回显到伪终端从设备，回显的字符再经过伪终端主设备、`telnetd` 服务器和网络发回给 `telnet` 客户端，显示给用户看。也许你会觉得吃惊，但真的是这样：每按一个键都要在网络上走个来回！
 
-	BSD 系列的 UNIX 在 `/dev` 目录下创建很多 `ptyXX` 和 `ttyXX` 设备文件，`XX` 由字母和数字组成，`ptyXX` 是主设备，相对应的 `ttyXX` 是从设备，伪终端的数目取决于内核配置。而在 SYS V 系列的 UNIX 上，伪终端主设备是 `/dev/ptmx`，「mx」表示 Multiplex，意思是多个主设备复用同一个设备文件，每打开一次 `/dev/ptmx`，内核就分配一个主设备，同时在 `/dev/pts` 目录下创建一个从设备文件，当终端关闭时就从 `/dev/pts` 目录下删除相应的从设备文件。Linux 同时支持上述两种伪终端，目前的标准倾向于 SYS V 的伪终端。
+    BSD 系列的 UNIX 在 `/dev` 目录下创建很多 `ptyXX` 和 `ttyXX` 设备文件，`XX` 由字母和数字组成，`ptyXX` 是主设备，相对应的 `ttyXX` 是从设备，伪终端的数目取决于内核配置。而在 SYS V 系列的 UNIX 上，伪终端主设备是 `/dev/ptmx`，「mx」表示 Multiplex，意思是多个主设备复用同一个设备文件，每打开一次 `/dev/ptmx`，内核就分配一个主设备，同时在 `/dev/pts` 目录下创建一个从设备文件，当终端关闭时就从 `/dev/pts` 目录下删除相应的从设备文件。Linux 同时支持上述两种伪终端，目前的标准倾向于 SYS V 的伪终端。
 
 ### 3.7.2. 作业控制
 
@@ -18758,39 +18758,39 @@ pid_t setsid(void);
 
 void daemonize(void)
 {
-	pid_t  pid;
+    pid_t  pid;
 
-	/*
-	 * Become a session leader to lose controlling TTY.
-	 */
-	if ((pid = fork()) < 0) {
-		perror("fork");
-		exit(1);
-	} else if (pid != 0) /* parent */
-		exit(0);
-	setsid();
+    /*
+     * Become a session leader to lose controlling TTY.
+     */
+    if ((pid = fork()) < 0) {
+        perror("fork");
+        exit(1);
+    } else if (pid != 0) /* parent */
+        exit(0);
+    setsid();
 
-	/*
-	 * Change the current working directory to the root.
-	 */
-	if (chdir("/") < 0) {
-		perror("chdir");
-		exit(1);
-	} 
+    /*
+     * Change the current working directory to the root.
+     */
+    if (chdir("/") < 0) {
+        perror("chdir");
+        exit(1);
+    } 
 
-	/*
-	 * Attach file descriptors 0, 1, and 2 to /dev/null.
-	 */
-	close(0);
-	open("/dev/null", O_RDWR);
-	dup2(0, 1);
-	dup2(0, 2);
+    /*
+     * Attach file descriptors 0, 1, and 2 to /dev/null.
+     */
+    close(0);
+    open("/dev/null", O_RDWR);
+    dup2(0, 1);
+    dup2(0, 2);
 }
 
 int main(void)
 {
-	daemonize();
-	while(1);
+    daemonize();
+    while(1);
 }
 ```
 
@@ -18846,8 +18846,8 @@ $ kill 13270
 #include <pthread.h>
 
 int pthread_create(pthread_t *restrict thread,
-	const pthread_attr_t *restrict attr,
-	void *(*start_routine)(void*), void *restrict arg);
+    const pthread_attr_t *restrict attr,
+    void *(*start_routine)(void*), void *restrict arg);
 ```
 
 返回值：成功返回 0，失败返回错误号。以前学过的系统函数都是成功返回 0，失败返回 -1，而错误号保存在全局变量 `errno` 中，而 pthread 库的函数都是通过返回值返回错误号，虽然每个线程也都有一个 `errno`，但这是为了兼容其它函数接口而提供的，pthread 库本身并不使用它，通过返回值返回错误码更加清晰。
@@ -18869,34 +18869,34 @@ pthread_t ntid;
 
 void printids(const char *s)
 {
-	pid_t      pid;
-	pthread_t  tid;
+    pid_t      pid;
+    pthread_t  tid;
 
-	pid = getpid();
-	tid = pthread_self();
-	printf("%s pid %u tid %u (0x%x)\n", s, (unsigned int)pid,
-	       (unsigned int)tid, (unsigned int)tid);
+    pid = getpid();
+    tid = pthread_self();
+    printf("%s pid %u tid %u (0x%x)\n", s, (unsigned int)pid,
+           (unsigned int)tid, (unsigned int)tid);
 }
 
 void *thr_fn(void *arg)
 {
-	printids(arg);
-	return NULL;
+    printids(arg);
+    return NULL;
 }
 
 int main(void)
 {
-	int err;
+    int err;
 
-	err = pthread_create(&ntid, NULL, thr_fn, "new thread: ");
-	if (err != 0) {
-		fprintf(stderr, "can't create thread: %s\n", strerror(err));
-		exit(1);
-	}
-	printids("main thread:");
-	sleep(1);
+    err = pthread_create(&ntid, NULL, thr_fn, "new thread: ");
+    if (err != 0) {
+        fprintf(stderr, "can't create thread: %s\n", strerror(err));
+        exit(1);
+    }
+    printids("main thread:");
+    sleep(1);
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -18963,44 +18963,44 @@ int pthread_join(pthread_t thread, void **value_ptr);
 
 void *thr_fn1(void *arg)
 {
-	printf("thread 1 returning\n");
-	return (void *)1;
+    printf("thread 1 returning\n");
+    return (void *)1;
 }
 
 void *thr_fn2(void *arg)
 {
-	printf("thread 2 exiting\n");
-	pthread_exit((void *)2);
+    printf("thread 2 exiting\n");
+    pthread_exit((void *)2);
 }
 
 void *thr_fn3(void *arg)
 {
-	while(1) {
-		printf("thread 3 writing\n");
-		sleep(1);
-	}
+    while(1) {
+        printf("thread 3 writing\n");
+        sleep(1);
+    }
 }
 
 int main(void)
 {
-	pthread_t   tid;
-	void        *tret;
+    pthread_t   tid;
+    void        *tret;
 
-	pthread_create(&tid, NULL, thr_fn1, NULL);
-	pthread_join(tid, &tret);
-	printf("thread 1 exit code %d\n", (int)tret);
+    pthread_create(&tid, NULL, thr_fn1, NULL);
+    pthread_join(tid, &tret);
+    printf("thread 1 exit code %d\n", (int)tret);
 
-	pthread_create(&tid, NULL, thr_fn2, NULL);
-	pthread_join(tid, &tret);
-	printf("thread 2 exit code %d\n", (int)tret);
+    pthread_create(&tid, NULL, thr_fn2, NULL);
+    pthread_join(tid, &tret);
+    printf("thread 2 exit code %d\n", (int)tret);
 
-	pthread_create(&tid, NULL, thr_fn3, NULL);
-	sleep(3);
-	pthread_cancel(tid);
-	pthread_join(tid, &tret);
-	printf("thread 3 exit code %d\n", (int)tret);
+    pthread_create(&tid, NULL, thr_fn3, NULL);
+    sleep(3);
+    pthread_cancel(tid);
+    pthread_join(tid, &tret);
+    printf("thread 3 exit code %d\n", (int)tret);
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -19055,9 +19055,9 @@ int pthread_detach(pthread_t tid);
 我们通过一个简单的程序观察这一现象。上图所描述的现象从理论上是存在这种可能的，但实际运行程序时很难观察到，为了使现象更容易观察到，我们把上述三条指令做的事情用更多条指令来做：
 
 ```c
-		val = counter;
-		printf("%x: %d\n", (unsigned int)pthread_self(), val + 1);
-		counter = val + 1;
+        val = counter;
+        printf("%x: %d\n", (unsigned int)pthread_self(), val + 1);
+        counter = val + 1;
 ```
 
 我们在「读取变量的值」和「把变量的新值保存回去」这两步操作之间插入一个 `printf` 调用，它会执行 `write` 系统调用进内核，为内核调度别的线程执行提供了一个很好的时机。我们在一个循环中重复上述操作几千次，就会观察到访问冲突的现象。
@@ -19075,34 +19075,34 @@ void *doit(void *);
 
 int main(int argc, char **argv)
 {
-	pthread_t tidA, tidB;
+    pthread_t tidA, tidB;
 
-	pthread_create(&tidA, NULL, &doit, NULL);
-	pthread_create(&tidB, NULL, &doit, NULL);
+    pthread_create(&tidA, NULL, &doit, NULL);
+    pthread_create(&tidB, NULL, &doit, NULL);
 
         /* wait for both threads to terminate */
-	pthread_join(tidA, NULL);
-	pthread_join(tidB, NULL);
+    pthread_join(tidA, NULL);
+    pthread_join(tidB, NULL);
 
-	return 0;
+    return 0;
 }
 
 void *doit(void *vptr)
 {
-	int    i, val;
+    int    i, val;
 
-	/*
-	 * Each thread fetches, prints, and increments the counter NLOOP times.
-	 * The value of the counter should increase monotonically.
-	 */
+    /*
+     * Each thread fetches, prints, and increments the counter NLOOP times.
+     * The value of the counter should increase monotonically.
+     */
 
-	for (i = 0; i < NLOOP; i++) {
-		val = counter;
-		printf("%x: %d\n", (unsigned int)pthread_self(), val + 1);
-		counter = val + 1;
-	}
+    for (i = 0; i < NLOOP; i++) {
+        val = counter;
+        printf("%x: %d\n", (unsigned int)pthread_self(), val + 1);
+        counter = val + 1;
+    }
 
-	return NULL;
+    return NULL;
 }
 ```
 
@@ -19174,38 +19174,38 @@ void *doit(void *);
 
 int main(int argc, char **argv)
 {
-	pthread_t tidA, tidB;
+    pthread_t tidA, tidB;
 
-	pthread_create(&tidA, NULL, doit, NULL);
-	pthread_create(&tidB, NULL, doit, NULL);
+    pthread_create(&tidA, NULL, doit, NULL);
+    pthread_create(&tidB, NULL, doit, NULL);
 
         /* wait for both threads to terminate */
-	pthread_join(tidA, NULL);
-	pthread_join(tidB, NULL);
+    pthread_join(tidA, NULL);
+    pthread_join(tidB, NULL);
 
-	return 0;
+    return 0;
 }
 
 void *doit(void *vptr)
 {
-	int     i, val;
+    int     i, val;
 
-	/*
-	 * Each thread fetches, prints, and increments the counter NLOOP times.
-	 * The value of the counter should increase monotonically.
-	 */
+    /*
+     * Each thread fetches, prints, and increments the counter NLOOP times.
+     * The value of the counter should increase monotonically.
+     */
 
-	for (i = 0; i < NLOOP; i++) {
-		pthread_mutex_lock(&counter_mutex);
+    for (i = 0; i < NLOOP; i++) {
+        pthread_mutex_lock(&counter_mutex);
 
-		val = counter;
-		printf("%x: %d\n", (unsigned int)pthread_self(), val + 1);
-		counter = val + 1;
+        val = counter;
+        printf("%x: %d\n", (unsigned int)pthread_self(), val + 1);
+        counter = val + 1;
 
-		pthread_mutex_unlock(&counter_mutex);
-	}
+        pthread_mutex_unlock(&counter_mutex);
+    }
 
-	return NULL;
+    return NULL;
 }
 ```
 
@@ -19215,17 +19215,17 @@ void *doit(void *vptr)
 
 ```c
 lock:
-	if(mutex > 0){
-		mutex = 0;
-		return 0;
-	} else
-		挂起等待;
-	goto lock;
+    if(mutex > 0){
+        mutex = 0;
+        return 0;
+    } else
+        挂起等待;
+    goto lock;
 
 unlock:
-	mutex = 1;
-	唤醒等待 Mutex 的线程;
-	return 0;
+    mutex = 1;
+    唤醒等待 Mutex 的线程;
+    return 0;
 ```
 
 unlock 操作中唤醒等待线程的步骤可以有不同的实现，可以只唤醒一个等待线程，也可以唤醒所有等待该 Mutex 的线程，然后让被唤醒的这些线程去竞争获得这个 Mutex，竞争失败的线程继续挂起等待。
@@ -19236,18 +19236,18 @@ unlock 操作中唤醒等待线程的步骤可以有不同的实现，可以只�
 
 ```c
 lock:
-	movb $0, %al
-	xchgb %al, mutex
-	if(al 寄存器的内容 > 0){
-		return 0;
-	} else
-		挂起等待;
-	goto lock;
+    movb $0, %al
+    xchgb %al, mutex
+    if(al 寄存器的内容 > 0){
+        return 0;
+    } else
+        挂起等待;
+    goto lock;
 
 unlock:
-	movb $1, mutex
-	唤醒等待 Mutex 的线程;
-	return 0;
+    movb $1, mutex
+    唤醒等待 Mutex 的线程;
+    return 0;
 ```
 
 unlock 中的释放锁操作同样只用一条指令实现，以保证它的原子性。
@@ -19305,8 +19305,8 @@ int pthread_cond_signal(pthread_cond_t *cond);
 #include <stdio.h>
 
 struct msg {
-	struct msg *next;
-	int num;
+    struct msg *next;
+    int num;
 };
 
 struct msg *head;
@@ -19315,47 +19315,47 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 void *consumer(void *p)
 {
-	struct msg *mp;
+    struct msg *mp;
 
-	for (;;) {
-		pthread_mutex_lock(&lock);
-		while (head == NULL)
-			pthread_cond_wait(&has_product, &lock);
-		mp = head;
-		head = mp->next;
-		pthread_mutex_unlock(&lock);
-		printf("Consume %d\n", mp->num);
-		free(mp);
-		sleep(rand() % 5);
-	}
+    for (;;) {
+        pthread_mutex_lock(&lock);
+        while (head == NULL)
+            pthread_cond_wait(&has_product, &lock);
+        mp = head;
+        head = mp->next;
+        pthread_mutex_unlock(&lock);
+        printf("Consume %d\n", mp->num);
+        free(mp);
+        sleep(rand() % 5);
+    }
 }
 
 void *producer(void *p)
 {
-	struct msg *mp;
-	for (;;) {
-		mp = malloc(sizeof(struct msg));
-		mp->num = rand() % 1000 + 1;
-		printf("Produce %d\n", mp->num);
-		pthread_mutex_lock(&lock);
-		mp->next = head;
-		head = mp;
-		pthread_mutex_unlock(&lock);
-		pthread_cond_signal(&has_product);
-		sleep(rand() % 5);
-	}
+    struct msg *mp;
+    for (;;) {
+        mp = malloc(sizeof(struct msg));
+        mp->num = rand() % 1000 + 1;
+        printf("Produce %d\n", mp->num);
+        pthread_mutex_lock(&lock);
+        mp->next = head;
+        head = mp;
+        pthread_mutex_unlock(&lock);
+        pthread_cond_signal(&has_product);
+        sleep(rand() % 5);
+    }
 }
 
 int main(int argc, char *argv[]) 
 {
-	pthread_t pid, cid;  
+    pthread_t pid, cid;  
 
-	srand(time(NULL));
-	pthread_create(&pid, NULL, producer, NULL);
-	pthread_create(&cid, NULL, consumer, NULL);
-	pthread_join(pid, NULL);
-	pthread_join(cid, NULL);
-	return 0;
+    srand(time(NULL));
+    pthread_create(&pid, NULL, producer, NULL);
+    pthread_create(&cid, NULL, consumer, NULL);
+    pthread_join(pid, NULL);
+    pthread_join(cid, NULL);
+    return 0;
 }
 ```
 
@@ -19415,43 +19415,43 @@ sem_t blank_number, product_number;
 
 void *producer(void *arg) 
 {
-	int p = 0;
-	while (1) {
-		sem_wait(&blank_number);
-		queue[p] = rand() % 1000 + 1;
-		printf("Produce %d\n", queue[p]);
-		sem_post(&product_number);
-		p = (p+1)%NUM;
-		sleep(rand()%5);
-	}
+    int p = 0;
+    while (1) {
+        sem_wait(&blank_number);
+        queue[p] = rand() % 1000 + 1;
+        printf("Produce %d\n", queue[p]);
+        sem_post(&product_number);
+        p = (p+1)%NUM;
+        sleep(rand()%5);
+    }
 }
 
 void *consumer(void *arg) 
 {
-	int c = 0;
-	while (1) {
-		sem_wait(&product_number);
-		printf("Consume %d\n", queue[c]);
-		queue[c] = 0;
-		sem_post(&blank_number);
-		c = (c+1)%NUM;
-		sleep(rand()%5);
-	}
+    int c = 0;
+    while (1) {
+        sem_wait(&product_number);
+        printf("Consume %d\n", queue[c]);
+        queue[c] = 0;
+        sem_post(&blank_number);
+        c = (c+1)%NUM;
+        sleep(rand()%5);
+    }
 }
 
 int main(int argc, char *argv[]) 
 {
-	pthread_t pid, cid;  
+    pthread_t pid, cid;  
 
-	sem_init(&blank_number, 0, NUM);
-	sem_init(&product_number, 0, 0);
-	pthread_create(&pid, NULL, producer, NULL);
-	pthread_create(&cid, NULL, consumer, NULL);
-	pthread_join(pid, NULL);
-	pthread_join(cid, NULL);
-	sem_destroy(&blank_number);
-	sem_destroy(&product_number);
-	return 0;
+    sem_init(&blank_number, 0, NUM);
+    sem_init(&product_number, 0, 0);
+    pthread_create(&pid, NULL, producer, NULL);
+    pthread_create(&cid, NULL, consumer, NULL);
+    pthread_join(pid, NULL);
+    pthread_join(cid, NULL);
+    sem_destroy(&blank_number);
+    sem_destroy(&product_number);
+    return 0;
 }
 ```
 
@@ -19988,40 +19988,40 @@ server.c 的作用是从客户端读字符，然后将每个字符转换为大�
 
 int main(void)
 {
-	struct sockaddr_in servaddr, cliaddr;
-	socklen_t cliaddr_len;
-	int listenfd, connfd;
-	char buf[MAXLINE];
-	char str[INET_ADDRSTRLEN];
-	int i, n;
+    struct sockaddr_in servaddr, cliaddr;
+    socklen_t cliaddr_len;
+    int listenfd, connfd;
+    char buf[MAXLINE];
+    char str[INET_ADDRSTRLEN];
+    int i, n;
 
-	listenfd = socket(AF_INET, SOCK_STREAM, 0);
+    listenfd = socket(AF_INET, SOCK_STREAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_port = htons(SERV_PORT);
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    servaddr.sin_port = htons(SERV_PORT);
     
-	bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+    bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
-	listen(listenfd, 20);
+    listen(listenfd, 20);
 
-	printf("Accepting connections ...\n");
-	while (1) {
-		cliaddr_len = sizeof(cliaddr);
-		connfd = accept(listenfd, 
-				(struct sockaddr *)&cliaddr, &cliaddr_len);
-	  
-		n = read(connfd, buf, MAXLINE);
-		printf("received from %s at PORT %d\n",
-		       inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
-		       ntohs(cliaddr.sin_port));
+    printf("Accepting connections ...\n");
+    while (1) {
+        cliaddr_len = sizeof(cliaddr);
+        connfd = accept(listenfd, 
+                (struct sockaddr *)&cliaddr, &cliaddr_len);
+      
+        n = read(connfd, buf, MAXLINE);
+        printf("received from %s at PORT %d\n",
+               inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
+               ntohs(cliaddr.sin_port));
     
-		for (i = 0; i < n; i++)
-			buf[i] = toupper(buf[i]);
-		write(connfd, buf, n);
-		close(connfd);
-	}
+        for (i = 0; i < n; i++)
+            buf[i] = toupper(buf[i]);
+        write(connfd, buf, n);
+        close(connfd);
+    }
 }
 ```
 
@@ -20066,12 +20066,12 @@ int accept(int sockfd, struct sockaddr *cliaddr, socklen_t *addrlen);
 
 ```c
 while (1) {
-	cliaddr_len = sizeof(cliaddr);
-	connfd = accept(listenfd, 
-			(struct sockaddr *)&cliaddr, &cliaddr_len);
-	n = read(connfd, buf, MAXLINE);
-	...
-	close(connfd);
+    cliaddr_len = sizeof(cliaddr);
+    connfd = accept(listenfd, 
+            (struct sockaddr *)&cliaddr, &cliaddr_len);
+    n = read(connfd, buf, MAXLINE);
+    ...
+    close(connfd);
 }
 ```
 
@@ -20093,34 +20093,34 @@ client.c 的作用是从命令行参数中获得一个字符串发给服务器�
 
 int main(int argc, char *argv[])
 {
-	struct sockaddr_in servaddr;
-	char buf[MAXLINE];
-	int sockfd, n;
-	char *str;
+    struct sockaddr_in servaddr;
+    char buf[MAXLINE];
+    int sockfd, n;
+    char *str;
     
-	if (argc != 2) {
-		fputs("usage: ./client message\n", stderr);
-		exit(1);
-	}
-	str = argv[1];
+    if (argc != 2) {
+        fputs("usage: ./client message\n", stderr);
+        exit(1);
+    }
+    str = argv[1];
     
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
-	servaddr.sin_port = htons(SERV_PORT);
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
+    servaddr.sin_port = htons(SERV_PORT);
     
-	connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+    connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
-	write(sockfd, str, strlen(str));
+    write(sockfd, str, strlen(str));
 
-	n = read(sockfd, buf, MAXLINE);
-	printf("Response from server:\n");
-	write(STDOUT_FILENO, buf, n);
+    n = read(sockfd, buf, MAXLINE);
+    printf("Response from server:\n");
+    write(STDOUT_FILENO, buf, n);
 
-	close(sockfd);
-	return 0;
+    close(sockfd);
+    return 0;
 }
 ```
 
@@ -20201,83 +20201,83 @@ tcp        0      0 127.0.0.1:8000          127.0.0.1:44406         ESTABLISHED8
 
 void perr_exit(const char *s)
 {
-	perror(s);
-	exit(1);
+    perror(s);
+    exit(1);
 }
 
 int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr)
 {
-	int n;
+    int n;
 
 again:
-	if ( (n = accept(fd, sa, salenptr)) < 0) {
-		if ((errno == ECONNABORTED) || (errno == EINTR))
-			goto again;
-		else
-			perr_exit("accept error");
-	}
-	return n;
+    if ( (n = accept(fd, sa, salenptr)) < 0) {
+        if ((errno == ECONNABORTED) || (errno == EINTR))
+            goto again;
+        else
+            perr_exit("accept error");
+    }
+    return n;
 }
 
 void Bind(int fd, const struct sockaddr *sa, socklen_t salen)
 {
-	if (bind(fd, sa, salen) < 0)
-		perr_exit("bind error");
+    if (bind(fd, sa, salen) < 0)
+        perr_exit("bind error");
 }
 
 void Connect(int fd, const struct sockaddr *sa, socklen_t salen)
 {
-	if (connect(fd, sa, salen) < 0)
-		perr_exit("connect error");
+    if (connect(fd, sa, salen) < 0)
+        perr_exit("connect error");
 }
 
 void Listen(int fd, int backlog)
 {
-	if (listen(fd, backlog) < 0)
-		perr_exit("listen error");
+    if (listen(fd, backlog) < 0)
+        perr_exit("listen error");
 }
 
 int Socket(int family, int type, int protocol)
 {
-	int n;
+    int n;
 
-	if ( (n = socket(family, type, protocol)) < 0)
-		perr_exit("socket error");
-	return n;
+    if ( (n = socket(family, type, protocol)) < 0)
+        perr_exit("socket error");
+    return n;
 }
 
 ssize_t Read(int fd, void *ptr, size_t nbytes)
 {
-	ssize_t n;
+    ssize_t n;
 
 again:
-	if ( (n = read(fd, ptr, nbytes)) == -1) {
-		if (errno == EINTR)
-			goto again;
-		else
-			return -1;
-	}
-	return n;
+    if ( (n = read(fd, ptr, nbytes)) == -1) {
+        if (errno == EINTR)
+            goto again;
+        else
+            return -1;
+    }
+    return n;
 }
 
 ssize_t Write(int fd, const void *ptr, size_t nbytes)
 {
-	ssize_t n;
+    ssize_t n;
 
 again:
-	if ( (n = write(fd, ptr, nbytes)) == -1) {
-		if (errno == EINTR)
-			goto again;
-		else
-			return -1;
-	}
-	return n;
+    if ( (n = write(fd, ptr, nbytes)) == -1) {
+        if (errno == EINTR)
+            goto again;
+        else
+            return -1;
+    }
+    return n;
 }
 
 void Close(int fd)
 {
-	if (close(fd) == -1)
-		perr_exit("close error");
+    if (close(fd) == -1)
+        perr_exit("close error");
 }
 ```
 
@@ -20288,47 +20288,47 @@ TCP 协议是面向流的，read 和 write 调用的返回值往往小于参数�
 ```c
 ssize_t Readn(int fd, void *vptr, size_t n)
 {
-	size_t  nleft;
-	ssize_t nread;
-	char   *ptr;
+    size_t  nleft;
+    ssize_t nread;
+    char   *ptr;
 
-	ptr = vptr;
-	nleft = n;
-	while (nleft > 0) {
-		if ( (nread = read(fd, ptr, nleft)) < 0) {
-			if (errno == EINTR)
-				nread = 0;
-			else
-				return -1;
-		} else if (nread == 0)
-			break;
+    ptr = vptr;
+    nleft = n;
+    while (nleft > 0) {
+        if ( (nread = read(fd, ptr, nleft)) < 0) {
+            if (errno == EINTR)
+                nread = 0;
+            else
+                return -1;
+        } else if (nread == 0)
+            break;
 
-		nleft -= nread;
-		ptr += nread;
-	}
-	return n - nleft;
+        nleft -= nread;
+        ptr += nread;
+    }
+    return n - nleft;
 }
 
 ssize_t Writen(int fd, const void *vptr, size_t n)
 {
-	size_t nleft;
-	ssize_t nwritten;
-	const char *ptr;
+    size_t nleft;
+    ssize_t nwritten;
+    const char *ptr;
 
-	ptr = vptr;
-	nleft = n;
-	while (nleft > 0) {
-		if ( (nwritten = write(fd, ptr, nleft)) <= 0) {
-			if (nwritten < 0 && errno == EINTR)
-				nwritten = 0;
-			else
-				return -1;
-		}
+    ptr = vptr;
+    nleft = n;
+    while (nleft > 0) {
+        if ( (nwritten = write(fd, ptr, nleft)) <= 0) {
+            if (nwritten < 0 && errno == EINTR)
+                nwritten = 0;
+            else
+                return -1;
+        }
 
-		nleft -= nwritten;
-		ptr += nwritten;
-	}
-	return n;
+        nleft -= nwritten;
+        ptr += nwritten;
+    }
+    return n;
 }
 ```
 
@@ -20343,44 +20343,44 @@ ssize_t Writen(int fd, const void *vptr, size_t n)
 ```c
 static ssize_t my_read(int fd, char *ptr)
 {
-	static int read_cnt;
-	static char *read_ptr;
-	static char read_buf[100];
+    static int read_cnt;
+    static char *read_ptr;
+    static char read_buf[100];
 
-	if (read_cnt <= 0) {
-	again:
-		if ( (read_cnt = read(fd, read_buf, sizeof(read_buf))) < 0) {
-			if (errno == EINTR)
-				goto again;
-			return -1;
-		} else if (read_cnt == 0)
-			return 0;
-		read_ptr = read_buf;
-	}
-	read_cnt--;
-	*ptr = *read_ptr++;
-	return 1;
+    if (read_cnt <= 0) {
+    again:
+        if ( (read_cnt = read(fd, read_buf, sizeof(read_buf))) < 0) {
+            if (errno == EINTR)
+                goto again;
+            return -1;
+        } else if (read_cnt == 0)
+            return 0;
+        read_ptr = read_buf;
+    }
+    read_cnt--;
+    *ptr = *read_ptr++;
+    return 1;
 }
 
 ssize_t Readline(int fd, void *vptr, size_t maxlen)
 {
-	ssize_t n, rc;
-	char    c, *ptr;
+    ssize_t n, rc;
+    char    c, *ptr;
 
-	ptr = vptr;
-	for (n = 1; n < maxlen; n++) {
-		if ( (rc = my_read(fd, &c)) == 1) {
-			*ptr++ = c;
-			if (c  == '\n')
-				break;
-		} else if (rc == 0) {
-			*ptr = 0;
-			return n - 1;
-		} else
-			return -1;
-	}
-	*ptr  = 0;
-	return n;
+    ptr = vptr;
+    for (n = 1; n < maxlen; n++) {
+        if ( (rc = my_read(fd, &c)) == 1) {
+            *ptr++ = c;
+            if (c  == '\n')
+                break;
+        } else if (rc == 0) {
+            *ptr = 0;
+            return n - 1;
+        } else
+            return -1;
+    }
+    *ptr  = 0;
+    return n;
 }
 ```
 
@@ -20406,30 +20406,30 @@ ssize_t Readline(int fd, void *vptr, size_t maxlen)
 
 int main(int argc, char *argv[])
 {
-	struct sockaddr_in servaddr;
-	char buf[MAXLINE];
-	int sockfd, n;
+    struct sockaddr_in servaddr;
+    char buf[MAXLINE];
+    int sockfd, n;
     
-	sockfd = Socket(AF_INET, SOCK_STREAM, 0);
+    sockfd = Socket(AF_INET, SOCK_STREAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
-	servaddr.sin_port = htons(SERV_PORT);
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
+    servaddr.sin_port = htons(SERV_PORT);
     
-	Connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+    Connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
-	while (fgets(buf, MAXLINE, stdin) != NULL) {
-		Write(sockfd, buf, strlen(buf));
-		n = Read(sockfd, buf, MAXLINE);
-		if (n == 0)
-			printf("the other side has been closed.\n");
-		else
-			Write(STDOUT_FILENO, buf, n);
-	}
+    while (fgets(buf, MAXLINE, stdin) != NULL) {
+        Write(sockfd, buf, strlen(buf));
+        n = Read(sockfd, buf, MAXLINE);
+        if (n == 0)
+            printf("the other side has been closed.\n");
+        else
+            Write(STDOUT_FILENO, buf, n);
+    }
 
-	Close(sockfd);
-	return 0;
+    Close(sockfd);
+    return 0;
 }
 ```
 
@@ -20463,45 +20463,45 @@ $
 
 int main(void)
 {
-	struct sockaddr_in servaddr, cliaddr;
-	socklen_t cliaddr_len;
-	int listenfd, connfd;
-	char buf[MAXLINE];
-	char str[INET_ADDRSTRLEN];
-	int i, n;
+    struct sockaddr_in servaddr, cliaddr;
+    socklen_t cliaddr_len;
+    int listenfd, connfd;
+    char buf[MAXLINE];
+    char str[INET_ADDRSTRLEN];
+    int i, n;
 
-	listenfd = Socket(AF_INET, SOCK_STREAM, 0);
+    listenfd = Socket(AF_INET, SOCK_STREAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_port = htons(SERV_PORT);
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    servaddr.sin_port = htons(SERV_PORT);
     
-	Bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+    Bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
-	Listen(listenfd, 20);
+    Listen(listenfd, 20);
 
-	printf("Accepting connections ...\n");
-	while (1) {
-		cliaddr_len = sizeof(cliaddr);
-		connfd = Accept(listenfd, 
-				(struct sockaddr *)&cliaddr, &cliaddr_len);
-		while (1) {
-			n = Read(connfd, buf, MAXLINE);
-			if (n == 0) {
-				printf("the other side has been closed.\n");
-				break;
-			}
-			printf("received from %s at PORT %d\n",
-			       inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
-			       ntohs(cliaddr.sin_port));
+    printf("Accepting connections ...\n");
+    while (1) {
+        cliaddr_len = sizeof(cliaddr);
+        connfd = Accept(listenfd, 
+                (struct sockaddr *)&cliaddr, &cliaddr_len);
+        while (1) {
+            n = Read(connfd, buf, MAXLINE);
+            if (n == 0) {
+                printf("the other side has been closed.\n");
+                break;
+            }
+            printf("received from %s at PORT %d\n",
+                   inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
+                   ntohs(cliaddr.sin_port));
     
-			for (i = 0; i < n; i++)
-				buf[i] = toupper(buf[i]);
-			Write(connfd, buf, n);
-		}
-		Close(connfd);
-	}
+            for (i = 0; i < n; i++)
+                buf[i] = toupper(buf[i]);
+            Write(connfd, buf, n);
+        }
+        Close(connfd);
+    }
 }
 ```
 
@@ -20518,22 +20518,22 @@ listenfd = socket(...);
 bind(listenfd, ...);
 listen(listenfd, ...); 
 while (1) {
-	connfd = accept(listenfd, ...);
-	n = fork();
-	if (n == -1) {
-		perror("call to fork");
-		exit(1);
-	} else if (n == 0) {
-		close(listenfd);
-		while (1) {
-			read(connfd, ...);
-			...
-			write(connfd, ...);
-		}
-		close(connfd);
-		exit(0);
-	} else
-		close(connfd);
+    connfd = accept(listenfd, ...);
+    n = fork();
+    if (n == -1) {
+        perror("call to fork");
+        exit(1);
+    } else if (n == 0) {
+        close(listenfd);
+        while (1) {
+            read(connfd, ...);
+            ...
+            write(connfd, ...);
+        }
+        close(connfd);
+        exit(0);
+    } else
+        close(connfd);
 }
 ```
 
@@ -20593,88 +20593,88 @@ select 是网络程序中很常用的一个系统调用，它可以同时监听�
 
 int main(int argc, char **argv)
 {
-	int i, maxi, maxfd, listenfd, connfd, sockfd;
-	int nready, client[FD_SETSIZE];
-	ssize_t n;
-	fd_set rset, allset;
-	char buf[MAXLINE];
-	char str[INET_ADDRSTRLEN];
-	socklen_t cliaddr_len;
-	struct sockaddr_in	cliaddr, servaddr;
+    int i, maxi, maxfd, listenfd, connfd, sockfd;
+    int nready, client[FD_SETSIZE];
+    ssize_t n;
+    fd_set rset, allset;
+    char buf[MAXLINE];
+    char str[INET_ADDRSTRLEN];
+    socklen_t cliaddr_len;
+    struct sockaddr_in  cliaddr, servaddr;
 
-	listenfd = Socket(AF_INET, SOCK_STREAM, 0);
+    listenfd = Socket(AF_INET, SOCK_STREAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family      = AF_INET;
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_port        = htons(SERV_PORT);
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family      = AF_INET;
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    servaddr.sin_port        = htons(SERV_PORT);
 
-	Bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+    Bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
-	Listen(listenfd, 20);
+    Listen(listenfd, 20);
 
-	maxfd = listenfd;		/* initialize */
-	maxi = -1;			/* index into client[] array */
-	for (i = 0; i < FD_SETSIZE; i++)
-		client[i] = -1;	/* -1 indicates available entry */
-	FD_ZERO(&allset);
-	FD_SET(listenfd, &allset);
+    maxfd = listenfd;       /* initialize */
+    maxi = -1;          /* index into client[] array */
+    for (i = 0; i < FD_SETSIZE; i++)
+        client[i] = -1; /* -1 indicates available entry */
+    FD_ZERO(&allset);
+    FD_SET(listenfd, &allset);
 
-	for ( ; ; ) {
-		rset = allset;	/* structure assignment */
-		nready = select(maxfd+1, &rset, NULL, NULL, NULL);
-		if (nready < 0)
-			perr_exit("select error");
+    for ( ; ; ) {
+        rset = allset;  /* structure assignment */
+        nready = select(maxfd+1, &rset, NULL, NULL, NULL);
+        if (nready < 0)
+            perr_exit("select error");
 
-		if (FD_ISSET(listenfd, &rset)) { /* new client connection */
-			cliaddr_len = sizeof(cliaddr);
-			connfd = Accept(listenfd, (struct sockaddr *)&cliaddr, &cliaddr_len);
+        if (FD_ISSET(listenfd, &rset)) { /* new client connection */
+            cliaddr_len = sizeof(cliaddr);
+            connfd = Accept(listenfd, (struct sockaddr *)&cliaddr, &cliaddr_len);
 
-			printf("received from %s at PORT %d\n",
-			       inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
-			       ntohs(cliaddr.sin_port));
+            printf("received from %s at PORT %d\n",
+                   inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
+                   ntohs(cliaddr.sin_port));
 
-			for (i = 0; i < FD_SETSIZE; i++)
-				if (client[i] < 0) {
-					client[i] = connfd; /* save descriptor */
-					break;
-				}
-			if (i == FD_SETSIZE) {
-				fputs("too many clients\n", stderr);
-				exit(1);
-			}
+            for (i = 0; i < FD_SETSIZE; i++)
+                if (client[i] < 0) {
+                    client[i] = connfd; /* save descriptor */
+                    break;
+                }
+            if (i == FD_SETSIZE) {
+                fputs("too many clients\n", stderr);
+                exit(1);
+            }
 
-			FD_SET(connfd, &allset);	/* add new descriptor to set */
-			if (connfd > maxfd)
-				maxfd = connfd; /* for select */
-			if (i > maxi)
-				maxi = i;	/* max index in client[] array */
+            FD_SET(connfd, &allset);    /* add new descriptor to set */
+            if (connfd > maxfd)
+                maxfd = connfd; /* for select */
+            if (i > maxi)
+                maxi = i;   /* max index in client[] array */
 
-			if (--nready == 0)
-				continue;	/* no more readable descriptors */
-		}
+            if (--nready == 0)
+                continue;   /* no more readable descriptors */
+        }
 
-		for (i = 0; i <= maxi; i++) {	/* check all clients for data */
-			if ( (sockfd = client[i]) < 0)
-				continue;
-			if (FD_ISSET(sockfd, &rset)) {
-				if ( (n = Read(sockfd, buf, MAXLINE)) == 0) {
-					/* connection closed by client */
-					Close(sockfd);
-					FD_CLR(sockfd, &allset);
-					client[i] = -1;
-				} else {
-					int j;
-					for (j = 0; j < n; j++)
-						buf[j] = toupper(buf[j]);
-					Write(sockfd, buf, n);
-				}
+        for (i = 0; i <= maxi; i++) {   /* check all clients for data */
+            if ( (sockfd = client[i]) < 0)
+                continue;
+            if (FD_ISSET(sockfd, &rset)) {
+                if ( (n = Read(sockfd, buf, MAXLINE)) == 0) {
+                    /* connection closed by client */
+                    Close(sockfd);
+                    FD_CLR(sockfd, &allset);
+                    client[i] = -1;
+                } else {
+                    int j;
+                    for (j = 0; j < n; j++)
+                        buf[j] = toupper(buf[j]);
+                    Write(sockfd, buf, n);
+                }
 
-				if (--nready == 0)
-					break;	/* no more readable descriptors */
-			}
-		}
-	}
+                if (--nready == 0)
+                    break;  /* no more readable descriptors */
+            }
+        }
+    }
 }
 ```
 
@@ -20700,38 +20700,38 @@ int main(int argc, char **argv)
 
 int main(void)
 {
-	struct sockaddr_in servaddr, cliaddr;
-	socklen_t cliaddr_len;
-	int sockfd;
-	char buf[MAXLINE];
-	char str[INET_ADDRSTRLEN];
-	int i, n;
+    struct sockaddr_in servaddr, cliaddr;
+    socklen_t cliaddr_len;
+    int sockfd;
+    char buf[MAXLINE];
+    char str[INET_ADDRSTRLEN];
+    int i, n;
 
-	sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
+    sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_port = htons(SERV_PORT);
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    servaddr.sin_port = htons(SERV_PORT);
     
-	Bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+    Bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
-	printf("Accepting connections ...\n");
-	while (1) {
-		cliaddr_len = sizeof(cliaddr);
-		n = recvfrom(sockfd, buf, MAXLINE, 0, (struct sockaddr *)&cliaddr, &cliaddr_len);
-		if (n == -1)
-			perr_exit("recvfrom error");
-		printf("received from %s at PORT %d\n",
-		       inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
-		       ntohs(cliaddr.sin_port));
+    printf("Accepting connections ...\n");
+    while (1) {
+        cliaddr_len = sizeof(cliaddr);
+        n = recvfrom(sockfd, buf, MAXLINE, 0, (struct sockaddr *)&cliaddr, &cliaddr_len);
+        if (n == -1)
+            perr_exit("recvfrom error");
+        printf("received from %s at PORT %d\n",
+               inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
+               ntohs(cliaddr.sin_port));
     
-		for (i = 0; i < n; i++)
-			buf[i] = toupper(buf[i]);
-		n = sendto(sockfd, buf, n, 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
-		if (n == -1)
-			perr_exit("sendto error");
-	}
+        for (i = 0; i < n; i++)
+            buf[i] = toupper(buf[i]);
+        n = sendto(sockfd, buf, n, 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
+        if (n == -1)
+            perr_exit("sendto error");
+    }
 }
 /* client.c */
 #include <stdio.h>
@@ -20745,33 +20745,33 @@ int main(void)
 
 int main(int argc, char *argv[])
 {
-	struct sockaddr_in servaddr;
-	int sockfd, n;
-	char buf[MAXLINE];
-	char str[INET_ADDRSTRLEN];
-	socklen_t servaddr_len;
+    struct sockaddr_in servaddr;
+    int sockfd, n;
+    char buf[MAXLINE];
+    char str[INET_ADDRSTRLEN];
+    socklen_t servaddr_len;
     
-	sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
+    sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
 
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
-	servaddr.sin_port = htons(SERV_PORT);
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
+    servaddr.sin_port = htons(SERV_PORT);
     
-	while (fgets(buf, MAXLINE, stdin) != NULL) {
-		n = sendto(sockfd, buf, strlen(buf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
-		if (n == -1)
-			perr_exit("sendto error");
+    while (fgets(buf, MAXLINE, stdin) != NULL) {
+        n = sendto(sockfd, buf, strlen(buf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
+        if (n == -1)
+            perr_exit("sendto error");
 
-		n = recvfrom(sockfd, buf, MAXLINE, 0, NULL, 0);
-		if (n == -1)
-			perr_exit("recvfrom error");
-	  
-		Write(STDOUT_FILENO, buf, n);
-	}
+        n = recvfrom(sockfd, buf, MAXLINE, 0, NULL, 0);
+        if (n == -1)
+            perr_exit("recvfrom error");
+      
+        Write(STDOUT_FILENO, buf, n);
+    }
 
-	Close(sockfd);
-	return 0;
+    Close(sockfd);
+    return 0;
 }
 ```
 
@@ -20800,23 +20800,23 @@ UNIX Domain Socket 与网络 socket 编程最明显的不同在于地址格式�
 
 int main(void)
 {
-	int fd, size;
-	struct sockaddr_un un;
+    int fd, size;
+    struct sockaddr_un un;
 
-	memset(&un, 0, sizeof(un));
-	un.sun_family = AF_UNIX;
-	strcpy(un.sun_path, "foo.socket");
-	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
-		perror("socket error");
-		exit(1);
-	}
-	size = offsetof(struct sockaddr_un, sun_path) + strlen(un.sun_path);
-	if (bind(fd, (struct sockaddr *)&un, size) < 0) {
-		perror("bind error");
-		exit(1);
-	}
-	printf("UNIX domain socket bound\n");
-	exit(0);
+    memset(&un, 0, sizeof(un));
+    un.sun_family = AF_UNIX;
+    strcpy(un.sun_path, "foo.socket");
+    if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+        perror("socket error");
+        exit(1);
+    }
+    size = offsetof(struct sockaddr_un, sun_path) + strlen(un.sun_path);
+    if (bind(fd, (struct sockaddr *)&un, size) < 0) {
+        perror("bind error");
+        exit(1);
+    }
+    printf("UNIX domain socket bound\n");
+    exit(0);
 }
 ```
 
@@ -20858,36 +20858,36 @@ UNIX domain socket bound
  */
 int serv_listen(const char *name)
 {
-	int                 fd, len, err, rval;
-	struct sockaddr_un  un;
+    int                 fd, len, err, rval;
+    struct sockaddr_un  un;
 
-	/* create a UNIX domain stream socket */
-	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-		return(-1);
-	unlink(name);   /* in case it already exists */
+    /* create a UNIX domain stream socket */
+    if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+        return(-1);
+    unlink(name);   /* in case it already exists */
 
-	/* fill in socket address structure */
-	memset(&un, 0, sizeof(un));
-	un.sun_family = AF_UNIX;
-	strcpy(un.sun_path, name);
-	len = offsetof(struct sockaddr_un, sun_path) + strlen(name);
+    /* fill in socket address structure */
+    memset(&un, 0, sizeof(un));
+    un.sun_family = AF_UNIX;
+    strcpy(un.sun_path, name);
+    len = offsetof(struct sockaddr_un, sun_path) + strlen(name);
 
-	/* bind the name to the descriptor */
-	if (bind(fd, (struct sockaddr *)&un, len) < 0) {
-		rval = -2;
-		goto errout;
-	}
-	if (listen(fd, QLEN) < 0) { /* tell kernel we're a server */
-		rval = -3;
-		goto errout;
-	}
-	return(fd);
+    /* bind the name to the descriptor */
+    if (bind(fd, (struct sockaddr *)&un, len) < 0) {
+        rval = -2;
+        goto errout;
+    }
+    if (listen(fd, QLEN) < 0) { /* tell kernel we're a server */
+        rval = -3;
+        goto errout;
+    }
+    return(fd);
 
 errout:
-	err = errno;
-	close(fd);
-	errno = err;
-	return(rval);
+    err = errno;
+    close(fd);
+    errno = err;
+    return(rval);
 }
 ```
 
@@ -20902,39 +20902,39 @@ errout:
 
 int serv_accept(int listenfd, uid_t *uidptr)
 {
-	int                 clifd, len, err, rval;
-	time_t              staletime;
-	struct sockaddr_un  un;
-	struct stat         statbuf;
+    int                 clifd, len, err, rval;
+    time_t              staletime;
+    struct sockaddr_un  un;
+    struct stat         statbuf;
 
-	len = sizeof(un);
-	if ((clifd = accept(listenfd, (struct sockaddr *)&un, &len)) < 0)
-		return(-1);     /* often errno=EINTR, if signal caught */
+    len = sizeof(un);
+    if ((clifd = accept(listenfd, (struct sockaddr *)&un, &len)) < 0)
+        return(-1);     /* often errno=EINTR, if signal caught */
 
-	/* obtain the client's uid from its calling address */
-	len -= offsetof(struct sockaddr_un, sun_path); /* len of pathname */
-	un.sun_path[len] = 0;           /* null terminate */
+    /* obtain the client's uid from its calling address */
+    len -= offsetof(struct sockaddr_un, sun_path); /* len of pathname */
+    un.sun_path[len] = 0;           /* null terminate */
 
-	if (stat(un.sun_path, &statbuf) < 0) {
-		rval = -2;
-		goto errout;
-	}
+    if (stat(un.sun_path, &statbuf) < 0) {
+        rval = -2;
+        goto errout;
+    }
 
-	if (S_ISSOCK(statbuf.st_mode) == 0) {
-		rval = -3;      /* not a socket */
-		goto errout;
-	}
+    if (S_ISSOCK(statbuf.st_mode) == 0) {
+        rval = -3;      /* not a socket */
+        goto errout;
+    }
 
-	if (uidptr != NULL)
-		*uidptr = statbuf.st_uid;   /* return uid of caller */
-	unlink(un.sun_path);        /* we're done with pathname now */
-	return(clifd);
+    if (uidptr != NULL)
+        *uidptr = statbuf.st_uid;   /* return uid of caller */
+    unlink(un.sun_path);        /* we're done with pathname now */
+    return(clifd);
 
 errout:
-	err = errno;
-	close(clifd);
-	errno = err;
-	return(rval);
+    err = errno;
+    close(clifd);
+    errno = err;
+    return(rval);
 }
 ```
 
@@ -20956,41 +20956,41 @@ errout:
  */
 int cli_conn(const char *name)
 {
-	int                fd, len, err, rval;
-	struct sockaddr_un un;
+    int                fd, len, err, rval;
+    struct sockaddr_un un;
 
-	/* create a UNIX domain stream socket */
-	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-		return(-1);
+    /* create a UNIX domain stream socket */
+    if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+        return(-1);
 
-	/* fill socket address structure with our address */
-	memset(&un, 0, sizeof(un));
-	un.sun_family = AF_UNIX;
-	sprintf(un.sun_path, "%s%05d", CLI_PATH, getpid());
-	len = offsetof(struct sockaddr_un, sun_path) + strlen(un.sun_path);
+    /* fill socket address structure with our address */
+    memset(&un, 0, sizeof(un));
+    un.sun_family = AF_UNIX;
+    sprintf(un.sun_path, "%s%05d", CLI_PATH, getpid());
+    len = offsetof(struct sockaddr_un, sun_path) + strlen(un.sun_path);
 
-	unlink(un.sun_path);        /* in case it already exists */
-	if (bind(fd, (struct sockaddr *)&un, len) < 0) {
-		rval = -2;
-		goto errout;
-	}
+    unlink(un.sun_path);        /* in case it already exists */
+    if (bind(fd, (struct sockaddr *)&un, len) < 0) {
+        rval = -2;
+        goto errout;
+    }
 
-	/* fill socket address structure with server's address */
-	memset(&un, 0, sizeof(un));
-	un.sun_family = AF_UNIX;
-	strcpy(un.sun_path, name);
-	len = offsetof(struct sockaddr_un, sun_path) + strlen(name);
-	if (connect(fd, (struct sockaddr *)&un, len) < 0) {
-		rval = -4;
-		goto errout;
-	}
-	return(fd);
+    /* fill socket address structure with server's address */
+    memset(&un, 0, sizeof(un));
+    un.sun_family = AF_UNIX;
+    strcpy(un.sun_path, name);
+    len = offsetof(struct sockaddr_un, sun_path) + strlen(name);
+    if (connect(fd, (struct sockaddr *)&un, len) < 0) {
+        rval = -4;
+        goto errout;
+    }
+    return(fd);
 
 errout:
-	err = errno;
-	close(fd);
-	errno = err;
-	return(rval);
+    err = errno;
+    close(fd);
+    errno = err;
+    return(rval);
 }
 ```
 
@@ -21031,8 +21031,8 @@ Connection: keep-alive
 <html>
 <head><title>Test Page</title></head>
 <body>
-	<p>Test OK</p>
-	<img src='mypic.jpg'>
+    <p>Test OK</p>
+    <img src='mypic.jpg'>
 </body>
 </html>
 ```
@@ -21052,8 +21052,8 @@ Content-Type: text/html
 <html>
 <head><title>Test Page</title></head>
 <body>
-	<p>Test OK</p>
-	<img src='mypic.jpg'>
+    <p>Test OK</p>
+    <img src='mypic.jpg'>
 </body>
 </html>
 ```
@@ -21117,17 +21117,17 @@ Content-Type: text/html
 1. 解析浏览器的请求，在服务目录中查找相应的文件，如果找不到该文件就返回 404 错误页面
 2. 如果找到了浏览器请求的文件，用 stat(2) 检查它是否可执行
 3. 如果该文件可执行：
-	1. 发送 HTTP/1.1 200 OK 给客户端
-	2. fork(2)，然后用 dup2(2) 重定向子进程的标准输出到客户端 socket
-	3. 在子进程中 exec(3) 该 CGI 程序
-	4. 关闭连接
+    1. 发送 HTTP/1.1 200 OK 给客户端
+    2. fork(2)，然后用 dup2(2) 重定向子进程的标准输出到客户端 socket
+    3. 在子进程中 exec(3) 该 CGI 程序
+    4. 关闭连接
 4. 如果该文件不可执行：
-	1. 发送 HTTP/1.1 200 OK 给客户端
-	2. 如果是一个图片文件，根据图片的扩展名发送相应的 Content-Type 给客户端
-	3. 如果不是图片文件，这里我们简化处理，都当作 Content-Type: text/html
-	4. 简单的 HTTP 协议头有这两行就足够了，再发一个空行表示结束
-	5. 读取文件的内容发送到客户端
-	6. 关闭连接
+    1. 发送 HTTP/1.1 200 OK 给客户端
+    2. 如果是一个图片文件，根据图片的扩展名发送相应的 Content-Type 给客户端
+    3. 如果不是图片文件，这里我们简化处理，都当作 Content-Type: text/html
+    4. 简单的 HTTP 协议头有这两行就足够了，再发一个空行表示结束
+    5. 读取文件的内容发送到客户端
+    6. 关闭连接
 
 # 4. 参考资料
 
