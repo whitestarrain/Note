@@ -354,7 +354,7 @@ setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
 ## 8.3. 系统备份
 
- 因为用的btrfs文件系统，因此系统崩了后，用启动盘进入后，挂载@,@home两个分卷到`/`,`/home`后，change root 后再进行操作或者备份还原就行（非root需要su到指定用户）
+因为用的btrfs文件系统，因此系统崩了后，用启动盘进入后，挂载@,@home两个分卷到`/`,`/home`后，change root 后再进行操作或者备份还原就行（非root需要su到指定用户）
 
 # 9. linux 图形化接口
 
@@ -381,6 +381,7 @@ setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 - 然后引导进入桌面，至此任务完成，之后就交给kde或i3wm管理桌面了。
 - **可以不需要DM，直接通过startx脚本命令进入桌面** 。
 
+
 # 11. 参考资料
 
 - 基础理论
@@ -397,6 +398,7 @@ setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
   - [ ] [Linux 下 MacBook 触摸板设置](https://harttle.land/2019/05/01/linux-macbook-trackpad-settings.html)
     > macbook上实际无法实现惯性功能
 - dwm 工具链（待尝试）
+  - [suckless极简主义开发团队](https://suckless.org/)
   - [ ] [从零开始配置自己的Arch Linux桌面（极简）](https://zhuanlan.zhihu.com/p/112536524)
     > dwm工具链相关软件，推荐看下
   - [ ] [入坑dwm](https://zhuanlan.zhihu.com/p/183861786)
