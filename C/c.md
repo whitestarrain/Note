@@ -7065,24 +7065,37 @@ ELF 文件格式是一个开放标准，各种 UNIX 系统的可执行文件都�
 - 可执行文件（Executable）
 - 共享库（Shared Object，或者 Shared Library）
 
-共享库留到[第 20 章「链接详解」第 4 节「共享库」](2-C-语言本质/ch20-链接详解#_4-共享库)再详细介绍，本节我们以[本章第 3 节例 18.2 「求一组数的最大值的汇编程序」](#e18-2)为例讨论目标文件和可执行文件的格式。现在详细解释一下这个程序的汇编、链接、运行过程：
+共享库留到[第 20 章「链接详解」第 4 节「共享库」]()再详细介绍，本节我们以[本章第 3 节例 18.2 「求一组数的最大值的汇编程序」]()为例讨论目标文件和可执行文件的格式。现在详细解释一下这个程序的汇编、链接、运行过程：
 
 1. 写一个汇编程序保存成文本文件 `max.s`。
 2. 汇编器读取这个文本文件转换成目标文件 `max.o`，目标文件由若干个 Section 组成，我们在汇编程序中声明的 `.section` 会成为目标文件中的 Section，此外汇编器还会自动添加一些 Section（比如符号表）。
-3. 然后链接器把目标文件中的 Section 合并成几个 Segment<sup>[28]</sup>，生成可执行文件 `max`。
+3. 然后链接器 **把目标文件中的 Section 合并成几个 Segment<sup>[28]</sup>** ，生成可执行文件 `max`。
 4. 最后加载器（Loader）根据可执行文件中的 Segment 信息加载运行这个程序。
 
 > <sup>[28]</sup> Segment 也可以翻译成「段」，为了避免混淆，在本书中只把 Section 称为段，而 Segment 直接用英文。
 
-ELF 格式提供了两种不同的视角，链接器把 ELF 文件看成是 Section 的集合，而加载器把 ELF 文件看成是 Segment 的集合。如下图所示。
+ELF 格式提供了两种不同的视角，链接器把 ELF 文件看成是  **Section 的集合** ，而加载器把 ELF 文件看成是  **Segment 的集合** 。如下图所示。
 
 <p id="c18-1">图 18.1. ELF 文件</p>
 
 ![ELF文件](./image/asm.elfoverview.png)
 
-左边是从链接器的视角来看 ELF 文件，开头的 ELF  Header 描述了体系结构和操作系统等基本信息，并指出 Section Header Table 和 Program Header Table 在文件中的什么位置，Program Header Table 在链接过程中用不到，所以是可有可无的，Section Header Table 中保存了所有 Section 的描述信息，通过 Section Header  Table 可以找到每个 Section 在文件中的位置。右边是从加载器的视角来看 ELF 文件，开头是 ELF Header，Program Header Table 中保存了所有 Segment 的描述信息，Section Header Table 在加载过程中用不到，所以是可有可无的。从上图可以看出，一个 Segment 由一个或多个 Section 组成，这些 Section 加载到内存时具有相同的访问权限。有些 Section 只对链接器有意义，在运行时用不到，也不需要加载到内存，那么就不属于任何 Segment。注意 Section  Header Table 和 Program Header Table 并不是一定要位于文件的开头和结尾，其位置由 ELF  Header 指出，上图这么画只是为了清晰。
+- 左边是从链接器的视角来看 ELF 文件，
+  - 开头的 ELF  Header 描述了体系结构和操作系统等基本信息，并指出 Section Header Table 和 Program Header Table 在文件中的什么位置，
+  - Program Header Table 在链接过程中用不到，所以是可有可无的，
+  - Section Header Table 中保存了所有 Section 的描述信息，通过 Section Header  Table 可以找到每个 Section 在文件中的位置。
+- 右边是从加载器的视角来看 ELF 文件，
+  - 开头是 ELF Header，Program Header Table 中保存了所有 Segment 的描述信息，
+  - Section Header Table 在加载过程中用不到，所以是可有可无的。
+  - 从上图可以看出， **一个 Segment 由一个或多个 Section 组成，这些 Section 加载到内存时具有相同的访问权限** 。
+  - 有些 Section 只对链接器有意义，在运行时用不到，也不需要加载到内存，那么就不属于任何 Segment。
 
-目标文件需要链接器做进一步处理，所以一定有 Section Header Table；可执行文件需要加载运行，所以一定有 Program Header Table；而共享库既要加载运行，又要在加载时做动态链接，所以既有 Section Header Table 又有 Program Header Table。
+- 注意 Section  Header Table 和 Program Header Table 并不是一定要位于文件的开头和结尾，其位置由 ELF  Header 指出，上图这么画只是为了清晰。
+
+- 不同类型文件关注点：
+  - 目标文件需要链接器做进一步处理，所以一定有 Section Header Table；
+  - 可执行文件需要加载运行，所以一定有 Program Header Table；
+  - 而共享库既要加载运行，又要在加载时做动态链接，所以既有 Section Header Table 又有 Program Header Table。
 
 #### 2.5.5.1. 目标文件
 
@@ -7113,7 +7126,10 @@ ELF Header:
 ...
 ```
 
-ELF Header 中描述了操作系统是 UNIX，体系结构是 80386。Section Header Table 中有 8 个 Section Header，从文件地址 `200`（`0xc8`）开始，每个 Section  Header 占 40 字节，共 320 字节，到文件地址 `0x207` 结束。这个目标文件没有 Program  Header。文件地址是这样定义的：文件开头第一个字节的地址是 0，然后每个字节占一个地址。
+ELF Header 中描述了操作系统是 UNIX，体系结构是 80386。
+Section Header Table 中有 8 个 Section Header，从文件地址 `200`（`0xc8`）开始，每个 Section  Header 占 40 字节，共 320 字节，到文件地址 `0x207` 结束。
+这个目标文件没有 Program  Header。
+文件地址是这样定义的： **文件开头第一个字节的地址是 0，然后每个字节占一个地址** 。
 
 ```bash
 ...
