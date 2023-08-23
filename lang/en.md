@@ -1,0 +1,54 @@
+<!-- - https://www.youtube.com/watch?v=is7vn5URVcc&ab_channel=%E8%8B%B1%E8%AF%AD%E5%85%94 -->
+
+- 句子成分
+  - 主语 subject
+  - 谓语动词 predicate verb
+  - 宾语 object
+  - 宾语补语 object complement
+  - 主语补语 subject complement
+  - 定语 attribute
+    - *The little white* rabit ate *a large* carrot
+  - 状语 aderbial
+    - The rabbit ate *quickly*
+  - 同位语 appositive
+    - He, *a English teacher* , is smart.
+- 简单句
+  - 什么(主语，人或物)
+  - 怎么样(谓语，动作)
+    - 可以独立完成的动作
+      - 结构
+        - 主语
+        - （不及物）动词
+      - 示例
+        - I sleep
+    - 有一个动作承受者
+      - 结构
+        - 主语
+        - （及物）动词
+        - 宾语 
+      - 示例
+        - I like you
+    - 有两个动作承受者
+      - 结构
+        - 主语
+        - （双及物）动词
+        - 间接宾语
+        - 直接宾语
+      - 示例
+        - I teach you english
+    - 只有一个动作承受者（不同于2）
+      - 结构
+        - 主语
+        - （复杂及物）动词
+        - 宾语
+        - （宾语）补语
+      - 示例
+        - I think you smart
+    - 把词后面的信息赋予前者
+      - 结构
+        - 主语
+        - （系）动词
+        - （主语）补语
+      - 示例
+        - I am smart
+        - He looks smart
