@@ -61,9 +61,11 @@
   - `git log --oneline --graph` 会按分支排布
   - `git log --oneline --decorate --graph --all` ，它会输出你的提交历史、各个分支的指向以及项目的分支分叉情况。
   - `git log --follow file_path` 展示出所有修改指定文件的提交
-  - `git log -p file_path` 查看某个文件的详细修改历史
+  - `git log -p file_path` **查看某个文件的详细修改历史** 
   - `git log -p FETCH_HEAD` 查看拉取信息
-  - `git log -S [keyword]` 搜索提交历史，根据关键词
+  - `git log -S [keyword]` **搜索提交历史，根据关键词** 
+  - `git log -S [regex]` 搜索提交历史，根据正则表达式
+  - `git log --stat` 查看每次提交的修改统计
   - `git log --follow [file]` 显示某个文件的版本历史，包括文件改名
   - `git shortlog -sn` 显示所有提交过的用户，按提交次数排序
   - `git reflog --all` HEAD移动记录
