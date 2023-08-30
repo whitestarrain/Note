@@ -1050,7 +1050,7 @@ e1   4   3   2   1   0
 
 - 说明
   - loc 属性允许用户永远使用 **显式索引** 来进行 **定位和切片** ， **包含头尾**
-  - 逗号前是对index进行选取，逗号后是对icolumn_name进行选取
+  - 逗号前是对index进行选取，逗号后是对column_name进行选取
   - 可以结合mask和高级索引模式: `data.loc[data.density > 100, ['pop', 'density']]`
 
 ---

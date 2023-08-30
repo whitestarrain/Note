@@ -227,6 +227,8 @@ TODO: 《算法珠玑》 有一些大数据处理的算法可以看看
 
 > from k-v database, used by levelDB, HBase etc.
 
+## 3.2. Piece table
+
 # 4. 参考资料
 
 - [ ] [Indexing — Data Structures](https://medium.com/nerd-for-tech/indexing-data-structures-aa7363693c40)
