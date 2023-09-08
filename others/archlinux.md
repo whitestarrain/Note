@@ -356,6 +356,10 @@ setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
 因为用的btrfs文件系统，因此系统崩了后，用启动盘进入后，挂载@,@home两个分卷到`/`,`/home`后，change root 后再进行操作或者备份还原就行（非root需要su到指定用户）
 
+timeshift还原后,要确保还原后的挂载信息和 `/etc/fstab` 下的保持一致
+
+[参考链接](https://blog.dreamfever.me/2021/12/08/cong-timeshift-restore-dao-zhi-home-gua-zai-shi-bai-shuo-qi/)
+
 # 9. linux 图形化接口
 
 - x windows
