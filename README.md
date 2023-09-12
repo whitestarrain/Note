@@ -175,7 +175,7 @@
 
 # 思维导图
 
-查看思维导图：**[思维导图跳转](https://whitestarrain.github.io/Note/YourBrain.html)**
+查看思维导图：**[思维导图跳转](https://whitestarrain.github.io/blog/brain/)**
 
 ```
 基础，java，数据库部分在以前准备面试的时候边复习边整理过，应该非常细，其他地方就不太行了
