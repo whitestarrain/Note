@@ -221,13 +221,15 @@ TODO: 《算法珠玑》 有一些大数据处理的算法可以看看
 
 ### 2.5.3. z-order index
 
-# 3. Other structure
+# 3. Others
 
 ## 3.1. LSM
 
 > from k-v database, used by levelDB, HBase etc.
 
 ## 3.2. Piece table
+
+## 3.3. Hamming Code
 
 # 4. 参考资料
 
