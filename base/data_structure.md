@@ -231,6 +231,8 @@ TODO: 《算法珠玑》 有一些大数据处理的算法可以看看
 
 ## 3.3. Hamming Code
 
+## 3.4. Bitmap
+
 # 4. 参考资料
 
 - [ ] [Indexing — Data Structures](https://medium.com/nerd-for-tech/indexing-data-structures-aa7363693c40)

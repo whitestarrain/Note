@@ -67,10 +67,12 @@
   - `git log -S [regex]` 搜索提交历史，根据正则表达式
   - `git log --stat` 查看每次提交的修改统计
   - `git log --follow [file]` 显示某个文件的版本历史，包括文件改名
+  - `git log <commit_start> <commit_end> [^<not_from_commit>]` 查看从commit_start开始到commit_end结束的提交,且不来自于no_from_commit
+  - `git log --since="2023-09-10" --before="2023-09-30"` 查看指定时间内的提交统计
   - `git shortlog -sn` 显示所有提交过的用户，按提交次数排序
   - `git reflog --all` HEAD移动记录
   - `gitk --all` 图形化界面展现分支，十分推荐。**加上all更全面直观**
-- 修改查询
+- diff查询
   - `git diff` 显示为 add 的文件（unstaged）修改内容
   - `git diff --stat startRef endRef` 显示两个提交间文件单位的差异
     ```
@@ -87,6 +89,18 @@
     > 等同于`git diff ref~1 ref`
   - `git show --name-only [commit]` 显示某次提交发生变化的文件
   - `git show [commit]:[filename]` 显示某次提交时，某个文件的内容
+
+- 提交状况统计
+
+  ```bash
+  # 统计所有用户的修改行数
+  log_option='<options>' && git log ${log_option} --format='%aN' | sort -u | while read name; do echo -en "$name\t"; git log ${log_option} --author="$name" --pretty=tformat: --numstat | awk '{ add += $1; subs += $2; } END { printf "added lines: %s, removed lines: %s \n", add, subs}' -; done
+
+  # options 详见log文档或上述示例
+
+  # 统计开发分支修改行数
+  log_option="dev_branch master ${git merge-base dev_branch master}"
+  ```
 
 ## 1.5. 远程仓库
 
@@ -224,6 +238,11 @@
 
 - `git stash` 将修改内容储藏到栈上
 - `git stash save "comment"` 将修改内容储藏到栈上，并添加注释
+- `git stash show -p stash@{<number>} > <name>.patch` 将stash的内容保存为一个patch
+  - First the stats: `git apply --stat a_file.patch`
+  - Then a dry run to detect errors: `git apply --check a_file.patch`
+  - apply patch as commit: `git am --keep-cr --signoff < a_file.patch `
+    - Don't forget if you have `autocrlf=false` for Windows only development you'll need to pass `--keep-cr` to am to keep those CRLFs
 - `git apply` 应用最新的存储
 - `git stash list` 展示所有储藏
 - `git stash apply stash@{2}` 应用指定的储藏（可以通过上一条指令）
