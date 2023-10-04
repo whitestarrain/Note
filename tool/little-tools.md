@@ -76,6 +76,3 @@
 
 - 基于node
 
-# 如果你想创造一门编程语言
-
-- [你需要决策的事情](https://www.mcmillen.dev/language_checklist.html)
