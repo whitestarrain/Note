@@ -76,3 +76,6 @@
 
 - 基于node
 
+# 命令行自动纠错工具 thefuck
+
+[thefuck](https://github.com/nvbn/thefuck)
