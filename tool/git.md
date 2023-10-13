@@ -315,6 +315,9 @@
   | `checkout [commit] <paths>` | NO   | YES   | YES     | **NO**   |
 
 - `git revert [commit]` 新建一个commit，用来撤销指定commit,后者的所有变化都将被前者抵消，并且应用到当前分支
+- `git revert -m 1/2 [merge_commit]` revert 一个merge
+  - Adding the option -m 1 to the git revert command tells Git that you want to keep the parent side of the merge (the branch you merged into).
+  - If you want to keep the side of the branch merged, you change the 1 to a 2 instead.
 
 ## 1.13. 变基
 
