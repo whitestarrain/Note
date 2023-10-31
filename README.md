@@ -15,7 +15,7 @@
 >
 > 有些笔记不太成熟，较为随便，会慢慢抽时间整理完善。
 
-- **[速查表(强烈推荐rstacruz速查表)](./cheatsheet.md)** 
+- **[速查表(强烈推荐rstacruz速查表)](./cheatsheet.md)**
 - **基础**
   - [计算机网络](./base/computer_network_question.md)
     > 主要整理了常见问题。知识点结构整理了思维导图。
@@ -36,7 +36,7 @@
 - **数据库**
   - [mysql](./database/mysql.md)
   - [redis](./database/redis.md)
-- **大数据(笔记没时间更完，看一下[资料](./big_data/资料)吧)** 
+- **大数据(笔记没时间更完，看一下[资料](./big_data/资料)吧)**
   - [hadoop(hdfs,MR,HBase),hive](./big_data/hadoop.md)
     > 好像是以前跟着视频边学边记的。更到HBase后就没时间更了。
   - [storm](./big_data/storm.md)
@@ -49,7 +49,7 @@
     > 基本上没记多少笔记
   - [elasticsearch](./big_data/elasticsearch.md)
     > 边学边从网上抄的笔记
-- **中间件** 
+- **中间件**
   - [lvs,keepalive](./Middleware/lvs+keepalive.md)
     > 随笔笔记，仍未整理
   - [nginx](./Middleware/nginx.md)
@@ -63,7 +63,7 @@
     > 整理了一点儿基础
   - [k8s](./container/k8s.md)
     > 占位
-- **前端** 
+- **前端**
   - [html基础(资料)](./front_end/资料/HTML.md)
   - [css基础(资料)](./front_end/资料/CSS.md)
   - [css-BFC(资料)](./front_end/资料/BFC.md)
@@ -102,7 +102,7 @@
     > 待整理
   - [superset](./python/superset.md)
     > 待整理
-- **Java** 
+- **Java**
   - [学习笔记1](./java/JavaBaseNote1.md)
   - [学习笔记2](./java/JavaBaseNote2.md)
   - [基础解析1-基础](./java/Java基础解析1-基础.md)
@@ -139,7 +139,7 @@
   - [JVM3性能监控和调优](./java/JVM3性能监控和调优.md)
   - [JVM指令手册](./java/JVM指令手册.md)
   - [JVM-常用JVM](./java/JVM-常用JVM.md)
-- **分布式** 
+- **分布式**
   - [分布式系统概念](./distributed_system/distribute_system_concept.md)
     > 一些算法和概念依旧不太全，有时间再继续补充
   - [zookeeper](./Middleware/zookeeper.md)
@@ -148,7 +148,7 @@
     > 一些简单笔记，估计还是官方文档好用
   - [SpringCloud](./distributed_system/SpringCloud.md)
     > 优秀的笔记已经一堆了
-- **读书笔记** 
+- **读书笔记**
   - [书单](./booknote/书单.md)
   - [代码整洁之道](./booknote/代码整洁之道.md)
   - [重构：改善既有代码设计](./booknote/重构：改善既有代码设计.md)
@@ -318,7 +318,7 @@ awk 'BEGIN{
   - [x] 重构：改善既有代码设计
   - [ ] [《操作系统导论》(OS Three Easy Pieces)](https://github.com/remzi-arpacidusseau/ostep-translations/tree/master/chinese)
   - [ ] clickhouse 原理解析与应用实践
-  - [ ] 数据密集型应用系统设计 
+  - [ ] 数据密集型应用系统设计
   - [ ] 深入理解现代操作系统
   - [ ] Operating Systems:Three Easy Pieces
   - [ ] 冒号课堂
@@ -359,14 +359,14 @@ awk 'BEGIN{
   - [x] nvim配置模块化(迁移到[dotfiles](https://github.com/whitestarrain/dotfiles))
   - [ ] [想搞搞树莓派](https://shumeipai.nxez.com/)
 
-<!-- 
+<!--
 
 cookie和session攻击
 25匹马赛马
 
 数据库 分区分库分表
 
-c  
+c
 c++
 java
 scala
@@ -378,7 +378,7 @@ vimscript
 ruby
 python
 - kotlin
-- rust 
+- rust
 - go
 - Lisp
 

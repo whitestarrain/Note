@@ -9,7 +9,7 @@
 ### 1.1.1. 程序基本概念
 
 - 程序（Program）:
-  - **告诉计算机应如何完成一个计算任务** 
+  - **告诉计算机应如何完成一个计算任务**
   - 这里的计算可以是数学运算，比如解方程，也可以是符号运算，比如查找和替换文档中的某个单词
   - 从根本上说，计算机是由数字电路组成的运算机器，只能对数字做运算，程序之所以能做符号运算，是因为符号在计算机内部也是用数字表示的
   - 此外，程序还可以处理声音和图像，声音和图像在计算机内部必然也是用数字表示的，这些数字经过专门的硬件设备转换成人可以听到、看到的声音和图像。
@@ -56,7 +56,7 @@
   - 于是有了汇编语言，把机器语言中一组一组的数字用助记符（Mnemonic）表示，直接用这些助记符写出汇编程序
   - 然后让汇编器（Assembler）去查表把助记符替换成数字，也就把汇编语言翻译成了机器语言
     - 从上面的例子可以看出，汇编语言和机器语言的指令是一一对应的，汇编语言有三条指令，机器语言也有三条指令，汇编器就是做一个简单的替换工作
-    - 例如在第一条指令中，把 `movl ?,%eax` 这种格式的指令替换成机器码 `a1 ?`，`?` 表示一个地址，在汇编指令中是 `0x804a01c`，转换成机器码之后是 `1c a0 04 08` 
+    - 例如在第一条指令中，把 `movl ?,%eax` 这种格式的指令替换成机器码 `a1 ?`，`?` 表示一个地址，在汇编指令中是 `0x804a01c`，转换成机器码之后是 `1c a0 04 08`
       > （这是指令中的十六进制数的小端表示，小端表示将在**「目标文件」**章节 介绍）。
 
 - 高级语言->机器语言
@@ -72,12 +72,12 @@
   - 平台这个词有很多种解释，可以指计算机体系结构（Architecture），也可以指操作系统（Operating System），也可以指开发平台（编译器、链接器等）
   - **不同的计算机体系结构有不同的指令集（Instruction Set）** ，可以识别的机器指令格式是不同的
 - 编译保证可移植性
-  - **直接用某种体系结构的汇编或机器指令写出来的程序只能在这种体系结构的计算机上运行** 
+  - **直接用某种体系结构的汇编或机器指令写出来的程序只能在这种体系结构的计算机上运行**
   - **而各种体系结构的计算机都有各自的 C 编译器** ，
     - 可以把 C 程序编译成各种不同体系结构的机器指令
     - 这意味着用 C 语言写的程序只需稍加修改甚至不用修改就可以在各种不同的计算机上 **编译** 运行
 - 不同编译器
-  - 还要注意一点， **即使在相同的体系结构和操作系统下，用不同的 C 编译器（或者同一个 C 编译器的不同版本）编译同一个程序得到的结果也有可能不同** 
+  - 还要注意一点， **即使在相同的体系结构和操作系统下，用不同的 C 编译器（或者同一个 C 编译器的不同版本）编译同一个程序得到的结果也有可能不同**
   - **C 语言有些语法特性在 C 标准中并没有明确规定，各编译器有不同的实现，** 编译出来的指令的行为特性也会不同，应该尽量避免使用不可移植的语法特性。
 - 其他高级语言
   - 各种高级语言都具有 C 语言的这些优点，所以绝大部分程序是用高级语言编写的
@@ -300,7 +300,7 @@
 - libc 和 glibc 都是 linux 下的 C 函数库。
   - libc 是 Linux 下的 ANSI C 函数库;
   - glibc 是 Linux 下的 GNU C 函数库。
-  - **libc 函数库 和 glibc 函数库，都有对应的 `libc.so`** 
+  - **libc 函数库 和 glibc 函数库，都有对应的 `libc.so`**
 
 - [ANSI C](https://zh.wikipedia.org/wiki/ANSI_C)共包括15个头文件。
   - 1995年，*Normative Addendum 1* （NA1）批准了3个头文件（`iso646.h`、`wchar.h`和`wctype.h`）增加到C标准函数库中。
@@ -349,7 +349,7 @@
   - 主流的 Debian、Ubuntu、RedHat、CentOS 等用的 C 标准库都默认是 glibc（或者是其变种）
   - 例如：在 C 代码中直接使用 fopen 函数就能打开文件，这是因为其在调用了系统中的 sys_open 系统调用，而 fopen 就是通过 glibc 来完成中间的处理过程的。
 
-- eglibc 
+- eglibc
   - 是一种变种的 glibc 标准 C 库，这里的 e 是 Embedded 的意思。
   - eglibc 主要特性是为了更好的支持嵌入式架构，可以支持不同的 shell （包括嵌入式），
   - 但它是二进制兼容 glibc 的，就是说如果代码之前依赖 eglibc 库，那么换成 glibc 后也不需要重新编译。
@@ -439,12 +439,12 @@
 
   ```c
   #include <stdio.h>
-  
-  /* 
+
+  /*
    * comment1
    * main: generate some simple output
    */
-  
+
   int main(void)
   {
     printf(/* comment2 */"Hello, world.\n"); /* comment3 */
@@ -702,7 +702,7 @@
     int hour = 11, minute = 59;
     ```
   - 在初始化语句中，等号右边的值叫做 Initializer，例如上面的 `'a'`、`11` 和 `59`。
-  - 注意， **初始化是一种特殊的声明，而不是一种赋值语句** 
+  - 注意， **初始化是一种特殊的声明，而不是一种赋值语句**
   - 就 **目前** 来看，先定义一个变量再给它赋值和定义这个变量的同时给它初始化所达到的效果是一样的，C 语言的很多语法规则既适用于赋值也适用于初始化，
   - 但在以后的学习中你也会了解到它们之间的不同，请在学习过程中注意总结赋值和初始化的相同和不同之处。
 
@@ -807,7 +807,7 @@
   （= Initializer 的部分可以不写）
   ```
 
-  - 注意， **本书所列的语法规则都是简化过的，是不准确的，目的是为了便于初学者理解** 
+  - 注意， **本书所列的语法规则都是简化过的，是不准确的，目的是为了便于初学者理解**
   - 比如上面所列的语法规则并没有描述运算符的优先级和结合性。完整的 C 语法规则请参考 *C99 Annex A*。
   - 表达式可以是单个的常量或变量，也可以是根据以上规则组合而成的更复杂的表达式。
   - 以前我们用 `printf` 打印常量或变量的值，现在可以用 `printf` 打印更复杂的表达式的值，例如：
@@ -842,7 +842,7 @@
   - 有的表达式既可以表示一个存储位置也可以表示一个值，而有的表达式只能表示值，不能表示存储位置
     - 例如 `minute + 1` 这个表达式就不能表示存储位置，放在 `=` 左边是语义错误。
     - 表达式所表示的存储位置称为左值（lvalue）（允许放在 `=` 左边），而以前我们所说的表达式的值也称为右值（rvalue）（只能放在 `=` 右边）。
-    - 上面的话换一种说法就是： **有的表达式既可以做左值也可以做右值，而有的表达式只能做右值** 
+    - 上面的话换一种说法就是： **有的表达式既可以做左值也可以做右值，而有的表达式只能做右值**
     - 目前我们学过的表达式中只有变量可以做左值，可以做左值的表达式还有几种，以后会讲到。
 
 - 我们看一个有意思的例子，
@@ -905,7 +905,7 @@
   - 符号在计算机内部也用数字表示，每个字符在计算机内部用一个整数表示，称为字符编码（Character Encoding）
   - 目前最常用的是 ASCII 码（American Standard Code for Information Interchange，美国信息交换标准码），
 
-    ![](./image/ASCII.gif) 
+    ![](./image/ASCII.gif)
 
   - 表中每一栏的最后一列是字符，前三列分别是用十进制（Dec）、十六进制（Hex）和八进制（Oct）表示的字符编码，
   - 各种进制之间的换算将在[「计算机中数的表示」-「不同进制之间的换算」](2-C-语言本质/ch14-计算机中数的表示#_2-不同进制之间的换算)介绍。
@@ -955,7 +955,7 @@ TODO: c语言中,elf文件与内存中的字符编码.hexdump和gdb下试试
 ```c
   #include <math.h>
   #include <stdio.h>
-  
+
   int main(void)
   {
     double pi = 3.1416;
@@ -1021,7 +1021,7 @@ int main(void)
 给函数命名也要遵循上一章讲过的标识符命名规则。由于我们定义的 `main` 函数不带任何参数，参数列表应写成 `void`。函数体可以由若干条语句和声明组成，C89 要求所有声明写在所有语句之前（本书的示例代码都遵循这一规定），而 C99 的新特性允许语句和声明按任意顺序排列，只要每个标识符都遵循先声明后使用的原则就行。`main` 函数的返回值是 `int` 型的，`return 0;` 这个语句表示返回值是 `0`，`main` 函数的返回值是返回给操作系统看的，因为 `main` 函数是被操作系统调用的，通常程序执行成功就返回 `0`，在执行过程中出错就返回一个非零值。比如我们将 `main` 函数中的 `return` 语句改为 `return 4;` 再执行它，执行结束后可以在 Shell 中看到它的退出状态（Exit Status）：
 
 ```bash
-$ ./a.out 
+$ ./a.out
 11 and 0 hours
 $ echo $?
 4
@@ -1038,12 +1038,12 @@ $ echo $?
 
 ```c
   #include <stdio.h>
-  
+
   void newline(void)
   {
     printf("\n");
   }
-  
+
   int main(void)
   {
     printf("First Line.\n");
@@ -1083,19 +1083,19 @@ int main(void)
 
 ```c
   #include <stdio.h>
-  
+
   void newline(void)
   {
     printf("\n");
   }
-  
+
   void threeline(void)
   {
     newline();
     newline();
     newline();
   }
-  
+
   int main(void)
   {
     printf("Three lines:\n");
@@ -1133,20 +1133,20 @@ void threeline(void);
 
 ```c
   #include <stdio.h>
-  
+
   void newline(void);
   void threeline(void);
-  
+
   int main(void)
   {
     ...
   }
-  
+
   void newline(void)
   {
     ...
   }
-  
+
   void threeline(void)
   {
     ...
@@ -1161,7 +1161,7 @@ void threeline(void);
 
 ```c
   #include <stdio.h>
-  
+
   int main(void)
   {
     printf("Three lines:\n");
@@ -1170,12 +1170,12 @@ void threeline(void);
     threeline();
     return 0;
   }
-  
+
   void newline(void)
   {
     printf("\n");
   }
-  
+
   void threeline(void)
   {
     newline();
@@ -1202,12 +1202,12 @@ main.c:6: warning: previous implicit declaration of ‘threeline’ was here
 
 ```c
   #include <stdio.h>
-  
+
   void print_time(int hour, int minute)
   {
     printf("%d:%d\n", hour, minute);
   }
-  
+
   int main(void)
   {
     print_time(23, 59);
@@ -1272,11 +1272,11 @@ int printf(const char *format, ...);
 第一个参数是 `const char *` 类型的，后面的 `...` 可以代表 0 个或任意多个参数，这些参数的类型也是不确定的，这称为可变参数（Variable Argument），[第 24 章「函数接口」第 6 节「可变参数」](2-C-语言本质/ch24-函数接口#_6-可变参数)将会详细讨论这种格式。总之，每个函数的原型都明确规定了返回值类型以及参数的类型和个数，即使像 `printf` 这样规定为「不确定」也是一种明确的规定，调用函数时要严格遵守这些规定，有时候我们把函数叫做**接口**（Interface），调用函数就是使用这个接口，使用接口的前提是必须和接口保持一致。
 
 > **Man Page**
-> 
+>
 > Man Page 是 Linux 开发最常用的参考手册，由很多页面组成，每个页面描述一个主题，这些页面被组织成若干个 Section。FHS（Filesystem Hierarchy Standard）标准规定了 Man Page 各 Section 的含义如下：
-> 
+>
 > <p id="t3-1">表 3.1. Man Page 的 Section</p>
-> 
+>
 > | Section | 描述                                                         |
 > | ------- | ------------------------------------------------------------ |
 > | 1       | 用户命令，例如 `ls(1)`                                         |
@@ -1287,9 +1287,9 @@ int printf(const char *format, ...);
 > | 6       | 游戏                                                         |
 > | 7       | 其它杂项，例如 `bash-builtins(7)` 描述了 bash 的各种内建命令   |
 > | 8       | 系统管理命令，例如 `ifconfig(8)`                               |
-> 
+>
 > 注意区分用户命令和系统管理命令，用户命令通常位于 /bin 和 /usr/bin 目录，系统管理命令通常位于 /sbin 和 /usr/sbin 目录，一般用户可以执行用户命令，而执行系统管理命令经常需要 root 权限。系统调用和库函数的区别将在[第 19 章「汇编与 C 之间的关系」第 2 节「main 函数和启动例程」](2-C-语言本质/ch19-汇编与-C-之间的关系#_2-main-函数和启动例程)说明。
-> 
+>
 > Man Page 中有些页面有重名，比如敲 `man printf` 命令看到的并不是 C 函数 `printf` ，而是位于第 1 个 Section 的系统命令 `printf`，要查看位于第 3 个 Section 的 `printf` 函数应该敲 `man 3 printf`，也可以敲 `man -k printf` 命令搜索哪些页面的主题包含 `printf` 关键字。本书会经常出现类似 `printf(3)` 这样的写法，括号中的 `3` 表示 Man Page 的第 3 个 Section，或者表示「我这里想说的是 `printf` 库函数而不是 `printf` 命令」。
 
 ### 1.3.4. 全局变量、局部变量和作用域
@@ -1311,7 +1311,7 @@ int main(void)
   return 0;
 }
 ```
-    
+
 `main` 函数中定义了局部变量 `hour`，`print_time` 函数中也有参数 `hour`，虽然它们名称相同，但仍然是两个不同的变量，代表不同的存储单元。`main` 函数的局部变量 `minute` 和 `print_time` 函数的参数 `minute` 也是如此。
 
 2. **每次调用函数时局部变量都表示不同的存储空间**。局部变量在每次函数调用时分配存储空间，在每次函数返回时释放存储空间，例如调用 `print_time(23, 59)` 时分配 `hour` 和 `minute` 两个变量的存储空间，在里面分别存上 `23` 和 `59`，函数返回时释放它们的存储空间，下次再调用 `print_time(12, 20)` 时又分配 `hour` 和 `minute` 的存储空间，在里面分别存上 `12` 和 `20`。
@@ -1322,14 +1322,14 @@ int main(void)
 
 ```c
   #include <stdio.h>
-  
+
   int hour = 23, minute = 59;
-  
+
   void print_time(void)
   {
     printf("%d:%d in print_time\n", hour, minute);
   }
-  
+
   int main(void)
   {
     print_time();
@@ -1377,14 +1377,14 @@ int hour = minute / 60;
 
 ```c
   #include <stdio.h>
-  
+
   void foo(void)
   {
     int i;
     printf("%d\n", i);
     i = 777;
   }
-  
+
   int main(void)
   {
     foo();
@@ -1756,7 +1756,7 @@ default： 语句列表
 
 ```c
   #include <math.h>
-  
+
   void print_logarithm(double x)
   {
     if (x <= 0.0) {
@@ -1939,17 +1939,17 @@ double distance(double x1, double y1, double x2, double y2)
 ```c
   #include <math.h>
   #include <stdio.h>
-  
+
   double distance(double x1, double y1, double x2, double y2)
   {
     double dx = x2 - x1;
     double dy = y2 - y1;
     double dsquared = dx * dx + dy * dy;
     double result = sqrt(dsquared);
-  
+
     return result;
   }
-  
+
   int main(void)
   {
     printf("distance is %f\n", distance(1.0, 2.0, 4.0, 6.0));
@@ -2231,7 +2231,7 @@ int factorial(int n)
 其中 `++i` 这个表达式相当于 `i = i + 1` <sup>[9]</sup>，`++` 称为前缀自增运算符（Prefix Increment Operator），类似地，`--` 称为前缀自减运算符（Prefix Decrement Operator）<sup>[10]</sup>，`--i` 相当于 `i = i - 1`。如果把 `++i` 这个表达式看作一个函数调用，除了传入一个参数返回一个值（等于参数值加 1）之外，还产生一个 Side Effect，就是把变量 `i` 的值增加了 1。
 
 > <sup>[9]</sup> 这两种写法在语义上稍有区别，详见[第 16 章「运算符详解」第 2.1 节「复合赋值运算符」](2-C-语言本质/ch16-运算符详解#_21-复合赋值运算符)。
-> 
+>
 > <sup>[10]</sup> increment 和 decrement 这两个词很有意思，大多数字典都说它们是名词，但经常被当成动词用，在计算机术语中，它们当动词用应该理解为 increase  by one 和 decrease by  one。现代英语中很多原本是名词的都被当成动词用，字典都跟不上时代了，再比如 transition 也是如此。
 
 `++` 和 `--` 运算符也可以用在变量后面，例如 `i++` 和 `i--`，为了和前缀运算符区别，这两个运算符称为后缀自增运算符（Postfix Increment Operator）和后缀自减运算符（Postfix Decrement Operator）。如果把 `i++` 这个表达式看作一个函数调用，传入一个参数返回一个值，返回值就等于参数值（而不是参数值加 1），此外也产生一个 Side Effect，就是把变量 `i` 的值增加了 1，它和 `++i` 的区别就在于返回值不同。同理，`--i` 返回减 1 之后的值，而 `i--` 返回减 1 之前的值，但这两个表达式都产生同样的 Side Effect，就是把变量 `i` 的值减了 1。
@@ -2280,7 +2280,7 @@ int factorial(int n)
 
 ```c
   #include <stdio.h>
-  
+
   int is_prime(int n)
   {
     int i;
@@ -2292,7 +2292,7 @@ int factorial(int n)
     else
         return 0;
   }
-  
+
   int main(void)
   {
     int i;
@@ -2317,7 +2317,7 @@ int factorial(int n)
 
 ```c
   #include <stdio.h>
-  
+
   int main(void)
   {
     int i, j;
@@ -2340,7 +2340,7 @@ int factorial(int n)
 
 ```c
   #include <stdio.h>
-  
+
   int main(void)
   {
     int i, j;
@@ -2524,18 +2524,18 @@ struct {
 
 ```c
   #include <stdio.h>
-  
+
   int main(void)
   {
     struct complex_struct { double x, y; } z;
-    double x = 3.0; 
+    double x = 3.0;
     z.x = x;
     z.y = 4.0;
     if (z.y < 0)
         printf("z=%f%fi\n", z.x, z.y);
     else
         printf("z=%f+%fi\n", z.x, z.y);
-  
+
     return 0;
   }
 ```
@@ -2584,7 +2584,7 @@ z1 = { 3.0, 4.0 };
 
 ```
 Initializer → 表达式
-Initializer → { 初始化列表 } 
+Initializer → { 初始化列表 }
 初始化列表 → Designated-Initializer, Designated-Initializer, ...
 （最后一个 Designated-Initializer 末尾可以有一个多余的 , 号）
 Designated-Initializer → Initializer
@@ -2651,26 +2651,26 @@ z = add_complex(z, z);
 
 ```c
   #include <math.h>
-  
+
   struct complex_struct {
     double x, y;
   };
-  
+
   double real_part(struct complex_struct z)
   {
     return z.x;
   }
-  
+
   double img_part(struct complex_struct z)
   {
     return z.y;
   }
-  
+
   double magnitude(struct complex_struct z)
   {
     return sqrt(z.x * z.x + z.y * z.y);
   }
-  
+
   double angle(struct complex_struct z)
   {
     return atan2(z.y, z.x);
@@ -2729,38 +2729,38 @@ struct complex_struct div_complex(struct complex_struct z1, struct complex_struc
 
 ```c
   #include <math.h>
-  
+
   struct complex_struct {
     double r, A;
   };
-  
+
   double real_part(struct complex_struct z)
   {
     return z.r * cos(z.A);
   }
-  
+
   double img_part(struct complex_struct z)
   {
     return z.r * sin(z.A);
   }
-  
+
   double magnitude(struct complex_struct z)
   {
     return z.r;
   }
-  
+
   double angle(struct complex_struct z)
   {
     return z.A;
   }
-  
+
   struct complex_struct make_from_real_img(double x, double y)
   {
     struct complex_struct z;
     z.A = atan2(y, x);
     z.r = sqrt(x * x + y * y);
   }
-  
+
   struct complex_struct make_from_mag_ang(double r, double A)
   {
     struct complex_struct z;
@@ -2961,11 +2961,11 @@ int count[4] = { [2] = 3 };
 
 ```c
   #include <stdio.h>
-  
+
   int main(void)
   {
     int count[4] = { 3, 2, }, i;
-  
+
     for (i = 0; i < 4; i++)
         printf("count[%d]=%d\n", i, count[i]);
     return 0;
@@ -3023,16 +3023,16 @@ int x = rand() % 10;
   #include <stdio.h>
   #include <stdlib.h>
   #define N 20
-  
+
   int a[N];
-  
+
   void gen_random(int upper_bound)
   {
     int i;
     for (i = 0; i < N; i++)
         a[i] = rand() % upper_bound;
   }
-  
+
   void print_random()
   {
     int i;
@@ -3040,7 +3040,7 @@ int x = rand() % 10;
         printf("%d ", a[i]);
     printf("\n");
   }
-  
+
   int main(void)
   {
     gen_random(10);
@@ -3090,7 +3090,7 @@ int main(void)
   #include <stdio.h>
   #define RECTANGULAR 1
   #define POLAR 2
-  
+
   int main(void)
   {
     int RECTANGULAR;
@@ -3115,16 +3115,16 @@ int main(void)
   #include <stdio.h>
   #include <stdlib.h>
   #define N 100000
-  
+
   int a[N];
-  
+
   void gen_random(int upper_bound)
   {
     int i;
     for (i = 0; i < N; i++)
         a[i] = rand() % upper_bound;
   }
-  
+
   int howmany(int value)
   {
     int count = 0, i;
@@ -3133,16 +3133,16 @@ int main(void)
             ++count;
     return count;
   }
-  
+
   int main(void)
   {
     int i;
-  
+
     gen_random(10);
     printf("value\thow many\n");
     for (i = 0; i < 10; i++)
         printf("%d\t%d\n", i, howmany(i));
-  
+
     return 0;
   }
 ```
@@ -3307,7 +3307,7 @@ printf("string: %s\n", str);
 int a[3][2] = { 1, 2, 3, 4, 5 };
 
 // 说明:
-  // 数组a的 shape 为 (3,2) 
+  // 数组a的 shape 为 (3,2)
   // 第一个维度,有三个元素,每个元素的shape 为 (2,)
   // 第二个维度,有两个元素,每个元素的shape为(), 就是一个数字
 
@@ -3355,18 +3355,18 @@ struct {
 
 ```c
   #include <stdio.h>
-  
+
   void print_day(int day)
   {
     char days[8][10] = { "", "Monday", "Tuesday",
                  "Wednesday", "Thursday", "Friday",
                  "Saturday", "Sunday" };
-  
+
     if (day < 1 || day > 7)
         printf("Illegal day number!\n");
     printf("%s\n", days[day]);
   }
-  
+
   int main(void)
   {
     print_day(2);
@@ -3390,12 +3390,12 @@ struct {
   #include <stdio.h>
   #include <stdlib.h>
   #include <time.h>
-  
+
   int main(void)
   {
     char gesture[3][10] = { "scissor", "stone", "cloth" };
     int man, computer, result, ret;
-  
+
     srand(time(NULL));
     while (1) {
         computer = rand() % 3;
@@ -3405,9 +3405,9 @@ struct {
             printf("Invalid input! Please input 0, 1 or 2.\n");
             continue;
         }
-        printf("Your gesture: %s\tComputer's gesture: %s\n", 
+        printf("Your gesture: %s\tComputer's gesture: %s\n",
             gesture[man], gesture[computer]);
-  
+
         result = (man - computer + 4) % 3 - 1;
         if (result > 0)
             printf("You win!\n");
@@ -3466,51 +3466,51 @@ struct {
 一是缺少空白字符，代码密度太大，看着很费劲。二是没有缩进，看不出来哪个 `{` 和哪个 `}` 配对，像这么短的代码还能凑合着看，如果代码超过一屏就完全没法看了。*CodingStyle* 中关于空白字符并没有特别规定，因为基本上所有的 C 代码风格对于空白字符的规定都差不多，主要有以下几条。
 
 1. 关键字 `if`、`while`、`for` 与其后的控制表达式的(括号之间插入一个空格分隔，但括号内的表达式应紧贴括号。例如：
-    
+
     ```c
     while␣(1);
     ```
-    
+
 2. 双目运算符的两侧各插入一个空格分隔，单目运算符和操作数之间不加空格，例如 `i␣=␣i␣+␣1`、`++i`、`!(i␣<␣1)`、`-x`、`&a[1]` 等。
 3. 后缀运算符和操作数之间也不加空格，例如取结构体成员 `s.a`、函数调用 `foo(arg1)`、取数组成员 `a[i]`。
 4. `,` 号和 `;` 号之后要加空格，这是英文的书写习惯，例如 `for␣(i␣=␣1;␣i␣<␣10;␣i++)`、`foo(arg1,␣arg2)`。
 5. 以上关于双目运算符和后缀运算符的规则并没有严格要求，有时候为了突出优先级也可以写得更紧凑一些，例如 `for␣(i=1;␣i<10;␣i++)`、`distance␣=␣sqrt(x*x␣+␣y*y)` 等。但是省略的空格一定不要误导了读代码的人，例如 `a||b␣&&␣c` 很容易让人理解成错误的优先级。
 6. 由于 UNIX 系统标准的字符终端是 24 行 80 列的，接近或大于 80 个字符的较长语句要折行写，折行后用空格和上面的表达式或参数对齐，例如：
-    
+
     ```c
     if␣(sqrt(x*x␣+␣y*y)␣>␣5.0
         &&␣x␣<␣0.0
         &&␣y␣>␣0.0)
     ```
-    
+
     再比如：
-    
+
     ```c
     foo(sqrt(x*x␣+␣y*y),
         a[i-1]␣+␣b[i-1]␣+␣c[i-1])
     ```
-    
+
 7. 较长的字符串可以断成多个字符串然后分行书写，例如：
-    
+
     ```c
     printf("This is such a long sentence that "
            "it cannot be held within a line\n");
     ```
-    
+
     C 编译器会自动把相邻的多个字符串接在一起，以上两个字符串相当于一个字符串 `"This is such a long sentence that it cannot be held within a line\n"`。
 8. 有的人喜欢在变量定义语句中用 `Tab` 字符，使变量名对齐，这样看起来很美观。
-    
+
     ```c
            →int    →a, b;
            →double →c;
     ```
-    
+
 
 内核代码风格关于缩进的规则有以下几条。
 
 1. 要用缩进体现出语句块的层次关系，使用 `Tab` 字符缩进，不能用空格代替 `Tab`。在标准的字符终端上一个 `Tab` 看起来是 8 个空格的宽度，如果你的文本编辑器可以设置 `Tab` 的显示宽度是几个空格，建议也设成 8，这样大的缩进使代码看起来非常清晰。如果有的行用空格做缩进，有的行用 `Tab` 做缩进，甚至空格和 `Tab` 混用，那么一旦改变了文本编辑器的 `Tab` 显示宽度就会看起来非常混乱，所以内核代码风格规定只能用 `Tab` 做缩进，不能用空格代替 `Tab`。
 2. `if/else`、`while`、`do/while`、`for`、`switch` 这些可以带语句块的语句，语句块的 `{` 或 `}` 应该和关键字写在同一行，用空格隔开，而不是单独占一行。例如应该这样写：
-    
+
     ```c
     if␣(...)␣{
            →语句列表
@@ -3518,9 +3518,9 @@ struct {
            →语句列表
     }
     ```
-    
+
     但很多人习惯这样写：
-    
+
     ```c
     if␣(...)
     {
@@ -3531,19 +3531,19 @@ struct {
            →语句列表
     }
     ```
-    
+
     内核的写法和 *K&R* 一致，好处是不必占太多行，使得一屏能显示更多代码。这两种写法用得都很广泛，只要在同一个项目中能保持统一就可以了。
 3. 函数定义的 `{` 和 `}` 单独占一行，这一点和语句块的规定不同，例如：
-    
+
     ```c
     int␣foo(int␣a,␣int␣b)
     {
            →语句列表
     }
     ```
-    
+
 4. `switch` 和语句块里的 `case`、`default` 对齐写，也就是说语句块里的 `case`、`default` 标号相对于 `switch` 不往里缩进，但标号下的语句要往里缩进。例如：
-    
+
     ```c
           →switch␣(c)␣{
           →case 'A':
@@ -3554,46 +3554,46 @@ struct {
           →       →语句列表
           →}
     ```
-    
+
     用于 `goto` 语句的自定义标号应该顶头写不缩进，而不管标号下的语句缩进到第几层。
-    
+
 5. 代码中每个逻辑段落之间应该用一个空行分隔开。例如每个函数定义之间应该插入一个空行，头文件、全局变量定义和函数定义之间也应该插入空行，例如：
-    
+
     ```c
     #include <stdio.h>
     #include <stdlib.h>
-    
+
     int g;
     double h;
-    
+
     int foo(void)
     {
            →语句列表
     }
-    
+
     int bar(int a)
     {
            →语句列表
     }
-    
+
     int main(void)
     {
            →语句列表
     }
     ```
-    
+
 6. 一个函数的语句列表如果很长，也可以根据相关性分成若干组，用空行分隔。这条规定不是严格要求，通常把变量定义组成一组，后面加空行，`return` 语句之前加空行，例如：
-    
+
     ```c
     int main(void)
     {
            →int    →a, b;
            →double →c;
-    
+
            →语句组1
-    
+
            →语句组2
-    
+
            →return 0;
     }
     ```
@@ -3621,7 +3621,7 @@ struct {
 使用注释的场合主要有以下几种。
 
 1. 整个源文件的顶部注释。说明此模块的相关信息，例如文件名、作者和版本历史等，顶头写不缩进。例如内核源代码目录下的 `kernel/sched.c` 文件的开头：
-    
+
     ```
     /*
      *  kernel/sched.c
@@ -3643,11 +3643,11 @@ struct {
      *  2004-04-02  Scheduler domains code by Nick Piggin
      */
     ```
-    
+
 2. 函数注释。说明此函数的功能、参数、返回值、错误码等，写在函数定义上侧，和此函数定义之间不留空行，顶头写不缩进。
 3. 相对独立的语句组注释。对这一组语句做特别说明，写在语句组上侧，和此语句组之间不留空行，与当前语句组的缩进一致。
 4. 代码行右侧的简短注释。对当前代码行做特别说明，一般为单行注释，和代码之间至少用一个空格隔开，一个源文件中所有的右侧注释最好能上下对齐。尽管[第 2 章「常量、变量和表达式」第 1 节「继续 Hello World」例 2.1「带更多注释的Hello World」]()讲过注释可以穿插在一行代码中间，但不建议这么写。内核源代码目录下的 `lib/radix-tree.c` 文件中的一个函数包含了上述三种注释：
-    
+
     ```c
     /**
      *      radix_tree_insert    -    insert into a radix tree
@@ -3664,7 +3664,7 @@ struct {
             unsigned int height, shift;
             int offset;
             int error;
-    
+
             /* Make sure the tree is high enough.  */
             if ((!index && !root->rnode) ||
                             index > radix_tree_maxindex(root->height)) {
@@ -3672,11 +3672,11 @@ struct {
                     if (error)
                             return error;
             }
-    
+
             slot = root->rnode;
             height = root->height;
             shift = (height-1) * RADIX_TREE_MAP_SHIFT;
-    
+
             offset = 0;                     /* uninitialised var warning */
             do {
                     if (slot == NULL) {
@@ -3689,7 +3689,7 @@ struct {
                             } else
                                     root->rnode = slot;
                     }
-    
+
                     /* Go a level down */
                     offset = (index >> shift) & RADIX_TREE_MAP_MASK;
                     node = slot;
@@ -3697,23 +3697,23 @@ struct {
                     shift -= RADIX_TREE_MAP_SHIFT;
                     height--;
             } while (height > 0);
-    
+
             if (slot != NULL)
                     return -EEXIST;
-    
+
             BUG_ON(!node);
             node->count++;
             node->slots[offset] = item;
             BUG_ON(tag_get(node, 0, offset));
             BUG_ON(tag_get(node, 1, offset));
-    
+
             return 0;
     }
     ```
-    
+
     *CodingStyle* 中特别指出，函数内的注释要尽可能少用。写注释主要是为了说明你的代码「能做什么」（比如函数接口定义），而不是为了说明「怎样做」，只要代码写得足够清晰，「怎样做」是一目了然的，如果你需要用注释才能解释清楚，那就表示你的代码可读性很差，除非是特别需要提醒注意的地方才使用函数内注释。
 5. 复杂的结构体定义比函数更需要注释。例如内核源代码目录下的 `kernel/sched.c` 文件中定义了这样一个结构体：
-    
+
     ```c
     /*
      * This is the main, per-CPU runqueue data structure.
@@ -3724,7 +3724,7 @@ struct {
      */
     struct runqueue {
             spinlock_t lock;
-    
+
             /*
              * nr_running and cpu_load should be in the same cacheline because
              * remote CPUs use both these fields when doing load calculation.
@@ -3734,7 +3734,7 @@ struct {
             unsigned long cpu_load[3];
     #endif
             unsigned long long nr_switches;
-    
+
             /*
              * This is part of a global counter where only the total sum
              * over all CPUs matters. A task can increase this counter on
@@ -3742,7 +3742,7 @@ struct {
              * it on another CPU. Always updated under the runqueue lock:
              */
             unsigned long nr_uninterruptible;
-    
+
             unsigned long expired_timestamp;
             unsigned long long timestamp_last_tick;
             task_t *curr, *idle;
@@ -3750,54 +3750,54 @@ struct {
             prio_array_t *active, *expired, arrays[2];
             int best_expired_prio;
             atomic_t nr_iowait;
-    
+
     #ifdef CONFIG_SMP
             struct sched_domain *sd;
-    
+
             /* For active balancing */
             int active_balance;
             int push_cpu;
-    
+
             task_t *migration_thread;
             struct list_head migration_queue;
             int cpu;
     #endif
-    
+
     #ifdef CONFIG_SCHEDSTATS
             /* latency stats */
             struct sched_info rq_sched_info;
-    
+
             /* sys_sched_yield() stats */
             unsigned long yld_exp_empty;
             unsigned long yld_act_empty;
             unsigned long yld_both_empty;
             unsigned long yld_cnt;
-    
+
             /* schedule() stats */
             unsigned long sched_switch;
             unsigned long sched_cnt;
             unsigned long sched_goidle;
-    
+
             /* try_to_wake_up() stats */
             unsigned long ttwu_cnt;
             unsigned long ttwu_local;
     #endif
     };
     ```
-    
+
 6. 复杂的宏定义和变量声明也需要注释。例如内核源代码目录下的 `include/linux/jiffies.h` 文件中的定义：
-    
+
     ```c
     /* TICK_USEC_TO_NSEC is the time between ticks in nsec assuming real ACTHZ and  */
     /* a value TUSEC for TICK_USEC (can be set bij adjtimex)                */
     #define TICK_USEC_TO_NSEC(TUSEC) (SH_DIV (TUSEC * USER_HZ * 1000, ACTHZ, 8))
-    
+
     /* some arch's have a small-data section that can be accessed register-relative
      * but that can only take up to, say, 4-byte variables. jiffies being part of
      * an 8-byte variable may not be correctly accessed unless we force the issue
      */
     #define __jiffy_data  __attribute__((section(".data")))
-    
+
     /*
      * The 64-bit value is not volatile - you MUST NOT read it
      * without sampling the sequence number in xtime_lock.
@@ -3806,7 +3806,7 @@ struct {
     extern u64 __jiffy_data jiffies_64;
     extern unsigned long volatile __jiffy_data jiffies;
     ```
-    
+
 ### 1.9.3. 标识符命名
 
 标识符命名应遵循以下原则：
@@ -3837,7 +3837,7 @@ struct {
 indent 工具可以把代码格式化成某种风格，例如把[本章第 1 节例 9.1「缺少缩进和空白的代码」](#e9-1)格式化成内核编码风格：
 
 ```bash
-  $ indent -kr -i8 main.c 
+  $ indent -kr -i8 main.c
   $ cat main.c
   #include <stdio.h>
   #include <stdlib.h>
@@ -3886,7 +3886,7 @@ indent 工具可以把代码格式化成某种风格，例如把[本章第 1 节
 
 ```c
   #include <stdio.h>
-  
+
   int add_range(int low, int high)
   {
     int i, sum;
@@ -3894,7 +3894,7 @@ indent 工具可以把代码格式化成某种风格，例如把[本章第 1 节
         sum = sum + i;
     return sum;
   }
-  
+
   int main(void)
   {
     int result[100];
@@ -3928,7 +3928,7 @@ This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
 and "show warranty" for details.
 This GDB was configured as "i486-linux-gnu"...
-(gdb) 
+(gdb)
 ```
 
 `-g` 选项的作用是在可执行文件中加入源代码的信息，比如可执行文件中第几条机器指令对应源代码的第几行，但并不是把整个源文件嵌入到可执行文件中，所以在调试时必须保证 `gdb` 能找到源文件。`gdb` 提供一个类似 Shell 的命令行环境，上面的 `(gdb)` 就是提示符，在这个提示符下输入 `help` 可以查看命令的类别：
@@ -3985,7 +3985,7 @@ list -- List specified function or line
 ```bash
 (gdb) list 1
 1   #include <stdio.h>
-2   
+2
 3   int add_range(int low, int high)
 4   {
 5       int i, sum;
@@ -4021,7 +4021,7 @@ list -- List specified function or line
 ```bash
 (gdb) l add_range
 1   #include <stdio.h>
-2   
+2
 3   int add_range(int low, int high)
 4   {
 5       int i, sum;
@@ -4056,7 +4056,7 @@ $ gdb main
 ...
 (gdb) start
 Breakpoint 1 at 0x80483ad: file main.c, line 14.
-Starting program: /home/akaedu/main 
+Starting program: /home/akaedu/main
 main () at main.c:14
 14      result[0] = add_range(1, 10);
 (gdb)
@@ -4083,7 +4083,7 @@ The program being debugged has been started already.
 Start it from the beginning? (y or n) y
 
 Breakpoint 2 at 0x80483ad: file main.c, line 14.
-Starting program: /home/akaedu/main 
+Starting program: /home/akaedu/main
 main () at main.c:14
 14      result[0] = add_range(1, 10);
 (gdb) s
@@ -4113,8 +4113,8 @@ sum = 0
   (gdb) f 1
   #1  0x080483c1 in main () at main.c:14
   14        result[0] = add_range(1, 10);
-  (gdb) i locals 
-  result = {0, 0, 0, 0, 0, 0, 134513196, 225011984, -1208685768, -1081160480, 
+  (gdb) i locals
+  result = {0, 0, 0, 0, 0, 0, 134513196, 225011984, -1208685768, -1081160480,
   ...
     -1208623680}
 ```
@@ -4150,7 +4150,7 @@ Value returned is $2 = 55
 (gdb) s
 15      result[1] = add_range(1, 100);
 (gdb) p result
-$3 = {55, 0, 0, 0, 0, 0, 134513196, 225011984, -1208685768, -1081160480, 
+$3 = {55, 0, 0, 0, 0, 0, 134513196, 225011984, -1208685768, -1081160480,
 ...
   -1208623680}
 ```
@@ -4164,7 +4164,7 @@ $3 = {55, 0, 0, 0, 0, 0, 134513196, 225011984, -1208685768, -1081160480,
   (gdb) bt
   #0  add_range (low=1, high=100) at main.c:6
   #1  0x080483db in main () at main.c:15
-  (gdb) i locals 
+  (gdb) i locals
   i = 11
   sum = 55
 ```
@@ -4224,12 +4224,12 @@ $6 = 13
 
 ```c
   #include <stdio.h>
-  
+
   int main(void)
   {
     int sum = 0, i = 0;
     char input[5];
-  
+
     while (1) {
         scanf("%s", input);
         for (i = 0; input[i] != '\0'; i++)
@@ -4244,7 +4244,7 @@ $6 = 13
 
 ```bash
 $ gcc main.c -g -o main
-$ ./main 
+$ ./main
 123
 input=123
 234
@@ -4260,7 +4260,7 @@ $ gdb main
 ...
 (gdb) start
 Breakpoint 1 at 0x80483b5: file main.c, line 5.
-Starting program: /home/akaedu/main 
+Starting program: /home/akaedu/main
 main () at main.c:5
 5       int sum = 0, i = 0;
 ```
@@ -4273,7 +4273,7 @@ main () at main.c:5
 (gdb) n
 9           scanf("%s", input);
 1: sum = 0
-(gdb) 
+(gdb)
 123
 10          for (i = 0; input[i] != '\0'; i++)
 1: sum = 0
@@ -4285,7 +4285,7 @@ main () at main.c:5
 (gdb) l
 5       int sum = 0, i;
 6       char input[5];
-7   
+7
 8       while (1) {
 9           scanf("%s", input);
 10          for (i = 0; input[i] != '\0'; i++)
@@ -4330,11 +4330,11 @@ Num     Type           Disp Enb Address    What
 3       breakpoint     keep y   0x08048411 in main at main.c:12
 ```
 
-每个断点都有一个编号，可以用编号指定删除某个断点： 
+每个断点都有一个编号，可以用编号指定删除某个断点：
 
 ```bash
 (gdb) delete breakpoints 2
-(gdb) i breakpoints 
+(gdb) i breakpoints
 Num     Type           Disp Enb Address    What
 3       breakpoint     keep y   0x08048411 in main at main.c:12
 ```
@@ -4343,14 +4343,14 @@ Num     Type           Disp Enb Address    What
 
 ```bash
 (gdb) disable breakpoints 3
-(gdb) i breakpoints 
+(gdb) i breakpoints
 Num     Type           Disp Enb Address    What
 3       breakpoint     keep n   0x08048411 in main at main.c:12
 (gdb) enable 3
-(gdb) i breakpoints 
+(gdb) i breakpoints
 Num     Type           Disp Enb Address    What
 3       breakpoint     keep y   0x08048411 in main at main.c:12
-(gdb) delete breakpoints 
+(gdb) delete breakpoints
 Delete all breakpoints? (y or n) y
 (gdb) i breakpoints
 No breakpoints or watchpoints.
@@ -4361,14 +4361,14 @@ No breakpoints or watchpoints.
 ```bash
 (gdb) break 9 if sum != 0
 Breakpoint 5 at 0x80483c3: file main.c, line 9.
-(gdb) i breakpoints 
+(gdb) i breakpoints
 Num     Type           Disp Enb Address    What
 5       breakpoint     keep y   0x080483c3 in main at main.c:9
     stop only if sum != 0
 (gdb) r
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
-Starting program: /home/akaedu/main 
+Starting program: /home/akaedu/main
 123
 input=123
 
@@ -4403,12 +4403,12 @@ Breakpoint 5, main () at main.c:9
 
 ```c
   #include <stdio.h>
-  
+
   int main(void)
   {
     int sum = 0, i = 0;
     char input[5];
-  
+
     while (1) {
         sum = 0;
         scanf("%s", input);
@@ -4441,7 +4441,7 @@ $ gdb main
 ...
 (gdb) start
 Breakpoint 1 at 0x80483b5: file main.c, line 5.
-Starting program: /home/akaedu/main 
+Starting program: /home/akaedu/main
 main () at main.c:5
 5       int sum = 0, i = 0;
 (gdb) n
@@ -4469,7 +4469,7 @@ $1 = "12345"
 ```bash
 (gdb) l
 6       char input[5];
-7   
+7
 8       while (1) {
 9           sum = 0;
 10          scanf("%s", input);
@@ -4514,11 +4514,11 @@ $3 = 12345
 `input[4]` 后面那个字节到底是什么时候变的？可以用观察点（Watchpoint）来跟踪。我们知道断点是当程序执行到某一代码行时中断，而观察点是当程序访问某个存储单元时中断，如果我们不知道某个存储单元是在哪里被改动的，这时候观察点尤其有用。下面删除原来设的断点，从头执行程序，重复上次的输入，用 `watch` 命令设置观察点，跟踪 `input[4]` 后面那个字节（可以用 `input[5]` 表示，虽然这是访问越界）：
 
 ```bash
-(gdb) delete breakpoints 
+(gdb) delete breakpoints
 Delete all breakpoints? (y or n) y
 (gdb) start
 Breakpoint 1 at 0x80483b5: file main.c, line 5.
-Starting program: /home/akaedu/main 
+Starting program: /home/akaedu/main
 main () at main.c:5
 5       int sum = 0, i = 0;
 (gdb) n
@@ -4530,7 +4530,7 @@ main () at main.c:5
 11          for (i = 0; input[i] != '\0'; i++)
 (gdb) watch input[5]
 Hardware watchpoint 2: input[5]
-(gdb) i watchpoints 
+(gdb) i watchpoints
 Num     Type           Disp Enb Address    What
 2       hw watchpoint  keep y              input[5]
 (gdb) c
@@ -4617,7 +4617,7 @@ input=23
 
 ```c
   #include <stdio.h>
-  
+
   int main(void)
   {
     int man = 0;
@@ -4632,9 +4632,9 @@ input=23
   $ gdb main
   ...
   (gdb) r
-  Starting program: /home/akaedu/main 
+  Starting program: /home/akaedu/main
   123
-  
+
   Program received signal SIGSEGV, Segmentation fault.
   0xb7e1404b in _IO_vfscanf () from /lib/tls/i686/cmov/libc.so.6
   (gdb) bt
@@ -4651,12 +4651,12 @@ input=23
 
 ```c
   #include <stdio.h>
-  
+
   int main(void)
   {
     int sum = 0, i = 0;
     char input[5];
-  
+
     scanf("%s", input);
     for (i = 0; input[i] != '\0'; i++) {
         if (input[i] < '0' || input[i] > '9') {
@@ -4674,7 +4674,7 @@ input=23
 然后输入一个超长的字符串，看看会发生什么：
 
 ```bash
-$ ./main 
+$ ./main
 1234567890
 Invalid input!
 input=-1
@@ -4683,7 +4683,7 @@ input=-1
 看起来正常。再来一次，这次输个更长的：
 
 ```bash
-$ ./main 
+$ ./main
 1234567890abcdef
 Invalid input!
 input=-1
@@ -4696,7 +4696,7 @@ Segmentation fault
 $ gdb main
 ...
 (gdb) r
-Starting program: /home/akaedu/main 
+Starting program: /home/akaedu/main
 1234567890abcdef
 Invalid input!
 input=-1
@@ -5135,10 +5135,10 @@ int binarysearch(int number)
 ```c
   #include <stdio.h>
   #include <assert.h>
-  
+
   #define LEN 8
   int a[LEN] = { 1, 2, 2, 2, 5, 6, 8, 9 };
-  
+
   int is_sorted(void)
   {
     int i;
@@ -5147,7 +5147,7 @@ int binarysearch(int number)
             return 0;
     return 1;
   }
-  
+
   int mustbe(int start, int end, int number)
   {
     int i;
@@ -5159,7 +5159,7 @@ int binarysearch(int number)
             return 0;
     return 1;
   }
-  
+
   int contains(int n)
   {
     int i;
@@ -5168,11 +5168,11 @@ int binarysearch(int number)
             return 1;
     return 0;
   }
-  
+
   int binarysearch(int number)
   {
     int mid, start = 0, end = LEN - 1;
-  
+
     assert(is_sorted()); /* Precondition */
     while (start <= end) {
         assert(mustbe(start, end, number)); /* Maintenance */
@@ -5190,7 +5190,7 @@ int binarysearch(int number)
     assert(!contains(number)); /* Postcondition 2 */
     return -1;
   }
-  
+
   int main(void)
   {
     printf("%d\n", binarysearch(5));
@@ -5237,35 +5237,35 @@ Aborted
 
 ```c
   #include <stdio.h>
-  
+
   char stack[512];
   int top = 0;
-  
+
   void push(char c)
   {
     stack[top++] = c;
   }
-  
+
   char pop(void)
   {
     return stack[--top];
   }
-  
+
   int is_empty(void)
   {
     return top == 0;
   }
-  
+
   int main(void)
   {
     push('a');
     push('b');
     push('c');
-    
+
     while(!is_empty())
         putchar(pop());
     putchar('\n');
-  
+
     return 0;
   }
 ```
@@ -5285,9 +5285,9 @@ Aborted
 ```c
   #include <stdio.h>
   #define LEN 3
-  
+
   char buf[LEN]={'a', 'b', 'c'};
-  
+
   void print_backward(int pos)
   {
        if(pos == LEN)
@@ -5295,12 +5295,12 @@ Aborted
        print_backward(pos+1);
        putchar(buf[pos]);
   }
-  
+
   int main(void)
   {
        print_backward(0);
        putchar('\n');
-       
+
        return 0;
   }
 ```
@@ -5334,28 +5334,28 @@ int maze[5][5] = {
 
 ```c
   #include <stdio.h>
-  
+
   #define MAX_ROW 5
   #define MAX_COL 5
-  
+
   struct point { int row, col; } stack[512];
   int top = 0;
-  
+
   void push(struct point p)
   {
     stack[top++] = p;
   }
-  
+
   struct point pop(void)
   {
     return stack[--top];
   }
-  
+
   int is_empty(void)
   {
     return top == 0;
   }
-  
+
   int maze[MAX_ROW][MAX_COL] = {
     0, 1, 0, 0, 0,
     0, 1, 0, 1, 0,
@@ -5363,7 +5363,7 @@ int maze[5][5] = {
     0, 1, 1, 1, 0,
     0, 0, 0, 1, 0,
   };
-  
+
   void print_maze(void)
   {
     int i, j;
@@ -5374,7 +5374,7 @@ int maze[5][5] = {
     }
     printf("*********\n");
   }
-  
+
   struct point predecessor[MAX_ROW][MAX_COL] = {
     {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
     {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
@@ -5382,7 +5382,7 @@ int maze[5][5] = {
     {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
     {{-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}, {-1,-1}},
   };
-  
+
   void visit(int row, int col, struct point pre)
   {
     struct point visit_point = { row, col };
@@ -5390,14 +5390,14 @@ int maze[5][5] = {
     predecessor[row][col] = pre;
     push(visit_point);
   }
-  
+
   int main(void)
   {
     struct point p = { 0, 0 };
-  
+
     maze[p.row][p.col] = 2;
-    push(p);    
-    
+    push(p);
+
     while (!is_empty()) {
         p = pop();
         if (p.row == MAX_ROW - 1  /* goal */
@@ -5425,7 +5425,7 @@ int maze[5][5] = {
         }
     } else
         printf("No path!\n");
-  
+
     return 0;
   }
 ```
@@ -5433,101 +5433,101 @@ int maze[5][5] = {
 运行结果如下：
 
 ```bash
-2 1 0 0 0 
-2 1 0 1 0 
-0 0 0 0 0 
-0 1 1 1 0 
-0 0 0 1 0 
+2 1 0 0 0
+2 1 0 1 0
+0 0 0 0 0
+0 1 1 1 0
+0 0 0 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 0 0 0 0 
-0 1 1 1 0 
-0 0 0 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 0 0 0 0
+0 1 1 1 0
+0 0 0 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 2 0 0 0 
-2 1 1 1 0 
-0 0 0 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 2 0 0 0
+2 1 1 1 0
+0 0 0 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 2 0 0 0 
-2 1 1 1 0 
-2 0 0 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 2 0 0 0
+2 1 1 1 0
+2 0 0 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 2 0 0 0 
-2 1 1 1 0 
-2 2 0 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 2 0 0 0
+2 1 1 1 0
+2 2 0 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 2 0 0 0 
-2 1 1 1 0 
-2 2 2 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 2 0 0 0
+2 1 1 1 0
+2 2 2 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 2 0 0 0 
-2 1 1 1 0 
-2 2 2 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 2 0 0 0
+2 1 1 1 0
+2 2 2 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 2 2 0 0 
-2 1 1 1 0 
-2 2 2 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 2 2 0 0
+2 1 1 1 0
+2 2 2 1 0
 *********
-2 1 0 0 0 
-2 1 2 1 0 
-2 2 2 2 0 
-2 1 1 1 0 
-2 2 2 1 0 
+2 1 0 0 0
+2 1 2 1 0
+2 2 2 2 0
+2 1 1 1 0
+2 2 2 1 0
 *********
-2 1 2 0 0 
-2 1 2 1 0 
-2 2 2 2 0 
-2 1 1 1 0 
-2 2 2 1 0 
+2 1 2 0 0
+2 1 2 1 0
+2 2 2 2 0
+2 1 1 1 0
+2 2 2 1 0
 *********
-2 1 2 2 0 
-2 1 2 1 0 
-2 2 2 2 0 
-2 1 1 1 0 
-2 2 2 1 0 
+2 1 2 2 0
+2 1 2 1 0
+2 2 2 2 0
+2 1 1 1 0
+2 2 2 1 0
 *********
-2 1 2 2 2 
-2 1 2 1 0 
-2 2 2 2 0 
-2 1 1 1 0 
-2 2 2 1 0 
+2 1 2 2 2
+2 1 2 1 0
+2 2 2 2 0
+2 1 1 1 0
+2 2 2 1 0
 *********
-2 1 2 2 2 
-2 1 2 1 2 
-2 2 2 2 0 
-2 1 1 1 0 
-2 2 2 1 0 
+2 1 2 2 2
+2 1 2 1 2
+2 2 2 2 0
+2 1 1 1 0
+2 2 2 1 0
 *********
-2 1 2 2 2 
-2 1 2 1 2 
-2 2 2 2 2 
-2 1 1 1 0 
-2 2 2 1 0 
+2 1 2 2 2
+2 1 2 1 2
+2 2 2 2 2
+2 1 1 1 0
+2 2 2 1 0
 *********
-2 1 2 2 2 
-2 1 2 1 2 
-2 2 2 2 2 
-2 1 1 1 2 
-2 2 2 1 0 
+2 1 2 2 2
+2 1 2 1 2
+2 2 2 2 2
+2 1 1 1 2
+2 2 2 1 0
 *********
-2 1 2 2 2 
-2 1 2 1 2 
-2 2 2 2 2 
-2 1 1 1 2 
-2 2 2 1 2 
+2 1 2 2 2
+2 1 2 1 2
+2 2 2 2 2
+2 1 1 1 2
+2 2 2 1 2
 *********
 (4, 4)
 (3, 4)
@@ -5591,28 +5591,28 @@ if (p 点是终点) {
 
 ```c
   #include <stdio.h>
-  
+
   #define MAX_ROW 5
   #define MAX_COL 5
-  
+
   struct point { int row, col, predecessor; } queue[512];
   int head = 0, tail = 0;
-  
+
   void enqueue(struct point p)
   {
     queue[tail++] = p;
   }
-  
+
   struct point dequeue(void)
   {
     return queue[head++];
   }
-  
+
   int is_empty(void)
   {
     return head == tail;
   }
-  
+
   int maze[MAX_ROW][MAX_COL] = {
     0, 1, 0, 0, 0,
     0, 1, 0, 1, 0,
@@ -5620,7 +5620,7 @@ if (p 点是终点) {
     0, 1, 1, 1, 0,
     0, 0, 0, 1, 0,
   };
-  
+
   void print_maze(void)
   {
     int i, j;
@@ -5631,21 +5631,21 @@ if (p 点是终点) {
     }
     printf("*********\n");
   }
-  
+
   void visit(int row, int col)
   {
     struct point visit_point = { row, col, head-1 };
     maze[row][col] = 2;
     enqueue(visit_point);
   }
-  
+
   int main(void)
   {
     struct point p = { 0, 0, -1 };
-  
+
     maze[p.row][p.col] = 2;
     enqueue(p);
-    
+
     while (!is_empty()) {
         p = dequeue();
         if (p.row == MAX_ROW - 1  /* goal */
@@ -5673,7 +5673,7 @@ if (p 点是终点) {
         }
     } else
         printf("No path!\n");
-  
+
     return 0;
   }
 ```
@@ -5681,101 +5681,101 @@ if (p 点是终点) {
 运行结果如下：
 
 ```bash
-2 1 0 0 0 
-2 1 0 1 0 
-0 0 0 0 0 
-0 1 1 1 0 
-0 0 0 1 0 
+2 1 0 0 0
+2 1 0 1 0
+0 0 0 0 0
+0 1 1 1 0
+0 0 0 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 0 0 0 0 
-0 1 1 1 0 
-0 0 0 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 0 0 0 0
+0 1 1 1 0
+0 0 0 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 2 0 0 0 
-2 1 1 1 0 
-0 0 0 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 2 0 0 0
+2 1 1 1 0
+0 0 0 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 2 2 0 0 
-2 1 1 1 0 
-0 0 0 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 2 2 0 0
+2 1 1 1 0
+0 0 0 1 0
 *********
-2 1 0 0 0 
-2 1 0 1 0 
-2 2 2 0 0 
-2 1 1 1 0 
-2 0 0 1 0 
+2 1 0 0 0
+2 1 0 1 0
+2 2 2 0 0
+2 1 1 1 0
+2 0 0 1 0
 *********
-2 1 0 0 0 
-2 1 2 1 0 
-2 2 2 2 0 
-2 1 1 1 0 
-2 0 0 1 0 
+2 1 0 0 0
+2 1 2 1 0
+2 2 2 2 0
+2 1 1 1 0
+2 0 0 1 0
 *********
-2 1 0 0 0 
-2 1 2 1 0 
-2 2 2 2 0 
-2 1 1 1 0 
-2 2 0 1 0 
+2 1 0 0 0
+2 1 2 1 0
+2 2 2 2 0
+2 1 1 1 0
+2 2 0 1 0
 *********
-2 1 0 0 0 
-2 1 2 1 0 
-2 2 2 2 2 
-2 1 1 1 0 
-2 2 0 1 0 
+2 1 0 0 0
+2 1 2 1 0
+2 2 2 2 2
+2 1 1 1 0
+2 2 0 1 0
 *********
-2 1 2 0 0 
-2 1 2 1 0 
-2 2 2 2 2 
-2 1 1 1 0 
-2 2 0 1 0 
+2 1 2 0 0
+2 1 2 1 0
+2 2 2 2 2
+2 1 1 1 0
+2 2 0 1 0
 *********
-2 1 2 0 0 
-2 1 2 1 0 
-2 2 2 2 2 
-2 1 1 1 0 
-2 2 2 1 0 
+2 1 2 0 0
+2 1 2 1 0
+2 2 2 2 2
+2 1 1 1 0
+2 2 2 1 0
 *********
-2 1 2 0 0 
-2 1 2 1 2 
-2 2 2 2 2 
-2 1 1 1 2 
-2 2 2 1 0 
+2 1 2 0 0
+2 1 2 1 2
+2 2 2 2 2
+2 1 1 1 2
+2 2 2 1 0
 *********
-2 1 2 2 0 
-2 1 2 1 2 
-2 2 2 2 2 
-2 1 1 1 2 
-2 2 2 1 0 
+2 1 2 2 0
+2 1 2 1 2
+2 2 2 2 2
+2 1 1 1 2
+2 2 2 1 0
 *********
-2 1 2 2 0 
-2 1 2 1 2 
-2 2 2 2 2 
-2 1 1 1 2 
-2 2 2 1 0 
+2 1 2 2 0
+2 1 2 1 2
+2 2 2 2 2
+2 1 1 1 2
+2 2 2 1 0
 *********
-2 1 2 2 0 
-2 1 2 1 2 
-2 2 2 2 2 
-2 1 1 1 2 
-2 2 2 1 2 
+2 1 2 2 0
+2 1 2 1 2
+2 2 2 2 2
+2 1 1 1 2
+2 2 2 1 2
 *********
-2 1 2 2 2 
-2 1 2 1 2 
-2 2 2 2 2 
-2 1 1 1 2 
-2 2 2 1 2 
+2 1 2 2 2
+2 1 2 1 2
+2 2 2 2 2
+2 1 1 1 2
+2 2 2 1 2
 *********
-2 1 2 2 2 
-2 1 2 1 2 
-2 2 2 2 2 
-2 1 1 1 2 
-2 2 2 1 2 
+2 1 2 2 2
+2 1 2 1 2
+2 2 2 2 2
+2 1 1 1 2
+2 2 2 1 2
 *********
 (4, 4)
 (3, 4)
@@ -5996,7 +5996,7 @@ if (p 点是终点) {
 ```
                                                     (11111111-00000100)
                                                              ↓
-00001000 - 00000100 → 00001000 + (-00000100) → 00001000 + 11111011 → 00000011 进 1 
+00001000 - 00000100 → 00001000 + (-00000100) → 00001000 + 11111011 → 00000011 进 1
 → 高位进的 1 加到低位上去，结果为 00000100
 ```
 
@@ -6087,7 +6087,7 @@ double a[10] = { 1.0 };
 那么以前我们常用的不带 signed 或 unsigned 关键字的 char 型是无符号数还是有符号数呢？C 标准规定这是 Implementation Defined，编译器可以定义 char 型是无符号的，也可以定义 char 型是有符号的，在该编译器所对应的体系结构上哪种实现效率高就可以采用哪种实现，x86 平台的 `gcc` 定义 char 型是有符号的。这也是 C 标准的 Rationale 之一： **优先考虑效率，而可移植性尚在其次** 。 **这就要求程序员非常清楚这些规则，如果你要写可移植的代码，就必须清楚哪些写法是不可移植的，应该避免使用** 。另一方面，写不可移植的代码有时候也是必要的，比如 Linux 内核代码使用了很多只有 `gcc` 支持的语法特性以得到最佳的执行效率，在写这些代码的时候就没打算用别的编译器编译，也就没考虑可移植性的问题。如果要写不可移植的代码，你也必须清楚代码中的哪些部分是不可移植的，以及为什么要这样写，如果不是为了效率，一般来说就没有理由故意写不可移植的代码。从现在开始，我们会接触到很多 Implementation Defined 的特性， **C 语言与平台和编译器是密不可分的，离开了具体的平台和编译器讨论 C 语言，就只能讨论到本书第一部分的程度了** 。注意，ASCII 码的取值范围是 0 ~ 127，所以不管 char 型是有符号的还是无符号的，存一个 ASCII 码都没有问题，一般来说，如果用 `char` 型存 ASCII 码字符，就不必明确写是 signed 还是 unsigned，如果用 char 型表示 8 位的整数，为了可移植性就必须写明是 signed 还是 unsigned。
 
 > **Implementation-defined、Unspecified 和 Undefined**
-> 
+>
 > 在 C 标准中没有做明确规定的地方会用 Implementation-defined、Unspecified 或 Undefined 来表述，在本书中有时把这三种情况统称为「未明确定义」的。这三种情况到底有什么不同呢？
 > 我们刚才看到一种 Implementation-defined 的情况，C 标准没有明确规定 char 是有符号的还是无符号的，但是要求编译器必须对此做出明确规定，并写在编译器的文档中。
 > 而对于 Unspecified 的情况，往往有几种可选的处理方式，C 标准没有明确规定按哪种方式处理，编译器可以自己决定，并且也不必写在编译器的文档中，这样即便用同一个编译器的不同版本来编译也可能得到不同的结果，因为编译器没有在文档中明确写它会怎么处理，那么不同版本的编译器就可以选择不同的处理方式，比如下一章我们会讲到一个函数调用的各个实参表达式按什么顺序求值是 Unspecified 的。
@@ -6171,7 +6171,7 @@ long double 型通常是比 double 型精度更高的类型，但各平台的实
     ```
 
     `ch` 要被提升为 int 型之后再传给 `printf`。
-  - 此外，相应的实参如果是 float 型的也要被提升为 double 型，这条规则称为 **Default Argument Promotion** 
+  - 此外，相应的实参如果是 float 型的也要被提升为 double 型，这条规则称为 **Default Argument Promotion**
 
 - Integer Promotion 情况二：算术运算中的类型转换。
   - 有符号或无符号的 char 型、short 型和 Bit-field 在做算术运算之前首先要做 Integer Promotion，
@@ -6185,8 +6185,6 @@ long double 型通常是比 double 型精度更高的类型，但各平台的实
     计算表达式 `c1 + c2` 的过程其实是先把 `c1` 和 `c2` 提升为 int 型然后再相加（unsigned char 的取值范围是 0 ~ 255，完全可以用 int 表示，所以提升为 int 就可以了，不需要提升为 unsigned int），整个表达式的值也是 int 型，最后的结果是 257。假如没有这个提升的过程，`c1 + c2` 就溢出了，溢出会得到什么结果是 Undefined，在大多数平台上会把进位截掉，得到的结果应该是 1。
 
     除了 + 号之外还有哪些运算符在计算之前需要做 Integer Promotion 呢？我们在下一小节先介绍 Usual Arithmetic Conversion 规则，然后再解答这个问题。
-
-
 
 #### 2.2.3.2. Usual Arithmetic Conversion
 
@@ -6310,11 +6308,11 @@ void show_pointer(void *x) { show_bytes((byte_pointer)&x, sizeof(void *)); }
 #### 2.2.5.1. 基本说明
 
 - C 标准的 Rationale 之一：
-  - **优先考虑效率，而可移植性尚在其次** 
-  - **这就要求程序员非常清楚这些规则，如果你要写可移植的代码，就必须清楚哪些写法是不可移植的，应该避免使用** 
+  - **优先考虑效率，而可移植性尚在其次**
+  - **这就要求程序员非常清楚这些规则，如果你要写可移植的代码，就必须清楚哪些写法是不可移植的，应该避免使用**
 
 - 实例： 不带 signed 或 unsigned 关键字的 char 型是无符号数还是有符号数?
-  - C 标准规定这是 Implementation Defined， **编译器可以定义 char 型是无符号的，也可以定义 char 型是有符号的** 
+  - C 标准规定这是 Implementation Defined， **编译器可以定义 char 型是无符号的，也可以定义 char 型是有符号的**
   - 在该编译器所对应的体系结构上哪种实现效率高就可以采用哪种实现
     > x86 平台的 `gcc` 定义 char 型是有符号的。
   - ASCII 码的取值范围是 0 ~ 127，所以不管 char 型是有符号的还是无符号的，存一个 ASCII 码都没有问题，
@@ -6332,16 +6330,16 @@ void show_pointer(void *x) { show_bytes((byte_pointer)&x, sizeof(void *)); }
   - Implementation-defined
     - C 标准没有明确规定 char 是有符号的还是无符号的
     - 但是要求编译器必须对此做出明确规定，并写在编译器的文档中。
-  - Unspecified 
+  - Unspecified
     - 对于 Unspecified 的情况，往往有几种可选的处理方式
     - C 标准没有明确规定按哪种方式处理，编译器可以自己决定，并且也不必写在编译器的文档中，这样即便用同一个编译器的不同版本来编译也可能得到不同的结果
     - 因为编译器没有在文档中明确写它会怎么处理，那么不同版本的编译器就可以选择不同的处理方式
     - 比如一个函数调用的各个实参表达式按什么顺序求值是 Unspecified 的。
-  - Undefined 
+  - Undefined
     - Undefined 的情况则是完全不确定的，C 标准没规定怎么处理，编译器很可能也没规定，甚至也没做出错处理，
     - 有很多 Undefined 的情况编译器是检查不出来的，最终会导致运行时错误，比如数组访问越界就是 Undefined 的。
 - 我们会接触到很多 Implementation Defined 的特性，
-- **C 语言与平台和编译器是密不可分的，离开了具体的平台和编译器讨论 C 语言，就只能讨论到本书第一部分的程度了** 
+- **C 语言与平台和编译器是密不可分的，离开了具体的平台和编译器讨论 C 语言，就只能讨论到本书第一部分的程度了**
 
 ## 2.3. 运算符详解
 
@@ -6359,7 +6357,7 @@ void show_pointer(void *x) { show_bytes((byte_pointer)&x, sizeof(void *)); }
 
 ![位运算](./image/op.bitwise.png)
 
-注意，`&`、`|`、`^` 运算符都是要做 Usual  Arithmetic Conversion 的（其中有一步是 Integer Promotion），`~` 运算符也要做 Integer  Promotion，所以在 C 语言中其实并不存在 8 位整数的位运算，操作数在做位运算之前都至少被提升为 int 型了，上面用 8 位整数举例只是为了书写方便。比如：
+注意，`&`、`|`、`^` 运算符都是要做 Usual Arithmetic Conversion 的（其中有一步是 Integer Promotion），`~` 运算符也要做 Integer Promotion，所以在 C 语言中 **其实并不存在 8 位整数的位运算，操作数在做位运算之前都至少被提升为 int 型了** ，上面用 8 位整数举例只是为了书写方便。比如：
 
 ```c
 unsigned char c = 0xfc;
@@ -6400,29 +6398,29 @@ unsigned int i = ~c;
 如果要对一个整数中的某些位进行操作，怎样表示这些位在整数中的位置呢？可以用掩码（Mask）来表示。比如掩码 `0x0000ff00` 表示对一个 32 位整数的 8 ~ 15 位进行操作，举例如下。
 
 1. 取出 8 ~ 15 位。
-    
+
     ```c
     unsigned int a, b, mask = 0x0000ff00;
     a = 0x12345678;
     b = (a & mask) >> 8; /* 0x00000056 */
     ```
-    
+
     这样也可以达到同样的效果：
-    
+
     ```c
     b = (a >> 8) & ~(~0U << 8);
     ```
-    
+
 2. 将 8 ~ 15 位清 0。
-    
+
     ```c
     unsigned int a, b, mask = 0x0000ff00;
     a = 0x12345678;
     b = a & ~mask; /* 0x12340078 */
     ```
-    
+
 3. 将 8 ~ 15 位置 1。
-    
+
     ```c
     unsigned int a, b, mask = 0x0000ff00;
     a = 0x12345678;
@@ -6433,7 +6431,7 @@ unsigned int i = ~c;
 
 1. 一个数和自己做异或的结果是 0。如果需要一个常数 0，x86 平台的编译器可能会生成这样的指令：`xorl %eax, %eax`。不管 `eax` 寄存器里的值原来是多少，做异或运算都能得到 0，这条指令比同样效果的 `movl $0, %eax` 指令快，因为前者只需要在 CPU 内部计算，而后者需要访问内存，在[下一章第 5 节「Memory Hierarchy」]()详细介绍。
 2. 从异或的真值表可以看出，不管是 0 还是 1，和 0 做异或保持原值不变，和 1 做异或得到原值的相反值。可以利用这个特性配合掩码实现某些位的翻转，例如：
-    
+
     ```c
     unsigned int a, b, mask = 1U << 6;
     a = 0x12345678;
@@ -6441,7 +6439,7 @@ unsigned int i = ~c;
     ```
 3. 如果 a1 ^ a2 ^ a3 ^ ... ^ an 的结果是 1，则表示 a1、a2、a3...an 之中 1 的个数为奇数个，否则为偶数个。这条性质可用于奇偶校验（Parity Check），比如在串口通信过程中，每个字节的数据都计算一个校验位，数据和校验位一起发送出去，这样接收方可以根据校验位粗略地判断接收到的数据是否有误。
 4. x ^ x ^ y == y，因为 x ^ x == 0，0 ^ y == y。这个性质有什么用呢？我们来看这样一个问题：交换两个变量的值，不得借助额外的存储空间，所以就不能采用 `temp = a; a = b; b = temp;` 的办法了。利用位运算可以这样做交换：
-    
+
     ```c
     a = a ^ b;
     b = b ^ a;
@@ -6560,7 +6558,7 @@ a = (++a)+(++a)+(++a)+(++a);
 - 条件运算符 `?:`、逗号运算符、逻辑与 `&&`、逻辑或 `||` 的第一个操作数求值之后是 Sequence Point。
   - 我们刚讲过条件运算符和逗号运算符，条件运算符要根据 `表达式1` 的值是否为真决定下一步求 `表达式2` 还是 `表达式3` 的值，如果决定求 `表达式2` 的值，`表达式3` 就不会被求值了，反之也一样，`,` 运算符也是这样，`表达式1` 求值结束才继续求 `表达式2` 的值。
   - 逻辑与和逻辑或早在[第 4 章「分支语句」第 3 节「布尔代数」]()就讲了，但在初学阶段我一直回避它们的操作数求值顺序问题。这两个运算符和条件运算符类似，先求左操作数的值，然后根据这个值是否为真，右操作数可能被求值，也可能不被求值。比如[第 8 章例 8.5 「剪刀石头布」]()这个程序中的这几句：
-    
+
     ```c
     ret = scanf("%d", &man);
     if (ret != 1 || man < 0 || man > 2) {
@@ -6568,7 +6566,7 @@ a = (++a)+(++a)+(++a)+(++a);
         continue;
     }
     ```
-    
+
     ```c
     # 其实可以写得更简单（类似于 *K&R* 的简洁风格）：
     if (scanf("%d", &man) != 1 || man < 0 || man > 2) {
@@ -6576,7 +6574,7 @@ a = (++a)+(++a)+(++a)+(++a);
         continue;
     }
     ```
-    
+
     - 这个控制表达式的求值顺序是：
       - 先求 `scanf("%d", &man) = 1` 的值，
       - 如果 `scanf` 调用失败，则返回值不等于 1 成立，`||` 运算有一个操作数为真则整个表达式为真，
@@ -6662,7 +6660,7 @@ CPU 总是周而复始地做同一件事：从内存取指令，然后解释执�
     - 比如 `eip` 用作程序计数器，这称为特殊寄存器（Special-purpose Register）
   - 而另外一些寄存器可以用在各种运算和读写内存的指令中，
     - 比如 `eax` 寄存器，这称为通用寄存器（General-purpose Register）。
-- 程序计数器（PC，Program Counter）， 
+- 程序计数器（PC，Program Counter），
   - **是一种特殊寄存器，保存着 CPU 取下一条指令的地址** ，CPU 按程序计数器保存的地址去内存中取指令然后解释执行，
   - **这时程序计数器保存的地址会自动加上该指令的长度，指向内存中的下一条指令** 。
 - 指令译码器（Instruction Decoder）。
@@ -6753,7 +6751,7 @@ CPU 执行指令除了访问内存之外还要访问很多设备（Device），�
   - 广义上操作系统的概念还包括一些必不可少的用户程序，比如 Shell 是每个 Linux 系统必不可少的，
     - 而 Office 办公套件则是可有可无的，所以前者也属于广义上操作系统的范畴，而后者属于应用软件。
 
-- 中断： 
+- 中断：
   - 访问设备还有一点和访问内存不同。
   - 内存只是保存数据而不会产生新的数据，如果 CPU 不去读它，它也不需要主动提供数据给 CPU，所以内存总是被动地等待被读或者被写。
   - 而 **设备往往会自己产生数据，并且需要主动通知 CPU 来读这些数据** ，
@@ -6938,7 +6936,7 @@ $ echo $?
 
 - `#`号表示单行注释，类似于 C 语言的 `//` 注释。
 - 汇编指示
-  - 汇编程序中以  **`.` 开头的名称** 并不是指令的助记符，不会被翻译成机器指令，而是 **给汇编器一些特殊指示** 
+  - 汇编程序中以  **`.` 开头的名称** 并不是指令的助记符，不会被翻译成机器指令，而是 **给汇编器一些特殊指示**
   - 称为 **汇编指示（Assembler Directive）或伪操作（Pseudo-operation）** ，由于它不是真正的指令所以加个「伪」字。
 - 段
   - 说明
@@ -6961,7 +6959,7 @@ $ echo $?
     ```asm6502
     .globl _start
     ```
-  - **符号在汇编程序中代表一个地址** 
+  - **符号在汇编程序中代表一个地址**
     - 可以用在指令中，汇编程序经过汇编器的处理之后， **所有的符号都被替换成它所代表的地址值** 。
   - **在 C 语言中我们通过变量名访问一个变量，其实就是读写某个地址的内存单元** ，
     - 我们通过函数名调用一个函数，其实就是跳转到该函数第一条指令所在的地址，
@@ -7220,9 +7218,9 @@ ELF 格式提供了两种不同的视角，链接器把 ELF 文件看成是  **S
 下面用 `readelf` 工具读出目标文件 `max.o` 的 ELF Header 和 Section Header Table，然后我们逐段分析。
 
 ```
-$ readelf -a max.o 
+$ readelf -a max.o
 ELF Header:
-  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00
   Class:                             ELF32
   Data:                              2's complement, little endian
   Version:                           1 (current)
@@ -7270,10 +7268,10 @@ There are no unwind sections in this file.
 
 Symbol table '.symtab' contains 8 entries:
    Num:    Value  Size Type    Bind   Vis      Ndx Name
-     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
-     1: 00000000     0 SECTION LOCAL  DEFAULT    1 
-     2: 00000000     0 SECTION LOCAL  DEFAULT    3 
-     3: 00000000     0 SECTION LOCAL  DEFAULT    4 
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND
+     1: 00000000     0 SECTION LOCAL  DEFAULT    1
+     2: 00000000     0 SECTION LOCAL  DEFAULT    3
+     3: 00000000     0 SECTION LOCAL  DEFAULT    4
      4: 00000000     0 NOTYPE  LOCAL  DEFAULT    3 data_items
      5: 0000000e     0 NOTYPE  LOCAL  DEFAULT    1 start_loop
      6: 00000023     0 NOTYPE  LOCAL  DEFAULT    1 loop_exit
@@ -7286,9 +7284,9 @@ No version information found in this file.
 
 
 ```bash
-$ readelf -a max.o 
+$ readelf -a max.o
 ELF Header:
-  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00
   Class:                             ELF32
   Data:                              2's complement, little endian
   Version:                           1 (current)
@@ -7367,7 +7365,7 @@ There are no program headers in this file.
 这个文件不大，我们直接用 `hexdump` 工具把目标文件的字节全部打印出来看。
 
 ```bash
-$ hexdump -C max.o 
+$ hexdump -C max.o
 00000000  7f 45 4c 46 01 01 01 00  00 00 00 00 00 00 00 00  |.ELF............|
 00000010  01 00 03 00 01 00 00 00  00 00 00 00 00 00 00 00  |................|
 00000020  c8 00 00 00 00 00 00 00  34 00 00 00 00 00 28 00  |........4.....(.|
@@ -7481,10 +7479,10 @@ There are no unwind sections in this file.
 
 Symbol table '.symtab' contains 8 entries:
    Num:    Value  Size Type    Bind   Vis      Ndx Name
-     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
-     1: 00000000     0 SECTION LOCAL  DEFAULT    1 
-     2: 00000000     0 SECTION LOCAL  DEFAULT    3 
-     3: 00000000     0 SECTION LOCAL  DEFAULT    4 
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND
+     1: 00000000     0 SECTION LOCAL  DEFAULT    1
+     2: 00000000     0 SECTION LOCAL  DEFAULT    3
+     3: 00000000     0 SECTION LOCAL  DEFAULT    4
      4: 00000000     0 NOTYPE  LOCAL  DEFAULT    3 data_items
      5: 0000000e     0 NOTYPE  LOCAL  DEFAULT    1 start_loop
      6: 00000023     0 NOTYPE  LOCAL  DEFAULT    1 loop_exit
@@ -7548,7 +7546,7 @@ Disassembly of section .text:
 ```
 $ readelf -a max
 ELF Header:
-  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00
   Class:                             ELF32
   Data:                              2's complement, little endian
   Version:                           1 (current)
@@ -7590,8 +7588,8 @@ Program Headers:
 
  Section to Segment mapping:
   Segment Sections...
-   00     .text 
-   01     .data 
+   00     .text
+   01     .data
 
 There is no dynamic section in this file.
 
@@ -7601,9 +7599,9 @@ There are no unwind sections in this file.
 
 Symbol table '.symtab' contains 10 entries:
    Num:    Value  Size Type    Bind   Vis      Ndx Name
-     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
-     1: 08048074     0 SECTION LOCAL  DEFAULT    1 
-     2: 080490a0     0 SECTION LOCAL  DEFAULT    2 
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND
+     1: 08048074     0 SECTION LOCAL  DEFAULT    1
+     2: 080490a0     0 SECTION LOCAL  DEFAULT    2
      3: 080490a0     0 NOTYPE  LOCAL  DEFAULT    2 data_items
      4: 08048082     0 NOTYPE  LOCAL  DEFAULT    1 start_loop
      5: 08048097     0 NOTYPE  LOCAL  DEFAULT    1 loop_exit
@@ -7793,7 +7791,7 @@ int main(void)
 
 ```bash
 $ gcc main.c -g
-$ objdump -dS a.out 
+$ objdump -dS a.out
 ...
 08048394 <bar>:
 int bar(int c, int d)
@@ -7809,8 +7807,8 @@ int bar(int c, int d)
     return e;
  80483a5:   8b 45 fc                mov    -0x4(%ebp),%eax
 }
- 80483a8:   c9                      leave  
- 80483a9:   c3                      ret    
+ 80483a8:   c9                      leave
+ 80483a9:   c3                      ret
 
 080483aa <foo>:
 
@@ -7826,8 +7824,8 @@ int foo(int a, int b)
  80483ba:   89 04 24                mov    %eax,(%esp)
  80483bd:   e8 d2 ff ff ff          call   8048394 <bar>
 }
- 80483c2:   c9                      leave  
- 80483c3:   c3                      ret    
+ 80483c2:   c9                      leave
+ 80483c3:   c3                      ret
 
 080483c4 <main>:
 
@@ -7842,7 +7840,7 @@ int main(void)
  80483d2:   83 ec 08                sub    $0x8,%esp
     foo(2, 3);
  80483d5:   c7 44 24 04 03 00 00    movl   $0x3,0x4(%esp)
- 80483dc:   00 
+ 80483dc:   00
  80483dd:   c7 04 24 02 00 00 00    movl   $0x2,(%esp)
  80483e4:   e8 c1 ff ff ff          call   80483aa <foo>
     return 0;
@@ -7852,7 +7850,7 @@ int main(void)
  80483f1:   59                      pop    %ecx
  80483f2:   5d                      pop    %ebp
  80483f3:   8d 61 fc                lea    -0x4(%ecx),%esp
- 80483f6:   c3                      ret   
+ 80483f6:   c3                      ret
 ...
 ```
 
@@ -7873,7 +7871,7 @@ int main(void)
   (gdb) s
   bar (c=2, d=3) at main.c:3
   3     int e = c + d;
-  (gdb) disassemble 
+  (gdb) disassemble
   Dump of assembler code for function bar:
   0x08048394 <bar+0>:   push   %ebp
   0x08048395 <bar+1>:   mov    %esp,%ebp
@@ -7883,8 +7881,8 @@ int main(void)
   0x080483a0 <bar+12>:  add    %edx,%eax
   0x080483a2 <bar+14>:  mov    %eax,-0x4(%ebp)
   0x080483a5 <bar+17>:  mov    -0x4(%ebp),%eax
-  0x080483a8 <bar+20>:  leave  
-  0x080483a9 <bar+21>:  ret    
+  0x080483a8 <bar+20>:  leave
+  0x080483a9 <bar+21>:  ret
   End of assembler dump.
   (gdb) si
   0x0804839d    3       int e = c + d;
@@ -7900,7 +7898,7 @@ int main(void)
   #0  bar (c=2, d=3) at main.c:5
   #1  0x080483c2 in foo (a=2, b=3) at main.c:9
   #2  0x080483e9 in main () at main.c:14
-  (gdb) info registers 
+  (gdb) info registers
   eax            0x5    5
   ecx            0xbff1c440 -1074674624
   edx            0x3    3
@@ -7940,7 +7938,7 @@ int main(void)
       - 见gdb章节 `x/7b`
 
 - 在执行程序时，操作系统为进程分配一块栈空间来保存函数栈帧，
-  - **`esp` 寄存器总是指向栈顶** 
+  - **`esp` 寄存器总是指向栈顶**
     > 64位系统上，为`rsp`，见 《深入理解操作系统》p120
   - 在 x86 平台上这个栈是从高地址向低地址增长的，
   - 我们知道每次调用一个函数都要分配一个栈帧来保存参数和局部变量
@@ -7960,7 +7958,7 @@ int main(void)
 ```asm6502
     foo(2, 3);
  80483d5:   c7 44 24 04 03 00 00    movl   $0x3,0x4(%esp)
- 80483dc:   00 
+ 80483dc:   00
  80483dd:   c7 04 24 02 00 00 00    movl   $0x2,(%esp)
  80483e4:   e8 c1 ff ff ff          call   80483aa <foo>
     return 0;
@@ -8032,7 +8030,7 @@ int bar(int c, int d)
     return e;
  80483a5:   8b 45 fc                mov    -0x4(%ebp),%eax
 }
- 80483a8:   c9                      leave  
+ 80483a8:   c9                      leave
  80483a9:   c3                      ret
 ```
 
@@ -8049,7 +8047,7 @@ int bar(int c, int d)
 地址 0x80483c2 处是 `foo` 函数的返回指令：
 
 ```asm6502
- 80483c2:   c9                      leave  
+ 80483c2:   c9                      leave
  80483c3:   c3                      ret
 ```
 
@@ -8125,7 +8123,7 @@ collect2: ld returned 1 exit status
 - crt1.o说明与程序入口
   - 如果目标文件是由 C 代码编译生成的，用 `gcc` 做链接就没错了
   - 整个程序的入口点是 `crt1.o` 中提供的 `_start`
-    - 它 **首先做一些初始化工作（以下称为启动例程，Startup Routine），然后调用 C 代码中提供的 `main` 函数** 
+    - 它 **首先做一些初始化工作（以下称为启动例程，Startup Routine），然后调用 C 代码中提供的 `main` 函数**
   - 所以，以前我们说 `main` 函数是程序的入口点其实不准确
     - `_start` 才是真正的入口点，而 `main` 函数是被 `_start` 调用的。
 
@@ -8146,7 +8144,7 @@ $ ld /usr/lib/crt1.o /usr/lib/crti.o main.o -o main -lc -dynamic-linker /lib/ld-
 那么 `crt1.o` 和 `crti.o` 里面都有什么呢？我们可以用 `readelf` 命令查看。在这里我们只关心符号表，如果只看符号表，可以用 `readelf` 命令的 `-s` 选项，也可以用 `nm` 命令。
 
 ```bash
-$ nm /usr/lib/crt1.o 
+$ nm /usr/lib/crt1.o
 00000000 R _IO_stdin_used
 00000000 D __data_start
          U __libc_csu_fini
@@ -8241,7 +8239,7 @@ Disassembly of section .fini:
 ```
 
 - `crt1.o` 中的未定义符号 `main` 在 `main.o` 中定义了，所以链接在一起就没问题了。
-- `crt1.o` 还有一个未定义符号 `__libc_start_main` 
+- `crt1.o` 还有一个未定义符号 `__libc_start_main`
   - 在其它几个目标文件中也没有定义，所以在可执行文件 `main` 中仍然是个未定义符号。
   - 这个符号是在 `libc` 中定义的，
   - `libc` 并不像其它目标文件一样链接到可执行文件 `main` 中，而是在运行时做动态链接：
@@ -8300,7 +8298,7 @@ exit(main(argc, argv));
 
 ```c
  #include <stdlib.h>
- 
+
  int main(void)
  {
     exit(4);
@@ -8310,7 +8308,7 @@ exit(main(argc, argv));
 这样和 `int main(void) { return 4; }` 的效果是一样的。在 Shell 中运行这个程序并查看它的退出状态：
 
 ```bash
-$ ./a.out 
+$ ./a.out
 $ echo $?
 4
 ```
@@ -8318,7 +8316,7 @@ $ echo $?
 按照惯例，退出状态为 `0` 表示程序执行成功，退出状态非 `0` 表示出错。注意，退出状态只有 8 位，而且被 Shell 解释成无符号数，如果将上面的代码改为 `exit(-1);` 或 `return -1;`，则运行结果为
 
 ```bash
-$ ./a.out 
+$ ./a.out
 $ echo $?
 255
 ```
@@ -8386,14 +8384,14 @@ Section Headers:
 ```bash
 Section to Segment mapping:
   Segment Sections...
-  00     
-  01     .interp 
-  02     .interp .note.ABI-tag .hash .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rel.dyn .rel.plt .init .plt .text .fini .rodata .eh_frame 
-  03     .ctors .dtors .jcr .dynamic .got .got.plt .data .bss 
-  04     .dynamic 
-  05     .note.ABI-tag 
-  06     
-  07     .ctors .dtors .jcr .dynamic .got 
+  00
+  01     .interp
+  02     .interp .note.ABI-tag .hash .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rel.dyn .rel.plt .init .plt .text .fini .rodata .eh_frame
+  03     .ctors .dtors .jcr .dynamic .got .got.plt .data .bss
+  04     .dynamic
+  05     .note.ABI-tag
+  06
+  07     .ctors .dtors .jcr .dynamic .got
 ```
 
 
@@ -8435,7 +8433,7 @@ Section to Segment mapping:
 
 - `a` 是一个 `GLOBAL` 的符号
 - 而 `b` 被 `static` 关键字修饰了，导致它成为一个 `LOCAL` 的符号，
-  - 所以  **`static` 在这里的作用是声明 `b` 这个符号为 `LOCAL` 的，不被链接器处理** 
+  - 所以  **`static` 在这里的作用是声明 `b` 这个符号为 `LOCAL` 的，不被链接器处理**
   - 在下一章我们会看到，如果把多个目标文件链接在一起，`LOCAL` 的符号只能在某一个目标文件中定义和使用，而不能定义在一个目标文件中却在另一个目标文件中使用。
   - 一个 **函数定义前面也可以用 `static` 修饰** ，表示这个函数名符号是 `LOCAL` 的。
 
@@ -8490,7 +8488,7 @@ $ objdump -dS a.out
 ![数组的存储布局](./image/asmc.array.png)
 
 - 注意
-  - **虽然栈是从高地址向低地址增长的，但数组总是从低地址向高地址排列的** 
+  - **虽然栈是从高地址向低地址增长的，但数组总是从低地址向高地址排列的**
   - 按从低地址到高地址的顺序依次是 `b[0]`、`b[1]`、`b[2]`……这样，
 - 数组元素 `b[n]` 的地址  =  数组的基地址（`b` 做右值就表示这个基地址） + n × 每个元素的字节数
 - 当 n=0 时，元素 `b[0]` 的地址就是数组的基地址，因此数组下标要从 0 开始而不是从 1 开始。
@@ -8505,7 +8503,7 @@ $ objdump -dS a.out
 - 变量 `c` 并没有在栈上分配存储空间，而是直接存在 `eax` 寄存器里
 - 后面调用 `printf` 也是直接从 `eax` 寄存器里取出 `c` 的值当参数压栈
 - 这就是 `register` 关键字的作用
-  - **指示编译器尽可能分配一个寄存器来存储这个变量** 
+  - **指示编译器尽可能分配一个寄存器来存储这个变量**
 
 #### 2.6.3.6. 变量属性
 
@@ -8900,7 +8898,7 @@ __asm__("movl $1, %eax\n\t"
 通常 C 代码中的内联汇编需要和 C 的变量建立关联，需要用到完整的内联汇编格式：
 
 ```asm6502
-__asm__(assembler template 
+__asm__(assembler template
     : output operands                  /* optional */
     : input operands                   /* optional */
     : list of clobbered registers      /* optional */
@@ -8913,11 +8911,11 @@ __asm__(assembler template
 
 ```c
   #include <stdio.h>
-  
-  int main() 
+
+  int main()
   {
           int a = 10, b;
-  
+
     __asm__("movl %1, %%eax\n\t"
         "movl %%eax, %0\n\t"
         :"=r"(b)        /* output */
@@ -9193,7 +9191,7 @@ int main(void)
     push('a');
     push('b');
     push('c');
-    
+
     while(!is_empty())
         putchar(pop());
     putchar('\n');
@@ -9327,7 +9325,7 @@ SECTIONS
 ```
 
 - `ENTRY(_start)` 说明 `_start` 是整个程序的入口点， **因此 `_start` 是入口点并不是规定死的** ，是可以改用其它函数做入口点的。
-- `PROVIDE (__executable_start = 0x08048000); . = 0x08048000 + SIZEOF_HEADERS;` 
+- `PROVIDE (__executable_start = 0x08048000); . = 0x08048000 + SIZEOF_HEADERS;`
   - 是 Text Segment 的起始地址，这个 Segment 包含后面列出的那些段，`.plt`、`.text`、`.rodata` 等等。
   - 每个段的描述格式都是「段名 : { 组成 }」，
     - 例如 `.plt : { *(.plt) }`，左边表示最终生成的文件的 `.plt` 段，右边表示所有目标文件的 `.plt` 段
@@ -9395,7 +9393,7 @@ int main(void)
     push('a');
     push('b');
     push('c');
-    
+
     while(!is_empty())
         putchar(pop());
     putchar('\n');
@@ -9460,7 +9458,7 @@ int main(void)
     push('b');
     push('c');
     printf("%d\n", top);
-    
+
     while(!is_empty())
         putchar(pop());
     putchar('\n');
@@ -9486,7 +9484,7 @@ int main(void)
     push('b');
     push('c');
     printf("%d\n", top);
-    
+
     while(!is_empty())
         putchar(pop());
     putchar('\n');
@@ -9498,7 +9496,7 @@ int main(void)
 
 注意:
 
-- 变量声明和函数声明有一点不同，函数声明的 `extern` 可写可不写，而 **变量声明如果不写 `extern` 意思就完全变了** 
+- 变量声明和函数声明有一点不同，函数声明的 `extern` 可写可不写，而 **变量声明如果不写 `extern` 意思就完全变了**
   - 如果上面的例子不写 `extern` 就表示在 `main` 函数中定义一个局部变量 `top`。
 - 另外，`stack.c` 中的定义是 `int top = -1;`，而 `main.c` 中的 **声明不能加 Initializer** ，
   - 如果上面的例子写成 `extern int top = -1;` 则编译器会报错。
@@ -9573,17 +9571,17 @@ int is_empty(void)
   /* main.c */
   #include <stdio.h>
   #include "stack.h"
-  
+
   int main(void)
   {
       push('a');
       push('b');
       push('c');
-      
+
       while(!is_empty())
           putchar(pop());
       putchar('\n');
-  
+
       return 0;
   }
   ```
@@ -9641,7 +9639,7 @@ int is_empty(void)
 
 > 和vimscript中autocmd和一些vimscript插件配置目的相同
 
-在 `stack.h` 中我们又看到两个新的预处理指示 `#ifndef STACK_H` 和 `#endif`: 
+在 `stack.h` 中我们又看到两个新的预处理指示 `#ifndef STACK_H` 和 `#endif`:
 
 - 意思是说，如果 `STACK_H` 这个宏没有定义过，那么从 `#ifndef` 到 `#endif` 之间的代码就包含在预处理的输出结果中，否则这一段代码就不出现在预处理的输出结果中。
 - `stack.h` 这个头文件的内容整个被 `#ifndef` 和 `#endif` 括起来了，如果在包含这个头文件时 `STACK_H` 这个宏已经定义过了，则相当于这个头文件里什么都没有，包含了一个空文件。
@@ -9754,12 +9752,12 @@ extern int f(void); /* previous linkage */
   - External  Linkage
   - Internal Linkage
   - No Linkage
-  - Previous Linkage 
+  - Previous Linkage
 - 生存期有
   - Static  Duration
   - Automatic Duration
 - 初始化有
-  - Static  Initializer 
+  - Static  Initializer
     - 表示 Initializer 中只能使用常量表达式，表达式的值必须在编译时就能确定，
   - Dynamic  Initializer
     - 表示 Initializer 中可以使用任意的右值表达式，表达式的值可以在运行时计算。
@@ -9986,7 +9984,7 @@ $ gcc -c -fPIC stack/stack.c stack/push.c stack/pop.c stack/is_empty.c
   反汇编查看 `push.o`：
 
   ```bash
-  $ objdump -dS push.o 
+  $ objdump -dS push.o
 
   push.o:     file format elf32-i386
 
@@ -10013,7 +10011,7 @@ $ gcc -c -fPIC stack/stack.c stack/push.c stack/pop.c stack/is_empty.c
     1f:   0f b6 45 fc             movzbl -0x4(%ebp),%eax
     23:   88 82 00 00 00 00       mov    %al,0x0(%edx)
   }
-    29:   c9                      leave  
+    29:   c9                      leave
     2a:   c3                      ret
   ```
 
@@ -10057,9 +10055,9 @@ $ gcc -c -fPIC stack/stack.c stack/push.c stack/pop.c stack/is_empty.c
   80483df:       0f b6 45 fc             movzbl -0x4(%ebp),%eax
   80483e3:       88 82 40 a0 04 08       mov    %al,0x804a040(%edx)
   }
-  80483e9:       c9                      leave  
-  80483ea:       c3                      ret    
-  80483eb:       90                      nop    
+  80483e9:       c9                      leave
+  80483ea:       c3                      ret
+  80483eb:       90                      nop
   ...
   ```
 
@@ -10107,7 +10105,7 @@ $ gcc -c -fPIC stack/stack.c stack/push.c stack/pop.c stack/is_empty.c
     40:   83 c4 04                add    $0x4,%esp
     43:   5b                      pop    %ebx
     44:   5d                      pop    %ebp
-    45:   c3                      ret    
+    45:   c3                      ret
 
   Disassembly of section .text.__i686.get_pc_thunk.bx:
 
@@ -10168,9 +10166,9 @@ $ gcc -c -fPIC stack/stack.c stack/push.c stack/pop.c stack/is_empty.c
   4bc:   83 c4 04                add    $0x4,%esp
   4bf:   5b                      pop    %ebx
   4c0:   5d                      pop    %ebp
-  4c1:   c3                      ret    
-  4c2:   90                      nop    
-  4c3:   90                      nop    
+  4c1:   c3                      ret
+  4c2:   90                      nop
+  4c3:   90                      nop
   ...
   ```
 
@@ -10210,7 +10208,7 @@ $ gcc -c -fPIC stack/stack.c stack/push.c stack/pop.c stack/is_empty.c
 
 ```bash
 $ gcc main.c -g -L. -lstack -Istack -o main
-$ ./main 
+$ ./main
 ./main: error while loading shared libraries: libstack.so: cannot open shared object file: No such file or directory
 ```
 
@@ -10383,7 +10381,7 @@ $ gdb main
 ...
 (gdb) start
 Breakpoint 1 at 0x80484b5: file main.c, line 7.
-Starting program: /home/akaedu/somedir/main 
+Starting program: /home/akaedu/somedir/main
 main () at main.c:7
 7       push('a');
 (gdb) si
@@ -10469,7 +10467,7 @@ $ ls -l /usr/lib/libc.so
 - soname 是一个符号链接的名字， **只包含共享库的主版本号** ，
   - 主版本号一致即可保证库函数的接口一致，
   - 因此应用程序的 `.dynamic` 段只记录共享库的 soname，只要 soname 一致，这个共享库就可以用。
-  - 例如上面的 `libcap.so.1` 和 `libcap.so.2` 
+  - 例如上面的 `libcap.so.1` 和 `libcap.so.2`
     - 是两个主版本号不同的 `libcap`，有些应用程序依赖于 `libcap.so.1`，有些应用程序依赖于 `libcap.so.2`，
     - 但对于依赖 `libcap.so.1` 的应用程序来说，真正的库文件不管是 `libcap.so.1.10` 还是 `libcap.so.1.11` 都可以用，
     - 所以使用共享库可以很方便地升级库文件而不需要重新编译应用程序，这是静态库所没有的优点。
@@ -10545,10 +10543,10 @@ $ ps
   PID TTY          TIME CMD
 29977 pts/0    00:00:00 bash
 30032 pts/0    00:00:00 ps
-$ cat /proc/29977/maps 
+$ cat /proc/29977/maps
 08048000-080f4000 r-xp 00000000 08:15 688142     /bin/bash
 080f4000-080f9000 rw-p 000ac000 08:15 688142     /bin/bash
-080f9000-080fe000 rw-p 080f9000 00:00 0 
+080f9000-080fe000 rw-p 080f9000 00:00 0
 09283000-09497000 rw-p 09283000 00:00 0          [heap]
 b7ca8000-b7cb2000 r-xp 00000000 08:15 581665     /lib/tls/i686/cmov/libnss_files-2.8.90.so
 b7cb2000-b7cb3000 r--p 00009000 08:15 581665     /lib/tls/i686/cmov/libnss_files-2.8.90.so
@@ -10621,7 +10619,7 @@ $ ps
 $ cat /proc/30697/maps
 08048000-080f4000 r-xp 00000000 08:15 688142     /bin/bash
 080f4000-080f9000 rw-p 000ac000 08:15 688142     /bin/bash
-080f9000-080fe000 rw-p 080f9000 00:00 0 
+080f9000-080fe000 rw-p 080f9000 00:00 0
 082d7000-084f9000 rw-p 082d7000 00:00 0          [heap]
 b7cf1000-b7cfb000 r-xp 00000000 08:15 581665     /lib/tls/i686/cmov/libnss_files-2.8.90.so
 b7cfb000-b7cfc000 r--p 00009000 08:15 581665     /lib/tls/i686/cmov/libnss_files-2.8.90.so
@@ -10737,11 +10735,11 @@ bff0e000-bff23000 rw-p bffeb000 00:00 0          [stack]
 
     我们早在[第 8 章「数组」第 2 节「数组应用实例：统计随机数」]()就认识了预处理指示这个概念，现在给出它的严格定义。
 
-    **一条预处理指示由一个逻辑代码行组成，以 `#` 开头，后面跟若干个预处理 Token，在预处理指示中允许使用的空白字符只有空格和 Tab。** 
+    **一条预处理指示由一个逻辑代码行组成，以 `#` 开头，后面跟若干个预处理 Token，在预处理指示中允许使用的空白字符只有空格和 Tab。**
 
 6. 找出 **字符常量或字符串中的转义序列，用相应的字节来替换它** ，比如把 `\n` 替换成字节 `0x0a`。
 7. 把 **相邻的字符串连接起来** 。继续上面的例子，如果代码中有：
-    
+
     ```c
     printf(
         STR);
@@ -11033,7 +11031,7 @@ int max(int n)
  8048382:       83 c4 04                add    $0x4,%esp
  8048385:       5b                      pop    %ebx
  8048386:       5d                      pop    %ebp
- 8048387:       c3                      ret    
+ 8048387:       c3                      ret
 ...
 ```
 
@@ -11266,7 +11264,7 @@ t(t(g)(0) + t)(1);
   - 不仅宏体是纯文本替换，宏参数也是纯文本替换。有以下一段简单的宏，实现乘法：
 
     ```c
-    #define MULTIPLY(x, y) x * y 
+    #define MULTIPLY(x, y) x * y
     ```
 
   - `MULTIPLY(1, 2)`没问题，会正常展开成`1 * 2`。
@@ -11329,7 +11327,7 @@ t(t(g)(0) + t)(1);
   - 有如下宏定义：
 
     ```c
-    #define min(X, Y)  ((X) < (Y) ? (X) : (Y)) 
+    #define min(X, Y)  ((X) < (Y) ? (X) : (Y))
     ```
   - 当有如下调用时`next = min (x + y, foo (z));`，
     - 宏体被展开成`next = ((x + y) < (foo (z)) ? (x + y) : (foo (z)));`，
@@ -11353,10 +11351,10 @@ t(t(g)(0) + t)(1);
   - 有如下宏定义：
 
     ```c
-    #define AFTERX(x) X_ ## x 
+    #define AFTERX(x) X_ ## x
     #define XAFTERX(x) AFTERX(x)
     #define TABLESIZE 1024
-    #define BUFSIZE TABLESIZE  
+    #define BUFSIZE TABLESIZE
     ```
   - `AFTERX(BUFSIZE)`会被展开成`X_BUFSIZE`。
     - 因为宏体中含有`##`，宏参数直接代入宏体。
@@ -11461,9 +11459,9 @@ t(t(g)(0) + t)(1);
     #endif
     ...
     ```
-    
+
     再比如`drivers/isdn/i4l/isdn_common.c`：
-    
+
     ```
     ...
     #include <linux/config.h>
@@ -11490,7 +11488,7 @@ t(t(g)(0) + t)(1);
     #endif                          /* CONFIG_NETDEVICES */
     ...
     ```
-    
+
     这样，在配置菜单中所做的配置通过条件预处理最终决定了哪些代码被编译到内核中。
 
     **`#ifdef` 或 `#if` 可以嵌套使用，但预处理指示通常都顶头写不缩进，为了区分嵌套的层次，可以像上面的代码中最后一行那样，在 `#endif` 处用注释写清楚它结束的是哪个 `#if` 或 `#ifdef`** 。
@@ -11641,7 +11639,7 @@ int main(void)
     return 0;
 }
 $ gcc main.c
-$ ./a.out 
+$ ./a.out
 myfunc
 main
 ```
@@ -11684,8 +11682,8 @@ int main(void)
     struct point p = { 0, 0 };
 
     maze[p.row][p.col] = 2;
-    push(p);    
-    
+    push(p);
+
     while (!is_empty()) {
         p = pop();
         if (p.row == MAX_ROW - 1  /* goal */
@@ -11871,7 +11869,7 @@ gcc main.o stack.o maze.o -o main
 `make` 命令会自动读取当前目录下的 `Makefile` 文件<sup>[33]</sup>，完成相应的编译步骤。Makefile 由一组规则（Rule）组成，每条规则的格式是：
 
 ```bash
-target ... : prerequisites ... 
+target ... : prerequisites ...
     command1
     command2
     ...
@@ -11888,10 +11886,10 @@ main: main.o stack.o maze.o
 
 `main` 是这条规则的 **目标（Target）** ，`main.o`、`stack.o` 和 `maze.o` 是这条规则的 **条件（Prerequisite）** 。
 
-目标和条件之间的关系是： 
+目标和条件之间的关系是：
 
 - **欲更新目标，必须首先更新它的所有条件；所有条件中只要有一个条件被更新了，目标也必须随之被更新** 。
-- 所谓「更新」就是执行一遍规则中的命令列表， 
+- 所谓「更新」就是执行一遍规则中的命令列表，
   - **命令列表中的每条命令必须以一个 `Tab` 开头，注意不能是空格** ，Makefile 的格式不像 C 语言的缩进那么随意，
   - **对于 Makefile 中的每个以 `Tab` 开头的命令，`make` 会创建一个 Shell 进程去执行它** 。
 
@@ -11964,7 +11962,7 @@ clean:
 - 把这条规则添加到我们的 Makefile 末尾，然后执行这条规则：
 
   ```bash
-  $ make clean 
+  $ make clean
   cleanning project
   rm main *.o
   clean completed
@@ -11983,7 +11981,7 @@ clean:
   - 例如上面已经执行过一遍 `make clean`，再执行一遍就没有文件可删了，这时 `rm` 会报错，但 `make` 忽略这一错误，继续执行后面的 `echo` 命令：
 
     ```bash
-    $ make clean 
+    $ make clean
     cleanning project
     rm main *.o
     rm: cannot remove `main': No such file or directory
@@ -12223,10 +12221,10 @@ target2: prerequisite1 prerequisite2
 #### 2.9.3.1. =
 
 ```makefile
-foo = $(bar) 
-bar = Huh? 
+foo = $(bar)
+bar = Huh?
 
-all: 
+all:
     @echo $(foo)
 ```
 
@@ -12272,7 +12270,7 @@ all:
 x := foo
 y := $(x) bar
 
-all: 
+all:
     @echo "-$(y)-"
 ```
 
@@ -12290,7 +12288,7 @@ x := foo
 如果要定义一个变量的值是一个空格，可以这样：
 
 ```makefile
-nullstring := 
+nullstring :=
 space := $(nullstring) # end of the line
 ```
 
@@ -12354,7 +12352,7 @@ main: main.o stack.o maze.o
 `$?` 变量也很有用，有时候希望只对更新过的条件进行操作，例如有一个库文件 `libsome.a` 依赖于几个目标文件：
 
 ```makefile
-libsome.a: foo.o bar.o lose.o win.o 
+libsome.a: foo.o bar.o lose.o win.o
     ar r libsome.a $?
     ranlib libsome.a
 ```
@@ -12520,16 +12518,16 @@ stack.o stack.d: stack.c stack.h main.h
 如果我在 `main.c` 中加了一行 `#include "foo.h"`，那么：
 
 1. `main.c` 的修改日期变了，根据规则 `main.o main.d: main.c main.h stack.h maze.h` 要重新生成 `main.o` 和 `main.d`。生成 `main.o` 的规则有两条：
-    
+
     ```
     main.o: main.c main.h stack.h maze.h
     %.o: %.c
     #  commands to execute (built-in):
             $(COMPILE.c) $(OUTPUT_OPTION) $<
     ```
-    
+
     第一条是把规则 `main.o main.d: main.c main.h stack.h maze.h` 拆开写得到的，第二条是隐含规则，因此执行 `cc` 命令重新编译 `main.o`。生成 `main.d` 的规则也有两条：
-    
+
     ```
     main.d: main.c main.h stack.h maze.h
     %.d: %.c
@@ -12538,7 +12536,7 @@ stack.o stack.d: stack.c stack.h main.h
         sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
         rm -f $@.$$$$
     ```
-    
+
     因此`main.d`的内容被更新为`main.o main.d: main.c main.h stack.h maze.h foo.h`。
 2. 由于 `main.d` 被 Makefile 包含，`main.d` 被更新又导致 `make` 重新读取整个 Makefile，把新的 `main.d` 包含进来，于是新的依赖关系生效了。
 
@@ -12603,7 +12601,7 @@ char *pc = &c;
   - 如果定义 `int p = i;` 就错了，因为 `i` 不是常量表达式，
   - 然而用 `i` 的地址来初始化一个指针却没有错， **因为 `i` 的地址是在编译链接时能确定的** ，而不需要到运行时才知道，`&i` 是常量表达式。
 - 后面两行代码定义了一个字符型变量 `c` 和一个指向 `c` 的字符型指针 `pc`，
-  - 注意 `pi` 和 `pc` 虽然是不同类型的指针变量，但它们的 **内存单元都占 4 个字节，因为要保存 32 位的虚拟地址** 
+  - 注意 `pi` 和 `pc` 虽然是不同类型的指针变量，但它们的 **内存单元都占 4 个字节，因为要保存 32 位的虚拟地址**
   - 同理， **在 64 位平台上指针变量都占 8 个字节** 。
 
 #### 2.10.1.2. 指针的定义，赋值
@@ -13062,7 +13060,7 @@ argv[1]=a
 argv[2]=b
 argv[3]=c
 $ ln -s a.out printargv
-$ ./printargv d e 
+$ ./printargv d e
 argv[0]=./printargv
 argv[1]=d
 argv[2]=e
@@ -13169,7 +13167,7 @@ char a[4][3][2] = {{{'a', 'b'}, {'c', 'd'}, {'e', 'f'}},
 
 // 与指针数组不同，尽管是多维数组，但元素都不是指针，指向一个数组，所以这里都只有一个*
 char (*pa)[2] = &a[1][0];
-char (*ppa)[3][2] = &a[1]; 
+char (*ppa)[3][2] = &a[1];
 
 // 要想通过`pa`或`ppa`访问数组`a`中的`'r'`元素，分别应该怎么写？
 
@@ -13538,7 +13536,7 @@ int (*(*fp)(void *))[10];
     typedef T2 T1(void *);
     T1 *fp;
     ```
-    
+
     显然，`T3` 是一个 `int` 数组，由 10 个元素组成。分解完毕。
 
 ## 2.11. 函数接口
@@ -13658,24 +13656,24 @@ void foo(char *str)
     ```c
     This Content hoho       is ok
             ok?
-    
+
             file system
     uttered words   ok ok      ?
     end.
     ```
-    
+
     压缩了空白之后就是：
-    
+
     ```
     This Content hoho is ok ok? file system uttered words ok ok ? end.
     ```
-    
+
     实现该功能的函数接口要求符合下述规范：
-    
+
     ```
     char *shrink_space(char *dest, const char *src, size_t n);
     ```
-    
+
     各项参数和返回值的含义和 `strncpy` 类似。完成之后，为自己实现的函数写一个 Man Page。
 
 #### 2.11.1.2. malloc 与 free
@@ -13797,7 +13795,7 @@ int main(void)
   - 例如先调用 `malloc` 返回一个指针 `p`，然后连着调用两次 `free(p);`，则后一次调用会产生运行时错误。
 
 ##### malloc和free简单实现
-    
+
 *K&R* 的 8.7 节给出了 `malloc` 和 `free` 的简单实现，基于环形链表。目前读者还没有学习链表，看那段代码会有点困难，我再做一些简化，图示如下，目的是让读者理解 `malloc` 和 `free` 的工作原理。`libc` 的实现比这要复杂得多，但基本工作原理也是如此。读者只要理解了基本工作原理，就很容易分析在使用 `malloc` 和 `free` 时遇到的各种 Bug 了。
 
 <p id="c24-5">图 24.5. 简单的malloc和free实现</p>
@@ -14325,9 +14323,9 @@ int main(void)
 ```c
      myprintf("c\ts\n", '1', "hello");
  80484c5:   c7 44 24 08 b0 85 04    movl   $0x80485b0,0x8(%esp)
- 80484cc:   08 
+ 80484cc:   08
  80484cd:   c7 44 24 04 31 00 00    movl   $0x31,0x4(%esp)
- 80484d4:   00 
+ 80484d4:   00
  80484d5:   c7 04 24 b6 85 04 08    movl   $0x80485b6,(%esp)
  80484dc:   e8 43 ff ff ff          call   8048424 <myprintf>
 ```
@@ -14537,22 +14535,22 @@ void *memcpy(void *dest, const void *src, size_t n)
 在 32 位的 x86 平台上，每次拷贝 1 个字节需要一条指令，每次拷贝4个字节也只需要一条指令，`memcpy` 函数的实现尽可能 4 个字节 4 个字节地拷贝，因而得到上述结果。
 
 > **C99 的 restrict 关键字**
-> 
+>
 > 我们来看一个跟 `memcpy` / `memmove` 类似的问题。下面的函数将两个数组中对应的元素相加，结果保存在第三个数组中。
-> 
+>
 > ```c
 > void vector_add(const double *x, const double *y, double *result)
-> {  
->   int i;  
->   for (i = 0; i < 64; ++i)  
->       result[i] = x[i] + y[i];  
+> {
+>   int i;
+>   for (i = 0; i < 64; ++i)
+>       result[i] = x[i] + y[i];
 > }
 > ```
-> 
+>
 > 如果这个函数要在多处理器的计算机上执行，编译器可以做这样的优化：把这一个循环拆成两个循环，一个处理器计算 `i` 值从 0 到 31 的循环，另一个处理器计算 `i` 值从 32 到 63 的循环，这样两个处理器可以同时工作，使计算时间缩短一半。但是这样的编译优化能保证得出正确结果吗？假如 `result` 和 `x` 所指的内存区间是重叠的，`result[0]` 其实是 `x[1]`，`result[i]` 其实是 `x[i+1]`，这两个处理器就不能各干各的事情了，因为第二个处理器的工作依赖于第一个处理器的最终计算结果，这种情况下编译优化的结果是错的。这样看来编译器是不敢随便做优化了，那么多处理器提供的并行性就无法利用，岂不可惜？为此，C99 引入 `restrict` 关键字，如果程序员把上面的函数声明为 `void vector_add(const double *restrict x, const double *restrict y, double *restrict result)`，就是告诉编译器可以放心地对这个函数做优化，程序员自己会保证这些指针所指的内存区间互不重叠。
-> 
+>
 > 由于 `restrict` 是 C99 引入的新关键字，目前 Linux 的 Man Page 还没有更新，所以都没有 `restrict` 关键字，本书的函数原型都取自 Man Page，所以也都没有 `restrict` 关键字。但在 C99 标准中库函数的原型都在必要的地方加了 `restrict` 关键字，在 C99 中 `memcpy` 的原型是 `void *memcpy(void * restrict s1, const void * restrict s2, size_t n);`，就是告诉调用者，这个函数的实现可能会做些优化，编译器也可能会做些优化，传进来的指针不允许指向重叠的内存区间，否则结果可能是错的，而 `memmove` 的原型是 `void *memmove(void *s1, const void *s2, size_t n);`，没有 `restrict` 关键字，说明传给这个函数的指针允许指向重叠的内存区间。在 `restrict` 关键字出现之前都是用自然语言描述哪些函数的参数不允许指向重叠的内存区间，例如在 C89 标准的库函数一章开头提到，本章描述的所有函数，除非特别说明，都不应该接收两个指针参数指向重叠的内存区间，例如调用 `sprintf` 时传进来的格式化字符串和结果字符串的首地址相同，诸如此类的调用都是非法的。本书也遵循这一惯例，除非像 `memmove` 这样特别说明之外，都表示「不允许」。
-> 
+>
 > 关于 `restrict` 关键字更详细的解释可以参考 *Began FORTRAN*。
 
 字符串的拷贝也可以用 `strdup(3)` 函数，这个函数不属于 C 标准库，是 POSIX 标准中定义的，POSIX 标准定义了 UNIX 系统的各种接口，包含 C 标准库的所有函数和很多其它的系统函数，在[第 28 章「文件与 I/O」第 2 节「C 标准 I/O 库函数与 Unbuffered I/O 函数」](3-Linux-系统编程/ch28-文件与-IO#_2-C-标准-io-库函数与-unbuffered-io-函数)将详细介绍 POSIX 标准。
@@ -14678,10 +14676,10 @@ int main(void)
     printf("%s\n", token);
     while ( (token = strtok(NULL, ":")) != NULL)
         printf("%s\n", token);
-    
+
     return 0;
 }
-$ ./a.out 
+$ ./a.out
 root
 x
 0
@@ -14697,26 +14695,26 @@ root
 ```bash
 (gdb) start
 Breakpoint 1 at 0x8048415: file main.c, line 5.
-Starting program: /home/akaedu/a.out 
+Starting program: /home/akaedu/a.out
 main () at main.c:5
 5   {
 (gdb) n
 6       char str[] = "root:x::0:root:/root:/bin/bash:";
-(gdb) 
+(gdb)
 9       token = strtok(str, ":");
 (gdb) display str
 1: str = "root:x::0:root:/root:/bin/bash:"
 (gdb) n
 10      printf("%s\n", token);
 1: str = "root\000x::0:root:/root:/bin/bash:"
-(gdb) 
+(gdb)
 root
 11      while ( (token = strtok(NULL, ":")) != NULL)
 1: str = "root\000x::0:root:/root:/bin/bash:"
-(gdb) 
+(gdb)
 12          printf("%s\n", token);
 1: str = "root\000x\000:0:root:/root:/bin/bash:"
-(gdb) 
+(gdb)
 x
 11      while ( (token = strtok(NULL, ":")) != NULL)
 1: str = "root\000x\000:0:root:/root:/bin/bash:"
@@ -14787,10 +14785,10 @@ Man Page 的 **BUGS** 部分指出了用 `strtok` 和 `strtok_r` 函数需要注
 
     ```
     http://www.google.cn/search?complete=1&hl=zh-CN&ie=GB2312&q=linux&meta=
-    
+
     http://www.baidu.com/s?wd=linux&cl=3
     ```
-    
+
     比如上面第一个例子，`http://www.google.cn/search` 是路径部分，`?` 号后面的 `complete=1&hl=zh-CN&ie=GB2312&q=linux&meta=` 是查询字符串，由五个「key=value」形式的键值对（Key-Value Pair）组成，以 `&` 隔开，有些键对应的值可能是空字符串，比如这个例子中的键 `meta`。
 
     现在要求实现一个函数，传入一个带查询字符串的 URL，首先检查输入格式的合法性，然后对 URL 进行切分，将路径部分和各键值对分别传出，请仔细设计函数接口以便传出这些字符串。如果函数中有动态分配内存的操作，还要另外实现一个释放内存的函数。完成之后，为自己设计的函数写一个 Man Page。
@@ -14806,14 +14804,14 @@ Man Page 的 **BUGS** 部分指出了用 `strtok` 和 `strtok_r` 函数需要注
 在[第 18 章「x86 汇编程序基础」第 5.1 节「目标文件」](2-C-语言本质/ch18-x86-汇编程序基础#_51-目标文件)中我们用 `hexdump` 命令查看过一个二进制文件。我们再做一个小实验，用 `vi` 编辑一个文件 `textfile`，在其中输入 `5678` 然后保存退出，用 `ls -l` 命令可以看到它的长度是 5：
 
 ```bash
-$ ls -l textfile 
+$ ls -l textfile
 -rw-r--r-- 1 akaedu akaedu 5 2009-03-20 10:58 textfile
 ```
 
 `5678` 四个字符各占一个字节，`vi` 会自动在文件末尾加一个换行符，所以文件长度是 5。用 `od` 命令查看该文件的内容：
 
 ```bash
-$ od -tx1 -tc -Ax textfile 
+$ od -tx1 -tc -Ax textfile
 000000 35 36 37 38 0a
          5   6   7   8  \n
 000005
@@ -14825,7 +14823,7 @@ $ od -tx1 -tc -Ax textfile
 
 #### 2.12.2.2. fopen/fclose
 
-在操作文件之前要用 `fopen` 打开文件，操作完毕要用 `fclose` 关闭文件。打开文件就是在操作系统中分配一些资源用于保存该文件的状态信息，并得到该文件的标识，以后用户程序就可以用这个标识对文件做各种操作，关闭文件则释放文件在操作系统中占用的资源，使文件的标识失效，用户程序就无法再操作这个文件了。 
+在操作文件之前要用 `fopen` 打开文件，操作完毕要用 `fclose` 关闭文件。打开文件就是在操作系统中分配一些资源用于保存该文件的状态信息，并得到该文件的标识，以后用户程序就可以用这个标识对文件做各种操作，关闭文件则释放文件在操作系统中占用的资源，使文件的标识失效，用户程序就无法再操作这个文件了。
 
 ```c
 #include <stdio.h>
@@ -14845,7 +14843,7 @@ $ pwd
 
 通常 Linux 发行版都把 Shell 配置成在提示符前面显示当前工作目录，例如 `~$` 表示当前工作目录是主目录，`/etc$` 表示当前工作目录是 `/etc`。用 `cd` 命令可以改变 Shell 进程的当前工作目录。在 Shell 下敲命令启动新的进程，则该进程的当前工作目录继承自 Shell 进程的当前工作目录，该进程也可以调用 `chdir(2)` 函数改变自己的当前工作目录。
 
-`mode` 参数是一个字符串，由 `rwatb+` 六个字符组合而成，`r` 表示读，`w` 表示写，`a` 表示追加（Append），在文件末尾追加数据使文件的尺寸增大。`t` 表示文本文件，`b` 表示二进制文件，有些操作系统的文本文件和二进制文件格式不同，而在 UNIX 系统中，无论文本文件还是二进制文件都是由一串字节组成，`t` 和 `b` 没有区分，用哪个都一样，也可以省略不写。如果省略 `t` 和 `b`，`rwa+` 四个字符有以下  ： 
+`mode` 参数是一个字符串，由 `rwatb+` 六个字符组合而成，`r` 表示读，`w` 表示写，`a` 表示追加（Append），在文件末尾追加数据使文件的尺寸增大。`t` 表示文本文件，`b` 表示二进制文件，有些操作系统的文本文件和二进制文件格式不同，而在 UNIX 系统中，无论文本文件还是二进制文件都是由一串字节组成，`t` 和 `b` 没有区分，用哪个都一样，也可以省略不写。如果省略 `t` 和 `b`，`rwa+` 四个字符有以下  ：
 
 - `"r"`：只读，文件必须已存在
 - "w"：只写，如果文件不存在则创建，如果文件已存在则把文件长度截断（Truncate）为 0 字节再重新写，也就是替换掉原来的文件内容
@@ -14983,7 +14981,7 @@ fputs(strerror(n), stderr);
 2. 做几个小练习，看看 `fopen` 出错有哪些常见的原因。
 
     打开一个没有访问权限的文件。
-    
+
     ```c
     fp = fopen("/etc/shadow", "r");
     if (fp == NULL) {
@@ -14993,7 +14991,7 @@ fputs(strerror(n), stderr);
     ```
 
     `fopen` 也可以打开一个目录，传给 `fopen` 的第一个参数目录名末尾可以加 `/` 也可以不加 `/`，但只允许以只读方式打开。试试如果以可写的方式打开一个存在的目录会怎么样呢？
-    
+
     ```c
     fp = fopen("/home/akaedu/", "r+");
     if (fp == NULL) {
@@ -15035,7 +15033,7 @@ int putchar(int c);
 返回值：成功返回写入的字节，出错返回 EOF
 ```
 
-对于 `fputc` 函数的使用也要说明几点： 
+对于 `fputc` 函数的使用也要说明几点：
 
 - 要用 `fputc` 函数写一个文件，该文件的打开方式必须是可写的（包括追加）。
 - 每调用一次 `fputc`，读写位置向后移动一个字节，因此可以连续多次调用 `fputc` 函数依次写入多个字节。但如果文件是以追加方式打开的，每次调用 `fputc` 时总是将读写位置移到文件末尾然后把要写入的字节追加到后面。
@@ -15098,11 +15096,11 @@ hey
 ##### 习题
 
 1. 编写一个简单的文件复制程序。
-    
+
     ```bash
     $ ./mycp dir1/fileA dir2/fileB
     ```
-    
+
     运行这个程序可以把 `dir1/fileA` 文件拷贝到 `dir2/fileB` 文件。注意各种出错处理。
 
 2. 虽然我说 `getchar` 要读到换行符才返回，但上面的程序并没有提供证据支持我的说法，如果看成每敲一个键 `getchar` 就返回一次，也能解释程序的运行结果。请写一个小程序证明 `getchar` 确实是读到换行符才返回的。
@@ -15159,8 +15157,8 @@ int main(void)
 运行这个程序，然后查看文件 `textfile` 的内容：
 
 ```bash
-$ ./a.out 
-$ od -tx1 -tc -Ax textfile 
+$ ./a.out
+$ od -tx1 -tc -Ax textfile
 000000 35 36 37 38 0a 00 00 00 00 00 4b
          5   6   7   8  \n  \0  \0  \0  \0  \0   K
 00000b
@@ -15271,13 +15269,13 @@ int main(void)
 $ gcc writerec.c -o writerec
 $ gcc readrec.c -o readrec
 $ ./writerec
-$ od -tx1 -tc -Ax recfile 
+$ od -tx1 -tc -Ax recfile
 000000 4b 65 6e 00 00 00 00 00 00 00 00 00 18 00 00 00
          K   e   n  \0  \0  \0  \0  \0  \0  \0  \0  \0 030  \0  \0  \0
 000010 4b 6e 75 74 68 00 00 00 00 00 00 00 1c 00 00 00
          K   n   u   t   h  \0  \0  \0  \0  \0  \0  \0 034  \0  \0  \0
 000020
-$ ./readrec 
+$ ./readrec
 Name1: Ken  Age1: 24
 Name2: Knuth    Age2: 28
 ```
@@ -15594,14 +15592,14 @@ int main()
 #### 2.12.2.11. 本节综合练习
 
 1. 编程读写一个文件 `test.txt`，每隔 1 秒向文件中写入一行记录，类似于这样：
-    
+
     ```
     1 2009-7-30 15:16:42
     2 2009-7-30 15:16:43
     ```
-    
+
     该程序应该无限循环，直到按 Ctrl-C 终止。下次再启动程序时在 `test.txt` 文件末尾追加记录，并且序号能够接续上次的序号，比如：
-    
+
     ```bash
     1 2009-7-30 15:16:42
     2 2009-7-30 15:16:43
@@ -15609,9 +15607,9 @@ int main()
     4 2009-7-30 15:19:03
     5 2009-7-30 15:19:04
     ```
-    
+
     这类似于很多系统服务维护的日志文件，例如在我的机器上系统服务进程 `acpid` 维护一个日志文件 `/var/log/acpid`，就像这样：
-    
+
     ```bash
     $ cat /var/log/acpid
     [Sun Oct 26 08:44:46 2008] logfile reopened
@@ -15619,31 +15617,31 @@ int main()
     [Sun Oct 26 18:54:39 2008] starting up
     ...
     ```
-    
+
     每次系统启动时 `acpid` 进程就以追加方式打开这个文件，当有事件发生时就追加一条记录，包括事件发生的时刻以及事件描述信息。
 
     获取当前的系统时间需要调用 `time(2)` 函数，返回的结果是一个 `time_t` 类型，其实就是一个大整数，其值表示从 UTC（Coordinated Universal Time）时间 1970 年 1 月 1 日 00:00:00（称为 UNIX 系统的 Epoch 时间）到当前时刻的秒数。然后调用 `localtime(3)` 将 `time_t` 所表示的 UTC 时间转换为本地时间（我们是 +8 区，比 UTC 多 8 个小时）并转成 `struct tm` 类型，该类型的各数据成员分别表示年月日时分秒，具体用法请查阅 Man Page。调用 `sleep(3)` 函数可以指定程序睡眠多少秒。
 
 2. INI 文件是一种很常见的配置文件，很多 Windows 程序都采用这种格式的配置文件，在 Linux 系统中 Qt 程序通常也采用这种格式的配置文件。比如：
-    
+
     ```ini
     ;Configuration of http
     [http]
     domain=www.mysite.com
     port=8080
     cgihome=/cgi-bin
-    
+
     ;Configuration of db
     [database]
     server = mysql
     user = myname
     password = toopendatabase
     ```
-    
+
     一个配置文件由若干个 Section 组成，由 [] 括号括起来的是 Section 名。每个 Section 下面有若干个 `key = value` 形式的键值对（Key-value Pair），等号两边可以有零个或多个空白字符（空格或 Tab），每个键值对占一行。以 ; 号开头的行是注释。每个 Section 结束时有一个或多个空行，空行是仅包含零个或多个空白字符（空格或 Tab）的行。INI 文件的最后一行后面可能有换行符也可能没有。
-    
+
     现在 XML 兴起了，INI 文件显得有点土。现在要求编程把 INI 文件转换成 XML 文件。上面的例子经转换后应该变成这样：
-    
+
     ```xml
     <!-- Configuration of http -->
     <http>
@@ -15651,7 +15649,7 @@ int main()
             <port>8080</port>
             <cgihome>/cgi-bin</cgihome>
     </http>
-    
+
     <!-- Configuration of db -->
     <database>
             <server>mysql</server>
@@ -15661,19 +15659,19 @@ int main()
     ```
 
 3. 实现类似 `gcc` 的 `-M` 选项的功能，给定一个 `.c` 文件，列出它直接和间接包含的所有头文件，例如有一个 `main.c` 文件：
-    
+
     ```c
     #include <errno.h>
     #include "stack.h"
-    
+
     int main()
     {
         return 0;
     }
     ```
-    
+
     你的程序读取这个文件，打印出其中包含的所有头文件的绝对路径：
-    
+
     ```bash
     $ ./a.out main.c
     /usr/include/errno.h
@@ -15683,7 +15681,7 @@ int main()
     ...
     /home/akaedu/stack.h: cannot find
     ```
-    
+
     如果有的头文件找不到，就像上面例子那样打印 `/home/akaedu/stack.h: cannot find`。首先复习一下[第 20 章「链接详解」第 2.2 节「头文件」](2-C-语言本质/ch20-链接详解#_22-头文件)讲过的头文件查找顺序，本题目不必考虑 `-I` 选项指定的目录，只在 `.c` 文件所在的目录以及系统目录 `/usr/include` 中查找。
 
 ### 2.12.3. 数值字符串转换函数
@@ -15911,7 +15909,7 @@ link pop(void)
 
 void print_item(link p)
 {
-    printf("%d\n", p->item); 
+    printf("%d\n", p->item);
 }
 
 int main(void)
@@ -16183,7 +16181,7 @@ link dequeue(void)
 
 void print_item(link p)
 {
-    printf("%d\n", p->item); 
+    printf("%d\n", p->item);
 }
 
 int main(void)
@@ -17064,10 +17062,10 @@ int main(void)
 执行结果如下：
 
 ```bash
-$ ./a.out 
+$ ./a.out
 hello（回车）
 hello
-$ ./a.out 
+$ ./a.out
 hello world（回车）
 hello worl$ d
 bash: d: command not found
@@ -17141,7 +17139,7 @@ tryagain:
             sleep(1);
             write(STDOUT_FILENO, MSG_TRY, strlen(MSG_TRY));
             goto tryagain;
-        }   
+        }
         perror("read /dev/tty");
         exit(1);
     }
@@ -17295,16 +17293,16 @@ int main(int argc, char *argv[])
     case O_WRONLY:
         printf("write only");
         break;
-    case O_RDWR:            
+    case O_RDWR:
         printf("read write");
         break;
     default:
         fputs("invalid access mode\n", stderr);
         exit(1);
     }
-    if (val & O_APPEND)  
+    if (val & O_APPEND)
         printf(", append");
-    if (val & O_NONBLOCK)           
+    if (val & O_NONBLOCK)
         printf(", nonblocking");
     putchar('\n');
     return 0;
@@ -17326,7 +17324,7 @@ $ cat temp.foo
 write only
 ```
 
-Shell 在执行 `a.out` 时将它的标准输出重定向到文件 `temp.foo`，并且是只写的。程序取出文件描述符 1 的 File Status Flag，发现是只写的，于是打印 `write only`，但是打印不到屏幕上而是打印到 `temp.foo` 这个文件中了。 
+Shell 在执行 `a.out` 时将它的标准输出重定向到文件 `temp.foo`，并且是只写的。程序取出文件描述符 1 的 File Status Flag，发现是只写的，于是打印 `write only`，但是打印不到屏幕上而是打印到 `temp.foo` 这个文件中了。
 
 ```bash
 $ ./a.out 2 2>>temp.foo
@@ -17434,7 +17432,7 @@ flag`参数有很多种取值，这里只讲两种，其它取值可查看`mmap(
 ```bash
 $ vi hello
 （编辑该文件的内容为「hello」）
-$ od -tx1 -tc hello 
+$ od -tx1 -tc hello
 0000000 68 65 6c 6c 6f 0a
           h   e   l   l   o  \n
 0000006
@@ -17493,7 +17491,7 @@ int main(void)
 用 `strace` 命令执行该程序，跟踪该程序执行过程中用到的所有系统调用的参数及返回值：
 
 ```bash
-$ strace ./a.out 
+$ strace ./a.out
 execve("./a.out", ["./a.out"], [/* 38 vars */]) = 0
 brk(0)                                  = 0x804a000
 access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
@@ -17523,7 +17521,7 @@ exit_group(0)                           = ?
 Process 8572 detached
 ```
 
-可以看到，执行这个程序要映射共享库 `/lib/tls/i686/cmov/libc.so.6` 到进程地址空间。也可以看到，`printf` 函数的底层确实是调用 `write`。 
+可以看到，执行这个程序要映射共享库 `/lib/tls/i686/cmov/libc.so.6` 到进程地址空间。也可以看到，`printf` 函数的底层确实是调用 `write`。
 
 ## 3.2. 文件系统
 
@@ -17649,7 +17647,7 @@ Maximum filesystem blocks=1048576
 8192 blocks per group, 8192 fragments per group
 128 inodes per group
 
-Writing inode tables: done                            
+Writing inode tables: done
 Writing superblocks and filesystem accounting information: done
 
 This filesystem will be automatically checked every 27 mounts or
@@ -17669,7 +17667,7 @@ Filesystem UUID:          8e1f3b7a-4d1f-41dc-8928-526e43b2fd74
 Filesystem magic number:  0xEF53
 Filesystem revision #:    1 (dynamic)
 Filesystem features:      resize_inode dir_index filetype sparse_super
-Filesystem flags:         signed directory hash 
+Filesystem flags:         signed directory hash
 Default mount options:    (none)
 Filesystem state:         clean
 Errors behavior:          Continue
@@ -18154,7 +18152,7 @@ int main(void)
 执行结果为
 
 ```bash
-$ ./a.out 
+$ ./a.out
 SSH_AGENT_PID=5717
 SHELL=/bin/bash
 DESKTOP_STARTUP_ID=
@@ -18167,7 +18165,7 @@ TERM=xterm
 按照惯例，环境变量字符串都是 `name=value` 这样的形式，大多数 `name` 由大写字母加下划线组成，一般把 `name` 的部分叫做环境变量，`value` 的部分则是环境变量的值。环境变量定义了进程的运行环境，一些比较重要的环境变量的含义如下：
 
 - PATH：可执行文件的搜索路径。`ls` 命令也是一个程序，执行它不需要提供完整的路径名 `/bin/ls`，然而通常我们执行当前目录下的程序 `a.out` 却需要提供完整的路径名 `./a.out`，这是因为 `PATH` 环境变量的值里面包含了 `ls` 命令所在的目录 `/bin`，却不包含 `a.out` 所在的目录。`PATH` 环境变量的值可以包含多个目录，用 `:` 号隔开。在 Shell 中用 `echo` 命令可以查看这个环境变量的值：
-    
+
     ```bash
     $ echo $PATH
     /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
@@ -18217,7 +18215,7 @@ int main(void)
     printf("PATH=%s\n", getenv("PATH"));
     return 0;
 }
-$ ./a.out 
+$ ./a.out
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
 PATH=hello
 $ echo $PATH
@@ -18270,7 +18268,7 @@ int main(void)
     }
     return 0;
 }
-$ ./a.out 
+$ ./a.out
 This is the child
 This is the parent
 This is the child
@@ -18319,14 +18317,14 @@ This GDB was configured as "i486-linux-gnu"...
 2   #include <unistd.h>
 3   #include <stdio.h>
 4   #include <stdlib.h>
-5   
+5
 6   int main(void)
 7   {
 8       pid_t pid;
 9       char *message;
 10      int n;
 11      pid = fork();
-(gdb) 
+(gdb)
 12      if(pid<0) {
 13          perror("fork failed");
 14          exit(1);
@@ -18341,7 +18339,7 @@ This GDB was configured as "i486-linux-gnu"...
 Breakpoint 1 at 0x8048481: file main.c, line 17.
 (gdb) set follow-fork-mode child
 (gdb) r
-Starting program: /home/akaedu/a.out 
+Starting program: /home/akaedu/a.out
 This is the parent
 [Switching to process 30725]
 
@@ -18419,7 +18417,7 @@ int main(void)
 执行此程序则得到：
 
 ```bash
-$ ./a.out 
+$ ./a.out
   PID  PPID  PGRP  SESS TPGID COMMAND
  6614  6608  6614  6614  7199 bash
  7199  6614  7199  6614  7199 ps
@@ -18429,7 +18427,7 @@ $ ./a.out
 
 调用 `exec` 后，原来打开的文件描述符仍然是打开的<sup>[37]</sup>。利用这一点可以实现 I/O 重定向。先看一个简单的例子，把标准输入转成大写然后打印到标准输出：
 
-> 
+>
 <sup>[37]</sup> 事实上，在每个文件描述符中有一个 close-on-exec 标志，如果该标志为 1，则调用 `exec` 时关闭这个文件描述符。该标志默认为 0，可以用 `fcntl` 函数将它置 1，本书不讨论该标志为 1 的情况。
 
 <p id="e30-4">例 30.4. upper</p>
@@ -18526,7 +18524,7 @@ int main(void)
         while(1);
     }
     /* child */
-    return 0;     
+    return 0;
 }
 ```
 
@@ -18772,7 +18770,7 @@ Shell 的作用是解释执行用户的命令，用户输入一条命令，Shell
 5. `bash`（Bourne Again Shell）：由 GNU 开发的 Shell，主要目标是与 POSIX 标准保持一致，同时兼顾对 `sh` 的兼容，`bash` 从 `csh` 和 `ksh` 借鉴了很多功能，是各种 Linux 发行版标准配置的 Shell，在 Linux 系统上 `/bin/sh` 往往是指向 `/bin/bash` 的符号链接<sup>[38]</sup>。虽然如此，`bash` 和 `sh` 还是有很多不同的，一方面，`bash` 扩展了一些命令和参数，另一方面，`bash` 并不完全和 `sh` 兼容，有些行为并不一致，所以 `bash` 需要模拟 `sh` 的行为：当我们通过 `sh` 这个程序名启动 `bash` 时，`bash` 可以假装自己是 `sh`，不认扩展的命令，并且行为与 `sh` 保持一致。
 
 > <sup>[38]</sup> 最新的发行版有一些变化，例如 Ubuntu 7.10 的 `/bin/sh` 是指向 `/bin/dash` 的符号链接，`dash` 也是一种类似 `bash` 的 Shell。
-> 
+>
 > ```bash
 > $ ls /bin/sh /bin/dash -l
 > -rwxr-xr-x 1 root root 79988 2008-03-12 19:22 /bin/dash
@@ -19163,7 +19161,7 @@ export PATH=$PATH:/home/akaedu
 ~$ ./a.out
 ```
 
-为什么登录 Shell 和非登录 Shell 的启动脚本要区分开呢？最初的设计是这样考虑的，如果从字符终端或者远程登录，那么登录 Shell 是该用户的所有其它进程的父进程，也是其它子 Shell 的父进程，所以环境变量在登录 Shell 的启动脚本里设置一次就可以自动带到其它非登录 Shell 里，而 Shell 的本地变量、函数、`alias` 等设置没有办法带到子 Shell 里，需要每次启动非登录 Shell 时设置一遍，所以就需要有非登录 Shell 的启动脚本，所以一般来说在 `~/.bash_profile` 里设置环境变量，在 `~/.bashrc` 里设置本地变量、函数、`alias` 等。如果你的 Linux 带有图形系统则不能这样设置，由于从图形界面的窗口管理器登录并不会产生登录 Shell，所以环境变量也应该在 `~/.bashrc` 里设置。 
+为什么登录 Shell 和非登录 Shell 的启动脚本要区分开呢？最初的设计是这样考虑的，如果从字符终端或者远程登录，那么登录 Shell 是该用户的所有其它进程的父进程，也是其它子 Shell 的父进程，所以环境变量在登录 Shell 的启动脚本里设置一次就可以自动带到其它非登录 Shell 里，而 Shell 的本地变量、函数、`alias` 等设置没有办法带到子 Shell 里，需要每次启动非登录 Shell 时设置一遍，所以就需要有非登录 Shell 的启动脚本，所以一般来说在 `~/.bash_profile` 里设置环境变量，在 `~/.bashrc` 里设置本地变量、函数、`alias` 等。如果你的 Linux 带有图形系统则不能这样设置，由于从图形界面的窗口管理器登录并不会产生登录 Shell，所以环境变量也应该在 `~/.bashrc` 里设置。
 
 #### 3.4.4.3. 非交互启动
 
@@ -19607,7 +19605,7 @@ efg
 查找 `a*` 这个模式的结果是三行都被找出来了
 
 ```bash
-$ egrep 'a*' testfile 
+$ egrep 'a*' testfile
 aabc
 aad
 efg
@@ -20098,7 +20096,7 @@ int main(void)
 程序运行时，每秒钟把各信号的未决状态打印一遍，由于我们阻塞了 `SIGINT` 信号，按 Ctrl-C 将会使 `SIGINT` 信号处于未决状态，按 Ctrl-\ 仍然可以终止程序，因为 `SIGQUIT` 信号没有阻塞。
 
 ```bash
-$ ./a.out 
+$ ./a.out
 0000000000000000000000000000000
 0000000000000000000000000000000（这时按 Ctrl-C）
 0100000000000000000000000000000
@@ -20266,7 +20264,7 @@ $ objdump -dS a.out
 ```bash
     a=5;
  8048352:       c7 05 50 95 04 08 05    movl   $0x5,0x8049550
- 8048359:       00 00 00 
+ 8048359:       00 00 00
  804835c:       c7 05 54 95 04 08 00    movl   $0x0,0x8049554
  8048363:       00 00 00
 ```
@@ -20419,7 +20417,7 @@ unsigned int mysleep(unsigned int nsecs)
 
 其实，子进程在终止时会给父进程发 `SIGCHLD` 信号，该信号的默认处理动作是忽略，父进程可以自定义 `SIGCHLD` 信号的处理函数，这样父进程只需专心处理自己的工作，不必关心子进程了，子进程终止时会通知父进程，父进程在信号处理函数中调用 `wait` 清理子进程即可。
 
-请编写一个程序完成以下功能：父进程 `fork` 出子进程，子进程调用 `exit(2)` 终止，父进程自定义 `SIGCHLD` 信号的处理函数，在其中调用 `wait` 获得子进程的退出状态并打印。 
+请编写一个程序完成以下功能：父进程 `fork` 出子进程，子进程调用 `exit(2)` 终止，父进程自定义 `SIGCHLD` 信号的处理函数，在其中调用 `wait` 获得子进程的退出状态并打印。
 
 事实上，由于 UNIX 的历史原因，要想不产生僵尸进程还有另外一种办法：父进程调用 `sigaction` 将 `SIGCHLD` 的处理动作置为 `SIG_IGN`，这样 `fork` 出来的子进程在终止时会自动清理掉，不会产生僵尸进程，也不会通知父进程。系统默认的忽略动作和用户用 `sigaction` 函数自定义的忽略通常是没有区别的，但这是一个特例。此方法对于 Linux 可用，但不保证在其它 UNIX 系统上都可用。请编写程序验证这样做不会产生僵尸进程。
 
@@ -20502,27 +20500,27 @@ fd 2: /dev/tty1
 现在我们来看终端登录的过程：
 
 1. 系统启动时，`init` 进程根据配置文件 `/etc/inittab` 确定需要打开哪些终端。例如配置文件中有这样一行：
-    
+
     ```bash
     1:2345:respawn:/sbin/getty 9600 tty1
     ```
-    
+
     和 `/etc/passwd` 类似，每个字段用 `:` 号隔开。开头的 `1` 是这一行配置的 id，通常要和 `tty` 的后缀一致，配置 `tty2` 的那一行 id 就应该是 `2`。第二个字段 `2345` 表示运行级别 2 ~ 5 都执行这个配置。最后一个字段 `/sbin/getty 9600 tty1` 是 `init` 进程要 `fork`/`exec` 的命令，打开终端 `/dev/tty1`，波特率是 9600（波特率只对串口和 Modem 终端有意义），然后提示用户输入帐号。中间的 `respawn` 字段表示 `init` 进程会监视 `getty` 进程的运行状态，一旦该进程终止，`init` 会再次 `fork`/`exec` 这个命令，所以我们从终端退出登录后会再次提示输入帐号。
-    
+
     有些新的 Linux 发行版已经不用 `/etc/inittab` 这个配置文件了，例如 Ubuntu 用 `/etc/event.d` 目录下的配置文件来配置 `init`。
 
 2. `getty` 根据命令行参数打开终端设备作为它的控制终端，把文件描述符 0、1、2 都指向控制终端，然后提示用户输入帐号。用户输入帐号之后，`getty` 的任务就完成了，它再执行 `login` 程序：
-    
+
     ```bash
     execle("/bin/login", "login", "-p", username, NULL, envp);
     ```
 
 3. `login` 程序提示用户输入密码（输入密码期间关闭终端的回显），然后验证帐号密码的正确性。如果密码不正确，`login` 进程终止，`init` 会重新 `fork`/`exec` 一个 `getty` 进程。如果密码正确，`login` 程序设置一些环境变量，设置当前工作目录为该用户的主目录，然后执行 Shell：
-    
+
     ```bash
     execl("/bin/bash", "-bash", NULL);
     ```
-    
+
     注意 `argv[0]` 参数的程序名前面加了一个 `-`，这样 `bash` 就知道自己是作为登录 Shell 启动的，执行登录 Shell 的启动脚本。从 `getty` 开始 `exec` 到 `login`，再 `exec` 到 `bash`，其实都是同一个进程，因此控制终端没变，文件描述符 0、1、2 也仍然指向控制终端。由于 `fork` 会复制 PCB 信息，所以由 Shell 启动的其它进程也都是如此。
 
 #### 3.7.1.3. 网络登录过程
@@ -20600,7 +20598,7 @@ $   PID  PPID  PGRP  SESS TPGID COMMAND
 ```bash
 $ cat &
 [1] 9386
-$ （再次回车） 
+$ （再次回车）
 
 [1]+  Stopped                 cat
 ```
@@ -20751,7 +20749,7 @@ void daemonize(void)
     if (chdir("/") < 0) {
         perror("chdir");
         exit(1);
-    } 
+    }
 
     /*
      * Attach file descriptors 0, 1, and 2 to /dev/null.
@@ -20772,7 +20770,7 @@ int main(void)
 为了确保调用 `setsid` 的进程不是进程组的 Leader，首先 `fork` 出一个子进程，父进程退出，然后子进程调用 `setsid` 创建新的 Session，成为守护进程。按照守护进程的惯例，通常将当前工作目录切换到根目录，将文件描述符 0、1、2 重定向到 `/dev/null`。Linux 也提供了一个库函数 `daemon(3)` 实现我们的 `daemonize` 函数的功能，它带两个参数指示要不要切换工作目录到根目录，以及要不要把文件描述符 0、1、2 重定向到 `/dev/null`。
 
 ```bash
-$ ./a.out 
+$ ./a.out
 $ ps
   PID TTY          TIME CMD
 11494 pts/0    00:00:00 bash
@@ -20982,7 +20980,7 @@ int main(void)
 运行结果是：
 
 ```bash
-$ ./a.out 
+$ ./a.out
 thread 1 returning
 thread 1 exit code 1
 thread 2 exiting
@@ -21321,9 +21319,9 @@ void *producer(void *p)
     }
 }
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
-    pthread_t pid, cid;  
+    pthread_t pid, cid;
 
     srand(time(NULL));
     pthread_create(&pid, NULL, producer, NULL);
@@ -21337,7 +21335,7 @@ int main(int argc, char *argv[])
 执行结果如下：
 
 ```bash
-$ ./a.out 
+$ ./a.out
 Produce 744
 Consume 744
 Produce 567
@@ -21388,7 +21386,7 @@ semaphore 变量的类型为 sem_t，sem_init() 初始化一个 semaphore 变量
 int queue[NUM];
 sem_t blank_number, product_number;
 
-void *producer(void *arg) 
+void *producer(void *arg)
 {
     int p = 0;
     while (1) {
@@ -21401,7 +21399,7 @@ void *producer(void *arg)
     }
 }
 
-void *consumer(void *arg) 
+void *consumer(void *arg)
 {
     int c = 0;
     while (1) {
@@ -21414,9 +21412,9 @@ void *consumer(void *arg)
     }
 }
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
-    pthread_t pid, cid;  
+    pthread_t pid, cid;
 
     sem_init(&blank_number, 0, NUM);
     sem_init(&product_number, 0, 0);
@@ -21472,7 +21470,7 @@ Philosopher A releases chopsticks 5 1
 ...
 ```
 
-分析一下，这个过程有没有可能产生死锁？调用 usleep(3) 函数可以实现微秒级的延时，试着用 usleep(3) 加快仿真的速度，看能不能观察到死锁现象。然后修改上述算法避免产生死锁。 
+分析一下，这个过程有没有可能产生死锁？调用 usleep(3) 函数可以实现微秒级的延时，试着用 usleep(3) 加快仿真的速度，看能不能观察到死锁现象。然后修改上述算法避免产生死锁。
 
 ## 3.9. TCP/IP 协议基础
 
@@ -21699,12 +21697,12 @@ eth1      Link encap:Ethernet  HWaddr 00:0C:29:C2:8D:88
           RX bytes:55551 (54.2 Kb)  TX bytes:7601 (7.4 Kb)
           Interrupt:9 Base address:0x10c0
 
-lo        Link encap:Local Loopback  
+lo        Link encap:Local Loopback
           inet addr:127.0.0.1  Mask:255.0.0.0
           UP LOOPBACK RUNNING  MTU:16436  Metric:1
           RX packets:37 errors:0 dropped:0 overruns:0 frame:0
           TX packets:37 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0 
+          collisions:0 txqueuelen:0
           RX bytes:3020 (2.9 Kb)  TX bytes:3020 (2.9 Kb)
 $ route
 Kernel IP routing table
@@ -21733,7 +21731,7 @@ default         192.168.10.1    0.0.0.0         UG    0      0        0 eth0
 
 ```
 以太网首部
- 0000: 00 05 5d 67 d0 b1 00 05 5d 61 58 a8 08 00 
+ 0000: 00 05 5d 67 d0 b1 00 05 5d 61 58 a8 08 00
  IP首部
  0000:                                           45 00
  0010: 00 53 93 25 00 00 80 11 25 ec c0 a8 00 37 c0 a8
@@ -21976,7 +21974,7 @@ int main(void)
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(SERV_PORT);
-    
+
     bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
     listen(listenfd, 20);
@@ -21984,14 +21982,14 @@ int main(void)
     printf("Accepting connections ...\n");
     while (1) {
         cliaddr_len = sizeof(cliaddr);
-        connfd = accept(listenfd, 
+        connfd = accept(listenfd,
                 (struct sockaddr *)&cliaddr, &cliaddr_len);
-      
+
         n = read(connfd, buf, MAXLINE);
         printf("received from %s at PORT %d\n",
                inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
                ntohs(cliaddr.sin_port));
-    
+
         for (i = 0; i < n; i++)
             buf[i] = toupper(buf[i]);
         write(connfd, buf, n);
@@ -22042,7 +22040,7 @@ int accept(int sockfd, struct sockaddr *cliaddr, socklen_t *addrlen);
 ```c
 while (1) {
     cliaddr_len = sizeof(cliaddr);
-    connfd = accept(listenfd, 
+    connfd = accept(listenfd,
             (struct sockaddr *)&cliaddr, &cliaddr_len);
     n = read(connfd, buf, MAXLINE);
     ...
@@ -22072,20 +22070,20 @@ int main(int argc, char *argv[])
     char buf[MAXLINE];
     int sockfd, n;
     char *str;
-    
+
     if (argc != 2) {
         fputs("usage: ./client message\n", stderr);
         exit(1);
     }
     str = argv[1];
-    
+
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
     servaddr.sin_port = htons(SERV_PORT);
-    
+
     connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
     write(sockfd, str, strlen(str));
@@ -22107,7 +22105,7 @@ int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen);
 
 客户端需要调用 connect() 连接服务器，connect 和 bind 的参数形式一致，区别在于 bind 的参数是自己的地址，而 connect 的参数是对方的地址。connect() 成功返回 0，出错返回 -1。
 
-先编译运行服务器: 
+先编译运行服务器:
 
 ```bash
 $ ./server
@@ -22148,8 +22146,8 @@ $ Accepting connections ...
 ./client abcd &
 [2] 8344
 $ netstat -apn|grep 8000
-tcp        0      0 0.0.0.0:8000            0.0.0.0:*               LISTEN     8343/server         
-tcp        0      0 127.0.0.1:44406         127.0.0.1:8000          ESTABLISHED8344/client         
+tcp        0      0 0.0.0.0:8000            0.0.0.0:*               LISTEN     8343/server
+tcp        0      0 127.0.0.1:44406         127.0.0.1:8000          ESTABLISHED8344/client
 tcp        0      0 127.0.0.1:8000          127.0.0.1:44406         ESTABLISHED8343/server
 ```
 
@@ -22366,7 +22364,7 @@ ssize_t Readline(int fd, void *vptr, size_t maxlen)
 
 #### 3.10.2.3. 把 client 改为交互式输入
 
-目前实现的 client 每次运行只能从命令行读取一个字符串发给服务器，再从服务器收回来，现在我们把它改成交互式的，不断从终端接受用户输入并和 server 交互。 
+目前实现的 client 每次运行只能从命令行读取一个字符串发给服务器，再从服务器收回来，现在我们把它改成交互式的，不断从终端接受用户输入并和 server 交互。
 
 ```c
 /* client.c */
@@ -22384,14 +22382,14 @@ int main(int argc, char *argv[])
     struct sockaddr_in servaddr;
     char buf[MAXLINE];
     int sockfd, n;
-    
+
     sockfd = Socket(AF_INET, SOCK_STREAM, 0);
 
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
     servaddr.sin_port = htons(SERV_PORT);
-    
+
     Connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
     while (fgets(buf, MAXLINE, stdin) != NULL) {
@@ -22408,12 +22406,12 @@ int main(int argc, char *argv[])
 }
 ```
 
-编译并运行 server 和 client，看看是否达到了你预想的结果。 
+编译并运行 server 和 client，看看是否达到了你预想的结果。
 
 ```bash
 $ ./client
 haha1
-HAHA1 
+HAHA1
 haha2
 the other side has been closed.
 haha3
@@ -22451,7 +22449,7 @@ int main(void)
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(SERV_PORT);
-    
+
     Bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
     Listen(listenfd, 20);
@@ -22459,7 +22457,7 @@ int main(void)
     printf("Accepting connections ...\n");
     while (1) {
         cliaddr_len = sizeof(cliaddr);
-        connfd = Accept(listenfd, 
+        connfd = Accept(listenfd,
                 (struct sockaddr *)&cliaddr, &cliaddr_len);
         while (1) {
             n = Read(connfd, buf, MAXLINE);
@@ -22470,7 +22468,7 @@ int main(void)
             printf("received from %s at PORT %d\n",
                    inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
                    ntohs(cliaddr.sin_port));
-    
+
             for (i = 0; i < n; i++)
                 buf[i] = toupper(buf[i]);
             Write(connfd, buf, n);
@@ -22491,7 +22489,7 @@ int main(void)
 ```c
 listenfd = socket(...);
 bind(listenfd, ...);
-listen(listenfd, ...); 
+listen(listenfd, ...);
 while (1) {
     connfd = accept(listenfd, ...);
     n = fork();
@@ -22525,7 +22523,7 @@ $ ./server
 
 ```bash
 $ netstat -apn |grep 8000
- tcp        1      0 127.0.0.1:33498         127.0.0.1:8000          CLOSE_WAIT 10830/client        
+ tcp        1      0 127.0.0.1:33498         127.0.0.1:8000          CLOSE_WAIT 10830/client
  tcp        0      0 127.0.0.1:8000          127.0.0.1:33498         FIN_WAIT2  -
 ```
 
@@ -22688,7 +22686,7 @@ int main(void)
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(SERV_PORT);
-    
+
     Bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
     printf("Accepting connections ...\n");
@@ -22700,7 +22698,7 @@ int main(void)
         printf("received from %s at PORT %d\n",
                inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)),
                ntohs(cliaddr.sin_port));
-    
+
         for (i = 0; i < n; i++)
             buf[i] = toupper(buf[i]);
         n = sendto(sockfd, buf, n, 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
@@ -22725,14 +22723,14 @@ int main(int argc, char *argv[])
     char buf[MAXLINE];
     char str[INET_ADDRSTRLEN];
     socklen_t servaddr_len;
-    
+
     sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
 
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr);
     servaddr.sin_port = htons(SERV_PORT);
-    
+
     while (fgets(buf, MAXLINE, stdin) != NULL) {
         n = sendto(sockfd, buf, strlen(buf), 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
         if (n == -1)
@@ -22741,7 +22739,7 @@ int main(int argc, char *argv[])
         n = recvfrom(sockfd, buf, MAXLINE, 0, NULL, 0);
         if (n == -1)
             perr_exit("recvfrom error");
-      
+
         Write(STDOUT_FILENO, buf, n);
     }
 

@@ -1,0 +1,16 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+tab_width = 2
+trim_trailing_whitespace = true
+
+[*.{html,py,css,c,sql}]
+indent_size = 4
+tab_width = 4
+
+[Makefile]
+indent_style = tab
+indent_size = 4
+tab_width = 4
