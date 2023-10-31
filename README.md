@@ -337,6 +337,7 @@ awk 'BEGIN{
   - [ ] 阿里巴巴数据库内核月报目录爬虫
 - lang
   - [ ] C/C++
+    - linux 触摸板驱动。参考：[OS-X-Voodoo-PS2-Controller](https://github.com/RehabMan/OS-X-Voodoo-PS2-Controller)
   - [ ] go
     - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua

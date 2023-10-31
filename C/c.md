@@ -6158,7 +6158,10 @@ long double 型通常是比 double 型精度更高的类型，但各平台的实
 
 - Integer Promotion 说明：
   - 在一个表达式中，凡是可以使用 int 或 unsigned int 类型做右值的地方也都可以使用有符号或无符号的 char 型、short 型和 Bit-field。
-  - **如果原始类型的取值范围都能用 int 型表示，则其类型被提升为 int，如果原始类型的取值范围用 int 型表示不了，则提升为 unsigned int 型** ，这称为 Integer Promotion。做 Integer Promotion 只影响上述几种类型的值，对其它类型无影响。C99 规定 Integer Promotion 适用于以下几种情况：
+  - **如果原始类型的取值范围都能用 int 型表示，则其类型被提升为 int，如果原始类型的取值范围用 int 型表示不了，则提升为 unsigned int 型** ，
+  - 这称为 Integer Promotion。做 Integer Promotion 只影响上述几种类型的值，对其它类型无影响。
+
+C99 规定 Integer Promotion 适用于以下几种情况：
 
 - Integer Promotion 情况一：形参类型位置
   - 例如使用了 Old Style C 风格的函数声明（详见[第 3 章「简单函数」第 2 节「自定义函数」]()）
@@ -6351,7 +6354,14 @@ void show_pointer(void *x) { show_bytes((byte_pointer)&x, sizeof(void *)); }
 
 #### 2.3.1.1. 按位与、或、异或、取反运算
 
-在[第 4 章「分支语句」第 3 节「布尔代数」](1-C-语言入门/ch04-分支语句#_3-布尔代数)讲过逻辑与、或、非运算，并列出了真值表，对于整数中的位也可以做与、或、非运算，C 语言提供了按位与（Bitwise AND）运算符 `&`、按位或（Bitwise OR）运算符 `|` 和按位取反（Bitwise NOT）运算符 `~`，此外还有按位异或（Bitwise XOR）运算符 `^`，我们在[第 14 章「计算机中数的表示」第 1 节「为什么计算机用二进制计数」](2-C-语言本质/ch14-计算机中数的表示#_1-为什么计算机用二进制计数)讲过异或运算。下面用二进制的形式举几个例子。
+在[第 4 章「分支语句」第 3 节「布尔代数」]()讲过逻辑与、或、非运算，并列出了真值表，对于整数中的位也可以做与、或、非运算，C 语言提供了:
+
+- 按位与（Bitwise AND）运算符 `&`
+- 按位或（Bitwise OR）运算符 `|`
+- 按位取反（Bitwise NOT）运算符 `~`，
+- 此外还有按位异或（Bitwise XOR）运算符 `^`，
+
+我们在[第 14 章「计算机中数的表示」第 1 节「为什么计算机用二进制计数」]()讲过异或运算。下面用二进制的形式举几个例子。
 
 <p id="c16-1">图 16.1. 位运算</p>
 
