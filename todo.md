@@ -397,8 +397,12 @@ python
   - compilation模式，以及跳转到第一个error处
     - https://emacs.stackexchange.com/questions/13646/jumping-to-the-first-error-not-warning-when-compiling
     - 54分25秒：https://www.youtube.com/watch?v=SRgLA8X5N_4
-  - [emac chinese document](https://github.com/lujun9972/emacs-document)
   - [远程开发模式tramp](https://zhuanlan.zhihu.com/p/488366338)
+  - [god mod, 类似vim的模式切换](https://github.com/emacsorphanage/god-mode)
+  - [embark, 另一种思路的which-key替代工具](https://github.com/oantolin/embark)
+  - [emacs 入门教程](https://github.com/Pavinberg/emacs-book)
+  - [emacs lisp简明教程](https://smacs.github.io/elisp/)
+  - [emac chinese document](https://github.com/lujun9972/emacs-document)
 - gdb
   - 前端
     - gf
