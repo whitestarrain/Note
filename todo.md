@@ -391,8 +391,11 @@ python
   - [nest local session](https://github.com/aleclearmind/nested-tmux)
   - [nest remote session](https://github.com/samoshkin/tmux-config)
 - tmux
-  - set default-command 'bash --init-file  .....'
-  - select-pane -Z: change pane when zoom
+  - 命令
+    - set default-command 'bash --init-file  .....'
+    - select-pane -Z: change pane when zoom
+  - [session保存：tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect#tmux-resurrect)
+  - tmux 剪切板互通处理
 - emacs
   - compilation模式，以及跳转到第一个error处
     - https://emacs.stackexchange.com/questions/13646/jumping-to-the-first-error-not-warning-when-compiling
@@ -409,3 +412,38 @@ python
     - gf2
   - 也能调试汇编
 - [2 years of learning c](https://www.youtube.com/watch?v=lMvFWKHhVZ0)
+  - [make your own programming language](https://craftinginterpreters.com/)
+- cat /dev/null
+- 如何清理deleted进程占用的空间，除kill进程外
+- tmpfs 重新划分
+- linux虚拟分卷划分分区
+- [Bash脚本进阶指南](https://github.com/LinuxStory/Advanced-Bash-Scripting-Guide-in-Chinese)
+- wasm(webassembly) wasi wapm 技术
+- [终端显示配色和样式，比如`\e[4:3m`](https://www.cnblogs.com/linuxprobe/p/14354824.html)
+- [nvim LSP: semantic tokens support](https://github.com/neovim/neovim/pull/21100)
+  - [Semantic Highlighting in Neovim](https://gist.github.com/swarn/fb37d9eefe1bc616c2a7e476c0bc0316#disabling-highlights)
+  - 覆盖插件
+    - [hlargs.nvim](https://github.com/m-demare/hlargs.nvim)
+    - [nvim-semantic-tokens](https://github.com/theHamsta/nvim-semantic-tokens)
+- [nvim 布局预定义 folke/edgy.nvim](https://github.com/folke/edgy.nvim)
+- [onedark主题](navarasu/onedark.nvim)
+- [浅谈C/C++编程中的字符编码转换](https://blog.csdn.net/benkaoya/article/details/59522148)
+- 免费frp服务，腾讯云不打算续了
+  - 完全免费：https://freefrp.net/
+  - 有付费节点：https://www.mossfrp.top/
+- neovim插件尝试：ThePrimeagen/harpoon
+- emacs
+  - 中英混打：https://emacs-china.org/t/os-smart-input-source/13436
+  - org, org-roam（obsidian的双链）
+  - 强大的org mode(https://www.zmonster.me/2015/07/12/org-mode-introduction.html)
+  - emacs甚至支持ditta，并输出图片。https://ditaa.sourceforge.net/
+- vim:
+  - tags管理:[ludovicchabant/vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)，大型项目可能需要ctags跳转
+- [vim, tmux剪切板互通](https://sspai.com/post/71018)
+- go，实现读取浏览器cookie: https://gist.github.com/dacort/bd6a5116224c594b14db
+- [计算机体系结构基础](https://foxsen.github.io/archbase/index.html)
+- [Tutorials/Using Other Window Managers with Plasma](https://userbase.kde.org/Tutorials/Using_Other_Window_Managers_with_Plasma#i3)
+- [cfenollosa/os-tutorial](https://github.com/cfenollosa/os-tutorial)
+  - 比较旧的os实现
+- [设计数据密集型应用](https://knowledgehive.github.io/ddia/#)
+- [MIT 6.828 JOS与NJU ICS NEMU源码精读](https://knowledgehive.github.io/6.828/#)
