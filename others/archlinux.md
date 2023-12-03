@@ -460,15 +460,159 @@ setterm 处理终端模式: https://wiki.archlinuxcn.org/wiki/Display_Power_Mana
 
 </details>
 
+### 4.2.2. 网络处理
+
+#### 4.2.2.1. Networkmanager 说明
+
+archlinux 较多使用networkmanager进行网络管理，最好了解一下其中device和connection的概念以及基本操作。
+同时nmcli支持非常完善的补全配置。
+
+参考资料:
+
+- [NetworkManager服务（nmcli）](https://www.cnblogs.com/liugp/p/16398715.html)
+- [nmcli 使用命令行连接wifi](https://blog.kelu.org/tech/2022/01/04/wifi-conn-with-nmcli.html)
+- [使用 nmcli 命令行工具配置静态 IP 地址](https://cnfczn.com/article/使用networkmanager配置静态IP)
+- [NetworkManager简单教程](https://www.ichenfu.com/2021/02/16/networkmanager-tutorial/)
+
+#### 4.2.2.2. 连接wifi配置静态ip
+
+方式：
+
+1. 手动修改`/etc/NetworkManger/system-connection` 下的配置文件来配置网络
+2. `nmuitui` tui界面配置（推荐）
+3. 命令行配置
+
+命令行配置说明：
+
+```
+# 展示所有wifi
+sudo nmcli device wifi list
+
+# 连接wifi，此时会生成一个connection
+nmcli device wifi connect <wifi_name>  password <password>
+
+# 查看connection
+nmctl connection show
+
+# 配置静态ip，路由，ip获取方式，dns
+nmcli connection modify <connection_name> ipv4.addresses <ip>
+nmcli connection modify <connection_name> ipv4.gateway <ip>
+nmcli connection modify <connection_name> ipv4.method manual
+nmcli connection modify <connection_name> ipv4.dns 8.8.8.8
+
+# 重新加载
+nmcli connection down <connection_name>
+nmcli connection up <connection_name>
+
+# 查看ip分配
+ip addr
+
+# wifi自动连接
+nmcli connection modify <connection_name> connection.autoconnect yes
+
+# 查看最终完整配置
+nmcli -p connection show 6-4-403
+```
+
+### 4.2.3. 电源设置
+
+```
+sudo systemctl start tlp.service
+sudo systemctl enable tlp.service
+```
+
+参考资料：
+
+- [tlp](https://wiki.archlinuxcn.org/wiki/TLP)
+- [TLP – 快速增加和优化 Linux 笔记本电脑电池寿命](https://cn.linux-console.net/?p=432)
+
+### 4.2.4. 时间设置
+
+- ntp
+- timedatectl
+- `hwclock --systohc`
+
+参考资料：
+
+- [设置NTP时间同步和timedatectl命令](https://cs.pynote.net/sf/linux/sys/202204133/)
+
 ## 4.3. 图形化界面(graphical.target)
 
 ## 4.4. 系统备份
 
-因为用的btrfs文件系统，因此系统崩了后，用启动盘进入后，挂载@,@home两个分卷到`/`,`/home`后，change root 后再进行操作或者备份还原就行（非root需要su到指定用户）
+> **pacman缓存平时最好别清**
 
-timeshift还原后,要确保还原后的挂载信息和 `/etc/fstab` 下的保持一致
+### 4.4.1. timeshift说明
 
-[参考链接](https://blog.dreamfever.me/2021/12/08/cong-timeshift-restore-dao-zhi-home-gua-zai-shi-bai-shuo-qi/)
+### 4.4.2. btrfs restore常见问题
+
+#### 4.4.2.1. Failed to mount /home
+
+原因：大概率是fstab restore了，和实际的subvolid匹配不上
+
+恢复方式：
+
+```
+# u盘系统
+mount -t btrfs -o compress=zstd /dev/nvmexn1pn /mnt
+btrfs subvolume list /mnt
+cat /mnt/@/etc/fstab
+
+# 紧急模式
+btrfs subvolume list /
+cat /etc/fstab
+```
+
+对比 subvolid 是否有问题，我这里是@子卷id有问题，根据subvolume list输出，修改subvolid后 reboot 即可
+
+参考：
+
+- [Failed to mount /@home, BTRFS after Timeshift restoration](https://www.reddit.com/r/archlinux/comments/qhb13t/failed_to_mount_home_btrfs_after_timeshift/)
+- [从 timeshift restore 导致 home 挂载失败说起](https://blog.dreamfever.me/posts/2021-12-08-cong-timeshift-restore-dao-zhi-home-gua-zai-shi-bai-shuo-qi/)
+
+#### 4.4.2.2. Failed to mount /boot
+
+原因：大概率是驱动版本和内核版本，或者内核版本与/usr下库版本不匹配
+
+排查：
+
+- `systemctl status boot.mount` 输出："Mount: Unknown filesystem vfat"
+- `uname -a` 和 `pacman -Qi linux`，查看内核版本是否相同
+
+如果不同的话，应该是没回滚内核导致的(timeshift 不会 restore /boot)，导致/usr下的lib，驱动等和内核版本不匹配
+
+修复：
+
+- 连接无线网
+- 先重新挂载下
+
+  ```
+  mount -t btrfs -o subvol=/@,compress=zstd /dev/sdxn /mnt # 挂载 / 目录
+  mkdir /mnt/home # 创建 /home 目录
+  mount -t btrfs -o subvol=/@home,compress=zstd /dev/sdxn /mnt/home # 挂载 /home 目录
+  mkdir -p /mnt/boot # 创建 /boot/efi 目录
+  mount /dev/sdxn /mnt/boot # 挂载 /boot 目录
+  swapon /dev/sdxn # 挂载交换分区
+  ```
+
+- `arch-chroot /mnt`
+- `file -bL /boot/vmlinuz-linux` 查看内核版本(应该是新的，没有回滚回去)
+- 恢复系统：
+  - 选择1：从cache中重新安装旧版linux内核 pacman -U /var/cache/pacman/pkg/
+  - 选择2：pacman -S linux linux-firmware 全部更新到新版
+- reboot
+
+问题避免：
+
+- 选择1：/boot/efi 目录 (待验证)
+- 选择2：每次系统升级后都backup一份，不跨系统版本restore (剥夺arch信仰)
+
+参考：
+
+- [Failed to mount /boot ... unknown filesystem vfat](https://bbs.archlinux.org/viewtopic.php?id=194797)
+- [restore Arch with timeshift after it got stuck booting after a reboot](https://www.reddit.com/r/archlinux/comments/v75tfy/need_help_restore_arch_with_timeshift_after_it/)
+
+initramfs 和 内核版本不匹配
 
 # 5. 显示服务器(后端)
 
