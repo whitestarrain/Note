@@ -440,8 +440,9 @@ setterm --blank force # off
 setterm --blank poke # on
 
 # 远程控制的时候(旧版setterm可能需要写成 >/dev/tty1)
-sudo setterm --blank force --term linux </dev/tty1
-sudo setterm --blank poke --term linux </dev/tty1
+su root
+setterm --blank force --term linux </dev/tty1
+setterm --blank poke --term linux </dev/tty1
 ```
 
 <details>
@@ -516,15 +517,29 @@ nmcli -p connection show 6-4-403
 
 ### 4.2.3. 电源设置
 
-```
-sudo systemctl start tlp.service
-sudo systemctl enable tlp.service
-```
+- 电源管理服务
+
+  ```
+  sudo systemctl start tlp.service
+  sudo systemctl enable tlp.service
+  ```
+- 限制充电阈值
+
+  ```bash
+  # 获取电量
+  cat /sys/class/power_supply/BAT1/capacity
+  # 充电状态
+  cat /sys/class/power_supply/BAT1/status
+  # 限制充电阈值
+  echo 60 > /sys/class/power_supply/BAT1/charge_control_end_threshold
+  ```
+
 
 参考资料：
 
 - [tlp](https://wiki.archlinuxcn.org/wiki/TLP)
 - [TLP – 快速增加和优化 Linux 笔记本电脑电池寿命](https://cn.linux-console.net/?p=432)
+- [Laptop/ASUS, Battery charge threshold](https://wiki.archlinux.org/title/Laptop/ASUS#Battery_charge_threshold)
 
 ### 4.2.4. 时间设置
 
@@ -535,6 +550,20 @@ sudo systemctl enable tlp.service
 参考资料：
 
 - [设置NTP时间同步和timedatectl命令](https://cs.pynote.net/sf/linux/sys/202204133/)
+
+### 蓝牙设置
+
+问题报错：
+
+```
+Bluetooth: hci0: Malformed MSFT vendor event: 0x02
+Bluetooth: hci0: reading supported features failed (-16)
+Bluetooth: hci0: HCI LE Coded PHY feature bit is set, but its usage is not supported
+```
+
+参考资料：
+
+- [Bluetooth](https://wiki.archlinux.org/title/bluetooth)
 
 ## 4.3. 图形化界面(graphical.target)
 
