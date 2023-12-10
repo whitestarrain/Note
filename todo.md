@@ -447,40 +447,97 @@ python
   - 比较旧的os实现
 - [设计数据密集型应用](https://knowledgehive.github.io/ddia/#)
 - [MIT 6.828 JOS与NJU ICS NEMU源码精读](https://knowledgehive.github.io/6.828/#)
-- archlinux
-  - glibc38 升级步骤、问题、原理
-  - multiuser模式，手动需要的操作:
-    - 字体
-    - wifi(iwd或者networkmanager)
-    - dhcp
-    - 时间
-    - sshd
-    - 各种驱动(声音&音量，摄像头，外接磁盘/usb识别，电量，屏幕亮度等)
-  - p2p 打洞
-    - frp p2p
-      - [内网穿透笔记](https://www.xiaoyeshiyu.com/post/931.html#P2P)
-      - [frp内网穿透之p2p实现远程桌面](https://blog.jlopt.com/2023/02/03/frp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E4%B9%8Bp2p%E5%AE%9E%E7%8E%B0%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2/)
-      - [【网络技术】P2P技术原理浅析](https://keenjin.github.io/2021/04/p2p/)
-    - 基于libp2p的 go工具
-      - [document: Hole Punching](https://docs.libp2p.io/concepts/nat/hole-punching/)
-      - [github开源工具 p2ptunnel](https://github.com/chenjia404/p2ptunnel)
-  - dhcp 固定ip
-    - [dhcpd 静态ip](https://blog.csdn.net/weixin_55029341/article/details/125954646)
-  - archlinux 软件降级 Downgrade
-    - [archlinux wiki](https://wiki.archlinuxcn.org/wiki/%E9%99%8D%E7%BA%A7%E8%BD%AF%E4%BB%B6%E5%8C%85)
-    - [参考资料](https://linux.cn/article-9730-1.html)
-  - [生成archLinux mirror list](https://zhuanlan.zhihu.com/p/260492196)
-  - [archLinux+dwm+st+ranger相关问题](https://www.cnblogs.com/codefuturedalao/p/15858589.html)
+
+---
+
+- **深入理解操作系统**
+  - **linux-c**
+    - **鸟哥linux基础**
+      - **archlinux**
+  - **操作系统导论**
+
+---
+
+- glibc38 升级步骤、问题、原理
+- multiuser模式，手动需要的操作:
+  - 字体
+  - wifi(iwd或者networkmanager)
+  - dhcp
+  - 时间
+  - sshd
+  - 各种驱动(声音&音量，摄像头，外接磁盘/usb识别，电量)
+- p2p 打洞
+  - frp p2p
+    - [内网穿透笔记](https://www.xiaoyeshiyu.com/post/931.html#P2P)
+    - [frp内网穿透之p2p实现远程桌面](https://blog.jlopt.com/2023/02/03/frp%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E4%B9%8Bp2p%E5%AE%9E%E7%8E%B0%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2/)
+    - [【网络技术】P2P技术原理浅析](https://keenjin.github.io/2021/04/p2p/)
+  - 基于libp2p的 go工具
+    - [document: Hole Punching](https://docs.libp2p.io/concepts/nat/hole-punching/)
+    - [github开源工具 p2ptunnel](https://github.com/chenjia404/p2ptunnel)
+- dhcp 固定ip
+  - [dhcpd 静态ip](https://blog.csdn.net/weixin_55029341/article/details/125954646)
+- archlinux 软件降级 Downgrade
+  - [archlinux wiki](https://wiki.archlinuxcn.org/wiki/%E9%99%8D%E7%BA%A7%E8%BD%AF%E4%BB%B6%E5%8C%85)
+  - [参考资料](https://linux.cn/article-9730-1.html)
+- [生成archLinux mirror list](https://zhuanlan.zhihu.com/p/260492196)
+- [archLinux+dwm+st+ranger相关问题](https://www.cnblogs.com/codefuturedalao/p/15858589.html)
+- dotfile manager
+  - [dotfile manager: stow](https://github.com/chaneyzorn/dotfiles)
+    - stow 默认push，`-adopt` 会pull
+    - 会将package下的文件，link到指定目录。
+      - 比如 `/usr/local/stow/ruby/bin/ruby`，
+      - `stow -S ruby`后
+      - 默认link到 `/usr/local/bin/ruby`，也就是把`stow dir + package`替换为了`target dir`
+    - `stow -t ../stow_target_dir -S package_names -n -v`: 展示之后要做什么
+  - [dotbot](https://github.com/anishathalye/dotbot)
+- [archlinux 笔记本，动作&硬件配置](https://github.com/levinit/itnotes/blob/main/linux/laptop%E7%AC%94%E8%AE%B0%E6%9C%AC%E7%9B%B8%E5%85%B3.md)
+- [合盖子动作处理](https://bbs.archlinuxcn.org/viewtopic.php?id=10306)
+  - HandleLidSwitch=lock
+  - systemctl restart systemd-logind.service
+- [archlinux cn](https://bbs.archlinuxcn.org/)
+- x window / x11 / xorg
+  - https://www.zhihu.com/question/321725817
+- dwm
+  - [dwm arch cn wiki](https://wiki.archlinuxcn.org/wiki/Dwm)
   - [dwm配置](https://zocoxx.com/archlinux-dwm-incomplete-guide.html)
-  - dotfile manager
-    - [dotfile manager: stow](https://github.com/chaneyzorn/dotfiles)
-      - stow 默认push，`-adopt` 会pull
-      - 会将package下的文件，link到指定目录。
-        - 比如 `/usr/local/stow/ruby/bin/ruby`，
-        - `stow -S ruby`后
-        - 默认link到 `/usr/local/bin/ruby`，也就是把`stow dir + package`替换为了`target dir`
-      - `stow -t ../stow_target_dir -S package_names -n -v`: 展示之后要做什么
-    - [dotbot](https://github.com/anishathalye/dotbot)
-  - [archlinux 笔记本，动作&硬件配置](https://github.com/levinit/itnotes/blob/main/linux/laptop%E7%AC%94%E8%AE%B0%E6%9C%AC%E7%9B%B8%E5%85%B3.md)
-  - [合盖子动作处理](https://bbs.archlinuxcn.org/viewtopic.php?id=10306)
-  - [archlinux cn](https://bbs.archlinuxcn.org/)
+  - [ArchLinux+DWM不完全指北](https://zocoxx.com/archlinux-dwm-incomplete-guide.html)
+- [picom](https://wiki.archlinux.org/title/picom)
+- dotfiles
+  - [dotfiles + stow example](https://github.com/elijahmanor/dotfiles)
+  - [awesome-dotfiles](https://github.com/webpro/awesome-dotfiles)
+- [natmap ssh打洞](https://github.com/heiher/natmap/wiki/ssh)
+- [Wireguard 原理](https://cshihong.github.io/2020/10/11/WireGuard%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/)
+- [家庭网络无公网 IPv4 地址异地无感知远程访问家中服务的一个解决方案（NATMap+OpenWrt+Surgio+GitHub Action+Gist+Surge/Stash/Clash）](https://imciel.com/2023/04/07/connect-to-home-without-public-ipv4/)
+- [linux FHS](https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html)
+- [telescope 支持 visual模式](https://github.com/Nauticus/dotfiles/blob/master/.config/nvim/lua/config/core/utils.lua)
+- [arch 电量管理,thermald, tlp, laptop-mode-tools, powertop, acpi](https://www.reddit.com/r/archlinux/comments/u4fldv/tlp_vs_laptopmodetools/)
+- [Linux thermal子系统和lm_sensors用户态工具](https://blog.csdn.net/scarecrow_byr/article/details/104402354)
+- apache bench压测工具：ab
+- [initramfs和mkinitcpio](https://wiki.archlinuxcn.org/wiki/Mkinitcpio)
+- [arch术语](https://wiki.archlinuxcn.org/wiki/Arch_%E6%9C%AF%E8%AF%AD)
+- 文件描述符占用磁盘问题
+  - [Linux系统下已删除文件继续占用空间问题(磁盘爆满异常)](https://blog.csdn.net/baidu_23275675/article/details/116143974)
+  - [Linux系统句柄问题分析----linux系统文件删除后，空间却不释放原因分析](https://blog.csdn.net/Keyuchen_01/article/details/108568375)
+- [here doc, here string](https://askubuntu.com/questions/678915/whats-the-difference-between-and-in-bash)
+- [systemd和systemctl详解](https://www.liuvv.com/p/c9c96ac3.html)
+- [archlinux kernel parameters](https://wiki.archlinux.org/title/kernel_parameters)
+- ssh p2p
+  - [ssh-p2p](https://github.com/nobonobo/ssh-p2p)
+  - [sshx](https://github.com/suutaku/sshx)
+- NAT
+  - [NAT基本原理和大致流程](https://www.cnblogs.com/limejuiceOwO/p/14881608.html)
+  - [NAT 类型初探](https://blog.mmf.moe/post/nat-types/)
+  - [NAT穿透技术、穿透原理和方法详解](https://blog.csdn.net/lisemi/article/details/97672734)
+  - [Headscale 搭建 P2P 内网穿透_](https://mritd.com/2022/10/19/use-headscale-to-build-a-p2p-network/)
+  - [remote bind](https://github.com/rust-net/remote-bind)
+- [百星 宿迁5元NAT](https://bxidc.xyz/)
+- 内存
+  - [我的内存呢？Linux MemAvailable 如何计算](https://lotabout.me/2021/Linux-Available-Memory/)
+  - [linuxatemyram](https://www.linuxatemyram.com/)
+  - [linux内存占用分析之meminfo](https://segmentfault.com/a/1190000022518282#item-5)
+  - man top
+  - [High memory usage with nothing running](https://forum.manjaro.org/t/high-memory-usage-with-nothing-running/70445/9)
+- [安装 Archlinux 时的 ToDoList](https://coda.world/archlinux-installation-todolist)
+- 内网穿透工具：
+  - https://juejin.cn/post/7240288077868286010
+  - https://blog.csdn.net/kjhlw/article/details/130278852
