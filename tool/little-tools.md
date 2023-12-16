@@ -170,6 +170,10 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 
 更多信息请参见 [pacman archlinux wiki](https://wiki.archlinux.org/index.php/Pacman/Tips_and_tricks#Install_packages_from_a_list)
 
+# calcurse 终端日历
+
+vim like 键位的日程管理工具
+
 # CR常见术语
 
 - CR: Code Review. 请求代码审查。

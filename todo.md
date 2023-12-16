@@ -541,3 +541,37 @@ python
 - 内网穿透工具：
   - https://juejin.cn/post/7240288077868286010
   - https://blog.csdn.net/kjhlw/article/details/130278852
+- linux 体验优化
+  - [Improving performance](https://wiki.archlinux.org/title/improving_performance#CPU)
+- [Linux 基本目录规范 ——XDG](https://winddoing.github.io/post/ef694e1f.html)
+  - [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+- terminfo, TERM, curse
+  - [Why does tmux set TERM=screen?](https://stackoverflow.com/questions/74786443/why-does-tmux-set-term-screen)
+  - [Getting italics working correctly in tmux](https://unix.stackexchange.com/questions/745710/getting-italics-working-correctly-in-tmux)
+  - [Possible colorscheme bug in Vim ](https://github.com/dracula/vim/issues/219)
+    - [tmux-256color.terminfo](https://github.com/benknoble/Dotfiles/blob/master/terminfo/tmux-256color.terminfo)
+    - `set -g default-terminal "tmux-256color"`
+    - vim support
+
+      ```vim
+      if $TERM =~# '\v(tmux.*)|(screen.*)'
+        " set any of t_so, t_se, t_ZH, t_ZR that are necessary
+      endif
+      ```
+  - [Checking how many colors my terminal emulator supports](https://unix.stackexchange.com/questions/23763/checking-how-many-colors-my-terminal-emulator-supports/23789#23789)
+  - [Clearing tmux terminal throws error: "'tmux-256color': unknown terminal type."](https://unix.stackexchange.com/questions/574669/clearing-tmux-terminal-throws-error-tmux-256color-unknown-terminal-type)
+  - [Italic fonts in iTerm2, tmux, and vim](https://github.com/alexpearce/home/issues/23)
+  - [How to actually get italics and true colour to work in iTerm + tmux + vim](https://medium.com/@dubistkomisch/how-to-actually-get-italics-and-true-colour-to-work-in-iterm-tmux-vim-9ebe55ebc2be)
+  - [shell bash终端中输出的颜色和格式详解（超详细）](https://www.cnblogs.com/unclemac/p/12783387.html)
+  - curse, ncurse库
+- [alist，支持多存储的文件列表程序](https://github.com/alist-org/alist)
+- [btop，比较酷炫的性能监视工具](https://github.com/aristocratos/btop)
+- [程序员进阶，一些mysql问题可以看下](https://it-blog-cn.com/blogs/db/processlist.html#二、show-processlist-参数分析)
+- cpu模式
+  - [使用 tlp 来为 linux 省电](https://fly.meow-2.com/post/linux/tlp-for-power-saving.html)
+  - [浅析 linux 电源配置](https://blog.deepin.org/posts/analyzing-the-linux-power-configuration/)
+  - [tlp 配置参数](https://blog.deepin.org/posts/tlp-power-management/)
+  - [Restart TLP service without rebooting system](https://askubuntu.com/questions/1242991/restart-tlp-service-without-rebooting-system)
+- [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
+- [nvim展示图片，inline graph protocol](https://github.com/edluffy/hologram.nvim)
+

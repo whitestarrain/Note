@@ -551,7 +551,7 @@ nmcli -p connection show 6-4-403
 
 - [设置NTP时间同步和timedatectl命令](https://cs.pynote.net/sf/linux/sys/202204133/)
 
-### 蓝牙设置
+### 4.2.5. 蓝牙设置
 
 问题报错：
 
@@ -564,6 +564,23 @@ Bluetooth: hci0: HCI LE Coded PHY feature bit is set, but its usage is not suppo
 参考资料：
 
 - [Bluetooth](https://wiki.archlinux.org/title/bluetooth)
+
+### 4.2.6. cpu调频
+
+- thermald
+- cpupower
+- auto-cpufreq
+- power-profiles-daemon
+
+参考资料：
+
+- [cpu调频](https://wiki.archlinuxcn.org/wiki/CPU_%E8%B0%83%E9%A2%91)
+
+### 4.2.7. 风扇
+
+- im-sensors
+
+- [Fan speed control](https://wiki.archlinux.org/title/fan_speed_control)
 
 ## 4.3. 图形化界面(graphical.target)
 

@@ -335,7 +335,7 @@ TODO: linux 常用命令整理
 
 ### 2.2.7. 查看文件内容
 
-- cat 
+- cat
   - 显示时同时显示行号:
 
   ```bash
@@ -369,14 +369,14 @@ TODO: linux 常用命令整理
 
   ```
   Grep正则表达式
-  正则表达式或正则表达式是与一组字符串匹配的模式。 
+  正则表达式或正则表达式是与一组字符串匹配的模式。
   模式由运算符，文字字符和元字符组成，它们具有特殊的含义。
   GNU grep支持三种正则表达式语法Basic，Extended和Perl-compatible。
 
   当没有给出正则表达式类型时，grep以Basic的形式调用，grep将搜索模式解释为基本Basic正则表达式。
   要将模式解释为扩展Extended的正则表达式，请使用-E（或--extended-regexp）选项。
 
-  在GNU grep的实现中，基本正则表达式和扩展正则表达式语法之间在功能上没有区别。 
+  在GNU grep的实现中，基本正则表达式和扩展正则表达式语法之间在功能上没有区别。
   唯一的区别是，在基本正则表达式中，元字符?，+，{，|，(和)被解释为文字字符。
   为了在使用基本正则表达式时保持元字符的特殊含义，必须使用反斜杠（\）对字符进行转义。
   ```
@@ -446,7 +446,7 @@ TODO: linux 常用命令整理
 
   ```bash
   # 将标准输出和标准错误重定向到同一文件；
-  ls  proc/*.c > list 2> &l 
+  ls  proc/*.c > list 2> &l
   ```
 
   ```bash
@@ -772,7 +772,11 @@ sort -nrk 1 data.txt
 sort -bd data # 忽略像空格之类的前导空白字符
 ```
 
-### 2.3.5. uniq 消除重复行
+### 2.3.5. comm 对比文件或者输入流
+
+> 通常和sort一起使用
+
+### 2.3.6. uniq 消除重复行
 
 > **注意**
 
@@ -800,7 +804,7 @@ sort -bd data # 忽略像空格之类的前导空白字符
   ```
 - 可指定每行中需要比较的重复内容：-s 开始位置 -w 比较字符数
 
-### 2.3.6. 用 tr 进行转换
+### 2.3.7. 用 tr 进行转换
 
 > **说明**
 
@@ -861,14 +865,14 @@ sort -bd data # 忽略像空格之类的前导空白字符
     - [:punct:]：标点符号
     - [:space:]：空白字符
     - [:upper:]：大写字母
-    - [:xdigit:]：十六进制字符  
+    - [:xdigit:]：十六进制字符
   - 使用方法：tr [:class:] [:class:]
 
 ```
 tr '[:lower:]' '[:upper:]'
 ```
 
-### 2.3.7. cut 按列切分文本
+### 2.3.8. cut 按列切分文本
 
 - cut：切割行。比如查看数据库表数据时
   - f:选择显示的列
@@ -879,7 +883,7 @@ tr '[:lower:]' '[:upper:]'
     - `cut -d' ' -f1,3 file` 以空格为分隔符切割后显示第一和三列
     - `cut -d' ' -f1-3 file` 以空格为分隔符切割后显示第一列到第三列
 
-### 2.3.8. paste 按列拼接文本
+### 2.3.9. paste 按列拼接文本
 
 - 将两个文本按列拼接到一起;
 
@@ -905,7 +909,7 @@ tr '[:lower:]' '[:upper:]'
   2,book
   ```
 
-### 2.3.9. wc 统计行和字符的工具
+### 2.3.10. wc 统计行和字符的工具
 
 ```bash
 $ wc -l file # 统计行数
@@ -913,11 +917,11 @@ $ wc -w file # 统计单词数
 $ wc -c file # 统计字符数
 ```
 
-### 2.3.10. sed 文本替换利器
+### 2.3.11. sed 文本替换利器
 
 [References](./References/sed.md)
 
-### 2.3.11. awk 数据流处理工具(重要)
+### 2.3.12. awk 数据流处理工具(重要)
 
 [References](./References/awk.md)
 
@@ -1004,9 +1008,9 @@ $ wc -c file # 统计字符数
   - 打印指定文本区域
   - awk 常用内建函数
 
-### 2.3.12. 迭代文件中的行、单词和字符
+### 2.3.13. 迭代文件中的行、单词和字符
 
-#### 2.3.12.1. 迭代文件中的每一行
+#### 2.3.13.1. 迭代文件中的每一行
 
 - while 循环法
 
@@ -1026,7 +1030,7 @@ $ wc -c file # 统计字符数
   cat file.txt| awk '{print}'
   ```
 
-#### 2.3.12.2. 迭代一行中的每一个单词
+#### 2.3.13.2. 迭代一行中的每一个单词
 
 ```bash
 for word in $line;
@@ -1035,7 +1039,7 @@ echo $word;
 done
 ```
 
-#### 2.3.12.3. 迭代每一个字符
+#### 2.3.13.3. 迭代每一个字符
 
 - 语法
   - `${string:start_pos:num_of_chars}` ：从字符串中提取一个字符；(bash文本切片）
@@ -1079,7 +1083,7 @@ done
 
 #### 2.5.1.1. sar
 
-- 查看CPU使用率: 
+- 查看CPU使用率:
 
   ```
   $sar -u 1 2
@@ -1346,7 +1350,7 @@ done
 
 ## 2.7. 网络工具
 
-### 2.7.1. netstat 查询网络服务和端口
+### 2.7.1. netstat 查询网络服务和端口 (通过 ss 和 ip 代替)
 
 > netstat 命令用于显示各种网络相关信息，如网络连接，路由表，接口状态 (Interface Statistics)，masquerade 连接，多播成员 (Multicast Memberships) 等等。
 
@@ -1392,14 +1396,13 @@ done
     lsof -i:7902
     COMMAND   PID   USER   FD   TYPE    DEVICE SIZE NODE NAME
     WSL     30294 tuapp    4u  IPv4 447684086       TCP 10.6.50.37:tnos-dp (LISTEN)
-    
+
     #查到30294
     #使用ps工具查询进程详情：
     ps -fe | grep 30294
     tdev5  30294 26160  0 Sep10 ?        01:10:50 tdesl -k 43476
     root     22781 22698  0 00:54 pts/20   00:00:00 grep 11554
     ```
-
 
 ### 2.7.2. 网络路由(route,ping,traceroute,host)
 
@@ -1489,6 +1492,12 @@ done
   ```bash
   $scp -r ID@site:path localpath
   ```
+
+### ip
+
+### ss
+
+### network manager 网络管理
 
 ## 2.8. 用户管理工具
 
@@ -1782,9 +1791,9 @@ done
 
 ## 3.19. crontab 定时任务
 
-## tcpdump 抓包工具
+## 3.20. tcpdump 抓包工具
 
-### 3.19.1. 介绍
+### 3.20.1. 介绍
 
 - crontab命令
   - 是cron table的简写
@@ -1799,7 +1808,7 @@ done
     - /etc/cron.weekly
     - /etc/cron.monthly
 
-### 3.19.2. 使用
+### 3.20.2. 使用
 
 - 语法
   ```bash
@@ -1823,7 +1832,7 @@ done
     - - 从X到Z
     - ，散列数字
 
-### 3.19.3. 实例
+### 3.20.3. 实例
 
 - 实例 1：每 1 分钟执行一次 myCommand
   ```bash
@@ -1874,9 +1883,9 @@ done
   0 23-7/1 * * * /etc/init.d/smb restart
   ```
 
-## 3.20. 内网穿透frp
+## 3.21. 内网穿透frp
 
-### 3.20.1. 基本说明
+### 3.21.1. 基本说明
 
 - 说明
   - 简单地说，frp就是一个反向代理软件，
@@ -1886,7 +1895,7 @@ done
 
   ![linux-1](./image/linux-1.png)
 
-### 3.20.2. 服务端设置
+### 3.21.2. 服务端设置
 
 - **部署在vps上**
 - 下载frp
@@ -1902,32 +1911,32 @@ done
   bind_port = 7000
   # 授权码，请改成更复杂的
   token = 13730395968
-  
+
   # frp管理后台端口，请按自己需求更改
   dashboard_port = 7500
   # frp管理后台用户名和密码，请改成自己的
   dashboard_user = admin
   dashboard_pwd = 13730395968
   enable_prometheus = true
-  
+
   # frp日志配置
   log_file = /var/log/frps.log
   log_level = info
   log_max_days = 3
-  
+
   vhost_http_port = 10080
   vhost_https_port = 10443
   ```
 - 新建一个启动文件`start_server.sh`
   ```bash
   nohup ./frps -c frps.ini >& output.log &
-  # chmod +x ./start_server.sh 
+  # chmod +x ./start_server.sh
   # jobs 查看nohup运行任务
   ```
 
 - 启动：`./start_server.sh`
 
-### 3.20.3. 客户端设置
+### 3.21.3. 客户端设置
 
 - 安装
   ```bash
@@ -1943,14 +1952,14 @@ done
   server_port = 7000
   # 换成服务端设置的token
   token = 13730395968
-  
+
   # 配置ssh服务
   [ssh]
   type = tcp
   local_ip = 127.0.0.1
   local_port = 22
   remote_port = 自定义的远程服务器端口，例如2222
-  
+
   # 配置http服务，可用于小程序开发、远程调试等
   [web]
   type = http
@@ -1962,9 +1971,9 @@ done
   [rdp] # 即Remote Desktop 远程桌面，Windows的RDP默认端口是3389，协议为TCP，
         # 建议使用frp远程连接前，在局域网中测试好，能够成功连接后再使用frp穿透连接。
   type = tcp
-  local_ip = 127.0.0.1           
+  local_ip = 127.0.0.1
   local_port = 3389
-  remote_port = 7001  
+  remote_port = 7001
 
   [smb] # SMB，即Windows文件共享所使用的协议，默认端口号445，协议TCP，本条规则可实现远程文件访问。
   type = tcp
@@ -1983,7 +1992,7 @@ done
 - 注意：**一个服务端可以同时给多个客户端使用**
 - 启动客户端 `./frpc.exe -c frpc.ini`
 
-## 3.21. neofetch
+## 3.22. neofetch
 
 - 安装 epel-release
   ```bash
@@ -2001,13 +2010,13 @@ done
 
   ![linux-2](./image/linux-2.png)
 
-## 3.22. Supervisor
+## 3.23. Supervisor
 
-### 3.22.1. 基本说明
+### 3.23.1. 基本说明
 
 TODO: supervisor
 
-## 3.23. quota 资源配额
+## 3.24. quota 资源配额
 
 # 4. linux常见问题
 
@@ -2146,7 +2155,7 @@ TODO: supervisor
       - `ls -l ./ &> out.txt`
         > 可以理解为所有输入流&后再重定向（>）
   - 输入：
-    >![out-redirect](./image/out-redirect.png) 
+    >![out-redirect](./image/out-redirect.png)
     - 修改 read 输入流：
       - `read var1 0<<<"afdfafawfwae"` 放文本
         > 没有堵塞，直接输入后结束<br />
