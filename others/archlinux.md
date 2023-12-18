@@ -1,3 +1,5 @@
+> archlinux 安装配置记录
+
 TODO: archlinux
 
 # 1. 分区与引导
@@ -353,6 +355,8 @@ setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 ## 4.1. 基础安装
 
 ### 4.1.1. 启动盘
+
+- 启动盘中已经预装了`iwd`, `arch-install-scripts`(包含genfstab) 等安装工具
 
 ### 4.1.2. 安装环境处理
 

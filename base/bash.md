@@ -130,6 +130,22 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   - 可以使用`return`命令来结束一个函数的执行并将**返回值**返回给调用者
   - 当然，也可以在函数内部用`exit`，这 _不但_ 会中止函数的继续执行， _而且_ 会终止整个程序的执行。
 
+# bash基本说明
+
+## 配置文件读取
+
+- login shell
+  - 登入时
+    - 整体配置文件：`/etc/profile`
+    - 个人配置文件(三选一)
+      - `~/.bash_profile`
+      - `~/.bash_login`
+      - `~/.profile`
+  - 登出时
+    - `~/.bash_logout`
+- non-login shell
+  - `~/.bashrc`
+
 # 注释
 
 脚本中可以包含 _注释_。注释是特殊的语句，会被`shell`解释器忽略。它们以`#`开头，到行尾结束。
@@ -154,7 +170,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
 # 变量
 
 - 跟许多程序设计语言一样，你可以在bash中创建变量。
-- Bash中没有数据类型。  **变量只能包含数字或者由一个或多个字符组成的字符串** 
+- Bash中没有数据类型。  **变量只能包含数字或者由一个或多个字符组成的字符串**
 - 你可以创建三种变量：
   - 局部变量
   - 环境变量
@@ -189,7 +205,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
 
 ## 环境变量
 
-- **环境变量** 
+- **环境变量**
   - 是对当前shell会话内所有的程序或脚本都可见的变量
 - 声明：
   - 创建它们跟创建局部变量类似
@@ -377,7 +393,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   # 当前目录有 a.txt 文件
   $ echo ?.txt
   a.txt
-  
+
   # 当前目录为空目录
   $ echo ?.txt
   ?.txt
@@ -410,7 +426,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   # 存在文件 a.txt、b.txt 和 ab.txt
   $ ls a*.txt
   a.txt ab.txt
-  
+
   $ ls *b*
   b.txt ab.txt
   ```
@@ -445,7 +461,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   # 子目录有一个 a.txt
   # 无效的写法
   $ ls *.txt
-  
+
   # 有效的写法
   $ ls */*.txt
   ```
@@ -466,7 +482,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   # 存在文件 a.txt 和 b.txt
   $ ls [ab].txt
   a.txt b.txt
-  
+
   # 只存在文件 a.txt
   $ ls [ab].txt
   a.txt
@@ -509,7 +525,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   a.txt
   b.txt
   c.txt
-  
+
   # 存在文件 report1.txt、report2.txt 和 report3.txt
   $ ls report[0-9].txt
   report1.txt
@@ -569,10 +585,10 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
    ```bash
    $ echo {1,2,3}
    1 2 3
-   
+
    $ echo d{a,e,i,u,o}g
    dag deg dig dug dog
-   
+
    $ echo Front-{A,B,C}-Back
    Front-A-Back Front-B-Back Front-C-Back
    ```
@@ -601,7 +617,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
 
   ```bash
   $ cp a.log{,.bak}
-  
+
   # 等同于
   # cp a.log a.log.bak
   ```
@@ -611,17 +627,17 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   ```bash
   $ echo {j{p,pe}g,png}
   jpg jpeg png
-  
+
   $ echo a{A{1,2},B{3,4}}b
   aA1b aA2b aB3b aB4b
   ```
 
-- 大括号也 **可以与其他模式联用，并且总是先于其他模式进行扩展** 
+- 大括号也 **可以与其他模式联用，并且总是先于其他模式进行扩展**
 
   ```bash
   $ echo /bin/{cat,b*}
   /bin/cat /bin/b2sum /bin/base32 /bin/base64 ... ...
-  
+
   # 基本等同于
   $ echo /bin/cat;echo /bin/b*
   ```
@@ -643,7 +659,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   # 不存在 a.txt 和 b.txt
   $ echo [ab].txt
   [ab].txt
-  
+
   $ echo {a,b}.txt
   a.txt b.txt
   ```
@@ -787,12 +803,12 @@ echo ${food:-Cake}  #=> $food or "Cake"
 
 - 语法
 
-  | Expression        | Description                                              |
-  | ----------------- | -------------------------------------------------------- |
-  | `${FOO:-val}`     | `$FOO`, or `val` if unset (or null)                      |
-  | `${FOO:=val}`     | Set `$FOO` to `val` if unset (or null)                   |
-  | `${FOO:+val}`     | `val` if `$FOO` is set (and not null)                    |
-  | `${FOO:?message}` | Show error message and exit if `$FOO` is unset (or null) |
+  | Expression           | Description                                              |
+  | -------------------- | -------------------------------------------------------- |
+  | `${FOO:-val}`        | `$FOO`, or `val` if unset (or null)                      |
+  | `${FOO:=val}`        | Set `$FOO` to `val` if unset (or null)                   |
+  | `${FOO:+val}`        | `val` if `$FOO` is set (and not null)                    |
+  | `${FOO:?message}`    | Show error message and exit if `$FOO` is unset (or null) |
 
   > Omitting the : removes the (non)nullity checks, e.g. ${FOO-val} expands to val if unset otherwise $FOO.
   >
@@ -800,9 +816,32 @@ echo ${food:-Cake}  #=> $food or "Cake"
 
 - 示例
 
+  | 变量设置方式     | str 没有设置       | str 为空字串       | str 已设置非为空字串 |
+  | ---------------- | ------------------ | ------------------ | -------------------- |
+  | var=${str-expr}  | var=expr           | var=               | var=$str             |
+  | var=${str:-expr} | var=expr           | var=expr           | var=$str             |
+  | var=${str+expr}  | var=               | var=expr           | var=expr             |
+  | var=${str:+expr} | var=               | var=               | var=expr             |
+  | var=${str=expr}  | str=expr var=expr  | str 不变 var=      | str 不变 var=$str    |
+  | var=${str:=expr} | str=expr var=expr  | str=expr var=expr  | str 不变 var=$str    |
+  | var=${str?expr}  | expr 输出至 stderr | var=               | var=$str             |
+  | var=${str:?expr} | expr 输出至 stderr | expr 输出至 stderr | var=$str             |
+
+- 示例
+
   ```bash
   echo ${food:-Cake}  #=> $food or "Cake"
   ```
+## 删除与替换
+
+| Expression           | Description                  |
+| -------------------- | ---------------------------- |
+| `${FOO#pattern}`     | 删除从左往右，最短匹配       |
+| `${FOO##pattern}`    | 删除从左往右，最长匹配       |
+| `${FOO%pattern}`     | 删除从右往左，最短匹配       |
+| `${FOO%%pattern}`    | 删除从右往左，最长匹配       |
+| `${FOO/str1/str2}`   | 用str2 替换 str1，只替换一次 |
+| `${FOO//str1//str2}` | 把所有str1替换为str2         |
 
 # 数组
 
@@ -1012,20 +1051,20 @@ done
   ```bash
   # ls的结果将会被写到list.txt中
   ls -l > list.txt
-  
+
   # 将输出附加到list.txt中
   ls -a >> list.txt
-  
+
   # 所有的错误信息会被写到errors.txt中
   grep da * 2> errors.txt
-  
+
   # 从errors.txt中读取输入
   less < errors.txt
   ```
   ```bash
   # 先输入后输出
   # cat从test.sh 获得输入数据，然后输出给文件catfile
-	cat > catfile < test.sh 
+	cat > catfile < test.sh
 
   # 向cat输入文件结束符，cat输出到catfile，这时不用按ctrl+d即可退出
 	cat > catfile << eof
@@ -1064,6 +1103,12 @@ done
     set -o pipefail
     ```
 
+- 管道中 `-` 表示 `stdin` 和 `stdout`
+
+  ```bash
+  tar -cvf - /home | tar -xvf - -C /tmp/homeback
+  ```
+
 ## 命令序列
 
 > 命令序列是由`;`，`&`，`&&`或者`||`运算符分隔的一个或多个管道序列。
@@ -1074,7 +1119,7 @@ done
   ```bash
   # command2 会在 command1 之后执行
   command1 ; command2
-  
+
   # 等同于这种写法
   command1
   command2
@@ -1174,7 +1219,7 @@ done
   ```bash
   # 写成一行
   if [[ 1 -eq 1 ]]; then echo "true"; fi
-  
+
   # 写成多行
   if [[ 1 -eq 1 ]]; then
     echo "true"
@@ -1186,7 +1231,7 @@ done
   ```bash
   # 写成一行
   if [[ 2 -ne 1 ]]; then echo "true"; else echo "false"; fi
-  
+
   # 写成多行
   if [[ 2 -ne 1 ]]; then
     echo "true"
@@ -1298,7 +1343,7 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
 
   ```bash
   #!/bin/bash
-  
+
   for FILE in $HOME/*.bash; do
     mv "$FILE" "${HOME}/scripts"
     chmod +x "${HOME}/scripts/${FILE}"
@@ -1322,7 +1367,7 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
 
   ```bash
   #!/bin/bash
-  
+
   # 0到9之间每个数的平方
   x=0
   while [[ $x -lt 10 ]]; do # x小于10
@@ -1364,7 +1409,7 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
 
   ```bash
   #!/bin/bash
-  
+
   PS3="Choose the package manager: "
   select ITEM in bower npm gem pip
   do
@@ -1483,9 +1528,9 @@ done
 
 - **参数和返回值** ：函数可以接收参数并返回结果。
   - 参数，在函数内部
-    - 跟 非交互式 下的脚本参数处理方式相同，使用 **位置参数** 
+    - 跟 非交互式 下的脚本参数处理方式相同，使用 **位置参数**
   - 返回值可以使用`return`命令，_返回_ 。
-    - 之前已经介绍过 **返回值** 
+    - 之前已经介绍过 **返回值**
     - 函数的返回值和脚本、命令的返回值要求相同，必须为0~255
     - 不带任何参数的`return`会返回最后一个执行的命令的返回值
     - 上面的例子，`return 0`会返回一个成功表示执行的值，`0`。
@@ -1547,7 +1592,7 @@ done
 
   ```bash
   #!/bin/bash -x
-  
+
   for (( i = 0; i < 3; i++ )); do
     echo $i
   done
@@ -1579,7 +1624,7 @@ done
 
   ```bash
   #!/bin/bash
-  
+
   echo "xtrace is turned off"
   set -x
   echo "xtrace is enabled"
@@ -1593,7 +1638,7 @@ done
 
   ```bash
   #!/bin/bash
-  
+
   echo "This is line $LINENO"
   ```
 
@@ -1608,7 +1653,7 @@ done
 
   ```bash
   #!/bin/bash
-  
+
   function func1()
   {
     echo "func1: FUNCNAME0 is ${FUNCNAME[0]}"
@@ -1616,14 +1661,14 @@ done
     echo "func1: FUNCNAME2 is ${FUNCNAME[2]}"
     func2
   }
-  
+
   function func2()
   {
     echo "func2: FUNCNAME0 is ${FUNCNAME[0]}"
     echo "func2: FUNCNAME1 is ${FUNCNAME[1]}"
     echo "func2: FUNCNAME2 is ${FUNCNAME[2]}"
   }
-  
+
   func1
   ```
 
@@ -1670,10 +1715,10 @@ done
   ```bash
   #!/bin/bash
   # main.sh
-  
+
   source lib1.sh
   source lib2.sh
-  
+
   func1
   ```
 
@@ -1701,7 +1746,7 @@ done
     echo "func1: BASH_LINENO is ${BASH_LINENO[0]}"
     echo "func1: FUNCNAME is ${FUNCNAME[0]}"
     echo "func1: BASH_SOURCE is ${BASH_SOURCE[1]}"
-  
+
     func2
   }
   ```
@@ -1721,10 +1766,10 @@ done
   ```bash
   #!/bin/bash
   # main.sh
-  
+
   source lib1.sh
   source lib2.sh
-  
+
   func1
   ```
 
@@ -1810,7 +1855,7 @@ TODO: bash笔记
 - 学习资源
   - [x] **[bash-handbook-zh-CN](https://github.com/liushuaikobe/bash-handbook-zh-CN)**
   - [ ] **[网道 Bash 脚本教程](https://wangdoc.com/bash/)**
-  - [ ] **[rstacruz/cheatsheets-bash.md](https://github.com/rstacruz/cheatsheets/blob/master/bash.md)** 
+  - [ ] **[rstacruz/cheatsheets-bash.md](https://github.com/rstacruz/cheatsheets/blob/master/bash.md)**
     > 异常全的bash命令。包括一些字符串处理
   - [ ] [GNU Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
     - [译文](https://xy2401.com/local-docs/gnu/manual.zh/bash.html)
