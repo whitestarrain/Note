@@ -174,6 +174,10 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 
 vim like 键位的日程管理工具
 
+# http 抓包工具 whistle
+
+[whistle](https://github.com/avwo/whistle)
+
 # CR常见术语
 
 - CR: Code Review. 请求代码审查。

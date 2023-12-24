@@ -1,5 +1,5 @@
 > 注：命令的具体使用推荐使用man或者 **[linux-comand](https://github.com/jaywcjlove/linux-command#web-%E7%89%88%E6%9C%AC)** 查询
-> 本文件只用来进行常用命令手机，每个命令的详细使用方法详见文档
+> 本文件只用来进行记录常用命令，每个命令的详细使用方法详见文档
 
 TODO: linux 常用命令整理
 
@@ -215,7 +215,7 @@ TODO: linux 常用命令整理
     - /usr/local/lib 本地增加的库
 
 
-### 2.2.2. 文件类型与信息
+### 2.2.2. ls, stat, file 文件类型与信息
 
 - 文件类型(`ls -lha`)
   > 扩展名只在图形化界面上有用
@@ -300,193 +300,9 @@ TODO: linux 常用命令整理
 
 > 注：.bashrc 在/home/你的用户名/ 文件夹下，以隐藏文件的方式存储；可使用 ls -a 查看；
 
-### 2.2.6. 查找目录及文件 find/locate
+### 2.2.6. find 查找目录及文件
 
-> **find**
-
-- 搜寻文件或目录:
-
-  ```bash
-  $ find ./ -name "core*" | xargs file
-  ```
-
-- 查找目标文件夹中是否有obj文件:
-
-  ```bash
-  $ find ./ -name '*.o'
-  ```
-
-- 递归当前目录及子目录删除所有.o文件:
-
-  ```bash
-  $ find ./ -name "*.o" -exec rm {} \;
-  ```
-
-> **locate**
-
-- find是实时查找，如果需要更快的查询，可试试locate；locate会为文件系统建立索引数据库，如果有文件更新，需要定期执行更新命令来更新索引库:
-
-  ```bash
-  # 寻找包含有string的路径:
-  $ locate string
-  ```
-
-- 与find不同，locate并不是实时查找。你需要更新数据库，以获得最新的文件索引信息。
-  ```bash
-  $ updatedb
-  ```
-
-### 2.2.7. 查看文件内容
-
-- cat
-  - 显示时同时显示行号:
-
-  ```bash
-  $ cat -n
-  ```
-- vi
-- head
-- tail
-  - 动态显示文本最新信息:
-
-    ```bash
-    tailf -f
-    ```
-- more
-  - 按页显示列表内容:
-
-    ```bash
-    $ ls -al | more
-    ```
-- less(推荐)
-- diff
-
-### 2.2.8. 查找文件内容
-
-- grep 匹配输出
-  - `-v` 反显
-  - `-e` 使用扩展正则表达式
-  - **grep 和 vim 中默认()为字符，如果要分组就要使用`\(word\)`**※
-  - **python 中()默认为分组，通过\进行转义为字符**
-  - 另外括号嵌套是，比如(())，数左括号，左边第一个是第一组，第二个是第二组
-
-  ```
-  Grep正则表达式
-  正则表达式或正则表达式是与一组字符串匹配的模式。
-  模式由运算符，文字字符和元字符组成，它们具有特殊的含义。
-  GNU grep支持三种正则表达式语法Basic，Extended和Perl-compatible。
-
-  当没有给出正则表达式类型时，grep以Basic的形式调用，grep将搜索模式解释为基本Basic正则表达式。
-  要将模式解释为扩展Extended的正则表达式，请使用-E（或--extended-regexp）选项。
-
-  在GNU grep的实现中，基本正则表达式和扩展正则表达式语法之间在功能上没有区别。
-  唯一的区别是，在基本正则表达式中，元字符?，+，{，|，(和)被解释为文字字符。
-  为了在使用基本正则表达式时保持元字符的特殊含义，必须使用反斜杠（\）对字符进行转义。
-  ```
-  - 具体规则这里就不列了
-
-- egrep
-
-### 2.2.9. 打包压缩 tar
-
-- `-C` 参数说明
-  ```bash
-  # 解压后，会得到output/${APP}/....，这种方式会保留文件夹层级
-  tar -czf output/${APP}.tar.gz output/${APP}
-  # -C 相当于cd到指定目录再压缩，后面跟着一个"."，表示压缩 "output/${APP}" 目录
-  tar -czf output/${APP}.tar.gz -C output/${APP} .
-  ```
-
-### 2.2.10. 比较文件或目录 diff
-
-### 2.2.11. 文件切分 split
-
-### 2.2.12. 文件与目录权限修改
-
-- 改变文件的拥有者 chown
-- 改变文件读、写、执行等属性 chmod
-- 递归子目录修改： chown -R tuxapp source/
-- 增加脚本可执行权限： chmod a+x myscript
-
-### 2.2.13. 软链接，硬链接
-
-- 创建符号链接/硬链接:
-
-  ```bash
-  ln cc ccAgain # 硬连接；删除一个，将仍能找到；
-  ln -s cc ccTo # 符号链接(软链接)；删除源，另一个无法使用；（后面一个ccTo 为新建的文件）
-  ```
-
-### 2.2.14. 管道和重定向
-
-- 批处理命令连接执行，使用 `|`
-- 串联: 使用分号 `;`
-- 前面成功，则执行后面一条，否则，不执行:`&&`
-- 前面失败，则后一条执行: `||`
-
----
-
-- xargs与管道简单使用
-
-  ```bash
-  echo "/" | ls -l # 不会显示根目录文件夹
-  echo "/" | xargs ls -l ## 可以显示根目录文件夹
-  ```
-  - 原因：
-    - 每个程序都有输入流，但不一定会用到。
-    - 比如 ls，只会判定传入的参数，而并没有读取输入流
-  - "/"通过管道，流入 xargs 命令中
-  - xargs 后接的第一个参数会被识别为命令，剩下的参数识别为命令的选项参数，再将输入流中的信息作为命令的参数，再把命令执行
-
-- 能够提示命名是否执行成功or失败；
-
-  ```bash
-  ls /proc && echo  suss! || echo failed.
-  ```
-
-  ```bash
-  # 与上述相同效果的是:
-  if ls /proc; then echo suss; else echo fail; fi
-  ```
-
-- 重定向:
-
-  ```bash
-  # 将标准输出和标准错误重定向到同一文件；
-  ls  proc/*.c > list 2> &l
-  ```
-
-  ```bash
-  # 等价的是:
-  ls  proc/*.c &> list
-  ```
-
-- 清空文件:
-
-  ```
-  :> a.txt
-  ```
-
-- 重定向:
-
-  ```
-  echo aa >> a.txt
-  ```
-
-### 2.2.15. 设置环境变量
-
-- 启动帐号后自动执行的是 文件为 .profile，然后通过这个文件可设置自己的环境变量；
-- 安装的软件路径一般需要加入到path中:
-
-  ```
-  PATH=$APPDIR:/opt/app/soft/bin:$PATH:/usr/local/bin:$TUXDIR/bin:$ORACLE_HOME/bin;export PATH
-  ```
-
-## 2.3. 文本处理
-
-### 2.3.1. find 文件查找
-
-#### 2.3.1.1. 基本使用
+#### 2.2.6.1. 基本使用
 
 - 查找txt和pdf文件:
 
@@ -515,7 +331,7 @@ TODO: linux 常用命令整理
   find . -maxdepth 1 -type f
   ```
 
-#### 2.3.1.2. 定制搜索
+#### 2.2.6.2. 定制搜索
 
 > **按类型搜索**
 
@@ -595,7 +411,7 @@ TODO: linux 常用命令整理
   find . -type f -user weber -print # 找用户weber所拥有的文件
   ```
 
-#### 2.3.1.3. 找到后的后续动作
+#### 2.2.6.3. 找到后的后续动作
 
 > **删除**
 
@@ -635,12 +451,127 @@ TODO: linux 常用命令整理
   -exec ./commands.sh {} \;
   ```
 
-#### 2.3.1.4. "-print"的定界符
+#### 2.2.6.4. "-print"的定界符
 
 - 默认使用’\n’作为文件的定界符；
 - -print0 使用’\0’作为文件的定界符，这样就可以搜索包含空格的文件；
 
-### 2.3.2. grep 文本搜索
+### 2.2.7. locate, updatedb
+
+### 2.2.8. cat, head, tail, less查看文件内容
+
+- cat
+  - 显示时同时显示行号:
+
+  ```bash
+  $ cat -n
+  ```
+- vi
+- head
+- tail
+  - 动态显示文本最新信息:
+
+    ```bash
+    tailf -f
+    ```
+- more
+  - 按页显示列表内容:
+
+    ```bash
+    $ ls -al | more
+    ```
+- less(推荐)
+
+
+### 2.2.9. 打包压缩 tar
+
+- `-C` 参数说明
+  ```bash
+  # 解压后，会得到output/${APP}/....，这种方式会保留文件夹层级
+  tar -czf output/${APP}.tar.gz output/${APP}
+  # -C 相当于cd到指定目录再压缩，后面跟着一个"."，表示压缩 "output/${APP}" 目录
+  tar -czf output/${APP}.tar.gz -C output/${APP} .
+  ```
+
+### 2.2.10. 文件切分 split
+
+### 2.2.11. 软链接，硬链接
+
+- 创建符号链接/硬链接:
+
+  ```bash
+  ln cc ccAgain # 硬连接；删除一个，将仍能找到；
+  ln -s cc ccTo # 符号链接(软链接)；删除源，另一个无法使用；（后面一个ccTo 为新建的文件）
+  ```
+
+### 2.2.12. 管道和重定向
+
+- 批处理命令连接执行，使用 `|`
+- 串联: 使用分号 `;`
+- 前面成功，则执行后面一条，否则，不执行:`&&`
+- 前面失败，则后一条执行: `||`
+
+---
+
+- xargs与管道简单使用
+
+  ```bash
+  echo "/" | ls -l # 不会显示根目录文件夹
+  echo "/" | xargs ls -l ## 可以显示根目录文件夹
+  ```
+  - 原因：
+    - 每个程序都有输入流，但不一定会用到。
+    - 比如 ls，只会判定传入的参数，而并没有读取输入流
+  - "/"通过管道，流入 xargs 命令中
+  - xargs 后接的第一个参数会被识别为命令，剩下的参数识别为命令的选项参数，再将输入流中的信息作为命令的参数，再把命令执行
+
+- 能够提示命名是否执行成功or失败；
+
+  ```bash
+  ls /proc && echo  suss! || echo failed.
+  ```
+
+  ```bash
+  # 与上述相同效果的是:
+  if ls /proc; then echo suss; else echo fail; fi
+  ```
+
+- 重定向:
+
+  ```bash
+  # 将标准输出和标准错误重定向到同一文件；
+  ls  proc/*.c > list 2> &l
+  ```
+
+  ```bash
+  # 等价的是:
+  ls  proc/*.c &> list
+  ```
+
+- 清空文件:
+
+  ```
+  :> a.txt
+  ```
+
+- 重定向:
+
+  ```
+  echo aa >> a.txt
+  ```
+
+### 2.2.13. 设置环境变量
+
+- 启动帐号后自动执行的是 文件为 .profile，然后通过这个文件可设置自己的环境变量；
+- 安装的软件路径一般需要加入到path中:
+
+  ```
+  PATH=$APPDIR:/opt/app/soft/bin:$PATH:/usr/local/bin:$TUXDIR/bin:$ORACLE_HOME/bin;export PATH
+  ```
+
+## 2.3. 文本处理与计算
+
+### 2.3.1. grep 文本搜索
 
 > **说明**
 
@@ -703,7 +634,7 @@ TODO: linux 常用命令整理
     grep -rne "\xE4\xB8\xAD\xE6\x96\x87|\xD6\xD0\xCE\xC4" *
     ```
 
-### 2.3.3. xargs 命令行参数转换
+### 2.3.2. xargs 命令行参数转换
 
 > **说明**
 
@@ -717,8 +648,10 @@ TODO: linux 常用命令整理
 
 - xargs参数说明
   - -d 定义定界符 （默认为空格 多行的定界符为 n）
-  - -n 指定输出为多行
-  - -I {} 指定替换字符串，这个字符串在xargs扩展时会被替换掉,用于待执行的命令需要多个参数时
+  - -n 指定需要多少个参数
+  - -I {} 指定替换字符串，这个字符串在xargs扩展时会被替换掉
+    - 用于待执行的命令需要多个参数时，指定xargs 参数的位置
+  - -P 并发执行数量，如 `echo '1 2 3 4' | xargs -n1 -t -P 10 sleep`
   - -0：指定0为输入定界符
 
 > **应用示例**
@@ -758,7 +691,7 @@ TODO: linux 常用命令整理
   ./redis-cli smembers $1  | awk '{print $1}'|xargs -I {} ./redis-cli get {}
   ```
 
-### 2.3.4. sort 排序
+### 2.3.3. sort 排序
 
 > **说明**
 
@@ -779,11 +712,8 @@ sort -nrk 1 data.txt
 sort -bd data # 忽略像空格之类的前导空白字符
 ```
 
-### 2.3.5. comm 对比文件或者输入流
 
-> 通常和sort一起使用
-
-### 2.3.6. uniq 消除重复行
+### 2.3.4. uniq 消除重复行
 
 > **注意**
 
@@ -811,7 +741,7 @@ sort -bd data # 忽略像空格之类的前导空白字符
   ```
 - 可指定每行中需要比较的重复内容：-s 开始位置 -w 比较字符数
 
-### 2.3.7. cut 按列切分文本
+### 2.3.5. cut 按列切分文本
 
 - cut：切割行。比如查看数据库表数据时
   - f:选择显示的列
@@ -822,33 +752,7 @@ sort -bd data # 忽略像空格之类的前导空白字符
     - `cut -d' ' -f1,3 file` 以空格为分隔符切割后显示第一和三列
     - `cut -d' ' -f1-3 file` 以空格为分隔符切割后显示第一列到第三列
 
-### 2.3.8. paste 按列拼接文本
-
-- 将两个文本按列拼接到一起;
-
-  ```bash
-  cat file1
-  1
-  2
-
-  cat file2
-  colin
-  book
-
-  paste file1 file2
-  1 colin
-  2 book
-  ```
-
-- 默认的定界符是制表符，可以用-d指明定界符
-
-  ```bash
-  paste file1 file2 -d ","
-  1,colin
-  2,book
-  ```
-
-### 2.3.9. wc 统计行和字符的工具
+### 2.3.6. wc 统计行和字符的工具
 
 ```bash
 $ wc -l file # 统计行数
@@ -856,11 +760,11 @@ $ wc -w file # 统计单词数
 $ wc -c file # 统计字符数
 ```
 
-### 2.3.10. tee 双向重定向
+### 2.3.7. tee 双向重定向
 
-### 2.3.11. 字符转换命令： tr, col, join, paste, expand,unexpand
+### 2.3.8. 字符转换命令： tr
 
-#### 2.3.11.1. tr
+#### 2.3.8.1. tr
 
 > **说明**
 
@@ -928,12 +832,63 @@ $ wc -c file # 统计字符数
 tr '[:lower:]' '[:upper:]'
 ```
 
+#### 2.3.8.2. col
 
-### 2.3.12. sed 文本替换利器
+#### 2.3.8.3. expand, unexpand
+
+### 2.3.9. 多文件处理
+
+#### 2.3.9.1. join
+
+#### 2.3.9.2. paste 按列拼接文本
+
+- 将两个文本按列拼接到一起;
+
+  ```bash
+  cat file1
+  1
+  2
+
+  cat file2
+  colin
+  book
+
+  paste file1 file2
+  1 colin
+  2 book
+  ```
+
+- 默认的定界符是制表符，可以用-d指明定界符
+
+  ```bash
+  paste file1 file2 -d ","
+  1,colin
+  2,book
+  ```
+
+
+#### 2.3.9.3. 比较文件或目录 diff， 以及 patch
+
+#### 2.3.9.4. comm 对比文件或者输入流
+
+> 通常和sort一起使用
+
+
+#### 2.3.9.5. cmp 字节单位的对比
+
+支持对比binary文件
+
+### 2.3.10. bc 数值计算
+
+### 2.3.11. iconv 编码转换
+
+### 2.3.12. printf 格式化输出
+
+### 2.3.13. sed 文本替换利器
 
 [References](./References/sed.md)
 
-### 2.3.13. awk 数据流处理工具(重要)
+### 2.3.14. awk 数据流处理工具(重要)
 
 [References](./References/awk.md)
 
@@ -1020,9 +975,11 @@ tr '[:lower:]' '[:upper:]'
   - 打印指定文本区域
   - awk 常用内建函数
 
-### 2.3.14. 迭代文件中的行、单词和字符
+### 2.3.15. pr 将文本文件转换成适合打印的格式
 
-#### 2.3.14.1. 迭代文件中的每一行
+### 2.3.16. 迭代文件中的行、单词和字符
+
+#### 2.3.16.1. 迭代文件中的每一行
 
 - while 循环法
 
@@ -1042,7 +999,7 @@ tr '[:lower:]' '[:upper:]'
   cat file.txt| awk '{print}'
   ```
 
-#### 2.3.14.2. 迭代一行中的每一个单词
+#### 2.3.16.2. 迭代一行中的每一个单词
 
 ```bash
 for word in $line;
@@ -1051,7 +1008,7 @@ echo $word;
 done
 ```
 
-#### 2.3.14.3. 迭代每一个字符
+#### 2.3.16.3. 迭代每一个字符
 
 - 语法
   - `${string:start_pos:num_of_chars}` ：从字符串中提取一个字符；(bash文本切片）
@@ -1078,16 +1035,58 @@ done
 
 ### 2.4.1. 磁盘信息
 
-- 磁盘信息：
-  - df:显示硬盘分区。
-    - linux 中没有盘符概念，只有一棵虚拟的目录树，所有分区中的目录都会放在根目录/下的某文件夹(不一定是子级)。比如/boot 目录就是一个分区。
-    - 有啥问题时，先 df，看看磁盘满没
-  - du -sh ./\*:统计此文件夹下每个目录大小
-  - 清楚数据前一定要备份
+#### 2.4.1.1. df
 
-### 2.4.2. 分区与挂载
+显示硬盘分区。
 
-### 2.4.3. 解压缩
+- linux 中没有盘符概念，只有一棵虚拟的目录树，所有分区中的目录都会放在根目录/下的某文件夹(不一定是子级)。比如/boot 目录就是一个分区。
+- 有啥问题时，先 df，看看磁盘满没
+
+#### 2.4.1.2. du
+
+#### 2.4.1.3. lsblk
+
+#### 2.4.1.4. blkid
+
+### 2.4.2. 分区
+
+#### 2.4.2.1. gdisk/fdisk
+
+#### 2.4.2.2. parted
+
+### 2.4.3. 格式化
+
+#### 2.4.3.1. mkfs
+
+#### 2.4.3.2. mkswap
+
+### 2.4.4. 挂载
+
+#### 2.4.4.1. mount, umount
+
+#### 2.4.4.2. loop设备挂载
+
+dd空文件, iso文件等
+
+```bash
+dd if=/dev/zero of=/srv/loopdev bs=1M count=512
+mkfs.xfs -f /srv/loopdev
+blkid /srv/loopdev
+mount -o loop UUID="7dd97bd2-4446-48fd-9d23-a8b03ffdd5ee" /mnt
+df /mnt
+```
+
+#### 2.4.4.3. swapon, swapoff
+
+#### 2.4.4.4. /etc/fstab ， /etc/mtab 与 /proc/mounts
+
+#### 2.4.4.5. 文件系统信息修改
+
+#### 2.4.4.6. mknod
+
+#### 2.4.4.7. tune2fs
+
+### 2.4.5. 解压缩
 
 ## 2.5. 性能监控
 
@@ -1523,63 +1522,461 @@ done
 
 ### 2.8.5. timeshift
 
-## 2.9. 用户管理工具
+## 2.9. 终端管理
 
-### 2.9.1. 用户
+### 2.9.1. stty
 
-### 2.9.2. 组
+### 2.9.2. terminfo: tic 和 infocmp
 
-### 2.9.3. 用户权限
+### 2.9.3. dircolors
 
-## 2.10. 系统管理及 IPC 资源管理
+### 2.9.4. /etc/inputrc 处理键盘映射
 
-## 2.11. 用户和权限
+## 2.10. 用户与权限
 
-> 了解逻辑，以后工作后要知道自己想要什么权限的用户。或者哪个程序的管理员，哪个程序的普通用户
+### 2.10.1. 系统配置文件
 
-- x 权限
-  - x 对目录是打开权限
-  - 对文件是运行权限
-  - 文件默认不给 x
-- useradd 添加用户
-- passwd:普通用户可以修改自己密码，只有 root 用户能修改别人密码
-- users:查看当前登录用户
-- id username 查看用户 id 信息
-- su 切换用户 switch user
-- groupadd 创建组
-- usermod 修改用户元数据
-  - a 增加
-  - G 组
-- chown 修改持有者和组 chown -R mysqladmin:mysqlgroup /otp/mysql
-- chmod 修改用户，组权限
-- 两个用户间 user1,user1 间交互部分数据：
+#### 2.10.1.1. /etc/passwd
 
-  > 先创建好用户和组，再分配权限
+#### 2.10.1.2. /etc/shadow
 
-  - 创建 mkdir /share
-  - 创建一个组
-    - groupadd user12share
-  - user1.user2 加入同一个组
-    - usermod -a -G user12share user01
-    - usermod -a -G user12share user02
-  - 给够组的权限
-    - chown root:user12share /share
-      > change owner 让用户 root 和组 user12share 持有
-    - chmod g+w /share
-      > ugo user,group,other
-  - 减掉其他人的权限
-    - chmod o-rx /share
-  - **重新登录，刷新权限**
-  - 注意，文件夹中新创建文件会采用默认权限，父级目录只会约束哪几个用户进来，必要时可以对文件进行权限修改或者修改组
+#### 2.10.1.3. /etc/group
 
-- 管理员：
-  - 操作系统管理员只有一个；root
-  - 如果有能够访问和运行某程序管理程序的的权限，就是某程序的管理员，比如 mysql 管理员
-  - 权限更新后一定要重新登录
+#### 2.10.1.4. /etc/gshadow
 
----
+#### 2.10.1.5. 关系说明
 
-## 2.12. 软件安装
+![linux-3](./image/linux-3.png)
+
+passwd中的，gid仅为初始group，一个用户可以在多个group中，且可以通过 newgrp 切换生效的group
+
+### 2.10.2. 用户管理
+
+#### 2.10.2.1. useradd
+
+##### 基本说明
+
+##### /etc/default/useradd 默认配置
+
+<details>
+<summary style="color:red;">展开</summary>
+
+```conf
+GROUP=100             # 默认的群组
+HOME=/home            # 默认的主文件夹所在目录
+INACTIVE=-1           # 密码失效日，在 shadow 内的第 7 栏
+EXPIRE=               # 帐号失效日，在 shadow 内的第 8 栏
+SHELL=/bin/bash       # 默认的 shell
+SKEL=/etc/skel        # 使用者主文件夹的内容数据参考目录
+CREATE_MAIL_SPOOL=yes # 是否主动帮使用者创建邮件信箱（mailbox）
+```
+</details>
+
+- 私有群组机制：
+  - 系统会创建一个与帐号一样的群组给使用者作为初始群组。
+  - 这种群组的设置机制会比较有保密性，这是因为使用者都有自己的群组，而且主文件夹权限将会设置为 700 （仅有自己可进入自己的主文件夹） 之故。
+  - 使用这种机制将不会参考 GROUP=100 这个设置值。
+  - 代表性的 distributions 有 RHEL, Fedora, CentOS 等；
+
+- 公共群组机制：
+  - 就是以`/etc/default/useradd`中 GROUP=100 这个设置值作为新建帐号的初始群组，因此每个帐号都属于 users 这个群组，
+  - 且默认主文件夹通常的权限会是“ drwxr-xr-x ... username users ... ”，
+  - 由于每个帐号都属于 users 群组，因此大家都可以互相分享主文件夹内的数据之故。
+  - 代表 distributions 如 SuSE等。
+
+##### /etc/login.defs
+
+<details>
+<summary style="color:red;">展开</summary>
+
+```
+MAIL_DIR        /var/spool/mail # 使用者默认邮件信箱放置目录
+
+PASS_MAX_DAYS   99999           # /etc/shadow 内的第 5 栏，多久需变更密码日数
+PASS_MIN_DAYS   0               # /etc/shadow 内的第 4 栏，多久不可重新设置密码日数
+PASS_MIN_LEN    5               # 密码最短的字符长度，已被 pam 模块取代，失去效用！
+PASS_WARN_AGE   7               # /etc/shadow 内的第 6 栏，过期前会警告的日数
+
+UID_MIN          1000           # 使用者最小的 UID，意即小于 1000 的 UID 为系统保留
+UID_MAX         60000           # 使用者能够用的最大 UID
+SYS_UID_MIN       201           # 保留给使用者自行设置的系统帐号最小值 UID
+SYS_UID_MAX       999           # 保留给使用者自行设置的系统帐号最大值 UID
+GID_MIN          1000           # 使用者自订群组的最小 GID，小于 1000 为系统保留
+GID_MAX         60000           # 使用者自订群组的最大 GID
+SYS_GID_MIN       201           # 保留给使用者自行设置的系统帐号最小值 GID
+SYS_GID_MAX       999           # 保留给使用者自行设置的系统帐号最大值 GID
+
+CREATE_HOME     yes             # 在不加 -M 及 -m 时，是否主动创建使用者主文件夹？
+UMASK           077             # 使用者主文件夹创建的 umask ，因此权限会是 700
+USERGROUPS_ENAB yes             # 使用 userdel 删除时，是否会删除初始群组
+ENCRYPT_METHOD SHA512           # 密码加密的机制使用的是 sha512 这一个机制！
+```
+</details>
+
+uid,gid以及密码等设置
+
+#### 2.10.2.2. usermod
+
+#### 2.10.2.3. userdel
+
+#### 2.10.2.4. passwd
+
+支持 `--stdin` 和管道命令结合
+
+```bash
+echo "password" | passwd --stdin username
+```
+
+#### 2.10.2.5. change
+
+修改/etc/shadow中的各个字段
+
+实现初次登陆必须修改密码：
+
+```bash
+chage -d 0 agetest
+```
+
+#### 2.10.2.6. chpasswd
+
+### 2.10.3. 组管理
+
+#### 2.10.3.1. groupmod
+
+#### 2.10.3.2. groupadd
+
+#### 2.10.3.3. groupdel
+
+#### 2.10.3.4. gpasswd
+
+组管理员，可控制加入，移出组
+
+### 2.10.4. 使用者管理
+
+
+#### 2.10.4.1. id
+
+#### 2.10.4.2. groups
+
+#### 2.10.4.3. finger
+
+使用者信息，登陆信息和个人信息
+
+#### 2.10.4.4. chfg
+
+修改finger中的信息，包括电话号码等信息等
+
+会记录在/etc/passwd 的 使用者信息列
+
+#### 2.10.4.5. chsh
+
+修改默认shell
+
+#### 2.10.4.6. newgrp
+
+切换生效的group
+
+会新打开一个shell环境，exit可以退回原来的环境
+
+### 2.10.5. 账号切换
+
+#### 2.10.5.1. su
+
+默认为 no-login shell，大多数环境变量不会改变
+
+需要使用 `su -`
+
+#### 2.10.5.2. sudo, visudo
+
+- `/etc/sudoers` 配置sudo授权用户
+  - 用visudo来编辑，退出时会检验语法
+
+### 2.10.6. 用户权限
+
+#### 2.10.6.1. chmod
+
+#### 2.10.6.2. chown
+
+#### 2.10.6.3. chgrp
+
+#### 2.10.6.4. 默认权限与隐藏权限
+
+##### umask
+
+##### chattr, lsattr
+
+文件特殊权限： SUID, SGID, SBIT
+
+### 2.10.7. ACL
+
+#### 2.10.7.1. 说明
+
+支持特定用户或者组设置权限
+
+支持检查： `sudo dmesg | grep -i acl`
+
+#### 2.10.7.2. getfacl, setfacl
+
+### 2.10.8. 特殊的shell 与 PAM
+
+#### 2.10.8.1. /sbin/nologin
+
+不可登陆账号的shell为 `/sbin/nologin`
+
+使用不可登陆账号登陆时，显示的内容：`/etc/nologin.txt`
+
+#### 2.10.8.2. PAM
+
+##### 概述
+
+Pluggable Authentication Modules, 嵌入式权限模块
+
+- PAM 可以说是一套应用程序接口 （Application Programming Interface, API），
+- 在Linux中执行有些程序时，这些程序在执行前首先要对启动它的用户进行认证，符合一定的要求之后才允许执行，例如login, su等。这些都可以使用PAM验证。
+  - openssh安装时，也会在 `/etc/pam.d` 下添加相应配置 `/etc/pam.d/sshd`
+- 他提供了一连串的验证机制，只要使用者将验证阶段的需求告知 PAM 后， PAM 就能够返回给使用者验证的结果 （成功或失败）。
+- 由于 PAM 仅是一套验证的机制，又可以提供给其他程序所调用引用，因此不论你使用什么程序，都可以使用 PAM 来进行验证，
+
+passwd示例：
+
+- 使用者开始执行 /usr/bin/passwd 这支程序，并输入密码；
+- passwd 调用 PAM 模块进行验证；
+- PAM 模块会到 /etc/pam.d/ 找寻与程序 （passwd） 同名的配置文件；
+- 依据 /etc/pam.d/passwd 内的设置，引用相关的 PAM 模块逐步进行验证分析；
+- 将验证结果 （成功、失败以及其他讯息） 回传给 passwd 这支程序；
+- passwd 这支程序会根据 PAM 回传的结果决定下一个动作 （重新输入新密码或者通过验证！）
+
+相关文件路径：
+
+- `/etc/pam.d/*`：每个程序个别的 PAM 配置文件；
+- `/lib64/security/*`：PAM 模块文件的实际放置目录；
+- `/etc/security/*`：其他 PAM 环境的配置文件；
+- `/usr/share/doc/pam-*/`：详细的 PAM 说明文档。
+- `/etc/securetty` 会影响到 root 可登陆的安全终端机
+- `/etc/nologin` 会影响到一般使用者是否能够登陆的功能之外
+- `/etc/security/limit.conf` ulimit 设置
+- `/var/log/secure`, `/var/log/messages`: 如果发生任何无法登陆或者是产生一些你无法预期的错误时，由于 PAM 模块都会将数据记载在 /var/log/secure 当中
+
+> PAM 有个特殊的地方，由于他是在程序调用时才予以设置的，
+> 因此你修改完成的数据， 对于已登陆系统中的使用者是没有效果的，要等再次登陆时才会生效
+
+##### 配置文件
+
+- 示例
+
+  ```
+  # cat /etc/pam.d/sudo
+
+  #%PAM-1.0
+  #模块类型        控制标记        模块路径     模块参数
+  auth            include         system-auth
+  account         include         system-auth
+  session         include         system-auth
+  ```
+
+- 模块类型
+  - auth：
+    - 表示鉴别类接口模块类型用于检查用户和密码，并分配权限；
+    - 这种类型的模块为用户验证提供两方面服务。
+      - 让应用程序提示用户输入密码或者其他标记，确认用户合法性；
+      - 通过他的凭证许可权限，设定组成员关系或者其他优先权。
+  - account：
+    - 表示账户类接口，主要负责账户合法性检查，确认帐号是否过期，是否有权限登录系统等；
+    - 这种模块执行的是基于非验证的帐号管理。
+    - 他主要用于限制/允许用户对某个服务的访问时间，当前有效的系统资源（最多可以多少用户），限制用户位置（例如：root只能通过控制台登录）。
+  - session：
+    - 会话类接口。实现从用户登录成功到退出的会话控制；
+    - 处理为用户提供服务之前/后需要做的些事情。包括：
+      - 开启/关闭交换数据的信息，监视目录等，设置用户会话环境等。
+    - 也就是说这是在系统正式进行服务提供之前的最后一道关口。
+  - password：
+    - 口令类接口。控制用户更改密码的全过程。也就是有些资料所说的升级用户验证标记。
+
+- auth 和 account
+  - 多数情况下auth和account会一起用来对用户登录和使用服务的情况进行限制。这样的限制会更加完整。
+  - 比如下面是一个具体的例子：
+    - login是一个应用程序。Login要完成两件工作——首先查询用户，然后为用户提供所需的服务，例如提供一个shell程序。
+    - 通常Login要求用户输入名称和密码进行验证。
+  - 步骤1：auth:
+    - 当用户名输入的时候，系统自然会去比对该用户是否是一个合法用户，是否在存在于本地或者远程的用户数据库中。
+    - 如果该账号确实存在，那么是否过期。
+  - 步骤2：account:
+    - 如果用户满足上述登录的前提条件，那么它是否具有可登录系统的password，password是否过期等。
+    - 他通常会将用户口令信息加密并提供给本地（/etc/shadow）或者远程的(ldap，kerberos等)口令验证方式进行验证。
+  - 后续
+    - 如果用户能够登录成功，证明auth和account的工作已经完成。但整个验证过程并没有完全结束。因为还有一些其他的问题没有得到确认。
+    - 例如，用户能够在服务器上同时开启多少个窗口登录，用户可以在登录之后使用多少终端多长时间，用户能够访问哪些资源和不能访问哪些资源等等。
+    - 也就是说登录之后的后续验证和环境定义等还需要其他的接口(session，password)。
+
+> 注意：上述接口在使用的时候，每行只能指定一种接口类型，如果程序需要多种接口的话，可在多行中分别予以规定。
+
+- 控制标准(control flag)
+
+  ```
+  规定如何处理PAM模块鉴别认证的结果，简而言之就是鉴别认证成功或者失败之后会发生什么事，如何进行控制。
+  单个应用程序可以调用多种底层模块，通常称为“堆叠”。
+  对应于某程序按照配置文件中出现顺序执行的所有模块成为“堆”，堆中的各模块的地位与出错时的处理方式由control_flag栏的取值决定，
+  他的四种可能的取值分别为required、Requisite、sufficient、optional
+  ```
+
+  - required：
+    - 表示该行以及所涉及模块的成功是用户通过鉴别的必要条件。
+    - 换句话说，只有当对应于应用程序的所有带 required 标记的模块全部成功后，该程序才能通过鉴别。
+    - 同时，如果任何带required标记的模块出现了错误，PAM并不立刻将错误消息返回给应用程序，而是在所有模块都调用完毕后才将错误消息返回调用他的程序。
+    - 反正说白了， **就是必须将所有的模块都执行一次，其中任何一个模块验证出错，验证都会继续进行，并在执行完成之后才返回错误信息** 。
+    - 这样做的目的就是不让用户知道自己被哪个模块拒绝，通过一种隐蔽的方式来保护系统服务。
+    - 就像设置防火墙规则的时候将拒绝类的规则都设置为drop一样，以致于用户在访问网络不成功的时候无法准确判断到底是被拒绝还是目标网络不可达。
+  - requisite：
+    - 与required相仿，只有带此标记的模块返回成功后，用户才能通过鉴别。
+    - 不同之处在于 **其一旦失败就不再执行堆中后面的其他模块** ，并且鉴别过程到此结束，同时也会立即返回错误信息。
+    - 与上面的required相比，似乎要显得更光明正大一些。
+  - sufficient：
+    - 表示该行以及所涉及模块验证成功是用户通过鉴别的充分条件。
+    -  **也就是说只要标记为sufficient的模块一旦验证成功，那么PAM便立即向应用程序返回成功结果而不必尝试任何其他模块** 。
+    -  即便后面的层叠模块使用了requisite或者required控制标志也是一样。
+    -  当标记为sufficient的模块失败时，sufficient模块会当做 optional对待。
+    -  因此拥有sufficient 标志位的配置项在执行验证出错的时候并不会导致整个验证失败，但执行验证成功之时则大门敞开。所以该控制位的使用务必慎重。
+  - optional：
+    - 他表示即便该行所涉及的模块验证失败用户仍能通过认证。可用来显示信息。
+    - 在PAM体系中，带有该标记的模块失败后将继续处理下一模块。
+    - 也就是说即使本行指定的模块验证失败，也允许用户享受应用程序提供的服务。
+    - 使用该标志，PAM框架会忽略这个模块产生的验证错误，继续顺序执行下一个层叠模块。
+  - include：
+    - 表示在验证过程中 **调用其他的PAM配置文件** 。
+    - 在RHEL系统中有相当多的应用通过完整调用/etc/pam.d/system-auth来实现认证而不需要重新逐一去写配置项。
+    - 这也就意味着在很多时候只要用户能够登录系统，针对绝大多数的应用程序也能同时通过认证。
+  - 另外还有一种比较复杂的格式为value = action的语法来设置控制标志，标志之间会以空格分开。格式如下：
+
+    ```
+    value1 = action1 value2 = action2 ……
+
+    其中value可以是下列Linux PAM库的返回值：
+    success、open_err、symbol_err、service_err、 system_err、buf_err、perm_denied、auth_err、cred_insufficient、
+    authinfo_unavail、user_unknown、maxtries、new_authtok_reqd、acct_expired、 session_err、cred_unavail、
+    cred_expired、cred_err、no_module_data、conv_err、 authtok_err、authtok_recover_err、authtok_lock_busy、
+    authtok_disable_aging、 try_again、ignore、abort、authtok_expired、module_unknown、bad_item和default
+    ```
+
+#### 2.10.8.3. 常见模块
+
+- pam_securetty.so：
+  - 限制系统管理员 （root） 只能够从安全的 （secure） 终端机登陆；
+  - 那什么是终端机？例如 tty1, tty2 等就是传统的终端机设备名称。
+  - 那么安全的终端机设置呢？ 就写在 `/etc/securetty` 这个文件中。
+  - 你可以查阅一下该文件， 就知道为什么 root 可以从 tty1~tty7 登陆，但却无法通过 telnet 登陆 Linux 主机了
+- pam_nologin.so：
+  - 这个模块可以限制一般使用者是否能够登陆主机之用。
+  - 当 /etc/nologin 这个文件存在时，则所有一般使用者均无法再登陆系统了！
+    - 若 /etc/nologin 存在，则一般使用者在登陆时， 在他们的终端机上会将该文件的内容显示出来！
+    - 所以，正常的情况下，这个文件应该是不能存在系统中的。
+    - 但这个模块对 root 以及已经登陆系统中的一般帐号并没有影响。 （与 /etc/nologin.txt 并不相同）
+- pam_selinux.so：
+  - SELinux 是个针对程序来进行细部管理权限的功能
+  - 由于 SELinux 会影响到使用者执行程序的权限，因此我们利用 PAM 模块，将 SELinux 暂时关闭，等到验证通过后， 再予以启动！
+- pam_console.so：
+  - 当系统出现某些问题，或者是某些时刻你需要使用特殊的终端接口 （例如 RS232 之类的终端连线设备） 登陆主机时，
+  - 这个模块可以帮助处理一些文件权限的问题，让使用者可以通过特殊终端接口 （console） 顺利的登陆系统。
+- pam_loginuid.so：
+  - 我们知道系统帐号与一般帐号的 UID 是不同的，一般帐号 UID 均大于 1000 才合理。
+  - 因此，为了验证使用者的 UID 真的是我们所需要的数值，可以使用这个模块来进行规范！
+- pam_env.so：
+  - 用来设置环境变量的一个模块，如果你有需要额外的环境变量设置，可以参考 /etc/security/pam_env.conf 这个文件的详细说明。
+- pam_unix.so：
+  - 这是个很复杂且重要的模块，这个模块可以用在验证阶段的认证功能，可以用在授权阶段的帐号授权管理，
+  - 可以用在会议阶段的登录文件记录等，也可以用在密码更新阶段的检验。
+- pam_pwquality.so：
+  - 可以用来检验密码的强度，包括密码是否在字典中，密码输入几次都失败就断掉此次连线等功能
+  - 最早之前其实使用的是 pam_cracklib.so 这个模块，后来改成 pam_pwquality.so 这个模块，
+  - 但此模块完全相容于 pam_cracklib.so， 同时提供了 /etc/security/pwquality.conf 这个文件可以额外指定默认值，比较容易处理修改
+- pam_limits.so：
+  - ulimit 其实那就是这个模块提供的能力。还有更多细部的设置可以参考： /etc/security/limits.conf 内的说明。
+
+### 2.10.9. linux用户间的交流
+
+#### 2.10.9.1. w,who,last,lastlog 登陆信息查询
+
+#### 2.10.9.2. write, mesg, wall 用户间交流
+
+```
+write wsain pts/13
+sdfs
+```
+
+```
+mesg n
+mesg y
+```
+
+```
+wall "I will shutdown my linux server..."
+```
+
+#### 2.10.9.3. mail 使用者间互发邮件
+
+### 2.10.10. 账号相关检查工具
+
+#### 2.10.10.1. pwck
+
+检查 /etc/passwd 这个帐号配置文件内的信息，与实际的主文件夹是否存在等信息，
+还可以比对 /etc/passwd /etc/shadow 的信息是否一致，
+另外，如果 /etc/passwd 内的数据字段错误时，会提示使用者修订
+
+#### 2.10.10.2. pwconv(用不到)
+
+将 /etc/passwd 内的帐号与密码，移动到 /etc/shadow 当中
+
+#### 2.10.10.3. pwunconv(别用)
+
+将 /etc/shadow 内的密码栏数据写回 /etc/passwd 当中， 并且删除 /etc/shadow 文件
+
+#### 2.10.10.4. chpasswd
+
+读入未加密前的密码，并且经过加密后， 将加密后的密码写入 /etc/shadow 当中
+
+```bash
+echo "user1:password1" | chpasswd
+```
+
+## 2.11. 系统资源管理
+
+### 2.11.1. ulimit
+
+基于 pam
+
+### 2.11.2. IPC
+
+## 2.12. 文件系统进阶管理
+
+### 2.12.1. 磁盘限额 Quota
+
+- 文件系统需要支持
+- 内核支持
+- 只对一般身份使用者有效
+- 启用SELinux后，非所有目录均可设置 quota。默认仅`/home`目录可设置
+
+### 2.12.2. RAID
+
+软件磁盘阵列
+
+### 2.12.3. LVM
+
+针对 ext
+
+## 2.13. 硬件与核心信息
+
+### 2.13.1. lscpu
+
+### 2.13.2. lspci
+
+### 2.13.3. lsmod
+
+### 2.13.4. lsusb
+
+### 2.13.5. lsblk
+
+### 2.13.6. dmesg
+
+## 2.14. 软件安装
 
 - 编译安装(自己编译安装)
   - 说明：
@@ -1729,9 +2126,9 @@ done
   - yum install man-pages-zh-CN
   - 看 man bash
 
-## 2.13. 网络管理
+## 2.15. 网络管理
 
-## 2.14. 远程管理命令
+## 2.16. 远程管理命令
 
 - 免密登录
   ```bash
@@ -1740,7 +2137,7 @@ done
   scp ./authorized_keys ...... # 其他机器免密登录本机
   ```
 
-# 3. Linux工具参考
+# 3. Linux工具
 
 ## 3.1. gdb 调试利器
 
@@ -1783,41 +2180,35 @@ done
 - -h 显示帮助信息
 - -v 显示版本信息
 
-## 3.4. ps 进程查看器
+## 3.4. pstack 跟踪进程栈
 
-## 3.5. pstack 跟踪进程栈
+## 3.5. strace 跟踪进程中的系统调用
 
-## 3.6. strace 跟踪进程中的系统调用
+## 3.6. ipcs 查询进程间通信状态
 
-## 3.7. ipcs 查询进程间通信状态
+## 3.7. vmstat 监视内存使用情况
 
-## 3.8. top linux 下的任务管理器
+## 3.8. iostat 监视 I/O 子系统
 
-## 3.9. free 查询可用内存
+## 3.9. sar 找出系统瓶颈的利器
 
-## 3.10. vmstat 监视内存使用情况
+## 3.10. readelf elf 文件格式分析
 
-## 3.11. iostat 监视 I/O 子系统
+## 3.11. objdump 二进制文件分析
 
-## 3.12. sar 找出系统瓶颈的利器
+## 3.12. nm 目标文件格式分析
 
-## 3.13. readelf elf 文件格式分析
+## 3.13. size 查看程序内存映像大小
 
-## 3.14. objdump 二进制文件分析
+## 3.14. wget 文件下载
 
-## 3.15. nm 目标文件格式分析
+## 3.15. scp 跨机远程拷贝
 
-## 3.16. size 查看程序内存映像大小
+## 3.16. crontab 定时任务
 
-## 3.17. wget 文件下载
+## 3.17. tcpdump 抓包工具
 
-## 3.18. scp 跨机远程拷贝
-
-## 3.19. crontab 定时任务
-
-## 3.20. tcpdump 抓包工具
-
-### 3.20.1. 介绍
+### 3.17.1. 介绍
 
 - crontab命令
   - 是cron table的简写
@@ -1832,7 +2223,7 @@ done
     - /etc/cron.weekly
     - /etc/cron.monthly
 
-### 3.20.2. 使用
+### 3.17.2. 使用
 
 - 语法
   ```bash
@@ -1856,7 +2247,7 @@ done
     - - 从X到Z
     - ，散列数字
 
-### 3.20.3. 实例
+### 3.17.3. 实例
 
 - 实例 1：每 1 分钟执行一次 myCommand
   ```bash
@@ -1907,9 +2298,9 @@ done
   0 23-7/1 * * * /etc/init.d/smb restart
   ```
 
-## 3.21. 内网穿透frp
+## 3.18. 内网穿透frp
 
-### 3.21.1. 基本说明
+### 3.18.1. 基本说明
 
 - 说明
   - 简单地说，frp就是一个反向代理软件，
@@ -1919,7 +2310,7 @@ done
 
   ![linux-1](./image/linux-1.png)
 
-### 3.21.2. 服务端设置
+### 3.18.2. 服务端设置
 
 - **部署在vps上**
 - 下载frp
@@ -1960,7 +2351,7 @@ done
 
 - 启动：`./start_server.sh`
 
-### 3.21.3. 客户端设置
+### 3.18.3. 客户端设置
 
 - 安装
   ```bash
@@ -2016,7 +2407,7 @@ done
 - 注意：**一个服务端可以同时给多个客户端使用**
 - 启动客户端 `./frpc.exe -c frpc.ini`
 
-## 3.22. neofetch
+## 3.19. neofetch
 
 - 安装 epel-release
   ```bash
@@ -2034,13 +2425,13 @@ done
 
   ![linux-2](./image/linux-2.png)
 
-## 3.23. Supervisor
+## 3.20. Supervisor
 
-### 3.23.1. 基本说明
+### 3.20.1. 基本说明
 
 TODO: supervisor
 
-## 3.24. quota 资源配额
+## 3.21. quota 资源配额
 
 # 4. linux常见问题
 
@@ -2581,16 +2972,6 @@ TODO: supervisor
   - 1 是单用户模式（物理服务器身边，重启时可以设置，不需要密码登录，修改密码时用）
   - 不过 linux 中图形界面并没有在内核代码中，需要安装后台程序
 
-### 7.2.2. /etc/passwd
-
-- /etc/passwd 文件
-  - `root:x:0:0:root:/root:/bin/bash`
-  - 冒号分隔符
-  - 一行是一个用户的信息
-  - `用户名:x:用户` id 号:组 id 号:用户描述信息:用户家目录:用户以交互模式登录时的 shell 外壳程序
-    > 原本加密后的密码是保存在 x 那里的，但因为不安全，所以移除了，x 用来占位
-    > 密码数据移到了 shadow 下
-
 # 8. 参考文档
 
 - [ ] [linux常用命令](https://tkstorm.com/linux-doc/)
@@ -2599,6 +2980,8 @@ TODO: supervisor
   - [基于上述文档的shell学习平台](https://git.io/learnyoubash)
 - [ ] [explain shell:shell命令解释](https://explainshell.com/)
 - [ ] [一文掌握 Linux 性能分析之内存篇](https://segmentfault.com/a/1190000018553950)
+- [ ] [Linux系统的PAM模块认证文件含义说明总结](https://www.cnblogs.com/fengdejiyixx/p/14804741.html)
+- [ ] [Btrfs 和 LVM-ext4 该如何选择？](https://linux.cn/article-13043-1.html)
 - 工具：
   - [Linux Command](https://github.com/jaywcjlove/linux-command)
 

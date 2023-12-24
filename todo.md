@@ -84,6 +84,7 @@
 - lang
   - [ ] C/C++
     - linux 触摸板驱动。参考：[OS-X-Voodoo-PS2-Controller](https://github.com/RehabMan/OS-X-Voodoo-PS2-Controller)
+    - 10分钟定时截图工具
   - [ ] go
     - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua
@@ -574,4 +575,8 @@ python
   - [Restart TLP service without rebooting system](https://askubuntu.com/questions/1242991/restart-tlp-service-without-rebooting-system)
 - [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
 - [nvim展示图片，inline graph protocol](https://github.com/edluffy/hologram.nvim)
+- [Does tar create new inodes to be archived?](https://unix.stackexchange.com/questions/138594/does-tar-create-new-inodes-to-be-archived)
+  - [tar posix header](https://git.savannah.gnu.org/cgit/tar.git/tree/src/tar.h)
+- [风扇控制](https://zhuanlan.zhihu.com/p/55859374)
+- [Linux内核，后台执行: ctrl-z/fg/bg/nohup/setsid/()与&/disown/screen](https://www.cnblogs.com/aaronLinux/p/6345072.html)
 

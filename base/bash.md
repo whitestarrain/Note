@@ -132,6 +132,17 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
 
 # bash基本说明
 
+## bash 命令种类
+
+- `type` 命令来 check
+
+builtin，alias，command，function
+
+## 通知信息
+
+- /etc/issue: 在 login 提示符之前显示，比如tty中
+- /etc/motd: 在用户成功登录系统之后显示
+
 ## 配置文件读取
 
 - login shell
@@ -145,6 +156,25 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
     - `~/.bash_logout`
 - non-login shell
   - `~/.bashrc`
+
+## PS1 变量
+
+## bash 历史记录
+
+## 类型声明 declare / typeset
+
+- `-a` ：将后面名为 variable 的变量定义成为 array 类型
+- `-i` ：将后面名为 variable 的变量定义成为整数数字 （integer） 类型
+  > bash 环境中的数值运算，默认最多仅能到达整数形态，所以 1/3 结果是 0；
+
+  ```bash
+  # 此时，sum为101 而非 字符串 “100+1”
+  declare -i sum=100+1
+  # 等价于
+  sum=$((100+1))
+  ```
+- `-x` ：用法与 export 一样，就是将后面的 variable 变成环境变量；
+- `-r` ：将变量设置成为 readonly 类型，该变量不可被更改内容，也不能 unset
 
 # 注释
 
@@ -1103,7 +1133,7 @@ done
     set -o pipefail
     ```
 
-- 管道中 `-` 表示 `stdin` 和 `stdout`
+- 管道中 `-`， 管道前后使用来表示前一个指令的 `stdin` 和后一个指令的 `stdout`
 
   ```bash
   tar -cvf - /home | tar -xvf - -C /tmp/homeback
