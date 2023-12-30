@@ -579,4 +579,7 @@ python
   - [tar posix header](https://git.savannah.gnu.org/cgit/tar.git/tree/src/tar.h)
 - [风扇控制](https://zhuanlan.zhihu.com/p/55859374)
 - [Linux内核，后台执行: ctrl-z/fg/bg/nohup/setsid/()与&/disown/screen](https://www.cnblogs.com/aaronLinux/p/6345072.html)
+- [tui项目](https://github.com/rothgar/awesome-tuis)
+  - [一百多行，cpp实现的tui俄罗斯方块](https://github.com/taylorconor/tinytetris)
+  - [六百多行，awk实现的第三人称射击游戏](https://github.com/TheMozg/awk-raycaster)
 

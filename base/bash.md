@@ -1057,6 +1057,7 @@ done
   |   `&>`   | 重定向输出和错误输出                                          |
   |  `&>>`   | 以追加的形式重定向输出和错误输出                              |
   |   `<`    | 重定向输入                                                    |
+  |  `2>&1`  | 错误输出重定向到标准输出                                      |
   |   `<<`   | [Here 文档](http://tldp.org/LDP/abs/html/here-docs.html) 语法 |
   |  `<<<`   | [Here 字符串](http://www.tldp.org/LDP/abs/html/x17837.html)   |
 
@@ -1100,6 +1101,16 @@ done
 	cat > catfile << eof
   ```
 
+- 使用流访问网络
+
+  ```bash
+  cd /proc/$$/fd
+  exec 9<> /dev/tcp/github.com/80 # 设置socket (一切皆文件)
+  echo -e "GET / HTTP/1.0 \n" 1>& 9 # 将输出重定向到文件标识符9（socket）
+  # -e 识别转义字符
+  cat 0<& 9  # 将输入重定向到0
+  ```
+
 ## 管道
 
 - 说明
@@ -1133,7 +1144,7 @@ done
     set -o pipefail
     ```
 
-- 管道中 `-`， 管道前后使用来表示前一个指令的 `stdin` 和后一个指令的 `stdout`
+- 管道中 `-`， 较多命令支持管道前后使用来表示前一个指令的 `stdin` 和后一个指令的 `stdout`
 
   ```bash
   tar -cvf - /home | tar -xvf - -C /tmp/homeback
@@ -1344,6 +1355,7 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
 - `for`与它在C语言中的循环
 
   ```bash
+  # 不需要括号括起来 elem
   for arg in elem1 elem2 ... elemN
   do
     # 语句
@@ -1352,6 +1364,30 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
 
   - 在每次循环的过程中，`arg`依次被赋值为从`elem1`到`elemN`
   - 这些值还可以是通配符或者[大括号扩展](#大括号扩展)。
+
+- `for .. in ..` 和扩展一起使用
+
+  ```bash
+  # 除了 * ，其他类型的扩展也支持
+  for file in `path/*`
+  do
+    echo "${file}"
+  done
+
+  for file in ~/{Document,.vim}; do  echo ${file}; done
+  # /home/wsain/Document
+  # /home/wsain/.vim
+
+  for file in aaa{Document,.vim}bbb; do  echo ${file}; done
+  # aaaDocumentbbb
+  # aaa.vimbbb
+  ```
+  ```bash
+  for file in $(ls -a)
+  do
+    echo "${file}"
+  done
+  ```
 
 - 当然，我们还可以把`for`循环写在一行，但这要求`do`之前要有一个分号，就像下面这样：
 

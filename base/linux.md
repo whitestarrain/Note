@@ -1,10 +1,6 @@
 > 注：命令的具体使用推荐使用man或者 **[linux-comand](https://github.com/jaywcjlove/linux-command#web-%E7%89%88%E6%9C%AC)** 查询
 > 本文件只用来进行记录常用命令，每个命令的详细使用方法详见文档
 
-TODO: linux 常用命令整理
-
-# 1. 常用命令列表
-
 |                |           |         |               |           |
 | :------------: | :-------: | :-----: | :-----------: | :-------: |
 |      man       |   help    |         |               |           |
@@ -51,11 +47,7 @@ TODO: linux 常用命令整理
 - hash:存储执行过的命令，提高下一次命令查找速度
   - hash -r 清除
 
-# 2. linux 基础
-
-## 2.1. 帮助命令
-
-### 2.1.1. 概述
+# 1. 帮助命令
 
 > 在linux终端，面对命令不知道怎么用，或不记得命令的拼写及参数时，我们需要求助于系统的帮助文档； linux系统内置的帮助文档很详细，通常能解决我们的问题，我们需要掌握如何正确的去使用它们；
 
@@ -64,9 +56,7 @@ TODO: linux 常用命令整理
 - 而对于命令的具体参数及使用方法，我们需要用到强大的man；
   - 在只记得部分命令关键字的场合，我们可通过man -k来搜索；
 
-### 2.1.2. 命令使用
-
-#### 2.1.2.1. 查看命令的简要说明(whatis,info)
+## 1.1. whatis 查看命令的简要说明
 
 - 简要说明命令的作用（显示命令所处的man分类页面）:
 
@@ -80,13 +70,13 @@ TODO: linux 常用命令整理
   $whatis -w "loca*"
   ```
 
-- 更加详细的说明文档:
+## 1.2. info 更加详细的说明文档
 
-  ```
-  $info command
-  ```
+```
+$info command
+```
 
-#### 2.1.2.2. 使用man
+## 1.3. 使用man
 
 - 查询命令command的说明文档:
 
@@ -145,7 +135,7 @@ TODO: linux 常用命令整理
   $man -k GNOME config| grep 1
   ```
 
-#### 2.1.2.3. 查看路径
+## 1.4. whereis which 查看路径
 
 - 查看程序的binary文件所在路径:
 
@@ -170,21 +160,9 @@ TODO: linux 常用命令整理
   - 可能是可执行程序，也可能是脚本（比如 python 脚本等）
   - 如果 type 返回 shell builtin，则是内部命令。shell 内部的。比如 cd，echo
 
-#### 2.1.2.4. 总结
+# 2. 文件及目录管理
 
-- whatis
-- info
-- man
-  - man -f (whatis)
-  - man -k (apropos)
-- which
-- whereis
-
-### 2.1.3. linux架构信息查询
-
-## 2.2. 文件及目录管理
-
-### 2.2.1. 文件系统目录
+## 2.1. 文件系统目录
 
 - /boot:系统启动相关文件
 - /etc:配置文件
@@ -215,7 +193,7 @@ TODO: linux 常用命令整理
     - /usr/local/lib 本地增加的库
 
 
-### 2.2.2. ls, stat, file 文件类型与信息
+## 2.2. ls, stat, file 文件类型与信息
 
 - 文件类型(`ls -lha`)
   > 扩展名只在图形化界面上有用
@@ -243,7 +221,7 @@ TODO: linux 常用命令整理
 - file
   - `ELF` 类型为二进制可执行程序
 
-### 2.2.3. 创建和删除
+## 2.3. 创建和删除
 
 - 命令
   - 创建：mkdir
@@ -265,7 +243,7 @@ TODO: linux 常用命令整理
     $ cp -r source_dir  dest_dir
     ```
 
-### 2.2.4. 目录切换
+## 2.4. 目录切换
 
 - 找到文件/目录位置：cd
 - 切换到上一个工作目录： cd -
@@ -273,7 +251,7 @@ TODO: linux 常用命令整理
 - 显示当前路径: pwd
 - 更改当前工作路径为path: cd path
 
-### 2.2.5. 列出目录项
+## 2.5. 列出目录项
 
 - 显示当前目录下的文件 ls
 - 按时间排序，以列表的方式显示目录项 ls -lrt
@@ -300,9 +278,9 @@ TODO: linux 常用命令整理
 
 > 注：.bashrc 在/home/你的用户名/ 文件夹下，以隐藏文件的方式存储；可使用 ls -a 查看；
 
-### 2.2.6. find 查找目录及文件
+## 2.6. find 查找目录及文件
 
-#### 2.2.6.1. 基本使用
+### 2.6.1. 基本使用
 
 - 查找txt和pdf文件:
 
@@ -331,7 +309,7 @@ TODO: linux 常用命令整理
   find . -maxdepth 1 -type f
   ```
 
-#### 2.2.6.2. 定制搜索
+### 2.6.2. 定制搜索
 
 > **按类型搜索**
 
@@ -411,7 +389,7 @@ TODO: linux 常用命令整理
   find . -type f -user weber -print # 找用户weber所拥有的文件
   ```
 
-#### 2.2.6.3. 找到后的后续动作
+### 2.6.3. 找到后的后续动作
 
 > **删除**
 
@@ -451,14 +429,16 @@ TODO: linux 常用命令整理
   -exec ./commands.sh {} \;
   ```
 
-#### 2.2.6.4. "-print"的定界符
+### 2.6.4. "-print"的定界符
 
 - 默认使用’\n’作为文件的定界符；
 - -print0 使用’\0’作为文件的定界符，这样就可以搜索包含空格的文件；
 
-### 2.2.7. locate, updatedb
+## 2.7. locate, updatedb
 
-### 2.2.8. cat, head, tail, less查看文件内容
+## 2.8. 查看文件内容
+
+### 2.8.1. cat
 
 - cat
   - 显示时同时显示行号:
@@ -466,7 +446,9 @@ TODO: linux 常用命令整理
   ```bash
   $ cat -n
   ```
-- vi
+
+### 2.8.2. head, tail
+
 - head
 - tail
   - 动态显示文本最新信息:
@@ -474,6 +456,9 @@ TODO: linux 常用命令整理
     ```bash
     tailf -f
     ```
+
+### 2.8.3. less, more
+
 - more
   - 按页显示列表内容:
 
@@ -482,20 +467,9 @@ TODO: linux 常用命令整理
     ```
 - less(推荐)
 
+## 2.9. 文件切分 split
 
-### 2.2.9. 打包压缩 tar
-
-- `-C` 参数说明
-  ```bash
-  # 解压后，会得到output/${APP}/....，这种方式会保留文件夹层级
-  tar -czf output/${APP}.tar.gz output/${APP}
-  # -C 相当于cd到指定目录再压缩，后面跟着一个"."，表示压缩 "output/${APP}" 目录
-  tar -czf output/${APP}.tar.gz -C output/${APP} .
-  ```
-
-### 2.2.10. 文件切分 split
-
-### 2.2.11. 软链接，硬链接
+## 2.10. 软链接，硬链接
 
 - 创建符号链接/硬链接:
 
@@ -504,74 +478,9 @@ TODO: linux 常用命令整理
   ln -s cc ccTo # 符号链接(软链接)；删除源，另一个无法使用；（后面一个ccTo 为新建的文件）
   ```
 
-### 2.2.12. 管道和重定向
+# 3. 文本处理与计算
 
-- 批处理命令连接执行，使用 `|`
-- 串联: 使用分号 `;`
-- 前面成功，则执行后面一条，否则，不执行:`&&`
-- 前面失败，则后一条执行: `||`
-
----
-
-- xargs与管道简单使用
-
-  ```bash
-  echo "/" | ls -l # 不会显示根目录文件夹
-  echo "/" | xargs ls -l ## 可以显示根目录文件夹
-  ```
-  - 原因：
-    - 每个程序都有输入流，但不一定会用到。
-    - 比如 ls，只会判定传入的参数，而并没有读取输入流
-  - "/"通过管道，流入 xargs 命令中
-  - xargs 后接的第一个参数会被识别为命令，剩下的参数识别为命令的选项参数，再将输入流中的信息作为命令的参数，再把命令执行
-
-- 能够提示命名是否执行成功or失败；
-
-  ```bash
-  ls /proc && echo  suss! || echo failed.
-  ```
-
-  ```bash
-  # 与上述相同效果的是:
-  if ls /proc; then echo suss; else echo fail; fi
-  ```
-
-- 重定向:
-
-  ```bash
-  # 将标准输出和标准错误重定向到同一文件；
-  ls  proc/*.c > list 2> &l
-  ```
-
-  ```bash
-  # 等价的是:
-  ls  proc/*.c &> list
-  ```
-
-- 清空文件:
-
-  ```
-  :> a.txt
-  ```
-
-- 重定向:
-
-  ```
-  echo aa >> a.txt
-  ```
-
-### 2.2.13. 设置环境变量
-
-- 启动帐号后自动执行的是 文件为 .profile，然后通过这个文件可设置自己的环境变量；
-- 安装的软件路径一般需要加入到path中:
-
-  ```
-  PATH=$APPDIR:/opt/app/soft/bin:$PATH:/usr/local/bin:$TUXDIR/bin:$ORACLE_HOME/bin;export PATH
-  ```
-
-## 2.3. 文本处理与计算
-
-### 2.3.1. grep 文本搜索
+## 3.1. grep 文本搜索
 
 > **说明**
 
@@ -634,7 +543,7 @@ TODO: linux 常用命令整理
     grep -rne "\xE4\xB8\xAD\xE6\x96\x87|\xD6\xD0\xCE\xC4" *
     ```
 
-### 2.3.2. xargs 命令行参数转换
+## 3.2. xargs 命令行参数转换
 
 > **说明**
 
@@ -691,7 +600,7 @@ TODO: linux 常用命令整理
   ./redis-cli smembers $1  | awk '{print $1}'|xargs -I {} ./redis-cli get {}
   ```
 
-### 2.3.3. sort 排序
+## 3.3. sort 排序
 
 > **说明**
 
@@ -713,7 +622,7 @@ sort -bd data # 忽略像空格之类的前导空白字符
 ```
 
 
-### 2.3.4. uniq 消除重复行
+## 3.4. uniq 消除重复行
 
 > **注意**
 
@@ -741,7 +650,7 @@ sort -bd data # 忽略像空格之类的前导空白字符
   ```
 - 可指定每行中需要比较的重复内容：-s 开始位置 -w 比较字符数
 
-### 2.3.5. cut 按列切分文本
+## 3.5. cut 按列切分文本
 
 - cut：切割行。比如查看数据库表数据时
   - f:选择显示的列
@@ -752,7 +661,7 @@ sort -bd data # 忽略像空格之类的前导空白字符
     - `cut -d' ' -f1,3 file` 以空格为分隔符切割后显示第一和三列
     - `cut -d' ' -f1-3 file` 以空格为分隔符切割后显示第一列到第三列
 
-### 2.3.6. wc 统计行和字符的工具
+## 3.6. wc 统计行和字符的工具
 
 ```bash
 $ wc -l file # 统计行数
@@ -760,11 +669,11 @@ $ wc -w file # 统计单词数
 $ wc -c file # 统计字符数
 ```
 
-### 2.3.7. tee 双向重定向
+## 3.7. tee 双向重定向
 
-### 2.3.8. 字符转换命令： tr
+## 3.8. 字符转换命令： tr
 
-#### 2.3.8.1. tr
+### 3.8.1. tr
 
 > **说明**
 
@@ -832,15 +741,15 @@ $ wc -c file # 统计字符数
 tr '[:lower:]' '[:upper:]'
 ```
 
-#### 2.3.8.2. col
+### 3.8.2. col
 
-#### 2.3.8.3. expand, unexpand
+### 3.8.3. expand, unexpand
 
-### 2.3.9. 多文件处理
+## 3.9. 多文件处理
 
-#### 2.3.9.1. join
+### 3.9.1. join
 
-#### 2.3.9.2. paste 按列拼接文本
+### 3.9.2. paste 按列拼接文本
 
 - 将两个文本按列拼接到一起;
 
@@ -867,28 +776,28 @@ tr '[:lower:]' '[:upper:]'
   ```
 
 
-#### 2.3.9.3. 比较文件或目录 diff， 以及 patch
+### 3.9.3. 比较文件或目录 diff， 以及 patch
 
-#### 2.3.9.4. comm 对比文件或者输入流
+### 3.9.4. comm 对比文件或者输入流
 
 > 通常和sort一起使用
 
 
-#### 2.3.9.5. cmp 字节单位的对比
+### 3.9.5. cmp 字节单位的对比
 
 支持对比binary文件
 
-### 2.3.10. bc 数值计算
+## 3.10. bc 数值计算
 
-### 2.3.11. iconv 编码转换
+## 3.11. iconv 编码转换
 
-### 2.3.12. printf 格式化输出
+## 3.12. printf 格式化输出
 
-### 2.3.13. sed 文本替换利器
+## 3.13. sed 文本替换利器
 
 [References](./References/sed.md)
 
-### 2.3.14. awk 数据流处理工具(重要)
+## 3.14. awk 数据流处理工具(重要)
 
 [References](./References/awk.md)
 
@@ -975,11 +884,11 @@ tr '[:lower:]' '[:upper:]'
   - 打印指定文本区域
   - awk 常用内建函数
 
-### 2.3.15. pr 将文本文件转换成适合打印的格式
+## 3.15. pr 将文本文件转换成适合打印的格式
 
-### 2.3.16. 迭代文件中的行、单词和字符
+## 3.16. 迭代文件中的行、单词和字符
 
-#### 2.3.16.1. 迭代文件中的每一行
+### 3.16.1. 迭代文件中的每一行
 
 - while 循环法
 
@@ -999,7 +908,7 @@ tr '[:lower:]' '[:upper:]'
   cat file.txt| awk '{print}'
   ```
 
-#### 2.3.16.2. 迭代一行中的每一个单词
+### 3.16.2. 迭代一行中的每一个单词
 
 ```bash
 for word in $line;
@@ -1008,7 +917,7 @@ echo $word;
 done
 ```
 
-#### 2.3.16.3. 迭代每一个字符
+### 3.16.3. 迭代每一个字符
 
 - 语法
   - `${string:start_pos:num_of_chars}` ：从字符串中提取一个字符；(bash文本切片）
@@ -1029,42 +938,58 @@ done
   $ od -c filename
   ```
 
-## 2.4. 磁盘管理
+# 4. 磁盘管理
 
 <!-- TODO: linux常用命令整理。正在进行中 -->
 
-### 2.4.1. 磁盘信息
+## 4.1. 磁盘信息
 
-#### 2.4.1.1. df
+### 4.1.1. df
 
 显示硬盘分区。
 
 - linux 中没有盘符概念，只有一棵虚拟的目录树，所有分区中的目录都会放在根目录/下的某文件夹(不一定是子级)。比如/boot 目录就是一个分区。
 - 有啥问题时，先 df，看看磁盘满没
 
-#### 2.4.1.2. du
+### 4.1.2. du
 
-#### 2.4.1.3. lsblk
+### 4.1.3. lsblk
 
-#### 2.4.1.4. blkid
+### 4.1.4. blkid
 
-### 2.4.2. 分区
+## 4.2. 分区
 
-#### 2.4.2.1. gdisk/fdisk
+### 4.2.1. gdisk/fdisk, partprobe
 
-#### 2.4.2.2. parted
+内核分区表：/proc/partitions
 
-### 2.4.3. 格式化
+删除分区时，一定要umount了
 
-#### 2.4.3.1. mkfs
+partprobe 可以指定device。在有光盘设备等只读设备的情况下，partprobe会报错
 
-#### 2.4.3.2. mkswap
+### 4.2.2. parted
 
-### 2.4.4. 挂载
+parted /dev/sda print
 
-#### 2.4.4.1. mount, umount
+## 4.3. 格式化
 
-#### 2.4.4.2. loop设备挂载
+### 4.3.1. mkfs
+
+## 4.4. 挂载
+
+### 4.4.1. mount, umount
+
+/etc/fstab， /etc/mtab 与 /proc/mounts
+
+```bash
+#【装置/UUID等】【挂载点】【文件系统】【文件系统参数】【dump】【fsck】
+/dev/mapper/centos-root /                       xfs     defaults        0 0
+UUID=13d0663f-4cbd-412d-aa9f-975eb18da590 /boot                   xfs     defaults        0 0
+/dev/mapper/centos-home /home                   xfs     defaults        0 0
+/dev/mapper/centos-swap swap                    swap    defaults        0 0
+```
+
+### 4.4.2. loop设备挂载
 
 dd空文件, iso文件等
 
@@ -1076,23 +1001,59 @@ mount -o loop UUID="7dd97bd2-4446-48fd-9d23-a8b03ffdd5ee" /mnt
 df /mnt
 ```
 
-#### 2.4.4.3. swapon, swapoff
+## 4.5. swap 交换空间
 
-#### 2.4.4.4. /etc/fstab ， /etc/mtab 与 /proc/mounts
+### 4.5.1. mkswap
 
-#### 2.4.4.5. 文件系统信息修改
+### 4.5.2. swapon, swapoff
 
-#### 2.4.4.6. mknod
+## 4.6. 文件系统信息修改
 
-#### 2.4.4.7. tune2fs
+### 4.6.1. mknod
 
-### 2.4.5. 解压缩
+### 4.6.2. tune2fs
 
-## 2.5. 性能监控
+# 5. 压缩打包
 
-### 2.5.1. 监控CPU
+## 5.1. gzip, zcat/zmore/zless/zgrep
 
-#### 2.5.1.1. sar
+## 5.2. bzip2, bzcat/bzmore/bzless/bzgrep
+
+## 5.3. xz, xzcat/xzmore/xzless/xzgrep
+
+## 5.4. tar
+
+- tar的权限处理
+
+- `-C` 参数说明
+  ```bash
+  # 解压后，会得到output/${APP}/....，这种方式会保留文件夹层级
+  tar -czf output/${APP}.tar.gz output/${APP}
+  # -C 相当于cd到指定目录再压缩，后面跟着一个"."，表示压缩 "output/${APP}" 目录
+  tar -czf output/${APP}.tar.gz -C output/${APP} .
+  ```
+
+## 5.5. xfs
+
+### 5.5.1. xfsdump
+
+### 5.5.2. xfsrestore
+
+## 5.6. iso
+
+### 5.6.1. mkisofs
+
+### 5.6.2. cdrecord
+
+## 5.7. dd
+
+## 5.8. cpio
+
+# 6. 性能监控
+
+## 6.1. 监控CPU
+
+### 6.1.1. sar
 
 - 查看CPU使用率:
 
@@ -1113,15 +1074,15 @@ df /mnt
   # sar指定-q后，就能查看运行队列中的进程数、系统上的进程大小、平均负载等；
   ```
 
-#### 2.5.1.2. vmstat
+### 6.1.2. vmstat
 
-### 2.5.2. 内存信息
+## 6.2. 内存信息
 
-#### 2.5.2.1. 文件：/proc/meminfo
+### 6.2.1. 文件：/proc/meminfo
 
 - 这个文件记录着比较详细的内存配置信息，使用 `cat /proc/meminfo` 查看。
 
-#### 2.5.2.2. 命令：free
+### 6.2.2. 命令：free
 
 - 示例
 
@@ -1146,11 +1107,11 @@ df /mnt
     - 但当应用程序申请内存时，如果 free 内存不够，内核就会回收 buffer 和 cache 的内存来满足应用程序的请求
     - 也就是available = free+(buff/cache 中可回收的部分内存)
 
-### 2.5.3. 硬件信息:dmidecode
+## 6.3. 硬件信息:dmidecode
 
 - 在Linux系统下获取有关硬件方面的信息
 
-### 2.5.4. 查询页面交换
+## 6.4. 查询页面交换
 
 - 查看页面交换发生状况:
   - 页面发生交换时，服务器的吞吐量会大幅下降
@@ -1160,7 +1121,7 @@ df /mnt
   sar -W 1 3
   ```
 
-### 2.5.5. vmstat/prstat
+## 6.5. vmstat/prstat
 
 - 示例
 
@@ -1215,11 +1176,11 @@ df /mnt
       - 这可能由于磁盘大量作随机访问造成，也有可能磁盘出现瓶颈（块操作）。
   - id: 空闲时间百分比
 
-## 2.6. 进程管理工具
+# 7. 进程管理工具
 
-### 2.6.1. 查询进程
+## 7.1. 查询进程
 
-#### 2.6.1.1. ps,pstree,pgrep 基本信息
+### 7.1.1. ps,pstree,pgrep 基本信息
 
 - 查询正在运行的进程信息
   ```bash
@@ -1251,7 +1212,7 @@ df /mnt
   ps -ajx
   ```
 
-#### 2.6.1.2. lsof 条件查询与位进程打开文件列表
+### 7.1.2. lsof 条件查询与位进程打开文件列表
 
 - lsof（list open files）是一个列出当前系统打开文件的工具。
   - 在linux环境下，任何事物都以文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。
@@ -1288,7 +1249,7 @@ df /mnt
   $lsof +d mydir1/
   ```
 
-### 2.6.2. 终止进程
+## 7.2. 终止进程
 
 - 杀死指定PID的进程 (PID为Process ID)
 
@@ -1308,7 +1269,7 @@ df /mnt
   kill %job
   ```
 
-### 2.6.3. 进程监控
+## 7.3. 进程监控
 
 - 查看系统中使用CPU、使用内存最多的进程；
 
@@ -1327,7 +1288,7 @@ df /mnt
 
   - 对于更详细的使用，详见 [top linux下的任务管理器](https://tkstorm.com/linux-doc/tool/top.html#top) ;
 
-### 2.6.4. 分析线程栈
+## 7.4. 分析线程栈
 
 - 使用命令pmap，来输出进程内存的状况，可以用来分析线程堆栈；
 
@@ -1345,7 +1306,7 @@ df /mnt
   08109000     12K rw---  /home/weber/soft/redis-2.6.16/src/redis-server
   ```
 
-### 2.6.5. 综合运用
+## 7.5. 综合运用
 
 - 将用户colin115下的所有进程名以av_开头的进程终止:
 
@@ -1359,204 +1320,57 @@ df /mnt
   ps -fe| grep colin115|grep HOST |awk '{print $2}' | xargs kill -9;
   ```
 
-## 2.7. 网络工具
+# 8. 数据与系统备份工具
 
-### 2.7.1. netstat 查询网络服务和端口 (通过 ss 和 ip 代替)
+## 8.1. 依赖打包工具备份
 
-> netstat 命令用于显示各种网络相关信息，如网络连接，路由表，接口状态 (Interface Statistics)，masquerade 连接，多播成员 (Multicast Memberships) 等等。
+### 8.1.1. dd
 
-- 列出所有端口 (包括监听和未监听的):
+### 8.1.2. cpio
 
-  ```bash
-  netstat -a
-  ```
+### 8.1.3. tar
 
-- 列出所有 tcp 端口:
+### 8.1.4. xfsdump, xfsrestore
 
-  ```bash
-  netstat -at
+## 8.2. rsync
 
-  netstat -au # udp
-  ```
+## 8.3. timeshift
 
-- 列出所有有监听的服务状态:
+# 9. 终端管理
 
-  ```bash
-  netstat -l
-  ```
+## 9.1. stty
 
-- 使用netstat工具查询端口:
+## 9.2. terminfo: tic 和 infocmp
 
-  ```bash
-  netstat -antp | grep 6379
-  tcp        0      0 127.0.0.1:6379          0.0.0.0:*               LISTEN      25501/redis-server
+## 9.3. dircolors
 
-  ps 25501
-    PID TTY      STAT   TIME COMMAND
-  25501 ?        Ssl   28:21 ./redis-server ./redis.conf
-  ```
+## 9.4. /etc/inputrc 处理键盘映射
 
-- lsof（list open files）是一个列出当前系统打开文件的工具。
-  - 在linux环境下，任何事物都以文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。
-  - 所以如传输控制协议 (TCP) 和用户数据报协议 (UDP) 套接字等； 在查询网络端口时，经常会用到这个工具。
-  - 查询7902端口现在运行什么程序:
+# 10. 用户与权限
 
-    ```bash
-    #分为两步
-    #第一步，查询使用该端口的进程的PID；
-    lsof -i:7902
-    COMMAND   PID   USER   FD   TYPE    DEVICE SIZE NODE NAME
-    WSL     30294 tuapp    4u  IPv4 447684086       TCP 10.6.50.37:tnos-dp (LISTEN)
+## 10.1. 系统配置文件
 
-    #查到30294
-    #使用ps工具查询进程详情：
-    ps -fe | grep 30294
-    tdev5  30294 26160  0 Sep10 ?        01:10:50 tdesl -k 43476
-    root     22781 22698  0 00:54 pts/20   00:00:00 grep 11554
-    ```
+### 10.1.1. /etc/passwd
 
-### 2.7.2. 网络路由(route,ping,traceroute,host)
+### 10.1.2. /etc/shadow
 
-- 查看路由状态:
+### 10.1.3. /etc/group
 
-  ```bash
-  route -n
-  ```
+### 10.1.4. /etc/gshadow
 
-- 发送ping包到地址IP:
-
-  ```bash
-  ping IP
-  ```
-
-- 探测前往地址IP的路由路径:
-
-  ```bash
-  traceroute IP
-  ```
-
-- DNS查询，寻找域名domain对应的IP:
-
-  ```bash
-  host domain
-  ```
-
-- 反向DNS查询:
-
-  ```bash
-  host IP
-  ```
-
-### 2.7.3. wget 下载
-
-- 直接下载文件或者网页:
-
-  ```bash
-  wget url
-
-  # –limit-rate :下载限速
-  # -o：指定日志文件；输出都写入日志；
-  # -c：断点续传
-  ```
-
-### 2.7.4. ftp sftp lftp ssh
-
-- SSH登陆:
-
-  ```bash
-  ssh ID@host
-
-  # ssh登陆远程服务器host，ID为用户名。
-  ```
-
-- ftp/sftp文件传输:
-
-  ```bash
-  sftp ID@host # 登陆服务器host，ID为用户名。
-
-  # sftp登陆后，可以使用下面的命令进一步操作：
-    # get filename # 下载文件
-    # put filename # 上传文件
-    # ls # 列出host上当前路径的所有文件
-    # cd # 在host上更改当前路径
-    # lls # 列出本地主机上当前路径的所有文件
-    # lcd # 在本地主机更改当前路径
-  ```
-
-- lftp同步文件夹(类似rsync工具):
-
-  ```bash
-  lftp -u user:pass host
-  lftp user@host:~> mirror -n
-  ```
-
-### 2.7.5. scp 网络复制
-
-- 将本地localpath指向的文件上传到远程主机的path路径:
-
-  ```bash
-  $scp localpath ID@host:path
-  ```
-
-- 以ssh协议，遍历下载path路径下的整个文件系统，到本地的localpath:
-
-  ```bash
-  $scp -r ID@site:path localpath
-  ```
-
-### 2.7.6. ip
-
-### 2.7.7. ss
-
-### 2.7.8. network manager 网络管理
-
-## 2.8. 数据与系统备份工具
-
-### 2.8.1. dd
-
-### 2.8.2. cpio
-
-### 2.8.3. tar
-
-### 2.8.4. rsync
-
-### 2.8.5. timeshift
-
-## 2.9. 终端管理
-
-### 2.9.1. stty
-
-### 2.9.2. terminfo: tic 和 infocmp
-
-### 2.9.3. dircolors
-
-### 2.9.4. /etc/inputrc 处理键盘映射
-
-## 2.10. 用户与权限
-
-### 2.10.1. 系统配置文件
-
-#### 2.10.1.1. /etc/passwd
-
-#### 2.10.1.2. /etc/shadow
-
-#### 2.10.1.3. /etc/group
-
-#### 2.10.1.4. /etc/gshadow
-
-#### 2.10.1.5. 关系说明
+### 10.1.5. 关系说明
 
 ![linux-3](./image/linux-3.png)
 
 passwd中的，gid仅为初始group，一个用户可以在多个group中，且可以通过 newgrp 切换生效的group
 
-### 2.10.2. 用户管理
+## 10.2. 用户管理
 
-#### 2.10.2.1. useradd
+### 10.2.1. useradd
 
-##### 基本说明
+#### 10.2.1.1. 基本说明
 
-##### /etc/default/useradd 默认配置
+#### 10.2.1.2. /etc/default/useradd 默认配置
 
 <details>
 <summary style="color:red;">展开</summary>
@@ -1584,7 +1398,7 @@ CREATE_MAIL_SPOOL=yes # 是否主动帮使用者创建邮件信箱（mailbox）
   - 由于每个帐号都属于 users 群组，因此大家都可以互相分享主文件夹内的数据之故。
   - 代表 distributions 如 SuSE等。
 
-##### /etc/login.defs
+#### 10.2.1.3. /etc/login.defs
 
 <details>
 <summary style="color:red;">展开</summary>
@@ -1615,11 +1429,11 @@ ENCRYPT_METHOD SHA512           # 密码加密的机制使用的是 sha512 这�
 
 uid,gid以及密码等设置
 
-#### 2.10.2.2. usermod
+### 10.2.2. usermod
 
-#### 2.10.2.3. userdel
+### 10.2.3. userdel
 
-#### 2.10.2.4. passwd
+### 10.2.4. passwd
 
 支持 `--stdin` 和管道命令结合
 
@@ -1627,7 +1441,7 @@ uid,gid以及密码等设置
 echo "password" | passwd --stdin username
 ```
 
-#### 2.10.2.5. change
+### 10.2.5. change
 
 修改/etc/shadow中的各个字段
 
@@ -1637,97 +1451,99 @@ echo "password" | passwd --stdin username
 chage -d 0 agetest
 ```
 
-#### 2.10.2.6. chpasswd
+### 10.2.6. chpasswd
 
-### 2.10.3. 组管理
+## 10.3. 组管理
 
-#### 2.10.3.1. groupmod
+### 10.3.1. groupmod
 
-#### 2.10.3.2. groupadd
+### 10.3.2. groupadd
 
-#### 2.10.3.3. groupdel
+### 10.3.3. groupdel
 
-#### 2.10.3.4. gpasswd
+### 10.3.4. gpasswd
 
 组管理员，可控制加入，移出组
 
-### 2.10.4. 使用者管理
+## 10.4. 使用者管理
 
 
-#### 2.10.4.1. id
+### 10.4.1. id
 
-#### 2.10.4.2. groups
+### 10.4.2. groups
 
-#### 2.10.4.3. finger
+### 10.4.3. finger
 
 使用者信息，登陆信息和个人信息
 
-#### 2.10.4.4. chfg
+### 10.4.4. chfg
 
 修改finger中的信息，包括电话号码等信息等
 
 会记录在/etc/passwd 的 使用者信息列
 
-#### 2.10.4.5. chsh
+### 10.4.5. chsh
 
 修改默认shell
 
-#### 2.10.4.6. newgrp
+### 10.4.6. newgrp
 
 切换生效的group
 
 会新打开一个shell环境，exit可以退回原来的环境
 
-### 2.10.5. 账号切换
+## 10.5. 账号切换
 
-#### 2.10.5.1. su
+### 10.5.1. su
 
 默认为 no-login shell，大多数环境变量不会改变
 
 需要使用 `su -`
 
-#### 2.10.5.2. sudo, visudo
+### 10.5.2. sudo, visudo
 
 - `/etc/sudoers` 配置sudo授权用户
   - 用visudo来编辑，退出时会检验语法
 
-### 2.10.6. 用户权限
+## 10.6. 用户权限
 
-#### 2.10.6.1. chmod
+### 10.6.1. chmod
 
-#### 2.10.6.2. chown
+### 10.6.2. chown
 
-#### 2.10.6.3. chgrp
+### 10.6.3. chgrp
 
-#### 2.10.6.4. 默认权限与隐藏权限
+### 10.6.4. 默认权限与隐藏权限
 
-##### umask
+SUID, SGID, SBIT
 
-##### chattr, lsattr
+#### 10.6.4.1. umask
+
+#### 10.6.4.2. chattr, lsattr
 
 文件特殊权限： SUID, SGID, SBIT
 
-### 2.10.7. ACL
+## 10.7. ACL
 
-#### 2.10.7.1. 说明
+### 10.7.1. 说明
 
 支持特定用户或者组设置权限
 
 支持检查： `sudo dmesg | grep -i acl`
 
-#### 2.10.7.2. getfacl, setfacl
+### 10.7.2. getfacl, setfacl
 
-### 2.10.8. 特殊的shell 与 PAM
+## 10.8. 特殊的shell 与 PAM
 
-#### 2.10.8.1. /sbin/nologin
+### 10.8.1. /sbin/nologin
 
 不可登陆账号的shell为 `/sbin/nologin`
 
 使用不可登陆账号登陆时，显示的内容：`/etc/nologin.txt`
 
-#### 2.10.8.2. PAM
+### 10.8.2. PAM
 
-##### 概述
+#### 10.8.2.1. 概述
 
 Pluggable Authentication Modules, 嵌入式权限模块
 
@@ -1760,7 +1576,7 @@ passwd示例：
 > PAM 有个特殊的地方，由于他是在程序调用时才予以设置的，
 > 因此你修改完成的数据， 对于已登陆系统中的使用者是没有效果的，要等再次登陆时才会生效
 
-##### 配置文件
+#### 10.8.2.2. 配置文件
 
 - 示例
 
@@ -1857,7 +1673,7 @@ passwd示例：
     authtok_disable_aging、 try_again、ignore、abort、authtok_expired、module_unknown、bad_item和default
     ```
 
-#### 2.10.8.3. 常见模块
+### 10.8.3. 常见模块
 
 - pam_securetty.so：
   - 限制系统管理员 （root） 只能够从安全的 （secure） 终端机登陆；
@@ -1891,11 +1707,11 @@ passwd示例：
 - pam_limits.so：
   - ulimit 其实那就是这个模块提供的能力。还有更多细部的设置可以参考： /etc/security/limits.conf 内的说明。
 
-### 2.10.9. linux用户间的交流
+## 10.9. linux用户间的交流
 
-#### 2.10.9.1. w,who,last,lastlog 登陆信息查询
+### 10.9.1. w,who,last,lastlog 登陆信息查询
 
-#### 2.10.9.2. write, mesg, wall 用户间交流
+### 10.9.2. write, mesg, wall 用户间交流
 
 ```
 write wsain pts/13
@@ -1911,25 +1727,25 @@ mesg y
 wall "I will shutdown my linux server..."
 ```
 
-#### 2.10.9.3. mail 使用者间互发邮件
+### 10.9.3. mail 使用者间互发邮件
 
-### 2.10.10. 账号相关检查工具
+## 10.10. 账号相关检查工具
 
-#### 2.10.10.1. pwck
+### 10.10.1. pwck
 
 检查 /etc/passwd 这个帐号配置文件内的信息，与实际的主文件夹是否存在等信息，
 还可以比对 /etc/passwd /etc/shadow 的信息是否一致，
 另外，如果 /etc/passwd 内的数据字段错误时，会提示使用者修订
 
-#### 2.10.10.2. pwconv(用不到)
+### 10.10.2. pwconv(用不到)
 
 将 /etc/passwd 内的帐号与密码，移动到 /etc/shadow 当中
 
-#### 2.10.10.3. pwunconv(别用)
+### 10.10.3. pwunconv(别用)
 
 将 /etc/shadow 内的密码栏数据写回 /etc/passwd 当中， 并且删除 /etc/shadow 文件
 
-#### 2.10.10.4. chpasswd
+### 10.10.4. chpasswd
 
 读入未加密前的密码，并且经过加密后， 将加密后的密码写入 /etc/shadow 当中
 
@@ -1937,46 +1753,206 @@ wall "I will shutdown my linux server..."
 echo "user1:password1" | chpasswd
 ```
 
-## 2.11. 系统资源管理
+# 11. 系统资源管理
 
-### 2.11.1. ulimit
+## 11.1. ulimit
 
 基于 pam
 
-### 2.11.2. IPC
+## 11.2. IPC
 
-## 2.12. 文件系统进阶管理
+# 12. 文件系统进阶管理
 
-### 2.12.1. 磁盘限额 Quota
+## 12.1. 磁盘限额 Quota
 
 - 文件系统需要支持
 - 内核支持
 - 只对一般身份使用者有效
 - 启用SELinux后，非所有目录均可设置 quota。默认仅`/home`目录可设置
 
-### 2.12.2. RAID
+## 12.2. RAID
 
 软件磁盘阵列
 
-### 2.12.3. LVM
+## 12.3. LVM
 
 针对 ext
 
-## 2.13. 硬件与核心信息
+# 13. cron 例行工作
 
-### 2.13.1. lscpu
+# 14. 程序管理与SELinux
 
-### 2.13.2. lspci
+# 15. systemctl
 
-### 2.13.3. lsmod
+# 16. 登录文件
 
-### 2.13.4. lsusb
+# 17. 开机流程
 
-### 2.13.5. lsblk
+## 17.1. /etc/inittab
 
-### 2.13.6. dmesg
+- 计算机开机-->计算机内核进内存-->加载根目录分区进内存-->引导 sbin 目录下 init 程序作为第一个进程-->该进程读取/etc/inittab 中的开机设置
+  > 小知识
+  - 3 是命令行模式，
+  - 5 是图形界面模式，
+  - 0 是直接关机无法开机，
+  - 6 是立刻重启死循环，
+  - 1 是单用户模式（物理服务器身边，重启时可以设置，不需要密码登录，修改密码时用）
+  - 不过 linux 中图形界面并没有在内核代码中，需要安装后台程序
 
-## 2.14. 软件安装
+
+# 18. 硬件与核心信息
+
+## 18.1. uname
+
+## 18.2. lscpu
+
+## 18.3. lspci
+
+## 18.4. lsmod
+
+## 18.5. lsusb
+
+## 18.6. lsblk
+
+## 18.7. dmesg
+
+# 19. 网络工具
+
+## 19.1. wget 下载
+
+- 直接下载文件或者网页:
+
+  ```bash
+  wget url
+
+  # –limit-rate :下载限速
+  # -o：指定日志文件；输出都写入日志；
+  # -c：断点续传
+  ```
+
+## 19.2. ftp sftp lftp
+
+- ftp/sftp文件传输:
+
+  ```bash
+  sftp ID@host # 登陆服务器host，ID为用户名。
+
+  # sftp登陆后，可以使用下面的命令进一步操作：
+    # get filename # 下载文件
+    # put filename # 上传文件
+    # ls # 列出host上当前路径的所有文件
+    # cd # 在host上更改当前路径
+    # lls # 列出本地主机上当前路径的所有文件
+    # lcd # 在本地主机更改当前路径
+  ```
+
+- lftp同步文件夹(类似rsync工具):
+
+  ```bash
+  lftp -u user:pass host
+  lftp user@host:~> mirror -n
+  ```
+
+## 19.3. ssh, scp
+
+- 免密登录
+  ```bash
+  ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa # 有公钥的话就不需要这步
+  cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys # 本机免密登录本机
+  scp ./authorized_keys ...... # 其他机器免密登录本机
+  ```
+
+- 将本地localpath指向的文件上传到远程主机的path路径:
+
+  ```bash
+  $scp localpath ID@host:path
+  ```
+
+- 以ssh协议，遍历下载path路径下的整个文件系统，到本地的localpath:
+
+  ```bash
+  $scp -r ID@site:path localpath
+  ```
+
+## 19.4. telnet
+
+# 20. 网络管理
+
+## 20.1. netstat 查询网络服务和端口 (通过 ss 和 ip 代替)
+
+> netstat 命令用于显示各种网络相关信息，如网络连接，路由表，接口状态 (Interface Statistics)，masquerade 连接，多播成员 (Multicast Memberships) 等等。
+
+- 列出所有端口 (包括监听和未监听的):
+
+  ```bash
+  netstat -a
+  ```
+
+- 列出所有 tcp 端口:
+
+  ```bash
+  netstat -at
+
+  netstat -au # udp
+  ```
+
+- 列出所有有监听的服务状态:
+
+  ```bash
+  netstat -l
+  ```
+
+- 使用netstat工具查询端口:
+
+  ```bash
+  netstat -antp | grep 6379
+  tcp        0      0 127.0.0.1:6379          0.0.0.0:*               LISTEN      25501/redis-server
+
+  ps 25501
+    PID TTY      STAT   TIME COMMAND
+  25501 ?        Ssl   28:21 ./redis-server ./redis.conf
+  ```
+
+- lsof（list open files）是一个列出当前系统打开文件的工具。
+  - 在linux环境下，任何事物都以文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。
+  - 所以如传输控制协议 (TCP) 和用户数据报协议 (UDP) 套接字等； 在查询网络端口时，经常会用到这个工具。
+  - 查询7902端口现在运行什么程序:
+
+    ```bash
+    #分为两步
+    #第一步，查询使用该端口的进程的PID；
+    lsof -i:7902
+    COMMAND   PID   USER   FD   TYPE    DEVICE SIZE NODE NAME
+    WSL     30294 tuapp    4u  IPv4 447684086       TCP 10.6.50.37:tnos-dp (LISTEN)
+
+    #查到30294
+    #使用ps工具查询进程详情：
+    ps -fe | grep 30294
+    tdev5  30294 26160  0 Sep10 ?        01:10:50 tdesl -k 43476
+    root     22781 22698  0 00:54 pts/20   00:00:00 grep 11554
+    ```
+
+## 20.2. 网络路由
+
+### 20.2.1. route (ip 代替)
+
+### 20.2.2. ping
+
+### 20.2.3. host
+
+### 20.2.4. traceroute
+
+## 20.3. iwd
+
+## 20.4. ip
+
+## 20.5. ss
+
+## 20.6. network manager
+
+# 21. 软件安装
+
+## 21.1. yum 和 rpm
 
 - 编译安装(自己编译安装)
   - 说明：
@@ -2126,26 +2102,17 @@ echo "user1:password1" | chpasswd
   - yum install man-pages-zh-CN
   - 看 man bash
 
-## 2.15. 网络管理
+## 21.2. pacman
 
-## 2.16. 远程管理命令
+# 22. 第三方工具
 
-- 免密登录
-  ```bash
-  ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa # 有公钥的话就不需要这步
-  cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys # 本机免密登录本机
-  scp ./authorized_keys ...... # 其他机器免密登录本机
-  ```
+## 22.1. gdb 调试利器
 
-# 3. Linux工具
+## 22.2. ldd 查看程序依赖库
 
-## 3.1. gdb 调试利器
+## 22.3. lsof 一切皆文件
 
-## 3.2. ldd 查看程序依赖库
-
-## 3.3. lsof 一切皆文件
-
-### 3.3.1. 基本说明
+### 22.3.1. 基本说明
 
 - lsof（list open files）
   - 定义：是一个查看当前系统文件的工具
@@ -2165,7 +2132,7 @@ echo "user1:password1" | chpasswd
   - 网络文件（例如：NFS file、网络socket，unix域名socket）
   - 还有其它类型的文件，等等
 
-### 3.3.2. 参数
+### 22.3.2. 参数
 
 - -a 列出打开文件存在的进程
 - -c<进程名> 列出指定进程所打开的文件
@@ -2180,35 +2147,29 @@ echo "user1:password1" | chpasswd
 - -h 显示帮助信息
 - -v 显示版本信息
 
-## 3.4. pstack 跟踪进程栈
+## 22.4. pstack 跟踪进程栈
 
-## 3.5. strace 跟踪进程中的系统调用
+## 22.5. strace 跟踪进程中的系统调用
 
-## 3.6. ipcs 查询进程间通信状态
+## 22.6. ipcs 查询进程间通信状态
 
-## 3.7. vmstat 监视内存使用情况
+## 22.7. vmstat 监视内存使用情况
 
-## 3.8. iostat 监视 I/O 子系统
+## 22.8. iostat 监视 I/O 子系统
 
-## 3.9. sar 找出系统瓶颈的利器
+## 22.9. sar 找出系统瓶颈的利器
 
-## 3.10. readelf elf 文件格式分析
+## 22.10. readelf elf 文件格式分析
 
-## 3.11. objdump 二进制文件分析
+## 22.11. objdump 二进制文件分析
 
-## 3.12. nm 目标文件格式分析
+## 22.12. nm 目标文件格式分析
 
-## 3.13. size 查看程序内存映像大小
+## 22.13. size 查看程序内存映像大小
 
-## 3.14. wget 文件下载
+## 22.14. tcpdump 抓包工具
 
-## 3.15. scp 跨机远程拷贝
-
-## 3.16. crontab 定时任务
-
-## 3.17. tcpdump 抓包工具
-
-### 3.17.1. 介绍
+### 22.14.1. 介绍
 
 - crontab命令
   - 是cron table的简写
@@ -2223,7 +2184,7 @@ echo "user1:password1" | chpasswd
     - /etc/cron.weekly
     - /etc/cron.monthly
 
-### 3.17.2. 使用
+### 22.14.2. 使用
 
 - 语法
   ```bash
@@ -2247,7 +2208,7 @@ echo "user1:password1" | chpasswd
     - - 从X到Z
     - ，散列数字
 
-### 3.17.3. 实例
+### 22.14.3. 实例
 
 - 实例 1：每 1 分钟执行一次 myCommand
   ```bash
@@ -2298,9 +2259,9 @@ echo "user1:password1" | chpasswd
   0 23-7/1 * * * /etc/init.d/smb restart
   ```
 
-## 3.18. 内网穿透frp
+## 22.15. 内网穿透frp
 
-### 3.18.1. 基本说明
+### 22.15.1. 基本说明
 
 - 说明
   - 简单地说，frp就是一个反向代理软件，
@@ -2310,7 +2271,7 @@ echo "user1:password1" | chpasswd
 
   ![linux-1](./image/linux-1.png)
 
-### 3.18.2. 服务端设置
+### 22.15.2. 服务端设置
 
 - **部署在vps上**
 - 下载frp
@@ -2351,7 +2312,7 @@ echo "user1:password1" | chpasswd
 
 - 启动：`./start_server.sh`
 
-### 3.18.3. 客户端设置
+### 22.15.3. 客户端设置
 
 - 安装
   ```bash
@@ -2407,7 +2368,7 @@ echo "user1:password1" | chpasswd
 - 注意：**一个服务端可以同时给多个客户端使用**
 - 启动客户端 `./frpc.exe -c frpc.ini`
 
-## 3.19. neofetch
+## 22.16. neofetch
 
 - 安装 epel-release
   ```bash
@@ -2425,25 +2386,21 @@ echo "user1:password1" | chpasswd
 
   ![linux-2](./image/linux-2.png)
 
-## 3.20. Supervisor
+## 22.17. Supervisor
 
-### 3.20.1. 基本说明
+### 22.17.1. 基本说明
 
 TODO: supervisor
 
-## 3.21. quota 资源配额
+## 22.18. ab 压测工具
 
-# 4. linux常见问题
-
-## 4.1. 线程数量过多
-
-# 5. bash
+# 23. bash
 
 > [bash-handbook](./bash.md)
 
 <!-- TODO: 小任务，这里看看有没有什么有用的东西整理到bash.md -->
 
-## 5.1. 开始
+## 23.1. 开始
 
 - /etc/profile 是 shell 打开时要读取的配置文件，里面有环境变量的定义等
 - pstree:展示进程树
@@ -2491,7 +2448,7 @@ TODO: supervisor
   - 函数
   - 磁盘目录下的可执行文件
 
-## 5.2. 文本流，重定向
+## 23.2. 文本流，重定向
 
 - 预先知识
 
@@ -2546,8 +2503,7 @@ TODO: supervisor
         - 创建一个 socket，并在这里生成一个映射文件(一切皆文件)
           > ![](./image/chongdingxiang2.jpg)
 
-* 重定向不是命令
-
+- 重定向不是命令
   - 作用：不修改源码的情况下，能够修改输入输出方向，既可以指定文件，也可以指定流
   - 输出
     - 示例 1：
@@ -2602,7 +2558,7 @@ TODO: supervisor
           cat 0<& 9  # 将输入重定向到0
           ```
 
-## 5.3. 变量
+## 23.3. 变量
 
 - 种类：
   - 本地
@@ -2654,7 +2610,7 @@ TODO: supervisor
       - sleep 20 ：睡眠 20 秒
       - linux 中的 fork()函数
 
-## 5.4. 引用&命令替换
+## 23.4. 引用&命令替换
 
 > 三种引用机制查看 man bash
 
@@ -2709,7 +2665,7 @@ TODO: supervisor
     lines=$(< scriptfile)
     ```
 
-## 5.5. 退出状态&逻辑判断
+## 23.5. 退出状态&逻辑判断
 
 - 退出状态：
   - echo \$?
@@ -2734,7 +2690,7 @@ TODO: supervisor
     后执行的命令的返回状态。
   ```
 
-## 5.6. 表达式
+## 23.6. 表达式
 
 > man bash shell 语法>表达式
 
@@ -2765,7 +2721,7 @@ TODO: supervisor
   # 因此中括号和表达式必须要用空格分开
   ```
 
-## 5.7. 流程控制
+## 23.7. 流程控制
 
 > **全部通过 help 进行学习**
 
@@ -2789,7 +2745,7 @@ TODO: supervisor
 
   ```
 
-## 5.8. 练习
+## 23.8. 练习
 
 - shell 编程一切皆命令
 - 习惯通过 `$?` 进行逻辑判断
@@ -2901,7 +2857,7 @@ TODO: supervisor
   }
 ```
 
-## 5.9. 七个扩展
+## 23.9. 七个扩展
 
 > man bash 吧，所有都在 man bash
 
@@ -2915,64 +2871,11 @@ TODO: supervisor
 - 8，引用删除 echo "hello"
 - \*，重定向 >
 
-# 6. 常见情景与使用
+# 24. linux常见问题
 
-- 大文件阅读
+## 24.1. 线程数量过多
 
-  <!-- less more gre sed awk-->
-
-- 查找record.log中包含AAA，但不包含BBB的记录的总数:
-
-  ```
-  cat -v record.log | grep AAA | grep -v BBB | wc -l
-  ```
-
-# 7. 其他
-
-## 7.1. 其他命令
-
-- 环境变量
-  - windows 中用两个%取环境变量的值，用;分割
-  - linux 中用\$取值，用:分割
-  - %path% == \$PATH
-  - 修改 profile 可以修改环境变量，具体再学完 shell script 后就理解了
-- yum install man man-pages
-  > man 是帮助程序 man-pages 是扩充的帮助页,一定要装<br>
-  > 也可以 `man ascii` `man utf-8` `man gets`<br>
-- man 可以查的一共是：
-  - 1,用户命令(/bin,/usr/bin,/usr/local/bin)，
-  - 2.系统调用，`man 2 read`
-  - 3.库用户，
-  - 4.特殊文件(设备文件)
-  - 5.文件格式(配置文件的语法)
-  - 6.游戏，杂项(Miscellaneous)
-  - 7.管理命令(/sbin,/usr/sbin,/usr/local/sbin)
-- 外部命令用 man，内部命令用 help(help 也是内部命令)
-- whereis 定位命令位置,同时指出帮助文档位置
-- which 定位命令位置
-- file descriptor:文件描述符/文件句柄。linux 中数字代表进程中的某一个流，任何进程最基本的三个流：
-
-  - 0 输入流
-  - 1 正确的输出流
-  - 2 错误的输出流
-
-- `!serv` 执行最近的，以 serv 开头的，执行过的命令
-- jps ：jdk 中的一个可执行程序，查看 java 进程 id
-
-## 7.2. 系统文件
-
-### 7.2.1. /etc/inittab
-
-- 计算机开机-->计算机内核进内存-->加载根目录分区进内存-->引导 sbin 目录下 init 程序作为第一个进程-->该进程读取/etc/inittab 中的开机设置
-  > 小知识
-  - 3 是命令行模式，
-  - 5 是图形界面模式，
-  - 0 是直接关机无法开机，
-  - 6 是立刻重启死循环，
-  - 1 是单用户模式（物理服务器身边，重启时可以设置，不需要密码登录，修改密码时用）
-  - 不过 linux 中图形界面并没有在内核代码中，需要安装后台程序
-
-# 8. 参考文档
+# 25. 参考文档
 
 - [ ] [linux常用命令](https://tkstorm.com/linux-doc/)
 - [x] [使用frp进行内网穿透](https://sspai.com/post/52523)
