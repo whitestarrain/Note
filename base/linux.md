@@ -171,6 +171,22 @@ $info command
 - /media:挂载点目录，移动设备
 - /mnt:挂载点目录，额外的临时文件系统
 - /proc:伪文件系统，内核映射文件
+  - /proc/cmdline	载入 kernel 时所下达的相关指令与参数！查阅此文件，可了解指令是如何启动的
+  - /proc/cpuinfo	本机的 CPU 的相关信息，包含频率、类型与运算功能等
+  - /proc/devices	这个文件记录了系统各个主要设备的主要设备代号，与 mknod 有关
+  - /proc/filesystems	目前系统已经载入的文件系统
+  - /proc/interrupts	目前系统上面的 IRQ 分配状态。
+  - /proc/ioports	目前系统上面各个设备所配置的 I/O 位址。
+  - /proc/kcore
+  - /proc/loadavg	top 以及 uptime 上三个平均数值就是记录在这里
+  - /proc/meminfo	使用 free 列出的内存信息，这里会有划分更细致的记录
+  - /proc/modules	目前我们的 Linux 已经载入的模块列表，也可以想成是驱动程序
+  - /proc/mounts	系统已经挂载的数据，就是用 mount 这个指令调用出来的数据
+  - /proc/swaps	swap挂载信息
+  - /proc/partitions	分区信息
+  - /proc/uptime	`uptime` 时展示的信息
+  - /proc/version	核心的版本，就是用 uname -a 显示的内容
+  - /proc/bus/*	一些总线的设备，还有 USB 的设备也记录在此
 - /sys:伪文件系统，跟硬件设备有关的属性映射文件
 - /tmp:临时文件，/var/tmp 也是
 - /var:用于存放运行时需要改变数据的文件，也是某些大文件的溢出区，比方说各种服务的日志文件（系统启动日志等。）等。
@@ -1007,11 +1023,31 @@ df /mnt
 
 ### 4.5.2. swapon, swapoff
 
-## 4.6. 文件系统信息修改
+free 查看效果
+
+## 4.6. 文件系统修改
 
 ### 4.6.1. mknod
 
 ### 4.6.2. tune2fs
+
+### 4.6.3. xfs_growfs
+
+扩展 xfs 文件系统
+
+- 严格说起来，扩展文件系统大小并不是没有进行“格式化”，是通过在文件系统当中增加 block group 的方式来增减文件系统的量。
+- 格式化的位置在于该设备后来新增的部份，设备的前面已经存在的文件系统则没有变化。
+- 而新增的格式化过的数据，再反馈回原本的 supberblock 。
+
+## 4.7. 分区表管理
+
+### 4.7.1. sfdisk
+
+MBR分区表管理
+
+### 4.7.2. sgdisk
+
+GPT 分区表管理
 
 # 5. 压缩打包
 
@@ -1049,328 +1085,61 @@ df /mnt
 
 ## 5.8. cpio
 
-# 6. 性能监控
-
-## 6.1. 监控CPU
-
-### 6.1.1. sar
-
-- 查看CPU使用率:
-
-  ```
-  $sar -u 1 2
-  Linux 2.6.35-22-generic-pae (MyVPS)     06/28/2014      _i686_  (1 CPU)
-
-  09:03:59 AM     CPU     %user     %nice   %system   %iowait    %steal     %idle
-  09:04:00 AM     all      0.00      0.00      0.50      0.00      0.00     99.50
-  09:04:01 AM     all      0.00      0.00      0.00      0.00      0.00    100.00
-  ```
-
-  - 后面的两个参数表示监控的频率，比如例子中的1和2，表示每秒采样一次，总共采样2次；
-
-- 查看CPU平均负载:
-  ```
-  $sar -q 1 2
-  # sar指定-q后，就能查看运行队列中的进程数、系统上的进程大小、平均负载等；
-  ```
-
-### 6.1.2. vmstat
-
-## 6.2. 内存信息
-
-### 6.2.1. 文件：/proc/meminfo
-
-- 这个文件记录着比较详细的内存配置信息，使用 `cat /proc/meminfo` 查看。
-
-### 6.2.2. 命令：free
-
-- 示例
-
-  ```
-  [root@VM-24-11-centos ~]# free -h
-                total        used        free      shared  buff/cache   available
-  Mem:           1.8G        1.5G         76M        644K        237M        163M
-  Swap:            0B          0B          0B
-  ```
-
-- 字段说明：
-  - total 系统总的可用物理内存大小
-  - used 已被使用的物理内存大小
-  - free 还有多少物理内存可用
-  - shared 被共享使用的物理内存大小
-  - buff/cache 被 buffer 和 cache 使用的物理内存大小
-    - free比buff/cache小，这是由linux的设计决定的。
-    - Linux 的想法是内存闲着反正也是闲着，不如拿出来做系统缓存和缓冲区，提高数据读写的速率
-    - 但是当系统内存不足时，buff/cache 会让出部分来，非常灵活的操作。
-  - available 还可以被 应用程序 使用的物理内存大小
-    - 对于内核来说，buffer 和 cache 其实都属于已经被使用的内存
-    - 但当应用程序申请内存时，如果 free 内存不够，内核就会回收 buffer 和 cache 的内存来满足应用程序的请求
-    - 也就是available = free+(buff/cache 中可回收的部分内存)
-
-## 6.3. 硬件信息:dmidecode
-
-- 在Linux系统下获取有关硬件方面的信息
-
-## 6.4. 查询页面交换
-
-- 查看页面交换发生状况:
-  - 页面发生交换时，服务器的吞吐量会大幅下降
-  - 服务器状况不良时，如果怀疑因为内存不足而导致了页面交换的发生，可以使用sar -W这个命令来确认是否发生了大量的交换；
-
-  ```
-  sar -W 1 3
-  ```
-
-## 6.5. vmstat/prstat
-
-- 示例
-
-  ```
-  [root@VM-24-11-centos ~]# vmstat 1
-  procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
-  r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
-  2  0      0  80780   2476 240008    0    0    74    28    3    8 14  3 83  0  0
-  1  0      0  80780   2476 240008    0    0     0     0 6538 13456 13  3 84  0  0
-  1  0      0  80796   2476 240008    0    0     0     0 6330 12957 13  4 82  0  0
-  1  0      0  80812   2476 240008    0    0     0     0 6428 13142 13  3 84  0  0
-  1  0      0  80812   2476 240008    0    0     0    16 6105 12506 15  3 82  0  0
-  1  0      0  80812   2484 240000    0    0     0    44 6327 12941 14  3 82  1  0
-  1  0      0  80408   2484 240008    0    0     0     0 6219 12768 15  3 82  0  0
-  ```
-
-- 字段说明：
-  - Procs（进程）
-    - r: 运行队列中进程数量，这个值也可以判断是否需要增加CPU。（长期大于1）
-    - b: 等待IO的进程数量。
-  - Memory（内存）
-    - swpd: 使用虚拟内存大小，如果swpd的值不为0，但是SI，SO的值长期为0，这种情况不会影响系统性能。
-    - free: 空闲物理内存大小。
-    - buff: 用作缓冲的内存大小。
-    - cache: 用作缓存的内存大小，如果cache的值大的时候，说明cache处的文件数多，如果频繁访问到的文件都能被cache处，那么磁盘的读IO bi会非常小。
-  - Swap
-    - si: 每秒从交换区写到内存的大小，由磁盘调入内存。
-    - so: 每秒写入交换区的内存大小，由内存调入磁盘。
-    - 注意：
-      - 内存够用的时候，这2个值都是0
-      - 如果这2个值长期大于0时，系统性能会受到影响，磁盘IO和CPU资源都会被消耗
-      - 有些朋友看到空闲内存（free）很少的或接近于0时，就认为内存不够用了
-      - 不能光看这一点，还要结合si和so
-      - 如果free很少，但是si和so也很少（大多时候是0），那么不用担心，系统性能这时不会受到影响的。
-  - IO（现在的Linux版本块的大小为1kb）
-    - bi: 每秒读取的块数
-    - bo: 每秒写入的块数
-    - 注意：随机磁盘读写的时候，这2个值越大（如超出1024k)，能看到CPU在IO等待的值也会越大。
-  - system（系统）
-    - in: 每秒中断数，包括时钟中断。
-    - cs: 每秒上下文切换数。
-    - 注意：上面2个值越大，会看到由内核消耗的CPU时间会越大。
-  - CPU（以百分比表示）
-    - us: 用户进程执行时间百分比(user time)
-      - us的值比较高时，说明用户进程消耗的CPU时间多
-      - 但是如果长期超50%的使用，那么我们就该考虑优化程序算法或者进行加速。
-    - sy: 内核系统进程执行时间百分比(system time)
-      - sy的值高时，说明系统内核消耗的CPU资源多
-      - 这并不是良性表现，我们应该检查原因。
-    - wa: IO等待时间百分比
-      - wa的值高时，说明IO等待比较严重
-      - 这可能由于磁盘大量作随机访问造成，也有可能磁盘出现瓶颈（块操作）。
-  - id: 空闲时间百分比
+# 6. 数据与系统备份工具
 
-# 7. 进程管理工具
+## 6.1. 依赖打包工具备份
 
-## 7.1. 查询进程
+### 6.1.1. dd
 
-### 7.1.1. ps,pstree,pgrep 基本信息
+### 6.1.2. cpio
 
-- 查询正在运行的进程信息
-  ```bash
-  ps -ef
+### 6.1.3. tar
 
-  # 查询归属于用户colin115的进程
-  ps -ef | grep colin115
-  ps -lu colin115
-  ```
+### 6.1.4. xfsdump, xfsrestore
 
-- 查询所有线程与进程
-  - `ps -uxH`
-  - `pstree -p`
+## 6.2. rsync
 
-- 查询进程ID（适合只记得部分进程字段）
+## 6.3. timeshift
 
-  ```bash
-  pgrep 查找进程
+# 7. 终端管理
 
-  # 查询进程名中含有re的进程
-  pgrep -l re
-  2 kthreadd
-  28 ecryptfs-kthrea
-  29515 redis-server
-  ```
+## 7.1. tty
 
-- 以完整的格式显示所有的进程
-  ```
-  ps -ajx
-  ```
+获取当前连接的名称
 
-### 7.1.2. lsof 条件查询与位进程打开文件列表
+## 7.2. stty
 
-- lsof（list open files）是一个列出当前系统打开文件的工具。
-  - 在linux环境下，任何事物都以文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。
-  - 所以如传输控制协议 (TCP) 和用户数据报协议 (UDP) 套接字等； 在查询网络端口时，经常会用到这个工具。
+## 7.3. terminfo: tic 和 infocmp
 
-- 查看端口占用的进程状态：
+## 7.4. dircolors
 
-  ```bash
-  # -i<条件>：列出符合条件的进程。（4、6、协议、:端口、 @ip ）
-  lsof -i:3306
-  ```
+## 7.5. /etc/inputrc 处理键盘映射
 
-- 查看用户username的进程所打开的文件
+# 8. 用户与权限
 
-  ```bash
-  $lsof -u username
-  ```
+## 8.1. 系统配置文件
 
-- 查询init进程当前打开的文件
+### 8.1.1. /etc/passwd
 
-  ```bash
-  $lsof -c init
-  ```
+### 8.1.2. /etc/shadow
 
-- 查询指定的进程ID(23295)打开的文件：
+### 8.1.3. /etc/group
 
-  ```bash
-  $lsof -p 23295
-  ```
+### 8.1.4. /etc/gshadow
 
-- 查询指定目录下被进程开启的文件（使用+D 递归目录）：
-
-  ```bash
-  $lsof +d mydir1/
-  ```
-
-## 7.2. 终止进程
-
-- 杀死指定PID的进程 (PID为Process ID)
-
-  ```bash
-  kill PID
-  ```
-
-- 杀死相关进程
-
-  ```bash
-  kill -9 3434
-  ```
-
-- 杀死job工作 (job为job number)
-
-  ```bash
-  kill %job
-  ```
-
-## 7.3. 进程监控
-
-- 查看系统中使用CPU、使用内存最多的进程；
-
-  ```bash
-  top
-  ```
-
-  - 输入top命令后，进入到交互界面；接着输入字符命令后显示相应的进程状态：
-  - 对于进程，平时我们最常想知道的就是哪些进程占用CPU最多，占用内存最多。
-
-  ```
-  P：根据CPU使用百分比大小进行排序。
-  M：根据驻留内存大小进行排序。
-  i：使top不显示任何闲置或者僵死进程。
-  ```
-
-  - 对于更详细的使用，详见 [top linux下的任务管理器](https://tkstorm.com/linux-doc/tool/top.html#top) ;
-
-## 7.4. 分析线程栈
-
-- 使用命令pmap，来输出进程内存的状况，可以用来分析线程堆栈；
-
-  ```
-  $pmap PID
-
-  eg:
-  [/home/weber#]ps -fe| grep redis
-  weber    13508 13070  0 08:14 pts/0    00:00:00 grep --color=auto redis
-  weber    29515     1  0  2013 ?        02:55:59 ./redis-server redis.conf
-  [/home/weber#]pmap 29515
-  29515:   ./redis-server redis.conf
-  08048000    768K r-x--  /home/weber/soft/redis-2.6.16/src/redis-server
-  08108000      4K r----  /home/weber/soft/redis-2.6.16/src/redis-server
-  08109000     12K rw---  /home/weber/soft/redis-2.6.16/src/redis-server
-  ```
-
-## 7.5. 综合运用
-
-- 将用户colin115下的所有进程名以av_开头的进程终止:
-
-  ```bash
-  ps -u colin115 |  awk '/av_/ {print "kill -9 " $1}' | sh
-  ```
-
-- 将用户colin115下所有进程名中包含HOST的进程终止:
-
-  ```bash
-  ps -fe| grep colin115|grep HOST |awk '{print $2}' | xargs kill -9;
-  ```
-
-# 8. 数据与系统备份工具
-
-## 8.1. 依赖打包工具备份
-
-### 8.1.1. dd
-
-### 8.1.2. cpio
-
-### 8.1.3. tar
-
-### 8.1.4. xfsdump, xfsrestore
-
-## 8.2. rsync
-
-## 8.3. timeshift
-
-# 9. 终端管理
-
-## 9.1. stty
-
-## 9.2. terminfo: tic 和 infocmp
-
-## 9.3. dircolors
-
-## 9.4. /etc/inputrc 处理键盘映射
-
-# 10. 用户与权限
-
-## 10.1. 系统配置文件
-
-### 10.1.1. /etc/passwd
-
-### 10.1.2. /etc/shadow
-
-### 10.1.3. /etc/group
-
-### 10.1.4. /etc/gshadow
-
-### 10.1.5. 关系说明
+### 8.1.5. 关系说明
 
 ![linux-3](./image/linux-3.png)
 
 passwd中的，gid仅为初始group，一个用户可以在多个group中，且可以通过 newgrp 切换生效的group
 
-## 10.2. 用户管理
+## 8.2. 用户管理
 
-### 10.2.1. useradd
+### 8.2.1. useradd
 
-#### 10.2.1.1. 基本说明
+#### 8.2.1.1. 基本说明
 
-#### 10.2.1.2. /etc/default/useradd 默认配置
+#### 8.2.1.2. /etc/default/useradd 默认配置
 
 <details>
 <summary style="color:red;">展开</summary>
@@ -1398,7 +1167,7 @@ CREATE_MAIL_SPOOL=yes # 是否主动帮使用者创建邮件信箱（mailbox）
   - 由于每个帐号都属于 users 群组，因此大家都可以互相分享主文件夹内的数据之故。
   - 代表 distributions 如 SuSE等。
 
-#### 10.2.1.3. /etc/login.defs
+#### 8.2.1.3. /etc/login.defs
 
 <details>
 <summary style="color:red;">展开</summary>
@@ -1429,11 +1198,11 @@ ENCRYPT_METHOD SHA512           # 密码加密的机制使用的是 sha512 这�
 
 uid,gid以及密码等设置
 
-### 10.2.2. usermod
+### 8.2.2. usermod
 
-### 10.2.3. userdel
+### 8.2.3. userdel
 
-### 10.2.4. passwd
+### 8.2.4. passwd
 
 支持 `--stdin` 和管道命令结合
 
@@ -1441,7 +1210,7 @@ uid,gid以及密码等设置
 echo "password" | passwd --stdin username
 ```
 
-### 10.2.5. change
+### 8.2.5. change
 
 修改/etc/shadow中的各个字段
 
@@ -1451,99 +1220,99 @@ echo "password" | passwd --stdin username
 chage -d 0 agetest
 ```
 
-### 10.2.6. chpasswd
+### 8.2.6. chpasswd
 
-## 10.3. 组管理
+## 8.3. 组管理
 
-### 10.3.1. groupmod
+### 8.3.1. groupmod
 
-### 10.3.2. groupadd
+### 8.3.2. groupadd
 
-### 10.3.3. groupdel
+### 8.3.3. groupdel
 
-### 10.3.4. gpasswd
+### 8.3.4. gpasswd
 
 组管理员，可控制加入，移出组
 
-## 10.4. 使用者管理
+## 8.4. 使用者管理
 
 
-### 10.4.1. id
+### 8.4.1. id
 
-### 10.4.2. groups
+### 8.4.2. groups
 
-### 10.4.3. finger
+### 8.4.3. finger
 
 使用者信息，登陆信息和个人信息
 
-### 10.4.4. chfg
+### 8.4.4. chfg
 
 修改finger中的信息，包括电话号码等信息等
 
 会记录在/etc/passwd 的 使用者信息列
 
-### 10.4.5. chsh
+### 8.4.5. chsh
 
 修改默认shell
 
-### 10.4.6. newgrp
+### 8.4.6. newgrp
 
 切换生效的group
 
 会新打开一个shell环境，exit可以退回原来的环境
 
-## 10.5. 账号切换
+## 8.5. 账号切换
 
-### 10.5.1. su
+### 8.5.1. su
 
 默认为 no-login shell，大多数环境变量不会改变
 
 需要使用 `su -`
 
-### 10.5.2. sudo, visudo
+### 8.5.2. sudo, visudo
 
 - `/etc/sudoers` 配置sudo授权用户
   - 用visudo来编辑，退出时会检验语法
 
-## 10.6. 用户权限
+## 8.6. 用户权限
 
-### 10.6.1. chmod
+### 8.6.1. chmod
 
-### 10.6.2. chown
+### 8.6.2. chown
 
-### 10.6.3. chgrp
+### 8.6.3. chgrp
 
-### 10.6.4. 默认权限与隐藏权限
+### 8.6.4. 默认权限与隐藏权限
 
 SUID, SGID, SBIT
 
-#### 10.6.4.1. umask
+#### 8.6.4.1. umask
 
-#### 10.6.4.2. chattr, lsattr
+#### 8.6.4.2. chattr, lsattr
 
 文件特殊权限： SUID, SGID, SBIT
 
-## 10.7. ACL
+## 8.7. ACL
 
-### 10.7.1. 说明
+### 8.7.1. 说明
 
 支持特定用户或者组设置权限
 
 支持检查： `sudo dmesg | grep -i acl`
 
-### 10.7.2. getfacl, setfacl
+### 8.7.2. getfacl, setfacl
 
-## 10.8. 特殊的shell 与 PAM
+## 8.8. 特殊的shell 与 PAM
 
-### 10.8.1. /sbin/nologin
+### 8.8.1. /sbin/nologin
 
 不可登陆账号的shell为 `/sbin/nologin`
 
 使用不可登陆账号登陆时，显示的内容：`/etc/nologin.txt`
 
-### 10.8.2. PAM
+### 8.8.2. PAM
 
-#### 10.8.2.1. 概述
+#### 8.8.2.1. 概述
 
 Pluggable Authentication Modules, 嵌入式权限模块
 
@@ -1576,7 +1345,7 @@ passwd示例：
 > PAM 有个特殊的地方，由于他是在程序调用时才予以设置的，
 > 因此你修改完成的数据， 对于已登陆系统中的使用者是没有效果的，要等再次登陆时才会生效
 
-#### 10.8.2.2. 配置文件
+#### 8.8.2.2. 配置文件
 
 - 示例
 
@@ -1673,7 +1442,7 @@ passwd示例：
     authtok_disable_aging、 try_again、ignore、abort、authtok_expired、module_unknown、bad_item和default
     ```
 
-### 10.8.3. 常见模块
+### 8.8.3. 常见模块
 
 - pam_securetty.so：
   - 限制系统管理员 （root） 只能够从安全的 （secure） 终端机登陆；
@@ -1707,11 +1476,11 @@ passwd示例：
 - pam_limits.so：
   - ulimit 其实那就是这个模块提供的能力。还有更多细部的设置可以参考： /etc/security/limits.conf 内的说明。
 
-## 10.9. linux用户间的交流
+## 8.9. linux用户间的交流
 
-### 10.9.1. w,who,last,lastlog 登陆信息查询
+### 8.9.1. w,who,last,lastlog 登陆信息查询
 
-### 10.9.2. write, mesg, wall 用户间交流
+### 8.9.2. write, mesg, wall 用户间交流
 
 ```
 write wsain pts/13
@@ -1727,25 +1496,25 @@ mesg y
 wall "I will shutdown my linux server..."
 ```
 
-### 10.9.3. mail 使用者间互发邮件
+### 8.9.3. mail 使用者间互发邮件
 
-## 10.10. 账号相关检查工具
+## 8.10. 账号相关检查工具
 
-### 10.10.1. pwck
+### 8.10.1. pwck
 
 检查 /etc/passwd 这个帐号配置文件内的信息，与实际的主文件夹是否存在等信息，
 还可以比对 /etc/passwd /etc/shadow 的信息是否一致，
 另外，如果 /etc/passwd 内的数据字段错误时，会提示使用者修订
 
-### 10.10.2. pwconv(用不到)
+### 8.10.2. pwconv(用不到)
 
 将 /etc/passwd 内的帐号与密码，移动到 /etc/shadow 当中
 
-### 10.10.3. pwunconv(别用)
+### 8.10.3. pwunconv(别用)
 
 将 /etc/shadow 内的密码栏数据写回 /etc/passwd 当中， 并且删除 /etc/shadow 文件
 
-### 10.10.4. chpasswd
+### 8.10.4. chpasswd
 
 读入未加密前的密码，并且经过加密后， 将加密后的密码写入 /etc/shadow 当中
 
@@ -1753,42 +1522,573 @@ wall "I will shutdown my linux server..."
 echo "user1:password1" | chpasswd
 ```
 
-# 11. 系统资源管理
+# 9. 系统资源管理
 
-## 11.1. ulimit
+## 9.1. ulimit
 
 基于 pam
 
-## 11.2. IPC
+## 9.2. IPC
 
-# 12. 文件系统进阶管理
+# 10. 磁盘管理进阶
 
-## 12.1. 磁盘限额 Quota
+## 10.1. 磁盘限额 Quota
 
 - 文件系统需要支持
 - 内核支持
 - 只对一般身份使用者有效
 - 启用SELinux后，非所有目录均可设置 quota。默认仅`/home`目录可设置
 
-## 12.2. RAID
+## 10.2. RAID
 
-软件磁盘阵列
+### 10.2.1. 说明
 
-## 12.3. LVM
+冗余廉价磁盘阵列
 
-针对 ext
+Redundant Arrays of Inexpensive Disks,
 
-# 13. cron 例行工作
+- RAID 0
+- RAID 1
+- RAID 1+0
+- RAID 0+1
+- RAID 5
+- RAID 6
 
-# 14. 程序管理与SELinux
+实现：
 
-# 15. systemctl
+- 软件实现,软件虚拟， /dev/md[0-...]
+- 硬件实现,硬件层管理，操作系统无感知 /dev/sd[a-p]
 
-# 16. 登录文件
+### 10.2.2. mdadm 软件实现
 
-# 17. 开机流程
+软件磁盘阵列， 支持分区间以及磁盘间的RAID实现
 
-## 17.1. /etc/inittab
+示例：
+
+```bash
+# 使用分区创建raid
+mdadm --create /dev/md[0-9] --auto=yes --level=[015] --chunk=NK  --raid-devices=N --spare-devices=N /dev/sdx /dev/hdx...
+# 查看raid信息
+mdadm --detail /dev/md0
+# xfs格式化raid时，优化项
+mkfs.xfs -f -d su=256k,sw=3 -r extsize=768k /dev/md0
+
+# raid管理
+mdadm --manage ..
+```
+
+配置文件：`/etc/mdadm.conf`
+
+```bash
+mdadm --detail /dev/md0 | grep -i uuid
+vim /etc/mdadm.conf
+```
+```
+#     RAID设备      识别码内容w
+ARRAY /dev/md0 UUID=2256da5f:4870775e:cf2fe320:4dfabbc6
+```
+```bash
+vim /etc/fstab
+```
+```
+UUID=494cb3e1-5659-4efc-873d-d0758baec523  /srv/raid xfs defaults 0 0
+```
+
+关闭raid：
+
+```bash
+# 1. 先卸载且删除配置文件内与这个 /dev/md0 有关的设置：
+[root@centos ~]# umount /srv/raid
+[root@centos ~]# vim /etc/fstab
+UUID=494cb3e1-5659-4efc-873d-d0758baec523 /srv/raid xfs defaults 0 0
+# 将这一行删除掉！或者是注解掉也可以！
+
+# 2. 先覆盖掉 RAID 的 metadata 以及 XFS 的 superblock，才关闭 /dev/md0 的方法
+[root@centos ~]# dd if=/dev/zero of=/dev/md0 bs=1M count=50
+[root@centos ~]# mdadm --stop /dev/md0
+mdadm: stopped /dev/md0 <==不啰唆！这样就关闭了！
+[root@centos ~]# dd if=/dev/zero of=/dev/vda5 bs=1M count=10
+[root@centos ~]# dd if=/dev/zero of=/dev/vda6 bs=1M count=10
+[root@centos ~]# dd if=/dev/zero of=/dev/vda7 bs=1M count=10
+[root@centos ~]# dd if=/dev/zero of=/dev/vda8 bs=1M count=10
+[root@centos ~]# dd if=/dev/zero of=/dev/vda9 bs=1M count=10
+# 因为 RAID 的相关数据其实也会存一份在磁盘当中，因此，如果你只是将配置文件移除， 同时关闭了 RAID，但是分区并没有重新规划过，
+# 那么重新开机过后，系统还是会将这颗磁盘阵列创建起来，只是名称可能会变成 /dev/md127 就是了！
+# 因此，移除掉 Software RAID 时，上述的 dd 指令不要忘记。
+
+[root@centos ~]# cat /proc/mdstat
+Personalities : [raid6] [raid5] [raid4]
+unused devices: <none> <==看吧！确实不存在任何阵列设备！
+
+[root@centos ~]# vim /etc/mdadm.conf
+# 删除或注解了
+# ARRAY /dev/md0 UUID=2256da5f:4870775e:cf2fe320:4dfabbc6
+```
+
+## 10.3. LVM
+
+### 10.3.1. 说明
+
+Logical Volume Manager
+
+![linux-4](./image/linux-4.png)
+
+![linux-5](./image/linux-5.png)
+
+> - physical volume, 物理卷。lvm使用的分区需要调整 partition type code 为 ’8e‘，RAID的 code 为 'fd'
+> - volume group, 卷组。PV整合为VG
+> - physical extent, 物理区块。LVM 默认使用 4MB 的 PE 区块，文件数据都是借由写入 PE 来处理的
+> - logic volume, 逻辑卷。VG切为LV
+
+- 实际的物理磁盘划分的分区可以作为物理卷（PV）。一个或多个物理卷可以用来创建卷组（VG）。
+- 然后基于卷组可以创建逻辑卷（LV）。只要在卷组中有可用空间，就可以随心所欲的创建逻辑卷。
+- 文件系统就是在逻辑卷上创建的，然后可以在操作系统挂载和访问。
+
+LVM 虽说支持 linear 和 triped(与raid0类似) 两种写入模式， 但注重于 **弹性调整容量** ，如果需要性能与备份，则使用RAID即可。
+
+所有 partition type code 查看： `sgdisk -L`
+
+### 10.3.2. pv阶段: pvcreate, pvscan, pvdisplay, pvremove
+
+命令：
+
+- pvcreate ：将实体 partition 创建成为 PV ；
+- pvscan ：搜寻目前系统里面任何具有 PV 的磁盘；
+- pvdisplay ：显示出目前系统上面的 PV 状态；
+- pvremove ：将 PV 属性移除，让该 partition 不具有 PV 属性。
+
+创建流程：
+
+```bash
+# gdisk修改 partition type code 为 `8E00`
+gdisk
+# 查看当前状态
+pvscan
+# 创建物理卷
+pvcreate /dev/vda{5,6,7,8}
+# 查看当前状态
+pvscan
+# 查看所有物理卷的信息
+pvdisplay
+```
+
+### 10.3.3. vg阶段: vgcreate, vgscan, vgdisplay ...
+
+命令：
+
+- vgcreate ：创建 VG 的指令啦
+- vgscan ：搜寻系统上面是否有 VG 存在
+- vgdisplay ：显示目前系统上面的 VG 状态；
+- vgextend ：在 VG 内增加额外的 PV ；
+- vgreduce ：在 VG 内移除 PV；
+- vgchange ：设置 VG 是否启动 （active）
+- vgremove ：删除一个 VG
+
+流程：
+
+```bash
+# 创建逻辑卷, -s 接pe大小
+vgcreate -s 16M testvg /dev/vda{5,6,7}
+# 查看状态
+pvscan
+vgscan
+vgdisplay testvg
+# 尝试扩展vg容量
+vgextend testvg /dev/vda8
+```
+
+### 10.3.4. LV阶段: lvcreate, lvscan, lvdisplay ...
+
+命令：
+
+- lvcreate ：创建 LV
+- lvscan ：查询系统上面的 LV
+- lvdisplay ：显示系统上面的 LV 状态
+- lvextend ：在 LV 里面增加容量
+- lvreduce ：在 LV 里面减少容量
+- lvremove ：删除一个 LV
+- lvresize ：对 LV 进行容量大小的调整
+
+流程：
+
+```bash
+lvcreate -L 2G -n testlv testvg
+#或者 lvcreate -l 128 -n testlv testvg
+# 查看状态
+lvscan
+lvdisplay /dev/testvg/testlv
+```
+```bash
+# 格式化、挂载 LV
+mkfs.xfs /dev/testvg/testlv
+mkdir /srv/lvm
+mount /dev/testvg/testlv /srv/lvm
+df -Th /srv/lvm
+Filesystem                  Type  Size  Used Avail Use% Mounted on
+/dev/mapper/testvg-testlv xfs   2.0G   33M  2.0G   2% /srv/lvm
+
+# 测试
+cp -a /etc /var/log /srv/lvm
+df -Th /srv/lvm
+Filesystem                  Type  Size  Used Avail Use% Mounted on
+/dev/mapper/testvg-testlv xfs   2.0G  152M  1.9G   8% /srv/lvm
+```
+
+### 10.3.5. 扩展lv容量
+
+- 确保vg有剩余的空间，没有的话扩展vg
+- lvresize，扩展逻辑卷的大小
+
+  ```bash
+  # 扩展lv容量
+  vgdisplay testvg
+  lvresize -L +500M /dev/testvg/testlv
+  ```
+- 文件系统扩展，磁盘变大了，需要让文件系统识别到
+
+  ```bash
+  xfs_info /srv/lvm
+  xfs_growfs /srv/lvm
+  xfs_info /srv/lvm
+  # 会发现 block group （agcount） 的数量增加一个
+  ```
+
+### 10.3.6. LVM thin volume
+
+```bash
+# 1. lvcreate 创建 testtpool 这个 thin pool 设备：
+lvcreate -L 1G -T testvg/testtpool  # 最重要的创建指令
+lvdisplay /dev/testvg/testtpool
+#  --- Logical volume ---
+#  LV Name                testtpool
+#  VG Name                testvg
+#  LV UUID                p3sLAg-Z8jT-tBuT-wmEL-1wKZ-jrGP-0xmLtk
+#  LV Write Access        read/write
+#  LV Creation host, time study.centos.test, 2015-07-28 18:27:32 +0800
+#  LV Pool metadata       testtpool_tmeta
+#  LV Pool data           testtpool_tdata
+#  LV Status              available
+#  # open                 0
+# LV Size                1.00 GiB   # 总共可分配出去的容量
+#  Allocated pool data    0.00%      # 已分配的容量百分比
+#  Allocated metadata     0.24%      # 已分配的中介数据百分比
+#  Current LE             64
+#  Segments               1
+#  Allocation             inherit
+#  Read ahead sectors     auto
+#  - currently set to     8192
+#  Block device           253:6
+
+lvs testvg  # 语法为 lvs VGname
+# LV         VG      Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+# testlv    testvg -wi-ao---- 2.50g
+# testtpool testvg twi-a-tz-- 1.00g             0.00   0.24
+# 这个 lvs 指令的输出更加简单明了！直接看比较清晰！
+
+# 2. 开始创建 testthin1 这个有 10GB 的设备，注意！必须使用 --thin 与 testtpool 链接
+lvcreate -V 10G -T testvg/testtpool -n testthin1
+
+lvs testvg
+#   LV         VG      Attr       LSize  Pool       Origin Data%  Meta%  Move Log Cpy%Sync Convert
+#   testlv    testvg -wi-ao----  2.50g
+#   testthin1 testvg Vwi-a-tz-- 10.00g testtpool        0.00
+#   testtpool testvg twi-aotz--  1.00g                   0.00   0.27
+# testvg 没有足够大到 10GB 的容量，但通过 thin pool 可以产生了 10GB 的 testthin1 这个设备
+
+# 3. 开始创建文件系统
+mkfs.xfs /dev/testvg/testthin1
+mkdir /srv/thin
+mount /dev/testvg/testthin1 /srv/thin
+df -Th /srv/thin
+# Filesystem                     Type  Size  Used Avail Use% Mounted on
+# /dev/mapper/testvg-testthin1 xfs    10G   33M   10G   1% /srv/thin
+
+4. 测试一下容量的使用！创建 500MB 的文件，但不可超过 1GB 的测试为宜
+dd if=/dev/zero of=/srv/thin/test.img bs=1M count=500
+lvs testvg
+# LV         VG      Attr       LSize  Pool       Origin Data%  Meta%  Move Log Cpy%Sync Convert
+# testlv    testvg -wi-ao----  2.50g
+# testthin1 testvg Vwi-aotz-- 10.00g testtpool        4.99
+# testtpool testvg twi-aotz--  1.00g                   49.93  1.81
+# 这时已经分配出 49% 以上的容量了，而 testthin1 却只看到用掉 5% 而已
+# 在管理上要注意
+```
+
+### 10.3.7. LVM 快照
+
+- 通过 PE 的 **写时复制** 进行备份。
+- 由于快照区与原本的 LV 共享很多 PE 区块，因此快照区与被快照的 LV 必须要在同一个 VG 上头。
+- 另外如果被备份的lv修改的数据大于快照lv的容量，此时快照也会失效的
+
+制作快照：
+
+```
+# 1. 先观察 VG 还剩下多少剩余容量
+vgdisplay testvg
+# ....（其他省略）....
+#   Total PE              252
+#   Alloc PE / Size       226 / 3.53 GiB
+#   Free  PE / Size       26 / 416.00 MiB
+
+# 2. 利用 lvcreate 创建 testlv 的快照区，快照被取名为 testsnap1，且给予 26 个 PE
+lvcreate -s -l 26 -n testsnap1 /dev/testvg/testlv
+# Logical volume "testsnap1" created
+# 上述的指令中最重要的是那个 -s 的选项！代表是 snapshot 快照功能之意！
+# -n 后面接快照区的设备名称， /dev/.... 则是要被快照的 LV 完整文件名。
+# -l 后面则是接使用多少个 PE 来作为这个快照区使用。
+
+lvdisplay /dev/testvg/testsnap1
+# --- Logical volume ---
+# LV Path                /dev/testvg/testsnap1
+# LV Name                testsnap1
+# VG Name                testvg
+# LV UUID                I3m3Oc-RIvC-unag-DiiA-iQgI-I3z9-0OaOzR
+# LV Write Access        read/write
+# LV Creation host, time study.centos.test, 2015-07-28 19:21:44 +0800
+# LV snapshot status     active destination for testlv
+# LV Status              available
+# # open                 0
+# LV Size                2.50 GiB    # 原始碟，就是 testlv 的原始容量
+# Current LE             160
+# COW-table size         416.00 MiB  # 这个快照能够纪录的最大容量！
+# COW-table LE           26
+# Allocated to snapshot  0.00%       # 目前已经被用掉的容量！
+# Snapshot chunk size    4.00 KiB
+# Segments               1
+# Allocation             inherit
+# Read ahead sectors     auto
+# - currently set to     8192
+# Block device           253:11
+```
+
+由于快照是由原来的lv写时复制搞过来的，如果挂载快照卷，会和备份时的lv相同
+
+```bash
+mkdir /srv/snapshot1
+# 因为 XFS 不允许相同的 UUID 文件系统的挂载，因此需要 nouuid 参数，让文件系统忽略相同的 UUID 所造成的问题
+mount -o nouuid /dev/testvg/testsnap1 /srv/snapshot1
+df -Th /srv/lvm /srv/snapshot1
+# Filesystem                     Type  Size  Used Avail Use% Mounted on
+# /dev/mapper/testvg-testlv    xfs   2.5G  111M  2.4G   5% /srv/lvm
+# /dev/mapper/testvg-testsnap1 xfs   2.5G  111M  2.4G   5% /srv/snapshot1
+```
+
+利用快照恢复：
+
+```bash
+# 1. 先将原本的 /dev/testvg/testlv 内容作些变更
+df -Th /srv/lvm /srv/snapshot1
+# Filesystem                     Type  Size  Used Avail Use% Mounted on
+# /dev/mapper/testvg-testlv    xfs   2.5G  111M  2.4G   5% /srv/lvm
+# /dev/mapper/testvg-testsnap1 xfs   2.5G  111M  2.4G   5% /srv/snapshot1
+
+cp -a /usr/share/doc /srv/lvm
+rm -rf /srv/lvm/log
+rm -rf /srv/lvm/etc/sysconfig
+df -Th /srv/lvm /srv/snapshot1
+# Filesystem                     Type  Size  Used Avail Use% Mounted on
+# /dev/mapper/testvg-testlv    xfs   2.5G  146M  2.4G   6% /srv/lvm
+# /dev/mapper/testvg-testsnap1 xfs   2.5G  111M  2.4G   5% /srv/snapshot1
+ll /srv/lvm /srv/snapshot1
+# /srv/lvm:
+# total 60
+# drwxr-xr-x. 887 root root 28672 Jul 20 23:03 doc
+# drwxr-xr-x. 131 root root  8192 Jul 28 00:12 etc
+# /srv/snapshot1:
+# total 16
+# drwxr-xr-x. 131 root root 8192 Jul 28 00:12 etc
+# drwxr-xr-x.  16 root root 4096 Jul 28 00:01 log
+# 两个目录的内容看起来已经不太一样了喔！检测一下快照 LV 吧！
+
+lvdisplay /dev/testvg/testsnap1
+#   --- Logical volume ---
+#   LV Path                /dev/testvg/testsnap1
+# ....（中间省略）....
+#  Allocated to snapshot  21.47%
+# 快照卷全部的容量已经被用掉了 21.4%
+
+# 2. 利用快照区将原本的 filesystem 备份，我们使用 xfsdump 来处理！
+[root@study ~]# xfsdump -l 0 -L lvm1 -M lvm1 -f /home/lvm.dump /srv/snapshot1
+# 此时你就会有一个备份数据，亦即是 /home/lvm.dump 了
+
+umount /srv/snapshot1
+lvremove /dev/testvg/testsnap1
+umount /srv/lvm  # 操作文件系统时一定要unmount了
+mkfs.xfs -f /dev/testvg/testlv # 重新格式化，清空数据
+mount /dev/testvg/testlv /srv/lvm
+xfsrestore -f /home/lvm.dump -L lvm1 /srv/lvm # 还原
+ll /srv/lvm
+```
+
+### 10.3.8. 移除lvm
+
+- 先卸载系统上面的 LVM 文件系统 （包括快照与所有 LV）；
+- 使用 lvremove 移除 LV ；
+- 使用 vgchange -a n VGname 让 VGname 这个 VG 不具有 Active 的标志；
+- 使用 vgremove 移除 VG：
+- 使用 pvremove 移除 PV；
+- 最后，使用 fdisk 还原 partition type code
+
+### 10.3.9. 指令汇总
+
+| 任务                  | PV 阶段   | VG 阶段               | LV 阶段    | filesystem（XFS / EXT4） |           |
+| --------------------- | --------- | --------------------- | ---------- | ------------------------ | --------- |
+| 搜寻（scan）          | pvscan    | vgscan                | lvscan     | lsblk, blkid             |           |
+| 创建（create）        | pvcreate  | vgcreate              | lvcreate   | mkfs.xfs                 | mkfs.ext4 |
+| 列出（display）       | pvdisplay | vgdisplay             | lvdisplay  | df, mount                |           |
+| 增加（extend）        | vgextend  | lvextend （lvresize） | xfs_growfs | resize2fs                |           |
+| 减少（reduce）        | vgreduce  | lvreduce （lvresize） | 不支持     | resize2fs                |           |
+| 删除（remove）        | pvremove  | vgremove              | lvremove   | umount, 重新格式化       |           |
+| 改变容量（resize）    | lvresize  | xfs_growfs            | resize2fs  |                          |           |
+| 改变属性（attribute） | pvchange  | vgchange              | lvchange   | /etc/fstab, remount      |           |
+
+
+# 11. 例行工作
+
+## 11.1. at, batch
+
+单一工作调度。
+
+batch会在工作负载较低的时候执行
+
+uptime查看系统启动时间与工作负载
+
+## 11.2. cron
+
+- 执行权限，二选一
+  - /etc/cron.allow
+  - /etc/cron.deny
+- cron任务配置：
+  - 用户级别：`/var/spool/cron/`
+  - 系统级别，语法有区别，需要有执行user
+    - `/etc/crontab`
+    - `/etc/cron.d/*`
+- 执行记录：/var/log/cron
+
+周与日月不可共存
+
+## 11.3. anacron
+
+```
+anacron [-sfn] [job]..
+anacron -u [job]..
+# 选项与参数：
+# -s  ：开始一连续的执行各项工作 （job），会依据时间记录文件的数据判断是否进行；
+# -f  ：强制进行，而不去判断时间记录文件的时间戳记；
+# -n  ：立刻进行未进行的任务，而不延迟 （delay） 等待时间；
+# -u  ：仅更新时间记录文件的时间戳记，不进行任何工作。
+# job ：由 /etc/anacrontab 定义的各项工作名称。
+```
+
+anacron 是一个应用程序并非一个服务，anacron 默认会以一天、七天、一个月为期去侦测系统未进行的 crontab 任务
+
+anacron 会去分析现在的时间与时间记录文件所记载的上次执行 anacron 的时间，两者比较后若发现有差异， 那就是在某些时刻没有进行 crontab 任务，
+此时 anacron 就会开始执行未进行的 crontab 任务
+
+示例配置：
+
+```
+# /etc/anacrontab: configuration file for anacron
+
+# See anacron(8) and anacrontab(5) for details.
+
+SHELL=/bin/sh
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+# the maximal random delay added to the base delay of the jobs
+RANDOM_DELAY=45
+# the jobs will be started during the following hours only
+START_HOURS_RANGE=3-22
+
+#period in days   delay in minutes   job-identifier       command
+1                 5                   cron.daily         nice run-parts /etc/cron.daily
+7                 25                  cron.weekly        nice run-parts /etc/cron.weekly
+@monthly          45                 cron.monthly       nice run-parts /etc/cron.monthly
+```
+
+流程：
+
+- 由 `/etc/anacrontab` 分析到 `cron.daily` 这项工作名称的天数为 1 天；
+- 由 `/var/spool/anacron/cron.daily` 取出最近一次执行 anacron 的时间戳记；
+- 由上个步骤与目前的时间比较，若差异天数为 1 天以上 （含 1 天），就准备进行指令；
+- 若准备进行指令，根据 `/etc/anacrontab` 的设置，将延迟 5 分钟 + 3 小时 （看 START_HOURS_RANGE 的设置）；
+- 延迟时间过后，开始执行后续指令，亦即 `run-parts /etc/cron.daily` 这串指令；
+- 执行完毕后， anacron 程序结束
+
+cron 和 anacron
+
+- crond 会主动去读取 `/etc/crontab`, `/var/spool/cron/`, `/etc/cron.d/` 等配置文件，并依据“分、时、日、月、周”的时间设置去各项工作调度；
+- 根据 `/etc/cron.d/0hourly` 的设置，主动去 `/etc/cron.hourly/` 目录下，执行所有在该目录下的可执行文件；
+- 因为 `/etc/cron.hourly/0anacron` 这个指令档的缘故，主动的每小时执行 anacron ，并调用 `/etc/anacrontab` 的配置文件；
+- 根据 `/etc/anacrontab` 的设置，依据每天、每周、每月去分析 `/etc/cron.daily/`, `/etc/cron.weekly/`, `/etc/cron.monthly/` 内的可执行文件，以进行固定周期需要执行的指令。
+
+因此 anacrontab 会自动重新执行的只有 `/etc/cron.{daily,weekly,monthly}` 三个文件夹下面的任务。
+如果想要监控其他任务，也可以自行配置
+
+# 12. 程序与内存管理
+
+## 12.1. job
+
+### 12.1.1. &, fg, jobs
+
+### 12.1.2. nohup
+
+nohup 并不支持 bash 内置的指令
+
+## 12.2. 进程管理
+
+### 12.2.1. kill, killall
+
+kill %number: 杀掉job，需要加`%`
+
+### 12.2.2. ps, pstree
+
+### 12.2.3. pgrep, pidof
+
+### 12.2.4. top
+
+### 12.2.5. nice, renice 优先级调整
+
+### 12.2.6. pmap 获取进程内存信息
+
+### 12.2.7. 程序与signal
+
+`kill -l` 或者 `man 7 signal`
+
+## 12.3. 内存管理
+
+### 12.3.1. free
+
+`cat /proc/meminfo`
+
+## 12.4. vmstat
+
+CPU/内存/磁盘输入输出状态
+
+## 12.5. 打开文件
+
+### 12.5.1. fuser
+
+找出使用当前文件的程序
+
+```bash
+fuser -uv .
+fuser -muv .
+```
+
+### 12.5.2. lsof
+
+列出被程序所打开的文件文件名
+
+### 12.5.3. pidof
+
+# 13. systemctl
+
+# 14. 登录文件
+
+# 15. 开机流程
+
+## 15.1. /etc/inittab
 
 - 计算机开机-->计算机内核进内存-->加载根目录分区进内存-->引导 sbin 目录下 init 程序作为第一个进程-->该进程读取/etc/inittab 中的开机设置
   > 小知识
@@ -1800,25 +2100,31 @@ echo "user1:password1" | chpasswd
   - 不过 linux 中图形界面并没有在内核代码中，需要安装后台程序
 
 
-# 18. 硬件与核心信息
+# 16. 硬件与核心信息
 
-## 18.1. uname
+## 16.1. uname
 
-## 18.2. lscpu
+## 16.2. lscpu
 
-## 18.3. lspci
+## 16.3. lspci
 
-## 18.4. lsmod
+## 16.4. lsmod
 
-## 18.5. lsusb
+## 16.5. lsusb
 
-## 18.6. lsblk
+## 16.6. iostat
 
-## 18.7. dmesg
+## 16.7. lsblk
 
-# 19. 网络工具
+## 16.8. dmesg
 
-## 19.1. wget 下载
+分析核心产生的信息
+
+## 16.9. dmidecode
+
+# 17. 网络工具
+
+## 17.1. wget 下载
 
 - 直接下载文件或者网页:
 
@@ -1830,7 +2136,7 @@ echo "user1:password1" | chpasswd
   # -c：断点续传
   ```
 
-## 19.2. ftp sftp lftp
+## 17.2. ftp sftp lftp
 
 - ftp/sftp文件传输:
 
@@ -1853,7 +2159,7 @@ echo "user1:password1" | chpasswd
   lftp user@host:~> mirror -n
   ```
 
-## 19.3. ssh, scp
+## 17.3. ssh, scp
 
 - 免密登录
   ```bash
@@ -1874,11 +2180,11 @@ echo "user1:password1" | chpasswd
   $scp -r ID@site:path localpath
   ```
 
-## 19.4. telnet
+## 17.4. telnet
 
-# 20. 网络管理
+# 18. 网络管理
 
-## 20.1. netstat 查询网络服务和端口 (通过 ss 和 ip 代替)
+## 18.1. netstat 查询网络服务和端口 (通过 ss 和 ip 代替)
 
 > netstat 命令用于显示各种网络相关信息，如网络连接，路由表，接口状态 (Interface Statistics)，masquerade 连接，多播成员 (Multicast Memberships) 等等。
 
@@ -1932,27 +2238,27 @@ echo "user1:password1" | chpasswd
     root     22781 22698  0 00:54 pts/20   00:00:00 grep 11554
     ```
 
-## 20.2. 网络路由
+## 18.2. 网络路由
 
-### 20.2.1. route (ip 代替)
+### 18.2.1. route (ip 代替)
 
-### 20.2.2. ping
+### 18.2.2. ping
 
-### 20.2.3. host
+### 18.2.3. host
 
-### 20.2.4. traceroute
+### 18.2.4. traceroute
 
-## 20.3. iwd
+## 18.3. iwd
 
-## 20.4. ip
+## 18.4. ip
 
-## 20.5. ss
+## 18.5. ss
 
-## 20.6. network manager
+## 18.6. network manager
 
-# 21. 软件安装
+# 19. 软件安装
 
-## 21.1. yum 和 rpm
+## 19.1. yum 和 rpm
 
 - 编译安装(自己编译安装)
   - 说明：
@@ -2102,17 +2408,15 @@ echo "user1:password1" | chpasswd
   - yum install man-pages-zh-CN
   - 看 man bash
 
-## 21.2. pacman
+## 19.2. pacman
 
-# 22. 第三方工具
+# 20. 第三方工具
 
-## 22.1. gdb 调试利器
+## 20.1. gdb 调试利器
 
-## 22.2. ldd 查看程序依赖库
+## 20.2. ldd 查看程序依赖库
 
-## 22.3. lsof 一切皆文件
-
-### 22.3.1. 基本说明
+## 20.3. lsof 一切皆文件
 
 - lsof（list open files）
   - 定义：是一个查看当前系统文件的工具
@@ -2132,44 +2436,45 @@ echo "user1:password1" | chpasswd
   - 网络文件（例如：NFS file、网络socket，unix域名socket）
   - 还有其它类型的文件，等等
 
-### 22.3.2. 参数
+- 参数
+  - -a 列出打开文件存在的进程
+  - -c<进程名> 列出指定进程所打开的文件
+  - -g 列出GID号进程详情
+  - -d<文件号> 列出占用该文件号的进程
+  - +d<目录> 列出目录下被打开的文件
+  - +D<目录> 递归列出目录下被打开的文件
+  - -n<目录> 列出使用NFS的文件
+  - -i<条件> 列出符合条件的进程。（4、6、协议、:端口、 @ip ）
+  - -p<进程号> 列出指定进程号所打开的文件
+  - -u 列出UID号进程详情
+  - -h 显示帮助信息
+  - -v 显示版本信息
 
-- -a 列出打开文件存在的进程
-- -c<进程名> 列出指定进程所打开的文件
-- -g 列出GID号进程详情
-- -d<文件号> 列出占用该文件号的进程
-- +d<目录> 列出目录下被打开的文件
-- +D<目录> 递归列出目录下被打开的文件
-- -n<目录> 列出使用NFS的文件
-- -i<条件> 列出符合条件的进程。（4、6、协议、:端口、 @ip ）
-- -p<进程号> 列出指定进程号所打开的文件
-- -u 列出UID号进程详情
-- -h 显示帮助信息
-- -v 显示版本信息
+注意：`lsof`输出的一列中有tid，也就是线程id（但一个进程内不同线程间使用的同一个fd），而`lsof -p`或`lsof +D`输出时则没有线程id
 
-## 22.4. pstack 跟踪进程栈
+## 20.4. pstack 跟踪进程栈
 
-## 22.5. strace 跟踪进程中的系统调用
+## 20.5. strace 跟踪进程中的系统调用
 
-## 22.6. ipcs 查询进程间通信状态
+## 20.6. ipcs 查询进程间通信状态
 
-## 22.7. vmstat 监视内存使用情况
+## 20.7. vmstat 监视内存使用情况
 
-## 22.8. iostat 监视 I/O 子系统
+## 20.8. iostat 监视 I/O 子系统
 
-## 22.9. sar 找出系统瓶颈的利器
+## 20.9. sar 找出系统瓶颈的利器
 
-## 22.10. readelf elf 文件格式分析
+## 20.10. readelf elf 文件格式分析
 
-## 22.11. objdump 二进制文件分析
+## 20.11. objdump 二进制文件分析
 
-## 22.12. nm 目标文件格式分析
+## 20.12. nm 目标文件格式分析
 
-## 22.13. size 查看程序内存映像大小
+## 20.13. size 查看程序内存映像大小
 
-## 22.14. tcpdump 抓包工具
+## 20.14. tcpdump 抓包工具
 
-### 22.14.1. 介绍
+### 20.14.1. 介绍
 
 - crontab命令
   - 是cron table的简写
@@ -2184,7 +2489,7 @@ echo "user1:password1" | chpasswd
     - /etc/cron.weekly
     - /etc/cron.monthly
 
-### 22.14.2. 使用
+### 20.14.2. 使用
 
 - 语法
   ```bash
@@ -2208,7 +2513,7 @@ echo "user1:password1" | chpasswd
     - - 从X到Z
     - ，散列数字
 
-### 22.14.3. 实例
+### 20.14.3. 实例
 
 - 实例 1：每 1 分钟执行一次 myCommand
   ```bash
@@ -2259,9 +2564,9 @@ echo "user1:password1" | chpasswd
   0 23-7/1 * * * /etc/init.d/smb restart
   ```
 
-## 22.15. 内网穿透frp
+## 20.15. 内网穿透frp
 
-### 22.15.1. 基本说明
+### 20.15.1. 基本说明
 
 - 说明
   - 简单地说，frp就是一个反向代理软件，
@@ -2271,7 +2576,7 @@ echo "user1:password1" | chpasswd
 
   ![linux-1](./image/linux-1.png)
 
-### 22.15.2. 服务端设置
+### 20.15.2. 服务端设置
 
 - **部署在vps上**
 - 下载frp
@@ -2312,7 +2617,7 @@ echo "user1:password1" | chpasswd
 
 - 启动：`./start_server.sh`
 
-### 22.15.3. 客户端设置
+### 20.15.3. 客户端设置
 
 - 安装
   ```bash
@@ -2368,7 +2673,7 @@ echo "user1:password1" | chpasswd
 - 注意：**一个服务端可以同时给多个客户端使用**
 - 启动客户端 `./frpc.exe -c frpc.ini`
 
-## 22.16. neofetch
+## 20.16. neofetch
 
 - 安装 epel-release
   ```bash
@@ -2386,21 +2691,21 @@ echo "user1:password1" | chpasswd
 
   ![linux-2](./image/linux-2.png)
 
-## 22.17. Supervisor
+## 20.17. Supervisor
 
-### 22.17.1. 基本说明
+### 20.17.1. 基本说明
 
 TODO: supervisor
 
-## 22.18. ab 压测工具
+## 20.18. ab 压测工具
 
-# 23. bash
+# 21. bash
 
 > [bash-handbook](./bash.md)
 
 <!-- TODO: 小任务，这里看看有没有什么有用的东西整理到bash.md -->
 
-## 23.1. 开始
+## 21.1. 开始
 
 - /etc/profile 是 shell 打开时要读取的配置文件，里面有环境变量的定义等
 - pstree:展示进程树
@@ -2448,7 +2753,7 @@ TODO: supervisor
   - 函数
   - 磁盘目录下的可执行文件
 
-## 23.2. 文本流，重定向
+## 21.2. 文本流，重定向
 
 - 预先知识
 
@@ -2558,7 +2863,7 @@ TODO: supervisor
           cat 0<& 9  # 将输入重定向到0
           ```
 
-## 23.3. 变量
+## 21.3. 变量
 
 - 种类：
   - 本地
@@ -2610,7 +2915,7 @@ TODO: supervisor
       - sleep 20 ：睡眠 20 秒
       - linux 中的 fork()函数
 
-## 23.4. 引用&命令替换
+## 21.4. 引用&命令替换
 
 > 三种引用机制查看 man bash
 
@@ -2665,7 +2970,7 @@ TODO: supervisor
     lines=$(< scriptfile)
     ```
 
-## 23.5. 退出状态&逻辑判断
+## 21.5. 退出状态&逻辑判断
 
 - 退出状态：
   - echo \$?
@@ -2690,7 +2995,7 @@ TODO: supervisor
     后执行的命令的返回状态。
   ```
 
-## 23.6. 表达式
+## 21.6. 表达式
 
 > man bash shell 语法>表达式
 
@@ -2721,7 +3026,7 @@ TODO: supervisor
   # 因此中括号和表达式必须要用空格分开
   ```
 
-## 23.7. 流程控制
+## 21.7. 流程控制
 
 > **全部通过 help 进行学习**
 
@@ -2745,7 +3050,7 @@ TODO: supervisor
 
   ```
 
-## 23.8. 练习
+## 21.8. 练习
 
 - shell 编程一切皆命令
 - 习惯通过 `$?` 进行逻辑判断
@@ -2857,7 +3162,7 @@ TODO: supervisor
   }
 ```
 
-## 23.9. 七个扩展
+## 21.9. 七个扩展
 
 > man bash 吧，所有都在 man bash
 
@@ -2871,11 +3176,11 @@ TODO: supervisor
 - 8，引用删除 echo "hello"
 - \*，重定向 >
 
-# 24. linux常见问题
+# 22. linux常见问题
 
-## 24.1. 线程数量过多
+## 22.1. 线程数量过多
 
-# 25. 参考文档
+# 23. 参考文档
 
 - [ ] [linux常用命令](https://tkstorm.com/linux-doc/)
 - [x] [使用frp进行内网穿透](https://sspai.com/post/52523)
