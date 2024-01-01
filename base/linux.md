@@ -1522,13 +1522,22 @@ wall "I will shutdown my linux server..."
 echo "user1:password1" | chpasswd
 ```
 
-# 9. 系统资源管理
+# 9. 系统资源限制
 
 ## 9.1. ulimit
 
 基于 pam
 
 ## 9.2. IPC
+
+为了实现进程间通信，操作系统提供了各种机制和资源，如管道、消息队列、共享内存、信号量等。这些资源必须经过适当的管理和分配，以保证系统的稳定性和安全性。IPC资源管理的主要任务包括如下几个方面：
+
+- 资源分配：为不同的进程分配不同的IPC资源，如管道、消息队列、共享内存等。
+- 资源共享：在多个进程之间共享IPC资源，如同一条管道、同一块共享内存等。
+- 资源同步：保证多个进程之间的操作按照一定的顺序进行，如利用信号量来实现互斥、同步等操作。
+- 资源回收：在进程退出后，回收由该进程所持有的IPC资源，以免造成系统资源浪费或者安全隐患。
+
+## 9.3. CGroup
 
 # 10. 磁盘管理进阶
 
@@ -2082,9 +2091,411 @@ fuser -muv .
 
 ### 12.5.3. pidof
 
+## 12.6. SELinux (Security Enhanced Linux)
+
+### 12.6.1. 说明
+
+![linux-6](./image/linux-6.png)
+
+Discretionary Access Control, DAC
+
+Mandatory Access Control, MAC
+
+### 12.6.2. 组成与检查依据
+
+- Subject: process
+- Object: 文件系统中的文件
+- Policy: 规则的集合，centos中有三个主要政策
+  - targeted：针对网络服务限制较多，针对本机限制较少，是默认的政策；
+  - minimum：由 target 修订而来，仅针对选择的程序来保护
+  - mls：完整的 SELinux 限制，限制方面较为严格。建议使用默认的 targeted 政策即可。
+- security context
+  - 和 rwx 一样，都放到inode中
+  - `ls -lZ`
+
+### 12.6.3. 执行模式
+
+- enforcing
+- permissive
+- disable
+
+### 12.6.4. 命令
+
+- getenforce: 获取执行模式
+- setenforce: 修改执行模式
+- sestatus: 获取policy
+- getsebool -a: 获取所有rule的开启情况
+- seinfo: 查看规则信息
+- sesearch: 查询规则详情
+- chon: 修改selinux type
+- restorecon: 恢复目录下默认的selinux type
+- semanage: 默认 security context 修改
+- selinux 错误检查
+  - auditd
+  - setroubleshootd
+
 # 13. systemctl
 
-# 14. 登录文件
+## 13.1. 说明
+
+说明:
+
+- systemd是一种新的linux系统服务管理器，用于替换init系统，
+  - 能够管理系统启动过程和系统服务，一旦启动起来，就将监管整个系统。
+  - 在centos7系统中，PID1被systemd所占用
+- systemd可以并行地启动系统服务进程，
+  - 并且最初仅启动确实被依赖的服务，极大减少了系统的引导时间，
+  - 这也就是为什么centos7系统启动速度比centos6快许多的原因；
+- systemctl 是 systemd 的主命令，用于管理系统及服务。
+
+systemd的新特性：
+
+- 系统引导时实现服务并行启动；
+- 按需激活进程；
+- 系统状态快照；
+- 基于依赖关系定义服务控制逻辑
+
+systemd的关键特性：
+
+- 基于socket的激活机制：socket与程序分离；
+- 基于bus的激活机制；
+- 基于device的激活机制；
+- 基于Path的激活机制；
+- 系统快照：保存各unit的当前状态信息于持久存储设备中；
+- 向后兼容sysv init脚本，放在/etc/init.d/
+
+**注意** ：systemctl的命令是固定不变的；非由systemd启动的服务，systemctl无法与之通信
+
+配置目录：
+
+- `/usr/lib/systemd/system/`：
+  - 每个服务最主要的启动脚本设置，有点类似以前的 /etc/init.d 下面的文件；
+  - 使用 CentOS 官方提供的软件安装后，默认的启动脚本配置文件都放在这里，这里的数据尽量不要修改
+  - 要修改时，到 /etc/systemd/system 下面修改最好
+- `/run/systemd/system/`：
+  - 系统执行过程中所产生的服务脚本
+  - 这些脚本的优先序要比 /usr/lib/systemd/system/ 高
+- `/etc/systemd/system/`：
+  - 管理员依据主机系统的需求所创建的执行脚本，其实这个目录有点像以前 /etc/rc.d/rc5.d/Sxx 之类的功能
+  - 执行优先序又比 /run/systemd/system/ 高喔！
+- `/etc/sysconfig/*`：
+  - 几乎所有的服务都会将初始化的一些选项设置写入到这个目录下，
+  - 举例来说，mandb 所要更新的 man page 索引中，需要加入的参数就写入到此目录下的 man-db 当中
+  - 而网络的设置则写在 /etc/sysconfig/network-scripts/ 这个目录内。
+  - 所以，这个目录内的文件也是挺重要的
+- `/var/lib/`：
+  - 一些会产生数据的服务都会将他的数据写入到 /var/lib/ 目录中。
+  - 举例来说，数据库管理系统 Mariadb 的数据库默认就是写入 /var/lib/mysql/ 这个目录下了
+- `/run/`：
+  - 放置了很多 daemon 的临时文件，包括 lock file 以及 PID file 等等。
+- `/etc/services`
+  - 服务默认的端口号
+
+**系统开机后默认执行 `/etc/systemd/system/` 下的脚本，一般会链接到 `/usr/lib/systemd/system/`**
+
+systemd 的 unit 类型:
+
+- Service unit：文件扩展名为.service，用于定义系统服务；
+  - 一般的系统服务，大多数服务都是这种类型
+- Target unit：文件扩展名为.target，用于模拟实现“运行级别”；
+  - 实际上是一些unit的集合
+- Mount unit：文件扩展名为.mount，定义文件系统挂载点；
+  - 例如来自网络的自动挂载、NFS 文件系统挂载等与文件系统相关性较高的程序管理。
+- Automount unit：文件扩展名为.automount，文件系统自动点设备；
+  - 与mount unit类似
+- Socket unit：文件扩展名为.socket，用于标识进程间通信用到的socket文件；
+  - 主要用来是IPC(Inter-process communication)用到的
+  - 较多图形化界面软件使用
+- Path unit：文件扩展名为.path, 用于定义文件系统中的一文件或目录
+  - 比如打印服务，需要检测特定目录
+- Timer unit: 用于循环执行
+  - 类似于 anacrontab
+- Snapshot unit：文件扩展名为.snapshot， 管理系统快照；
+- Device unit：文件扩展名为.device，用于定义内核识别的设备；
+- Swap unit：文件扩展名为.swap, 用于标识swap设备；
+
+## 13.2. 管理服务
+
+命令：
+
+- start     ：立刻启动后面接的 unit
+- stop      ：立刻关闭后面接的 unit
+- restart   ：立刻关闭后启动后面接的 unit，亦即执行 stop 再 start 的意思
+- reload    ：不关闭后面接的 unit 的情况下，重新载入配置文件，让设置生效
+- enable    ：设置下次开机时，后面接的 unit 会被启动
+- disable   ：设置下次开机时，后面接的 unit 不会被启动
+- status    ：目前后面接的这个 unit 的状态，会列出有没有正在执行、开机默认执行否、登录等信息等！
+- is-active ：目前有没有正在运行中
+- is-enable ：开机时有没有默认要启用这个 unit
+- show      : 输出执行配置和运行信息
+
+状态：
+
+- active （running）：正有一个或多个程序正在系统中执行的意思
+  - 举例来说，正在执行中的 vsftpd 就是这种模式。
+- active （exited）：仅执行一次就正常结束的服务，目前并没有任何程序在系统中执行。
+  - 举例来说，开机或者是挂载时才会进行一次的 quotaon 功能，就是这种模式
+- active （waiting）：正在执行当中，不过还再等待其他的事件才能继续处理。
+  - 举例来说，打印的相关服务就是这种状态。 虽然正在启动中，不过，也需要真的有打印工作过来，才会继续唤醒打印机服务来进行下一步打印的功能。
+- inactive：这个服务目前没有运行的意思。
+
+daemon 默认状态：
+
+- enabled：这个 daemon 将在开机时被执行
+- disabled：这个 daemon 在开机时不会被执行
+- static：这个 daemon 不可以自己启动 （enable 不可），不过可能会被其他的 enabled 的服务来唤醒 （作为依赖服务）
+- mask：这个 daemon 无论如何都无法被启动，因为已经被强制注销 （非删除）。可通过 systemctl unmask 方式改回原本状态
+
+查看所有unit
+
+- list-units
+- list-unit-files
+
+常见target
+
+- graphical.target：
+  - 就是文字加上图形界面，这个项目已经包含了下面的 multi-user.target 项目
+- multi-user.target：纯文本模式
+- rescue.target：
+  - 在无法使用 root 登陆的情况下，systemd 在开机时会多加一个额外的暂时系统，与你原本的系统无关。
+  - 这时你可以取得 root 的权限来维护你的系统。
+  - 但是这是额外系统，因此可能需要用 chroot 的方式来切到原来的系统
+- emergency.target：
+  - 紧急处理系统的错误，还是需要使用 root 登陆的情况，在无法使用 rescue.target 时，可以尝试使用这种模式
+- shutdown.target：
+  - 就是关机的流程。
+- getty.target：
+  - 可以设置你需要几个 tty 之类的，如果想要降低 tty 的项目，可以修改这个配置文件
+
+修改target(操作模式)
+
+- get-default: 获取默认targe
+- set-default: 设置默认target
+- isolate: 切换target
+
+  ```
+  # isolate 的 alias
+  systemctl poweroff  系统关机
+  systemctl reboot    重新开机
+  systemctl suspend   进入暂停模式。暂停模式会将系统的状态数据保存到内存中，然后关闭掉大部分的系统硬件。但不会关机。
+  systemctl hibernate 进入休眠模式。休眠模式则是将系统状态保存到硬盘当中，保存完毕后，将计算机关机。当使用者尝试唤醒系统时，系统会开始正常运行， 然后将保存在硬盘中的系统状态恢复回来。
+  systemctl rescue    强制进入救援模式
+  systemctl emergency 强制进入紧急救援模式
+  ```
+
+依赖关系
+
+- systemctl list-dependencies [unit] [--reverse]
+
+socket 文件查询
+
+- systemctl list-sockets
+
+查看日志:
+
+- journalctl -e -u unit_name
+
+## 13.3. service 配置
+
+### 13.3.1. 示例配置
+
+```
+[Unit]           # 这个项目与此 unit 的解释、执行服务相依性有关
+Description=OpenSSH server daemon
+After=network.target sshd-keygen.service
+Wants=sshd-keygen.service
+
+[Service]        # 这个项目与实际执行的指令参数有关
+EnvironmentFile=/etc/sysconfig/sshd
+ExecStart=/usr/sbin/sshd -D $OPTIONS
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]        # 这个项目说明此 unit 要挂载哪个 target 下面
+WantedBy=multi-user.target
+```
+
+- [Unit]：
+  - unit 本身的说明，以及与其他有依赖关系 daemon 的设置，包括在什么服务之后才启动此 unit 之类的设置值；
+- [Service], [Socket], [Timer], [Mount], [Path]..：
+  - 不同的 unit type 就得要使用相对应的设置项目。
+  - 我们拿的是 sshd.service 来当范本，所以这边就使用 [Service] 来设置。
+  - 这个项目内主要在规范服务启动的脚本、环境配置文件文件名、重新启动的方式等等。
+- [Install]：这个项目就是将此 unit 安装到哪个 target 里面去的意思！
+
+配置注意：
+
+- 设置项目通常是可以重复的，
+  - 例如我可以重复设置两个 After 在配置文件中，不过，后面的设置会取代前面的
+  - 因此，如果你想要重置某个值， 可以使用类似“ After= ”的设置，亦即该项目的等号后面什么都没有
+- 如果设置参数需要有“是/否”的项目
+  - 可以使用 1, yes, true, on 代表启动
+  - 用 0, no, false, off 代表关闭
+- 空白行、开头为 # 或 ; 的那一行，都代表注释
+
+
+`/etc/systemd/system/` 下的文件不要修改，如果想要覆盖原来的service：
+
+- `/usr/lib/systemd/system/vsftpd.service`：
+  - 官方释出的默认配置文件；
+- `/etc/systemd/system/vsftpd.service.d/custom.conf`：
+  - 在 /etc/systemd/system 下面创建与配置文件相同文件名的目录，但是要加上 .d 的扩展名。
+  - 然后在该目录下创建配置文件即可。
+  - 另外，配置文件最好附文件名取名为 .conf
+  - 在这个目录下的文件会“累加其他设置”进入 /usr/lib/systemd/system/vsftpd.service 内
+- `/etc/systemd/system/vsftpd.service.wants/*`：
+  - 此目录内的文件为链接文件，意思是启动了 vsftpd.service 之后，最好再加上这目录下面建议的服务。
+- `/etc/systemd/system/vsftpd.service.requires/*`：
+  - 此目录内的文件为链接文件，设置依赖服务的链接。
+  - 意思是在启动 vsftpd.service 之前，需要事先启动哪些服务的意思。
+
+### 13.3.2. 配置说明
+
+以下为常见配置说明，systemctl支持的配置项还有更多
+
+| [Unit]        |                                                              |
+| ------------- | ------------------------------------------------------------ |
+| 设置参数      | 参数意义说明                                                 |
+| Description   | 就是当我们使用 systemctl list-units 时，会输出给管理员看的简易说明。当然，使用 systemctl status 输出的此服务的说明，也是这个项目 |
+| Documentation | 这个项目在提供管理员能够进行进一步的文件查询的功能！提供的文件可以是如下的数据：`Documentation=http://www....` `Documentation=man:sshd（8）` `Documentation=file:/etc/ssh/sshd_config` |
+| After         | 说明此 unit 是在哪个 daemon 启动之后才启动的意思， **基本上仅是说明服务启动的顺序而已** ，并没有强制要求里头的服务一定要启动后此 unit 才能启动。 以 sshd.service 的内容为例，该文件提到 After 后面有 network.target 以及 sshd-keygen.service，但是若这两个 unit 没有启动而强制启动 sshd.service 的话， 那么 sshd.service 应该还是能够启动的！这与 Requires 的设置是有差异的喔！ |
+| Before        | 与 After 的意义相反，是在什么服务启动前最好启动这个服务的意思。不过这 **仅是规范服务启动的顺序** ，并非强制要求的意思。 |
+| Requires      | 明确的定义此 unit 需要在哪个 daemon 启动后才能够启动！就是设置依赖服务。如果在此项设置的前导服务没有启动，那么此 unit 就不会被启动。 |
+| Wants         | 与 Requires 刚好相反，规范的是这个 unit 之后最好还要启动什么服务比较好的意。不过， **并不强制** 。主要的目的是希望创建让使用者比较好操作的环境。 因此，这个 Wants 后面接的服务如果没有启动，其实不会影响到这个 unit 本身！ |
+| Conflicts     | 代表冲突的服务。亦即这个项目后面接的服务如果有启动，那么我们这个 unit 本身就不能启动。我们 unit 有启动，则此项目后的服务就不能启动。 |
+
+| [Service]       |                                                              |
+| --------------- | ------------------------------------------------------------ |
+| 设置参数        | 参数意义说明                                                 |
+| Type            | 说明这个 daemon 启动的方式，会影响到 ExecStart 喔！一般来说，有下面几种类型 <br />  <br /> simple：默认值，这个 daemon 主要由 ExecStart 接的指令串来启动，启动后常驻于内存中。<br /> forking：由 ExecStart 启动的程序通过 spawns 延伸出其他子程序来作为此 daemon 的主要服务。原生的父程序在启动结束后就会终止运行。 传统的 unit 服务大多属于这种项目，例如 httpd 这个 WWW 服务，当 httpd 的程序因为运行过久因此即将终结了，则 systemd 会再重新生出另一个子程序持续运行后， 再将父程序删除。据说这样的性能比较好 <br /> oneshot：与 simple 类似，不过这个程序在工作完毕后就结束了，不会常驻在内存中。<br /> dbus：与 simple 类似，但这个 daemon 必须要在取得一个 D-Bus 的名称后，才会继续运行。因此设置这个项目时，通常也要设置 BusName= 才行。<br /> idle：与 simple 类似，意思是，要执行这个 daemon 必须要所有的工作都顺利执行完毕后才会执行。这类的 daemon 通常是开机到最后才执行即可的服务<br /> <br />比较重要的项目大概是 simple, forking 与 oneshot 了！毕竟很多服务需要子程序 （forking），而有更多的动作只需要在开机的时候执行一次（oneshot），例如文件系统的检查与挂载啊等等的。 |
+| EnvironmentFile | 可以指定启动脚本的环境配置文件！例如 sshd.service 的配置文件写入到 /etc/sysconfig/sshd 当中！你也可以使用 Environment= 后面接多个不同的 Shell 变量来给予设置！ |
+| ExecStart       | 就是实际执行此 daemon 的指令或脚本程序。你也可以使用 ExecStartPre （之前） 以及 ExecStartPost （之后） 两个设置项目来在实际启动服务前，进行额外的指令行为。 但是你得要特别注意的是，指令串仅接受“指令 参数 参数...”的格式，不能接受 <, >, >>, \|, & 等特殊字符，很多的 bash 语法也不支持喔！ 所以，要使用这些特殊的字符时，最好直接写入到指令脚本里面去！不过，上述的语法也不是完全不能用，亦即，若要支持比较完整的 bash 语法，那你得要使用 Type=oneshot 才行喔！ 其他的 Type 才不能支持这些字符。 |
+| ExecStop        | 与 systemctl stop 的执行有关，关闭此服务时所进行的指令。     |
+| ExecReload      | 与 systemctl reload 有关的指令行为                           |
+| Restart         | 当设置 Restart=1 时，则当此 daemon 服务终止后，会再次的启动此服务。举例来说，如果你在 tty2 使用文字界面登陆，操作完毕后登出，基本上，这个时候 tty2 就已经结束服务了。 但是你会看到屏幕又立刻产生一个新的 tty2 的登陆画面等待你的登陆！那就是 Restart 的功能！除非使用 systemctl 强制将此服务关闭，否则这个服务会源源不绝的一直重复产生！ |
+| RemainAfterExit | 当设置为 RemainAfterExit=1 时，则当这个 daemon 所属的所有程序都终止之后，此服务会再尝试启动。这对于 Type=oneshot 的服务很有帮助！ |
+| TimeoutSec      | 若这个服务在启动或者是关闭时，因为某些缘故导致无法顺利“正常启动或正常结束”的情况下，则我们要等多久才进入“强制结束”的状态！ |
+| KillMode        | 可以是 process, control-group, none 的其中一种，如果是 process 则 daemon 终止时，只会终止主要的程序 （ExecStart 接的后面那串指令），如果是 control-group 时， 则由此 daemon 所产生的其他 control-group 的程序，也都会被关闭。如果是 none 的话，则没有程序会被关闭喔！ |
+| RestartSec      | 与 Restart 有点相关性，如果这个服务被关闭，然后需要重新启动时，大概要 sleep 多少时间再重新启动的意思。默认是 100ms （毫秒）。 |
+
+
+| [Install]      |                                                              |
+| -------------- | ------------------------------------------------------------ |
+| 设置参数       | 参数意义说明                                                 |
+| WantedBy       | 这个设置后面接的大部分是 `*.target unit` 。意思是，这个 unit 本身是附挂在哪一个 target unit 下面的。一般来说，大多的服务性质的 unit 都是附挂在 multi-user.target 下面！ |
+| Also           | 当目前这个 unit 本身被 enable 时，Also 后面接的 unit 也请 enable 的意思。也就是具有依赖性的服务可以写在这里呢！ |
+| Alias          | 进行一个链接的别名的意思！当 systemctl enable 相关的服务时，则此服务会进行链接文件的创建。以 multi-user.target 为例，是用来作为默认操作环境 default.target 的规划， 因此当设置用成 default.target 时，这个 /etc/systemd/system/default.target 就会链接到 /usr/lib/systemd/system/multi-user.target |
+
+### 13.3.3. 配置中的变量
+
+文件名中的`@` 和 文件中的`%I`
+
+## 13.4. systemctl 针对 timer 的配置文件
+
+相较于cron的优势
+
+- 由于所有的 systemd 的服务产生的信息都会被纪录 （log），因此比 crond 在 debug 上面要更清楚方便的多；
+- 各项 timer 的工作可以跟 systemd 的服务相结合；
+- 各项 timer 的工作可以跟 control group （cgroup，用来取代 /etc/secure/limit.conf 的功能） 结合，来限制该工作的资源利用
+
+缺点：
+
+- 没有email通知功能，或者自己写个
+- 没有类似 anacron 的功能
+
+使用方式：
+
+- 系统的 timer.target 一定要启动
+- 要有个 sname.service 的服务存在 （sname 是自己指定的名称）
+- 要有个 sname.timer 的时间启动服务存在
+
+timer配置:
+
+`man systemd.timer & man systemd.time`
+
+| [Timer]           |                                                              |
+| ----------------- | ------------------------------------------------------------ |
+| 设置参数          | 参数意义说明                                                 |
+| OnActiveSec       | 当 timers.target 启动多久之后才执行这只 unit                 |
+| OnBootSec         | 当开机完成后多久之后才执行                                   |
+| OnStartupSec      | 当 systemd 第一次启动之后过多久才执行                        |
+| OnUnitActiveSec   | 这个 timer 配置文件所管理的那个 unit 服务在最后一次启动后，隔多久后再执行一次的意思 |
+| OnUnitInactiveSec | 这个 timer 配置文件所管理的那个 unit 服务在最后一次停止后，隔多久再执行一次的意思。 |
+| OnCalendar        | 使用实际时间 （非循环时间） 的方式来启动服务的意思！至于时间的格式后续再来谈。 |
+| Unit              | 一般来说不太需要设置，因此如同上面刚刚提到的，基本上我们设置都是 sname.server + sname.timer，那如果你的 sname 并不相同时，那在 .timer 的文件中， 就得要指定是哪一个 service unit |
+| Persistent        | 当使用 OnCalendar 的设置时，指定该功能要不要持续进行的意思。通常是设置为 yes ，比较能够满足类似 anacron 的功能 |
+
+OnCalendar配置:
+
+```
+语法：英文周名  YYYY-MM-DD  HH:MM:SS
+示例：Thu       2015-08-13  13:40:00
+
+每周二凌晨2点： Sun *-*-* 02:00:00
+```
+
+或者也可以使用英文口语：
+
+| 英文口语   | 实际的时间格式代表      |
+| ---------- | ----------------------- |
+| now        | Thu 2015-08-13 13:50:00 |
+| today      | Thu 2015-08-13 00:00:00 |
+| tomorrow   | Thu 2015-08-14 00:00:00 |
+| hourly     | `*-*- :00:00`           |
+| daily      | `*-*-* 00:00:00`        |
+| weekly     | `Mon *-*-* 00:00:00`    |
+| monthly    | `*-*-01 00:00:00`       |
+| +3h10m     | Thu 2015-08-13 17:00:00 |
+| 2015-08-16 | Sun 2015-08-16 00:00:00 |
+
+示例：
+
+```
+# 开机后 2 小时开始执行一次这个 backup.service
+# 自从第一次执行后，未来我每两天要执行一次 backup.service
+
+[root@study ~]# vim /etc/systemd/system/backup.timer
+[Unit]
+Description=backup my server timer
+
+[Timer]
+OnBootSec=2hrs
+OnUnitActiveSec=2days
+
+[Install]
+WantedBy=multi-user.target
+# 只要这样设置就够了！储存离开吧！
+
+[root@study ~]# systemctl daemon-reload
+[root@study ~]# systemctl enable backup.timer
+[root@study ~]# systemctl restart backup.timer
+[root@study ~]# systemctl list-unit-files &#124; grep backup
+backup.service          disabled   # 这个不需要启动！只要 enable backup.timer 即可！
+backup.timer            enabled
+
+[root@study ~]# systemctl show timers.target
+ConditionTimestamp=Thu 2015-08-13 14:31:11 CST      # timer 这个 unit 启动的时间！
+
+[root@study ~]# systemctl show backup.service
+ExecMainExitTimestamp=Thu 2015-08-13 14:50:19 CST   # backup.service 上次执行的时间
+
+[root@study ~]# systemctl show backup.timer
+NextElapseUSecMonotonic=2d 19min 11.540653s         # 下一次执行距离 timers.target 的时间
+```
+
+# 14. 登陆文件
+
+## 14.1. 说明
+
+## 14.2. rsyslog.service
+
+## 14.3. logrotate
+
+## 14.4. systemd-journald.service
+
+## 14.5. logwatch 分析工具
 
 # 15. 开机流程
 
