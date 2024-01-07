@@ -1657,7 +1657,9 @@ LVM 虽说支持 linear 和 triped(与raid0类似) 两种写入模式， 但注�
 
 所有 partition type code 查看： `sgdisk -L`
 
-### 10.3.2. pv阶段: pvcreate, pvscan, pvdisplay, pvremove
+### 10.3.2. lvmetad.socket 服务
+
+### 10.3.3. pv阶段: pvcreate, pvscan, pvdisplay, pvremove
 
 命令：
 
@@ -1681,7 +1683,7 @@ pvscan
 pvdisplay
 ```
 
-### 10.3.3. vg阶段: vgcreate, vgscan, vgdisplay ...
+### 10.3.4. vg阶段: vgcreate, vgscan, vgdisplay ...
 
 命令：
 
@@ -1706,7 +1708,7 @@ vgdisplay testvg
 vgextend testvg /dev/vda8
 ```
 
-### 10.3.4. LV阶段: lvcreate, lvscan, lvdisplay ...
+### 10.3.5. LV阶段: lvcreate, lvscan, lvdisplay ...
 
 命令：
 
@@ -1743,7 +1745,7 @@ Filesystem                  Type  Size  Used Avail Use% Mounted on
 /dev/mapper/testvg-testlv xfs   2.0G  152M  1.9G   8% /srv/lvm
 ```
 
-### 10.3.5. 扩展lv容量
+### 10.3.6. 扩展lv容量
 
 - 确保vg有剩余的空间，没有的话扩展vg
 - lvresize，扩展逻辑卷的大小
@@ -1762,7 +1764,7 @@ Filesystem                  Type  Size  Used Avail Use% Mounted on
   # 会发现 block group （agcount） 的数量增加一个
   ```
 
-### 10.3.6. LVM thin volume
+### 10.3.7. LVM thin volume
 
 ```bash
 # 1. lvcreate 创建 testtpool 这个 thin pool 设备：
@@ -1823,7 +1825,7 @@ lvs testvg
 # 在管理上要注意
 ```
 
-### 10.3.7. LVM 快照
+### 10.3.8. LVM 快照
 
 - 通过 PE 的 **写时复制** 进行备份。
 - 由于快照区与原本的 LV 共享很多 PE 区块，因此快照区与被快照的 LV 必须要在同一个 VG 上头。
@@ -1929,7 +1931,7 @@ xfsrestore -f /home/lvm.dump -L lvm1 /srv/lvm # 还原
 ll /srv/lvm
 ```
 
-### 10.3.8. 移除lvm
+### 10.3.9. 移除lvm
 
 - 先卸载系统上面的 LVM 文件系统 （包括快照与所有 LV）；
 - 使用 lvremove 移除 LV ；
@@ -1938,7 +1940,7 @@ ll /srv/lvm
 - 使用 pvremove 移除 PV；
 - 最后，使用 fdisk 还原 partition type code
 
-### 10.3.9. 指令汇总
+### 10.3.10. 指令汇总
 
 | 任务                  | PV 阶段   | VG 阶段               | LV 阶段    | filesystem（XFS / EXT4） |           |
 | --------------------- | --------- | --------------------- | ---------- | ------------------------ | --------- |
@@ -1950,7 +1952,6 @@ ll /srv/lvm
 | 删除（remove）        | pvremove  | vgremove              | lvremove   | umount, 重新格式化       |           |
 | 改变容量（resize）    | lvresize  | xfs_growfs            | resize2fs  |                          |           |
 | 改变属性（attribute） | pvchange  | vgchange              | lvchange   | /etc/fstab, remount      |           |
-
 
 # 11. 例行工作
 
@@ -2074,7 +2075,7 @@ kill %number: 杀掉job，需要加`%`
 
 CPU/内存/磁盘输入输出状态
 
-## 12.5. 打开文件
+## 12.5. 文件占用
 
 ### 12.5.1. fuser
 
@@ -2485,9 +2486,13 @@ ExecMainExitTimestamp=Thu 2015-08-13 14:50:19 CST   # backup.service 上次执�
 NextElapseUSecMonotonic=2d 19min 11.540653s         # 下一次执行距离 timers.target 的时间
 ```
 
-# 14. 登陆文件
+# 14. 系统日志收集
 
 ## 14.1. 说明
+
+entos5之前日志系统的名称叫syslog，它主要有两个服务组成，一个是syslogd（system application ）它主要记录着应用程序的一些日志，一个是klogd（Linux kernel）它主要记录着Linux内核的日志。
+
+entos6和centos7 为 rsyslog
 
 ## 14.2. rsyslog.service
 
@@ -2547,7 +2552,11 @@ NextElapseUSecMonotonic=2d 19min 11.540653s         # 下一次执行距离 time
   # -c：断点续传
   ```
 
-## 17.2. ftp sftp lftp
+## 17.2. curl
+
+- 使用标准输入： `--data-binary @-`
+
+## 17.3. ftp sftp lftp
 
 - ftp/sftp文件传输:
 
@@ -2570,7 +2579,7 @@ NextElapseUSecMonotonic=2d 19min 11.540653s         # 下一次执行距离 time
   lftp user@host:~> mirror -n
   ```
 
-## 17.3. ssh, scp
+## 17.4. ssh, scp
 
 - 免密登录
   ```bash
@@ -2591,7 +2600,7 @@ NextElapseUSecMonotonic=2d 19min 11.540653s         # 下一次执行距离 time
   $scp -r ID@site:path localpath
   ```
 
-## 17.4. telnet
+## 17.5. telnet
 
 # 18. 网络管理
 
@@ -2619,7 +2628,7 @@ NextElapseUSecMonotonic=2d 19min 11.540653s         # 下一次执行距离 time
   netstat -l
   ```
 
-- 使用netstat工具查询端口:
+- 根据进程id查询对应的端口:
 
   ```bash
   netstat -antp | grep 6379
@@ -2629,25 +2638,6 @@ NextElapseUSecMonotonic=2d 19min 11.540653s         # 下一次执行距离 time
     PID TTY      STAT   TIME COMMAND
   25501 ?        Ssl   28:21 ./redis-server ./redis.conf
   ```
-
-- lsof（list open files）是一个列出当前系统打开文件的工具。
-  - 在linux环境下，任何事物都以文件的形式存在，通过文件不仅仅可以访问常规数据，还可以访问网络连接和硬件。
-  - 所以如传输控制协议 (TCP) 和用户数据报协议 (UDP) 套接字等； 在查询网络端口时，经常会用到这个工具。
-  - 查询7902端口现在运行什么程序:
-
-    ```bash
-    #分为两步
-    #第一步，查询使用该端口的进程的PID；
-    lsof -i:7902
-    COMMAND   PID   USER   FD   TYPE    DEVICE SIZE NODE NAME
-    WSL     30294 tuapp    4u  IPv4 447684086       TCP 10.6.50.37:tnos-dp (LISTEN)
-
-    #查到30294
-    #使用ps工具查询进程详情：
-    ps -fe | grep 30294
-    tdev5  30294 26160  0 Sep10 ?        01:10:50 tdesl -k 43476
-    root     22781 22698  0 00:54 pts/20   00:00:00 grep 11554
-    ```
 
 ## 18.2. 网络路由
 
@@ -2821,7 +2811,7 @@ NextElapseUSecMonotonic=2d 19min 11.540653s         # 下一次执行距离 time
 
 ## 19.2. pacman
 
-# 20. 第三方工具
+# 20. 第三方其他工具
 
 ## 20.1. gdb 调试利器
 
@@ -3601,6 +3591,10 @@ TODO: supervisor
 - [ ] [一文掌握 Linux 性能分析之内存篇](https://segmentfault.com/a/1190000018553950)
 - [ ] [Linux系统的PAM模块认证文件含义说明总结](https://www.cnblogs.com/fengdejiyixx/p/14804741.html)
 - [ ] [Btrfs 和 LVM-ext4 该如何选择？](https://linux.cn/article-13043-1.html)
+- 日志
+  - [Linux日志管理系统rsyslog](https://www.cnblogs.com/qiuhom-1874/p/12091118.html)
+  - [Linux下Rsyslog日志远程集中式管理](https://www.cnblogs.com/zhangwencheng/p/14862190.html)
+  - [Understand logging in Linux](https://unix.stackexchange.com/questions/205883/understand-logging-in-linux)
 - 工具：
   - [Linux Command](https://github.com/jaywcjlove/linux-command)
 

@@ -61,9 +61,9 @@
   - `git log --oneline --graph` 会按分支排布
   - `git log --oneline --decorate --graph --all` ，它会输出你的提交历史、各个分支的指向以及项目的分支分叉情况。
   - `git log --follow file_path` 展示出所有修改指定文件的提交
-  - `git log -p file_path` **查看某个文件的详细修改历史** 
+  - `git log -p file_path` **查看某个文件的详细修改历史**
   - `git log -p FETCH_HEAD` 查看拉取信息
-  - `git log -S [keyword]` **搜索提交历史，根据关键词** 
+  - `git log -S [keyword]` **搜索提交历史，根据关键词**
   - `git log -S [regex]` 搜索提交历史，根据正则表达式
   - `git log --stat` 查看每次提交的修改统计
   - `git log --follow [file]` 显示某个文件的版本历史，包括文件改名
@@ -79,7 +79,7 @@
     例：
     README.md                                       |   4 +-
     base/design_patterns/design_pattern.md          |  78 +-
-    ``` 
+    ```
   - `git diff --cached` 观看 add 后的修改内容（staged）。（Git 1.6.1 及更高版本还允许使用 git diff --staged，效果是相同的，但更好记些。）
   - `git diff HARD` 显示上面两种修改
   - `git diff ref1 ref2 --stat` 显示区别，以文件为单位
@@ -142,7 +142,7 @@
 - `git checkout remote_repo/branch_name` 切换到远程仓库分支，会显示 HEAD detached
 - 删除远程分支
   - `git branch -dr [remote/branch]`
-  - `git push remoteRep --delete remote_branch_name` 
+  - `git push remoteRep --delete remote_branch_name`
 - `git checkout -b branch_name remote/remo_branch` 以指定分支（本地分支或者 fetch 过来的远程分支，比如 origin/master）为起点建立新的分支，并进行跟踪
   > 也就是`git checkout -b branch_name [ref]`
 - `git checkout remote_branch_name` 自动创建与远程分支同名的分支，并且会自动关联。`git checkout -b branch_name remote/remo_branch`的简写
@@ -151,7 +151,7 @@
 - `git checkout -` 切换到上一个分支
 - 建立追踪关系
   - 拉取分支时
-    - `git fetch -u origin[/branch_name]` 设置**已经fetch过来**的分支作为跟踪分支 
+    - `git fetch -u origin[/branch_name]` 设置**已经fetch过来**的分支作为跟踪分支
   - 对已有的本地分支分支建立追踪关系
     - `git push -u remote_Rep remote_branch`
     - `git branch -u remote_Rep/remote_branch local_branch`
@@ -167,8 +167,8 @@
       这两种方式都可以达到目的。但是1方法更通用，因为你的远程库有可能并没有mybranch1分支，
       这种情况下你用2方法就不可行，连目标分支都不存在，怎么进行关联呢？
       所以可以总结一下：
-      git push -u origin mybranch1 
-      相当于 
+      git push -u origin mybranch1
+      相当于
       git push origin mybranch1 + git branch --set-upstream-to=origin/mybranch1 mybranch1
       ```
 
@@ -241,8 +241,10 @@
 - `git stash show -p stash@{<number>} > <name>.patch` 将stash的内容保存为一个patch
   - First the stats: `git apply --stat a_file.patch`
   - Then a dry run to detect errors: `git apply --check a_file.patch`
-  - apply patch as commit: `git am --keep-cr --signoff < a_file.patch `
+  - just apply patch: `git apply a_file.patch`
+  - apply patch as commit: `git am --signoff < a_file.patch`
     - Don't forget if you have `autocrlf=false` for Windows only development you'll need to pass `--keep-cr` to am to keep those CRLFs
+    - patch need `git format-patch` add commit info
 - `git apply` 应用最新的存储
 - `git stash list` 展示所有储藏
 - `git stash apply stash@{2}` 应用指定的储藏（可以通过上一条指令）
@@ -292,7 +294,7 @@
   - `git checkout version_id filename` 分支不动，将指定文件内容重置为指定提交下文件的内容 **对工作目录不安全**
   - `git checkout ref ./` 分支不动，将所有文件内容重置为指定提交下文件的内容。 **对工作目录不安全**
   - `git checkout .`  : 取消所有未暂存的修改（会修改文件） **不推荐简略写法**
-    > 等同于`git checkout HEAD .` 
+    > 等同于`git checkout HEAD .`
     > 小心使用
   - `git reset [--mixed] .` :取消暂存(不会修改文件)
     > reset 一般都自己在自己分支上用，省略HEAD
@@ -348,7 +350,8 @@
   > 两个点
 - `git format-patch ref` 当前到指定位置的修改打为patch
 - `git apply --check patch_path` 检查是否合法
-- `git am --signoff < patch_path` 打补丁
+- `git apply patch_path` 打补丁
+- `git am --signoff < patch_path` 打补丁，补丁中需要带着提交人的信息。可通过`git format-patch`添加
   > (使用-s或--signoff选项，可以commit信息中加入Signed-off-by信息)
 
 ## 1.15. 清理
@@ -560,8 +563,8 @@
 - 范例
 
   ```bash
-  More detailed explanatory text, if necessary.  Wrap it to 
-  about 72 characters or so. 
+  More detailed explanatory text, if necessary.  Wrap it to
+  about 72 characters or so.
 
   Further paragraphs come after blank lines.
 
@@ -577,9 +580,9 @@
   - 不兼容变动
   - 关闭Issue
 
-> **情况1：不兼容变动** 
+> **情况1：不兼容变动**
 
-- 说明 
+- 说明
   - 如果当前代码与上一个版本不兼容，则 Footer 部分以`BREAKING CHANGE`开头，后面是对变动的描述、以及变动理由和迁移方法。
 
 - 示例
@@ -604,7 +607,7 @@
       The removed `inject` wasn't generaly useful for directives so there should be no code using it.
   ```
 
-> **情况2：关闭Issue** 
+> **情况2：关闭Issue**
 
 - 说明：如果当前 commit 针对某个issue，那么可以在 Footer 部分关闭这个 issue 。
 
