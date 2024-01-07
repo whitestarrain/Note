@@ -1282,15 +1282,64 @@ chage -d 0 agetest
 
 ### 8.6.3. chgrp
 
-### 8.6.4. 默认权限与隐藏权限
+### 8.6.4. 默认权限 umask
 
-SUID, SGID, SBIT
+### 8.6.5. 隐藏属性 chattr, lsattr
 
-#### 8.6.4.1. umask
+```
++   ：增加某一个特殊参数，其他原本存在参数则不动。
+-   ：移除某一个特殊参数，其他原本存在参数则不动。
+=   ：设置一定，且仅有后面接的参数
 
-#### 8.6.4.2. chattr, lsattr
+A  ：当设置了 A 这个属性时，若你有存取此文件（或目录）时，他的存取时间 atime 将不会被修改，
+     可避免 I/O 较慢的机器过度的存取磁盘。（目前建议使用文件系统挂载参数处理这个项目）
+S  ：一般文件是非同步写入磁盘的，如果加上 S 这个属性时，
+     当你进行任何文件的修改，该更动会“同步”写入磁盘中。
+a  ：当设置 a 之后，这个文件将只能增加数据，而不能删除也不能修改数据，只有root 才能设置这属性
+c  ：这个属性设置之后，将会自动的将此文件“压缩”，在读取的时候将会自动解压缩，
+     但是在储存的时候，将会先进行压缩后再储存（看来对于大文件似乎蛮有用的！）
+d  ：当 dump 程序被执行的时候，设置 d 属性将可使该文件（或目录）不会被 dump 备份
+i  ：这个 i 可就很厉害了！他可以让一个文件“不能被删除、改名、设置链接也无法写入或新增数据！”
+     对于系统安全性有相当大的助益！只有 root 能设置此属性
+s  ：当文件设置了 s 属性时，如果这个文件被删除，他将会被完全的移除出这个硬盘空间，
+     所以如果误删了，完全无法救回来了喔！
+u  ：与 s 相反的，当使用 u 来设置文件时，如果该文件被删除了，则数据内容其实还存在磁盘中，
+     可以使用来救援该文件喔！
+注意1：属性设置常见的是 a 与 i 的设置值，而且很多设置值必须要身为 root 才能设置
+注意2：xfs 文件系统仅支持 AadiS 而已
+```
 
-文件特殊权限： SUID, SGID, SBIT
+### 8.6.6. 特殊权限 SUID, SGID, SBIT
+
+#### 8.6.6.1. SUID
+
+只针对二进制文件有效，限制与功能：
+
+- SUID 权限仅对二进制程序（binary program）有效；
+- 执行者对于该程序需要具有 x 的可执行权限；
+- 本权限仅在执行该程序的过程中有效 （run-time）；
+- 执行者将具有该程序拥有者 （owner） 的权限。
+
+#### 8.6.6.2. SGID
+
+对于可执行文件的限制与功能：
+
+- SGID 对二进制程序有用；
+- 程序执行者对于该程序来说，需具备 x 的权限；
+- 执行者在执行的过程中将会获得该程序群组的支持
+
+对于文件夹的限制与功能：
+
+- 使用者若对于此目录具有 r 与 x 的权限时，该使用者能够进入此目录；
+- 使用者在此目录下的有效群组（effective group）将会变成该目录的群组；
+- 用途：若使用者在此目录下具有 w 的权限（可以新建文件），则使用者所创建的新文件，该新文件的群组与此目录的群组相同。
+
+#### 8.6.6.3. SBIT
+
+只针对文件夹有效，限制与功能：
+
+- 当使用者对于此目录具有 w, x 权限，亦即具有写入的权限时；
+- 当使用者在该目录下创建文件或目录时，仅有自己与 root 才有权力删除该文件
 
 ## 8.7. ACL
 
@@ -2063,7 +2112,19 @@ kill %number: 杀掉job，需要加`%`
 
 ### 12.2.7. 程序与signal
 
-`kill -l` 或者 `man 7 signal`
+查询signal: `kill -l` 或者 `man 7 signal`
+
+常见signal
+
+| 代号 | 名称    | 内容                                                         |
+| ---- | ------- | ------------------------------------------------------------ |
+| 1    | SIGHUP  | 启动被终止的程序，可让该 PID 重新读取自己的配置文件，类似重新启动 |
+| 2    | SIGINT  | 相当于用键盘输入 [ctrl]-c 来中断一个程序的进行               |
+| 9    | SIGKILL | 代表强制中断一个程序的进行，如果该程序进行到一半， 那么尚未完成的部分可能会有“半产品”产生，类似 vim会有 .filename.swp 保留下来。 |
+| 15   | SIGTERM | 以正常的结束程序来终止该程序。由于是正常的终止， 所以后续的动作会将他完成。不过，如果该程序已经发生问题，就是无法使用正常的方法终止时， 输入这个 signal 也是没有用的。 |
+| 19   | SIGSTOP | 相当于用键盘输入 [ctrl]-z 来暂停一个程序的进行               |
+
+`kill -signal PID` 可以将signal传递给某个 %jobname 或者 pid
 
 ## 12.3. 内存管理
 
@@ -2490,21 +2551,277 @@ NextElapseUSecMonotonic=2d 19min 11.540653s         # 下一次执行距离 time
 
 ## 14.1. 说明
 
-entos5之前日志系统的名称叫syslog，它主要有两个服务组成，一个是syslogd（system application ）它主要记录着应用程序的一些日志，一个是klogd（Linux kernel）它主要记录着Linux内核的日志。
+centos5之前日志系统的名称叫syslog，它主要有两个服务组成，
 
-entos6和centos7 为 rsyslog
+- 一个是syslogd（system application ）它主要记录着应用程序的一些日志，
+- 一个是klogd（Linux kernel）它主要记录着Linux内核的日志。
 
-## 14.2. rsyslog.service
+centos6和centos7 为 rsyslog
 
-## 14.3. logrotate
+CentOS 7 除了保有既有的 rsyslog.service 之外，其实最上游还使用了 systemd 自己的登录文件日志管理功能。
+system-journald.service 里面的很多观念还是沿用 rsyslog.service，且日志数据会放到内存中
 
-## 14.4. systemd-journald.service
+## 14.2. syslog(linux函数)
 
-## 14.5. logwatch 分析工具
+linux程序大多主动调用linux函数 `syslog` 来记录日志（可使用 man 3 syslog 查询到相关的信息，或查询 syslog.h 这个文件来了解）
+
+log类型：
+
+| 相对序号 | 服务类别        | 说明                                                                                 |
+| -------- | --------------- | ------------------------------------------------------------------------------------ |
+| 0        | kern（kernel）  | 就是核心 （kernel） 产生的日志，大部分都是硬件侦测以及核心功能的启用                 |
+| 1        | user            | 在使用者层级所产生的日志，例如后续会介绍到的用户使用 logger 指令来记录登录文件的功能 |
+| 2        | mail            | 只要与邮件收发有关的日志记录都属于这个；                                             |
+| 3        | daemon          | 主要是系统的服务所产生的日志，例如 systemd 就是这个有关的日志                        |
+| 4        | auth            | 主要与认证/授权有关的机制，例如 login, ssh, su 等需要帐号/密码的服务                 |
+| 5        | syslog          | 就是由 syslog 相关协定产生的日志，其实就是 rsyslogd 本身产生的日志                   |
+| 6        | lpr             | 亦即是打印相关的日志                                                                 |
+| 7        | news            | 与新闻群组服务器有关的东西；                                                         |
+| 8        | uucp            | 全名为 Unix to Unix Copy Protocol，早期用于 unix 系统间的程序数据交换；              |
+| 9        | cron            | 就是例行性工作调度 cron/at 等产生日志记录的地方；                                    |
+| 10       | authpriv        | 与 auth 类似，但记录较多帐号私人的日志，包括 pam 模块的运行等                        |
+| 11       | ftp             | 与 FTP 通讯协定有关的日志输出                                                        |
+| 16~23    | local0 ~ local7 | 保留给本机用户使用的一些登录文件日志，较常与终端机互动。                             |
+
+日志等级:
+
+| 等级数值 | 等级名称        | 说明                                                                                                                                                                   |
+| -------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7        | debug           | 用来 debug 时产生的讯息数据；                                                                                                                                          |
+| 6        | info            | 仅是一些基本的讯息说明而已；                                                                                                                                           |
+| 5        | notice          | 虽然是正常信息，但比 info 还需要被注意到的一些信息内容；                                                                                                               |
+| 4        | warning（warn） | 警示的讯息，可能有问题，但是还不至于影响到某个 daemon 运行的信息；基本上， info, notice, warn 这三个讯息都是在告知一些基本信息而已，应该还不至于造成一些系统运行困扰； |
+| 3        | err（error）    | 一些重大的错误讯息，例如配置文件的某些设置值造成该服务服法启动的信息说明， 通常借由 err 的错误告知，应该可以了解到该服务无法启动的问题                                 |
+| 2        | crit            | 比 error 还要严重的错误信息，这个 crit 是临界点 （critical） 的缩写，这个错误已经很严重了                                                                              |
+| 1        | alert           | 警告警告，已经很有问题的等级，比 crit 还要严重                                                                                                                         |
+| 0        | emerg（panic）  | 紧急等级，意指系统已经几乎要死机的状态， 很严重的错误信息了。通常大概只有硬件出问题，导致整个核心无法顺利运行，就会出现这样的等级的讯息                                |
+
+## 14.3. rsyslog.service
+
+| syslog          | 这个是 Linux 核心所提供的登录文件设计指引，所有的要求大概都写入到一个名为 syslog.h 的头文件案中。如果想要开发与登录文件有关的软件， 那你就得要依循这个 syslog 函数的要求去设计才行。可以使用 man 3 syslog 去查询一下相关的数据！ |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| rsyslogd        | 为了要达成实际上进行日志的分类所开发的一套软件，所以，这就是最基本的 daemon 程序。                                                                                                                                               |
+| rsyslog.service | 为了加入 systemd 的控制，因此 rsyslogd 的开发者设计的启动服务脚本设置。                                                                                                                                                          |
+
+
+配置文件示例：
+
+```conf
+服务名称[.=!]讯息等级        日志记录的文件名或设备或主机
+# 下面以 mail 这个服务产生的 info 等级为例：
+mail.info            /var/log/maillog_info
+# 这一行说明：mail 服务产生的大于等于 info 等级的讯息，都记录到
+# /var/log/maillog_info 文件中的意思。
+```
+
+服务名称[.=!]日志等级:
+
+- `.` ：代表“比后面还要严重的等级 （含该等级） 都被记录下来”的意思，
+  - 例如： mail.info 代表只要是 mail 的信息，
+  - 而且该信息等级严重于 info （含 info 本身）时，就会被记录下来的意思。
+- `.=`：代表所需要的等级就是后面接的等级而已， 其他的不要
+- `.!`：代表不等于， 亦即是除了该等级外的其他等级都记录。
+
+日志常见路径：
+
+- 文件的绝对路径：通常就是放在 /var/log 里头的文件
+  - 日志路径前设置`-`表示暂存到内存，提高存储性能。但非正常会导致日志丢失
+- 打印机或其他：例如 /dev/lp0 这个打印机设备
+- 使用者名称：显示给使用者
+- 远端主机：例如 @test.host 当然啦，要对方主机也能支持才行
+- `*`：代表“目前在线上的所有人”，类似 wall 这个指令的意义
+
+centos7 `/etc/rsyslog.conf` 示例
+
+```
+#kern.*                                              /dev/console
+*.info;mail.none;authpriv.none;cron.none             /var/log/messages
+authpriv.*                                           /var/log/secure
+mail.*                                              -/var/log/maillog
+cron.*                                               /var/log/cron
+*.emerg                                              :omusrmsg:*
+uucp,news.crit                                       /var/log/spooler
+local7.*                                             /var/log/boot.log
+```
+
+rsyslog支持C/S架构，收集日志:
+
+```
+# server相关配置：
+
+# Provides UDP syslog reception
+#$ModLoad imudp
+#$UDPServerRun 514
+
+# Provides TCP syslog reception
+#$ModLoad imtcp
+#$InputTCPServerRun 514
+
+# clicent相关配置：
+*.*       @@192.168.1.100 # 使用tcp
+# *.*       @192.168.1.100 # 使用udp
+```
+
+## 14.4. logrotate
+
+```
+logrotate [-vf] config_file
+选项与参数：
+-v  ：启动显示模式，会显示 logrotate 运行的过程喔！
+-f  ：不论是否符合配置文件的数据，强制每个登录文件都进行 rotate 的动作！
+```
+
+logrotate 依赖于cron，cron配置在`/etc/cron.daily/logrotate`
+
+logrotate 配置文件有 `/etc/logrotate.conf`，`/etc/logrotate.d/`。
+
+- `/etc/logrotate.d/`下的文件都会include到 `/etc/logrotate.conf`当中
+- `/etc/logrotate.conf`一般为默认的配置
+- `/etc/logrotate.d/` 则为特定应用或日志文件的配置，会覆盖默认配置
+
+配置示例：
+
+```
+# 下面的设置是 "logrotate 的默认设置值" ，如果个别的文件设置了其他的参数，
+# 则将以个别的文件设置为主，若该文件没有设置到的参数则以这个文件的内容为默认值！
+
+weekly    # 默认每周对登录文件进行一次 rotate 的工作
+rotate 4  # 保留几个日志文件
+create    # 表示由于日志文件被更名，因此创建一个新的来继续储存
+dateext   # 轮转文件后缀添加日期
+#compress # 是否压缩轮转的日志文件
+
+include /etc/logrotate.d
+# 将 /etc/logrotate.d/ 这个目录中的所有文件都读进来执行 rotate 的工作！
+
+/var/log/wtmp {       # 仅针对 /var/log/wtmp 所设置的参数
+    monthly           # 每个月一次，取代每周
+    create 0664 root utmp # 指定新建文件的权限与所属帐号/群组
+    minsize 1M        # 文件大小一定要超过 1M 后才进行 rotate （略过时间参数）
+    rotate 1          # 仅保留一个，亦即仅有 wtmp.1 保留而已。
+}
+# 这个 wtmp 可记录登陆者与系统重新开机时的时间与来源主机及登陆期间的时间。
+# 由于具有 minsize 的参数，因此不见得每个月一定会进行一次喔！要看文件大小。
+```
+
+syslog logrotate示例：
+
+```
+/var/log/cron
+/var/log/maillog
+/var/log/messages
+/var/log/secure
+/var/log/spooler
+{
+    sharedscripts
+    postrotate
+        /bin/kill -HUP `cat /var/run/syslogd.pid 2&> /dev/null` 2> /dev/null || true
+    endscript
+}
+```
+
+- 文件名：被处理的登录文件绝对路径文件名写在前面，可以使用空白字符分隔多个登录文件；
+- 参数：上述文件名进行轮替的参数使用 { } 包括起来；
+- 执行脚本：
+  - 可调用外部指令来进行额外的命令下达，这个设置需与 sharedscripts .... endscript 设置合用才行。
+  - 脚本时机：
+    - prerotate：在启动 logrotate 之前进行的指令，例如修改登录文件的属性等动作；
+    - postrotate：在做完 logrotate 之后启动的指令，例如重新启动 （kill -HUP） 某个服务！
+
+prerotate 与 postrotate 可以用来处理有特殊属性的文件:
+
+```
+/var/log/cron
+/var/log/maillog
+/var/log/messages
+/var/log/secure
+/var/log/spooler
+{
+    sharedscripts
+    prerotate
+       /usr/bin/chattr -a /var/log/messages
+    endscript
+    sharedscripts
+    postrotate
+        /bin/kill -HUP `cat /var/run/syslogd.pid 2&gt; /dev/null` 2&gt; /dev/null &#124;&#124; true
+        /usr/bin/chattr +a /var/log/messages
+    endscript
+}
+```
+
+## 14.5. systemd-journald.service
+
+### 14.5.1. journalctl
+
+过去只有 rsyslogd 的年代中，由于 rsyslogd 必须要开机完成并且执行了 rsyslogd 这个 daemon 之后，登录文件才会开始记录。
+所以，核心还得要自己产生一个 klogd 的服务， 才能将系统在开机过程、启动服务的过程中的信息记录下来，然后等 rsyslogd 启动后才传送给它来处理。
+
+现在有了 systemd 之后，由于systemd是核心唤醒的，然后又是第一个执行的软件，它可以主动调用 systemd-journald 来协助记载登录文件。
+因此在开机过程中的所有信息，包括启动服务与服务若启动失败的情况等等，都可以直接被记录到 systemd-journald 里。
+
+不过 systemd-journald 由于是使用于内存的登录文件记录方式，因此重新开机过后，开机前的登录文件信息当然就不会被记载了。
+为此，还是建议启动 rsyslogd 来协助分类记录。也就是说， systemd-journald 用来管理与查询这次开机后的登录信息，
+而 rsyslogd 可以用来记录以前及现在的所以数据到磁盘文件中，方便未来进行查询。
+
+```
+journalctl [-nrpf] [--since TIME] [--until TIME] _optional
+选项与参数：
+默认会输出全部的 log 内容，从旧的输出到最新的讯息
+-n  ：输出最近的几行的意思～找最新的日志相当有用
+-r  ：反向输出，从最新的输出到最旧的数据
+-p  ：输出后面所接的日志等级，info,err等
+-f  ：类似 tail -f 的功能，持续显示 journal 日志的内容
+-u  : 只输出指定unit的日志
+--since --until：设置开始与结束的时间，让在该期间的数据输出而已
+_SYSTEMD_UNIT=unit.service ：只输出 unit.service 的日志而已
+_COMM=bash ：只输出与 bash 有关的日志
+_PID=pid   ：只输出 PID 号码的日志
+_UID=uid   ：只输出 UID 为 uid 的日志
+SYSLOG_FACILITY=[0-23] ：使用 syslog.h 规范的服务相对序号来调用出正确的数据！
+```
+
+### 14.5.2. logger
+
+输出日志到journald日志
+
+`logger [-p 服务名称.等级] "日志"`
+
+### 14.5.3. 保存日志到磁盘
+
+配置文件目录: `/etc/systemd/journald.conf`(`man 5 journald.conf`)
+
+如果想要保存你的 journalctl 所读取的登录文件， 那么就得要创建一个 /var/log/journal 的目录，并且处理一下该目录的权限，
+那么未来重新启动 systemd-journald.service 之后， 日志登录文件就会主动的复制一份到 /var/log/journal 目录下
+
+```
+# 1\. 先处理所需要的目录与相关权限设置
+[root@study ~]# mkdir /var/log/journal
+[root@study ~]# chown root:systemd-journal /var/log/journal
+[root@study ~]# chmod 2775 /var/log/journal
+
+# 2\. 重新启动 systemd-journald 并且观察备份的日志数据！
+[root@study ~]# systemctl restart systemd-journald.service
+[root@study ~]# ll /var/log/journal/
+drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95ec7a
+```
+你得要注意的是，因为现在整个日志登录文件的容量会持续长大，因此你最好还是观察一下你系统能用的总容量，
+另外，未来在 /run/log 下面就没有相关的日志可以观察了！因为移动到 /var/log/journal 下面了
+
+## 14.6. logwatch 分析工具
+
+或者也可以自己写脚本
 
 # 15. 开机流程
 
-## 15.1. /etc/inittab
+## 15.1. 整体说明
+
+## 15.2. kernel载入
+
+## 15.3. Boot Loader: Grub2
+
+## 15.4. 常见问题
+
+## 15.5. /etc/inittab
 
 - 计算机开机-->计算机内核进内存-->加载根目录分区进内存-->引导 sbin 目录下 init 程序作为第一个进程-->该进程读取/etc/inittab 中的开机设置
   > 小知识
@@ -2514,7 +2831,6 @@ entos6和centos7 为 rsyslog
   - 6 是立刻重启死循环，
   - 1 是单用户模式（物理服务器身边，重启时可以设置，不需要密码登录，修改密码时用）
   - 不过 linux 中图形界面并没有在内核代码中，需要安装后台程序
-
 
 # 16. 硬件与核心信息
 
