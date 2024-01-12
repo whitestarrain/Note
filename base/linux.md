@@ -485,7 +485,33 @@ $info command
 
 ## 2.9. 文件切分 split
 
-## 2.10. 软链接，硬链接
+文件夹内，每500个文件打一个压缩包
+
+```bash
+find target_path -type f | split -l 500 -d --filter 'tar cvf ImagePackage-$FILE.tar --files-from=- --null'
+```
+
+bash实现:
+
+```bash
+count=1
+N=500
+find ./images -type f -print0  | {
+  while count<9
+  do
+      files=()
+      for ((i=0;i<N;i++))   # Add N filenames to the `files` array
+      do
+          IFS= read -d '' -r file
+          files+=("$file")
+      done
+      ((count++))
+      tar -czf archive-$count.tar.gz "${files[@]}"
+  done
+}
+```
+
+## 2.10. ln, readlink
 
 - 创建符号链接/硬链接:
 
@@ -493,6 +519,11 @@ $info command
   ln cc ccAgain # 硬连接；删除一个，将仍能找到；
   ln -s cc ccTo # 符号链接(软链接)；删除源，另一个无法使用；（后面一个ccTo 为新建的文件）
   ```
+- 原理(需要了解linux文件系统)：
+  - 硬链接通过在目录的block中添加指向 **相同inode** 的记录
+    - 硬链接不支持跨 filesystem
+    - 不支持文件夹之间的硬链接(因为文件夹下面的文件也需要hard link)
+  - 软链接通过在目录的block中添加指向 **目标路径**  的记录。通过路径再找到目标文件的inode
 
 # 3. 文本处理与计算
 
@@ -677,7 +708,14 @@ sort -bd data # 忽略像空格之类的前导空白字符
     - `cut -d' ' -f1,3 file` 以空格为分隔符切割后显示第一和三列
     - `cut -d' ' -f1-3 file` 以空格为分隔符切割后显示第一列到第三列
 
-## 3.6. wc 统计行和字符的工具
+## 3.6. column 格式化输出
+
+```
+# 读入mysql标准输入的时候，是没有特殊符号的，只有输出的时候才有
+cat <(mysql -e "select id,name from t1" 2>/dev/null)
+```
+
+## 3.7. wc 统计行和字符的工具
 
 ```bash
 $ wc -l file # 统计行数
@@ -685,11 +723,11 @@ $ wc -w file # 统计单词数
 $ wc -c file # 统计字符数
 ```
 
-## 3.7. tee 双向重定向
+## 3.8. tee 双向重定向
 
-## 3.8. 字符转换命令： tr
+## 3.9. 字符转换命令： tr
 
-### 3.8.1. tr
+### 3.9.1. tr
 
 > **说明**
 
@@ -757,15 +795,15 @@ $ wc -c file # 统计字符数
 tr '[:lower:]' '[:upper:]'
 ```
 
-### 3.8.2. col
+### 3.9.2. col
 
-### 3.8.3. expand, unexpand
+### 3.9.3. expand, unexpand
 
-## 3.9. 多文件处理
+## 3.10. 多文件处理
 
-### 3.9.1. join
+### 3.10.1. join
 
-### 3.9.2. paste 按列拼接文本
+### 3.10.2. paste 按列拼接文本
 
 - 将两个文本按列拼接到一起;
 
@@ -792,28 +830,27 @@ tr '[:lower:]' '[:upper:]'
   ```
 
 
-### 3.9.3. 比较文件或目录 diff， 以及 patch
+### 3.10.3. diff 比较文件或目录， 以及 patch
 
-### 3.9.4. comm 对比文件或者输入流
+### 3.10.4. comm 对比文件或者输入流
 
 > 通常和sort一起使用
 
-
-### 3.9.5. cmp 字节单位的对比
+### 3.10.5. cmp 字节单位的对比
 
 支持对比binary文件
 
-## 3.10. bc 数值计算
+## 3.11. bc 数值计算
 
-## 3.11. iconv 编码转换
+## 3.12. iconv 编码转换
 
-## 3.12. printf 格式化输出
+## 3.13. printf 格式化输出
 
-## 3.13. sed 文本替换利器
+## 3.14. sed 文本替换利器
 
 [References](./References/sed.md)
 
-## 3.14. awk 数据流处理工具(重要)
+## 3.15. awk 数据流处理工具(重要)
 
 [References](./References/awk.md)
 
@@ -900,11 +937,11 @@ tr '[:lower:]' '[:upper:]'
   - 打印指定文本区域
   - awk 常用内建函数
 
-## 3.15. pr 将文本文件转换成适合打印的格式
+## 3.16. pr 将文本文件转换成适合打印的格式
 
-## 3.16. 迭代文件中的行、单词和字符
+## 3.17. 迭代文件中的行、单词和字符
 
-### 3.16.1. 迭代文件中的每一行
+### 3.17.1. 迭代文件中的每一行
 
 - while 循环法
 
@@ -924,7 +961,7 @@ tr '[:lower:]' '[:upper:]'
   cat file.txt| awk '{print}'
   ```
 
-### 3.16.2. 迭代一行中的每一个单词
+### 3.17.2. 迭代一行中的每一个单词
 
 ```bash
 for word in $line;
@@ -933,7 +970,7 @@ echo $word;
 done
 ```
 
-### 3.16.3. 迭代每一个字符
+### 3.17.3. 迭代每一个字符
 
 - 语法
   - `${string:start_pos:num_of_chars}` ：从字符串中提取一个字符；(bash文本切片）
@@ -993,17 +1030,39 @@ parted /dev/sda print
 
 ## 4.4. 挂载
 
-### 4.4.1. mount, umount
+### 4.4.1. mount, umount, findmnt
 
-/etc/fstab， /etc/mtab 与 /proc/mounts
+- 相关文件
+  - /etc/fstab， /etc/mtab 与 /proc/mounts
 
 ```bash
+# man fstab
 #【装置/UUID等】【挂载点】【文件系统】【文件系统参数】【dump】【fsck】
 /dev/mapper/centos-root /                       xfs     defaults        0 0
 UUID=13d0663f-4cbd-412d-aa9f-975eb18da590 /boot                   xfs     defaults        0 0
 /dev/mapper/centos-home /home                   xfs     defaults        0 0
 /dev/mapper/centos-swap swap                    swap    defaults        0 0
 ```
+
+- `mount --bind` 和 硬链接
+
+  ```
+  mount /temp1 /temp2
+
+  当mount --bind命令执行后，Linux将会把被挂载目录的目录项（也就是该目录文件的block，记录了下级目录的信息）屏蔽，
+  在本例里就是 /test2 的下级路径被隐藏起来了（注意，只是隐藏不是删除，数据都没有改变，只是访问不到了）
+
+  同时，内核将挂载目录（本例里是 /test1）的目录项记录在内存里的一个s_root对象里
+
+  在mount命令执行时，VFS会创建一个vfsmount对象，这个对象里包含了整个文件系统所有的mount信息，其中也会包括本次mount中的信息，这个对象是一个HASH值对应表（HASH值通过对路径字符串的计算得来），表里就有 /test1 到 /test2 两个目录的HASH值对应关系
+  命令执行完后，当访问 /test2下的文件时，系统会告知 /test2 的目录项被屏蔽掉了，自动转到内存里找VFS，通过vfsmount了解到 /test2 和 /test1 的对应关系，从而读取到 /test1 的inode，这样在 /test2 下读到的全是 /test1 目录下的文件
+  由上述过程可知，mount --bind 和硬连接的重要区别有：
+
+  1.mount --bind连接的两个目录的inode号码并不一样，只是被挂载目录的block被屏蔽掉，inode被重定向到挂载目录的inode（被挂载目录的inode和block依然没变）
+  2.两个目录的对应关系存在于内存里，一旦重启挂载关系就不存在了
+  ```
+
+
 
 ### 4.4.2. loop设备挂载
 
@@ -1109,7 +1168,17 @@ GPT 分区表管理
 
 ## 7.2. stty
 
-## 7.3. terminfo: tic 和 infocmp
+## 7.3. terminfo:
+
+### 7.3.1. tic
+
+### 7.3.2. infocmp
+
+### 7.3.3. tput
+
+### 7.3.4. tset
+
+### 7.3.5. ncurse 库
 
 ## 7.4. dircolors
 
@@ -1236,7 +1305,6 @@ chage -d 0 agetest
 
 ## 8.4. 使用者管理
 
-
 ### 8.4.1. id
 
 ### 8.4.2. groups
@@ -1273,6 +1341,12 @@ chage -d 0 agetest
 
 - `/etc/sudoers` 配置sudo授权用户
   - 用visudo来编辑，退出时会检验语法
+
+journalctl 查看的日志，sudo多次失败后，会被lock
+
+```
+pam_faillock(sudo:auth): Consecutive login failures for user user1 account temporarily locked
+```
 
 ## 8.6. 用户权限
 
@@ -2917,6 +2991,12 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
   ```
 
 ## 17.5. telnet
+
+## 17.6. netcat(nc)/ncat
+
+透过使用TCP或UDP协议的网络连接去读写数据
+
+[参考](https://www.cnblogs.com/pandana/p/15881273.html)
 
 # 18. 网络管理
 

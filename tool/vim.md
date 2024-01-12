@@ -19,7 +19,7 @@
 - hjkl:移动
 - w:下一个单词开头，e：下一个单词末尾。W下一个空格开头，E下一个空格末尾
 - % 括号匹配移动
-- gg移动到开头，G移动到末尾，数字+gg移动到指定行 
+- gg移动到开头，G移动到末尾，数字+gg移动到指定行
 - \$ 到行末;0到行首;^ 到第一个不是空格的位置(可以使用0w代替)
 - M(middle)移动到屏幕中间位置。H(Head)移动到屏幕顶部位置。L(Lower)移动到屏幕底部位置
 - zz将编辑行移动到屏幕中间,zt将编辑行移动到屏幕顶部，zb将编辑行移动到屏幕底部
@@ -232,7 +232,7 @@
   - 普通模式下：
     - y (yank) 复制
     - p(put)粘贴
-    - yy 复制一行 yiw复制一个单词 
+    - yy 复制一行 yiw复制一个单词
   - 插入模式下
     - 可以通过C-v粘贴剪切板内容
     - C-r 寄存器名  粘贴指定寄存器内容
@@ -314,7 +314,7 @@
 - gf 查看光标所在字符串对应文件
 - gd 查看定义位置
 - C-p C-n 代码提示上下浏览
-- dh 相当于将鼠标移动到那里（vscode专属）	
+- dh 相当于将鼠标移动到那里（vscode专属）
 - C-w h 光标移动到左侧目录树（vscode专属）
 - q: 显示命令历史
 - ssh-keygen -p 重新设置ssh的密码
@@ -444,7 +444,7 @@
     1aaa
     2aaa
     3aaa
-  
+
   sort sort默认使用字典序，数字排序的话，使用 sort n
   ```
 - `<c-a>`:increase number
@@ -459,10 +459,16 @@
   :redir END
   ```
 - 输出所有highlight到buffer: `:runtime syntax/hitest.vim`
+- 检查语法高亮花费的时间
+
+  ```vim
+  syntime on
+  syntime report
+  ```
 
 # 4. vim插件
 
-**详细插件配置：[dotfiles](https://github.com/whitestarrain/dotfiles)** 
+**详细插件配置：[dotfiles](https://github.com/whitestarrain/dotfiles)**
 
 ## 4.1. 插件
 
@@ -483,7 +489,7 @@
 		```
 	- 输入:PlugInstall
 	- windows报错解决：
-		- 将插件文件夹下的文件夹（仅文件夹）和vimfiles下的文件夹 合并 
+		- 将插件文件夹下的文件夹（仅文件夹）和vimfiles下的文件夹 合并
 		- 不要替换tag，把所有插件的tag放到一个文件夹中
 
 ## 4.3. 寻找插件
@@ -529,7 +535,7 @@
 	- 安装：Plug 'ctrlpvim/ctrlp.vim'
 	- 配置
 		```
-		" ctrlp config 
+		" ctrlp config
 		let g:ctrlp_map = '<C-p>'
 		```
 - 快速跳转
@@ -620,7 +626,7 @@
 - 大纲插件；
 	- 安装 Plug 'majutsushi/tagbar'
 	- 注意：查看文档，需要安装ctags生成tag文件
-	
+
 - 高亮指定单词：
 	- 安装：Plug 'lfv89/vim-interestingwords'
 	- 使用：
@@ -759,7 +765,7 @@
 		快速定位单词尾
 		<leader> + <leader> e，定位光标后面的单词尾
 		<leader> + <leader> ge，定位光标前面的单词尾
-		
+
 		设置了相对行后
 		往上跳转 n 行: n + k
 		往下跳转 n 行: n + j

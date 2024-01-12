@@ -281,6 +281,7 @@ builtin，alias，command，function
     ```
 
 - `shift`:
+  - 会对参数进行左移，即删除`$#`中的第一个参数
 
 ## 特殊变量
 
@@ -317,15 +318,18 @@ builtin，alias，command，function
   - 这种特殊字符的扩展，称为模式扩展（globbing）。
   - 其中有些用到通配符，又称为通配符扩展（wildcard expansion）
 
-- Bash 一共提供八种扩展。
-  - `波浪线扩展`
-  - `? 字符扩展`
-  - `* 字符扩展`
-  - `方括号扩展`
-  - `大括号扩展`
-  - `变量扩展`
-  - `子命令扩展`
-  - `算术扩展`
+- Bash 扩展
+  - 大括号扩展 brace expansion
+  - 波浪线扩展 tilde expansion
+  - 参数和变量扩展 parameter and variable expansion
+  - 命令扩展 command substitution
+  - 算数扩展 arithmetic expansion
+  - 分词 word splitting
+  - 路径名扩展 pathname expansion.
+    - `? 字符扩展`
+    - `* 字符扩展`
+    - `方括号扩展`
+  - 进程替换 process substitution (需系统支持)
 
 - Bash 是先进行扩展，再执行命令。
   - 因此，扩展的结果是由 Bash 负责的，与所要执行的命令无关。
@@ -348,6 +352,39 @@ builtin，alias，command，function
   # 或者
   $ set +f
   ```
+
+
+## IFS
+
+internal field separator，默认为`<space><tab><newline>`
+
+分词时使用，将扩展出来的内容划分为 words。一些命令也使用IFS来切分，比如read
+
+---
+
+```bash
+printf "$IFS" | od -b
+```
+
+```bash
+# 扩展会在命令执行前完成
+IFS=":" echo $(echo "$IFS") # 依旧是原始值
+IFS=":" echo $(echo "a:b:c") # 依旧是 a:b:c
+
+# 打印 a b c
+IFS=":"
+echo $(echo "a:b:c")
+```
+
+```bash
+# 默认值
+IFS=$' \t\n'
+```
+
+```bash
+IFS=ab read x y z
+1a2b3
+```
 
 ## 扩展
 
@@ -391,6 +428,8 @@ builtin，alias，command，function
   $ echo ~+
   /home/me/foo
   ```
+
+- `~-`会扩展为`OLDPWD`，也就是`cd -`时的目录
 
 ### 文件名扩展
 
@@ -731,6 +770,44 @@ builtin，alias，command，function
   echo $(( x + y ))     # 13
   ```
 
+### 进程替换扩展(Process Substitution)
+
+- 说明
+  - 假设有一个工具，它原本接受的参数应该是一个指代某个具体文档的"文件名"，使用Process Substitution后，可以用其他命令的输出来作为文件的内容，让这个工具去处理
+
+- 注意：
+  - 此外， Process Substitution 并不能和文件完全等价。
+  - Process Substitution 所建立的"对象"，是不能进行写入和随机读取操作的。
+  - 不能写入的话应该很好理解，因为如果进行写操作，将会写到那个临时的文件描述符里面去，而这个临时文件描述符会被迅速地释放掉，
+  - 而且由于创建的这个"文件"——姑且这么称呼，不是一个 regular file (与之相对的是 special file)，如果在写入时有严格的检查，甚至连写入都会被拒绝；
+  - 有时候我们需要对文件进行随机读取，比如 C 语言里的 fseek() 函数的操作，这样的操作将不能在 Process Substitution 产生的临时对象上正常运作。
+
+- 原理
+  - 创建一个 **命名管道(named pipe)**
+  - 将命令的输出重定向到 命名管道中
+  - 将 process substitution 处替换为 命名管道 路径
+
+  ```bash
+  echo <( ls /tmp )
+  /dev/fd/63
+
+  ls -lh <( ls /tmp )
+  lr-x------ 1 wsain wsain 64 Jan  9 20:03 /dev/fd/63 -> 'pipe:[1983586]'
+
+  ls -lh <( ls /tmp ) <( ls /tmp )
+  lr-x------ 1 wsain wsain 64 Jan  9 20:03 /dev/fd/62 -> 'pipe:[1983623]'
+  lr-x------ 1 wsain wsain 64 Jan  9 20:03 /dev/fd/63 -> 'pipe:[1983621]'
+  ```
+
+### 分词 word splitting (重要)
+
+- 只有没有在双引号里，才会出现分词
+- 只有在出现以下扩展时，才会出现分词。
+  - `parameter and variable expansion`
+  - `command substitution`
+  - `arithmetic expansion`
+- 分词依据IFS
+
 ## 单引号和双引号
 
 - 单引号和双引号之间有很重要的区别
@@ -894,6 +971,12 @@ echo ${food:-Cake}  #=> $food or "Cake"
   ```bash
   fruits=(Apple Pear Plum)
   ```
+  ```bash
+  # 触发扩展
+  pids=($(ps -elf | grep worker | awk '{print $4}' | sort | uniq | xargs))
+  # 但一般推荐使用 read -a 或者 mapfile 拆分命令输出为数组
+  read -a pids <<< "$(ps -elf | grep worker | awk '{print $4}' | sort | uniq | xargs)"
+  ```
 
 ## 数组扩展
 
@@ -989,6 +1072,32 @@ echo ${food:-Cake}  #=> $food or "Cake"
   echo ${fruits[@]} # Apple Desert fig Plum Banana Cherry
   ```
 
+## 多行字符串处理
+
+```bash
+#! /bin/bash
+
+# mul 为包含换行的文本
+read -r -d '' mul <<-_exit
+hello world
+hello
+world
+hello world
+hello world
+_exit
+
+# 使用 分词 切分为数组
+IFS=$'\n'
+arr1=($mul)
+# 会扩展为 arr1=('hello world' 'hello' 'world' 'hello world' 'hello world')
+echo ${#arr1[@]}
+IFS=$' \n\t'
+
+# 使用 read 切分为数组. `-d ''` 使读到newline时不自动停止
+IFS=$'\n' read -r -d '' -a arr2 <<< "$mul"
+echo ${#arr2[@]}
+```
+
 # 字典
 
 ## 定义
@@ -1059,6 +1168,7 @@ done
   |   `<`    | 重定向输入                                                    |
   |  `2>&1`  | 错误输出重定向到标准输出                                      |
   |   `<<`   | [Here 文档](http://tldp.org/LDP/abs/html/here-docs.html) 语法 |
+  |  `<<-`   | 也是here文档，但是会忽略leading tab                           |
   |  `<<<`   | [Here 字符串](http://www.tldp.org/LDP/abs/html/x17837.html)   |
 
   > 细分：
@@ -1219,15 +1329,16 @@ done
 
 - **跟字符串相关：**
 
-  |        基元        | 含义                                |
-  | :----------------: | :---------------------------------- |
-  |    `[ -z STR ]`    | `STR`为空（长度为 0，**z**ero）     |
-  |    `[ -n STR ]`    | `STR`非空（长度非 0，**n**on-zero） |
-  | `[ STR1 == STR2 ]` | `STR1`和`STR2`相等                  |
-  | `[ STR1 != STR2 ]` | `STR1`和`STR2`不等                  |
-  | `[ STR1 =~ STR2 ]` | 前者包含后者(子字符串)              |
-  | `[ STR1 < STR2 ]`  | ASCII 小于                          |
-  | `[ STR1 > STR2 ]`  | ASCII 大于                          |
+|         基元          | 含义                                        |
+| :-------------------: | :------------------------------------------ |
+|     `[ -z STR ]`      | `STR`为空（长度为 0，**z**ero）             |
+|     `[ -n STR ]`      | `STR`非空（长度非 0，**n**on-zero）         |
+|  `[ STR1 == STR2 ]`   | `STR1`和`STR2`相等                          |
+|  `[ STR1 != STR2 ]`   | `STR1`和`STR2`不等                          |
+|  `[ STR1 =~ STR2 ]`   | 前者包含后者(子字符串)                      |
+| `[[ STR1 =~ regex ]]` | regex可以从STR1中找到匹配字符串,只有[[ 支持 |
+|   `[ STR1 < STR2 ]`   | ASCII 小于                                  |
+|   `[ STR1 > STR2 ]`   | ASCII 大于                                  |
 
 - **算数二元运算符：**
 
@@ -1526,6 +1637,21 @@ cat file.txt | while read line; do
 done
 ```
 
+```bash
+while read -r var;
+do
+    echo $var | awk '{print $4}'
+done< <(echo "a b c d")
+```
+
+```bash
+# https://unix.stackexchange.com/questions/592511/while-loop-done-command-instead-of-done-file
+while read <&3 -r var;
+do
+    echo $var
+done 3< <(echo "a b c d")
+```
+
 ### list file
 
 ```bash
@@ -1632,9 +1758,11 @@ done
   get_execute_time "sleep 3"
   ```
 
-# Debugging
+# 其他
 
-## bash参数设置
+## Debugging
+
+### bash参数设置
 
 - shell提供了用于debugging脚本的工具
   - 如果我们想以debug模式运行某脚本，可以在其shebang中使用一个特殊的选项：
@@ -1698,7 +1826,7 @@ done
   echo "xtrace is turned off again"
   ```
 
-## 环境变量
+### 环境变量
 
 - LINENO: 变量`LINENO`返回它在脚本里面的行号。
 
@@ -1855,9 +1983,44 @@ done
     - 函数`func1`是在`main.sh`的第7行调用
     - 函数`func2`是在`lib1.sh`的第8行调用的。
 
-# 其他
+## read
+
+- 基本使用
+
+  ```bash
+  read var
+  read -t 60 -p "please input your name in 1 min: " user_name
+  read -s -p "please input your password:" password
+  ```
+
+- 读取数据并分隔为数组
+
+  ```bash
+  IFS=',' read -a arr1 <<< "a,b,c,d"
+  echo ${#arr1[@]}
+  ```
+
+- 赋值多个变量
+  ```bash
+  IFS=':' read user group password <<< "user1:group1:xxxxx"
+  echo "$user $group $password"
+  ```
+
+- 读取多行数据
+  ```bash
+  read -r -d '' multi_lines <<- _exit
+  aaa bbb
+  ccc ddd
+  eeeeeee
+  ggg ggg
+  _exit
+
+  echo "$multi_lines"
+  ```
 
 ## bash中的括号
+
+> see `man bash` Compound Commands section
 
 - `[[`
 - `[`
@@ -1897,13 +2060,21 @@ TODO: bash笔记
 
 ## 目录堆栈
 
+dirs
+
 ## 临时文件夹
 
 ## set,shopt命令
 
-## read命令
+[set 命令，shopt 命令](https://wangdoc.com/bash/set)
+
+[set, shopt](https://www.gnu.org/software/bash/manual/html_node/Modifying-Shell-Behavior.html)
+
+## mktmp, trap命令
 
 ## getoption命令
+
+## 命令提示符
 
 # 后记
 
@@ -1946,4 +2117,6 @@ TODO: bash笔记
   - [Why doesn't Bash `(())` work inside `[[]]`?](https://stackoverflow.com/questions/61889505/why-doesnt-bash-work-inside)
   - [Use { ..; } instead of (..) to avoid subshell overhead](https://www.shellcheck.net/wiki/SC2235)
   - [What is the difference between the Bash operators [[ vs [ vs ( vs ((?](https://unix.stackexchange.com/questions/306111/what-is-the-difference-between-the-bash-operators-vs-vs-vs)
-
+  - Process Substitution
+    - [gnu Process Substitution](https://www.gnu.org/software/bash/manual/html_node/Process-Substitution.html#Process-Substitution)
+    - [What does "< <(command args)" mean in the shell?](https://stackoverflow.com/questions/2443085/what-does-command-args-mean-in-the-shell)
