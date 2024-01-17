@@ -607,7 +607,7 @@ find ./images -type f -print0  | {
   - -n 指定需要多少个参数
   - -I {} 指定替换字符串，这个字符串在xargs扩展时会被替换掉
     - 用于待执行的命令需要多个参数时，指定xargs 参数的位置
-  - -P 并发执行数量，如 `echo '1 2 3 4' | xargs -n1 -t -P 10 sleep`
+  - -P 并发执行数量，如 `echo '1 2 3 4' | xargs -d ' ' -t -P 10 sleep`
   - -0：指定0为输入定界符
 
 > **应用示例**
@@ -629,6 +629,15 @@ find ./images -type f -print0  | {
   echo "nameXnameXnameXname" | xargs -dX
 
   name name name name
+  ```
+- 在xargs中调用function
+
+  ```bash
+  my_echo(){
+    echo "$1"
+  }
+  export -f my_echo
+  echo "1 2 3 4" | xargs -d ' ' -t -P 5 -I {} bash -c "my_echo {}"
   ```
 
 - 综合应用

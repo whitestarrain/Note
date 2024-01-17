@@ -12943,19 +12943,49 @@ void func(int a[])
 
 #### 2.10.4.1. 常见情况
 
-- `count int  *`, `int const *`
+- `count int * a`, `int const *a`
   - 这两种写法是一样的
   - ，`a` 是一个 **指向 `const int` 型的指针** ，
   - `a` 所指向的内存单元不可改写，所以 `(*a)++` 是不允许的，
   - 但 `a` 可以改写，所以 `a++` 是允许的。
+  - 可以理解为，`const`的是`* a`
 
 - `int * const a`
   - `a` 是一个 **指向 `int` 型的 `const` 指针** ，
   - `*a` 是可以改写的，但 `a` 不允许改写。
+  - 可以理解为，`const`的`a`
 
 - `int const * const a`
   - `a` 是一个 **指向 `const int` 型的 `const` 指针** ，
   - 因此 `*a` 和 `a` 都不允许改写。
+  - 可以理解为，`const`的`a`和`*a`
+
+多级指针同理，示例：
+
+```c
+int main(int argc, char *argv[])
+{
+    char   c  = 'a';
+    char  *p1 = &c;
+    char **p2 = &p1;
+
+    const char **pp1   = p2;
+    char const **pp1_2 = p2;
+    // **pp1            = 'b';        // error
+
+    char *const *pp2 = p2;
+    // *pp2             = *pp2 + 1;   // error
+
+    char **const pp3 = p2;
+    // pp3              = pp3;        // error
+
+    char const *const *const pp4 = p2;
+    // const char *const *const pp4 = p2;
+    // pp4   = pp4;         // error
+    // *pp4  = *pp4 + 1;    // error
+    // **pp4 = **pp4 + 1;   // error
+}
+```
 
 #### 2.10.4.2. 隐式类型转换
 
