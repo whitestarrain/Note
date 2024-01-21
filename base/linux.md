@@ -3062,9 +3062,93 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
 
 ## 18.6. network manager
 
-# 19. 软件安装
+# 19. linux开机流程
 
-## 19.1. yum 和 rpm
+## 19.1. 整体说明
+
+- 按下开机按钮
+- 计算机硬件会主动的读取 BIOS 或 UEFI BIOS, 载入 BIOS 的硬件信息与进行自我测试，并依据设置取得第一个可开机的设备；
+  > Windows 8.1 以前的版本，不能够在非 UEFI 的 BIOS 环境下使用 GPT 分区表的分区来开机
+- 系统主动读取第一个可开机的设备 （由 BIOS 设置的）
+  - 读取并执行第一个开机设备内 MBR 的 boot Loader （亦即是 grub2, spfdisk 等程序）；
+- 读入开机管理程序
+  - 开机管理程序可以指定使用哪个核心文件来开机，并实际载入核心到内存当中解压缩与执行
+  - 此时核心就能够开始在内存内活动，并检测所有硬件信息并载入适当的驱动程序来使整部主机开始运行
+  - 等到核心检测完硬件与载入驱动程序完毕后，操作系统就开始在你的 PC 上面运行了
+- Linux 调用外部程序开始准备软件执行的环境，并且实际的载入所有系统运行所需要的软件程序
+  - 在硬件驱动成功后，Kernel 会主动调用 systemd 程序，并以 default.target 流程开机；
+  - systemd 执行 sysinit.target 初始化系统及 basic.target 准备操作系统；
+  - systemd 启动 multi-user.target 下的本机与服务器服务；
+  - systemd 执行 multi-user.target 下的 /etc/rc.d/rc.local 文件；
+  - systemd 执行 multi-user.target 下的 getty.target 及登陆服务；
+  - systemd 执行 graphical 需要的服务
+
+## 19.2. BIOS, boot loader 与 kernel 载入
+
+> - BIOS：不论传统 BIOS 还是 UEFI BIOS 都会被简称为 BIOS；
+> - MBR：虽然分区表有传统 MBR 以及新式 GPT，不过 GPT 也有保留一块相容 MBR 的区块，
+>   - 因此，下面的说明在安装 boot loader 的部份， 还是简称为 MBR 。
+>   - 总之，MBR 就代表该磁盘的最前面可安装 boot loader 的那个区块就对了！
+
+### 19.2.1. BIOS, 开机自我测试与 MBR/GPT
+
+bios与开机测试：
+
+- 在个人计算机架构下，想要启动整部系统首先就得要让系统去载入 BIOS （Basic Input Output System），并通过 BIOS 程序去载入 CMOS 的信息
+- 并且借由 CMOS 内的设置值取得主机的各项硬件设置
+  - 例如 CPU 与周边设备的沟通频率
+  - 开机设备的搜寻顺序
+  - 硬盘的大小与类型
+  - 系统时间
+  - 各周边总线的是否启动 Plug and Play （PnP, 随插即用设备）
+  - 各周边设备的 I/O 位址
+  - 以及与 CPU 沟通的 IRQ 岔断等等的信息。
+- 在取得这些信息后，BIOS 还会进行开机自我测试 （Power-on Self Test, POST）
+- 然后开始执行硬件检测的初始化，并设置 PnP 设备，之后再定义出可开机的设备顺序，接下来就会开始进行开机设备的数据读取了。
+
+Boot Loader:
+
+- 由于我们的系统软件大多放置到硬盘中，所以 BIOS 会指定开机的设备好让我们可以读取磁盘中的操作系统核心文件。
+- 但由于不同的操作系统他的文件系统格式不相同，因此我们必须要以一个开机管理程序来处理核心文件载入 （load） 的问题
+- 因此这个开机管理程序就被称为 Boot Loader 了。
+- 这个 Boot Loader 程序安装在开机设备的第一个扇区 （sector） 内，也就是我们一直谈到的 MBR （Master Boot Record, 主要开机记录区）。
+
+既然核心文件需要 loader 来读取，那每个操作系统的 loader 都不相同， 这样的话 BIOS 又是如何读取 MBR 内的 loader ？
+
+- 其实 BIOS 是通过硬件的 `INT 13` 中断功能来读取 MBR 的，
+- 也就是说，只要 BIOS 能够检测的到你的磁盘 （不论该磁盘是 SATA 还是 SAS 接口），
+- 那他就有办法通过 INT 13 这条信道来读取该磁盘的第一个扇区内的 MBR 软件，这样 boot loader 也就能够被执行了。
+
+boot loader 安装在 MBR, boot sector 与操作系统的关系:
+
+![linux-7](./image/linux-7.png)
+
+- 我们知道每颗硬盘的最前面区块含有 MBR 或 GPT 分区表的提供 loader 的区块，
+- 那么如果我的主机上面有两颗硬盘的话， 系统会去哪颗硬盘的最前面区块读取 boot loader 呢？
+- 这个就得要看 BIOS 的设置了。
+- 基本上，我们常常讲的 **“系统的 MBR”其实指的是 第一个开机设备的 MBR 才对**
+- 所以，改天如果你要将开机管理程序安装到某颗硬盘的 MBR 时， 要特别注意当时系统的“第一个开机设备”是哪个，否则会安装到错误的硬盘上面的 MBR
+
+boot loader 与多系统
+
+- 虽然各个操作系统都可以安装一份 boot loader 到他们的 boot sector 中， 这样 **操作系统可以通过自己的 boot loader 来载入核心** 了。
+- boot loader 主要的功能如下：
+  - 提供菜单：使用者可以选择不同的开机项目，这也是多重开机的重要功能
+  - 载入核心文件：直接指向可开机的程序区段来开始操作系统；
+  - 转交其他 loader：将开机管理功能转交给其他 loader 负责。
+- 由于具有菜单功能，因此我们可以选择不同的核心来开机。
+- 而由于具有控制权转交的功能，因此我们可以载入其他 boot sector 内的 loader 。
+- 不过  **Windows 的 loader 默认不具有控制权转交的功能** ，
+  - 因此你不能使用 Windows 的 loader 来载入 Linux 的 loader
+  - 这也是为啥安装多系统时，会特别强调先装 Windows 再装 Linux 的缘故。
+
+MBR中的 boot loader 是系统安装时装进去的？也就是每个系统有两个bootloader，一个是MBR中的，一个是加载kernel用的？
+
+![linux-8](./image/linux-8.png)
+
+# 20. 软件安装
+
+## 20.1. yum 和 rpm
 
 - 编译安装(自己编译安装)
   - 说明：
@@ -3214,15 +3298,15 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
   - yum install man-pages-zh-CN
   - 看 man bash
 
-## 19.2. pacman
+## 20.2. pacman
 
-# 20. 第三方其他工具
+# 21. 第三方其他工具
 
-## 20.1. gdb 调试利器
+## 21.1. gdb 调试利器
 
-## 20.2. ldd 查看程序依赖库
+## 21.2. ldd 查看程序依赖库
 
-## 20.3. lsof 一切皆文件
+## 21.3. lsof 一切皆文件
 
 - lsof（list open files）
   - 定义：是一个查看当前系统文件的工具
@@ -3258,29 +3342,29 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
 
 注意：`lsof`输出的一列中有tid，也就是线程id（但一个进程内不同线程间使用的同一个fd），而`lsof -p`或`lsof +D`输出时则没有线程id
 
-## 20.4. pstack 跟踪进程栈
+## 21.4. pstack 跟踪进程栈
 
-## 20.5. strace 跟踪进程中的系统调用
+## 21.5. strace 跟踪进程中的系统调用
 
-## 20.6. ipcs 查询进程间通信状态
+## 21.6. ipcs 查询进程间通信状态
 
-## 20.7. vmstat 监视内存使用情况
+## 21.7. vmstat 监视内存使用情况
 
-## 20.8. iostat 监视 I/O 子系统
+## 21.8. iostat 监视 I/O 子系统
 
-## 20.9. sar 找出系统瓶颈的利器
+## 21.9. sar 找出系统瓶颈的利器
 
-## 20.10. readelf elf 文件格式分析
+## 21.10. readelf elf 文件格式分析
 
-## 20.11. objdump 二进制文件分析
+## 21.11. objdump 二进制文件分析
 
-## 20.12. nm 目标文件格式分析
+## 21.12. nm 目标文件格式分析
 
-## 20.13. size 查看程序内存映像大小
+## 21.13. size 查看程序内存映像大小
 
-## 20.14. tcpdump 抓包工具
+## 21.14. tcpdump 抓包工具
 
-### 20.14.1. 介绍
+### 21.14.1. 介绍
 
 - crontab命令
   - 是cron table的简写
@@ -3295,7 +3379,7 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
     - /etc/cron.weekly
     - /etc/cron.monthly
 
-### 20.14.2. 使用
+### 21.14.2. 使用
 
 - 语法
   ```bash
@@ -3319,7 +3403,7 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
     - - 从X到Z
     - ，散列数字
 
-### 20.14.3. 实例
+### 21.14.3. 实例
 
 - 实例 1：每 1 分钟执行一次 myCommand
   ```bash
@@ -3370,9 +3454,9 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
   0 23-7/1 * * * /etc/init.d/smb restart
   ```
 
-## 20.15. 内网穿透frp
+## 21.15. 内网穿透frp
 
-### 20.15.1. 基本说明
+### 21.15.1. 基本说明
 
 - 说明
   - 简单地说，frp就是一个反向代理软件，
@@ -3382,7 +3466,7 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
 
   ![linux-1](./image/linux-1.png)
 
-### 20.15.2. 服务端设置
+### 21.15.2. 服务端设置
 
 - **部署在vps上**
 - 下载frp
@@ -3423,7 +3507,7 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
 
 - 启动：`./start_server.sh`
 
-### 20.15.3. 客户端设置
+### 21.15.3. 客户端设置
 
 - 安装
   ```bash
@@ -3479,7 +3563,7 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
 - 注意：**一个服务端可以同时给多个客户端使用**
 - 启动客户端 `./frpc.exe -c frpc.ini`
 
-## 20.16. neofetch
+## 21.16. neofetch
 
 - 安装 epel-release
   ```bash
@@ -3497,21 +3581,21 @@ drwxr-sr-x. 2 root systemd-journal 27 Aug 20 02:37 309eb890d09f440681f596543d95e
 
   ![linux-2](./image/linux-2.png)
 
-## 20.17. Supervisor
+## 21.17. Supervisor
 
-### 20.17.1. 基本说明
+### 21.17.1. 基本说明
 
 TODO: supervisor
 
-## 20.18. ab 压测工具
+## 21.18. ab 压测工具
 
-# 21. bash
+# 22. bash
 
 > [bash-handbook](./bash.md)
 
 <!-- TODO: 小任务，这里看看有没有什么有用的东西整理到bash.md -->
 
-## 21.1. 开始
+## 22.1. 开始
 
 - /etc/profile 是 shell 打开时要读取的配置文件，里面有环境变量的定义等
 - pstree:展示进程树
@@ -3559,7 +3643,7 @@ TODO: supervisor
   - 函数
   - 磁盘目录下的可执行文件
 
-## 21.2. 文本流，重定向
+## 22.2. 文本流，重定向
 
 - 预先知识
 
@@ -3669,7 +3753,7 @@ TODO: supervisor
           cat 0<& 9  # 将输入重定向到0
           ```
 
-## 21.3. 变量
+## 22.3. 变量
 
 - 种类：
   - 本地
@@ -3721,7 +3805,7 @@ TODO: supervisor
       - sleep 20 ：睡眠 20 秒
       - linux 中的 fork()函数
 
-## 21.4. 引用&命令替换
+## 22.4. 引用&命令替换
 
 > 三种引用机制查看 man bash
 
@@ -3776,7 +3860,7 @@ TODO: supervisor
     lines=$(< scriptfile)
     ```
 
-## 21.5. 退出状态&逻辑判断
+## 22.5. 退出状态&逻辑判断
 
 - 退出状态：
   - echo \$?
@@ -3801,7 +3885,7 @@ TODO: supervisor
     后执行的命令的返回状态。
   ```
 
-## 21.6. 表达式
+## 22.6. 表达式
 
 > man bash shell 语法>表达式
 
@@ -3832,7 +3916,7 @@ TODO: supervisor
   # 因此中括号和表达式必须要用空格分开
   ```
 
-## 21.7. 流程控制
+## 22.7. 流程控制
 
 > **全部通过 help 进行学习**
 
@@ -3856,7 +3940,7 @@ TODO: supervisor
 
   ```
 
-## 21.8. 练习
+## 22.8. 练习
 
 - shell 编程一切皆命令
 - 习惯通过 `$?` 进行逻辑判断
@@ -3968,7 +4052,7 @@ TODO: supervisor
   }
 ```
 
-## 21.9. 七个扩展
+## 22.9. 七个扩展
 
 > man bash 吧，所有都在 man bash
 
@@ -3982,11 +4066,11 @@ TODO: supervisor
 - 8，引用删除 echo "hello"
 - \*，重定向 >
 
-# 22. linux常见问题
+# 23. linux常见问题
 
-## 22.1. 线程数量过多
+## 23.1. 线程数量过多
 
-# 23. 参考文档
+# 24. 参考文档
 
 - [ ] [linux常用命令](https://tkstorm.com/linux-doc/)
 - [x] [使用frp进行内网穿透](https://sspai.com/post/52523)
