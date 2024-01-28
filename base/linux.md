@@ -193,6 +193,7 @@ $info command
 - /bin:二进制可执行文件，用户命令
 - /sbin:管理员命令
 - /lib:存放跟文件系统中的程序运行所需要的共享库及内核模块。共享库又叫动态链接共享库，作用类似windows里的.dll文件，存放了根文件系统程序运行所需的共享文件。
+  - `/lib/modules/$（uname -r）/kernel` 核心模块
 - /dev:设备文件，linux，一切皆文件
 - /opt:额外安装的可选应用程序包所放置的位置。一般情况下，我们可以把 tomcat 等都安装到这里。
 - /usr:是 Unix Software Resource 的缩写,用于存放系统应用程序，比较重要的目录/usr/local 本地系统管理员软件安装目录（安装系统级的应用）。这是最庞大的目录，要用到的应用程序和文件几乎都在这个目录。
@@ -2322,7 +2323,7 @@ systemd的关键特性：
   - 这些脚本的优先序要比 /usr/lib/systemd/system/ 高
 - `/etc/systemd/system/`：
   - 管理员依据主机系统的需求所创建的执行脚本，其实这个目录有点像以前 /etc/rc.d/rc5.d/Sxx 之类的功能
-  - 执行优先序又比 /run/systemd/system/ 高喔！
+  - 执行优先序又比 /run/systemd/system/ 高
 - `/etc/sysconfig/*`：
   - 几乎所有的服务都会将初始化的一些选项设置写入到这个目录下，
   - 举例来说，mandb 所要更新的 man page 索引中，需要加入的参数就写入到此目录下的 man-db 当中
@@ -2536,6 +2537,29 @@ WantedBy=multi-user.target
 ### 13.3.3. 配置中的变量
 
 文件名中的`@` 和 文件中的`%I`
+
+```
+cat  /usr/lib/systemd/system/clash-meta@.service
+[Unit]
+Description=Clash-Meta Daemon for %i.
+After=network.target NetworkManager.service systemd-networkd.service iwd.service
+
+[Service]
+Type=exec
+User=%i
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW CAP_NET_BIND_SERVICE
+Restart=on-abort
+ExecStart=/usr/bin/clash-meta
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+# 会将配置文件中的 %I 替换为wsain，从而读取配置时，默认读取用户wsain下的配置
+systemctl start clash-meta@wsain.service
+```
 
 ## 13.4. systemctl 针对 timer 的配置文件
 
@@ -3003,7 +3027,7 @@ boot loader 安装在 MBR, boot sector 与操作系统的关系
 
 ### 15.2.2. 加载核心并检测硬件与 initramfs 的功能
 
-#### kernel 加载
+#### 15.2.2.1. kernel 加载
 
 - 当我们借由 boot loader 的管理而开始读取核心文件后，接下来， Linux 就会将核心解压缩到内存当中，
 - 并且利用核心的功能，开始测试与驱动各个周边设备，包括储存设备、CPU、网卡、声卡等等
@@ -3011,7 +3035,7 @@ boot loader 安装在 MBR, boot sector 与操作系统的关系
   - 也就是说，核心此时才开始接管 BIOS 后的工作了
 - 核心文件位置一般会被放置到 /boot 里面，并且取名为 /boot/vmlinuz
 
-#### 动态加载核心模块
+#### 15.2.2.2. 动态加载核心模块
 
 - Linux 核心是可以通过动态加载核心模块(驱动)的，这些核心模块就放置在 `/lib/modules/` 目录内
 - 由于模块放置到磁盘根目录内 （要记得 /lib 不可以与 / 分别放在不同的 partition ），
@@ -3021,23 +3045,463 @@ boot loader 安装在 MBR, boot sector 与操作系统的关系
 - 因此 USB, SATA, SCSI... 等磁盘设备的驱动程序通常都是以模块的方式来存在的。
 
 
-#### Initial RAM Disk
+#### 15.2.2.3. Initial RAM Disk
 
 问题：若想到读取 SATA 磁盘上的文件，需要文件系统，就需要驱动。但是想要加载驱动，又需要加载文件系统后读取
 
 虚拟文件系统 （Initial RAM Disk 或 Initial RAM Filesystem）
 
-- 一般使用的文件名为 /boot/initrd 或 /boot/initramfs
+- 一般使用的文件名为 `/boot/initrd` 或 `/boot/initramfs`
 - 这个文件的特色是，他也能够通过 boot loader 来加载到内存中，然后这个文件会被解压缩并且在内存当中仿真成一个根目录，
 - 且此仿真在内存当中的文件系统能够提供一支可执行的程序，通过该程序来加载开机过程中所最需要的核心模块，
   - 通常这些模块就是 USB, RAID, LVM, SCSI 等文件系统与磁盘接口的驱动程序
 - 等加载完成后， 会帮助核心重新调用 systemd 来开始后续的正常开机流程。
 
-## 15.3. Boot Loader: Grub2
+![linux-9](./image/linux-9.png)
 
-## 15.4. 常见问题
+- boot loader 可以加载 kernel 与 initramfs ，然后在内存中让 initramfs 解压缩成为根目录，
+- kernel 就能够借此加载适当的驱动程序，最终释放虚拟文件系统，并挂载实际的根目录文件系统，就能够开始后续的正常开机流程。
+- 详细说明：`man initrd`
 
-## 15.5. /etc/inittab
+查看initramfs中的内容：
+
+```
+lsinitrd /boot/initramfs
+
+lsinitcpio /boot/initramfs-linux.img
+```
+
+```
+# 1. 先来直接看一下 initramfs 里面的内容有些啥数据？
+[root@study ~]# lsinitrd /boot/initramfs-3.10.0-229.el7.x86_64.img
+# 首先会调用出 initramfs 最前面文件开始的许多数据介绍，这部份会占用一些容量！
+Image: /boot/initramfs-3.10.0-229.el7.x86_64.img: 18M
+========================================================================
+Early CPIO image
+========================================================================
+drwxr-xr-x   3 root     root            0 May  4 17:56 .
+-rw-r--r--   1 root     root            2 May  4 17:56 early_cpio
+drwxr-xr-x   3 root     root            0 May  4 17:56 kernel
+drwxr-xr-x   3 root     root            0 May  4 17:56 kernel/x86
+drwxr-xr-x   2 root     root            0 May  4 17:56 kernel/x86/microcode
+-rw-r--r--   1 root     root        10240 May  4 17:56 kernel/x86/microcode/GenuineIntel.bin
+========================================================================
+Version: dracut-033-240.el7
+
+Arguments: -f
+
+dracut modules:  # 开始一堆模块的加载行为
+bash
+nss-softokn
+.....（中间省略）.....
+========================================================================
+drwxr-xr-x  12 root     root            0 May  4 17:56 .
+crw-r--r--   1 root     root       5,   1 May  4 17:56 dev/console
+crw-r--r--   1 root     root       1,  11 May  4 17:56 dev/kmsg
+crw-r--r--   1 root     root       1,   3 May  4 17:56 dev/null
+.....（中间省略）.....
+lrwxrwxrwx   1 root     root           23 May  4 17:56 init -&gt; usr/lib/systemd/systemd
+.....（中间省略）.....
+drwxr-xr-x   2 root     root            0 May  4 17:56 var/lib/lldpad
+lrwxrwxrwx   1 root     root           11 May  4 17:56 var/lock -&gt; ../run/lock
+lrwxrwxrwx   1 root     root           10 May  4 17:56 var/log -&gt; ../run/log
+lrwxrwxrwx   1 root     root            6 May  4 17:56 var/run -&gt; ../run
+========================================================================
+# 最后则会列出这个 initramfs 里头的所有文件，也就是说，这个 initramfs 文件大概存着两部份，
+# 先是文件开始宣告的许多文件部份，再来才是真的会被核心取用的全部附加的文件数据
+```
+
+从上面大概知道了这个 initramfs 里头含有两大区块:
+
+- 一个是事先宣告的一些数据，包括 kernel/x86/microcode/GenuineIntel.bin 这些东西。
+- 在这些数据后面，才是真的我们的核心会去读取的重要文件
+  - 如果看一下文件的内容，你会发现到 init 那只程序已经被 systemd 所取代
+- 如果你想要进一步将这个文件解开的话，那得要先将前面的 kernel/x86/microcode/GenuineIntel.bin 之前的文件先去除掉，这样才能够顺利的解开
+
+```
+# 1. 先将 /boot 下面的文件进行去除前面不需要的文件开始数据部份。
+[root@study ~]# mkdir /tmp/initramfs
+[root@study ~]# cd /tmp/initramfs
+[root@study initramfs]# dd if=/boot/initramfs-3.10.0-229.el7.x86_64.img of=initramfs.gz bs=11264 skip=1
+[root@study initramfs]# ll initramfs.gz; file initramfs.gz
+-rw-r--r--. 1 root root 18558166 Aug 24 19:38 initramfs.gz
+initramfs.gz: gzip compressed data, from Unix, last modified: Mon May  4 17:56:47 2015,
+ max compression
+
+# 2. 从上面看到文件是 gzip 压缩文件，所以将它解压缩后，再查阅一下文件的类型！
+[root@study initramfs]# gzip -d initramfs.gz
+[root@study initramfs]# file initramfs
+initramfs: ASCII cpio archive （SVR4 with no CRC）
+
+# 3. 解开后又产生一个 cpio 文件，得要将它用 cpio 的方法解开！加上不要绝对路径的参数较保险！
+[root@study initramfs]# cpio -i -d -H newc --no-absolute-filenames < initramfs
+[root@study initramfs]# ll
+lrwxrwxrwx.  1 root root        7 Aug 24 19:40 bin -> usr/bin
+drwxr-xr-x.  2 root root       42 Aug 24 19:40 dev
+drwxr-xr-x. 12 root root     4096 Aug 24 19:40 etc
+lrwxrwxrwx.  1 root root       23 Aug 24 19:40 init -> usr/lib/systemd/systemd
+-rw-r--r--.  1 root root 42263552 Aug 24 19:38 initramfs
+lrwxrwxrwx.  1 root root        7 Aug 24 19:40 lib -> usr/lib
+lrwxrwxrwx.  1 root root        9 Aug 24 19:40 lib64 -> usr/lib64
+drwxr-xr-x.  2 root root        6 Aug 24 19:40 proc
+drwxr-xr-x.  2 root root        6 Aug 24 19:40 root
+drwxr-xr-x.  2 root root        6 Aug 24 19:40 run
+lrwxrwxrwx.  1 root root        8 Aug 24 19:40 sbin -> usr/sbin
+-rwxr-xr-x.  1 root root     3041 Aug 24 19:40 shutdown
+drwxr-xr-x.  2 root root        6 Aug 24 19:40 sys
+drwxr-xr-x.  2 root root        6 Aug 24 19:40 sysroot
+drwxr-xr-x.  2 root root        6 Aug 24 19:40 tmp
+drwxr-xr-x.  7 root root       61 Aug 24 19:40 usr
+drwxr-xr-x.  3 root root       47 Aug 24 19:40 var
+# 上面几乎就像是一个小型的文件系统根目录耶，这样就能让 kernel 去挂载了
+
+# 4. systemd 是要以哪个 target 来执行开机
+[root@study initramfs]# ll usr/lib/systemd/system/default.target
+lrwxrwxrwx. 1 root root 13 Aug 24 19:40 usr/lib/systemd/system/default.target -> initrd.target
+
+# 5. 系统内默认的 initrd.target 依赖关系
+[root@study initramfs]# systemctl list-dependencies initrd.target
+initrd.target
+├─dracut-cmdline.service
+.....（中间省略）.....
+├─basic.target
+│ ├─alsa-restore.service
+.....（中间省略）.....
+│ ├─slices.target
+│ │ ├─-.slice
+│ │ └─system.slice
+│ ├─sockets.target
+│ │ ├─dbus.socket
+.....（中间省略）.....
+│ │ └─systemd-udevd-kernel.socket
+│ ├─sysinit.target
+│ │ ├─dev-hugepages.mount
+.....（中间省略）.....
+│ │ ├─local-fs.target
+│ │ │ ├─-.mount
+│ │ │ ├─boot.mount
+.....（中间省略）.....
+│ │ └─swap.target
+│ │   ├─dev-centos-swap.swap
+.....（中间省略）.....
+│ │   └─dev-mapper-centos\x2dswap.swap
+│ └─timers.target
+│   └─systemd-tmpfiles-clean.timer
+├─initrd-fs.target
+└─initrd-root-fs.target
+# 依旧通过 systemd 的方式，一个一个的将所有的侦测与服务加载系统中！
+```
+
+通过上面解开 initramfs 的结果，:
+
+- 其实 initramfs 就是一个小型的根目录，这个小型根目录里面也是通过 systemd 来进行管理，
+- 同时观察 default.target 的链接，会发现其实这个小型系统就是通过 initrd.target 来开机，
+- 而 initrd.target 也是需要读入一堆例如 basic.target, sysinit.target 等等的硬件侦测、核心功能启用的流程， 然后开始让系统顺利运行。
+- 最终才又卸载 initramfs 的小型文件系统，实际挂载系统的根目录
+
+此外，initramfs 仅是带入开机过程会用到的核心模块而已。
+所以如果你在 initramfs 里面去找 modules 这个关键字的话， 就可以发现主要的核心模块大概就是 SCSI、virtio、RAID 等等跟磁盘相关性比较高的模块。
+不过如果SATA等驱动编译到核心中了，就算没有initramfs 也可以顺利开机。
+
+在核心完整的加载后，主机应该就开始正确的运行了，接下来，就是要开始执行系统的第一支程序： systemd
+
+## 15.3. systemd 与 target
+
+### 15.3.1. 说明
+
+```
+systemctl list-dependencies multi-user.target
+```
+
+基本上 CentOS 7.x 的 systemd 开机流程大约是这样：
+
+1. local-fs.target + swap.target：这两个 target 主要在挂载本机 /etc/fstab 里面所规范的文件系统与相关的内存交换空间。
+2. sysinit.target：这个 target 主要在侦测硬件，加载所需要的核心模块等动作。
+3. basic.target：加载主要的周边硬件驱动程序与防火墙相关任务
+4. multi-user.target 下面的其它一般系统或网络服务的加载
+5. 图形界面相关服务如 gdm.service 等其他服务的加载
+
+### 15.3.2. sysinit.target
+
+- 特殊文件系统设备的挂载：包括 dev-hugepages.mount dev-mqueue.mount 等挂载服务，主要在挂载跟巨量内存分页使用与讯息伫列的功能。 挂载成功后，会在 /dev 下面创建 /dev/hugepages/, /dev/mqueue/ 等目录；
+- 特殊文件系统的启用：包括磁盘阵列、网络磁盘 （iscsi）、LVM 文件系统、文件系统对照服务 （multipath） 等等，也会在这里被侦测与使用到！
+- 开机过程的讯息传递与动画执行：使用 plymouthd 服务搭配 plymouth 指令来传递动画与讯息
+- 日志式登录文件的使用：就是 systemd-journald 这个服务的启用啊！
+- 加载额外的核心模块：通过 /etc/modules-load.d/*.conf 文件的设置，让核心额外加载管理员所需要的核心模块
+- 加载额外的核心参数设置：包括 /etc/sysctl.conf 以及 /etc/sysctl.d/*.conf 内部设置
+- 启动系统的乱数产生器：乱数产生器可以帮助系统进行一些密码加密演算的功能
+- 设置终端机 （console） 字形
+- 启动动态设备管理员：就是 udevd 。用在动态对应实际设备存取与设备文件名对应的一个服务，相当重要，也是在这里启动的
+
+### 15.3.3. basic.target
+
+- 加载 alsa 音效驱动程序：这个 alsa 是个音效相关的驱动程序。
+- 加载 firewalld 防火墙：CentOS 7.x 以后使用 firewalld 取代 iptables 的防火墙设置，虽然最终都是使用 iptables 的架构， 不过在设置上面相差很多
+- 加载 CPU 的微指令功能；
+- 启动与设置 SELinux 的安全本文：如果由 disable 的状态改成 enable 的状态，或者是管理员设置强制重新设置一次 SELinux 的安全本文， 也在这个阶段处理
+- 将目前的开机过程所产生的开机信息写入到 /var/log/dmesg 当中
+- 由 /etc/sysconfig/modules/*.modules 及 /etc/rc.modules 加载管理员指定的模块
+- 加载 systemd 支持的 timer 功能
+
+### 15.3.4. multi-user.target下的服务
+
+- /usr/lib/systemd/system （系统默认的服务启动脚本设置）
+- /etc/systemd/system （管理员自己开发与设置的脚本设置）
+
+而使用者针对主机的本机服务与服务器网络服务的各项 unit 若要 enable 的话，就是将它放到 `/etc/systemd/system/multi-user.target.wants/` 这个目录下面做个链接， 这样就可以在开机的时候去启动
+
+### 15.3.5. graphical.target 下面的服务
+
+果你的 default.target 是 multi-user.target 的话，那么这个步骤就不会进行。
+反之，如果是 graphical.target 的话，那么 systemd 就会开始加载用户管理服务与图形界面管理员 （window display manager, DM） 等，启动图形界面来让用户以图形界面登陆系统
+
+### 15.3.6. 配置文件
+
+基本上， systemd 有自己的配置文件处理方式，不过为了相容于 systemV ，其实很多的服务脚本设置还是会读取位于 /etc/sysconfig/ 下面的环境配置文件。
+
+- 关于模块： `/etc/modprobe.d/*.conf` 及 `/etc/modules-load.d/*.conf`
+
+有两个地方可以处理模块加载的问题，包括：
+
+- /etc/modules-load.d/*.conf：单纯要核心加载模块的位置；
+- /etc/modprobe.d/*.conf：可以加上模块参数的位置
+
+基本上 systemd 已经帮我们将开机会用到的驱动程序全部加载了，因此这个部份应该无须更动。
+不过， 如果你有某些特定的参数要处理时，应该就得要在这里进行了。
+
+其他：
+
+/etc/sysconfig/*
+
+- authconfig：
+  - 这个文件主要在规范使用者的身份认证的机制，
+    - 包括是否使用本机的 /etc/passwd, /etc/shadow 等，
+    - 以及 /etc/shadow 密码记录使用何种加密演算法，还有是否使用外部密码服务器提供的帐号验证 （NIS, LDAP） 等。
+      - 系统默认使用 SHA512 加密演算法，并且不使用外部的身份验证机制；
+  - 另外，不建议手动修改这个文件喔！你应该使用“ authconfig-tui ”指令来修改较佳！
+- cpupower：
+  - 如果你有启动 cpupower.service 服务时，他就会读取这个配置文件。
+  - 主要是 Linux 核心如何操作 CPU 的原则。
+  - 一般来说，启动 cpupower.service 之后，系统会让 CPU 以最大性能的方式来运行，否则默认就是用多少算多少的模式来处理的。
+- firewalld, iptables-config, iptables-config, ebtables-config：
+  - 与防火墙服务的启动外带的参数有关
+- network-scripts/：
+  - 至于 network-scripts 里面的文件，则是主要用在设置网卡，
+
+## 15.4. 核心与核心模块
+
+谈完了整个开机的流程，您应该会知道，在整个开机的过程当中，是否能够成功的驱动我们主机的硬件配备， 是核心 （kernel） 的工作。
+
+而核心一般都是压缩文件，因此在使用核心之前，就得要将他解压缩后，才能载入内存当中。
+
+另外，为了应付日新月异的硬件，目前的核心都是具有“可读取模块化驱动程序”的功能， 亦即是所谓的“ modules （模块化）”的功能。
+
+所谓的模块化可以将他想成是一个“外挂程序”， 该外挂程序可能由硬件开发厂商提供，也有可能我们的核心本来就支持。
+
+不过，较新的硬件， 通常都需要硬件开发商提供驱动程序模块。
+
+那么核心与核心模块放在哪？
+
+- 核心： `/boot/vmlinuz` 或 `/boot/vmlinuz-version`；
+- 核心解压缩所需 RAM Disk： `/boot/initramfs` （/boot/initramfs-version）；
+- 核心模块： `/lib/modules/version/kernel` 或 `/lib/modules/$（uname -r）/kernel`；
+- 核心源代码： `/usr/src/linux` 或 `/usr/src/kernels/` （要安装才会有，默认不安装）
+
+如果该核心被顺利的载入系统当中了，那么就会有几个信息纪录下来：
+
+- 核心版本： /proc/version
+- 系统核心功能： /proc/sys/kernel/
+
+问题来啦，如果我有个新的硬件，偏偏我的操作系统不支持，该怎么办？
+
+- 重新编译核心，并加入最新的硬件驱动程序源代码；
+- 将该硬件的驱动程序编译成为模块，在开机时载入该模块
+
+### 15.4.1. 核心模块和依赖关系(depmod)
+
+既然要处理核心模块，自然就得要了解了解我们核心提供的模块之间的依赖关系。
+
+基本上，核心模块的放置处是在 `/lib/modules/$（uname -r）/kernel` 当中，里面主要还分成几个目录：
+
+```
+arch    ：与硬件平台有关的项目，例如 CPU 的等级等等；
+crypto    ：核心所支持的加密的技术，例如 md5 或者是 des 等等；
+drivers    ：一些硬件的驱动程序，例如显卡、网卡、PCI 相关硬件等等；
+fs    ：核心所支持的 filesystems ，例如 vfat, reiserfs, nfs 等等；
+lib    ：一些函数库；
+net    ：与网络有关的各项协定数据，还有防火墙模块 （net/ipv4/netfilter/*） 等等；
+sound    ：与音效有关的各项模块；
+```
+
+`/lib/modules/$（uname -r）/modules.dep` 这个文件记录了在核心支持的模块的各项依赖关系。
+
+利用 depmod 这个指令就可以创建该文件
+
+```
+[root@study ~]# depmod [-Ane]
+选项与参数：
+-A  ：不加任何参数时， depmod 会主动的去分析目前核心的模块，并且重新写入
+      /lib/modules/$（uname -r）/modules.dep 当中。若加入 -A 参数时，则 depmod
+      会去搜寻比 modules.dep 内还要新的模块，如果真找到新模块，才会更新。
+-n  ：不写入 modules.dep ，而是将结果输出到屏幕上（standard out）；
+-e  ：显示出目前已载入的不可执行的模块名称
+
+范例一：若我做好一个网卡驱动程序，文件名为 a.ko，该如何更新核心相依性？
+[root@study ~]# cp a.ko /lib/modules/$（uname -r）/kernel/drivers/net
+[root@study ~]# depmod
+```
+
+以上面的范例一为例，我们的 kernel 核心模块扩展名一定是 .ko 结尾的，
+当你使用 depmod 之后，该程序会跑到模块标准放置目录 `/lib/modules/$（uname -r）/kernel` ， 并依据相关目录的定义将全部的模块捉出来分析，
+最终才将分析的结果写入 modules.dep 文件中。
+
+这个文件很重要，因为会影响 `modprobe` 指令的应用！
+
+### 15.4.2. 查看已加载的核心模块(lsmod, modinfo)
+
+```
+[root@study ~]# lsmod
+Module                  Size  Used by
+nf_conntrack_ftp       18638  0
+nf_conntrack          105702  1 nf_conntrack_ftp
+....（中间省略）....
+qxl                    73766  1
+drm_kms_helper         98226  1 qxl
+ttm                    93488  1 qxl
+drm                   311588  4 qxl,ttm,drm_kms_helper  # drm 还被 qxl, ttm..等模块使用
+....（下面省略）....
+```
+
+使用 lsmod 之后，系统会显示出目前已经存在于核心当中的模块，显示的内容包括有：
+
+```
+模块名称（Module）；
+模块的大小（size）；
+此模块是否被其他模块所使用 （Used by）。
+```
+
+`modinfo` 查看核心模块信息：
+
+```
+[root@study ~]# modinfo [-adln] [module_name|filename]
+选项与参数：
+-a  ：仅列出作者名称；
+-d  ：仅列出该 modules 的说明 （description）；
+-l  ：仅列出授权 （license）；
+-n  ：仅列出该模块的详细路径。
+```
+
+范例一：由上个表格当中，请列出 drm 这个模块的相关信息：
+
+```
+[root@study ~]# modinfo drm
+filename:       /lib/modules/3.10.0-229.el7.x86_64/kernel/drivers/gpu/drm/drm.ko
+license:        GPL and additional rights
+description:    DRM shared core routines
+author:         Gareth Hughes, Leif Delgass, José Fonseca, Jon Smirl
+rhelversion:    7.1
+srcversion:     66683E37FDD905C9FFD7931
+depends:        i2c-core
+intree:         Y
+vermagic:       3.10.0-229.el7.x86_64 SMP mod_unload modversions
+signer:         CentOS Linux kernel signing key
+sig_key:        A6:2A:0E:1D:6A:6E:48:4E:9B:FD:73:68:AF:34:08:10:48:E5:35:E5
+sig_hashalgo:   sha256
+parm:           edid_fixup:Minimum number of valid EDID header Bytes （0-8, default 6） （int）
+.....（下面省略）.....
+```
+
+可以看到这个模块的来源，以及该模块的简易说明
+
+范例二：我有一个模块名称为 a.ko ，请问该模块的信息为？
+
+```
+[root@study ~]# modinfo a.ko
+....（省略）....
+```
+
+modinfo 除了可以“查阅在核心内的模块”之外，也可以检查“某个模块文件”，
+
+### 15.4.3. 加载和移除核心模块(modprobe, insmod, rmmod)
+
+如果想要自行手动载入模块，有很多方法，最简单而且建议的，是使用 modprobe 这个指令来载入模块。
+
+- 这是因为 `modprobe` 会主动的去搜寻 modules.dep 的内容，先了解了模块的相依性后， 才决定需要载入的模块有哪些，很方便。
+- 至于 `insmod` 则完全由使用者自行载入一个完整文件名的模块， 并不会主动的分析模块间依赖关系
+
+```
+[root@study ~]# insmod [/full/path/module_name] [parameters]
+
+范例一：请尝试载入 cifs.ko 这个“文件系统”模块
+[root@study ~]# insmod /lib/modules/$（uname -r）/kernel/fs/fat/fat.ko
+[root@study ~]# lsmod | grep fat
+fat                    65913  0
+```
+
+insmod 立刻就将该模块加载了，但是 insmod 后面接的模块必须要是完整的“文件名”才行！那如何移除这个模块呢？
+
+```
+[root@study ~]# rmmod [-fw] module_name
+选项与参数：
+-f  ：强制将该模块移除掉，不论是否正被使用；
+
+范例一：将刚刚载入的 fat 模块移除
+[root@study ~]# rmmod fat
+
+范例二：请载入 vfat 这个“文件系统”模块
+[root@study ~]# insmod /lib/modules/$（uname -r）/kernel/fs/vfat/vfat.ko
+insmod: ERROR: could not load module /lib/modules/3.10.0-229.el7.x86_64/kernel/fs/vfat/
+ vfat.ko: No such file or directory
+# 无法载入 vfat 这个模块啊！伤脑筋！
+```
+
+使用 insmod 与 rmmod 的问题就是，你必须要自行找到模块的完整文件名才行，
+而且如同上述范例二的结果， 万一模块有相依属性的问题时，将无法直接载入或移除该模块。
+
+所以建议直接使用 modprobe 来处理模块载入的问题，这个指令的用法是：
+
+```
+[root@study ~]# modprobe [-cfr] module_name
+选项与参数：
+-c  ：列出目前系统所有的模块！（更详细的代号对应表）
+-f  ：强制载入该模块；
+-r  ：类似 rmmod ，就是移除某个模块啰～
+
+范例一：载入 vfat 模块
+[root@study ~]# modprobe vfat
+# 很方便吧！不需要知道完整的模块文件名，这是因为该完整文件名已经记录到
+# /lib/modules/`uname -r`/modules.dep 当中的缘故啊！如果要移除的话：
+[root@study ~]# modprobe -r vfat
+```
+
+例题：尝试使用 modprobe 载入 cifs 这个模块，并且观察该模块的相关模块是哪个？答：我们使用 modprobe 来载入，再以 lsmod 来观察与 grep 撷取关键字看看：
+
+```
+[root@study ~]# modprobe cifs
+[root@study ~]# lsmod | grep cifs
+cifs                  456500  0
+dns_resolver           13140  1 cifs   # 竟然还有使用到 dns_resolver 哩！
+
+[root@study ~]# modprobe -r cifs &lt;==测试完移除此模块
+```
+
+### 15.4.4. 核心模块的额外参数设置
+
+/etc/modprobe.d/*conf
+
+## 15.5. Boot Loader: Grub2
+
+### 15.5.1. boot loader的两个阶段
+
+### 15.5.2. 配置文件  /boot/grub2/grub.cfg
+
+### 15.5.3. grub2 配置文件维护 /etc/default/grub 与 /etc/grub.d
+
+### 15.5.4. initramfs 的重要性与创建新 initramfs 文件
+
+## 15.6. 常见问题
+
+## 15.7. /etc/inittab
 
 - 计算机开机-->计算机内核进内存-->加载根目录分区进内存-->引导 sbin 目录下 init 程序作为第一个进程-->该进程读取/etc/inittab 中的开机设置
   > 小知识
@@ -3057,6 +3521,10 @@ boot loader 安装在 MBR, boot sector 与操作系统的关系
 ## 16.3. lspci
 
 ## 16.4. lsmod
+
+depmod
+
+modinfo
 
 ## 16.5. lsusb
 
