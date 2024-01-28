@@ -582,4 +582,11 @@ python
 - [tui项目](https://github.com/rothgar/awesome-tuis)
   - [一百多行，cpp实现的tui俄罗斯方块](https://github.com/taylorconor/tinytetris)
   - [六百多行，awk实现的第三人称射击游戏](https://github.com/TheMozg/awk-raycaster)
+- [MIT 哲学，UNIX 哲学和 GUI 系统哲学，三种设计哲学间的交锋](https://www.cnblogs.com/lucelujiaming/p/9480869.html)
+- emacs
+  - [从操作系统架构的角度谈Emacs的学习](http://www.nituchao.com/os-tool/emacs-os-arch.html)
+  - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
+  - [Centaur Emacs](https://github.com/seagle0128/.emacs.d)
+    - [Centaur markdown 预览支持语法高亮和各类图](https://emacs-china.org/t/centaur-markdown/12170)
+- [多路复用](https://juejin.cn/post/6844903935648497678)
 

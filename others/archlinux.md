@@ -633,6 +633,7 @@ cat /etc/fstab
 
 修复：
 
+- arch 系统盘开机
 - 连接无线网
 - 先重新挂载下
 
@@ -702,6 +703,31 @@ initramfs 和 内核版本不匹配
 - 显示管理器(DM)又叫做登陆管理器，如sddm、lightdm等，其作用仅仅只是在你开机后，让你输入用户名和密码登陆
 - 然后引导进入桌面，至此任务完成，之后就交给kde或i3wm管理桌面了。
 - **可以不需要DM，直接通过startx脚本命令进入桌面** 。
+
+## pacman 常用命令
+
+```bash
+pacman --help
+pacman -S --help
+
+# 搜索package
+pacman -Ss package
+# 更新软件列表
+pacman -Sy
+# 安装文件
+pacman -S package
+
+# 查看已安装的包，安装的文件
+pacman -Ql package
+
+# 下载包的文件信息
+pacman -Fy
+# 查看未安装的包，包里面的文件列表
+pacman -Fl package
+# 查看某个文件再哪个包里面
+pacman -F filename
+pacman -Fx regex
+```
 
 # 7. 参考资料
 
