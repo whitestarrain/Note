@@ -923,16 +923,16 @@ echo ${food:-Cake}  #=> $food or "Cake"
 
 - 示例
 
-  | 变量设置方式     | str 没有设置       | str 为空字串       | str 已设置非为空字串 |
-  | ---------------- | ------------------ | ------------------ | -------------------- |
-  | var=${str-expr}  | var=expr           | var=               | var=$str             |
-  | var=${str:-expr} | var=expr           | var=expr           | var=$str             |
-  | var=${str+expr}  | var=               | var=expr           | var=expr             |
-  | var=${str:+expr} | var=               | var=               | var=expr             |
-  | var=${str=expr}  | str=expr var=expr  | str 不变 var=      | str 不变 var=$str    |
-  | var=${str:=expr} | str=expr var=expr  | str=expr var=expr  | str 不变 var=$str    |
-  | var=${str?expr}  | expr 输出至 stderr | var=               | var=$str             |
-  | var=${str:?expr} | expr 输出至 stderr | expr 输出至 stderr | var=$str             |
+  | 变量设置方式       | str 没有设置         | str 为空字串       | str 已设置非为空字串 |
+  | ------------------ | -------------------- | ------------------ | -------------------- |
+  | `var=${str-expr}`  | `var=expr`           | var=               | `var=$str`           |
+  | `var=${str:-expr}` | `var=expr`           | var=expr           | `var=$str`           |
+  | `var=${str+expr}`  | `var=`               | var=expr           | `var=expr`           |
+  | `var=${str:+expr}` | `var=`               | var=               | `var=expr`           |
+  | `var=${str=expr}`  | `str=expr var=expr`  | str 不变 var=      | `str 不变 var=$str`  |
+  | `var=${str:=expr}` | `str=expr var=expr`  | str=expr var=expr  | `str 不变 var=$str`  |
+  | `var=${str?expr}`  | `expr 输出至 stderr` | var=               | `var=$str`           |
+  | `var=${str:?expr}` | `expr 输出至 stderr` | expr 输出至 stderr | `var=$str`           |
 
 - 示例
 
@@ -1254,10 +1254,12 @@ done
     set -o pipefail
     ```
 
-- 管道中 `-`， 较多命令支持管道前后使用来表示前一个指令的 `stdin` 和后一个指令的 `stdout`
+- 在使用管道时，较多命令支持使用 `-` 在管道前后来表示前一个指令的 `stdin` 和后一个指令的 `stdout`。
 
   ```bash
   tar -cvf - /home | tar -xvf - -C /tmp/homeback
+  # curl 中有 @filename的语法，如果要读取stdin，就是 @-
+  curl --location --request POST 'url'  --data @-
   ```
 
 ## 命令序列

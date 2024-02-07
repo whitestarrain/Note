@@ -573,7 +573,6 @@ python
   - [浅析 linux 电源配置](https://blog.deepin.org/posts/analyzing-the-linux-power-configuration/)
   - [tlp 配置参数](https://blog.deepin.org/posts/tlp-power-management/)
   - [Restart TLP service without rebooting system](https://askubuntu.com/questions/1242991/restart-tlp-service-without-rebooting-system)
-- [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
 - [nvim展示图片，inline graph protocol](https://github.com/edluffy/hologram.nvim)
 - [Does tar create new inodes to be archived?](https://unix.stackexchange.com/questions/138594/does-tar-create-new-inodes-to-be-archived)
   - [tar posix header](https://git.savannah.gnu.org/cgit/tar.git/tree/src/tar.h)
@@ -586,7 +585,22 @@ python
 - emacs
   - [从操作系统架构的角度谈Emacs的学习](http://www.nituchao.com/os-tool/emacs-os-arch.html)
   - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
+  - [doom emacs](https://github.com/doomemacs/doomemacs)
   - [Centaur Emacs](https://github.com/seagle0128/.emacs.d)
     - [Centaur markdown 预览支持语法高亮和各类图](https://emacs-china.org/t/centaur-markdown/12170)
+  - [专业emacs入门](https://zhuanlan.zhihu.com/p/385214753)
 - [多路复用](https://juejin.cn/post/6844903935648497678)
+- [pytest基础使用](https://juejin.cn/post/7221769090834481189)
+- [vim quickfix 高级使用](https://blog.csdn.net/niuiic/article/details/115800729)
+- vim text object 扩展
+  - target.vim
+  - mini.ai
+- [emacs 作者 Richard Stallman 我的Lisp经历和GNU Emacs的开发](https://www.gnu.org/gnu/rms-lisp.zh-cn.html)
 
+# 优秀公开课
+
+- [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
+- lc-3
+  - [主页 Introduction to Computing Systems](https://highered.mheducation.com/sites/0072467509/student_view0/)
+  - [模拟器 LC 3 Simulator Windows Version 3.01 (385.0K)](https://highered.mheducation.com/sites/dl/free/0072467509/104652/LC301.exe)
+  - [指令手册 AppendixA.pdf](https://highered.mheducation.com/sites/dl/free/0072467509/104691/pat67509_appa.pdf)
