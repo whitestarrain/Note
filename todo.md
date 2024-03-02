@@ -596,11 +596,38 @@ python
   - target.vim
   - mini.ai
 - [emacs 作者 Richard Stallman 我的Lisp经历和GNU Emacs的开发](https://www.gnu.org/gnu/rms-lisp.zh-cn.html)
+- [android 签名机制](https://github.com/jeanboydev/Android-ReadTheFuckingSourceCode/blob/master/article/android/basic/09_signature.md)
+- [cdn 加速原理](https://cloud.tencent.com/developer/article/1690751)
+- [neo4j图数据库]
+  - [neo4j入门](https://zhuanlan.zhihu.com/p/88745411)
 
 # 优秀公开课
+
+任何方向的学习，推荐去：[编程指北](https://csguide.cn/) 找一下资源
 
 - [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
 - lc-3
   - [主页 Introduction to Computing Systems](https://highered.mheducation.com/sites/0072467509/student_view0/)
   - [模拟器 LC 3 Simulator Windows Version 3.01 (385.0K)](https://highered.mheducation.com/sites/dl/free/0072467509/104652/LC301.exe)
   - [指令手册 AppendixA.pdf](https://highered.mheducation.com/sites/dl/free/0072467509/104691/pat67509_appa.pdf)
+- [编译原理](https://csguide.cn/roadmap/basic/compiler.html)
+- [计算机导论：CS 50](https://cs50.harvard.edu/college/2021/spring)
+  - [b站视频](https://www.bilibili.com/video/BV1Rb411378V)
+- 清华大学 ucore OS
+  - [ucore实验指导书](https://nankai.gitbook.io/ucore-os-on-risc-v64/)
+- MIT 6.828: Operating System Engineering
+
+# 优秀博客
+
+rss 配置
+
+- [小土刀 2.0](https://wdxtub.com/work/)
+
+# AI
+
+- [python实现反向传播](https://www.cnblogs.com/chenzhen0530/p/10830112.html)
+- [文图生成模型架构](https://developer.aliyun.com/article/989767)
+- [nlp 入门](https://github.com/PKU-TANGENT/nlp-tutorial?tab=readme-ov-file)
+- [全连接，python实现](https://zhuanlan.zhihu.com/p/84153154)
+
+

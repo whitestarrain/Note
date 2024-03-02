@@ -717,14 +717,19 @@ pacman -Sy
 # 安装文件
 pacman -S package
 
+# 卸载软件
+pacman -R[vscu] package
+
 # 查看已安装的包，安装的文件
 pacman -Ql package
+# 在已安装的包中查看file的owner
+pacman -Qo file
 
 # 下载包的文件信息
 pacman -Fy
 # 查看未安装的包，包里面的文件列表
 pacman -Fl package
-# 查看某个文件再哪个包里面
+# 在所有包中查找哪些包包含指定文件
 pacman -F filename
 pacman -Fx regex
 ```

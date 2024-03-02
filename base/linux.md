@@ -209,7 +209,6 @@ $info command
     - /usr/local/bin 本地增加的命令
     - /usr/local/lib 本地增加的库
 
-
 ## 2.2. ls, stat, file 文件类型与信息
 
 - 文件类型(`ls -lha`)
@@ -678,7 +677,6 @@ sort -nrk 1 data.txt
 sort -bd data # 忽略像空格之类的前导空白字符
 ```
 
-
 ## 3.4. uniq 消除重复行
 
 > **注意**
@@ -838,7 +836,6 @@ tr '[:lower:]' '[:upper:]'
   1,colin
   2,book
   ```
-
 
 ### 3.10.3. diff 比较文件或目录， 以及 patch
 
@@ -1075,8 +1072,6 @@ UUID=13d0663f-4cbd-412d-aa9f-975eb18da590 /boot                   xfs     defaul
   1.mount --bind连接的两个目录的inode号码并不一样，只是被挂载目录的block被屏蔽掉，inode被重定向到挂载目录的inode（被挂载目录的inode和block依然没变）
   2.两个目录的对应关系存在于内存里，一旦重启挂载关系就不存在了
   ```
-
-
 
 ### 4.4.2. loop设备挂载
 
@@ -2182,23 +2177,89 @@ cron 和 anacron
 
 nohup 并不支持 bash 内置的指令
 
-## 12.2. 进程管理
+## 12.2. 守护进程运行
 
-### 12.2.1. kill, killall
+```
+setsid command >/dev/null 2>&1 < /dev/null &
+```
+
+基本原理，c实现：
+
+<details>
+<summary style="color:red;">展开</summary>
+
+---
+
+可参照《linux-c一站式》
+
+```c
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+// create a daemon
+void daemonize()
+{
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("fork");
+        exit(0);
+    }
+
+    if (pid > 0) {   // parent
+        exit(0);
+    }
+
+    // child
+    pid_t session_id = setsid();
+    printf("session_id: %d\n", session_id);
+
+    // change the current working directory to the root
+    if (chdir("/") < 0) {
+        perror("chdir");
+        exit(1);
+    }
+
+    // attach file descriptors 0, 1 and 2 to the /dev/null
+    close(0);
+    open("/dev/null", 0, O_RDWR);
+    dup2(0, 1);
+    dup2(0, 2);
+}
+
+int main(int argc, char *argv[])
+{
+    daemonize();
+    int i = 10;
+    while (i--) {
+        printf("%d: i\n", getpid());
+        sleep(1);
+    }
+}
+```
+
+---
+
+</details>
+
+## 12.3. 进程管理
+
+### 12.3.1. kill, killall
 
 kill %number: 杀掉job，需要加`%`
 
-### 12.2.2. ps, pstree
+### 12.3.2. ps, pstree
 
-### 12.2.3. pgrep, pidof
+### 12.3.3. pgrep, pidof
 
-### 12.2.4. top
+### 12.3.4. top
 
-### 12.2.5. nice, renice 优先级调整
+### 12.3.5. nice, renice 优先级调整
 
-### 12.2.6. pmap 获取进程内存信息
+### 12.3.6. pmap 获取进程内存信息
 
-### 12.2.7. 程序与signal
+### 12.3.7. 程序与signal
 
 查询signal: `kill -l` 或者 `man 7 signal`
 
@@ -2214,19 +2275,19 @@ kill %number: 杀掉job，需要加`%`
 
 `kill -signal PID` 可以将signal传递给某个 %jobname 或者 pid
 
-## 12.3. 内存管理
+## 12.4. 内存管理
 
-### 12.3.1. free
+### 12.4.1. free
 
 `cat /proc/meminfo`
 
-## 12.4. vmstat
+## 12.5. vmstat
 
 CPU/内存/磁盘输入输出状态
 
-## 12.5. 文件占用
+## 12.6. 文件占用
 
-### 12.5.1. fuser
+### 12.6.1. fuser
 
 找出使用当前文件的程序
 
@@ -2235,15 +2296,15 @@ fuser -uv .
 fuser -muv .
 ```
 
-### 12.5.2. lsof
+### 12.6.2. lsof
 
 列出被程序所打开的文件文件名
 
-### 12.5.3. pidof
+### 12.6.3. pidof
 
-## 12.6. SELinux (Security Enhanced Linux)
+## 12.7. SELinux (Security Enhanced Linux)
 
-### 12.6.1. 说明
+### 12.7.1. 说明
 
 ![linux-6](./image/linux-6.png)
 
@@ -2251,7 +2312,7 @@ Discretionary Access Control, DAC
 
 Mandatory Access Control, MAC
 
-### 12.6.2. 组成与检查依据
+### 12.7.2. 组成与检查依据
 
 - Subject: process
 - Object: 文件系统中的文件
@@ -2263,13 +2324,13 @@ Mandatory Access Control, MAC
   - 和 rwx 一样，都放到inode中
   - `ls -lZ`
 
-### 12.6.3. 执行模式
+### 12.7.3. 执行模式
 
 - enforcing
 - permissive
 - disable
 
-### 12.6.4. 命令
+### 12.7.4. 命令
 
 - getenforce: 获取执行模式
 - setenforce: 修改执行模式
@@ -2485,7 +2546,6 @@ WantedBy=multi-user.target
   - 用 0, no, false, off 代表关闭
 - 空白行、开头为 # 或 ; 的那一行，都代表注释
 
-
 `/etc/systemd/system/` 下的文件不要修改，如果想要覆盖原来的service：
 
 - `/usr/lib/systemd/system/vsftpd.service`：
@@ -2529,7 +2589,6 @@ WantedBy=multi-user.target
 | TimeoutSec      | 若这个服务在启动或者是关闭时，因为某些缘故导致无法顺利“正常启动或正常结束”的情况下，则我们要等多久才进入“强制结束”的状态！ |
 | KillMode        | 可以是 process, control-group, none 的其中一种，如果是 process 则 daemon 终止时，只会终止主要的程序 （ExecStart 接的后面那串指令），如果是 control-group 时， 则由此 daemon 所产生的其他 control-group 的程序，也都会被关闭。如果是 none 的话，则没有程序会被关闭喔！ |
 | RestartSec      | 与 Restart 有点相关性，如果这个服务被关闭，然后需要重新启动时，大概要 sleep 多少时间再重新启动的意思。默认是 100ms （毫秒）。 |
-
 
 | [Install]      |                                                              |
 | -------------- | ------------------------------------------------------------ |
@@ -2713,7 +2772,6 @@ log类型：
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | rsyslogd        | 为了要达成实际上进行日志的分类所开发的一套软件，所以，这就是最基本的 daemon 程序。                                                                                                                                               |
 | rsyslog.service | 为了加入 systemd 的控制，因此 rsyslogd 的开发者设计的启动服务脚本设置。                                                                                                                                                          |
-
 
 配置文件示例：
 
@@ -3047,7 +3105,6 @@ boot loader 安装在 MBR, boot sector 与操作系统的关系
 - 而且为了担心影响到磁盘内的文件系统，因此开机过程中根目录是以只读的方式来挂载的
 - 一般来说，非必要的功能且可以编译成为模块的核心功能，目前的 Linux distributions 都会将他编译成为模块。
 - 因此 USB, SATA, SCSI... 等磁盘设备的驱动程序通常都是以模块的方式来存在的。
-
 
 #### 15.2.2.3. Initial RAM Disk
 
