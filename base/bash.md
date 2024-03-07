@@ -808,6 +808,23 @@ IFS=ab read x y z
   - `arithmetic expansion`
 - 分词依据IFS
 
+---
+
+- 注意：赋值变量的时候，变量中会保存原始值
+
+  ```bash
+  # 没有分词(因为赋值变量)
+  pid=$(ps -elf | grep worker | grep -v grep | tail -3 | awk '{print $4}')
+  # 没有分词(因为双引号)
+  ❯ echo "$pid"
+  2646806
+  2646935
+  2649821
+  # 下面这里出现分词
+  ❯ echo $pid
+  2646806 2646935 2649821
+  ```
+
 ## 单引号和双引号
 
 - 单引号和双引号之间有很重要的区别
