@@ -1671,6 +1671,24 @@ do
 done 3< <(echo "a b c d")
 ```
 
+```bash
+# 注意：下面这种写法可以循环遍历lines
+
+while read line;
+do
+    echo "${line}"
+done <<< "${lines}"
+
+# 但下面这种只会循环读第一行
+while read line  <<< "${lines}" ;
+do
+    echo "${line}"
+done
+
+# 可以理解成 while 是一个命令，会fork + exec 后面的子命令
+# 主要是看重定向输入到while命令，还是到子命令
+```
+
 ### list file
 
 ```bash

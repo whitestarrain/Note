@@ -200,6 +200,12 @@ python
 - vim text object 扩展
   - target.vim
   - mini.ai
+- [awesome nvim code runner](https://github.com/rockerBOO/awesome-neovim#code-runner)
+  - [overseer](https://github.com/stevearc/overseer.nvim/tree/master)
+  - toggleterm
+    - 要看下不kill进程的bug修了没, mac上没问题
+- [jedrzejboczar/possession.nvim](https://github.com/jedrzejboczar/possession.nvim)
+  - 感觉能替代startify，通过hooks和user_data
 
 ### emacs
 

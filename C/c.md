@@ -22677,11 +22677,11 @@ socket 这个词可以表示很多概念：
 
 我们已经知道，内存中的多字节数据相对于内存地址有大端和小端之分，磁盘文件中的多字节数据相对于文件中的偏移地址也有大端小端之分。网络数据流同样有大端小端之分，那么如何定义网络数据流的地址呢？
 
-- 发送主机通常将发送缓冲区中的数据按内存地址从低到高的顺序发出，
-- 接收主机把从网络上接到的字节依次保存在接收缓冲区中，也是按内存地址从低到高的顺序保存，
+- 发送主机通常 **将发送缓冲区中的数据按内存地址从低到高的顺序发出** ，
+- 接收主机 **把从网络上接到的字节依次保存在接收缓冲区中，也是按内存地址从低到高的顺序保存** ，
 - 因此，网络数据流的地址应这样规定： **先发出的数据是低地址，后发出的数据是高地址** 。
 
-TCP/IP 协议规定，网络数据流应采用大端字节序，即低地址高字节。
+TCP/IP 协议规定， **网络数据流应采用大端字节序，即低地址高字节** 。
 
 例如上一节的 UDP 段格式:
 
@@ -22725,9 +22725,12 @@ socket API 是一层抽象的网络编程接口，适用于各种底层网络协
 
 说明：
 
-- 各种 socket 地址结构体的开头都是相同的，前 16 位表示整个结构体的长度（并不是所有 UNIX 的实现都有长度字段，如 Linux 就没有），后 16 位表示地址类型。
-- IPv4、IPv6 和 UNIX  Domain  Socket 的地址类型分别定义为常数 AF_INET、AF_INET6、AF_UNIX。这样，只要取得某种 sockaddr 结构体的首地址，不需要知道具体是哪种类型的 sockaddr 结构体，就可以根据地址类型字段确定结构体中的内容。
-- 因此，socket API 可以接受各种类型的 sockaddr 结构体指针做参数，例如 bind、accept、connect 等函数，这些函数的参数应该设计成 `void *` 类型以便接受各种类型的指针，
+- 各种 socket 地址结构体的开头都是相同的，前 16 位表示整个结构体的长度，后 16 位表示地址类型。
+  - 并不是所有 UNIX 的实现都有长度字段，如 Linux 就没有
+- IPv4、IPv6 和 UNIX  Domain  Socket 的地址类型分别定义为常数 AF_INET、AF_INET6、AF_UNIX。
+  - 这样，只要取得某种 sockaddr 结构体的首地址，不需要知道具体是哪种类型的 sockaddr 结构体，就可以根据地址类型字段确定结构体中的内容。
+  - 因此，socket API 可以接受各种类型的 sockaddr 结构体指针做参数，
+  - 例如 bind、accept、connect 等函数，这些函数的参数应该设计成 `void *` 类型以便接受各种类型的指针，
 - 但是 socket API 的实现早于 ANSI C 标准化，那时还没有 `void *` 类型，因此这些函数的参数都用 `struct sockaddr *` 类型表示，在传递参数之前要强制类型转换一下，例如：
 
   ```c
@@ -22846,7 +22849,19 @@ int main(void)
 int socket(int family, int type, int protocol);
 ```
 
-socket() 打开一个网络通讯端口，如果成功的话，就像 open() 一样 **返回一个文件描述符，应用程序可以像读写文件一样用 read/write 在网络上收发数据** ，如果 socket() 调用出错则返回 -1。对于 IPv4，family 参数指定为 AF_INET。对于 TCP 协议，type 参数指定为 SOCK_STREAM，表示面向流的传输协议。如果是 UDP 协议，则 type 参数指定为 SOCK_DGRAM，表示面向数据报的传输协议。protocol 参数的介绍从略，指定为 0 即可。
+socket() 打开一个网络通讯端口，
+
+- 如果成功的话，就像 open() 一样 **返回一个文件描述符，应用程序可以像读写文件一样用 read/write 在网络上收发数据** ，
+- 如果 socket() 调用出错则返回 -1。
+
+参数:
+
+- family
+  - 对于 IPv4，family 参数指定为 AF_INET。
+- type
+  - 对于 TCP 协议，type 参数指定为 SOCK_STREAM，表示面向流的传输协议。
+  - 如果是 UDP 协议，则 type 参数指定为 SOCK_DGRAM，表示面向数据报的传输协议。
+- protocol 参数的介绍从略，指定为 0 即可。
 
 ```c
 int bind(int sockfd, const struct sockaddr *myaddr, socklen_t addrlen);
@@ -22854,7 +22869,9 @@ int bind(int sockfd, const struct sockaddr *myaddr, socklen_t addrlen);
 
 服务器程序所监听的网络地址和端口号通常是固定不变的，客户端程序得知服务器程序的地址和端口号后就可以向服务器发起连接，因此服务器需要调用 bind 绑定一个固定的网络地址和端口号。bind() 成功返回 0，失败返回 -1。
 
-bind() 的作用是将参数 sockfd 和 myaddr 绑定在一起，使 sockfd 这个用于网络通讯的文件描述符监听 myaddr 所描述的地址和端口号。前面讲过，`struct sockaddr *` 是一个通用指针类型，myaddr 参数实际上可以接受多种协议的 sockaddr 结构体，而它们的长度各不相同，所以需要第三个参数 addrlen 指定结构体的长度。我们的程序中对 myaddr 参数是这样初始化的：
+bind() 的作用是 **将参数 sockfd 和 myaddr 绑定在一起** ，使 sockfd 这个用于网络通讯的文件描述符监听 myaddr 所描述的地址和端口号。
+
+前面讲过，`struct sockaddr *` 是一个通用指针类型，myaddr 参数实际上可以接受多种协议的 sockaddr 结构体，而它们的长度各不相同，所以需要第三个参数 addrlen 指定结构体的长度。我们的程序中对 myaddr 参数是这样初始化的：
 
 ```c
 bzero(&servaddr, sizeof(servaddr));
@@ -22869,13 +22886,17 @@ servaddr.sin_port = htons(SERV_PORT);
 int listen(int sockfd, int backlog);
 ```
 
-典型的服务器程序可以同时服务于多个客户端，当有客户端发起连接时，服务器调用的 accept() 返回并接受这个连接，如果有大量的客户端发起连接而服务器来不及处理，尚未 accept 的客户端就处于连接等待状态，listen() 声明 sockfd 处于监听状态，并且最多允许有 backlog 个客户端处于连接待状态，如果接收到更多的连接请求就忽略。listen() 成功返回 0，失败返回 -1。
+典型的服务器程序可以同时服务于多个客户端，当有客户端发起连接时，服务器调用的 accept() 返回并接受这个连接，如果有大量的客户端发起连接而服务器来不及处理，尚未 accept 的客户端就处于连接等待状态， **listen() 声明 sockfd 处于监听状态，并且最多允许有 backlog 个客户端处于连接待状态，如果接收到更多的连接请求就忽略** 。listen() 成功返回 0，失败返回 -1。
 
 ```c
 int accept(int sockfd, struct sockaddr *cliaddr, socklen_t *addrlen);
 ```
 
-三方握手完成后，服务器调用 accept() 接受连接，如果服务器调用 accept() 时还没有客户端的连接请求，就阻塞等待直到有客户端连接上来。cliaddr 是一个传出参数，accept() 返回时传出客户端的地址和端口号。addrlen 参数是一个传入传出参数（value-result   argument），传入的是调用者提供的缓冲区 cliaddr 的长度以避免缓冲区溢出问题，传出的是客户端地址结构体的实际长度（有可能没有占满调用者提供的缓冲区）。如果给 cliaddr 参数传 NULL，表示不关心客户端的地址。
+三方握手完成后，服务器调用 accept() 接受连接，如果服务器调用 accept() 时还没有客户端的连接请求，就阻塞等待直到有客户端连接上来。
+
+- cliaddr 是一个传出参数，accept() 返回时传出客户端的地址和端口号。
+  - 如果给 cliaddr 参数传 NULL，表示不关心客户端的地址。
+- addrlen 参数是一个传入传出参数（value-result argument），传入的是调用者提供的缓冲区 cliaddr 的长度以避免缓冲区溢出问题，传出的是客户端地址结构体的实际长度（有可能没有占满调用者提供的缓冲区）。
 
 我们的服务器程序结构是这样的：
 
@@ -22890,7 +22911,11 @@ while (1) {
 }
 ```
 
-整个是一个 while 死循环，每次循环处理一个客户端连接。由于 cliaddr_len 是传入传出参数，每次调用 accept() 之前应该重新赋初值。accept() 的参数 listenfd 是先前的监听文件描述符，而 accept() 的返回值是另外一个文件描述符 connfd，之后与客户端之间就通过这个 connfd 通讯，最后关闭 connfd 断开连接，而不关闭 listenfd，再次回到循环开头 listenfd 仍然用作 accept 的参数。accept() 成功返回一个文件描述符，出错返回 -1。
+- 整个是一个 while 死循环，每次循环处理一个客户端连接。
+- 由于 cliaddr_len 是传入传出参数，每次调用 accept() 之前应该重新赋初值。
+- accept() 的参数 listenfd 是先前的监听文件描述符，而 accept() 的返回值是另外一个文件描述符 connfd，之后与客户端之间就通过这个 connfd 通讯，
+- 最后关闭 connfd 断开连接，而不关闭 listenfd，
+- 再次回到循环开头 listenfd 仍然用作 accept 的参数。accept() 成功返回一个文件描述符，出错返回 -1。
 
 client.c 的作用是从命令行参数中获得一个字符串发给服务器，然后接收服务器返回的字符串并打印。
 
@@ -22939,7 +22964,9 @@ int main(int argc, char *argv[])
 }
 ```
 
-由于客户端不需要固定的端口号，因此不必调用 bind()，客户端的端口号由内核自动分配。注意，客户端不是不允许调用 bind()，只是没有必要调用 bind() 固定一个端口号，服务器也不是必须调用 bind()，但如果服务器不调用 bind()，内核会自动给服务器分配监听端口，每次启动服务器时端口号都不一样，客户端要连接服务器就会遇到麻烦。
+由于客户端不需要固定的端口号，因此不必调用 bind()，客户端的端口号由内核自动分配。 **注意，客户端不是不允许调用 bind()，只是没有必要调用 bind() 固定一个端口号** ，
+
+服务器也不是必须调用 bind()，但如果服务器不调用 bind()，内核会自动给服务器分配监听端口，每次启动服务器时端口号都不一样，客户端要连接服务器就会遇到麻烦。
 
 ```c
 int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen);
@@ -23098,7 +23125,14 @@ void Close(int fd)
 
 慢系统调用 accept、read 和 write 被信号中断时应该重试。connect 虽然也会阻塞，但是被信号中断时不能立刻重试。对于 accept，如果 errno 是 ECONNABORTED，也应该重试。详细解释见参考资料。
 
-TCP 协议是面向流的，read 和 write 调用的返回值往往小于参数指定的字节数。对于 read 调用，如果接收缓冲区中有 20 字节，请求读 100 个字节，就会返回 20。对于 write 调用，如果请求写 100 个字节，而发送缓冲区中只有 20 个字节的空闲位置，那么 write 会阻塞，直到把 100 个字节全部交给发送缓冲区才返回，但如果 socket 文件描述符有 O_NONBLOCK 标志，则 write 不阻塞，直接返回 20。为避免这些情况干扰主程序的逻辑，确保读写我们所请求的字节数，我们实现了两个包装函数 Readn 和 Writen，也放在 wrap.c 中：
+TCP 协议是面向流的，read 和 write 调用的返回值往往小于参数指定的字节数。
+
+- 对于 read 调用，如果接收缓冲区中有 20 字节，请求读 100 个字节，就会返回 20。
+- 对于 write 调用，
+  - 如果请求写 100 个字节，而发送缓冲区中只有 20 个字节的空闲位置，那么 write 会阻塞，直到把 100 个字节全部交给发送缓冲区才返回，
+  - 但如果 socket 文件描述符有 O_NONBLOCK 标志，则 write 不阻塞，直接返回 20。
+
+为避免这些情况干扰主程序的逻辑，确保读写我们所请求的字节数，我们实现了两个包装函数 Readn 和 Writen，也放在 wrap.c 中：
 
 ```c
 ssize_t Readn(int fd, void *vptr, size_t n)
@@ -23156,6 +23190,7 @@ ssize_t Writen(int fd, const void *vptr, size_t n)
 因此，常见的应用层协议都是带有可变长字段的，字段之间的分隔符用换行的比用 `'\0'` 的更常见，例如本节后面要介绍的 HTTP 协议。可变长字段的协议用 Readn 来读就很不方便了，为此我们实现一个类似于 fgets 的 readline 函数，也放在 wrap.c 中：
 
 ```c
+// wrap read方法，每次读取100个字节放到buffer中，避免频繁io
 static ssize_t my_read(int fd, char *ptr)
 {
     static int read_cnt;
@@ -23260,9 +23295,14 @@ haha3
 $
 ```
 
-这时 server 仍在运行，但是 client 的运行结果并不正确。原因是什么呢？仔细查看 server.c 可以发现，server 对每个请求只处理一次，应答后就关闭连接，client 不能继续使用这个连接发送数据。但是 client 下次循环时又调用 write 发数据给 server，write 调用只负责把数据交给 TCP 发送缓冲区就可以成功返回了，所以不会出错，而 server 收到数据后应答一个 RST 段，client 收到 RST 段后无法立刻通知应用层，只把这个状态保存在 TCP 协议层。client 下次循环又调用 write 发数据给 server，由于 TCP 协议层已经处于 RST 状态了，因此不会将数据发出，而是发一个 SIGPIPE 信号给应用层，SIGPIPE 信号的缺省处理动作是终止程序，所以看到上面的现象。
+这时 server 仍在运行，但是 client 的运行结果并不正确。原因是什么呢？
 
-为了避免 client 异常退出，上面的代码应该在判断对方关闭了连接后 break 出循环，而不是继续 write。另外，有时候代码中需要连续多次调用 write，可能还来不及调用 read 得知对方已关闭了连接就被 SIGPIPE 信号终止掉了，这就需要在初始化时调用 sigaction 处理 SIGPIPE 信号，如果 SIGPIPE 信号没有导致进程异常退出，write 返回 -1 并且 errno 为 EPIPE。
+- 仔细查看 server.c 可以发现，server 对每个请求只处理一次，应答后就关闭连接，client 不能继续使用这个连接发送数据。
+- 但是 client 下次循环时又调用 write 发数据给 server，write 调用只负责把数据交给 TCP 发送缓冲区就可以成功返回了，所以不会出错，而 server 收到数据后应答一个 RST 段， **client 收到 RST 段后无法立刻通知应用层，只把这个状态保存在 TCP 协议层** 。
+- client 下次循环又调用 write 发数据给 server， **由于 TCP 协议层已经处于 RST 状态了，因此不会将数据发出，而是发一个 SIGPIPE 信号给应用层** ，SIGPIPE 信号的缺省处理动作是终止程序，所以看到上面的现象。
+
+为了避免 client 异常退出，上面的代码应该在判断对方关闭了连接后 break 出循环，而不是继续 write。
+另外，有时候代码中需要连续多次调用 write，可能还来不及调用 read 得知对方已关闭了连接就被 SIGPIPE 信号终止掉了，这就需要在初始化时调用 sigaction 处理 SIGPIPE 信号，如果 SIGPIPE 信号没有导致进程异常退出，write 返回 -1 并且 errno 为 EPIPE。
 
 另外，我们需要修改 server，使它可以多次处理同一客户端的请求。
 
@@ -23380,7 +23420,12 @@ $ netstat -apn |grep 8000
  bind error: Address already in use
 ```
 
-client 终止时自动关闭 socket 描述符，server 的 TCP 连接收到 client 发的 FIN 段后处于 TIME_WAIT 状态。TCP 协议规定，主动关闭连接的一方要处于 TIME_WAIT 状态，等待两个 MSL（maximum segment lifetime）的时间后才能回到 CLOSED 状态，因为我们先 Ctrl-C 终止了 server，所以 server 是主动关闭连接的一方，在 TIME_WAIT 期间仍然不能再次监听同样的 server 端口。MSL 在 RFC1122 中规定为两分钟，但是各操作系统的实现不同，在 Linux 上一般经过半分钟后就可以再次启动 server 了。至于为什么要规定 TIME_WAIT 的时间请读者参考 *UNP* 2.7 节。
+- client 终止时自动关闭 socket 描述符，server 的 TCP 连接收到 client 发的 FIN 段后处于 TIME_WAIT 状态。
+-  **TCP 协议规定，主动关闭连接的一方要处于 TIME_WAIT 状态，等待两个 MSL（maximum segment lifetime）的时间后才能回到 CLOSED 状态** ，
+  -  **MSL 在 RFC1122 中规定为两分钟，但是各操作系统的实现不同** ，
+  -  在 Linux 上一般经过半分钟后就可以再次启动 server 了。
+  -  至于为什么要规定 TIME_WAIT 的时间请读者参考 *UNP* 2.7 节。
+-  因为我们先 Ctrl-C 终止了 server，所以 server 是主动关闭连接的一方，在 TIME_WAIT 期间仍然不能再次监听同样的 server 端口。
 
 在 server 的 TCP 连接没有完全断开之前不允许重新监听是不合理的，因为，TCP 连接没有完全断开指的是 connfd（127.0.0.1:8000）没有完全断开，而我们重新监听的是 listenfd（0.0.0.0:8000），虽然是占用同一个端口，但 IP 地址不同，connfd 对应的是与某个客户端通讯的一个具体的 IP 地址，而 listenfd 对应的是 wildcard address。解决这个问题的方法是使用 setsockopt() 设置 socket 描述符的选项 SO_REUSEADDR 为 1，表示允许创建端口号相同但 IP 地址不同的多个 socket 描述符。在 server 代码的 socket() 和 bind() 调用之间插入如下代码：
 
