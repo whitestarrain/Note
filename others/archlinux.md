@@ -712,6 +712,8 @@ pacman -S --help
 
 # 搜索package
 pacman -Ss package
+# 查询package信息
+pacman -Si package
 # 更新软件列表
 pacman -Sy
 # 安装文件

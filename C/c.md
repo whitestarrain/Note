@@ -23646,9 +23646,10 @@ socket API 原本是为网络通讯设计的，但后来在 socket 的框架上�
 - 虽然网络 socket 也可用于同一台主机的进程间通讯（通过 loopback 地址 127.0.0.1），但是 UNIX Domain Socket用于 IPC 更有效率：
   - 不需要经过网络协议栈，不需要打包拆包、计算校验和、维护序号和应答等，只是将应用层数据从一个进程拷贝到另一个进程。
   - 这是因为，IPC 机制本质上是可靠的通讯，而网络协议是为不可靠的通讯设计的。
-- UNIX  Domain Socket 也提供面向流和面向数据包两种 API 接口，类似于 TCP 和 UDP，但是面向消息的 UNIX Domain Socket 也是可靠的，消息既不会丢失也不会顺序错乱。
+- UNIX  Domain Socket 也提供面向流和面向数据包两种 API 接口，类似于 TCP 和 UDP，
+  - 但是面向消息的 UNIX Domain Socket 也是可靠的，消息既不会丢失也不会顺序错乱。
 
-UNIX Domain Socket 是全双工的，API 接口语义丰富，相比其它 IPC 机制有明显的优越性，目前已成为使用最广泛的 IPC 机制，比如 X Window 服务器和 GUI 程序之间就是通过 UNIX Domain Socket通讯的。
+UNIX Domain Socket 是 **全双工** 的，API 接口语义丰富，相比其它 IPC 机制有明显的优越性，目前已成为使用最广泛的 IPC 机制，比如 X Window 服务器和 GUI 程序之间就是通过 UNIX Domain Socket通讯的。
 
 使用 UNIX  Domain Socket 的过程和网络 socket 十分相似，也要先调用 socket() 创建一个 socket 文件描述符，address family 指定为 AF_UNIX，type 可以选择 SOCK_DGRAM 或 SOCK_STREAM，protocol 参数仍然指定为 0 即可。
 
@@ -23692,6 +23693,13 @@ int main(void)
 ```
 
 offsetof(struct sockaddr_un, sun_path) 就是取 sockaddr_un 结构体的 sun_path 成员在结构体中的偏移，也就是从结构体的第几个字节开始是 sun_path 成员。想一想，这个宏是如何实现这一功能的？
+
+```
+(type *)0 表示type * 类型的空指针
+((TYPE *)0)->MEMBER 表示取空指针的member元素（因为是空指针，所以实际取会报错的）
+&((TYPE *)0)->MEMBER 这样就表示取空指针的member元素的地址，因为没有取值，所以不会报错
+同时因为是空指针，地址为0，所以member的地址 member_address = 0 + offset， 进而得出member在结构体中的偏移
+```
 
 该程序的运行结果如下。
 
@@ -23803,7 +23811,7 @@ errout:
 }
 ```
 
-以下是客户端的 connect 模块，与网络 socket 编程不同的是，UNIX Domain Socket 客户端一般要显式调用 bind 函数，而不依赖系统自动分配的地址。客户端 bind 一个自己指定的 socket 文件名的好处是，该文件名可以包含客户端的 pid 以便服务器区分不同的客户端。
+以下是客户端的 connect 模块，与网络 socket 编程不同的是， **UNIX Domain Socket 客户端一般要显式调用 bind 函数，而不依赖系统自动分配的地址** 。客户端 bind 一个自己指定的 socket 文件名的好处是，该文件名可以包含客户端的 pid 以便服务器区分不同的客户端。
 
 ```c
 #include <stdio.h>

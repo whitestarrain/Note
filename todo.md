@@ -231,6 +231,8 @@ python
     - [Centaur markdown 预览支持语法高亮和各类图](https://emacs-china.org/t/centaur-markdown/12170)
   - [专业emacs入门](https://zhuanlan.zhihu.com/p/385214753)
 - [emacs 作者 Richard Stallman 我的Lisp经历和GNU Emacs的开发](https://www.gnu.org/gnu/rms-lisp.zh-cn.html)
+- [emacs2ram，把emacs放到内存中](https://github.com/lujun9972/emacs-document/blob/master/emacs-common/十倍提升Emacs性能.org)
+- [21 天学会 Emacs](https://book.emacs-china.org/)
 
 ### vscode
 
@@ -374,6 +376,7 @@ python
 - [here doc, here string](https://askubuntu.com/questions/678915/whats-the-difference-between-and-in-bash)
 - [btop，比较酷炫的性能监视工具](https://github.com/aristocratos/btop)
 - [Linux内核，后台执行: ctrl-z/fg/bg/nohup/setsid/()与&/disown/screen](https://www.cnblogs.com/aaronLinux/p/6345072.html)
+- [nc 常用场景](https://www.sqlsec.com/2019/10/nc.html)
 
 ### linux/c
 
@@ -553,6 +556,7 @@ python
 
 - [Git搭配.gitattributes强制项目文本使用lf作为换行符](https://anuoua.github.io/2020/05/21/Git%E6%90%AD%E9%85%8D.gitattributes%E5%BC%BA%E5%88%B6%E9%A1%B9%E7%9B%AE%E6%96%87%E6%9C%AC%E4%BD%BF%E7%94%A8lf%E4%BD%9C%E4%B8%BA%E6%8D%A2%E8%A1%8C%E7%AC%A6/)
 - [使用 Git 来处理 LF 和 CRLF 的系统差异](https://www.fullstackbb.com/post/handle-line-endings-in-git/)
+- [git ignore binary file](https://gist.github.com/chichunchen/970a7e97c74a253a4503)
 
 ### tmux
 

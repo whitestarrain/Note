@@ -99,7 +99,9 @@
   # options 详见log文档或上述示例
 
   # 统计开发分支修改行数
-  log_option="dev_branch master ${git merge-base dev_branch master}"
+  log_option="dev_branch master $(git merge-base dev_branch master)"
+
+  # 也可以管道输入到`column -t` 命令中进行格式化
   ```
 
 ## 1.5. 远程仓库
@@ -379,7 +381,9 @@
 
 ## 1.17. gitignore
 
-```
+- 说明
+
+  ```
   # 此为注释 – 将被 Git 忽略
   # 忽略所有 .a 结尾的文件
   *.a
@@ -393,9 +397,11 @@
   doc/*.txt
   # 忽略 doc/ 目录下所有扩展名为 txt 的文件
   doc/**/*.txt
-```
+  ```
 
-```
+- 只不忽略一个文件
+
+  ```
   比如一个三级目录，只不忽略一个文件/fileTemplates/includes/File Header.java，就要这么写
 
   /*
@@ -404,7 +410,43 @@
   !/fileTemplates/includes
   /fileTemplates/includes/*
   !/fileTemplates/includes/File Header.java
-```
+  ```
+
+- 忽略所有二进制文件
+
+  ```
+  # Ignore all
+  *
+
+  # Unignore all with extensions
+  !*.*
+
+  # Unignore all dirs
+  !*/
+
+  ### Above combination will ignore all files without extension ###
+
+  # Ignore files with extension `.class` & `.sm`
+  *.class
+  *.sm
+
+  # Ignore `bin` dir
+  bin/
+  # or
+  */bin/*
+
+  # Unignore all `.jar` in `bin` dir
+  !*/bin/*.jar
+
+  # Ignore all `library.jar` in `bin` dir
+  */bin/library.jar
+
+  # Ignore a file with extension
+  relative/path/to/dir/filename.extension
+
+  # Ignore a file without extension
+  relative/path/to/dir/anotherfile
+  ```
 
 ## 1.18. .gitattributes
 
