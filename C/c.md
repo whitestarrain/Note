@@ -12858,7 +12858,6 @@ pa++;
 - 然后 `pa++` 让 `pa` 指向下一个元素（也就是 `a[1]`），
   - 由于 `pa` 是 `int *` 指针，一个 `int` 型元素占 4 个字节，
   - 所以 `pa++` 使 `pa` 所指向的 **地址加 4，注意不是加 1** 。
-  - 指针的`++`并不是淡出你的数值加一
 
 下面画图理解。从前面的例子我们发现，地址的具体数值其实无关紧要，关键是要说明地址之间的关系（`a[1]` 位于 `a[0]` 之后 4 个字节处）以及指针与变量之间的关系（指针保存的是变量的地址），现在我们换一种画法，省略地址的具体数值，用方框表示存储空间，用箭头表示指针和变量之间的关系。
 
@@ -13250,9 +13249,38 @@ int (*pa)[10] = &a[0];
 
 - 则 `pa[0]` 和 `a[0]` 取的是同一个元素，唯一比原来复杂的地方在于这个元素是由 10 个 `int` 组成的数组，而不是基本类型。
 - 这样，我们可以把 `pa` 当成二维数组名来使用，`pa[1][2]` 和 `a[1][2]` 取的也是同一个元素，
-- 而且 `pa` 比 `a` 用起来更灵活，数组名不支持赋值、自增等运算，而指针可以支持，`pa++` 使 `pa` 跳过二维数组的一行（40 个字节），指向 `a[1]` 的首地址。
+- 而且 `pa` 比 `a` 用起来更灵活，数组名不支持赋值、自增等运算，而指针可以支持， **`pa++` 使 `pa` 跳过二维数组的一行（40 个字节）** ，指向 `a[1]` 的首地址。
 
-#### 2.10.7.3. 三维数组示例
+#### 2.10.7.3. 右值问题：数组指针和指向指针的指针
+
+```c
+int a[5][5];
+for (int i = 0; i < 5; i++) {
+  for (int j = 0; j < 5; j++) {
+    a[i][j] = (i + 1) * (j + 1);
+  }
+}
+int (*pa)[5] = a; // a作右值，返回首元素的地址，首元素为shape为(5,)的一维数组
+int (*ppa)[5][5] = &a;
+int **tmp = &a;
+```
+```
+   tmp       pa      ppa
+    9        10      11      12        13      14       15       16      17
+┬────────┬────────┬────────┬────────┬───────┬───────┬────────┬────────┬────────┬────────┬────────┬────────┬────────┬
+│  12    │  12    │ 12     │a[0][0] │a[0][1]│a[0][2]│ a[0][3]│ a[0][4]│a[1][0] │ a[1][2]│        │        │        │
+┴───┬────┴─┬──────┴───┬────┴────────┴───────┴───────┴────────┴────────┴────────┴────────┴────────┴────────┴────────┴
+    │      │          │      ▲   ▲ ▲
+    │      │          └──────┘   │ │
+    │      └─────────────────────┘ │
+    └──────────────────────────────┘
+*pa 会获取数组a[0]，而不是地址12下的值，是因为数组a[0]做右值，编译器会返回a[0]的地址(算是根据指针类型特殊处理)，所以使用**pa才会获取地址12下的值
+tmp是指向指针的指针，*tmp 则会直接获取地址12下的值，也就是 1，**tmp则会进一步获取地址1下面的值，提示段错误。
+
+另外，因为指针类型不同，++操作编译器做的处理也不同。pa++ 会跳过数组的一行，tmp++ 只会跳过一个int
+```
+
+#### 2.10.7.4. 三维数组示例
 
 ```c
 char a[4][3][2] = {{{'a', 'b'}, {'c', 'd'}, {'e', 'f'}},
@@ -13909,6 +13937,96 @@ int main(void)
 6. 新申请的空闲块和前一个空闲块连续，因此可以合并成一个。在能合并时要尽量合并，以免空闲块越割越小，无法满足大的分配请求。
 7. 在合并后的这个空闲块末尾截出 24 个字节，新的头节点占 8 个字节，另外 16 个字节返回给用户。
 8. 调用 `free(p3)` 释放这个内存块，由于它和前一个空闲块连续，又重新合并成一个空闲块。注意，Break 只能抬高而不能降低，从内核申请到的内存以后都归 `malloc` 管了，即使调用 `free` 也不会还给内核。
+
+##### malloc中存储数组
+
+- 基于数组指针(推荐):
+- 基于指针数组/二级指针:
+- 一维数组模拟：
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define assign_array(pointer, pointer_p, dim1, dim2) \
+    do {                                             \
+        pointer_p = pointer;                         \
+        for (int i = 0; i < dim1; i++) {             \
+            for (int j = 0; j < dim2; j++) {         \
+                p[i][j] = (i + 1) * (j + 1);         \
+            }                                        \
+        }                                            \
+    } while (0)
+
+#define printf_array(pointer, pointer_p, dim1, dim2) \
+    do {                                             \
+        pointer_p = pointer;                         \
+        for (int i = 0; i < dim1; i++) {             \
+            for (int j = 0; j < dim2; j++) {         \
+                printf("%d\t", p[i][j]);             \
+            }                                        \
+            printf("\n");                            \
+        }                                            \
+    } while (0)
+
+/**
+ * 数组指针
+ */
+void array_pointer(int dim1, int dim2)
+{
+    int(*pa)[dim2] = malloc(sizeof(int) * dim1 * dim2);
+    memset(pa, 0, sizeof(int) * dim1 * dim2);
+    assign_array(pa, int(*p)[dim2], dim1, dim2);
+    printf_array(pa, int(*p)[dim2], dim1, dim2);
+    free(pa);
+}
+
+/**
+ * 二级指针
+ */
+void pointer_array(int dim1, int dim2)
+{
+    int **arr_pointers = malloc(sizeof(int *) * dim1);
+    for (int i = 0; i < dim1; i++) {
+        *(arr_pointers + i) = malloc(sizeof(int) * dim2);
+    }
+    assign_array(arr_pointers, int **p, dim1, dim2);
+    printf_array(arr_pointers, int **p, dim1, dim2);
+    for (int i = 0; i < dim1; i++) {
+        free(*(arr_pointers + i));
+    }
+    free(arr_pointers);
+}
+
+/*
+ * 一维数组模拟
+ */
+void single_array(int dim1, int dim2)
+{
+    int *p = malloc(sizeof(int) * dim1 * dim2);
+    for (int i = 0; i < dim1; i++) {
+        for (int j = 0; j < dim2; j++) {
+            p[dim2 * i + j] = (i + 1) * (j + 1);
+        }
+    }
+    for (int i = 0; i < dim1; i++) {
+        for (int j = 0; j < dim2; j++) {
+            printf("%d\t", p[dim2 * i + j]);
+        }
+        printf("\n");
+    }
+    free(p);
+}
+
+int main(int argc, char *argv[])
+{
+    array_pointer(5, 5);
+    pointer_array(5, 5);
+    single_array(5, 5);
+    return EXIT_SUCCESS;
+}
+```
 
 ##### 习题
 
