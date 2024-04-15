@@ -4,7 +4,7 @@
 
 # 基础
 
-## 设计模式<!-- fold -->
+## 设计模式<!-- markmap: fold -->
 
 ### 七大原则
 
@@ -30,9 +30,9 @@
 
 #### J2EE 型模式
 
-## 计算机网络 <!-- fold -->
+## 计算机网络 <!-- markmap: fold -->
 
-### 理论(参考《计算<br />机网络》谢希仁) <!-- fold -->
+### 理论(参考《计算<br />机网络》谢希仁) <!-- markmap: fold -->
 
 - 概述
   - 基本概念
@@ -146,13 +146,13 @@
       - 首部检验和
     - 网际控制报文协议 ICMP(P146)
       - 种类
-        - 差错报告报文 <!-- fold -->
+        - 差错报告报文 <!-- markmap: fold -->
           - 终点不可达
           - 源点抑制
           - 时间超过
           - 参数问题
           - 改变路由(重定向)
-        - 询问报文 <!-- fold -->
+        - 询问报文 <!-- markmap: fold -->
           - 回送请求和回答
           - 时间戳请求和回答
       - 示例：ping
@@ -164,13 +164,13 @@
     - 协议分类
       - 内部网关协议 IGP
         - RIP
-          - 工作原理 <!-- fold -->
+          - 工作原理 <!-- markmap: fold -->
             - 相邻路由表的交换
           - 算法：距离向量算法(p135)
-          - RIP 报文格式 <!-- fold -->
+          - RIP 报文格式 <!-- markmap: fold -->
             - 在**运输层**进行路由信息的交换
             - 因为是运输层所以有 UDP 首部
-          - 特点 <!-- fold -->
+          - 特点 <!-- markmap: fold -->
             - 快消息传得慢
           - 优缺点
         - OSPF
@@ -191,7 +191,7 @@
         - 自治系统内路由算法
         - 自治系统间路由算法
   - 路由器组成
-  - ip 多播(了解) <!-- fold -->
+  - ip 多播(了解) <!-- markmap: fold -->
     - 多播路由器
     - 基本原理
     - 协议
@@ -209,7 +209,7 @@
     - UDP 首部格式
     - 检验和计算
   - TCP
-    - 特点 <!-- fold -->
+    - 特点 <!-- markmap: fold -->
       - 面向连接
       - 每一条 TCP 链接只能有两个端点
       - TCP 提供可交付的服务
@@ -228,7 +228,7 @@
           - 按序到达的最后一个分组发送确认
           - go-back-n
       - 实现
-        - 以字节为单位的滑动窗口 <!-- fold -->
+        - 以字节为单位的滑动窗口 <!-- markmap: fold -->
           - 边界
             - 含义
               - 前沿
@@ -241,14 +241,14 @@
             - 三个指针
           - 缓存与窗口关系
             - tcp 发送缓存
-              - 存放内容 <!-- fold -->
+              - 存放内容 <!-- markmap: fold -->
                 - 发送应用程序传送给发送方 TCP 准备发送的数据
                 - TCP 已发送但尚未收到确认的数据
             - tcp 接收缓存
-              - 存放内容 <!-- fold -->
+              - 存放内容 <!-- markmap: fold -->
                 - 按序到达的、但尚未被接收应用程序读取的数据
                 - 未按序到达的数据
-              - 窗口与缓存对应 <!-- fold -->
+              - 窗口与缓存对应 <!-- markmap: fold -->
                 - 接收缓存填满，接收窗口为 0
             - 缓存特点
               - 环形缓存，循环使用
@@ -256,10 +256,10 @@
               - 发送窗口和接收窗口并不总是一样大的（时间滞后）
               - 不按序到达数据的处理
               - tcp 接收方必须要有累积确认的功能
-        - 超时重传时间的选择 <!-- fold -->
+        - 超时重传时间的选择 <!-- markmap: fold -->
           - 自适应算法
-        - 选择确认 SACK <!-- fold -->
-          - 目的 <!-- fold -->
+        - 选择确认 SACK <!-- markmap: fold -->
+          - 目的 <!-- markmap: fold -->
             - 只重传缺少的数据
             - 不重传已经正确到达的数据
           - 原理与开启
@@ -283,7 +283,7 @@
 
 - 应用层
 
-### 基础问题 <!-- fold -->
+### 基础问题 <!-- markmap: fold -->
 
 - 基础
   - 计算机网络体系结构
@@ -315,7 +315,7 @@
     - 面向连接和无连接的区别(端到端和点对点)
   - TCP 如何保证传输的可靠性
   - 什么是 TCP 粘包？
-  - 传输层网络攻击有哪些？解决策略有哪些 <!-- fold -->
+  - 传输层网络攻击有哪些？解决策略有哪些 <!-- markmap: fold -->
     - syn 超时
     - 洪泛攻击
 - 应用层：HTTP 和 HTTPS
@@ -356,7 +356,7 @@
     - ping 的流程是什么
   - 什么是 NAT (网络地址转换)？
 
-## 操作系统<!-- fold -->
+## 操作系统<!-- markmap: fold -->
 
 ### 理论体系结构
 
@@ -460,21 +460,21 @@
     - blocking 和 non-blocking 区别
     - synchronous IO 和 asynchronous IO 区别
 
-## 算法<!-- fold -->
+## 算法<!-- markmap: fold -->
 
-## Linux <!-- fold -->
+## Linux <!-- markmap: fold -->
 
 ### 常用命令
 
 ### shell
 
-## 编码与加密算法 <!-- fold -->
+## 编码与加密算法 <!-- markmap: fold -->
 
 # Java 知识栈
 
-## Java 基础 <!-- fold -->
+## Java 基础 <!-- markmap: fold -->
 
-### 基础 <!-- fold -->
+### 基础 <!-- markmap: fold -->
 
 #### 基础中的基础
 
@@ -492,7 +492,7 @@
 - 面向对象
   - 封装
   - 继承
-    - 不支持多继承 <!-- fold -->
+    - 不支持多继承 <!-- markmap: fold -->
       - 钻石问题
       - 可维护性和设计
   - 多态
@@ -612,7 +612,7 @@
 - 双大括号初始化(不推荐)
 - try-with-resources(针对 io 资源，推荐)
 
-### 集合 <!-- fold -->
+### 集合 <!-- markmap: fold -->
 
 - 为什么要使用集合
 - HashMap
@@ -620,7 +620,7 @@
     - 存储结构：数组+链表
     - 扩容机制
       - 创建新的数组
-      - 头插 <!-- fold -->
+      - 头插 <!-- markmap: fold -->
         - 使用头插可能与缓存的时间局部性原则有关
         - 最近访问过的数据下次大概率会再次访问
         - 把刚访问过的元素放在链表最前面可以直接被查询到，减少查找次数
@@ -637,12 +637,12 @@
     - 扩容机制
       - 创建新的数组
       - 尾插
-      - [如何解决的 resize 死循环](https://www.fangzhipeng.com/javainterview/2019/03/11/hashmap-dead-cycle.html) <!-- fold -->
-        - transfer 调用 <!-- fold -->
+      - [如何解决的 resize 死循环](https://www.fangzhipeng.com/javainterview/2019/03/11/hashmap-dead-cycle.html) <!-- markmap: fold -->
+        - transfer 调用 <!-- markmap: fold -->
           - 直接将原来 transfer()方法中的代码写在自己方法体内，不再调用
-        - 使用尾插 <!-- fold -->
+        - 使用尾插 <!-- markmap: fold -->
           - **扩容后，新数组中的链表顺序依然与旧数组中的链表顺序保持一致**
-      - [resize 不重新计算 hash](https://juejin.cn/post/6844903682664824845) <!-- fold -->
+      - [resize 不重新计算 hash](https://juejin.cn/post/6844903682664824845) <!-- markmap: fold -->
         - 1.7 扩容时需要重新计算哈希值和索引位置
         - 1.8 并不重新计算哈希值，巧妙地采用和扩容后容量进行&操作来计算新的索引位置。
   - 线程不安全
@@ -656,10 +656,10 @@
   - 容量为什么要 2 的幂
   - [遍历方法及性能](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
   - 有什么同步容器/并发容器
-  - HashMap 漏洞导致变慢 <!-- fold -->
+  - HashMap 漏洞导致变慢 <!-- markmap: fold -->
     - 中间对计算 hashcode 的成员变量做了修改，内存泄漏
     - hashcode 设计不标准，元素落到一个桶中
-  - 如何为 key 设计 hashcode <!-- fold -->
+  - 如何为 key 设计 hashcode <!-- markmap: fold -->
     - 计算 hashCode 依赖的值是不可变
     - hashCode 必须基于对象的内容生成
     - hashCode 产生的散列码最好能均匀分布
@@ -693,10 +693,10 @@
     - 数据结构:数组+链表/红黑树
     - 同步机制
       - hash 槽。减小了加锁粒度
-      - CAS+synchronized <!-- fold -->
+      - CAS+synchronized <!-- markmap: fold -->
         - CAS 失败自旋保证成功
         - 再失败就 synchronized
-      - [使用 synchronized 原因](https://www.cnblogs.com/aspirant/p/8623864.html) <!-- fold -->
+      - [使用 synchronized 原因](https://www.cnblogs.com/aspirant/p/8623864.html) <!-- markmap: fold -->
         - 锁粒度降低了，synchronized 并不比 ReentrantLock 差
         - synchronized 优化空间大
         - 大量数据操作，ReentrantLock 开销较多内存
@@ -744,9 +744,9 @@
 
 - [其他重要问题](https://www.jianshu.com/p/8bc28d6b0a5e)
 
-### 并发编程 <!-- fold -->
+### 并发编程 <!-- markmap: fold -->
 
-#### **体系结构** <!-- fold -->
+#### **体系结构** <!-- markmap: fold -->
 
 - 理论体系
   - 为什么需要多线程
@@ -874,7 +874,7 @@
   - Disruptor
   - HiKariCP
 
-#### 详细讲解 <!-- fold -->
+#### 详细讲解 <!-- markmap: fold -->
 
 - 并发基础
 
@@ -913,7 +913,7 @@
     - 为什么要使用多线程
     - sleep() 方法和 wait() 方法区别和共同点
 
-- **并发编程三大特性** <!-- fold -->
+- **并发编程三大特性** <!-- markmap: fold -->
   - 原子性
   - 可见性
   - 有序性
@@ -921,7 +921,7 @@
 - JMM
   - 基础结构
   - JMM 与 Java 内存区域划分的区别与联系
-  - JMM 原子操作 <!-- fold -->
+  - JMM 原子操作 <!-- markmap: fold -->
     - read(读取）:从主内存读取数据
     - load(载入）:将主内存读取到的数据写入工作内存
     - use(使用）:从工作内存读取数据来计算
@@ -931,7 +931,7 @@
     - lock(锁定）:将主内存变量加锁，标识为线程独占状态。其他线程将无法读或写
     - unlock(解锁）:将主内存变量解锁，解锁后其他线程可以锁定该变量
   - 重排序
-    - 组成 <!-- fold -->
+    - 组成 <!-- markmap: fold -->
       - 编译器优化重排
       - 指令并行重排
       - 内存系统重排
@@ -951,7 +951,7 @@
     - [修饰数组](https://blog.csdn.net/u014674862/article/details/89168376)|[资料](https://stackoverflow.com/questions/53753792/java-volatile-array-my-test-results-do-not-match-the-expectations)
   - 禁止重排序
     - 说明
-    - 原理(内存屏障) <!-- fold -->
+    - 原理(内存屏障) <!-- markmap: fold -->
       - volatile 写
         - 前面:storestore
         - 后面:sotreload
@@ -1015,18 +1015,18 @@
       - 对象头中的内容
       - 阻塞的好处(cpu)与代价(内核态)
   - 特性保证
-    - 可见性 <!-- fold -->
+    - 可见性 <!-- markmap: fold -->
       - 获得锁，清空工作内存
       - 从主内存拷贝共享变量最新的值到工作内存成为副本
       - 执行代码，将修改后的副本的值刷新回主内存中，线程释放锁
       - 而获取不到锁的线程会阻塞等待，所以变量的值肯定一直都是最新的。
-    - 原子性 <!-- fold -->
+    - 原子性 <!-- markmap: fold -->
       - 单一线程持有
       - 可见性的强制刷新
-    - 有序性 <!-- fold -->
+    - 有序性 <!-- markmap: fold -->
       - as-if-serial
       - happends-before
-  - synchronized 和 ReentrantLock 的区别 <!-- fold -->
+  - synchronized 和 ReentrantLock 的区别 <!-- markmap: fold -->
     - jvm-api 层面
     - 是否可中断
     - 公平非公平
@@ -1141,17 +1141,17 @@
     - 可重入锁和非可重入锁
       - 表现
       - 原理：粒度（加锁范围）
-      - 实例 <!-- fold -->
+      - 实例 <!-- markmap: fold -->
         - 可重入锁
         - 不可重入锁
-    - 公平锁与非公平锁 <!-- fold -->
+    - 公平锁与非公平锁 <!-- markmap: fold -->
       - 表现
       - 原理
       - 实例
         - 公平锁
         - 非公平锁
         - 可以切换:ReentrantLock
-    - 读写锁和排它锁 <!-- fold -->
+    - 读写锁和排它锁 <!-- markmap: fold -->
       - 表现
       - 原理
       - 实例
@@ -1197,7 +1197,7 @@
     - 任务的执行(Executor)
     - 异步计算的结果(Future)
   - 创建
-    - ThreadPoolExecutor 构造方法参数及含义 <!-- fold -->
+    - ThreadPoolExecutor 构造方法参数及含义 <!-- markmap: fold -->
       - int corePoolSize：该线程池中核心线程数最大值
       - int maximumPoolSize：该线程池中线程总数最大值 。
       - long keepAliveTime：非核心线程闲置超时时长。
@@ -1209,7 +1209,7 @@
         - DiscardPolicy：丢弃新来的任务，但是不抛出异常。
         - DiscardOldestPolicy：丢弃队列头部（最旧的）的任务，然后重新尝试执行程序（如果再次失败，重复此过程）。
         - CallerRunsPolicy：由调用线程处理该任务。
-    - Executors 默认实现(底层使用 ThreadPoolExecutor) <!-- fold -->
+    - Executors 默认实现(底层使用 ThreadPoolExecutor) <!-- markmap: fold -->
       - FixedThreadPool
         - 参数设置
         - 执行过程
@@ -1223,13 +1223,13 @@
         - 执行过程
         - 弊端
   - **线程池工作流程**
-  - ThreadPool 状态转换 <!-- fold -->
+  - ThreadPool 状态转换 <!-- markmap: fold -->
     - RUNNING
     - SHUTDOWN
     - STOP
     - TIDYING
     - TERMINATED
-  - ScheduledThreadPool <!-- fold -->
+  - ScheduledThreadPool <!-- markmap: fold -->
     - 继承了 ThreadPoolExecutor
     - 主要用来在给定的延迟后运行任务，或者定期执行任务
     - 实际项目中会使`用quartz`
@@ -1246,19 +1246,19 @@
 
 - **ThreadLocal(待做)**
 
-#### JUC 整理 <!-- fold -->
+#### JUC 整理 <!-- markmap: fold -->
 
-#### 并发本质 <!-- fold -->
+#### 并发本质 <!-- markmap: fold -->
 
-#### 并发模式 <!-- fold -->
+#### 并发模式 <!-- markmap: fold -->
 
-#### 并发框架 <!-- fold -->
+#### 并发框架 <!-- markmap: fold -->
 
-### IO/NIO/AIO <!-- fold -->
+### IO/NIO/AIO <!-- markmap: fold -->
 
-## JVM <!-- fold -->
+## JVM <!-- markmap: fold -->
 
-### 基础知识 <!-- fold -->
+### 基础知识 <!-- markmap: fold -->
 
 - jvm 发展
 - 特点：
@@ -1273,7 +1273,7 @@
   - 执行
   - 退出
 
-### 内存与垃圾回收 <!-- fold -->
+### 内存与垃圾回收 <!-- markmap: fold -->
 
 #### 上层
 
@@ -1390,15 +1390,15 @@
               - 静态连接
               - 动态链接
             - **非虚方法与虚方法**
-              - 什么是非虚方法 <!-- fold -->
+              - 什么是非虚方法 <!-- markmap: fold -->
                 - 静态方法
                 - 私有方法
                 - final 方法
                 - 构造器
                 - 父类方法(使用 super 显式调用)
-              - 什么是虚方法 <!-- fold -->
+              - 什么是虚方法 <!-- markmap: fold -->
                 - 非虚方法之外的方法
-              - 无个调用指令 <!-- fold -->
+              - 无个调用指令 <!-- markmap: fold -->
                 - invokespecial
                 - invokestatic
                 - invokevirtual
@@ -1418,7 +1418,7 @@
           - 栈帧退出方式
           - 作用
         - 一些附加信息
-  - 问题 <!-- fold -->
+  - 问题 <!-- markmap: fold -->
     - 栈中可能出现的异常
     - i++和++i 的区别。<br />从字节码，局部变量表，操作数栈层面解释
     - 举例栈溢出的情况？(StackOverflowError)
@@ -1500,11 +1500,11 @@
       - 以元祖 JVM:Sun JDK 1.0.2 的 32 位 x86 为例
       - 整体原理类似
     - 符号引用
-      - 说明 <!-- fold -->
+      - 说明 <!-- markmap: fold -->
         - 通常是设计字符串的，是用文本形式来表示引用关系
         - 实际使用时可以藉此找到相应的位置
     - 直接引用
-      - 表现形式 <!-- fold -->
+      - 表现形式 <!-- markmap: fold -->
         - 指向 methodblock 的指针
         - 虚方法表下标
       - 说明
@@ -1516,14 +1516,14 @@
     - 回收内容
       - 常量池中废弃的常量
         - 回收策略
-        - 组成 <!-- fold -->
+        - 组成 <!-- markmap: fold -->
           - 字面量常量
           - 符号引用
       - 不再使用的类
-        - 回收策略 <!-- fold -->
+        - 回收策略 <!-- markmap: fold -->
           - 该类所有的实例都已经被回收
           - 加载该类的类加载器已经被回收
-- 问题 <!-- fold -->
+- 问题 <!-- markmap: fold -->
   - 说一下 JVM 内存模型吧，有哪些区？分别干什么的？
   - Java8 的内存分代改进
   - JVM 内存分哪几个区，每个区的作用是什么？
@@ -1543,7 +1543,7 @@
 
 - **对象的实例化内存布局和访问定位**
   - 创建对象的方式
-  - 创建对象的步骤（六步） <!-- fold -->
+  - 创建对象的步骤（六步） <!-- markmap: fold -->
     - 判断对象对应的类是否加载，链接，初始化。（加载类元信息）
     - 为对象分配内存
       - 指针碰撞
@@ -1582,7 +1582,7 @@
       - 说明
       - 优点
       - 缺点
-  - 问题 <!-- fold -->
+  - 问题 <!-- markmap: fold -->
     - 对象在 JVM 中是怎么存储的？
     - 对象头信息里面有哪些东西？
     - java 对象头里有什么
@@ -1640,14 +1640,14 @@
         - C1
           - client 模式下运行
           - 简单和可靠的优化，耗时短
-          - 优化策略 <!-- fold -->
+          - 优化策略 <!-- markmap: fold -->
             - 方法内联：将引用的函数代码编译到引用点处，<br />这样可以减少栈帧的生成，减少参数传递以及跳转过程
             - 去虚拟化：对唯一的实现类进行内联
             - 沉余消除：在运行期间把一些不会执行的代码折叠掉
         - C2
           - server 模式下运行
           - 耗时较长的优化，以及激进优化
-          - 优化策略 <!-- fold -->
+          - 优化策略 <!-- markmap: fold -->
             - 标量替换：用标量值代替聚合对象的属性值
             - 栈上分配：对于未逃逸的对象分配对象在栈而不是堆
             - 同步消除：清除同步操作，通常指 synchronized
@@ -1813,7 +1813,7 @@
           - 触发(特殊)
             - **达到阀值，而不是满了**
           - 垃圾回收机制
-            - 回收流程 <!-- fold -->
+            - 回收流程 <!-- markmap: fold -->
               - 初始标记(STW):仅仅只是标记出 GC Roots 能直接关联到的对象。
               - 并发标记(不 STW):从 GC Roots 的直接关联对象开始遍历整个对象图的过程
               - 重新标记(STW):为了修正并发标记期间，因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录
@@ -1822,9 +1822,9 @@
               - 情况：比如大对象导致空间不足
               - 错误：Concurrent Mode Failure
               - 解决：serial old fullGC
-          - 搭配问题 <!-- fold -->
+          - 搭配问题 <!-- markmap: fold -->
             - 无法与 Parallel Scavenge 搭配
-          - 废弃原因 <!-- fold -->
+          - 废弃原因 <!-- markmap: fold -->
             - 内存碎片，大对象无法分配
             - 后备 serial old 效率过低
             - 并发导致程序变慢
@@ -1834,12 +1834,12 @@
             - 分类
             - 作用位置
             - 吞吐/响应 优先
-            - 使用算法 <!-- fold -->
+            - 使用算法 <!-- markmap: fold -->
               - 局部复制
               - 整体标记压缩
             - 适用场景
           - 出现原因
-          - 缺点 <!-- fold -->
+          - 缺点 <!-- markmap: fold -->
             - 额外内存占用:Remember Set
           - 分区算法，分代收集
             - region 组成
@@ -1849,15 +1849,15 @@
           - 参数调优
           - 垃圾回收机制
             - 预备知识
-              - dirty card queue <!-- fold -->
+              - dirty card queue <!-- markmap: fold -->
                 - 作用：用来更新 Rset，避免线程同步开销
-              - Remember Set <!-- fold -->
+              - Remember Set <!-- markmap: fold -->
                 - 作用：准确的反映老年代对所在的内存分段中对象的引用
             - 回收种类
               - minorGC
                 - 触发
                 - 回收区域
-                - 详细过程 <!-- fold -->
+                - 详细过程 <!-- markmap: fold -->
                   - 第一阶段，扫描根。
                   - 第二阶段，更新 RSet。
                   - 第三阶段，处理 RSet。
@@ -1866,14 +1866,14 @@
               - 老年代并发标记过程
                 - 触发
                 - 回收区域
-                - 详细过程 <!-- fold -->
+                - 详细过程 <!-- markmap: fold -->
                   - 1.初始标记阶段
                   - 2.根区域扫描（Root Region Scanning)
                   - 3.并发标记（Concurrent Marking)
                   - 4.再次标记（Remark)
                   - 5.独占清理（cleanup,STW)
                   - 6.并发清理阶段
-                - 回收结果 <!-- fold -->
+                - 回收结果 <!-- markmap: fold -->
                   - 百分百为垃圾的内存分段被回收
                   - 部分为垃圾的内存分段被计算
               - mixedGC
@@ -1882,14 +1882,14 @@
                 - **可预测时间模型(重要)**
               - full GC(失败保护)
                 - 触发
-                - 性能 <!-- fold -->
+                - 性能 <!-- markmap: fold -->
                   - 单线程
                   - 独占式
                   - 高强度
                   - 总之很差
       - 垃圾回收器的选择
 
-  - 问题 <!-- fold -->
+  - 问题 <!-- markmap: fold -->
     - 垃圾收集的算法有哪些？如何判断一个对象是否可以回收？
     - 垃圾收集器工作的基本流程。
     - JVMGC 算法有哪些，目前的 JDK 版本采用什么回收算法
@@ -1914,9 +1914,9 @@
     - CMS 和 G1 了解么，CMS 解决什么问题，说一下回收的过程。
     - CMS 回收停顿了几次，为什么要停顿两次。
 
-### 字节码与类加载子系统 <!-- fold -->
+### 字节码与类加载子系统 <!-- markmap: fold -->
 
-### jvm 监控与调优 <!-- fold -->
+### jvm 监控与调优 <!-- markmap: fold -->
 
 #### 概述
 
@@ -1924,21 +1924,21 @@
 
 #### GUI 监控
 
-#### JVM运行时参数 <!-- fold -->
+#### JVM运行时参数 <!-- markmap: fold -->
 
-- 打印设置的XX选项及值 <!-- fold -->
+- 打印设置的XX选项及值 <!-- markmap: fold -->
   - -XX:+PrintCommandLineFlags:可以让在程序运行前打印出用户手动设置或者JVM自动设置的XX选项
   - -XX:+PrintFlagslnitial:表示打印出所有XX选项的默认值
   - -XX:+PrintFlagsFinal:表示打印出XX选项在运行程序时生效的值
   - -XX:+PrintVMOptions: 打印JVM的参数
 
-- 堆、栈、方法区等内存大小设置 <!-- fold -->
+- 堆、栈、方法区等内存大小设置 <!-- markmap: fold -->
   - 栈
     - -Xss128k
       - 置每个线程的栈大小为128k
       - 等价于 -XX:ThreadStackSize=128k
   - 堆内存
-    - -Xms3550m 
+    - -Xms3550m
       - 等价于-XX:InitialHeapSize,设置JVM初始堆内存为3550M
     - -Xmx3550m
       - 等价于-XX:MaxHeapSize,设置JVM最大堆内存为3550M
@@ -1953,15 +1953,15 @@
       - 设置年轻代中Eden区与一个Survivor区的比值，默认为8
     - -XX:+UseAdaptiveSizePolicy
       - 自动选择各区大小比例
-    - -XX:NewRatio=4 
+    - -XX:NewRatio=4
       - 设置老年代与年轻代（包括1个Eden和2个Survivor区）的比值
-    - -XX:PretenureSizeThreadshold=1024 
+    - -XX:PretenureSizeThreadshold=1024
       - 设置让大于此阅值的对象直接分配在老年代，单位为字节
       - 只对Serial、ParNew收集器有效
     - -XX:MaxTenuringThreshod=15
       - 默认值为15
       - 新生代每次MinorGC后，还存活的对象年龄+1，当年龄大于这个值的时候就进入老年代
-    - -XX:+PrintTenuringDistribution 
+    - -XX:+PrintTenuringDistribution
       - 让JVM在每次MinorGC后打印出当前使用的Survivor中对象的年龄分布
     - -XX:TargetSurvivorRatio:表示MinorGC结束后Survivor区域中占用空间的期望比例
   - 方法区
@@ -1990,7 +1990,7 @@
     - 默认情况下，`-XX:+UseAdaptivePolicy`是开启的
     - 需要显式设置`-XX:SurvivorRatio=8`，才能`Eden : S0 : S1 = 8 : 1 : 1`
 
-- OutofMemory相关的选项 <!-- fold -->
+- OutofMemory相关的选项 <!-- markmap: fold -->
   - -XX:+HeapDumpOnOutOfMemoryError
     - 表示在内存出现OOM的时候，把Heap转存（Dump)到文件以便后续分析
   - -XX:+HeapDumpBeforeFullGC
@@ -2003,13 +2003,13 @@
     - 以部署在linux系统/opt/Server目录下的Server.jar为例
     - （1）在run.sh启动脚本中添加jvm参数
       <!-- WARN: 这里一定要有空行，否则下面代码块显示会有bug -->
-      - 
+      -
          ```bash
          -XX:OnOutOfMemoryError=/opt/Server/restart.sh
          ```
     - （2）restart.sh脚本
       <!--这里一定要有空行 -->
-      - 
+      -
          ```bash
          #!/bin/bash
          # linux环境
@@ -2017,7 +2017,7 @@
          kill -9 $pid
          cd /opt/Server/;sh run.sh
          ```
-      - 
+      -
          ```bash
          # windows环境
          echo off
@@ -2026,22 +2026,22 @@
          start run.bat
          ```
 
-- 查看垃圾回收器 <!-- fold -->
+- 查看垃圾回收器 <!-- markmap: fold -->
   - 查看默认垃圾收集器
   - jvm参数
 
-    - 
+    -
       ```bash
       -XX:+PrintCommandLineFlags  # 查看命令行相关参数(包含使用的垃圾收集器)
       ```
   - jinfo
 
-    - 
+    -
       ```bash
       jinfo -flag 相关垃圾收集器参数 进程ID
       ```
 
-- 非整堆收集垃圾回收器相关参数 <!-- fold -->
+- 非整堆收集垃圾回收器相关参数 <!-- markmap: fold -->
 
   - Serial回收器
     - -XX:+UseSerialGC
@@ -2059,11 +2059,11 @@
     - -XX:+UseParallelGC
       - 手动指定新生代用Parallel并行收集器执行内存回收任务。
       - 默认jdk8是开启的。
-      -  和UseParallelOldGC **相互激活** 
+      -  和UseParallelOldGC **相互激活**
     - -XX:UseParallelOldGC
       - 手动指定老年代使用并行会收收集器。
       - 默认jdk8是开启的。
-      - 和UseParallelGC **相互激活** 
+      - 和UseParallelGC **相互激活**
     - -XX:ParallelGCThreads
       - 设置新生代并行收集器的线程数，一般的，最好与CPU数量相等，以避免过多的线程影响垃圾收集的性能。
       - 默认情况下，当CPU数量小于等于8个，ParallelGCThreads的值等于CPU数量。
@@ -2089,7 +2089,7 @@
       - 开启该参数后会自动将-XX:+UseParNewGC打开。即ParNew（Young区用）+CMS（Old区用）+Serial Old的组合。
     - -XX:CMSInitiatingOccupanyFraction
       - 设置堆内存使用率的阈值，一旦达到阈值，便开始回收。
-      - JDK5及以前的版本的默认值为68，即当老年代的利用率达到68%时，会执行一次CMS回收。 **JDK6及以上版本默认值为92%** 
+      - JDK5及以前的版本的默认值为68，即当老年代的利用率达到68%时，会执行一次CMS回收。 **JDK6及以上版本默认值为92%**
       - 如果内存增长缓慢，这可以设置一个较大的值，大的阈值可以有效降低CMS的出发频率，减少老年代回收的次数可以较为明显地改善应用程序性能。
       - 反之，如果内存使用率增长很快，则应该降低这个阈值，以避免频繁触发老年代串行收集器。因此**通过该选项可以有效降低Full GC的执行次数**。
     - -XX:UseCMSCompactAtFullCollection
@@ -2125,23 +2125,23 @@
     - -XX:+CMSPrecleaningEnabled
       - 指定CMS是否需要进行Pre cleaning这个阶段
 
-- 整堆收集：G1垃圾回收器 <!-- fold -->
+- 整堆收集：G1垃圾回收器 <!-- markmap: fold -->
   -  参数设置
-    - -XX:UseG1GC 
+    - -XX:UseG1GC
       - 手动指定使用G1收集器执行内存回收任务。
     - -XX:G1HeapRegionSize
       - 设置每个Region的大小。值是2的幂，范围是1MB到32MB之间，目标是根据最小的Java堆大小划分出2048个区域。Region默认是堆内存的1/2000。
-    - -XX:MaxGCPauseMillis 
+    - -XX:MaxGCPauseMillis
       - 设置期望达到的最大GC停顿时间指标（JVM会尽力实现，但不保证达到）。默认是200ms。
-    - -XX:ParallelGCThread 
+    - -XX:ParallelGCThread
       - 设置STW时GC线程数的值。最多设置为8。
     - -XX:ConcGCThreads
       - 设置并发标记的线程数，建议将该参数设置为并行垃圾回收线程（ParallelGCThreads）的1/4左右。
-    - -XX:InitiatingHeapOccupancyPercent 
+    - -XX:InitiatingHeapOccupancyPercent
       - 设置触发并发GC周期的Java堆占用阈值。超过此值，就触发GC。默认是45.
-    - -XX:G1NewSizePercent、-XX:G1MaxNewSizePercent 
+    - -XX:G1NewSizePercent、-XX:G1MaxNewSizePercent
       - 新生代占整个堆内存的最小百分比（默认5%）、最大百分比（默认60%）
-    - -XX:G1ReservePercent 
+    - -XX:G1ReservePercent
       - 保留内存区域，防止to space（Survivor中的to区）溢出
   - Mixed GC 调优
     - -XX:InitiatingHeapOccupancyPercent:
@@ -2160,7 +2160,7 @@
       - 默认值是Java堆的10%
 
 
-- GC日志参数 <!-- fold -->
+- GC日志参数 <!-- markmap: fold -->
   - 常用参数
     - -verbose:gc
       - 输出gc日志信息，默认输出到标准输出
@@ -2201,7 +2201,7 @@
     - -XX:GCLogFileSize=1M
       - 控制GC日志文件的大小
 
-- 其他参数 <!-- fold -->
+- 其他参数 <!-- markmap: fold -->
   - -XX:+DisableExplicitGC
     - 禁止hotspot执行System.gc(),默认禁用
   - `-XX:ReservedCodeCacheSize=<n>[g|m]k]、-XX:InitialCodeCacheSize=<n>[g|m]k]`
@@ -2219,12 +2219,12 @@
     - 使用TLAB,默认打开
   - -XX:+PrintTLAB
     - 打印TLAB的使用情况
-  - -XX:TLABSize 
+  - -XX:TLABSize
     - 设置TLAB大小
 
-## 常用框架 <!-- fold -->
+## 常用框架 <!-- markmap: fold -->
 
-### Spring<!-- fold -->
+### Spring<!-- markmap: fold -->
 
 #### 基础
 
@@ -2325,7 +2325,7 @@
       - xml：`aop:aspectj-autoproxy`
       - 注解：`@EnableAspectJAutoProxy`
     - 配置步骤
-    - 切入点表达式 <!-- fold -->
+    - 切入点表达式 <!-- markmap: fold -->
       - execution：用于匹配方法执行的连接点；
       - within：用于匹配指定类型内的方法执行；
       - this：用于匹配当前 AOP 代理对象类型的执行方法；注意是 AOP 代理对象的类型匹配，这样就可能包括引入接口也类型匹配；
@@ -2437,11 +2437,11 @@
   - spring MVC 中的适配器模式
 - 装饰者模式
 
-### SpringMVC <!-- fold -->
+### SpringMVC <!-- markmap: fold -->
 
-### SpringBoot <!-- fold -->
+### SpringBoot <!-- markmap: fold -->
 
-### Mybatis <!-- fold -->
+### Mybatis <!-- markmap: fold -->
 
 - 基本使用
   - xml
@@ -2531,10 +2531,10 @@
       - 触发
 
 - 分页
-  - RowBounds <!-- fold -->
+  - RowBounds <!-- markmap: fold -->
     - 内存分页
     - 返回结果集的子集
-  - 分页插件 <!-- fold -->
+  - 分页插件 <!-- markmap: fold -->
     - 拦截 sql,物理分页
     - `select _ from student`
     - 拦截 sql 后重写为：<br /> `select t._ from （select \* from student）t limit 0，10`
@@ -2543,22 +2543,22 @@
   - 分页插件原理
   - 自定义插件步骤
 
-- 注意 <!-- fold -->
+- 注意 <!-- markmap: fold -->
   - `jdbcType=date`会导致时间插入时丢失时分秒
 
-### Netty <!-- fold -->
+### Netty <!-- markmap: fold -->
 
-### quartz <!-- fold -->
+### quartz <!-- markmap: fold -->
 
-## 测试框架 <!-- fold -->
+## 测试框架 <!-- markmap: fold -->
 
 ### Junit
 
 ### Mockito
 
-## JNI <!-- fold -->
+## JNI <!-- markmap: fold -->
 
-## 工具库 <!-- fold -->
+## 工具库 <!-- markmap: fold -->
 
 ### excel 处理
 
@@ -2582,9 +2582,9 @@
 
 # 数据库
 
-## 关系型数据库 <!-- fold -->
+## 关系型数据库 <!-- markmap: fold -->
 
-### Mysql<!-- fold -->
+### Mysql<!-- markmap: fold -->
 
 #### [三大范式](https://blog.csdn.net/weixin_43649997/article/details/105835007)
 
@@ -2637,17 +2637,17 @@
 
 - 概述
   - 索引是什么
-  - 什么时候需要建索引 <!-- fold -->
+  - 什么时候需要建索引 <!-- markmap: fold -->
     - 不修改
     - 经常作为条件查询，排序，分组
     - 外键
-  - 什么时候不要建索引 <!-- fold -->
+  - 什么时候不要建索引 <!-- markmap: fold -->
     - 用不到
     - 记录少
     - 频繁更新
     - 经常增删
     - 数据重复且分布平均的表字段
-  - 什么时候创建复合索引 <!-- fold -->
+  - 什么时候创建复合索引 <!-- markmap: fold -->
     - 用得到
     - 高并发
     - 一个索引当几个用
@@ -2692,7 +2692,7 @@
   - 索引树结构
   - 二级索引检索过程
 - 常见问题
-  - M 和 I 两者区别 <!-- fold -->
+  - M 和 I 两者区别 <!-- markmap: fold -->
     - 事务
     - 主键
     - 外键
@@ -2709,7 +2709,7 @@
   - **id**
   - select_type
   - table
-  - **type** <!-- fold -->
+  - **type** <!-- markmap: fold -->
     - system
     - const
     - eq_ref
@@ -2850,11 +2850,11 @@
 
 #### 大表调优
 
-### oracle<!-- fold -->
+### oracle<!-- markmap: fold -->
 
-## nosql <!-- fold -->
+## nosql <!-- markmap: fold -->
 
-### Redis<!-- fold -->
+### Redis<!-- markmap: fold -->
 
 - 基本数据类型
   - String
@@ -2865,7 +2865,7 @@
   - Hash
     - 说明
     - 应用场景
-    - 数据结构 <!-- fold -->
+    - 数据结构 <!-- markmap: fold -->
       - 小于(64,512):ziplist
       - 否则：hashtable
 
@@ -2877,14 +2877,14 @@
   - Set
     - 说明
     - 应用场景
-    - 数据结构 <!-- fold -->
+    - 数据结构 <!-- markmap: fold -->
       - 默认使用 IntSet
       - 一定情况下 IntSet 转换为 HashTable
 
   - ZSet
     - 说明
     - 应用场景
-    - 数据结构 <!-- fold -->
+    - 数据结构 <!-- markmap: fold -->
       - 小于(64,512):ziplist
       - 否则：hashtable+skiplist
 
@@ -2972,7 +2972,7 @@
     - 说明
       - 两个端口
       - 集群总线
-      - 数据存取 <!-- fold -->
+      - 数据存取 <!-- markmap: fold -->
         - CRC16
         - hash 槽
         - 重定向
@@ -3004,17 +3004,17 @@
     - 解决方案
 
 - 线程模型
-  - 为什么使用单线程 <!-- fold -->
+  - 为什么使用单线程 <!-- markmap: fold -->
     - 可维护性，方便开发和调试
     - 单线程也能处理并发请求(多路复用)
     - 性能瓶颈不是 cpu，而是内存和网络
-  - 为什么能单线程处理那么多客户端 <!-- fold -->
+  - 为什么能单线程处理那么多客户端 <!-- markmap: fold -->
     - 纯内存
     - 单线程，无锁
     - 多路复用
     - 高效底层数据结构优化
   - 为什么 6.0 前不使用多线程
-  - Redis 6.0 为什么使用多线程 <!-- fold -->
+  - Redis 6.0 为什么使用多线程 <!-- markmap: fold -->
     - 提高网络 io 读写性能
     - `默认禁用`
 
@@ -3035,18 +3035,18 @@
       - 实现可重入:Hash
       - 缺陷
   - 缓存
-    - 旁路缓存模式 <!-- fold -->
+    - 旁路缓存模式 <!-- markmap: fold -->
       - 关联：双写一致问题
     - 读写穿透
     - 异步缓存写入
   - 布隆过滤器
   - 布谷鸟过滤器
 
-### MongoDB<!-- fold -->
+### MongoDB<!-- markmap: fold -->
 
 # 分布式系统
 
-## 分布式理论 <!-- fold -->
+## 分布式理论 <!-- markmap: fold -->
 
 ### 基础理论
 
@@ -3084,9 +3084,9 @@
 
 #### raft
 
-## 高可用 <!-- fold -->
+## 高可用 <!-- markmap: fold -->
 
-## 分布式锁实现 <!-- fold -->
+## 分布式锁实现 <!-- markmap: fold -->
 
 ### 数据库
 
@@ -3096,25 +3096,25 @@
 
 ### etcd
 
-## 分布式协调框架 <!-- fold -->
+## 分布式协调框架 <!-- markmap: fold -->
 
 ### zookeeper
 
-## RPC 框架 <!-- fold -->
+## RPC 框架 <!-- markmap: fold -->
 
 ### SpringCloud
 
-### Dubbo<!-- fold -->
+### Dubbo<!-- markmap: fold -->
 
 # 消息队列
 
-## Kafka<!-- fold -->
+## Kafka<!-- markmap: fold -->
 
-## RocketMQ<!-- fold -->
+## RocketMQ<!-- markmap: fold -->
 
 # 大数据
 
-## 数据采集和传输层 <!-- fold -->
+## 数据采集和传输层 <!-- markmap: fold -->
 
 ### Flume
 
@@ -3122,7 +3122,7 @@
 
 ### Kafka
 
-## 数据存储层 <!-- fold -->
+## 数据存储层 <!-- markmap: fold -->
 
 ### HDFS
 
@@ -3130,7 +3130,7 @@
 
 ### HBase
 
-## 数据分析层 <!-- fold -->
+## 数据分析层 <!-- markmap: fold -->
 
 ### MapReduce
 
@@ -3144,7 +3144,7 @@
 
 ### Mahout
 
-## OLAP 引擎 <!-- fold -->
+## OLAP 引擎 <!-- markmap: fold -->
 
 ### Druid(?)
 
@@ -3154,7 +3154,7 @@
 
 ### Presto(?)
 
-## 资源管理 <!-- fold -->
+## 资源管理 <!-- markmap: fold -->
 
 ### Yarn
 
@@ -3162,11 +3162,11 @@
 
 ### Kubernetes
 
-## 其他 <!-- fold -->
+## 其他 <!-- markmap: fold -->
 
 # 人工智能
 
-## 机器学习 <!-- fold -->
+## 机器学习 <!-- markmap: fold -->
 
 ### sklearn
 
@@ -3193,13 +3193,13 @@
 
 ### XGBoost
 
-## 深度学习 <!-- fold -->
+## 深度学习 <!-- markmap: fold -->
 
 ## opencv
 
 # 前端
 
-## 基础<!-- fold -->
+## 基础<!-- markmap: fold -->
 
 ### html
 
@@ -3211,7 +3211,7 @@
 
 ### 函数库-Jquery
 
-## 深入<!-- fold -->
+## 深入<!-- markmap: fold -->
 
 ### ES6
 
@@ -3221,7 +3221,7 @@
 
 ### scss、less
 
-## 服务端<!-- fold -->
+## 服务端<!-- markmap: fold -->
 
 ### NodeJs
 
@@ -3231,11 +3231,11 @@
 
 ## 前端开发的组件化-webpack
 
-## 框架 <!-- fold -->
+## 框架 <!-- markmap: fold -->
 
 ### 组件化-Vue
 
-- vue 
+- vue
 - 状态管理器-vuex
 
 ### 组件化-React
@@ -3253,7 +3253,7 @@
 
 # 其他
 
-## 鉴权 <!-- fold -->
+## 鉴权 <!-- markmap: fold -->
 
 ## vimscript
 
