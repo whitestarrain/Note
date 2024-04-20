@@ -519,6 +519,7 @@ python
 
 - [python pkg_resouce,setup.py以及entry_points](https://zhuanlan.zhihu.com/p/503252479)
 - [pytest基础使用](https://juejin.cn/post/7221769090834481189)
+- [python, 实现cheatengine类似的功能](https://blog.csdn.net/wuchenlhy/article/details/135976268)
 
 ## base
 
@@ -615,6 +616,10 @@ python
 - [大数据理论体系](https://blog.csdn.net/Shockang/article/details/115609804)
 - [elk 中文指南](https://elkguide.elasticsearch.cn/)
 - [Distributed System: DFS系列 -- NFS, AFS & HDFS（GFS）](https://blog.csdn.net/Firehotest/article/details/69220280)
+- spark 性能提速
+  - [spark arrow-datafusion](https://github.com/apache/arrow-datafusion)
+  - [blaze](https://github.com/kwai/blaze)
+  - [gluten](https://github.com/apache/incubator-gluten)
 
 ## others
 

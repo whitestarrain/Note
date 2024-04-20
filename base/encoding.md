@@ -79,7 +79,7 @@
   new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),"utf-8"));
   ```
 
---- 
+---
 
 - JVM中unicode的桥梁作用：
   - JVM内存都是采用Unicode进行编码，一个char占2个bytes。
@@ -89,15 +89,18 @@
 ## 2.2. 识别
 
 - 检测文件头的字节顺序标识（Byte Order Mark，BOM）
-  > 不是标准，windows程序(如windows记事本)会携带 <br />
-  > Posix系统明确不建议使用字节序掩码EF BB BF
-  ```
-  EF BB BF UTF-8
-  FE FF UTF-16/UCS-2, big endian
-  FF FE UTF-16/UCS-2, little endian
-  FF FE 00 00 UTF-32/UCS-4, little endian.
-  00 00 FE FF UTF-32/UCS-4, big-endian.
-  ```
+  - 不是标准，windows程序(如windows记事本)会携带。一些微软程序、如excel也会基于BOM来识别文本编码
+  - Posix系统明确不建议使用 字节顺序标识(BOM)。不是所有软件都支持BOM。
+  - 如果需要在文件开头提那家 BOM， 可以使用类似 `utf-8-sig` 的文件编码。
+  - 常见BOM：
+
+    ```
+    EF BB BF UTF-8
+    FE FF UTF-16/UCS-2, big endian
+    FF FE UTF-16/UCS-2, little endian
+    FF FE 00 00 UTF-32/UCS-4, little endian.
+    00 00 FE FF UTF-32/UCS-4, big-endian.
+    ```
 
 - 软件自己根据编码规则猜测当前文件的编码。
   - 响应体中的content-type字段中的编码信息
@@ -157,7 +160,7 @@
 - 对于单字节的符号
     ```
   字节的第一位设为 0，后面的7位为这个符号的 Unicode 码，
-  因此对于英文字母，UTF-8 编码和 ASCII 码是相同的。 
+  因此对于英文字母，UTF-8 编码和 ASCII 码是相同的。
     ```
 - 对于n字节的符号（n>1）
   ```
@@ -301,7 +304,7 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 - 问题：在讲抽象字符集ACR的时候曾经提起，UCS是一个**开放字符集**，未来可能有更多的符号加入到这个字符集中来
   - 也就是说UCS需要的**码位**，理论上是**无限**的。
   - 但计算机**整形**能表示的整数范围是有限的
-  - 所以说到底，对 **有限与无限的矛盾，必须通过一种方式进行调和** 
+  - 所以说到底，对 **有限与无限的矛盾，必须通过一种方式进行调和**
   - 这个解决方案，就是**字符编码表(Character Encoding Form)**。
 
 - 字符编码表
