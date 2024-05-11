@@ -2158,7 +2158,7 @@ inputFormat --> inputSplit --> recordReader --> mapper --> outputControler --> (
   ```
   数据仓库（Data Warehouse）是一个面向主题的（Subject Oriented）、集成
   的（Integrated）、相对稳定的（Non-Volatile）、反映历史变化（Time Variant
-  ）的数据集合，用于支持管理决策。
+  ）的数据集合，用于支持管理决策。
   ```
   ```
   数据仓库存放的都是所有历史数据
@@ -2169,7 +2169,7 @@ inputFormat --> inputSplit --> recordReader --> mapper --> outputControler --> (
   - 传统数据库弊端：
     - 无法满足快速增长的海量数据存储需求
     - 无法有效处理不同类型的数据
-    - 计算和处理能力不足
+    - 计算和处理能力不足
 
 
 - hive 数据仓库
@@ -2187,7 +2187,7 @@ inputFormat --> inputSplit --> recordReader --> mapper --> outputControler --> (
         > 放入到 hive
   - 本质：某种程度上可以看作是用户编程接口，本身不存储和处理数据
     - 存储：依赖分布式文件系统HDFS存储数据
-    - 处理：依赖分布式并行计算模型MapReduce处理数据
+    - 处理：依赖分布式并行计算模型MapReduce处理数据
   - 数据仓库内保存数据特点：
     - 时间拉链：按照时间顺序保存数据
     - 历史数据不能修改和删除
@@ -3946,7 +3946,7 @@ Parquet文件是以二进制方式存储的，所以是不可以直接读取的�
     - 负责收集分布在集群中各个Impalad进程的资源信息，用于查询调度
   - CLI
     - 给用户提供查询使用的命令行工具
-    - 还提供了Hue、JDBC及ODBC的使用接口
+    - 还提供了Hue、JDBC及ODBC的使用接口
 
 
 

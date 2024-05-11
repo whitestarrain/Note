@@ -209,6 +209,43 @@ $info command
     - /usr/local/bin 本地增加的命令
     - /usr/local/lib 本地增加的库
 
+<details>
+<summary style="color:red;">cpuinfo说明</summary>
+
+---
+
+```
+processor       : 0 	//系统中逻辑处理核的编号。对于单核处理器，则可认为是其CPU编号，对于多核处理器则可以是物理核、或者使用超线程技术虚拟的逻辑核
+vendor_id       : GenuineIntel //厂商标识
+cpu family      : 64	//CPU产品系列代号
+model           : 79	//CPU属于其系列中的哪一代的代号
+model name      : Intel(R) Xeon(R) CPU E5-2682 v4 @ 2.50GHz	//CPU属于的名字及其编号、标称主频
+stepping        : 1	//CPU属于制作更新版本
+microcode       : 0x1 //微码
+cpu MHz         : 2499.996	//CPU的实际使用主频
+cache size      : 40960 KB	//CPU二级缓存大小
+physical id     : 0	//单个CPU的标号
+siblings        : 1	//单个CPU逻辑物理核数
+core id         : 0	//当前物理核在其所处CPU中的编号
+cpu cores       : 1	//该逻辑核所处CPU的物理核数
+apicid          : 0	//用来区分不同逻辑核的编号，系统中每个逻辑核的此编号必然不同
+initial apicid  : 0	//初始逻辑核的编号
+fpu             : yes	//是否具有浮点运算单元(Floating Point Unit)
+fpu_exception   : yes	//是否支持浮点计算异常
+cpuid level     : 13	//执行cpuid指令前，eax寄存器中的值，根据不同的值cpuid指令会返回不同的内容
+wp              : yes	//表明当前CPU是否在内核态支持对用户空间的写保护(Write Protection)
+flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl eagerfpu pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm rdseed adx smap xsaveopt	//当前CPU支持的功能
+bogomips        : 4999.99	//在系统内核启动时粗略测算的CPU速度(Million Instructions Per Second)
+clflush size    : 64	//每次刷新缓存的大小单位
+cache_alignment : 64	//缓存地址对齐单位
+address sizes   : 46 bits physical, 48 bits virtual	//可访问地址空间位数
+power management:	//对能源管理的支持
+```
+
+---
+
+</details>
+
 ## 2.2. ls, stat, file 文件类型与信息
 
 - 文件类型(`ls -lha`)
@@ -2181,6 +2218,9 @@ nohup 并不支持 bash 内置的指令
 
 ```
 setsid command >/dev/null 2>&1 < /dev/null &
+
+# 示例
+setsid dockerd &> /dev/null < /dev/null &
 ```
 
 基本原理，c实现：

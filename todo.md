@@ -1,3 +1,12 @@
+# 优先级较高项
+
+- csapp
+  - [csapp labs](http://csapp.cs.cmu.edu/3e/labs.html)
+  - [lab 资料](https://hansimov.gitbook.io/csapp/labs/labs-overview)
+- [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
+- ucore
+- 深度学习进阶，自然语言处理
+
 # 待做项(备忘录草稿)
 
 > 完成项会可能继续完善更新，以下不一定为最新。
@@ -206,6 +215,7 @@ python
     - 要看下不kill进程的bug修了没, mac上没问题
 - [jedrzejboczar/possession.nvim](https://github.com/jedrzejboczar/possession.nvim)
   - 感觉能替代startify，通过hooks和user_data
+- [有一些不错的插件](https://innei.in/posts/Z-Turn/nvim-lua-config-init)
 
 ### emacs
 
@@ -520,6 +530,7 @@ python
 - [python pkg_resouce,setup.py以及entry_points](https://zhuanlan.zhihu.com/p/503252479)
 - [pytest基础使用](https://juejin.cn/post/7221769090834481189)
 - [python, 实现cheatengine类似的功能](https://blog.csdn.net/wuchenlhy/article/details/135976268)
+- [dataclass `__hash__` method](https://stackoverflow.com/questions/52390576/how-can-i-make-a-python-dataclass-hashable)
 
 ## base
 
@@ -546,6 +557,9 @@ python
 ### compile
 
 - [在线分析ast语法树](https://astexplorer.net/)
+- [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
+- [Let's Build a Compiler, by Jack Crenshaw](https://compilers.iecc.com/crenshaw/)
+- [The LEMON Parser Generator](https://www.hwaci.com/sw/lemon/)
 
 ### hardware
 
@@ -555,7 +569,7 @@ python
 
 ### git
 
-- [Git搭配.gitattributes强制项目文本使用lf作为换行符](https://anuoua.github.io/2020/05/21/Git%E6%90%AD%E9%85%8D.gitattributes%E5%BC%BA%E5%88%B6%E9%A1%B9%E7%9B%AE%E6%96%87%E6%9C%AC%E4%BD%BF%E7%94%A8lf%E4%BD%9C%E4%B8%BA%E6%8D%A2%E8%A1%8C%E7%AC%A6/)
+- [Git搭配.gitattributes强制项目文本使用lf作为换行符](https://anuoua.github.io/2020/05/21/Git搭配.gitattributes强制项目文本使用lf作为换行符/)
 - [使用 Git 来处理 LF 和 CRLF 的系统差异](https://www.fullstackbb.com/post/handle-line-endings-in-git/)
 - [git ignore binary file](https://gist.github.com/chichunchen/970a7e97c74a253a4503)
 

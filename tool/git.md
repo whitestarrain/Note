@@ -450,6 +450,10 @@
 
 ## 1.18. .gitattributes
 
+**Git 只会在检入与检出时对文件进行处理，具体点说就是 git add 与 git checkout 操作中。因此 Git 并不会自动将工作目录中正在编写的文本文件自动转换换行符。**
+
+### 1.18.1. 使用说明
+
 - .gitattributes示例
 
   ```
@@ -469,11 +473,35 @@
   *.yml text eol=lf
   ```
 
-- 在修改了 core.autocrlf 的配置或者添加 .gitattributes 文件后 ，执行以下命令，修复换行符
+- 修复 **git track文件** 的换行符:
+  - 在修改了 core.autocrlf 的配置或者添加 .gitattributes 文件后 ，执行以下命令
 
   ```
   git add --renormalize .
   ```
+- 从git库中重新checkout出来文件，使工作目录的换行符和git cached的保持一致
+
+  ```
+  # !!要保证当前本地没有任何 change !!
+  git rm --cached -r .
+  git reset --hard HEAD
+  ```
+
+### 1.18.2. 原理说明
+
+> 本地测试结论：
+
+- git add入库后，新文件的换行符会照原样存入git仓库
+- 如果新加 .gitattributes 文件，若有配置换行符，此时git仓库中的所有文件换行符会改为 `\n`
+
+  ```bash
+  # 查看git仓库中的文件换行符
+  git show HEAD:path/to/file | cat -A
+  ```
+- 换行符转换处理
+  - 之后每次暂存入库的时候，会统一转为 `\n`,
+  - 在checkout的时候，会根据.gitattributes中的配置转换为指定换行符
+-
 
 ## 1.19. 别名
 
