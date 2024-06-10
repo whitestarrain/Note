@@ -24,7 +24,7 @@
 
 > 随网站业务的发展,越来越多的用户访问,面临的问题
 > > 性能越来越差
-> > 
+> >
 > > 越来越多的数据导致存储空间不足
 
 ![distribute_system-25](./image/distribute_system-25.png)
@@ -105,7 +105,7 @@
 
 > 随着业务的发展,数据的存储需求和检索需求越来越复杂,面临的问题
 > > **存储的字段差异较大,骷髅表(复杂的业务，不是每个字段都有用，到处空字段)**。
-> > 
+> >
 > > **复杂的文本检索**
 
 ![distribute_system-30](./image/distribute_system-30.png)
@@ -199,7 +199,7 @@
     - 而集群指的是将几台服务器集中在一起，实现同一业务。
   - 包含关系/联系
     - 分布式中的每一个节点，都可以做集群
-    - 而集群并不一定就是分布式的。 
+    - 而集群并不一定就是分布式的。
   - 容错性
     - 分布式，从窄意上理解，也跟集群差不多， 但是它的组织比较松散，不像集群，有一个组织性，一台服务器垮了，其它的服务器可以顶上来。
     - 分布式的每一个节点，都完成不同的业务，一个节点垮了，那这个业务就不可访问了。
@@ -395,9 +395,9 @@
 
 ## 3.1. 幂等
 
-幂等性是数学上的含义是对于参数 x，f(x)=f(f(x));比如绝对值函数。 在分布式环境下表示的是对于同样的请求，在一次或者多次请求的情况下对系统的使用资源是一样的。保证失败重试不会导致提交两次。 
+幂等性是数学上的含义是对于参数 x，f(x)=f(f(x));比如绝对值函数。 在分布式环境下表示的是对于同样的请求，在一次或者多次请求的情况下对系统的使用资源是一样的。保证失败重试不会导致提交两次。
 
-- 方法： 
+- 方法：
   - 带版本号的方式；
   - 采用数据库唯一索引方式；
 
@@ -496,7 +496,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
   - 屏蔽了底层网络编程的具体细节。
 
 - 使用场景
-  - 由于 RPC 固有的消耗相对本地调用高出几个数量级，本地调用的固有消耗是纳秒级，而 RPC 的固有消耗是在毫秒级。 
+  - 由于 RPC 固有的消耗相对本地调用高出几个数量级，本地调用的固有消耗是纳秒级，而 RPC 的固有消耗是在毫秒级。
   - 那么对于**过于轻量的计算任务就并不合适导出远程接口由独立的进程提供服务**
   - 只有**花在计算任务上时间远远高于 RPC 的固有消耗才值得导出为远程接口提供服务**。
 
@@ -656,7 +656,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 # 5. 分布式算法
 
-## 5.1. 分布式事务算法
+## 5.1. 分布式事务算法(共识算法)
 
 ### 5.1.1. 2PC(两阶段提交)
 
@@ -725,7 +725,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
   ![zookeeper-16](./image/zookeeper-16.png)
 
 - 我（`Proposer提案者`）收到回复了，让我看看要怎么搞啊。
-  - **情况1**：当 `Proposer` 收到超过半数的 `accept` 
+  - **情况1**：当 `Proposer` 收到超过半数的 `accept`
     - 那么它这个时候会向所有的 `acceptor` 发送提案的提交请求。
     - 需要注意的是：
       - 因为上述仅仅是超过半数的 `acceptor` 批准执行了该提案内容，其他没有批准的并没有执行该提案内容，
@@ -734,7 +734,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
     ![zookeeper-17](./image/zookeeper-17.png)
 
-  - **情况2**：如果 `Proposer` 如果没有收到超过半数的 `accept` 
+  - **情况2**：如果 `Proposer` 如果没有收到超过半数的 `accept`
     - 那么它将会将 **递增** 该 `Proposal` 的编号，然后 **重新进入 Prepare 阶段** 。
 
 #### 5.1.3.4. Leader的学习
@@ -753,9 +753,9 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
   就这样无休无止的永远提案下去，这就是 `paxos` 算法的死循环问题。
 
-- 解决方案: 就允许一个能提案 
+- 解决方案: 就允许一个能提案
 
-### ZAB
+### 5.1.4. ZAB
 
 - ZAB 协议全称就是 ZooKeeper Atomic Broadcast protocol，是 ZooKeeper 用来实现一致性的算法
 - ZAB 基于 Paxos 算法实现的，不过 ZAB 对 Paxos 进行了很多改进与优化。
@@ -765,11 +765,11 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 - 详细算法：[跳转](../Middleware/zookeeper.md)
 
-### 5.1.4. Raft
+### 5.1.5. Raft
 
 <!-- TODO: 把看完的资料整理一下吧 -->
 
-#### 5.1.4.1. leader election
+#### 5.1.5.1. leader election
 
 > **初次选举**
 
@@ -777,15 +777,15 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 > **再次选举**
 
-#### 5.1.4.2. log replication
+#### 5.1.5.2. log replication
 
-#### 5.1.4.3. safety
+#### 5.1.5.3. safety
 
-#### 5.1.4.4. corner case
+#### 5.1.5.4. corner case
 
-### 5.1.5. 应用
+### 5.1.6. 应用
 
-#### 5.1.5.1. mysql的两段式提交
+#### 5.1.6.1. mysql的两段式提交
 
 > **简单说明**
 
@@ -815,13 +815,13 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
 [Mysql笔记，XA章节](../database/mysql.md)
 
-#### 5.1.5.2. zookeeper 的ZAB使用paxos
+#### 5.1.6.2. zookeeper 的ZAB使用paxos
 
 [跳转](../Middleware/zookeeper.md)
 
-#### 5.1.5.3. Mysql:5.7开始，支持group replication，采用Paxos
+#### 5.1.6.3. Mysql:5.7开始，支持group replication，采用Paxos
 
-#### 5.1.5.4. MongoDB:从3.4开始，支持类raft复制协议
+#### 5.1.6.4. MongoDB:从3.4开始，支持类raft复制协议
 
 ## 5.2. 分布式缓存算法
 
@@ -855,11 +855,11 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 
       public static void main(String[] args) {
           SimpleHash simpleHash = new SimpleHash(2 << 12, 8);
-          System.out.println("node_number=hash(\"semlinker\") % 3 -> " + 
+          System.out.println("node_number=hash(\"semlinker\") % 3 -> " +
             simpleHash.hash("semlinker") % 3);
-          System.out.println("node_number=hash(\"kakuqo\") % 3 -> " + 
+          System.out.println("node_number=hash(\"kakuqo\") % 3 -> " +
             simpleHash.hash("kakuqo") % 3);
-          System.out.println("node_number=hash(\"test\") % 3 -> " + 
+          System.out.println("node_number=hash(\"test\") % 3 -> " +
             simpleHash.hash("test") % 3);
       }
   }
@@ -871,7 +871,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
 > **业务场景**
 
 - 缓存节点减少：
-  - 说明：在分布式多节点系统中，出现故障很常见，任何节点都可能在没有任何事先通知的情况下挂掉，针对这种情况我们期望系统只是出现性能降低，正常的功能不会受到影响。 
+  - 说明：在分布式多节点系统中，出现故障很常见，任何节点都可能在没有任何事先通知的情况下挂掉，针对这种情况我们期望系统只是出现性能降低，正常的功能不会受到影响。
   - 传统hash算法表现：假设其中 1 个节点出现故障，这时节点数发生了变化，节点个数从 3 减少为 2，此时表格的状态发生了变化：
     > ![distribute_system-15](./image/distribute_system-15.png)
   - 弊端：
@@ -942,7 +942,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
   > ![distribute_system-19](./image/distribute_system-19.png)
 - 服务器减少情况
   - 假设 cs3 服务器出现故障导致服务下线，这时原本存储于 cs3 服务器的对象 o4，需要被重新分配至 cs2 服务器，其它对象仍存储在原有的机器上。
-  > ![distribute_system-20](./image/distribute_system-20.png) 
+  > ![distribute_system-20](./image/distribute_system-20.png)
 
 - 虚拟节点
   - 出现原因:
@@ -969,7 +969,7 @@ import java.util.TreeMap;
 
 public class ConsistentHashingWithoutVirtualNode {
     //待添加入Hash环的服务器列表
-    private static String[] servers = {"192.168.0.1:8888", "192.168.0.2:8888", 
+    private static String[] servers = {"192.168.0.1:8888", "192.168.0.2:8888",
       "192.168.0.3:8888"};
 
     //key表示服务器的hash值，value表示服务器
@@ -1052,20 +1052,20 @@ TODO: 分布式复制模型 理论整理，之后再融到整个文件中。
 ### 5.3.1. 复制的目的
 
 - 在分布式系统中，数据通常需要被分散在多台机器上，主要为了达到以下目的：
-  - **扩展性** 
+  - **扩展性**
     - 数据量因读写负载巨大，一台机器无法承载
     - 数据分散在多台机器上可以有效地进行负载均衡，达到灵活的横向扩展。
-  - **容错、高可用** 
+  - **容错、高可用**
     - 在分布式系统中，单机故障是常态，在单机故障下仍然希望系统能够正常工作，这时候就需要数据在多台机器上做冗余
     - 在遇到单机故障时其他机器就可以及时接管。
-  - **统一的用户体验** 
+  - **统一的用户体验**
     - 如果系统客户端分布在多个地域，通常考虑在多个地域部署服务
     - 以方便用户能够就近访问到他们所需要的数据，获得统一的用户体验。
 
 - 数据的多机分布的方式主要有两种
   - 一种是将数据 **分片保存** ，每个机器保存数据的部分分片（Kafka中称为Partition，其他部分系统称为Shard）
   - 另一种则是 **完全的冗余** ，其中每一份数据叫做一个副本（Kafka中称为Replica），通过数据复制技术实现
-  - 在分布式系统中，两种方式通常会 **共同使用** 
+  - 在分布式系统中，两种方式通常会 **共同使用**
     - 最后的数据分布往往是下图的样子，一台机器上会保存不同数据分片的若干个副本
 
   ![distribute_system-45](./image/distribute_system-45.png)
@@ -1102,14 +1102,14 @@ TODO: 分布式复制模型 理论整理，之后再融到整个文件中。
 > 如上图所示，在这个时间窗口中，任何情况都有可能发生。
 > 在这种情况下，客户端何时算写入完成，会决定其他客户端读到数据的可能性。
 
-- 这里我们假设这份数据有 **一个主副本和一个从副本** 
+- 这里我们假设这份数据有 **一个主副本和一个从副本**
   - 如果主副本保存后即向客户端返回成功，这样叫做 **异步复制** （1）。
   - 而如果等到数据传送到从副本1，并得到确认之后再返回客户端成功，称为 **同步复制** （2）。
   - 这里我们先假设系统正常运行，在异步同步下
     - 如果从副本承担读请求，假设reader1和reader2同时在客户端收到写入成功后发出读请求
     - 两个reader就可能读到不一样的值。
   - 为了避免这种情况，实际上有两种角度的做法
-    - 第一种角度是让客户端 **只从主副本读取数据** 
+    - 第一种角度是让客户端 **只从主副本读取数据**
       - 这样，在正常情况下，所有客户端读到的数据一定是一致的（Kafka当前的做法）
       - 但如果仅采用异步复制并由主副本承担读请求，当主节点故障发生切换时，一样会发生数据不一致的问题。
     - 另一种角度则是 **采用同步复制**
@@ -1153,7 +1153,7 @@ TODO: 分布式复制模型 理论整理，之后再融到整个文件中。
 ### 5.4.2. snowflake (Twitter)
 
 ### 5.4.3. leaf (美团)
- 
+
 ## 5.5. 其他重要分布式协议
 
 ### 5.5.1. Gossip 协议
@@ -1271,5 +1271,6 @@ TODO: 分布式复制模型 理论整理，之后再融到整个文件中。
 - [ ] [Replication（下）：事务，一致性与共识](https://tech.meituan.com/2022/08/25/replication-in-meituan-02.html)
 - [ ] [《数据密集型应用系统设计（DDIA）》]()
 - [ ] [阿里微服务生态体系](https://seata.io/zh-cn/)
+- [ ] [分布式数据库的一致性问题与共识算法](https://thiscute.world/posts/consistency-and-consensus-algorithm/)
 
 

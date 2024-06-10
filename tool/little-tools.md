@@ -178,6 +178,12 @@ vim like 键位的日程管理工具
 
 [whistle](https://github.com/avwo/whistle)
 
+# charm 开源终端工具集
+
+## vhs
+
+制作终端gif
+
 # CR常见术语
 
 - CR: Code Review. 请求代码审查。

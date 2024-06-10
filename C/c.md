@@ -24151,3 +24151,5 @@ Content-Type: text/html
 - [ ] [system-v-与-posix-简介与对比](https://www.lizhongyi.com/archives/system-v-与-posix-简介与对比/)
 - [ ] [信号量--System V信号量 与 Posix信号量](https://cloud.tencent.com/developer/article/1686386)
 - [ ] [C标准库 POSIX库 glibc库有什么关系](https://broadgeek.com/2022/04/20/5398/)
+- [ ] [Linux部署程序之glibc兼容性问题](https://blog.csdn.net/wf19930209/article/details/131833531)
+  - patchelf等方式处理兼容性问题

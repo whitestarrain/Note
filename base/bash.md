@@ -1113,6 +1113,12 @@ IFS=$' \n\t'
 # 使用 read 切分为数组. `-d ''` 使读到newline时不自动停止
 IFS=$'\n' read -r -d '' -a arr2 <<< "$mul"
 echo ${#arr2[@]}
+
+# 使用while read
+while read line;
+do
+  echo $line
+done < <(echo "${mul}")
 ```
 
 # 字典

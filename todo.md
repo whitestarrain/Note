@@ -216,6 +216,9 @@ python
 - [jedrzejboczar/possession.nvim](https://github.com/jedrzejboczar/possession.nvim)
   - 感觉能替代startify，通过hooks和user_data
 - [有一些不错的插件](https://innei.in/posts/Z-Turn/nvim-lua-config-init)
+- [Astronvim里面的插件可以借鉴一下](https://github.com/AstroNvim/AstroNvim)
+- [nvim-java-ide](https://sookocheff.com/post/vim/neovim-java-ide/)
+- [非常完整的vim学习笔记](https://yyq123.github.io/learn-vim/)
 
 ### emacs
 
@@ -508,6 +511,8 @@ python
   - [tlp 配置参数](https://blog.deepin.org/posts/tlp-power-management/)
   - [Restart TLP service without rebooting system](https://askubuntu.com/questions/1242991/restart-tlp-service-without-rebooting-system)
 - [风扇控制](https://zhuanlan.zhihu.com/p/55859374)
+- [mosh 通过 ssf 进行tcp连接](https://github.com/mobile-shell/mosh/issues/13)
+  - 主要是为了解决cpolar不支持udp的问题，抽时间可以研究下
 
 ## lang
 

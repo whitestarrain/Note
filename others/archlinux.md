@@ -484,7 +484,7 @@ archlinux 较多使用networkmanager进行网络管理，最好了解一下其�
 方式：
 
 1. 手动修改`/etc/NetworkManger/system-connection` 下的配置文件来配置网络
-2. `nmuitui` tui界面配置（推荐）
+2. `nmtui` tui界面配置（推荐）
 3. 命令行配置
 
 命令行配置说明：
@@ -665,6 +665,16 @@ cat /etc/fstab
 
 initramfs 和 内核版本不匹配
 
+### 4.4.3. cpio备份 /boot
+
+```bash
+# 备份
+sudo find /boot -print | cpio -ocvB > ~/bak/boot_kernel_6_9_3.cpio
+
+# 还原
+cpio –icduv < /opt/etc.cpio
+```
+
 # 5. 显示服务器(后端)
 
 ## 5.1. X Window System
@@ -704,7 +714,7 @@ initramfs 和 内核版本不匹配
 - 然后引导进入桌面，至此任务完成，之后就交给kde或i3wm管理桌面了。
 - **可以不需要DM，直接通过startx脚本命令进入桌面** 。
 
-## pacman 常用命令
+# 7. pacman 常用命令
 
 ```bash
 pacman --help
@@ -734,9 +744,15 @@ pacman -Fl package
 # 在所有包中查找哪些包包含指定文件
 pacman -F filename
 pacman -Fx regex
+
+# 从安装缓存中恢复指定包的版本
+pacman -U /var/cache/pacman/pkg/xxx.zst
+
+# 从网络源中恢复指定包的版本
+pacman -U https://archive.archlinux.org/packages/n/neovim/
 ```
 
-# 7. 参考资料
+# 8. 参考资料
 
 - 基础理论
   - [ ] [Arch入门指南](https://zhuanlan.zhihu.com/p/561081661)
