@@ -1,9 +1,14 @@
 # 优先级较高项
 
+- [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
+  - 编译原理打算复习一下大学资料的，一直没时间看
+- emacs, elisp
+  - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
+  - [面向产品经理的emacs教程](https://remacs.fun/posts/面向产品经理的emacs教程1.-emacs初识/)
+- 博客里面，写上今年规划，以及多写一些博客吧
 - csapp
   - [csapp labs](http://csapp.cs.cmu.edu/3e/labs.html)
   - [lab 资料](https://hansimov.gitbook.io/csapp/labs/labs-overview)
-- [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
 - ucore
 - 深度学习进阶，自然语言处理
 

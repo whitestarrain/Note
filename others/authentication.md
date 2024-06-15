@@ -244,7 +244,7 @@
 
 - 进一步抽象
   > 在 NIST 的描述中，我们对 ACM 内部进行进一步的抽象，可以得出这两个核心模块
-  - Policy Decision Point (PDP) 
+  - Policy Decision Point (PDP)
   - Policy Enforcement Point (PEP)
 
   > ![authen-13](./image/authen-13.png)
@@ -298,7 +298,7 @@
     - 而 permission 如果到了针对单个病人的情况下，是绝对多如牛毛的，特别是有两个叫做老张的病人时。
   - 往往，我们会使用 JSON 或者 XML 定义这个 policy，那么，这一切都可以完全自动化，而不需要使用管理员点击
   - 再现实一些的话，我们可以完全实现一个审批的流程，如果你使用过 Google Drive，你会对这个请求访问的过程绝不陌生。
-    > ![authen-15](./image/authen-15.png) 
+    > ![authen-15](./image/authen-15.png)
 
 - 动态的总体控制
   - Environment conditions 也能够提供统一的系统级别的控制
@@ -513,6 +513,8 @@ Access Control List
 
 # 3. 鉴权方法
 
+TODO: 根据 postman 中 支持的 Authentication 方法分类
+
 ## 3.1. HTTP Basic Authentication
 
 ### 3.1.1. 说明
@@ -528,7 +530,7 @@ Access Control List
   - 此时，假设客户端尚未被验证，则客户端提供如下请求至服务器:
 
   ```http
-    Get /index.html HTTP/1.0 
+    Get /index.html HTTP/1.0
     Host:www.google.com
   ```
 
@@ -537,10 +539,10 @@ Access Control List
   - 如果没有客户端不会弹出用户名和密码输入界面）服务器返回的数据大抵如下：
 
   ```http
-    HTTP/1.0 401 Unauthorised 
-    Server: SokEvo/1.0 
-    WWW-Authenticate: Basic realm=”google.com” 
-    Content-Type: text/html 
+    HTTP/1.0 401 Unauthorised
+    Server: SokEvo/1.0
+    WWW-Authenticate: Basic realm=”google.com”
+    Content-Type: text/html
     Content-Length: xxx
   ```
 
@@ -551,8 +553,8 @@ Access Control List
 - 用户输入用户名和密码后，将用户名及密码以BASE64加密方式加密，并将密文放入前一条请求信息中，则客户端发送的第一条请求信息则变成如下内容：
 
   ```http
-    Get /index.html HTTP/1.0 
-    Host:www.google.com 
+    Get /index.html HTTP/1.0
+    Host:www.google.com
     Authorization: Basic d2FuZzp3YW5n
   ```
 
@@ -626,9 +628,9 @@ Access Control List
           send('./Authentication_base');
           })
           var send = function(url){
-                $.ajax({ 
-                url : url, 
-                method : 'GET', 
+                $.ajax({
+                url : url,
+                method : 'GET',
               });
           }
         </script>
@@ -680,7 +682,7 @@ http.createServer((req, res) => {
     res.setHeader('Set-Cookie', 'name=zhunny')
     res.end('Hello Cookie')
   }
-}).listen(3000) 
+}).listen(3000)
 ```
 
 ### 3.2.2. session说明
@@ -735,7 +737,7 @@ http.createServer((req, res) => {
 
 ### 3.2.5. 缺点
 
-- **①** **占资源：** 
+- **①** **占资源：**
   - 每个用户经过我们的应用认证之后，我们的应用都要在服务端做一次记录，以方便用户下次请求的鉴别，
   - 通常而言session都是保存在内存中，而随着认证用户的增多，服务端的开销会明显增大。
     - 为了满足全局一致性，我们最好把 `session` 存储在 `redis` 中做持久化，
@@ -819,7 +821,7 @@ http.createServer((req, res) => {
     - 公共的声明：7个官方字段
       <details>
       <summary style="color:red;">官方字段</summary>
-      
+
         ```
         iss: jwt签发者
         sub: jwt所面向的用户
@@ -951,7 +953,7 @@ http.createServer((req, res) => {
       console.log(ctx.state.user);
       ctx.body = {
         message: "获取数据成功",
-        userinfo: ctx.state.user.data 
+        userinfo: ctx.state.user.data
       };
     }
   )
@@ -1038,4 +1040,5 @@ http.createServer((req, res) => {
 - [NIST (美国国家标准技术研究所) 的 ABAC 的定义与实现考虑，最重要的资料](https://nvlpubs.nist.gov/nistpubs/specialpublications/NIST.SP.800-162.pdf) 待阅读
 - [一文读懂 AWS IAM - 知乎](https://zhuanlan.zhihu.com/p/111676632) 待整理
 - [权限系统设计](https://zhuanlan.zhihu.com/p/362733752)
+- [OAuth2 Bearer Token](https://datatracker.ietf.org/doc/html/rfc6750#section-1.2)
 
