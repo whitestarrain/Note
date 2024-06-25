@@ -12,7 +12,7 @@
 - 数组的创建：
 
   - np.array([1, 2.1, 3, 4], dtype='float32')
-    - 如果不添加dtype参数，类型不一致时， NumPy 将会向上转换（如果可行） 
+    - 如果不添加dtype参数，类型不一致时， NumPy 将会向上转换（如果可行）
   - np.zeros(10, dtype=int)
     - zeros 将数组元素都填充为 0，10 是数组长度
   - np.ones((3, 5), dtype=float)
@@ -90,7 +90,7 @@ In [1]: import numpy as np
 In [2]: arr = np.arange(0,25).reshape(5,5)
 
 In [3]: arr
-Out[3]: 
+Out[3]:
 array([[ 0,  1,  2,  3,  4],
       [ 5,  6,  7,  8,  9],
       [10, 11, 12, 13, 14],
@@ -114,23 +114,23 @@ array([[ 0,  1,  2,  3,  4],
   ```python
   In [12]: arr[0]
   Out[12]: array([0, 1, 2, 3, 4])
-  
+
   # 获取子数组
   In [13]: arr[0][1:3]
   Out[13]: array([1, 2])
-  
+
   # 从头
   In [14]: arr[0][:3]
   Out[14]: array([0, 1, 2])
-  
+
   # 到尾
   In [15]: arr[0][3:]
   Out[15]: array([3, 4])
-  
+
   # 跳选
   In [16]: arr[0][::2]
   Out[16]: array([0, 2, 4])
-  
+
   # 跳选，逆序
   In [17]: arr[0][::-2]
   Out[17]: array([4, 2, 0])
@@ -142,12 +142,12 @@ array([[ 0,  1,  2,  3,  4],
 
   ```python
   In [18]: arr[1:3,2:5]
-  Out[18]: 
+  Out[18]:
   array([[ 7,  8,  9],
         [12, 13, 14]])
 
   In [19]: arr[::-1,::-1]
-  Out[19]: 
+  Out[19]:
   array([[24, 23, 22, 21, 20],
          [19, 18, 17, 16, 15],
          [14, 13, 12, 11, 10],
@@ -192,7 +192,7 @@ In [1]: import numpy as np
 In [2]: arr = np.arange(0,25).reshape(5,5)
 
 In [3]: arr
-Out[3]: 
+Out[3]:
 array([[ 0,  1,  2,  3,  4],
       [ 5,  6,  7,  8,  9],
       [10, 11, 12, 13, 14],
@@ -206,12 +206,12 @@ array([[ 0,  1,  2,  3,  4],
 
   ```python
   In [3]: arr.reshape(1,25)
-  Out[3]: 
+  Out[3]:
   array([[ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
           16, 17, 18, 19, 20, 21, 22, 23, 24]])
 
   In [5]: arr.reshape((1,5,5))
-  Out[5]: 
+  Out[5]:
   array([[[ 0,  1,  2,  3,  4],
           [ 5,  6,  7,  8,  9],
           [10, 11, 12, 13, 14],
@@ -222,7 +222,7 @@ array([[ 0,  1,  2,  3,  4],
 
   ```python
   In [6]: arr[np.newaxis,:]
-  Out[6]: 
+  Out[6]:
   array([[[ 0,  1,  2,  3,  4],
           [ 5,  6,  7,  8,  9],
           [10, 11, 12, 13, 14],
@@ -232,7 +232,7 @@ array([[ 0,  1,  2,  3,  4],
   Out[9]: (1, 5, 5)
 
   In [7]: arr[:,np.newaxis]
-  Out[7]: 
+  Out[7]:
   array([[[ 0,  1,  2,  3,  4]],
 
         [[ 5,  6,  7,  8,  9]],
@@ -260,20 +260,20 @@ array([[ 0,  1,  2,  3,  4],
 
   ```python
   In [21]: z
-  Out[21]: 
+  Out[21]:
   array([[1, 2, 3],
         [3, 2, 1]])
 
   In [22]: np.concatenate([z,z])
-  Out[22]: 
+  Out[22]:
   array([[1, 2, 3],
         [3, 2, 1],
         [1, 2, 3],
         [3, 2, 1]])
 
   In [23]: np.concatenate([z,z],axis=1)
-  Out[23]: 
-  array([[1, 2, 3, 1, 2, 3], 
+  Out[23]:
+  array([[1, 2, 3, 1, 2, 3],
         [3, 2, 1, 3, 2, 1]])
   ```
 
@@ -284,7 +284,7 @@ array([[ 0,  1,  2,  3,  4],
 
   ```python
   In [7]: z
-  Out[7]: 
+  Out[7]:
   array([[1, 2, 3],
         [3, 2, 1]])
 
@@ -292,15 +292,15 @@ array([[ 0,  1,  2,  3,  4],
   Out[14]: (1, 1, 1, 2, 3)
 
   # 相当于 concatenate([,],axis=0)
-  In [15]: np.vstack([z[np.newaxis,np.newaxis,np.newaxis,:,:],z[np.newaxis,np.newaxis,np.newaxis,:,:]]).shape  
+  In [15]: np.vstack([z[np.newaxis,np.newaxis,np.newaxis,:,:],z[np.newaxis,np.newaxis,np.newaxis,:,:]]).shape
   Out[15]: (2, 1, 1, 2, 3)
 
   # 相当于 concatenate([,],axis=1)
-  In [13]: np.hstack([z[np.newaxis,np.newaxis,np.newaxis,:,:],z[np.newaxis,np.newaxis,np.newaxis,:,:]]).shape  
+  In [13]: np.hstack([z[np.newaxis,np.newaxis,np.newaxis,:,:],z[np.newaxis,np.newaxis,np.newaxis,:,:]]).shape
   Out[13]: (1, 2, 1, 2, 3)
 
   # 相当于 concatenate([,],axis=2)
-  In [16]: np.dstack([z[np.newaxis,np.newaxis,np.newaxis,:,:],z[np.newaxis,np.newaxis,np.newaxis,:,:]]).shape  
+  In [16]: np.dstack([z[np.newaxis,np.newaxis,np.newaxis,:,:],z[np.newaxis,np.newaxis,np.newaxis,:,:]]).shape
   Out[16]: (1, 1, 2, 2, 3)
 
   ```
@@ -421,7 +421,7 @@ array([[ 0,  1,  2,  3,  4],
   print("gamma(x)     =", special.gamma(x)) # 伽玛函数
   print("ln|gamma(x)| =", special.gammaln(x)) # 伽玛函数的自然对数
   print("beta(x, 2)   =", special.beta(x, 2)) # 贝塔函数（第一类欧拉积分）
-  
+
   # 误差函数 (高斯函数积分)
   # 互补误差函数，逆误差函数
   x = np.array([0, 0.3, 0.7, 1.0])
@@ -436,18 +436,18 @@ array([[ 0,  1,  2,  3,  4],
 
   ```python
   In [12]: x = np.arange(5)
-  
+
   In [13]: y = np.empty(5)
-  
+
   In [14]: y
-  Out[14]: 
+  Out[14]:
   array([6.95288142e-310, 9.50182622e-312, 0.00000000e+000, 6.95288139e-310,
         0.00000000e+000])
-  
+
   # 指定将结果输出到y中
   In [15]: np.multiply(x, 10, out=y)
   Out[15]: array([ 0., 10., 20., 30., 40.])
-  
+
   In [16]: y
   Out[16]: array([ 0., 10., 20., 30., 40.])
   ```
@@ -527,7 +527,7 @@ array([[ 0,  1,  2,  3,  4],
     Out[82]: (2, 3, 4)
 
     In [83]: np.sum(arr1,axis=0)
-    Out[83]: 
+    Out[83]:
     array([[12, 14, 16, 18],
           [20, 22, 24, 26],
           [28, 30, 32, 34]])
@@ -618,7 +618,7 @@ array([[ 0,  1,  2,  3,  4],
     # shape为(2,1)的索引数组中，每个元素会索引到arr指定位置的一级元素。
     # 结果shape就成了 (2,1,5)
   In [34]: arr[[[1],[2]]]
-  Out[34]: 
+  Out[34]:
   array([[[ 5,  6,  7,  8,  9]],
 
         [[10, 11, 12, 13, 14]]])
@@ -641,7 +641,7 @@ array([[ 0,  1,  2,  3,  4],
     # 此处必须加一个维度，(3,1)可以广播到(3,4)
     # 否则(3,)会广播失败
   In [43]: X[row[:,np.newaxis]]
-  Out[43]: 
+  Out[43]:
   array([[[ 0,  1,  2,  3]],
 
         [[ 4,  5,  6,  7]],
@@ -650,14 +650,14 @@ array([[ 0,  1,  2,  3,  4],
 
   # 同时使用mask对axis = 1 进行取值。结果shape为(3,2)
   In [42]: X[row[:, np.newaxis], mask]
-  Out[42]: 
+  Out[42]:
   array([[ 0,  2],
          [ 4,  6],
          [ 8, 10]])
 
   # 同时对 axis=1 进行切片。shape为 (3,1,2)
   In [53]: X[row[:, np.newaxis], 1:3]
-  Out[53]: 
+  Out[53]:
   array([[[ 1,  2]],
         [[ 5,  6]],
         [[ 9, 10]]])
@@ -711,7 +711,7 @@ array([[ 0,  1,  2,  3,  4],
  name = ['Alice', 'Bob', 'Cathy', 'Doug']
  age = [25, 45, 37, 19]
  weight = [55.0, 85.5, 68.0, 61.5]
- 
+
  # 使用复合的dtype参数来创建结构化数组
  data = np.zeros(4, dtype={'names':('name', 'age', 'weight'),
                            'formats':('U10', 'i4', 'f8')})
@@ -780,13 +780,13 @@ array([[ 0,  1,  2,  3,  4],
   ```python
   In [32]: s1 = pd.Series({"a":1,"b":2})
   In [38]: pd.DataFrame(s1)
-  Out[38]: 
+  Out[38]:
      0
   a  1
   b  2
 
   In [39]: pd.DataFrame(s1,columns=["c1"])
-  Out[39]: 
+  Out[39]:
      c1
   a   1
   b   2
@@ -797,19 +797,19 @@ array([[ 0,  1,  2,  3,  4],
   In [32]: s1 = pd.Series({"a":1,"b":2})
   In [33]: s2 = pd.Series({"b":2,"c":3})
   In [34]: s1
-  Out[34]: 
+  Out[34]:
   a    1
   b    2
   dtype: int64
 
   In [35]: s2
-  Out[35]: 
+  Out[35]:
   b    2
   c    3
   dtype: int64
 
   In [37]: pd.DataFrame({"s1":s1,"s2":s2})
-  Out[37]: 
+  Out[37]:
       s1   s2
   a  1.0  NaN
   b  2.0  2.0
@@ -821,7 +821,7 @@ array([[ 0,  1,  2,  3,  4],
   In [26]: data = [{'a': i, 'b': 2 * i} for i in range(3)]
 
   In [27]: pd.DataFrame(data)
-  Out[27]: 
+  Out[27]:
      a  b
   0  0  0
   1  1  2
@@ -835,14 +835,14 @@ array([[ 0,  1,  2,  3,  4],
 
   ```python
   In [46]: pd.DataFrame(np.arange(0,6).reshape(3,2))
-  Out[46]: 
+  Out[46]:
      0  1
   0  0  1
   1  2  3
   2  4  5
 
   In [44]: pd.DataFrame(np.arange(0,6).reshape(3,2), columns=['foo', 'bar'], index=['a', 'b', 'c'])
-  Out[44]: 
+  Out[44]:
       foo  bar
   a    0    1
   b    2    3
@@ -853,9 +853,9 @@ array([[ 0,  1,  2,  3,  4],
 
   ```python
   In [53]: A = np.zeros(3, dtype=[('A', 'i8'), ('B', 'f8')])
-  
+
   In [54]: pd.DataFrame(A)
-  Out[54]: 
+  Out[54]:
      A    B
   0  0  0.0
   1  0  0.0
@@ -889,7 +889,7 @@ array([[ 0,  1,  2,  3,  4],
   ```
 
   - index对象与numpy对象区别
-    - Index 对象与 NumPy 数组之间的不同在于， Index 对象的索引是不可变的， 
+    - Index 对象与 NumPy 数组之间的不同在于， Index 对象的索引是不可变的，
     - 也就是说不能通过通常的方式进行调整
 
 - 看作有序集合 可以进行集合运算
@@ -903,7 +903,7 @@ array([[ 0,  1,  2,  3,  4],
   Out[64]: Int64Index([3, 5, 7], dtype='int64') # Use index.intersection(other) instead
 
   In [65]: indA | indB
-  Out[65]: Int64Index([1, 2, 3, 5, 7, 9, 11], dtype='int64') # Use index.union(other) instead.        
+  Out[65]: Int64Index([1, 2, 3, 5, 7, 9, 11], dtype='int64') # Use index.union(other) instead.
 
   In [66]: indA ^ indB
   Out[66]: Int64Index([1, 2, 9, 11], dtype='int64') # Use index.symmetric_difference(other) instead
@@ -936,14 +936,14 @@ In [7]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
   ```python
   # 包含头尾
   In [12]: se["a":"b"]
-  Out[12]: 
+  Out[12]:
   a    0
   b    1
   dtype: int32
 
   # 不包含尾
   In [15]: se[0:1]
-  Out[15]: 
+  Out[15]:
   a    0
   dtype: int32
   ```
@@ -952,7 +952,7 @@ In [7]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
 
   ```python
   In [20]: se>2
-  Out[20]: 
+  Out[20]:
   a    False
   b    False
   c    False
@@ -961,7 +961,7 @@ In [7]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
   dtype: bool
 
   In [21]: se[se>2]
-  Out[21]: 
+  Out[21]:
   d    3
   e    4
   dtype: int32
@@ -971,7 +971,7 @@ In [7]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
 
   ```python
   In [24]: se[["a","b"]]
-  Out[24]: 
+  Out[24]:
   a    0
   b    1
   dtype: int32
@@ -981,7 +981,7 @@ In [7]: se = pd.Series(arr[0],index=["a","b","c","d","e"])
 
 ```python
 In [9]: df
-Out[9]: 
+Out[9]:
     a1  b1  c1  d1  e1
 a1  24  23  22  21  20
 b1  19  18  17  16  15
@@ -996,14 +996,14 @@ e1   4   3   2   1   0
   ```python
   # 显式切片
   In [7]: df['a1':'b1']
-  Out[7]: 
+  Out[7]:
       a1  b1  c1  d1  e1
   a1  24  23  22  21  20
   b1  19  18  17  16  15
-  
+
   # 隐式切片
   In [8]: df[0:1]
-  Out[8]: 
+  Out[8]:
       a1  b1  c1  d1  e1
   a1  24  23  22  21  20
 
@@ -1017,7 +1017,7 @@ e1   4   3   2   1   0
 
   ```python
   In [10]: df["a1"]
-  Out[10]: 
+  Out[10]:
   a1    24
   b1    19
   c1    14
@@ -1031,7 +1031,7 @@ e1   4   3   2   1   0
 
   ```python
   In [37]: df[['a1','b1']]
-  Out[37]: 
+  Out[37]:
       a1  b1
   a1  24  23
   b1  19  18
@@ -1052,6 +1052,7 @@ e1   4   3   2   1   0
   - loc 属性允许用户永远使用 **显式索引** 来进行 **定位和切片** ， **包含头尾**
   - 逗号前是对index进行选取，逗号后是对column_name进行选取
   - 可以结合mask和高级索引模式: `data.loc[data.density > 100, ['pop', 'density']]`
+  - 索引顺序是与维度顺序一致
 
 ---
 
@@ -1059,7 +1060,7 @@ e1   4   3   2   1   0
 
   ```python
   In [10]: df.loc['a1':'b1','a1':'c1']
-  Out[10]: 
+  Out[10]:
       a1  b1  c1
   a1  24  23  22
   b1  19  18  17
@@ -1069,7 +1070,7 @@ e1   4   3   2   1   0
 
   ```python
   In [11]: df.loc[['a1','b1'],['a1','c1']]
-  Out[11]: 
+  Out[11]:
       a1  c1
   a1  24  22
   b1  19  17
@@ -1080,7 +1081,7 @@ e1   4   3   2   1   0
 
   ```python
   In [18]: df.loc['a1']
-  Out[18]: 
+  Out[18]:
   a1    24
   b1    23
   c1    22
@@ -1091,7 +1092,7 @@ e1   4   3   2   1   0
   # 不使用索引器，是对column_name进行取值
   # 下面等同于 df.loc[:,'a1']
   In [20]: df['a1']
-  Out[20]: 
+  Out[20]:
   a1    24
   b1    19
   c1    14
@@ -1103,7 +1104,7 @@ e1   4   3   2   1   0
 #### 2.3.3.2. iloc
 
 - 说明
-  - 允许用户永远使用 **隐式索引** 来定位和切片, **包含头，不包含尾(左闭右开)** 
+  - 允许用户永远使用 **隐式索引** 来定位和切片, **包含头，不包含尾(左闭右开)**
   - 同loc，逗号前是对index进行选取，逗号后是对icolumn_name进行选取
 
 ---
@@ -1114,7 +1115,7 @@ e1   4   3   2   1   0
 
   ```python
   In [26]: df.iloc[0:1,0:1]
-  Out[26]: 
+  Out[26]:
       a1
   a1  24
   ```
@@ -1127,7 +1128,7 @@ e1   4   3   2   1   0
 
   # 单独指定index或者column_name，降级
   In [31]: df.iloc[:,1]
-  Out[31]: 
+  Out[31]:
   a1    23
   b1    18
   c1    13
@@ -1136,7 +1137,7 @@ e1   4   3   2   1   0
   Name: b1, dtype: int32
 
   In [33]: df.iloc[1]
-  Out[33]: 
+  Out[33]:
   a1    19
   b1    18
   c1    17
@@ -1155,7 +1156,7 @@ e1   4   3   2   1   0
 
   ```python
   In [34]: df.values
-  Out[34]: 
+  Out[34]:
   array([[24, 23, 22, 21, 20],
         [19, 18, 17, 16, 15],
         [14, 13, 12, 11, 10],
@@ -1166,7 +1167,7 @@ e1   4   3   2   1   0
 
   ```python
   In [35]: df.T
-  Out[35]: 
+  Out[35]:
       a1  b1  c1  d1  e1
   a1  24  19  14   9   4
   b1  23  18  13   8   3
@@ -1179,7 +1180,7 @@ e1   4   3   2   1   0
 
   ```python
   In [18]: df.loc[df.a1>10,:]
-  Out[18]: 
+  Out[18]:
       a1  b1  c1  d1  e1
   a1  24  23  22  21  20
   b1  19  18  17  16  15
@@ -1208,7 +1209,7 @@ e1   4   3   2   1   0
                             index=['a1','b1','c1','d1','e1'],
                             columns=['a1','b1','c1','d1','e1'])
   In [21]: np.add(df,100)
-  Out[21]: 
+  Out[21]:
       a1   b1   c1   d1   e1
   a1  124  123  122  121  120
   b1  119  118  117  116  115
@@ -1234,7 +1235,7 @@ e1   4   3   2   1   0
       ...:           'New York': 19651127}, name='population')
 
   In [24]: area/population
-  Out[24]: 
+  Out[24]:
   Alaska             NaN
   California    0.011060
   New York           NaN
@@ -1243,7 +1244,7 @@ e1   4   3   2   1   0
 
   # 指定fill_value
   In [37]: area.divide(population,fill_value=1)
-  Out[37]: 
+  Out[37]:
   Alaska        1.723337e+06
   California    1.106024e-02
   New York      5.088767e-08
@@ -1260,7 +1261,7 @@ e1   4   3   2   1   0
   In [32]: A = pd.DataFrame(np.random.randint(0, 20, (2, 2)), columns=list('AB'))
   In [33]: B = pd.DataFrame(np.random.randint(0, 10, (3, 3)), columns=list('BAC'))
   In [35]: A+B
-  Out[35]: 
+  Out[35]:
         A     B   C
   0  15.0  25.0 NaN
   1  27.0   0.0 NaN
@@ -1290,7 +1291,7 @@ e1   4   3   2   1   0
   ```python
   In [48]: null_test = pd.Series([1,None,pd.NA,np.nan])
   In [49]: null_test.isnull()
-  Out[49]:  
+  Out[49]:
   0    False
   1     True
   2     True
@@ -1298,7 +1299,7 @@ e1   4   3   2   1   0
   dtype: bool
 
   In [50]: null_test.isna()
-  Out[50]:  
+  Out[50]:
   0    False
   1     True
   2     True

@@ -10383,6 +10383,22 @@ Dynamic section at offset 0xf10 contains 23 entries:
 
 还可以看出，可执行文件运行时需要哪些共享库也都记录在 `.dynamic` 段中。当然 `rpath` 这种办法也是不推荐的，把共享库的路径定死了，失去了灵活性。
 
+###### LD_PRELOAD
+
+LD_PRELOAD 是 Linux 系统中的一个环境变量，它可以影响程序的运行时的链接（Runtime linker），它允许你定义在程序运行前优先加载的动态链接库。
+这个功能主要就是用来有选择性的载入不同动态链接库中的相同函数。
+通过这个环境变量，我们可以在主程序和其动态链接库的中间加载别的动态链接库，甚至覆盖正常的函数库。
+一方面，我们可以以此功能来使用自己的或是更好的函数（无需别人的源码），而另一方面，我们也可以以向别人的程序注入程序，从而达到特定的目的。
+
+例如：
+
+- 动态库劫持：可以用LD_PRELOAD来劫持程序中的函数，替换为自己编写的函数，实现一些特殊的功能。
+- 程序调试：可以用LD_PRELOAD来替换程序中的函数，增加一些调试信息，例如，在程序中调用printf函数时，可以用LD_PRELOAD来替换为自己编写的函数，输出调试信息。
+- 库版本控制：可以用LD_PRELOAD来强制程序使用指定版本的共享库，以避免程序在不同版本的环境中产生兼容性问题。
+
+需要注意的是，使用LD_PRELOAD需要注意一些安全和兼容性问题。为了避免程序崩溃或产生意外的行为，替换的函数必须与被替换的函数具有相同的函数原型和行为。
+在使用LD_PRELOAD时需要注意共享库与程序之间的交互，避免产生意外的结果。
+
 #### 2.7.4.2. 动态链接的过程
 
 本节研究一下在 `main.c` 中调用共享库的函数 `push` 是如何实现的。首先反汇编看一下 `main` 的指令：
@@ -24129,7 +24145,59 @@ Content-Type: text/html
     5. 读取文件的内容发送到客户端
     6. 关闭连接
 
-# 4. 参考资料
+# 4. 其他
+
+## 4.1. glibc 2.39 编译到指定文件夹
+
+```
+mkdir glibc-2.39
+cd glibc-2.39
+wget http://ftp.gnu.org/gnu/glibc/glibc-2.39.tar.xz
+tar -xf glibc-2.39.tar.gz
+mv glibc-2.39 glibc-2.39-src
+mkdir glibc-2.39-build glibc-2.39-prefix
+
+# LD_LIBRARY_PATH 最后不要有 `:`
+# gcc 和 make 就算在PATH中，如果不是默认的/usr下面，最好指定一下路径
+LD_LIBRARY_PATH=/usr/local/openssl/lib:/usr/local/openssl/lib \
+CC=/home/work/opt/gcc-7.3/bin/gcc \
+MAKE=/home/work/opt/make-4.2/make-4.2-prefix/bin/make \
+../glibc-2.39-src/configure --prefix=/home/work/opt/glibc-2.39/glibc-2.39-prefix
+make
+# 编译好了，因为当前目录下有libso.6，可能会导致ls等命令失败
+# 可以退出后 export LD_LIBRARY_PATH=/usr/lib
+make install
+```
+
+```
+binutils 需要在源码目录下configure和make
+```
+
+## 4.2. binutils
+
+[gnu binutils](https://www.gnu.org/software/binutils/)
+
+包含as nm objdump readelf 等工具以及libbfd、libopcodes 等二进制文件描述库和函数库
+
+## 4.3. 多 glibc 版本 方案
+
+**动态链接器是硬编码到可执行文件中的** ，使用 LD_LIBRARY_PATH 可以指定动态库路径，但是不可以指定dynamic-linker 路径
+
+
+- 方案1：编译时指定 glibc path 和 dynamic-linker
+
+  ```
+  g++ main.o -o myapp ... \
+    -Wl,--rpath=/path/to/newglibc \
+    -Wl,--dynamic-linker=/path/to/newglibc/ld-linux.so.2
+  ```
+
+- 方案2: `patchelf --set-interpreter` 重新设置设置动态链接器
+- 方案3: rtldi and a binary editor.
+
+[Multiple glibc libraries on a single host](https://stackoverflow.com/questions/847179/multiple-glibc-libraries-on-a-single-host)
+
+# 5. 参考资料
 
 - [ ] **[Linux C编程一站式学习](http://akaedu.github.io/book/)(重要)**
   - [markdown版本](https://github.com/52fhy/linux-c) **[本地](./资料/linux-c/README.md)**
@@ -24153,3 +24221,4 @@ Content-Type: text/html
 - [ ] [C标准库 POSIX库 glibc库有什么关系](https://broadgeek.com/2022/04/20/5398/)
 - [ ] [Linux部署程序之glibc兼容性问题](https://blog.csdn.net/wf19930209/article/details/131833531)
   - patchelf等方式处理兼容性问题
+- [ ] [有趣的 LD_PRELOAD](https://www.anquanke.com/post/id/254388#h2-0)

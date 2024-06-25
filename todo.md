@@ -632,6 +632,7 @@ python
 - 微前端，乾坤
 - [当Ajax遇上302, 孽缘！](https://zhuanlan.zhihu.com/p/383548535)
 - [Document Redirect 与 XHR Redirect区别](https://segmentfault.com/a/1190000042857203)
+- [阮一峰 TypeScript教程](https://wangdoc.com/typescript/)
 
 ## big data
 
@@ -726,5 +727,7 @@ rss 配置
 - [文图生成模型架构](https://developer.aliyun.com/article/989767)
 - [nlp 入门](https://github.com/PKU-TANGENT/nlp-tutorial?tab=readme-ov-file)
 - [全连接，python实现](https://zhuanlan.zhihu.com/p/84153154)
+- [大模型(llm)学习笔记（让天下没有难学的大模型）](https://github.com/liguodongiot/llm-action)
+- [llm 实现：c/cuda实现gpt-2](https://github.com/karpathy/llm.c)
 
 

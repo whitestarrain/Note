@@ -475,6 +475,29 @@
   .\{-} 是 .* 的非贪婪模式
   ```
 
+- 调用外部命令(`help filter`, `help w_c`)
+  - 调用命令并replace
+    - `:%!sort -k2` 整个文件的内容作为stdin，调用sort程序，参数为`-k2`，输出到buffer
+    - `:'<,'>!awk '{print $1}'` 选定内容作为stdin，调用awk程序，输出到buffer
+    - `:'<,'>!sh` 执行选中的命令，输出到buffer
+
+      ```bash
+      # 多行命令也支持，多行命令+多行stdin的可以用这种 here doc 的形式
+      tr [:lower:] [:upper:] \
+      <<_exit
+        sdfsdf
+        sdfsdsdf
+        sdfsdd
+      _exit
+      # :%!sh
+      ```
+  - 调用命令并输出到message
+    - `:w !ls` 执行指定命令，并写入到message
+    - `:'<,'>w !sh` 执行选中的命令(将选中的数据作为stdin传给sh)，输出到message
+  - 调用命令并追加
+    > :read 不支持读取buffer作为stdin
+    - `:r !ls` 执行指定命令，并写入到buffer。
+
 # 4. vim插件
 
 **详细插件配置：[dotfiles](https://github.com/whitestarrain/dotfiles)**

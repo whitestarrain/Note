@@ -16,7 +16,7 @@ TODO: kafka底层架构补充
       - kafka会将数据存到磁盘中
       - kafka吞吐量非常高，使用堆外内存，零拷贝。一般公司三台kafka就完全够用
   - 异步通信
-    > ![spark-40](./image/spark-40.png) 
+    > ![spark-40](./image/spark-40.png)
     - 一个请求队列
     - 一个结果响应队列
 
@@ -29,7 +29,9 @@ TODO: kafka底层架构补充
     - 消费者不丢数据：默认在磁盘存7天，7天内，可以处理多次
 
 - 节点：
-  > ![spark-41](./image/spark-41.png) 
+
+  > ![spark-41](./image/spark-41.png)
+
   - producer:消息生产者
   - consumer：消息消费者
   - broker:kafka集群的server,负责处理消息读、写请求，存储消息
@@ -38,14 +40,17 @@ TODO: kafka底层架构补充
     - 负责消息的读，写和存储
     - 可以管理多个partition
   - topic:消息队列/分类
-    - 一类消息的总称。 
+    - 一类消息的总称。
     - 不同类消息会分别存储
     - 每个topic由多个partition组成。在创建topic时可以指定
       - partition:组成topic的单元，直接接触内存
 
 - 消息存储模型
-  > ![spark-42](./image/spark-42.png) 
+
+  > ![spark-42](./image/spark-42.png)
+
   - 总括：
+
     ```
     kafka里面的消息是有topic来组织的，简单的我们可以想象为一个队列，一个队列
     就是一个topic,然后它把每个topic又分为很多个partition,这个是为了做并行的
@@ -60,6 +65,7 @@ TODO: kafka底层架构补充
     是消费完了我就把它删掉，而kafka是根据时间策略删除，而不是消费完就删除，
     在kafka里面没有一个消费完这么个概念，只有过期这样一个概念
     ```
+
   - 细节说明：
     - 一个topic分成多个partition
     - 每个partition内部消息**强有序**，严格按照FIFO；写消息时，其中的每个消息都有一个序号叫**offset**
@@ -78,7 +84,7 @@ TODO: kafka底层架构补充
 
 - 消费模型：
   - 图解：
-    > ![spark-43](./image/spark-43.png) 
+    > ![spark-43](./image/spark-43.png)
     - 集群中画出的是一个topic的四个分区(这里为了说明就画一个topic)
   - 说明：
     - consumer自己维护消费到哪个offset
@@ -106,9 +112,9 @@ TODO: kafka底层架构补充
     ```
   - 分布式：数据副本元余、流量负载均衡、可扩展
     ```
-  分布式，数据副本，也就是同一份数据可以到不同的broker上面去，
-  也就是当一份数据，磁盘坏掉的时候，数据不会丢失，比如3个副本，
-  就是在3个机器磁盘都坏掉的情况下数据才会丢。
+    分布式，数据副本，也就是同一份数据可以到不同的broker上面去，
+    也就是当一份数据，磁盘坏掉的时候，数据不会丢失，比如3个副本，
+    就是在3个机器磁盘都坏掉的情况下数据才会丢。
     ```
   - 灵活：消息长时间持久化+Client维护消费状态
     ```
@@ -130,6 +136,7 @@ TODO: kafka底层架构补充
 # 5. 集群搭建
 
 待做
+
 <!--file:///D:/learn/githubRepo/JavaGuide/docs/system-design/distributed-system/message-queue/Kafka%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93.md-->
 
 # 参考资料

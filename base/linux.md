@@ -848,6 +848,17 @@ tr '[:lower:]' '[:upper:]'
 
 ### 3.10.1. join
 
+tab 作为分割符的两个csv文件，根据第一列join起来:
+
+```
+join -t, -a1 -a2 -o 0,1.2,1.3,1.4,1.5,1.6,2.6,2.7,2.8 -e '?' \
+  <(sed 1d file1.csv | sed 's/\t/,/g' | sort -t ',' -k 1,1) \
+  <(sed 1d file2.csv | sed 's/\t/,/g' | sort -t ',' -k 1,1) \
+  > dataset.csv
+```
+
+注意：join的时候，sort要根据join依据的一列进行sort，不要sort一整行
+
 ### 3.10.2. paste 按列拼接文本
 
 - 将两个文本按列拼接到一起;

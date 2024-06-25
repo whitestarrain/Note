@@ -89,6 +89,16 @@
     > 等同于`git diff ref~1 ref`
   - `git show --name-only [commit]` 显示某次提交发生变化的文件
   - `git show [commit]:[filename]` 显示某次提交时，某个文件的内容
+  - `git diff -L :function_name:path_to_file`: 查看某个函数的修改历史
+    - 默认是按照c的语法check的
+    - 如果想要支持其他语言，需要在.gitatrributes里面加上
+
+      ```
+      *.py diff=python
+      *.rb diff=ruby
+      ...
+      ```
+
 
 - 提交状况统计
 
