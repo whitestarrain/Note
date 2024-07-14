@@ -246,7 +246,11 @@ power management:	//对能源管理的支持
 
 </details>
 
-## 2.2. ls, stat, file 文件类型与信息
+## 2.2. XDG 基准目录规范
+
+TODO: linux XDG 目录规范
+
+## 2.3. ls, stat, file 文件类型与信息
 
 - 文件类型(`ls -lha`)
   > 扩展名只在图形化界面上有用
@@ -274,7 +278,7 @@ power management:	//对能源管理的支持
 - file
   - `ELF` 类型为二进制可执行程序
 
-## 2.3. 创建和删除
+## 2.4. 创建和删除
 
 - 命令
   - 创建：mkdir
@@ -296,7 +300,7 @@ power management:	//对能源管理的支持
     $ cp -r source_dir  dest_dir
     ```
 
-## 2.4. 目录切换
+## 2.5. 目录切换
 
 - 找到文件/目录位置：cd
 - 切换到上一个工作目录： cd -
@@ -304,7 +308,7 @@ power management:	//对能源管理的支持
 - 显示当前路径: pwd
 - 更改当前工作路径为path: cd path
 
-## 2.5. 列出目录项
+## 2.6. 列出目录项
 
 - 显示当前目录下的文件 ls
 - 按时间排序，以列表的方式显示目录项 ls -lrt
@@ -331,9 +335,9 @@ power management:	//对能源管理的支持
 
 > 注：.bashrc 在/home/你的用户名/ 文件夹下，以隐藏文件的方式存储；可使用 ls -a 查看；
 
-## 2.6. find 查找目录及文件
+## 2.7. find 查找目录及文件
 
-### 2.6.1. 基本使用
+### 2.7.1. 基本使用
 
 - 查找txt和pdf文件:
 
@@ -362,7 +366,7 @@ power management:	//对能源管理的支持
   find . -maxdepth 1 -type f
   ```
 
-### 2.6.2. 定制搜索
+### 2.7.2. 定制搜索
 
 > **按类型搜索**
 
@@ -442,7 +446,7 @@ power management:	//对能源管理的支持
   find . -type f -user weber -print # 找用户weber所拥有的文件
   ```
 
-### 2.6.3. 找到后的后续动作
+### 2.7.3. 找到后的后续动作
 
 > **删除**
 
@@ -482,16 +486,16 @@ power management:	//对能源管理的支持
   -exec ./commands.sh {} \;
   ```
 
-### 2.6.4. "-print"的定界符
+### 2.7.4. "-print"的定界符
 
 - 默认使用’\n’作为文件的定界符；
 - -print0 使用’\0’作为文件的定界符，这样就可以搜索包含空格的文件；
 
-## 2.7. locate, updatedb
+## 2.8. locate, updatedb
 
-## 2.8. 查看文件内容
+## 2.9. 查看文件内容
 
-### 2.8.1. cat
+### 2.9.1. cat
 
 - cat
   - 显示时同时显示行号:
@@ -500,7 +504,7 @@ power management:	//对能源管理的支持
   $ cat -n
   ```
 
-### 2.8.2. head, tail
+### 2.9.2. head, tail
 
 - head
 - tail
@@ -510,7 +514,7 @@ power management:	//对能源管理的支持
     tailf -f
     ```
 
-### 2.8.3. less, more
+### 2.9.3. less, more
 
 - more
   - 按页显示列表内容:
@@ -520,7 +524,7 @@ power management:	//对能源管理的支持
     ```
 - less(推荐)
 
-## 2.9. 文件切分 split
+## 2.10. 文件切分 split
 
 文件夹内，每500个文件打一个压缩包
 
@@ -548,7 +552,7 @@ find ./images -type f -print0  | {
 }
 ```
 
-## 2.10. ln, readlink
+## 2.11. ln, readlink
 
 - 创建符号链接/硬链接:
 

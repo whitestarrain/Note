@@ -184,6 +184,12 @@ vim like 键位的日程管理工具
 
 制作终端gif
 
+# madness markdown预览server
+
+[madness](https://github.com/DannyBen/madness)
+
+支持docker部署
+
 # CR常见术语
 
 - CR: Code Review. 请求代码审查。

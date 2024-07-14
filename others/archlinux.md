@@ -749,7 +749,7 @@ pacman -Fx regex
 pacman -U /var/cache/pacman/pkg/xxx.zst
 
 # 从网络源中恢复指定包的版本
-pacman -U https://archive.archlinux.org/packages/n/neovim/
+pacman -U https://archive.archlinux.org/packages/n/neovim/xxxx.zst
 ```
 
 # 8. 参考资料
@@ -768,6 +768,7 @@ pacman -U https://archive.archlinux.org/packages/n/neovim/
   - [ ] [Linux 下 MacBook 触摸板设置](https://harttle.land/2019/05/01/linux-macbook-trackpad-settings.html)
     > macbook上实际无法实现惯性功能
   - [x] [archlinux 安装前的网络设置 静态IP DHCP 无线WIFI](https://www.jianshu.com/p/b1e4b99032ef)
+  - [ ] [安装 Archlinux 时的 ToDoList](https://coda.world/archlinux-installation-todolist)
 - dwm 工具链（待尝试）
   - [suckless极简主义开发团队](https://suckless.org/)
   - [ ] [从零开始配置自己的Arch Linux桌面（极简）](https://zhuanlan.zhihu.com/p/112536524)

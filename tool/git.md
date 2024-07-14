@@ -370,6 +370,7 @@
 
 - `git clean` 用来清理未track的文件
 - `git clean -n` 是一次clean的演习, 告诉你哪些文件会被删除. 记住他不会真正的删除文件, 只是一个提醒
+- `git clean -n -e 'temp.patch'` 清理的时候，跳过`temp.patch`
 - `git clean -f` 删除当前目录下所有没有track过的文件. 他不会删除.gitignore文件里面指定的文件夹和文件, 不管这些文件有没有被track过
 - `git clean -f <path>` 删除指定路径下的没有被track过的文件
 - `git clean -df` 删除当前目录下没有被track过的文件和文件夹
@@ -389,7 +390,11 @@
   ```
 - 然后退出二分查找： `git bisect reset`
 
-## 1.17. gitignore
+## git 裸库
+
+## 1.17. 配置文件
+
+### 1.17.1. gitignore
 
 - 说明
 
@@ -458,11 +463,11 @@
   relative/path/to/dir/anotherfile
   ```
 
-## 1.18. .gitattributes
+### 1.17.2. .gitattributes
 
 **Git 只会在检入与检出时对文件进行处理，具体点说就是 git add 与 git checkout 操作中。因此 Git 并不会自动将工作目录中正在编写的文本文件自动转换换行符。**
 
-### 1.18.1. 使用说明
+#### 1.17.2.1. 使用说明
 
 - .gitattributes示例
 
@@ -497,7 +502,7 @@
   git reset --hard HEAD
   ```
 
-### 1.18.2. 原理说明
+#### 1.17.2.2. 原理说明
 
 > 本地测试结论：
 
@@ -511,16 +516,15 @@
 - 换行符转换处理
   - 之后每次暂存入库的时候，会统一转为 `\n`,
   - 在checkout的时候，会根据.gitattributes中的配置转换为指定换行符
--
 
-## 1.19. 别名
+## 1.18. 别名
 
 - `git config --global alias.st status` /*设置st为status的别名，git st即为git status*/
 - `git config --global alias.unstage 'reset HEAD'`
 - `git config --global alias.last 'log -1'` /*最后一次提交信息*/
 - `git config --global alias.tree "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"`
 
-## 1.20. 工具
+## 1.19. 工具
 
 - tig
   - 使用
@@ -535,8 +539,9 @@
     - d       查看diff
 
 - gitk:图形化工具
+- lazygit: tui 工具
 
-## 1.21. 常见问题
+## 1.20. 常见问题
 
 - git乱码：
   - 右键->option->text

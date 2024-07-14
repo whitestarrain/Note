@@ -498,6 +498,23 @@
     > :read 不支持读取buffer作为stdin
     - `:r !ls` 执行指定命令，并写入到buffer。
 
+- visual block 模式下的 replace
+
+  ```
+  :'<,'>s/\%Vpattern1/pattern2/g
+  或者
+  :'<,'>s/\%Vpattern1\%V/pattern2/g
+  ```
+
+- cdo, cfdo, ldo, bufdo, windo, tabdo, argdo
+
+  ```vim
+  :grep foo "%:p"
+  :copen
+  :cdo lua print(vim.inspect(vim.api.nvim_win_get_cursor(0)))
+  :cdo lua print(vim.fn.expand("cfile"))
+  ```
+
 # 4. vim插件
 
 **详细插件配置：[dotfiles](https://github.com/whitestarrain/dotfiles)**

@@ -1,5 +1,7 @@
 # 优先级较高项
 
+- [ ] [emacs GTD 日程管理](https://www.cnblogs.com/yangruiGB2312/p/9101838.html)
+
 - [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
   - 编译原理打算复习一下大学资料的，一直没时间看
 - emacs, elisp
@@ -11,6 +13,19 @@
   - [lab 资料](https://hansimov.gitbook.io/csapp/labs/labs-overview)
 - ucore
 - 深度学习进阶，自然语言处理
+
+- [ ] 完工遗留的blog草稿
+
+# 小任务
+
+- [ ] 路由追踪实现
+- [ ] nginx转发
+  - [x] markdown preview
+  - [ ] [awesome rss](https://github.com/HenryQW/Awesome-TTRSS)
+    - [ ] cron 上传 rss 数据库文件
+    - [ ] gnu 加密 dotfile 敏感文件
+- [ ] netty 框架
+- [ ] tempral 框架
 
 # 待做项(备忘录草稿)
 
@@ -223,7 +238,17 @@ python
 - [有一些不错的插件](https://innei.in/posts/Z-Turn/nvim-lua-config-init)
 - [Astronvim里面的插件可以借鉴一下](https://github.com/AstroNvim/AstroNvim)
 - [nvim-java-ide](https://sookocheff.com/post/vim/neovim-java-ide/)
-- [非常完整的vim学习笔记](https://yyq123.github.io/learn-vim/)
+- [比较完整的vim学习笔记](https://yyq123.github.io/learn-vim/)
+- 几个可以尝试的插件
+  - [nvim-bqf better quick fix，可以用来批量替换](https://github.com/kevinhwang91/nvim-bqf)
+    - 不过普通的 quickfix 好像也行
+  - [incline.nvim 显示窗口名称，但是会遮盖，所以不是太想用](https://github.com/b0o/incline.nvim)
+- [pantran.nvim, translate plugin](https://github.com/potamides/pantran.nvim)
+- [markdown-preview.nvim 支持remote vim + local browser](https://github.com/iamcco/markdown-preview.nvim)
+- [telescope 辅助插件，支持rg参数](https://www.reddit.com/r/neovim/comments/11ukbgn/how_to_includeexclude_files_in_telescope_live_grep/)
+  - [menu来切换参数](https://github.com/molecule-man/telescope-menufacture)
+  - [自动带上参数](https://github.com/nvim-telescope/telescope-live-grep-args.nvim)
+  - [简单实现的telescope-menufacture](https://github.com/tjdevries/config_manager/blob/7400242/xdg_config/nvim/lua/tj/telescope/custom/multi_rg.lua)
 
 ### emacs
 
@@ -255,6 +280,7 @@ python
 ### vscode
 
 - python debug config snippet
+
   ```json
   {
     // Use IntelliSense to learn about possible attributes.
@@ -329,6 +355,7 @@ python
     ]
   }
   ```
+
 ## linux
 
 ### bash/shell
@@ -605,6 +632,7 @@ python
 
 ### dotfile manager
 
+- [General-purpose dotfiles utilities](https://dotfiles.github.io/utilities/)
 - [dotfile manager: stow](https://github.com/chaneyzorn/dotfiles)
   - stow 默认push，`-adopt` 会pull
   - 会将package下的文件，link到指定目录。
@@ -615,6 +643,17 @@ python
 - [dotbot](https://github.com/anishathalye/dotbot)
 - [dotfiles + stow example](https://github.com/elijahmanor/dotfiles)
 - [awesome-dotfiles](https://github.com/webpro/awesome-dotfiles)
+- [git bare](https://catcat.cc/post/diyo4/)
+  - `cd && git init --bare $HOME/.dotfiles`
+  - `alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'`
+- [chezmoi](https://github.com/twpayne/chezmoi) 和 [yadm](https://github.com/TheLocehiliosan/yadm.git)，都类似是git bare的封装版本。
+  - 说实话我不喜欢太多的依赖
+  - [yadm 使用教程](https://www.escapelife.site/posts/696ce25d.html) 中提到 /etc配置，不过看起来是两个repo
+
+    ```bash
+    # 使用.yadm作为yadm的系统文件管理目录
+    alias sysyadm="sudo yadm -Y $HOME/.yadm"
+    ```
 
 ## mysql
 
@@ -626,6 +665,7 @@ python
 - [nginx server块中的hostname](https://blog.csdn.net/qq_35952638/article/details/100163824)
 - [nginx配置中 server_name作用](https://blog.csdn.net/Cheng_Kohui/article/details/82930464)
 - [celery+redis 探究](https://juejin.cn/post/7032895646822563870)
+- caddy， 替代nginx
 
 ## front end
 
@@ -633,6 +673,7 @@ python
 - [当Ajax遇上302, 孽缘！](https://zhuanlan.zhihu.com/p/383548535)
 - [Document Redirect 与 XHR Redirect区别](https://segmentfault.com/a/1190000042857203)
 - [阮一峰 TypeScript教程](https://wangdoc.com/typescript/)
+- [CSS 实现的各种效果，比如代码雨...](https://github.com/chokcoco/iCSS)
 
 ## big data
 
@@ -696,6 +737,21 @@ python
 - [cdn 加速原理](https://cloud.tencent.com/developer/article/1690751)
 - [neo4j图数据库]
   - [neo4j入门](https://zhuanlan.zhihu.com/p/88745411)
+- 聊天室协议
+  - MQTT (Message Queuing Telemetry Transport)
+  - AMQP (Advanced Message Queuing Protocol)
+  - DDS (Data Distribution Service)
+  - XMPP (Extensible Messaging and Presence Protocol)
+  - CoAP (Constrained Application Protocol)
+  - WebSocket
+  - **IRC**  (Internet Relay Chat)
+  - RCS (Rich Communication Services)
+- gpg
+  - [理解和使用 GPG](https://www.rectcircle.cn/posts/understand-and-use-gpg/)
+  - [GPG入门教程](https://www.ruanyifeng.com/blog/2013/07/gpg.html)
+  - [archlinux wiki - GnuPG](https://wiki.archlinuxcn.org/wiki/GnuPG#)
+- [yabai - a macOS Tiling WM.](https://github.com/koekeishiya/yabai)
+  - [配置示例](https://github.com/spencerwooo/dotfiles-archive/blob/master/macOS/_yabairc)
 
 # 优秀公开课
 
@@ -729,5 +785,6 @@ rss 配置
 - [全连接，python实现](https://zhuanlan.zhihu.com/p/84153154)
 - [大模型(llm)学习笔记（让天下没有难学的大模型）](https://github.com/liguodongiot/llm-action)
 - [llm 实现：c/cuda实现gpt-2](https://github.com/karpathy/llm.c)
+- [omniparse 将视频，图片等转换为markdown、json等](https://github.com/adithya-s-k/omniparse)
 
 
