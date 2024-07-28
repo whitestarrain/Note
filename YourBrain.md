@@ -470,13 +470,15 @@
 
 ## 编码与加密算法 <!-- markmap: fold -->
 
-# Java 知识栈
+# 后端
 
-## Java 基础 <!-- markmap: fold -->
+## Java 知识栈
 
-### 基础 <!-- markmap: fold -->
+### Java 基础 <!-- markmap: fold -->
 
-#### 基础中的基础
+#### 基础 <!-- markmap: fold -->
+
+##### 基础中的基础
 
 - 基本概念
   - JRE 与 JDK
@@ -547,7 +549,7 @@
     - 使用 Apache Commons Collections
     - 使用 Java9 的 List.of()方法
 
-#### [反射](https://www.cnblogs.com/yougewe/p/10125073.html)
+##### [反射](https://www.cnblogs.com/yougewe/p/10125073.html)
 
 - 说明
 - 原理
@@ -561,7 +563,7 @@
   - [重写 private 方法](https://www.cnblogs.com/lixinjie/p/combine-reflect-and-oo-in-java.html)
   - 框架编写
 
-#### java 泛型
+##### java 泛型
 
 - 什么是泛型
 - 原理与类型擦除
@@ -573,7 +575,7 @@
   - T ,T extends xxx, ？,？extends xxx <br />和 ？super xxx 的区别？
   - 为何不能通过直接通过`T[] arr=new T[10]`的方式来创建数组<br />如何正确创建泛型数组。
 
-#### String
+##### String
 
 - String,StringBuilder,StringBuffer 使用场景
 - AbstractStringBilder,建造者
@@ -583,7 +585,7 @@
   - StringBuilder
 - 字符串常量池
 
-#### SPI
+##### SPI
 
 - 原理
   - api
@@ -599,7 +601,7 @@
     - 自定义 scope
     - 自定义标签
 
-#### java8 新特性
+##### java8 新特性
 
 - Stream
 - Function Interface
@@ -607,12 +609,12 @@
 - Optional
 - Data Time-api
 
-#### 语法糖
+##### 语法糖
 
 - 双大括号初始化(不推荐)
 - try-with-resources(针对 io 资源，推荐)
 
-### 集合 <!-- markmap: fold -->
+#### 集合 <!-- markmap: fold -->
 
 - 为什么要使用集合
 - HashMap
@@ -744,9 +746,9 @@
 
 - [其他重要问题](https://www.jianshu.com/p/8bc28d6b0a5e)
 
-### 并发编程 <!-- markmap: fold -->
+#### 并发编程 <!-- markmap: fold -->
 
-#### **体系结构** <!-- markmap: fold -->
+##### **体系结构** <!-- markmap: fold -->
 
 - 理论体系
   - 为什么需要多线程
@@ -874,7 +876,7 @@
   - Disruptor
   - HiKariCP
 
-#### 详细讲解 <!-- markmap: fold -->
+##### 详细讲解 <!-- markmap: fold -->
 
 - 并发基础
 
@@ -1246,19 +1248,19 @@
 
 - **ThreadLocal(待做)**
 
-#### JUC 整理 <!-- markmap: fold -->
+##### JUC 整理 <!-- markmap: fold -->
 
-#### 并发本质 <!-- markmap: fold -->
+##### 并发本质 <!-- markmap: fold -->
 
-#### 并发模式 <!-- markmap: fold -->
+##### 并发模式 <!-- markmap: fold -->
 
-#### 并发框架 <!-- markmap: fold -->
+##### 并发框架 <!-- markmap: fold -->
 
-### IO/NIO/AIO <!-- markmap: fold -->
+#### IO/NIO/AIO <!-- markmap: fold -->
 
-## JVM <!-- markmap: fold -->
+### JVM <!-- markmap: fold -->
 
-### 基础知识 <!-- markmap: fold -->
+#### 基础知识 <!-- markmap: fold -->
 
 - jvm 发展
 - 特点：
@@ -1273,9 +1275,9 @@
   - 执行
   - 退出
 
-### 内存与垃圾回收 <!-- markmap: fold -->
+#### 内存与垃圾回收 <!-- markmap: fold -->
 
-#### 上层
+##### 上层
 
 - 画出详细架构
 - 类加载过程
@@ -1334,7 +1336,7 @@
     - 类加载器引用哦作为类型信息存于方法区
     - 引用类型转换时，要保证两个类加载器相同
 
-#### 中层
+##### 中层
 
 - **Java 内存区域布局说明**
 - 程序计数器
@@ -1588,7 +1590,7 @@
     - java 对象头里有什么
 - 直接内存
 
-#### 下层
+##### 下层
 
 - 执行引擎
   - 作用
@@ -1914,17 +1916,17 @@
     - CMS 和 G1 了解么，CMS 解决什么问题，说一下回收的过程。
     - CMS 回收停顿了几次，为什么要停顿两次。
 
-### 字节码与类加载子系统 <!-- markmap: fold -->
+#### 字节码与类加载子系统 <!-- markmap: fold -->
 
-### jvm 监控与调优 <!-- markmap: fold -->
+#### jvm 监控与调优 <!-- markmap: fold -->
 
-#### 概述
+##### 概述
 
-#### 命令行 监控
+##### 命令行 监控
 
-#### GUI 监控
+##### GUI 监控
 
-#### JVM运行时参数 <!-- markmap: fold -->
+##### JVM运行时参数 <!-- markmap: fold -->
 
 - 打印设置的XX选项及值 <!-- markmap: fold -->
   - -XX:+PrintCommandLineFlags:可以让在程序运行前打印出用户手动设置或者JVM自动设置的XX选项
@@ -2222,11 +2224,11 @@
   - -XX:TLABSize
     - 设置TLAB大小
 
-## 常用框架 <!-- markmap: fold -->
+### 常用框架 <!-- markmap: fold -->
 
-### Spring<!-- markmap: fold -->
+#### Spring<!-- markmap: fold -->
 
-#### 基础
+##### 基础
 
 - 什么是 Spring 框架
 - Spring 框架的重要模块
@@ -2236,7 +2238,7 @@
   - AOP
 - BeanFactory 和 ApplicationContextSpring
 
-#### IOC
+##### IOC
 
 - 概念
 - [IOC 容器初始化过程](https://javadoop.com/post/spring-ioc)
@@ -2279,7 +2281,7 @@
 
 - 注意：对于无法添加注解<br />如导入的第三方依赖<br />可以通过 xml 将其存入或者向其注入<br />或者使用下面的`@Bean`
 
-#### 摆脱 xml 的注解
+##### 摆脱 xml 的注解
 
 - @Configuration
 - @ComponentScan
@@ -2290,7 +2292,7 @@
 - @Import
 - @PropertySource
 
-#### AOP
+##### AOP
 
 - 说明
 - 相关概念
@@ -2339,7 +2341,7 @@
       - reference pointcut：表示引用其他命名切入点，只有@ApectJ 风格支持，Schema 风格不支持。
     - 参数传递
 
-#### Bean
+##### Bean
 
 - 创建 Bean 的方式
   - 默认构造函数
@@ -2357,7 +2359,7 @@
 
 - 线程安全问题
 
-#### 事务
+##### 事务
 
 - Spring 对事务的支持
   - 取决于数据库
@@ -2405,7 +2407,7 @@
     - rollback-for
     - no-rollback-for
 
-#### 设计模式
+##### 设计模式
 
 - 工厂设计模式
   - BeanFactory
@@ -2437,11 +2439,11 @@
   - spring MVC 中的适配器模式
 - 装饰者模式
 
-### SpringMVC <!-- markmap: fold -->
+#### SpringMVC <!-- markmap: fold -->
 
-### SpringBoot <!-- markmap: fold -->
+#### SpringBoot <!-- markmap: fold -->
 
-### Mybatis <!-- markmap: fold -->
+#### Mybatis <!-- markmap: fold -->
 
 - 基本使用
   - xml
@@ -2546,39 +2548,71 @@
 - 注意 <!-- markmap: fold -->
   - `jdbcType=date`会导致时间插入时丢失时分秒
 
-### Netty <!-- markmap: fold -->
+#### Netty <!-- markmap: fold -->
 
-### quartz <!-- markmap: fold -->
+#### quartz <!-- markmap: fold -->
 
-## 测试框架 <!-- markmap: fold -->
+### 测试框架 <!-- markmap: fold -->
 
-### Junit
+#### Junit
 
-### Mockito
+#### Mockito
 
-## JNI <!-- markmap: fold -->
+### JNI <!-- markmap: fold -->
 
-## 工具库 <!-- markmap: fold -->
+### 工具库 <!-- markmap: fold -->
 
-### excel 处理
+#### excel 处理
 
-#### poi
+##### poi
 
-#### easyExcel
+##### easyExcel
 
-### hutool
+#### hutool
 
-### lombok
+#### lombok
 
-### jsoup
+#### jsoup
 
-### log4j
+#### log4j
 
-### junit
+#### junit
 
-### [深度学习-djl](https://github.com/deepjavalibrary/djl)
+#### [深度学习-djl](https://github.com/deepjavalibrary/djl)
 
-### 函数式编程-vavr
+#### 函数式编程-vavr
+
+# 中间件
+
+## 消息队列
+
+### Kafka<!-- markmap: fold -->
+
+### RocketMQ<!-- markmap: fold -->
+
+## 负载均衡
+
+### nginx
+
+### lvs+keepalive
+
+## 分布式动态服务发现、配置
+
+### Zookeeper
+
+### Nacos
+
+### Eureka
+
+- 原生，2.0遇到瓶颈，停止维护
+
+### Consul
+
+- 原生，GO语言开发
+
+## 其他
+
+### Tempral
 
 # 数据库
 
@@ -3106,12 +3140,6 @@
 
 ### Dubbo<!-- markmap: fold -->
 
-# 消息队列
-
-## Kafka<!-- markmap: fold -->
-
-## RocketMQ<!-- markmap: fold -->
-
 # 大数据
 
 ## 数据采集和传输层 <!-- markmap: fold -->
@@ -3160,9 +3188,11 @@
 
 ### Mesos
 
-### Kubernetes
+# 容器
 
-## 其他 <!-- markmap: fold -->
+## docker
+
+## kubernetes(k8s)
 
 # 人工智能
 
@@ -3221,27 +3251,48 @@
 
 ### scss、less
 
-## 服务端<!-- markmap: fold -->
+## 服务端运行时<!-- markmap: fold -->
 
-### NodeJs
+### node.js, npm
 
-### npm、yarn
+### deno
 
-## TypeScript
+- node.js 同作者
 
-## 前端开发的组件化-webpack
+### bun
+
+## js静态检查
+
+### TypeScript
+
+### Flow
+
+## 打包工具
+
+### webpack
+
+### turbopack
+
+### rollup
+
+### vite
+
+- vue 生态下的打包工具
+- 基于rollup
 
 ## 框架 <!-- markmap: fold -->
 
-### 组件化-Vue
+### Vue
 
 - vue
 - 状态管理器-vuex
 
-### 组件化-React
+### React
 
 - React
 - 状态管理器-redux
+
+### Angular
 
 ### 其他
 

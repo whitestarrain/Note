@@ -524,6 +524,14 @@ TODO: linux XDG 目录规范
     ```
 - less(推荐)
 
+### 2.9.4. od
+
+输出文件的八进制、十六进制、对应ascii码等格式编码的字节
+
+```
+od -tx1 -tc -Ax file
+```
+
 ## 2.10. 文件切分 split
 
 文件夹内，每500个文件打一个压缩包
@@ -630,6 +638,12 @@ find ./images -type f -print0  | {
     ```bash
     grep -rne "\xE4\xB8\xAD\xE6\x96\x87|\xD6\xD0\xCE\xC4" *
     ```
+
+正则说明:
+
+- grep 默认使用Basic规范的正则表达式
+- `grep -E` 则使用 Extended 规范
+- Basic 规范相对于 Extended 规范， **只是字符 `?+{}|()` 应解释为普通字符，要表示上述特殊含义则需要加 `\` 转义**
 
 ## 3.2. xargs 命令行参数转换
 
@@ -1660,11 +1674,51 @@ passwd示例：
 - pam_limits.so：
   - ulimit 其实那就是这个模块提供的能力。还有更多细部的设置可以参考： /etc/security/limits.conf 内的说明。
 
-## 8.9. linux用户间的交流
+### 8.8.4. 常见问题
 
-### 8.9.1. w,who,last,lastlog 登陆信息查询
+#### 密码输入次数太多被锁定
 
-### 8.9.2. write, mesg, wall 用户间交流
+查看报错
+
+```bash
+# journalctl _COMM=sudo
+
+xxxxxxxxxxxxxxxxxxxxxxxxx sudo[461453]: pam_unix(sudo:auth): authentication failure; logname=xxxxxx uid=1000 euid=0 tty= ruser=wsain rhost=  user=wsain
+xxxxxxxxxxxxxxxxxxxxxxxxx sudo[461453]: pam_faillock(sudo:auth): Consecutive login failures for user xxxxxx account temporarily locked
+```
+
+root 用户登陆解锁
+
+- 使用 faillock
+
+  ```
+  # show  failed logins
+  faillock --user myUsername
+
+  # reset
+  faillock --user myUsername --reset
+  ```
+
+- 使用 pam_tally2 ([已经被 pam_faillock 代替, 见 2022 libpam-modules change log](https://changelogs.ubuntu.com/changelogs/pool/main/p/pam/pam_1.4.0-11ubuntu2/changelog))
+
+  ```
+  pam_tally2 --user=username --reset
+  ```
+
+
+## 8.9. Capability
+
+> 2.1版开始，支持 Capability
+
+### 8.9.1. 说明
+
+### 8.9.2. setcap
+
+## 8.10. linux用户间的交流
+
+### 8.10.1. w,who,last,lastlog 登陆信息查询
+
+### 8.10.2. write, mesg, wall 用户间交流
 
 ```
 write wsain pts/13
@@ -1680,25 +1734,25 @@ mesg y
 wall "I will shutdown my linux server..."
 ```
 
-### 8.9.3. mail 使用者间互发邮件
+### 8.10.3. mail 使用者间互发邮件
 
-## 8.10. 账号相关检查工具
+## 8.11. 账号相关检查工具
 
-### 8.10.1. pwck
+### 8.11.1. pwck
 
 检查 /etc/passwd 这个帐号配置文件内的信息，与实际的主文件夹是否存在等信息，
 还可以比对 /etc/passwd /etc/shadow 的信息是否一致，
 另外，如果 /etc/passwd 内的数据字段错误时，会提示使用者修订
 
-### 8.10.2. pwconv(用不到)
+### 8.11.2. pwconv(用不到)
 
 将 /etc/passwd 内的帐号与密码，移动到 /etc/shadow 当中
 
-### 8.10.3. pwunconv(别用)
+### 8.11.3. pwunconv(别用)
 
 将 /etc/shadow 内的密码栏数据写回 /etc/passwd 当中， 并且删除 /etc/shadow 文件
 
-### 8.10.4. chpasswd
+### 8.11.4. chpasswd
 
 读入未加密前的密码，并且经过加密后， 将加密后的密码写入 /etc/shadow 当中
 
@@ -2430,34 +2484,7 @@ systemd的关键特性：
 - 系统快照：保存各unit的当前状态信息于持久存储设备中；
 - 向后兼容sysv init脚本，放在/etc/init.d/
 
-**注意** ：systemctl的命令是固定不变的；非由systemd启动的服务，systemctl无法与之通信
-
-配置目录：
-
-- `/usr/lib/systemd/system/`：
-  - 每个服务最主要的启动脚本设置，有点类似以前的 /etc/init.d 下面的文件；
-  - 使用 CentOS 官方提供的软件安装后，默认的启动脚本配置文件都放在这里，这里的数据尽量不要修改
-  - 要修改时，到 /etc/systemd/system 下面修改最好
-- `/run/systemd/system/`：
-  - 系统执行过程中所产生的服务脚本
-  - 这些脚本的优先序要比 /usr/lib/systemd/system/ 高
-- `/etc/systemd/system/`：
-  - 管理员依据主机系统的需求所创建的执行脚本，其实这个目录有点像以前 /etc/rc.d/rc5.d/Sxx 之类的功能
-  - 执行优先序又比 /run/systemd/system/ 高
-- `/etc/sysconfig/*`：
-  - 几乎所有的服务都会将初始化的一些选项设置写入到这个目录下，
-  - 举例来说，mandb 所要更新的 man page 索引中，需要加入的参数就写入到此目录下的 man-db 当中
-  - 而网络的设置则写在 /etc/sysconfig/network-scripts/ 这个目录内。
-  - 所以，这个目录内的文件也是挺重要的
-- `/var/lib/`：
-  - 一些会产生数据的服务都会将他的数据写入到 /var/lib/ 目录中。
-  - 举例来说，数据库管理系统 Mariadb 的数据库默认就是写入 /var/lib/mysql/ 这个目录下了
-- `/run/`：
-  - 放置了很多 daemon 的临时文件，包括 lock file 以及 PID file 等等。
-- `/etc/services`
-  - 服务默认的端口号
-
-**系统开机后默认执行 `/etc/systemd/system/` 下的脚本，一般会链接到 `/usr/lib/systemd/system/`**
+**注意** ：systemctl的命令是固定不变的；不是由systemd启动的服务，systemctl无法与之通信
 
 systemd 的 unit 类型:
 
@@ -2480,7 +2507,43 @@ systemd 的 unit 类型:
 - Device unit：文件扩展名为.device，用于定义内核识别的设备；
 - Swap unit：文件扩展名为.swap, 用于标识swap设备；
 
-## 13.2. 管理服务
+
+## 13.2. 配置目录：
+
+下面三个目录优先级从低到高，配置依次覆盖
+
+- `/usr/lib/systemd/system/`：
+  - 每个服务最主要的启动脚本设置，有点类似以前的 /etc/init.d 下面的文件；
+  - 使用 CentOS 官方提供的软件安装后，默认的启动脚本配置文件都放在这里，这里的数据尽量不要修改
+  - 要修改时，到 /etc/systemd/system 下面修改最好
+- `/run/systemd/system/`：
+  - 系统执行过程中所产生的服务脚本
+  - 这些脚本的优先序要比 /usr/lib/systemd/system/ 高
+- `/etc/systemd/system/`：
+  - 管理员依据主机系统的需求所创建的执行脚本，其实这个目录有点像以前 /etc/rc.d/rc5.d/Sxx 之类的功能
+  - 执行优先序又比 /run/systemd/system/ 高
+  - 此目录下可以添加`/etc/systemd/system/<unit>.d/`文件夹
+    - 文件夹下创建`.conf`文件，文件中的配置会累加或者覆盖 `/usr/lib/systemd/system/` 的配置
+
+**系统开机后默认执行 `/etc/systemd/system/` 下的脚本，一般会链接到 `/usr/lib/systemd/system/`**
+
+---
+
+- `/etc/sysconfig/*`：
+  - 几乎所有的服务都会将初始化的一些选项设置写入到这个目录下，
+  - 举例来说，mandb 所要更新的 man page 索引中，需要加入的参数就写入到此目录下的 man-db 当中
+  - 而网络的设置则写在 /etc/sysconfig/network-scripts/ 这个目录内。
+  - 所以，这个目录内的文件也是挺重要的
+- `/var/lib/`：
+  - 一些会产生数据的服务都会将他的数据写入到 /var/lib/ 目录中。
+  - 举例来说，数据库管理系统 Mariadb 的数据库默认就是写入 /var/lib/mysql/ 这个目录下了
+- `/run/`：
+  - 放置了很多 daemon 的临时文件，包括 lock file 以及 PID file 等等。
+- `/etc/services`
+  - 服务默认的端口号
+
+
+## 13.3. 管理服务
 
 命令：
 
@@ -2561,9 +2624,9 @@ socket 文件查询
 
 - journalctl -e -u unit_name
 
-## 13.3. service 配置
+## 13.4. service 配置
 
-### 13.3.1. 示例配置
+### 13.4.1. 示例配置
 
 ```
 [Unit]           # 这个项目与此 unit 的解释、执行服务相依性有关
@@ -2616,7 +2679,7 @@ WantedBy=multi-user.target
   - 此目录内的文件为链接文件，设置依赖服务的链接。
   - 意思是在启动 vsftpd.service 之前，需要事先启动哪些服务的意思。
 
-### 13.3.2. 配置说明
+### 13.4.2. 配置说明
 
 以下为常见配置说明，systemctl支持的配置项还有更多
 
@@ -2652,7 +2715,7 @@ WantedBy=multi-user.target
 | Also           | 当目前这个 unit 本身被 enable 时，Also 后面接的 unit 也请 enable 的意思。也就是具有依赖性的服务可以写在这里呢！ |
 | Alias          | 进行一个链接的别名的意思！当 systemctl enable 相关的服务时，则此服务会进行链接文件的创建。以 multi-user.target 为例，是用来作为默认操作环境 default.target 的规划， 因此当设置用成 default.target 时，这个 /etc/systemd/system/default.target 就会链接到 /usr/lib/systemd/system/multi-user.target |
 
-### 13.3.3. 配置中的变量
+### 13.4.3. 配置中的变量
 
 文件名中的`@` 和 文件中的`%I`
 
@@ -2679,7 +2742,7 @@ WantedBy=multi-user.target
 systemctl start clash-meta@wsain.service
 ```
 
-## 13.4. systemctl 针对 timer 的配置文件
+## 13.5. systemctl 针对 timer 的配置文件
 
 相较于cron的优势
 
@@ -4711,6 +4774,7 @@ TODO: supervisor
 
 # 23. 参考文档
 
+- [x] [鸟哥的Linux私房菜：基础学习篇 第四版](https://wizardforcel.gitbooks.io/vbird-linux-basic-4e/content/)
 - [ ] [linux常用命令](https://tkstorm.com/linux-doc/)
 - [x] [使用frp进行内网穿透](https://sspai.com/post/52523)
 - [ ] **[bash-handbook-zh-CN](https://github.com/denysdovhan/bash-handbook/blob/master/translations/zh-CN/README.md)**
@@ -4725,4 +4789,5 @@ TODO: supervisor
   - [Understand logging in Linux](https://unix.stackexchange.com/questions/205883/understand-logging-in-linux)
 - 工具：
   - [Linux Command](https://github.com/jaywcjlove/linux-command)
-
+- [red hat 使用 systemd 单元文件自定义和优化您的系统](https://docs.redhat.com/zh_hans/documentation/red_hat_enterprise_linux/9/html-single/using_systemd_unit_files_to_customize_and_optimize_your_system/index)
+- [setcap 命令详解](https://www.cnblogs.com/iamfy/archive/2012/09/20/2694977.html)

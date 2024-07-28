@@ -1,10 +1,10 @@
-# bash-handbook-zh-CN [![CC 4.0][cc-image]][cc-url]
+# 1. bash-handbook-zh-CN [![CC 4.0][cc-image]][cc-url]
 
 谨以此文档献给那些想学习Bash又无需钻研太深的人。
 
 > **Tip**: 不妨尝试 [**learnyoubash**](https://git.io/learnyoubash) — 一个基于本文档的交互式学习平台！
 
-# 前言
+# 2. 前言
 
 如果你是一个程序员，时间的价值想必心中有数。持续优化工作流是你最重要的工作之一。
 
@@ -26,11 +26,11 @@ Bash是一个Unix Shell，作为[Bourne shell](https://en.wikipedia.org/wiki/Bou
 
 在本文中，我会用例子来描述在bash中最重要的思想。希望这篇概略性的文章对你有帮助。
 
-# Shells与模式
+# 3. Shells与模式
 
 bash shell有交互和非交互两种模式。
 
-## 交互模式
+## 3.1. 交互模式
 
 Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
 桌面环境接管了第7个虚拟终端，于是按下`Ctrl-Alt-F7`，可以进入一个操作友好的图形用户界面。
@@ -52,7 +52,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
 - [iTerm2](https://en.wikipedia.org/wiki/ITerm2)
 - [ConEmu](https://en.wikipedia.org/wiki/ConEmu)
 
-## 非交互模式
+## 3.2. 非交互模式
 
 - 在非交互模式下，shell从文件或者管道中读取命令并执行。
   - 当shell解释器执行完文件中的最后一个命令，shell进程终止，并回到父进程。
@@ -109,7 +109,7 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
     - 比如，安装完新版本的`bash`，我们可能将其路径添加到`PATH`中，来“隐藏”老版本。
     - 如果直接用`#!/bin/bash`，那么系统会选择老版本的`bash`来执行脚本，如果用`#!/usr/bin/env bash`，则会使用新版本。
 
-## 返回值
+## 3.3. 返回值
 
 - 说明：
   - 每个命令都有一个**返回值**（**返回状态**或者**退出状态**）
@@ -130,38 +130,112 @@ Ubuntu用户都知道，在Ubuntu中有7个虚拟终端。
   - 可以使用`return`命令来结束一个函数的执行并将**返回值**返回给调用者
   - 当然，也可以在函数内部用`exit`，这 _不但_ 会中止函数的继续执行， _而且_ 会终止整个程序的执行。
 
-# bash基本说明
+# 4. bash基本说明
 
-## bash 命令种类
+## 4.1. bash 命令种类
 
 - `type` 命令来 check
 
 builtin，alias，command，function
 
-## 通知信息
+## 4.2. 通知信息
 
 - /etc/issue: 在 login 提示符之前显示，比如tty中
 - /etc/motd: 在用户成功登录系统之后显示
 
-## 配置文件读取
+## 4.3. 启动环境与配置文件
 
-- login shell
-  - 登入时
-    - 整体配置文件：`/etc/profile`
-    - 个人配置文件(三选一)
-      - `~/.bash_profile`
-      - `~/.bash_login`
-      - `~/.profile`
-  - 登出时
-    - `~/.bash_logout`
-- non-login shell
-  - `~/.bashrc`
+用户每次使用 Shell，都会开启一个与 Shell 的 Session（对话）。
 
-## PS1 变量
+Session 有两种类型：登录 Session 和非登录 Session，也可以叫做 login shell 和 non-login shell。
 
-## bash 历史记录
+### 4.3.1. 登录 Session (login shell)
 
-## 类型声明 declare / typeset
+登录 Session 是用户登录系统以后，系统为用户开启的原始 Session，通常需要用户输入用户名和密码进行登录。
+
+登录 Session 一般进行整个系统环境的初始化，启动的初始化脚本依次如下。
+
+- `/etc/profile`：所有用户的全局配置脚本。
+- `/etc/profile.d`目录里面所有`.sh`文件
+- 用户个人配置初始化，优先级从搞到底，只执行一个
+  - `~/.bash_profile`：用户的个人配置脚本。如果该脚本存在，则执行完就不再往下执行。
+  - `~/.bash_login`：如果`~/.bash_profile`没找到，则尝试执行这个脚本（C shell 的初始化脚本）。如果该脚本存在，则执行完就不再往下执行。
+  - `~/.profile`：如果`~/.bash_profile`和`~/.bash_login`都没找到，则尝试读取这个脚本（Bourne shell 和 Korn shell 的初始化脚本）。
+
+Linux 发行版更新的时候，会更新`/etc`里面的文件，比如`/etc/profile`，因此不要直接修改这个文件。如果想修改所有用户的登陆环境，就在`/etc/profile.d`目录里面新建`.sh`脚本。
+
+如果想修改你个人的登录环境，一般是写在`~/.bash_profile`里面。下面是一个典型的`.bash_profile`文件。
+
+```
+# .bash_profile
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin
+PATH=$PATH:$HOME/bin
+
+SHELL=/bin/bash
+MANPATH=/usr/man:/usr/X11/man
+EDITOR=/usr/bin/vi
+PS1='\h:\w\$ '
+PS2='> '
+
+if [ -f ~/.bashrc ]; then
+. ~/.bashrc
+fi
+
+export PATH
+export EDITOR
+```
+
+可以看到，这个脚本定义了一些最基本的环境变量，然后执行了`~/.bashrc`。
+
+`bash`命令的`--login`参数，会强制执行登录 Session 会执行的脚本。
+
+```
+$ bash --login
+```
+
+`bash`命令的`--noprofile`参数，会跳过上面这些 Profile 脚本。
+
+```
+$ bash --noprofile
+```
+
+### 4.3.2. 非登陆session (non-login shell)
+
+非登录 Session 是用户进入系统以后，手动新建的 Session，这时不会进行环境初始化。比如，
+
+- 在命令行执行`bash`命令，就会新建一个非登录 Session。
+- 从图形界面的窗口管理器登录并不会产生登录 Shell。
+
+非登录 Session 的初始化脚本依次如下。
+
+- `/etc/bash.bashrc`：对全体用户有效。
+- `~/.bashrc`：仅对当前用户有效。
+
+对用户来说，`~/.bashrc`通常是最重要的脚本。非登录 Session 默认会执行它，而登录 Session 一般也会通过调用执行它。
+每次新建一个 Bash 窗口，就相当于新建一个非登录 Session，所以`~/.bashrc`每次都会执行。
+注意， **执行脚本相当于新建一个非互动的 Bash 环境，但是这种情况不会调用`~/.bashrc`** 。
+
+`bash`命令的`--norc`参数，可以禁止在非登录 Session 执行`~/.bashrc`脚本。
+
+```
+$ bash --norc
+```
+
+`bash`命令的`--rcfile`参数，指定另一个脚本代替`.bashrc`。
+
+```
+$ bash --rcfile testrc
+```
+
+### 4.3.3. .bash_logout
+
+~/.bash_logout脚本在每次退出 Session 时执行，通常用来做一些清理工作和记录工作，比如删除临时文件，记录用户在本次 Session 花费的时间。
+
+如果没有退出时要执行的命令，这个文件也可以不存在。
+
+## 4.4. PS1 变量
+
+## 4.5. 类型声明 declare / typeset
 
 - `-a` ：将后面名为 variable 的变量定义成为 array 类型
 - `-i` ：将后面名为 variable 的变量定义成为整数数字 （integer） 类型
@@ -176,7 +250,144 @@ builtin，alias，command，function
 - `-x` ：用法与 export 一样，就是将后面的 variable 变成环境变量；
 - `-r` ：将变量设置成为 readonly 类型，该变量不可被更改内容，也不能 unset
 
-# 注释
+# 5. bash history
+
+## 5.1. 基本说明
+
+- Shell启动时，会从`HISTFILE`（默认是`~/.bash_history`）里读取命令的历史记录。
+  - 如果设置了`HISTFILESIZE`变量，那么只会读取`HISTFILESIZE`条历史记录。
+  - 如果不想保存历史信息，可以unset shell的`history` option，（`set +o history`），或者unset `HISTFILE`变量。
+- Shell退出时，这个shell的最后`HISTSIZE`条历史记录会写到`HISTFILE`里。
+  - 如果shell打开了`histappend`选项，会以append的方式回写`HISTFILE`文件， 否则回写时会覆盖`HISTFILE`。
+  - 如果保存时历史记录超过了`HISTFILESIZE`，那么`HISTFILE`会被截断（truncated）。
+  - 如果不想被截断，可以考虑unset `HISTFILESIZE`，或者把它设成null、非数字的值或者负数值。
+
+在图形界面下，简单地点击shell窗口的关闭按钮可能不会保存这个shell的历史记录。通过执行`exit`命令来退出shell。
+
+可以通过`CTRL-p`和`CTRL-n`来上下浏览历史记录，通过`CTRL-r`反向搜索历史记录。
+
+## 5.2. 环境变量
+
+- `HISTFILE`
+  - 历史记录所在的文件。默认是`~/.bash_history`。
+  - 不想保存历史信息时，可以unset这个变量。
+- `HISTFILESIZE`
+  - 设置`HISTFILE`文件里可以保存多少条记录，例如`export HISTFILESIZE=10000`。
+- `HISTSIZE`
+  - 设置一个shell session可以存多少条历史记录。
+- `HISTIGNORE`
+  - 保存历史时忽略某些命令。Pattern之间用`:`分隔。
+  - 例如`export HISTIGNORE="&:[ ]*:exit"`，会忽略三种类型的历史记录；
+    - 分别是： `&`，和上一条历史记录相同的记录；
+    - `[ ]*`，以空格开头的历史记录；
+    - `exit`，忽略`exit`命令。
+- `HISTCONTROL`，
+  - 和`HISTIGNORE`类似，也是用来忽略某些历史记录，见`man bash`。
+- `HISTCMD`
+  - 下一个命令在历史记录中的index。假设当前`HISTCMD`的值是123，然后执行`ls`，再执行`history`，会看到：
+- `HISTTIMEFORMAT`
+  - 可以在`history`的输出中显示历史记录的时间戳。`HISTTIMEFORMAT`字符串的可用格式见`man strftime`。
+
+## 5.3. 相关bash option
+
+- `history`
+  - 可以控制是否保留历史记录。
+  - 打开这个选项，`set -o history`；关闭这个选项，`set +o history`。
+
+- `histappend`
+  - 打开后，写`HISTFILE`时会用append的方式；否则，使用覆盖的方式。
+  - `shopt -s histappend`，打开；`shopt -u histappend`，关闭。
+  - append的时候只会把这个shell启动后新增的历史记录写到`HISTFILE`里。
+  - 如果`histappend`选项处于关闭状态（默认行为），那么`HISTFILE`只会保留 最后关闭的那个shell的历史（其它shell的历史都被覆盖了）。
+
+- `histreedit`
+  - 打开这个option后，如果替换（例如`^xxx^yyy^`）失败，会失败的替换重新输出到shell的输入行上。
+
+- `histverify`
+  - 打开后，在做history expansion时会不立即执行它，而是把expansion的结果输出到shell上，让用户有机会在执行前修改它。
+  - 比如，打开这个option后，输入`!!`不会立即执行上一个命令，而是把上一个命令打印到shell的输入行上。
+
+（注：可以看到一些选项用`set`来设置，另外一些用`shopt`来设置。这两个都是bash的bulitin command，它们所控制选项有所不同。详见`man bash`。）
+
+## 5.4. History Expansion
+
+通过history expansion，可以重新执行之前执行过的命令或者提取之前执行过的命令的参数。
+
+History Expansion有两种类型，event Designators以及word Designators。 Event designators用来重新执行命令，而word designators用来提取历史命令的参数。
+
+### 5.4.1. event Designators
+
+Event designators以`!`开头，也有一个是以`^`开头的。
+
+```
+$ !!        # 执行上一个命令，和!-1等效
+$ !-1       # 执行上一个命令
+$ !-2       # 执行上上个命令
+$ !3        # 执行编号为3的历史记录
+$ !xyz      # 执行以xyz开头的最近执行过的命令
+$ !?xyz?    # 执行含有xyz的最近执行过的命令
+$ ^xxx^yyy^ # 找到最近执行的带xxx的命令，把xxx替换成yyy，然后执行它
+```
+
+### 5.4.2. Word Designators
+
+Word designators跟在一个event designators后面，它们之间以`:`分隔。
+
+```
+$ echo !!:2   # 提取上一个命令的第2个参数，然后把它传给echo并执行
+$ !!:2        # 提取上一个命令的第2个参数，并执行它。如果不想执行，要打开bash的histverify选项
+              # 或者用"p" modifier
+$ echo !!:0   # 提取上一个命令的名字
+$ echo !!:3-5 # 提取第3，4，5个参数
+$ echo !!:$   # 提取最后一个参数
+$ echo !!:^   # 提取第一个参数
+$ echo !!:*   # 提取所有参数，和!!:1-$效果一样
+$ echo !!:3*  # 等效于3-$
+$ echo !!:3-  # 提取第3个到倒数第二个
+```
+
+### 5.4.3. Modifier
+
+Word designators后面还可以跟着一个modifier，它可以进一步修改word designators提取出的字符串。
+
+```
+$ echo !!:$:h   # 从末尾开始删除直到遇到/，如果!!:$是个path string，那么"h"相当于只保留dirname
+$ echo !!:$:t   # 和"h"相反，保留basename
+$ echo !!:$:r   # 去掉后缀，比如abc.xml会变成abc
+$ echo !!:$:r:r # 去掉两个后缀，比如abc.gz.tar会变成abc。这个例子也说明了modifier可以连续使用
+$ echo !!:$:e   # 只保留后缀，比如abc.xml会变成.xml
+$ echo !!:$:gs/abc/xyz/ # 把字符串中的abc替换成xyz，如果不加"g"，则只会替换第一个abc
+$ echo !!:$:&   # 重复上一次"s"替换
+$ echo !!:*:q   # 给字符串加上单引号；对于单引号内的字符串，bash不会做变量替换
+$ echo !!:*:x   # 和"q"一样，只不过如果字符串带有空格，那么会break word。
+                # 假如字符串是"a b c"，那么"q"的结果是'a b c'，"x"的结果是'a' 'b' 'c'
+$ !!:$:p        # man bash里说：“Print the new command but do not execute it”。
+# "p"的一个例子
+$ find ./abc -name pom.xml
+$ !!:0:p ./xyz !!:2-$
+```
+
+注： `!!:$`可以简写成`!$`，也就是`!!:`可以简写成`!`。
+
+## 5.5. 实时更新history
+
+```
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+```
+
+应用了这个`PROMPT_COMMAND`后，每个shell的历史记录都会“实时地”在shell间共享。
+
+- `history -a`会把当前shell的命令append到`HISTFILE`里；
+- 然后通过`history -c`清除这个shell的所有历史记录；
+- 最后通过`history -r`把`HISTFILE`的内容读取到当前shell里。
+- 这个`PROMPT_COMMAND`会在每次执行命令后都会把`HISTFILE`重新加载一遍， 如果`HISTFILE`很大可能会产生一些延迟。
+  - （这个`PROMPT_COMMAND`在append时没有性能问题，因为每次append只是append一条记录。）
+
+如果不要求“实时”共享，可以通过在一个shell里执行`history -a`，然后在另一个shell里执行`history -r`的方式来分享一个shell的历史记录。
+
+另外，在shell script里`history`命令默认是禁用的。可以通过下面的方式打开，
+
+# 6. 注释
 
 脚本中可以包含 _注释_。注释是特殊的语句，会被`shell`解释器忽略。它们以`#`开头，到行尾结束。
 
@@ -197,7 +408,7 @@ builtin，alias，command，function
 
 > **Tip**: 用注释来说明你的脚本是干什么的，以及 _为什么_ 这样写。
 
-# 变量
+# 7. 变量
 
 - 跟许多程序设计语言一样，你可以在bash中创建变量。
 - Bash中没有数据类型。  **变量只能包含数字或者由一个或多个字符组成的字符串**
@@ -206,7 +417,7 @@ builtin，alias，command，function
   - 环境变量
   - 作为 _位置参数_ 的变量
 
-## 局部变量
+## 7.1. 局部变量
 
 - 说明：
   - 有脚本内局部变量和函数内局部变量
@@ -233,7 +444,7 @@ builtin，alias，command，function
   local local_var="I'm a local value"
   ```
 
-## 环境变量
+## 7.2. 环境变量
 
 - **环境变量**
   - 是对当前shell会话内所有的程序或脚本都可见的变量
@@ -260,7 +471,7 @@ builtin，alias，command，function
 
   [这里](http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_03_02.html#sect_03_02_04)有一张更全面的Bash环境变量列表。
 
-## 位置参数
+## 7.3. 位置参数
 
 - **位置参数** 是在调用一个函数并传给它参数时创建的变量。
   > 下表列出了在函数中，位置参数变量和一些其它的特殊变量以及它们的意义。
@@ -283,7 +494,7 @@ builtin，alias，command，function
 - `shift`:
   - 会对参数进行左移，即删除`$#`中的第一个参数
 
-## 特殊变量
+## 7.4. 特殊变量
 
 - `$0`	当前脚本的文件名
 - `$n`	传递给脚本或函数的参数。n 是一个数字，表示第几个参数。例如，第一个参数是`$1`，第二个参数是`$2`。
@@ -296,7 +507,7 @@ builtin，alias，command，function
 - `$$`	当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。
 - `$_`  上一个命令的最后一个参数
 
-## 默认值
+## 7.5. 默认值
 
 - 变量可以有 _默认_ 值。我们可以用如下语法来指定默认值：
 
@@ -308,9 +519,9 @@ builtin，alias，command，function
   FOO=${FOO:-'default'}
   ```
 
-# Shell扩展
+# 8. Shell扩展
 
-## 说明
+## 8.1. 说明
 
 - 基本说明：
   - Shell 接收到用户输入的命令以后， **会根据空格将用户的输入，拆分成一个个词元（token）** 。
@@ -354,7 +565,7 @@ builtin，alias，command，function
   ```
 
 
-## IFS
+## 8.2. IFS
 
 internal field separator，默认为`<space><tab><newline>`
 
@@ -386,9 +597,9 @@ IFS=ab read x y z
 1a2b3
 ```
 
-## 扩展
+## 8.3. 扩展
 
-### 波浪线扩展
+### 8.3.1. 波浪线扩展
 
 - 波浪线`~`会自动扩展成当前用户的主目录。
 
@@ -431,9 +642,9 @@ IFS=ab read x y z
 
 - `~-`会扩展为`OLDPWD`，也就是`cd -`时的目录
 
-### 文件名扩展
+### 8.3.2. 文件名扩展
 
-#### `?` 字符扩展
+#### 8.3.2.1. `?` 字符扩展
 
 - `?`字符代表文件路径里面的 **任意单个字符，不包括空字符** 。
   > 比如，`Data???`匹配所有`Data`后面跟着三个字符的文件名。
@@ -471,7 +682,7 @@ IFS=ab read x y z
   - 上面例子中，如果`?.txt`可以扩展成文件名，`echo`命令会输出扩展后的结果；
   - 如果不能扩展成文件名，`echo`就会原样输出`?.txt`
 
-#### `*` 字符扩展
+#### 8.3.2.2. `*` 字符扩展
 
 - `*`字符代表文件路径里面的任意数量的任意字符，包括零个字符。
 
@@ -541,7 +752,7 @@ IFS=ab read x y z
   - 因此，`**/*.txt`可以匹配顶层的文本文件和任意深度子目录的文本文件。
   - 详细介绍请看后面`shopt`命令的介绍。
 
-#### 方括号扩展
+#### 8.3.2.3. 方括号扩展
 
 - 方括号扩展的形式是`[...]`， **只有文件确实存在的前提下才会扩展** 。
   - 如果文件不存在，就会原样输出。
@@ -621,7 +832,7 @@ IFS=ab read x y z
 
   - 上面代码中，`[!1-3]`表示排除 1、2 和 3。
 
-### 变量扩展
+### 8.3.3. 变量扩展
 
 - Bash 将美元符号`$`开头的词元视为变量，将其扩展成变量值，详见《Bash 变量》一章。
 
@@ -646,7 +857,7 @@ IFS=ab read x y z
 
 - 上面例子中，`${!S*}`扩展成所有以`S`开头的变量名。
 
-### 大括号扩展
+### 8.3.4. 大括号扩展
 
 - 大括号扩展`{...}`表示分别扩展成大括号里面的所有值，各个值之间使用逗号分隔。
   - 比如，`{1,2,3}`扩展成`1 2 3`。
@@ -735,7 +946,7 @@ IFS=ab read x y z
 
   - 上面例子中，如果不存在`a.txt`和`b.txt`，那么`[ab].txt`就会变成一个普通的文件名，而`{a,b}.txt`可以照样扩展。
 
-### 子命令置换
+### 8.3.5. 子命令置换
 
 - 命令置换允许我们对一个命令求值，并将其值置换到另一个命令或者变量赋值表达式中
 - 当一个命令被`反引号` 或`$()`包围时，命令置换将会执行
@@ -751,7 +962,7 @@ IFS=ab read x y z
 
 - `$(...)`可以嵌套，比如`$(ls $(pwd))`。
 
-### 算数扩展
+### 8.3.6. 算数扩展
 
 - 在bash中，执行算数运算是非常方便的。算数表达式必须包在`$(( ))`中。算数扩展的格式为：
 
@@ -770,7 +981,7 @@ IFS=ab read x y z
   echo $(( x + y ))     # 13
   ```
 
-### 进程替换扩展(Process Substitution)
+### 8.3.7. 进程替换扩展(Process Substitution)
 
 - 说明
   - 假设有一个工具，它原本接受的参数应该是一个指代某个具体文档的"文件名"，使用Process Substitution后，可以用其他命令的输出来作为文件的内容，让这个工具去处理
@@ -799,7 +1010,7 @@ IFS=ab read x y z
   lr-x------ 1 wsain wsain 64 Jan  9 20:03 /dev/fd/63 -> 'pipe:[1983621]'
   ```
 
-### 分词 word splitting (重要)
+### 8.3.8. 分词 word splitting (重要)
 
 - 只有没有在双引号里，才会出现分词
 - 只有在出现以下扩展时，才会出现分词。
@@ -825,7 +1036,7 @@ IFS=ab read x y z
   2646806 2646935 2649821
   ```
 
-## 单引号和双引号
+## 8.4. 单引号和双引号
 
 - 单引号和双引号之间有很重要的区别
   - 在双引号中，变量引用或者命令置换是会被展开的
@@ -859,9 +1070,9 @@ IFS=ab read x y z
   - 但是，假如这个值来自某个环境变量，来自一个位置参数，或者来自其它命令（`find`, `cat`, 等等）呢
   - 因此，如果输入 *可能* 包含空格， **务必要用引号把表达式包起来** 。
 
-# 字符串(Parameter expansions)
+# 9. 字符串(Parameter expansions)
 
-## 拼接
+## 9.1. 拼接
 
 - 字符串拼接直接写到一起即可(不需要空格)
 
@@ -872,7 +1083,7 @@ IFS=ab read x y z
   echo "$c"
   ```
 
-## 获取长度
+## 9.2. 获取长度
 
 - 获取长度
 
@@ -881,7 +1092,7 @@ IFS=ab read x y z
   echo ${#string}
   ```
 
-## 字符替换
+## 9.3. 字符替换
 
 | Code              | Description         |
 | ----------------- | ------------------- |
@@ -903,7 +1114,7 @@ echo ${name/J/j}    #=> "john" (substitution)
 echo ${food:-Cake}  #=> $food or "Cake"
 ```
 
-## 提取子字符串
+## 9.4. 提取子字符串
 
 - 语法
 
@@ -923,7 +1134,7 @@ echo ${food:-Cake}  #=> $food or "Cake"
   echo ${name:(-2):1} #=> "h" (slicing from right)
   ```
 
-## 默认值
+## 9.5. 默认值
 
 - 语法
 
@@ -956,7 +1167,7 @@ echo ${food:-Cake}  #=> $food or "Cake"
   ```bash
   echo ${food:-Cake}  #=> $food or "Cake"
   ```
-## 删除与替换
+## 9.6. 删除与替换
 
 | Expression           | Description                  |
 | -------------------- | ---------------------------- |
@@ -967,13 +1178,13 @@ echo ${food:-Cake}  #=> $food or "Cake"
 | `${FOO/str1/str2}`   | 用str2 替换 str1，只替换一次 |
 | `${FOO//str1//str2}` | 把所有str1替换为str2         |
 
-# 数组
+# 10. 数组
 
 跟其它程序设计语言一样，bash中的数组变量给了你引用多个值的能力。在bash中，数组下标也是从0开始，也就是说，第一个元素的下标是0。
 
 跟数组打交道时，要注意一个特殊的环境变量`IFS`。**IFS**，全称 **Input Field Separator**，保存了数组中元素的分隔符。它的默认值是一个空格`IFS=' '`。
 
-## 数组声明
+## 10.1. 数组声明
 
 - 在bash中，可以通过简单地给数组变量的某个下标赋值来创建一个数组：
 
@@ -995,7 +1206,7 @@ echo ${food:-Cake}  #=> $food or "Cake"
   read -a pids <<< "$(ps -elf | grep worker | awk '{print $4}' | sort | uniq | xargs)"
   ```
 
-## 数组扩展
+## 10.2. 数组扩展
 
 - 单个数组元素的扩展跟普通变量的扩展类似：
 
@@ -1058,7 +1269,7 @@ echo ${food:-Cake}  #=> $food or "Cake"
   - 数组元素中的空格得以保留。
   - 使用arr[@]的时候，不加引号shellchecker会报错
 
-## 数组切片
+## 10.3. 数组切片
 
 - 除此之外，可以通过 _切片_ 运算符来取出数组中的某一片元素：
 
@@ -1069,7 +1280,7 @@ echo ${food:-Cake}  #=> $food or "Cake"
   - `${fruits[@]}`扩展为整个数组
   - `:0:2`取出了数组中从0开始，长度为2的元素。
 
-## 向数组中添加元素
+## 10.4. 向数组中添加元素
 
 - 向数组中添加元素也非常简单。复合赋值在这里显得格外有用。我们可以这样做：
 
@@ -1080,7 +1291,7 @@ echo ${food:-Cake}  #=> $food or "Cake"
 
 - 上面的例子中，`${fruits[@]}`扩展为整个数组，并被置换到复合赋值语句中，接着，对数组`fruits`的赋值覆盖了它原来的值。
 
-## 从数组中删除元素
+## 10.5. 从数组中删除元素
 
 - 用`unset`命令来从数组中删除一个元素：
 
@@ -1089,7 +1300,7 @@ echo ${food:-Cake}  #=> $food or "Cake"
   echo ${fruits[@]} # Apple Desert fig Plum Banana Cherry
   ```
 
-## 多行字符串处理
+## 10.6. 多行字符串处理
 
 ```bash
 #! /bin/bash
@@ -1121,9 +1332,9 @@ do
 done < <(echo "${mul}")
 ```
 
-# 字典
+# 11. 字典
 
-## 定义
+## 11.1. 定义
 
 ```bash
 declare -A sounds # Declares sound as a Dictionary object (aka associative array).
@@ -1133,7 +1344,7 @@ sounds[bird]="tweet"
 sounds[wolf]="howl"
 ```
 
-## 基本使用
+## 11.2. 基本使用
 
 ```bash
 echo ${sounds[dog]} # Dog's sound
@@ -1143,9 +1354,9 @@ echo ${#sounds[@]}  # Number of elements
 unset sounds[dog]   # Delete dog
 ```
 
-## 遍历
+## 11.3. 遍历
 
-### 遍历所有value
+### 11.3.1. 遍历所有value
 
 ```bash
 for val in "${sounds[@]}"; do
@@ -1153,7 +1364,7 @@ for val in "${sounds[@]}"; do
 done
 ```
 
-### 遍历所有key
+### 11.3.2. 遍历所有key
 
 ```bash
 for key in "${!sounds[@]}"; do
@@ -1161,14 +1372,14 @@ for key in "${!sounds[@]}"; do
 done
 ```
 
-# 流，管道以及序列
+# 12. 流，管道以及序列
 
 - Bash有很强大的工具来处理程序之间的协同工作
 - 使用流，我们能将一个程序的输出发送到另一个程序或文件，因此，我们能方便地记录日志或做一些其它我们想做的事。
 - 管道给了我们创建传送带的机会，控制程序的执行成为可能。
 - 学习如何使用这些强大的、高级的工具是非常非常重要的。
 
-## 流
+## 12.1. 流
 
 - Bash接收输入，并以字符序列或 **字符流** 的形式产生输出。这些流能被重定向到文件或另一个流中。
   > 有三个文件描述符：
@@ -1244,7 +1455,7 @@ done
   cat 0<& 9  # 将输入重定向到0
   ```
 
-## 管道
+## 12.2. 管道
 
 - 说明
   - 我们不仅能将流重定向到文件中，还能重定向到其它程序中
@@ -1285,7 +1496,7 @@ done
   curl --location --request POST 'url'  --data @-
   ```
 
-## 命令序列
+## 12.3. 命令序列
 
 > 命令序列是由`;`，`&`，`&&`或者`||`运算符分隔的一个或多个管道序列。
 
@@ -1318,7 +1529,7 @@ done
 
   - _与_ 或 _或_ 序列的返回值是序列中最后一个执行的命令的返回值。
 
-# 条件表达式与条件语句
+# 13. 条件表达式与条件语句
 
 跟其它程序设计语言一样，Bash中的条件语句让我们可以决定一个操作是否被执行。结果取决于一个包在`[[ ]]`里的表达式。
 
@@ -1326,7 +1537,7 @@ done
 
 共有两个不同的条件表达式：`if`和`case`。
 
-## 基元和组合表达式
+## 13.1. 基元和组合表达式
 
 - 说明
   - 由`[[ ]]`（`sh`中是`[ ]`）包起来的表达式被称作 **检测命令** 或 **基元**
@@ -1387,7 +1598,7 @@ done
 
 - 当然，还有很多有用的基元，在[Bash的man页面](http://www.gnu.org/software/bash/manual/html_node/Bash-Conditional-Expressions.html)能很容易找到它们。
 
-## 使用`if`
+## 13.2. 使用`if`
 
 - `if`在使用上跟其它语言相同。
   - 如果中括号里的表达式为真，那么`then`和`fi`之间的代码会被执行
@@ -1429,7 +1640,7 @@ done
   fi
   ```
 
-## 使用`case`
+## 13.3. 使用`case`
 
 - 如果你需要面对很多情况，分别要采取不同的措施，那么使用`case`会比嵌套的`if`更有用。
   > 使用`case`来解决复杂的条件判断，看起来像下面这样：
@@ -1480,13 +1691,13 @@ done
   done
   ```
 
-# 循环
+# 14. 循环
 
 循环其实不足为奇。跟其它程序设计语言一样，bash中的循环也是只要控制条件为真就一直迭代执行的代码块。
 
 Bash中有四种循环：`for`，`while`，`until`和`select`。
 
-## `for`循环
+## 14.1. `for`循环
 
 - `for`与它在C语言中的循环
 
@@ -1552,7 +1763,7 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
   done
   ```
 
-## `while`循环
+## 14.2. `while`循环
 
 - `while`循环检测一个条件，只要这个条件为 _真_，就执行一段命令
   - 被检测的条件跟`if..then`中使用的[基元](#基元和组合表达式)并无二异
@@ -1578,7 +1789,7 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
   done
   ```
 
-## `until`循环
+## 14.3. `until`循环
 
 - `until`循环跟`while`循环正好相反
   - 它跟`while`一样也需要检测一个测试条件
@@ -1590,7 +1801,7 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
   done
   ```
 
-## `select`循环
+## 14.4. `select`循环
 
 - `select`循环帮助我们组织一个用户菜单。它的语法几乎跟`for`循环一致：
 
@@ -1640,9 +1851,9 @@ Bash中有四种循环：`for`，`while`，`until`和`select`。
     <installing bash-handbook>
     ```
 
-## 实际情景
+## 14.5. 实际情景
 
-### range
+### 14.5.1. range
 
 ```bash
 for i in {1..5}; do # 大括号扩展
@@ -1654,7 +1865,7 @@ for i in {5..50..5}; do # 带步长
 done
 ```
 
-### reading line
+### 14.5.2. reading line
 
 ```bash
 cat file.txt | while read line; do
@@ -1695,7 +1906,7 @@ done
 # 主要是看重定向输入到while命令，还是到子命令
 ```
 
-### list file
+### 14.5.3. list file
 
 ```bash
 for file in "path"/*; do
@@ -1707,7 +1918,7 @@ for file in "path"/*; do
 done
 ```
 
-## 循环控制
+## 14.6. 循环控制
 
 - 我们会遇到想提前结束一个循环或跳过某次循环执行的情况
   - 这些可以使用shell内建的`break`和`continue`语句来实现
@@ -1724,9 +1935,9 @@ done
   done
   ```
 
-# 函数
+# 15. 函数
 
-## 基本说明
+## 15.1. 基本说明
 
 - 在脚本中，可以定义并调用函数。
   - 跟其它程序设计语言类似，函数是一个代码块，但有所不同。
@@ -1759,7 +1970,7 @@ done
   # greeting        # Hello, unknown!
   ```
 
-## 参数与返回
+## 15.2. 参数与返回
 
 - **参数和返回值** ：函数可以接收参数并返回结果。
   - 参数，在函数内部
@@ -1801,11 +2012,11 @@ done
   get_execute_time "sleep 3"
   ```
 
-# 其他
+# 16. 其他
 
-## Debugging
+## 16.1. Debugging
 
-### bash参数设置
+### 16.1.1. bash参数设置
 
 - shell提供了用于debugging脚本的工具
   - 如果我们想以debug模式运行某脚本，可以在其shebang中使用一个特殊的选项：
@@ -1869,7 +2080,7 @@ done
   echo "xtrace is turned off again"
   ```
 
-### 环境变量
+### 16.1.2. 环境变量
 
 - LINENO: 变量`LINENO`返回它在脚本里面的行号。
 
@@ -2026,7 +2237,7 @@ done
     - 函数`func1`是在`main.sh`的第7行调用
     - 函数`func2`是在`lib1.sh`的第8行调用的。
 
-## read
+## 16.2. read
 
 - 基本使用
 
@@ -2061,7 +2272,7 @@ done
   echo "$multi_lines"
   ```
 
-## bash中的括号
+## 16.3. bash中的括号
 
 > see `man bash` Compound Commands section
 
@@ -2071,7 +2282,7 @@ done
 - `((`
 - `${ ...; }`
 
-## 双括号语法
+## 16.4. 双括号语法
 
 - 语法：
 
@@ -2101,44 +2312,46 @@ done
 
 TODO: bash笔记
 
-## 目录堆栈
+## 16.5. 目录堆栈
 
 dirs
 
-## 临时文件夹
+## 16.6. 临时文件夹
 
-## set,shopt命令
+## 16.7. set,shopt命令
 
 [set 命令，shopt 命令](https://wangdoc.com/bash/set)
 
 [set, shopt](https://www.gnu.org/software/bash/manual/html_node/Modifying-Shell-Behavior.html)
 
-## mktmp, trap命令
+## 16.8. mktmp, trap命令
 
-## getoption命令
+## 16.9. getoption命令
 
-## 命令提示符
+## 16.10. 命令提示符
 
-# 后记
+# 17. 后记
 
 因此如果你想了解更多，请运行`man bash`，从那里开始
 
-# 想了解更多？
+# 18. 想了解更多？
 
 下面是一些其它有关Bash的资料：
 
 - Bash的man页面。在Bash可以运行的众多环境中，通过运行`man bash`可以借助帮助系统`man`来显示Bash的帮助信息。有关`man`命令的更多信息，请看托管在[The Linux Information Project](http://www.linfo.org/)上的网页["The man Command"](http://www.linfo.org/man.html)。
 - ["Bourne-Again SHell manual"](https://www.gnu.org/software/bash/manual/)，有很多可选的格式，包括HTML，Info，Tex，PDF，以及Textinfo。托管在<https://www.gnu.org/>上。截止到2016/01，它基于的是Bash的4.3版本，最后更新日期是2015/02/02。
 
-# 其它资源
+# 19. 其它资源
 
 - 学习资源
   - [x] **[bash-handbook-zh-CN](https://github.com/liushuaikobe/bash-handbook-zh-CN)**
   - [ ] **[网道 Bash 脚本教程](https://wangdoc.com/bash/)**
+    - [ ] [Bash启动环境](https://wangdoc.com/bash/startup)
   - [ ] **[rstacruz/cheatsheets-bash.md](https://github.com/rstacruz/cheatsheets/blob/master/bash.md)**
     > 异常全的bash命令。包括一些字符串处理
   - [ ] [GNU Bash Reference Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html)
     - [译文](https://xy2401.com/local-docs/gnu/manual.zh/bash.html)
+  - [ ] [Bash的history命令，实现history实时更新](https://rockhong.github.io/history-in-bash.html)
 
 - 辅助
   - [shellcheck](https://github.com/koalaman/shellcheck)

@@ -118,9 +118,9 @@
 
 > <details>
 > <summary style="color:red;">示例展示</summary>
-> 
-> ![key_points-11](./image/key_points-11.png) 
-> 
+>
+> ![key_points-11](./image/key_points-11.png)
+>
 > > **线程与线程之间是无法交互的。只有通过主内存才可以交互**
 > </details>
 
@@ -138,7 +138,7 @@
 ### 3.4.1. 说明
 
 - 在不影响单线程程序执行结果的前提下，计算机为了最大限度的发挥机器性能，会对机器指令重排序优化
-  > ![key_points-13](./image/key_points-13.png) 
+  > ![key_points-13](./image/key_points-13.png)
 
 - 代码示例
   ```java
@@ -259,9 +259,9 @@ happens-before关系保证正确同步的多线程程序的执行结果不被重
 
   > <details>
   > <summary style="color:red;">图解</summary>
-  > 
-  > ![key_points-12](./image/key_points-12.png) 
-  > 
+  >
+  > ![key_points-12](./image/key_points-12.png)
+  >
   > </details>
 
   - volatile底层实现主要是通过汇编lock前缀指令。
@@ -303,7 +303,7 @@ happens-before关系保证正确同步的多线程程序的执行结果不被重
   ```java
   // step 1，是普通变量的写，step 2是volatile变量的写，那符合第2个规则，这两个steps不能重排序
   // 而step 3是volatile变量读，step 4是普通变量读，符合第1个规则，同样不能重排序。
-  
+
   // 声明变量
   int a = 0; // 声明普通变量
   volatile boolean flag = false; // 声明volatile变量
@@ -469,7 +469,7 @@ Object类中的wait和notify方法实现线程等待和唤醒
 
    ```java
    static Object objectLock = new Object();
-   
+
    private static void synchronizedWaitNotify() {
        new Thread(() -> {
            synchronized (objectLock) {
@@ -482,7 +482,7 @@ Object类中的wait和notify方法实现线程等待和唤醒
                System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
            }
        }, "A").start();
-   
+
        new Thread(() -> {
            synchronized (objectLock) {
                objectLock.notify(); // 唤醒
@@ -508,7 +508,7 @@ Object类中的wait和notify方法实现线程等待和唤醒
 
    ```java
    static Object objectLock = new Object();
-   
+
    private static void synchronizedWaitNotify() {
        new Thread(() -> {
            //synchronized (objectLock) {
@@ -521,7 +521,7 @@ Object类中的wait和notify方法实现线程等待和唤醒
            System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
            //}
        }, "A").start();
-   
+
        new Thread(() -> {
            //synchronized (objectLock) {
            objectLock.notify(); // 唤醒
@@ -539,7 +539,7 @@ Object类中的wait和notify方法实现线程等待和唤醒
 
    ```java
    static Object objectLock = new Object();
-   
+
    private static void synchronizedWaitNotify() {
        new Thread(() -> {
            try {
@@ -557,7 +557,7 @@ Object类中的wait和notify方法实现线程等待和唤醒
                System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
            }
        }, "A").start();
-   
+
        new Thread(() -> {
            synchronized (objectLock) {
                objectLock.notify(); // 唤醒
@@ -587,7 +587,7 @@ Condition接口中的await后signal方法实现线程的等待和唤醒
    ```java
    static Lock lock = new ReentrantLock();
    static Condition condition = lock.newCondition();
-   
+
    private static void lockAwaitSignal() {
        new Thread(() -> {
            lock.lock();
@@ -603,7 +603,7 @@ Condition接口中的await后signal方法实现线程的等待和唤醒
                lock.unlock();
            }
        }, "A").start();
-   
+
        new Thread(() -> {
            lock.lock();
            try {
@@ -633,7 +633,7 @@ Condition接口中的await后signal方法实现线程的等待和唤醒
    ```java
    static Lock lock = new ReentrantLock();
    static Condition condition = lock.newCondition();
-   
+
    private static void lockAwaitSignal() {
        new Thread(() -> {
            //lock.lock();
@@ -649,7 +649,7 @@ Condition接口中的await后signal方法实现线程的等待和唤醒
                //lock.unlock();
            }
        }, "A").start();
-   
+
        new Thread(() -> {
            //lock.lock();
            try {
@@ -671,7 +671,7 @@ Condition接口中的await后signal方法实现线程的等待和唤醒
    ```java
    static Lock lock = new ReentrantLock();
    static Condition condition = lock.newCondition();
-   
+
    private static void lockAwaitSignal() {
        new Thread(() -> {
            try {
@@ -692,7 +692,7 @@ Condition接口中的await后signal方法实现线程的等待和唤醒
                lock.unlock();
            }
        }, "A").start();
-   
+
        new Thread(() -> {
            lock.lock();
            try {
@@ -786,7 +786,7 @@ Condition接口中的await后signal方法实现线程的等待和唤醒
            System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒");
        }, "A");
        a.start();
-   
+
        new Thread(() -> {
            LockSupport.unpark(a); // B 线程唤醒线程 A
            System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
@@ -821,7 +821,7 @@ Condition接口中的await后signal方法实现线程的等待和唤醒
            System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒" + System.currentTimeMillis());
        }, "A");
        a.start();
-   
+
        new Thread(() -> {
            LockSupport.unpark(a);
            System.out.println(Thread.currentThread().getName() + "\t" + "------通知");
@@ -856,7 +856,7 @@ Condition接口中的await后signal方法实现线程的等待和唤醒
            System.out.println(Thread.currentThread().getName() + "\t" + "------被唤醒" + System.currentTimeMillis());
        }, "A");
        a.start();
-   
+
        new Thread(() -> {
            LockSupport.unpark(a);
            LockSupport.unpark(a);
@@ -1297,7 +1297,7 @@ TODO: 线程复用及线程池原理
 
 [ThreadLocal详解](https://www.cnblogs.com/fsmly/p/11020641.html)
 
-<!-- 
+<!--
 
 - ThreadLocal提供了线程内存储变量的能力
   - 这些变量不同之处在于每一个线程读取的变量是对应的互相独立的
@@ -1344,13 +1344,13 @@ java同步方式有哪些
 - volatile
 - ReentrantLock
 - ThreadLocal
-- 阻塞队列，LinkedBlockingQueue 
+- 阻塞队列，LinkedBlockingQueue
 - 原子变量AtomicInteger 等
 ```
 
 # 19. 参考文献
 
-- **[《深入浅出java多线程》](http://concurrent.redspider.group/RedSpider.html)**
+- **[《深入浅出java多线程》](https://redspider.gitbook.io/concurrent)**
 - **[多线程与高并发](https://www.cnblogs.com/Zs-book1/p/14318992.html)**
 - [异常线程处理](https://mp.weixin.qq.com/s?__biz=Mzg3NjU3NTkwMQ==&mid=2247505057&idx=1&sn=621ebc409b589478e2e05388e079d8c0&source=41#wechat_redirect)
 - [并发编程之submit和execute区别](https://www.jianshu.com/p/29610984f1dd)

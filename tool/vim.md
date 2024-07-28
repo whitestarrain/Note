@@ -514,6 +514,22 @@
   :cdo lua print(vim.inspect(vim.api.nvim_win_get_cursor(0)))
   :cdo lua print(vim.fn.expand("cfile"))
   ```
+- 打出'^M':
+  - 插入模式下，`<c-v><c-m>`
+- excel 打开 csv 中文乱码
+
+  ```vim
+  " help encoding-names
+  set fileencoding=prc
+  set fileencoding=cp936
+  ```
+- 已指定编码打开文件
+  ```vim
+  " 打开新文件
+  :e ++encoding=gbk file_name
+  " 已其他编码加载当前文件
+  :e ++encoding=gbk
+  ```
 
 # 4. vim插件
 

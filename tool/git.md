@@ -17,9 +17,10 @@
   - `git add -p`  添加每个变化前，都会要求确认 对于同一个文件的多处变化，可以实现分次提交
 - 修改提交
   - `git commit -m "sign"` 提交版本
-  - `git commit --amend` 撤销提交
+  - `git commit --amend` 修正提交，将修改并入上一次提交
   - `git commit --amend [file1] [file2] ...` 重做上一次commit，并包括指定文件的新变化
   - `git commit --amend --no-edit（或者新字符串）` 覆盖上次提交 但 id 会变
+  - `git commit --amend --date='Mon Jul 15 00:47:47 2024 +0800'` 修改 AuthorDate
   - `git commit -am "sign"` ：直接添加并 commit 上去但必须是已经追踪的文件，这条命令无法添加追踪 **所以不太推荐**
   - `git commit -v` 提交时显示所有diff信息
     > git中*好要加转义字符，因为 因为 Git 有它自己的文件模式扩展匹配方式，所以我们不用 shell 来帮忙展开。 <br />
@@ -58,6 +59,7 @@
   - `git ls-files` 列出追踪文件的目录
 - 各种log信息
   - `git log --oneline`
+  - `git log --pretty=fuller` 输出 AuthorDate 和 CommitDate
   - `git log --oneline --graph` 会按分支排布
   - `git log --oneline --decorate --graph --all` ，它会输出你的提交历史、各个分支的指向以及项目的分支分叉情况。
   - `git log --follow file_path` 展示出所有修改指定文件的提交

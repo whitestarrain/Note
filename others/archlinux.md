@@ -714,7 +714,9 @@ cpio –icduv < /opt/etc.cpio
 - 然后引导进入桌面，至此任务完成，之后就交给kde或i3wm管理桌面了。
 - **可以不需要DM，直接通过startx脚本命令进入桌面** 。
 
-# 7. pacman 常用命令
+# 7. pacman
+
+## 常用命令
 
 ```bash
 pacman --help
@@ -751,6 +753,14 @@ pacman -U /var/cache/pacman/pkg/xxx.zst
 # 从网络源中恢复指定包的版本
 pacman -U https://archive.archlinux.org/packages/n/neovim/xxxx.zst
 ```
+
+## AUR
+
+> Arch User Package
+
+## yay
+
+## paru
 
 # 8. 参考资料
 

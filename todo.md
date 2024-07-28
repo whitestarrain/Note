@@ -15,6 +15,8 @@
 - 深度学习进阶，自然语言处理
 
 - [ ] 完工遗留的blog草稿
+- [ ] [常用bash命令](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
+  - 可以看看有没有自己眼生的
 
 # 小任务
 
@@ -24,8 +26,21 @@
   - [ ] [awesome rss](https://github.com/HenryQW/Awesome-TTRSS)
     - [ ] cron 上传 rss 数据库文件
     - [ ] gnu 加密 dotfile 敏感文件
+    - [ ] 容器中设置host代理
+
+      ```bash
+      docker run -it \
+        -e http_proxy="http://host.docker.internal:6152" \
+        -e https_proxy="http://host.docker.internal:6152" \
+        -e all_proxy="socks5://host.docker.internal:6153" \
+        ubuntu /bin/bash
+      ```
 - [ ] netty 框架
 - [ ] tempral 框架
+- [ ] c 实现文件上传下载
+- [ ] c 实现https
+- [x] [clashtui](https://github.com/JohanChane/clashtui)
+  - 算了，还是直接wget 订阅链接比较简单
 
 # 待做项(备忘录草稿)
 
@@ -249,6 +264,12 @@ python
   - [menu来切换参数](https://github.com/molecule-man/telescope-menufacture)
   - [自动带上参数](https://github.com/nvim-telescope/telescope-live-grep-args.nvim)
   - [简单实现的telescope-menufacture](https://github.com/tjdevries/config_manager/blob/7400242/xdg_config/nvim/lua/tj/telescope/custom/multi_rg.lua)
+- [x] mapping配置改为 require("whichkey").register
+  - 主要是为了支持 buffer mapping 的 prefix 展示
+  - 处理下格式，whichkey最新版本，参数格式有变
+  - git clone 的时候指定一下commit-id
+- [x] [host: iterm2+tmux, ssh: nvim-0.10 导致host 的 tmux崩溃](https://github.com/tmux/tmux/issues/3983)
+  - 设置`TMUX`环境变量: `TMUX="tmux" nvim`
 
 ### emacs
 
@@ -545,6 +566,7 @@ python
 - [风扇控制](https://zhuanlan.zhihu.com/p/55859374)
 - [mosh 通过 ssf 进行tcp连接](https://github.com/mobile-shell/mosh/issues/13)
   - 主要是为了解决cpolar不支持udp的问题，抽时间可以研究下
+- [AUR(arch user package)管理工具 paru，与yay类似](https://linux.cn/article-13122-1.html)
 
 ## lang
 
@@ -755,8 +777,9 @@ python
 
 # 优秀公开课
 
-任何方向的学习，推荐去：[编程指北](https://csguide.cn/) 找一下资源
+> 任何方向的学习，可以去：[编程指北](https://csguide.cn/) 找一下资源
 
+- [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)
 - [MIT 6.828 JOS与NJU ICS NEMU源码精读](https://knowledgehive.github.io/6.828/#)
 - [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
 - lc-3

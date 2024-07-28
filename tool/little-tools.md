@@ -1,3 +1,23 @@
+# 搜索工具
+
+## grep
+
+## ag
+
+## ripgreg
+
+## fzf
+
+## fd
+
+# z 快速跳转路径
+
+# 文件管理器
+
+## ranger
+
+## lf
+
 # github图标制作
 
 - [链接](https://shields.io/)
@@ -85,7 +105,7 @@
 
 - [thefuck](https://github.com/nvbn/thefuck)
 
-# 正则工具
+# 正则工具 regex101
 
 - [regex101](https://github.com/nedrysoft/regex101)
 
@@ -190,6 +210,20 @@ vim like 键位的日程管理工具
 
 支持docker部署
 
+# curl获取ip
+
+```
+curl http://ifconfig.me
+```
+
+# fd: 简易find
+
+[fd](https://github.com/sharkdp/fd?tab=readme-ov-file)
+
+简单、快速、友好的 find 替代品
+
+# json处理命令行工具 jq
+
 # CR常见术语
 
 - CR: Code Review. 请求代码审查。
@@ -206,3 +240,7 @@ vim like 键位的日程管理工具
 - IMO: In My Opinion. 在我看来。
 - TBD: To Be Done. 未完成，待续。
 - TL;DR: Too Long; Didn't Read. 太长懒得看。常见于README文档。
+
+# 参考
+
+- [awesome tuis](https://github.com/rothgar/awesome-tuis)
