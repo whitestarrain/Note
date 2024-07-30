@@ -13,7 +13,7 @@ bind: 0.0.0.0
 
 # set a server root path, for example:
 # base_uri: /docs
-base_uri: ~
+base_uri: /madness
 
 # set the underlying markdown renderer:
 # renderer: redcarpet    # default renderer
