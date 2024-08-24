@@ -567,6 +567,8 @@ find ./images -type f -print0  | {
   ```bash
   ln cc ccAgain # 硬连接；删除一个，将仍能找到；
   ln -s cc ccTo # 符号链接(软链接)；删除源，另一个无法使用；（后面一个ccTo 为新建的文件）
+
+  ln -sn cc2 ccTo # --no-dereference 可以用来覆盖软链
   ```
 - 原理(需要了解linux文件系统)：
   - 硬链接通过在目录的block中添加指向 **相同inode** 的记录
@@ -2508,7 +2510,7 @@ systemd 的 unit 类型:
 - Swap unit：文件扩展名为.swap, 用于标识swap设备；
 
 
-## 13.2. 配置目录：
+## 13.2. 配置目录
 
 下面三个目录优先级从低到高，配置依次覆盖
 

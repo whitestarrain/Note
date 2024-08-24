@@ -1,3 +1,11 @@
+# Nerd Font
+
+打上icon patch的字体
+
+3.0 版本后，icon 码点有变化，需要确定好自己环境下icon的码点 3.0 版本还是 3.0 之前的版本
+
+https://github.com/ryanoasis/nerd-fonts/issues/1190
+
 # 搜索工具
 
 ## grep
@@ -198,6 +206,8 @@ vim like 键位的日程管理工具
 
 [whistle](https://github.com/avwo/whistle)
 
+# 手机端抓包工具 Charles
+
 # charm 开源终端工具集
 
 ## vhs
@@ -223,6 +233,12 @@ curl http://ifconfig.me
 简单、快速、友好的 find 替代品
 
 # json处理命令行工具 jq
+
+# logseq 笔记软件
+
+支持markdown，org mode，支持双链
+
+也支持进行日程管理，可以考虑作为emacs org的代替品。
 
 # CR常见术语
 

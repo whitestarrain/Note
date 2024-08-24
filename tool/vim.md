@@ -530,6 +530,32 @@
   " 已其他编码加载当前文件
   :e ++encoding=gbk
   ```
+- `:g` 全局命令, `help :g`
+
+  ```vim
+  " 全局删除
+  :g/pattern/d
+  :g/^$/d "删除所有空行
+
+  " 全局替换
+  :g/microsoft antitrust/s/judgment/ripoff/
+
+  " 全局移动：
+  " 将所有的行按相反的顺序排列。其中，查找模式.*将匹配所有行，m0命令将每一行移动到0行之后：
+  :g/.*/m0
+  "将指定标记（Mark）之间的行按相反的顺序排列：
+  :'a,'bg/^/m'b
+  " 将文本中的“DESCRIPTION”部分，上移到“SYNTAX”之前：
+  :g /SYNTAX/.,/DESCRIPTION/-1 move /PARAMETERS/-1
+
+  " 全局复制
+  " 使用以下命令，可以重复每一行。其中:t或:copy为复制命令：
+  :g/^/t.
+  " 将包含模式pattern的行，复制到文件末尾：
+  :g/pattern/t$
+  "重复每一行，并以“print ''”包围：
+  :g/./yank|put|-1s/'/"/g|s/.*/Print '&'/
+  ```
 
 # 4. vim插件
 

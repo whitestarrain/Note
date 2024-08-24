@@ -17,6 +17,8 @@
 - [ ] 完工遗留的blog草稿
 - [ ] [常用bash命令](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
   - 可以看看有没有自己眼生的
+- [ ] 使用 make 安装 dotfiles
+  - 参考：https://github.com/jessfraz/dotfiles
 
 # 小任务
 
@@ -35,12 +37,23 @@
         -e all_proxy="socks5://host.docker.internal:6153" \
         ubuntu /bin/bash
       ```
-- [ ] netty 框架
 - [ ] tempral 框架
 - [ ] c 实现文件上传下载
 - [ ] c 实现https
 - [x] [clashtui](https://github.com/JohanChane/clashtui)
   - 算了，还是直接wget 订阅链接比较简单
+- [ ] dotfiles 实现 Dockerfile
+- [ ] netty 框架
+- [ ] Zmodem 协议，sz rz 实现远程图片上传
+  - 怎么触发local host的sz
+- [ ] tmux中使用nvim 时错位
+  - 原因1：unicode 标准，不同版本，unicode字符宽度可能没有对齐，
+    - [tmux status line width with unicode characters](https://stackoverflow.com/questions/66157606/tmux-status-line-width-with-unicode-characters)
+  - 原因2：windows上， 隐藏仿真层 ConPTY 会重写输出
+    - [tmux: ambiguous double width / single width characters rendered differently under tmux](https://github.com/wez/wezterm/issues/3704)
+    - 应该是这个，mac上ssh链接，没有这个问题。windows上 可以复现。之后强制调用 openssh 试试
+- [ ] 逆向工程
+  - utools 禁用更新
 
 # 待做项(备忘录草稿)
 
@@ -141,8 +154,11 @@
     - [ ] 命令行工具开发
     - [ ] **练手项目：kakuyomu 小说终端阅读器(包含登录功能)**
   - [ ] php 工作中，有项目用，可以看看
+  - [ ] Elixir
   - [ ] rust
   - [ ] kotlin 好像挺火的
+  - [ ] lisp
+  - [ ] ruby
 - 机器学习&深度学习
   - [ ] opencv 系统整理
   - [ ] 深度学习笔记系统整理（暂时抽不出时间）
@@ -157,22 +173,6 @@ cookie和session攻击
 25匹马赛马
 
 数据库 分区分库分表
-
-c
-c++
-java
-scala
-rust
-javascript
-typescript
-lua
-vimscript
-ruby
-python
-- kotlin
-- rust
-- go
-- Lisp
 
 -->
 
@@ -270,6 +270,9 @@ python
   - git clone 的时候指定一下commit-id
 - [x] [host: iterm2+tmux, ssh: nvim-0.10 导致host 的 tmux崩溃](https://github.com/tmux/tmux/issues/3983)
   - 设置`TMUX`环境变量: `TMUX="tmux" nvim`
+- [ ] lsp semantic token highlighting 优先级调成比 treesitter高
+  - 这样就能实现vscode上，引用不存在成员，不highlight为红色的效果了
+  - 当前默认关了lsp的语义高亮
 
 ### emacs
 
@@ -681,6 +684,8 @@ python
 
 - [查询占满/tmp硬盘，show processlist](https://blog.51cto.com/nginxs/1933625)
 - [程序员进阶，一些mysql问题可以看下](https://it-blog-cn.com/blogs/db/processlist.html#二、show-processlist-参数分析)
+- [mysql innodb文件格式 Antelope 与 Barracuda](https://www.cnblogs.com/jiangxiaobo/p/10846694.html)
+  - [MySQL 不建议使用TEXT类型](https://www.cnblogs.com/VicLiu/p/15566181.html)
 
 ## middleware
 
@@ -774,6 +779,8 @@ python
   - [archlinux wiki - GnuPG](https://wiki.archlinuxcn.org/wiki/GnuPG#)
 - [yabai - a macOS Tiling WM.](https://github.com/koekeishiya/yabai)
   - [配置示例](https://github.com/spencerwooo/dotfiles-archive/blob/master/macOS/_yabairc)
+- [protobuf](https://github.com/protocolbuffers/protobuf)
+  - 由 Google 开发的二进制序列化格式和相关的技术，它用于高效地序列化和反序列化结构化数据，通常用于网络通信、数据存储等场景
 
 # 优秀公开课
 
@@ -810,4 +817,8 @@ rss 配置
 - [llm 实现：c/cuda实现gpt-2](https://github.com/karpathy/llm.c)
 - [omniparse 将视频，图片等转换为markdown、json等](https://github.com/adithya-s-k/omniparse)
 
+# 付费课程
+
+- [udemy](www.udemy.com)
+<!-- [bilibili搬运](https://www.bilibili.com/video/BV1vA4y197C7/?spm_id_from=333.337.search-card.all.click&vd_source=c8e13c17fa73d1d5aca51505a5d3170d) -->
 
