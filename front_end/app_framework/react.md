@@ -97,7 +97,7 @@
 
 #### 2.3.2.2. I/O(读写 网络延迟)
 
-- React解决 I/O 瓶颈方式： **同时发生(concurrent) 模式** 
+- React解决 I/O 瓶颈方式： **同时发生(concurrent) 模式**
   - React通过将人机交互研究的结果整合到真实的UI中。使用 同时发生(concurrent) 模式。
   - 这里并不是说从物理底层提高 I/O 性能，而是一种`狡猾的策略`——同时发生(concurrent)策略
   - 就像 异步可中断更新 中提到的，当用户UI界面要发生变化时，一般都会有过渡动画
@@ -110,7 +110,7 @@
     - 当前有模块A，此时发生用户操作，需要先加载某数据(I/O操作)，将得到的新数据渲染到另外一个模块B
     - 模块B渲染成功后进行 A B 之间的切换过渡动画
     - 最终 模块 A 消失，只留下模块 B。
-  - 实际执行：上述场景中，React 并不会真的  一步一步 逐个执行，而是采用 同步发生的策略。实际执行的过程是：  
+  - 实际执行：上述场景中，React 并不会真的  一步一步 逐个执行，而是采用 同步发生的策略。实际执行的过程是：
     - 开始加载某数据(I/O操作)，于此同时开始执行 A B 的过渡动画
     - 当加载某数据(I/O操作)结束，无论此时过渡动画是否完成，都将数据渲染到 模块 B 中
   - 分析：
@@ -122,7 +122,7 @@
   > **人机交互的成果：人机交互的用户体验经验分析结果、说直白点就是人机交互操作的心理分析和如何欺骗你眼睛感知的套路**
 
   - 说直白点，如果用户看到页面在切换过程中的 loading 状态，即使这个时间非常短，用户也会明确感知到，进而用户会觉得切换时间有点长。
-  - 同时发生模式策略，就是 **先隐藏了切换过程中的 loading 状态** 
+  - 同时发生模式策略，就是 **先隐藏了切换过程中的 loading 状态**
     - 刚开始 I/O 的同时就进行场景切换
     - 此时虽然数据实际并未加载完成，但 React 就好像 数据已经加载完成一样似地
     - 开始同步进行页面切换
@@ -377,7 +377,7 @@ TODO: react fiber架构整理
   - 是`React.createElement(component, props, ...children)`方法的语法糖
   - 最终会被解析为一个对象。
   - JSX是一个表达式，可以正常在`if`与`for`中使用
-  - 在JSX中，可以 **使用大括号嵌入js表达式** 
+  - 在JSX中，可以 **使用大括号嵌入js表达式**
 
   ```javascript
   function getGreeting(user) {
@@ -411,7 +411,7 @@ TODO: react fiber架构整理
 
 ## 3.3. react的元素与虚拟DOM
 
-- React 元素是 **不可变对象** 
+- React 元素是 **不可变对象**
   - 一旦被创建，你就无法更改它的子元素或者属性
   - 一个元素就像电影的单帧：它代表了某个特定时刻的 UI。
   - 更新 UI 唯一的方式是创建一个全新的元素，并将其传入 root.render()。
@@ -548,7 +548,7 @@ TODO: react fiber架构整理
   - React DOM 迅速更新 DOM ，使其显示为 `<h1>Hello, Sara</h1>`。
 
 - 注意：
-  - **组件名称总是以大写字母开始** 
+  - **组件名称总是以大写字母开始**
   - 就像类名需要大写一样。
   - 不过，funciton类型的组件也需要大写首字母
   - 举例来说
@@ -573,7 +573,7 @@ TODO: react fiber架构整理
   }
   ```
 
-- React 很灵活，但是它有一条严格的规则：  **所有 React 组件都必须是纯函数，并禁止修改其自身 props** 
+- React 很灵活，但是它有一条严格的规则：  **所有 React 组件都必须是纯函数，并禁止修改其自身 props**
 
 #### 4.2.1.3. 类型限制与使用
 
@@ -589,7 +589,7 @@ TODO: react fiber架构整理
   ```javascript
   Person.propTypes = {
     name: PropTypes.string.isRequired,
-    age: PropTypes.number. 
+    age: PropTypes.number.
   }
   ```
 
@@ -637,7 +637,7 @@ TODO: react fiber架构整理
 
 ![react-2](./image/react-2.png)
 
-> React 的生命周期主要可分为: 
+> React 的生命周期主要可分为:
 > - 初始化阶段
 > - 挂载阶段
 > - 更新阶段
@@ -649,7 +649,7 @@ TODO: react fiber架构整理
 
 - 挂载阶段，对应的生命周期为：
   - 1.componentWillMount :发生在 render 函数之前，还没有挂载 Dom
-  - 2.render 
+  - 2.render
   - 3.componentDidMount :发生在 render 函数之后，已经挂载 Dom
 
 - 更新阶段:更新阶段分为由 state 更新引起和 props 更新引起
@@ -669,7 +669,7 @@ TODO: react fiber架构整理
     - *一直到这里 this.props 和 this.state 都还未发生更新*
     - 4. render
       - 执行 render 函数。
-    - 5. componentDidUpdate(prevProps, prevState) 
+    - 5. componentDidUpdate(prevProps, prevState)
       - 在此时已经完成渲染，Dom 已经发生变化，State 已经发生更新
       - prevProps、prevState 均为上一个状态的值
   - state（具体同上）
@@ -691,11 +691,11 @@ TODO: react fiber架构整理
 
   ```
   引发问题： setState 在 setTimeout 和原生事件回调中却可以同步更新（ this.state 立即获得更新结果）是为什么呢？
-  答案： 
+  答案：
       在 React 中，如果是由 React 引发的事件处理（比如：onClick 引发的事件处理）或在钩子函数中，调用 setState 不会同步更新 this.state，
       除此之外的 setState 调用会同步执行this.setState。
       “除此之外”指的是：绕过 React 通过 addEventListener 直接添加的事件处理函数和 setTimeout/setInterval 产生的异步调用。
-  解释： 
+  解释：
       每次 setState 产生新的state会依次被存入一个队列，然后会根据isBathingUpdates 变量判断是直接更新 this.state 还是放进 dirtyComponent 里回头再说。
       isBatchingUpdates 默认是 false，也就表示 setState 会同步更新 this.state。
       但是，当 React 在调用事件处理函数之前就会调用 batchedUpdates，这个函数会把 isBatchingUpdates 修改为 true，
@@ -729,7 +729,7 @@ TODO: react fiber架构整理
   而可以被打断的阶段正是实际 dom 挂载之前的虚拟 dom 构建阶段，也就是要被去掉的三个生命周期。
   本身这三个生命周期所表达的含义是没有问题的，但 react 官方认为我们（开发者）也许在这三个函数中编写了有副作用的代码，
   所以要替换掉这三个生命周期，因为这三个生命周期可能在一次 render 中被反复调用多次。
-  ``` 
+  ```
 - 取代这三个生命周期的是两个新生命周期
   - `static getDerivedStateFromProps(nextProps,nextState)`
     - 在 React 16.3.0 版本中：在组件实例化、接收到新的 props 时会被调用
@@ -790,8 +790,8 @@ TODO: react fiber架构整理
   </button>
   ```
 
-- 在 React 中你 **不能通过返回 false来阻止默认行为** 
-  - 必须明确调用 `preventDefault` 
+- 在 React 中你 **不能通过返回 false来阻止默认行为**
+  - 必须明确调用 `preventDefault`
   - 例如，对于纯 HTML ，要阻止链接打开一个新页面的默认行为，可以这样写：
 
     ```html
@@ -1043,7 +1043,7 @@ function Mailbox(props) {
 
 const messages = ['React', 'Re: React', 'Re:Re: React'];
 
-const root = ReactDOM.createRoot(document.getElementById('root')); 
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Mailbox unreadMessages={messages} />);
 ```
 
@@ -1119,12 +1119,12 @@ render() {
     }
   }
 
-  const root = ReactDOM.createRoot(document.getElementById('root')); 
+  const root = ReactDOM.createRoot(document.getElementById('root'));
   root.render(<Page />);
   ```
 
 - 注意：
-  - 在组件的 render 方法中 **返回 null 并不会影响组件的生命周期** 
+  - 在组件的 render 方法中 **返回 null 并不会影响组件的生命周期**
   - 例如，上面这个示例中，componentDidUpdate 依然会被调用。
 
 ### 4.4.3. 列表渲染与key
@@ -1234,7 +1234,7 @@ class NameForm extends React.Component {
 - 设置表单元素的 value 属性之后，其显示值将由 this.state.value 决定，以满足 React 状态的同一数据理念
 - 每次键盘敲击之后会执行 handleChange 方法以更新 React 状态，显示值也将随着用户的输入改变。
 - 对于受控组件来说，每一次 state(状态) 变化都会伴有相关联的处理函数。
-  - 这使得 **可以直接修改或验证用户的输入** 
+  - 这使得 **可以直接修改或验证用户的输入**
   - 比如，如果我们希望强制 name 的输入都是大写字母，可以这样来写 handleChange 方法
 
   ```javascript
@@ -1315,11 +1315,11 @@ class NameForm extends React.Component {
 
 ### 4.5.3. 不受控组件
 
-- 在HTML中， 
+- 在HTML中，
   - `<input type="file">` 可以让用户从设备存储器中选择一个或多个文件上传到服务器
   - 或者通过 JavaScript 使用 [File API](https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications) 操作。
 
-- 因为它的值是只读的，所以它是 Reac t中的  **不受控 组件** 
+- 因为它的值是只读的，所以它是 Reac t中的  **不受控 组件**
   > React深入中会进行详细说明
 
 ### 4.5.4. 处理多个输入元素
@@ -1523,7 +1523,7 @@ root.render(<Calculator />);
   - 而不是保存 celsiusValue 和 fahrenheitValue ， 另一个输入框的值总是在 render() 方法中计算得来的。
   - 这使我们对其进行清除和四舍五入到其他字段同时不会丢失用户输入的精度。
 
-- 当你看到 UI 中的错误，你可以使用 React 开发者工具来检查 props 
+- 当你看到 UI 中的错误，你可以使用 React 开发者工具来检查 props
   - 并向上遍历树，直到找到负责更新状态的组件。
   - 这使你可以跟踪到 bug 的源头
 
@@ -1676,7 +1676,7 @@ root.render(<Calculator />);
 
   - 函数一般来说，只应该做一件事，就是返回一个值
     - 如果你有多个操作，每个操作应该写成一个单独的函数
-    - 而且， **数据的状态应该与操作方法分离** 
+    - 而且， **数据的状态应该与操作方法分离**
     - 根据这种理念，React 的函数组件只应该做一件事情：返回组件的 HTML 代码，而没有其他的功能。
 
     ![refactor-16](./image/refactor-16.png)
@@ -1708,8 +1708,8 @@ root.render(<Calculator />);
   - 但是当时函数类型组件必须是纯函数，不能包含状态，也不支持生命周期方法，因此无法取代类
   - React Hooks 的设计目的，就是 **加强版函数组件，完全不使用"类"，就能写出一个全功能的组件** 。
 
-- 钩子（hook）：就是 **React 函数组件的副效应解决方案** 
-  - **用来为函数组件引入副效应** 
+- 钩子（hook）：就是 **React 函数组件的副效应解决方案**
+  - **用来为函数组件引入副效应**
   - 函数组件的主体只应该用来返回组件的 HTML 代码
   - 所有的其他操作（副效应）都必须通过钩子引入。
 
@@ -1724,11 +1724,11 @@ root.render(<Calculator />);
 ### 5.4.1. 基本说明
 
  - 说明：
-  - `useEffect()` 是 **通用的副效应钩子** 
+  - `useEffect()` 是 **通用的副效应钩子**
   - 找不到对应的钩子时，就可以用它。其实，从名字也可以看出来，它跟副效应（side effect）直接相关。
 
 - 作用：
-  - 就是 **指定一个副效应函数** 
+  - 就是 **指定一个副效应函数**
   - 组件 **每渲染一次** ，该函数就自动执行一次
   - 组件首次在网页 DOM 加载后，副效应函数也会执行。
 
@@ -1909,7 +1909,7 @@ root.render(<Calculator />);
   - 其他生命周期函数见文档：[React官方中文文档FAQ](https://react.docschina.org/docs/hooks-faq.html#do-hooks-cover-all-use-cases-for-classes)
     > 我们给 Hook 设定的目标是尽早覆盖 class 的所有使用场景。
     > 目前暂时还没有对应不常用的 getSnapshotBeforeUpdate，getDerivedStateFromError 和 componentDidCatch 生命周期的 Hook 等价写法，
-    > 但我们计划尽早把它们加进来。 
+    > 但我们计划尽早把它们加进来。
 
 - api说明
 
@@ -1927,11 +1927,11 @@ root.render(<Calculator />);
   - 第1个参数effect是一个function
     - 用来编写useEffect对应的执行代码。
     - 当下面3个生命周期函数执行后，就会触发useEffect函数，进而执行而第1个参数 effect 中的内容
-      > componentDidMount、componentDidUpdate、componentWillUnmount 
+      > componentDidMount、componentDidUpdate、componentWillUnmount
     - effect 函数主体内容中的代码，就是组件挂载之后和组件重新渲染之后你需要执行的代码；
     - effect 函数 return 出去的返回函数主体内容中的代码，就是组件即将被卸载前你需要执行的代码；
       - 不需要在组件卸载前执行代码的话，不需要return
-  - 第2个参数 deps 
+  - 第2个参数 deps
     - 可选参数，是Hook用来向React表明useEffect依赖关系
     - 指定的依赖项改变时，才会执行副效应函数
     - 如果为一个空数组，就表明副效应参数没有任何依赖项
@@ -2003,13 +2003,13 @@ root.render(<Calculator />);
   ```
   ```
   有警告：
-  Either include it or remove the dependency array. 
-  You can also do a functional update 'setA(a => ...)' 
+  Either include it or remove the dependency array.
+  You can also do a functional update 'setA(a => ...)'
   if you only need 'a' in the 'setA' call.
   ```
   ```javascript
   //需要改为
-  let timer = setInterval(() => {setA(a => a+1)},1000);  
+  let timer = setInterval(() => {setA(a => a+1)},1000);
   ```
 
   - 上面，尽管setInterval正常工作，每次都“正常执行了”，
@@ -2029,7 +2029,7 @@ root.render(<Calculator />);
     //如果下面代码看不懂，你需要重新去温习useState高级用法中的“数据类型为Objcet，修改方法”
     return <div>
       {JSON.stringify(obj)}
-      <button onClick={() => {setObj({...obj,a:obj.a+1})}}>a+1</button> 
+      <button onClick={() => {setObj({...obj,a:obj.a+1})}}>a+1</button>
       <button onClick={() => {setObj({...obj,b:obj.b+1})}}>b+1</button>
     </div>
   }
@@ -2431,10 +2431,10 @@ elem.dispatchEvent(event);//派发事件
   function Component(){
     //声明一个变量xxx，以及对应修改xxx的dispatch
     //将事件处理函数reducer和默认值initialValue作为参数传递给useReducer
-    const [xxx, dispatch] = useReducer(reducer, initialValue); 
+    const [xxx, dispatch] = useReducer(reducer, initialValue);
 
     //若想获取xxx的值，直接使用xxx即可
-    
+
     //若想修改xxx的值，通过dispatch来修改
     dispatch('xx');
   }
@@ -2497,11 +2497,11 @@ elem.dispatchEvent(event);//派发事件
 ### 6.5.1. React的引用对比与性能优化
 
 - 性能优化点
-  - react中，对比组件数据时，使用的是 **引用对比** 
+  - react中，对比组件数据时，使用的是 **引用对比**
   - 当父组件重新渲染时，所有子组件也都会重新渲染。
 
 - 优化方式：
-  - 类组件: 
+  - 类组件:
     - **生命周期函数拦截**
 
       ```javascript
@@ -2563,7 +2563,7 @@ elem.dispatchEvent(event);//派发事件
 
 ## 8.6. CRACO
 
-**C** **r**eate **R**eact **A**pp **C**onfiguration **O**verride 
+**C** **r**eate **R**eact **A**pp **C**onfiguration **O**verride
 
 # 9. 参考资料
 
