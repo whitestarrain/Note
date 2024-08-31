@@ -214,6 +214,29 @@ Docker 的主要用途，目前有三大类。
   ```
 - bbox4 无法 ping 到 bbox3。
 
+## 代理设置
+
+- 容器使用宿主机代理
+
+  ```
+  docker run -it \
+      -e http_proxy="http://host.docker.internal:6152" \
+      -e https_proxy="http://host.docker.internal:6152" \
+      -e all_proxy="socks5://host.docker.internal:6153" \
+      ubuntu /bin/bash
+  ```
+
+- 拉取镜像时使用代理: `vim /etc/docker/daemon.json`
+
+  ```json
+  {
+    "proxies": {
+      "http-proxy": "http://127.0.0.1:7890",
+      "https-proxy": "http://127.0.0.1:7890"
+    }
+  }
+  ```
+
 # 3. docker安装
 
 ## 3.1. 系统支持

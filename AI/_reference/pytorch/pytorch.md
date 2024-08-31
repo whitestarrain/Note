@@ -276,12 +276,12 @@ t.eye(2, 3, dtype=t.int) # 对角线为1, 不要求行列数一致
 
 
 ```python
-scalar = t.tensor(3.14159) 
+scalar = t.tensor(3.14159)
 print('scalar: %s, shape of sclar: %s' %(scalar, scalar.shape))
 ```
 
     scalar: tensor(3.1416), shape of sclar: torch.Size([])
-    
+
 
 
 ```python
@@ -290,7 +290,7 @@ print('vector: %s, shape of vector: %s' %(vector, vector.shape))
 ```
 
     vector: tensor([1, 2]), shape of vector: torch.Size([2])
-    
+
 
 
 ```python
@@ -380,7 +380,7 @@ b.shape
 
 
 ```python
-b.unsqueeze(1) # 注意形状，在第1维（下标从0开始）上增加“１” 
+b.unsqueeze(1) # 注意形状，在第1维（下标从0开始）上增加“１”
 #等价于 b[:,None]
 b[:, None].shape
 ```
@@ -401,7 +401,7 @@ b.unsqueeze(-2) # -2表示倒数第二个维度
 
 
     tensor([[[0, 1, 2]],
-    
+
             [[3, 4, 5]]])
 
 
@@ -572,13 +572,13 @@ a[:2, 0:2] # 前两行，第0,1列
 
 
 ```python
-print(a[0:1, :2]) # 第0行，前两列 
+print(a[0:1, :2]) # 第0行，前两列
 print(a[0, :2]) # 注意两者的区别：形状不同
 ```
 
     tensor([[1.1741, 1.4335]])
     tensor([1.1741, 1.4335])
-    
+
 
 
 ```python
@@ -829,7 +829,7 @@ d.item() # 只包含一个元素的tensor即可调用tensor.item,与形状无关
 ```
 
     torch.Size([1, 1, 1])
-    
+
 
 
 
@@ -845,7 +845,7 @@ d.item() # 只包含一个元素的tensor即可调用tensor.item,与形状无关
 ```
 
 #### 1.1.1.4. 高级索引
-PyTorch在0.2版本中完善了索引操作，目前已经支持绝大多数numpy的高级索引[^10]。高级索引可以看成是普通索引操作的扩展，但是高级索引操作的结果一般不和原始的Tensor共享内存。 
+PyTorch在0.2版本中完善了索引操作，目前已经支持绝大多数numpy的高级索引[^10]。高级索引可以看成是普通索引操作的扩展，但是高级索引操作的结果一般不和原始的Tensor共享内存。
 [^10]: https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html#advanced-indexing
 
 
@@ -860,11 +860,11 @@ x
     tensor([[[ 0,  1,  2],
              [ 3,  4,  5],
              [ 6,  7,  8]],
-    
+
             [[ 9, 10, 11],
              [12, 13, 14],
              [15, 16, 17]],
-    
+
             [[18, 19, 20],
              [21, 22, 23],
              [24, 25, 26]]])
@@ -906,7 +906,7 @@ x[[0, 2], ...] # x[0] 和 x[2]
     tensor([[[ 0,  1,  2],
              [ 3,  4,  5],
              [ 6,  7,  8]],
-    
+
             [[18, 19, 20],
              [21, 22, 23],
              [24, 25, 26]]])
@@ -932,7 +932,7 @@ Tensor有不同的数据类型，如表3-3所示，每种类型分别对应有CP
 | 32-bit integer (signed)  | `torch.int32` or `torch.int`      | `torch.IntTensor`                                            | `torch.cuda.IntTensor`    |
 | 64-bit integer (signed)  | `torch.int64` or `torch.long`     | `torch.LongTensor`                                           | `torch.cuda.LongTensor`   |
 
- 
+
 
 各数据类型之间可以互相转换，`type(new_type)`是通用的做法，同时还有`float`、`long`、`half`等快捷方法。CPU tensor与GPU tensor之间的互相转换通过`tensor.cuda`和`tensor.cpu`方法实现，此外还可以使用`tensor.to(device)`。Tensor还有一个`new`方法，用法与`t.Tensor`一样，会调用该tensor对应类型的构造函数，生成与当前tensor类型一致的tensor。`torch.*_like(tensora)` 可以生成和`tensora`拥有同样属性(类型，形状，cpu/gpu)的新tensor。 `tensor.new_*(new_shape)` 新建一个不同形状的tensor。
 
@@ -964,7 +964,7 @@ t.set_default_tensor_type('torch.FloatTensor')
 
 ```python
 # 把a转成FloatTensor，等价于b=a.type(t.FloatTensor)
-b = a.float() 
+b = a.float()
 b.dtype
 ```
 
@@ -1058,7 +1058,7 @@ a.new_ones(4,5, dtype=t.int)
 
 
 ```python
-a.new_tensor([3,4]) # 
+a.new_tensor([3,4]) #
 ```
 
 
@@ -1144,7 +1144,7 @@ t.clamp(a, min=3)
 
     tensor([[0., 1., 2.],
             [3., 4., 5.]])
-    
+
 
 
 
@@ -1168,7 +1168,7 @@ a
 
 
 
-#### 1.1.1.7. 归并操作 
+#### 1.1.1.7. 归并操作
 此类操作会使输出形状小于输入形状，并可以沿着某一维度进行指定操作。如加法`sum`，既可以计算整个tensor的和，也可以计算tensor中每一行或每一列的和。常用的归并操作如表3-5所示。
 
 表3-5: 常用归并操作
@@ -1237,7 +1237,7 @@ a.cumsum(dim=1) # 沿着行累加
 
     tensor([[0, 1, 2],
             [3, 4, 5]])
-    
+
 
 
 
@@ -1333,7 +1333,7 @@ t.max(a)
 
 
 ```python
-t.max(b, dim=1) 
+t.max(b, dim=1)
 # 第一个返回值的15和6分别表示第0行和第1行最大的元素
 # 第二个返回值的0和0表示上述最大的数是该行第0个元素
 ```
@@ -1569,7 +1569,7 @@ c # c与a共享内存
 
 
 ```python
-tensor = t.tensor(a) 
+tensor = t.tensor(a)
 ```
 
 
@@ -1590,7 +1590,7 @@ a
 Numpy的广播法则定义如下：
 
 - 让所有输入数组都向其中shape最长的数组看齐，shape中不足的部分通过在前面加1补齐
-- 两个数组要么在某一个维度的长度一致，要么其中一个为1，否则不能计算 
+- 两个数组要么在某一个维度的长度一致，要么其中一个为1，否则不能计算
 - 当输入数组的某个维度的长度为1时，计算时沿此维度复制扩充成一样的形状
 
 PyTorch当前已经支持了自动广播法则，但是笔者还是建议读者通过以下两个函数的组合手动实现广播法则，这样更直观，更不易出错：
@@ -1622,7 +1622,7 @@ a+b
     tensor([[[1., 1.],
              [1., 1.],
              [1., 1.]],
-    
+
             [[1., 1.],
              [1., 1.],
              [1., 1.]]])
@@ -1642,7 +1642,7 @@ a[None].expand(2, 3, 2) + b.expand(2,3,2)
     tensor([[[1., 1.],
              [1., 1.],
              [1., 1.]],
-    
+
             [[1., 1.],
              [1., 1.],
              [1., 1.]]])
@@ -1732,7 +1732,7 @@ b
 
 
 ```python
-c = a[2:] 
+c = a[2:]
 c.storage()
 ```
 
@@ -1945,7 +1945,7 @@ y = t.ones(100)
     10 loops, best of 3: 997 µs per loop
     The slowest run took 5.80 times longer than the fastest. This could mean that an intermediate result is being cached.
     10 loops, best of 3: 4.91 µs per loop
-    
+
 
 可见二者有超过几十倍的速度差距，因此在实际使用中应尽量调用内建函数(buildin-function)，这些函数底层由C/C++实现，能通过执行底层优化实现高效计算。因此在平时写代码时，就应养成向量化的思维习惯，千万避免对较大的tensor进行逐元素遍历。
 
@@ -1965,7 +1965,7 @@ b[-1],b[-2]
 ```
 
     tensor(19999999) tensor(19999998)
-    
+
 
 
 
@@ -2023,7 +2023,7 @@ device = t.device('cpu') #如果你想用gpu，改成t.device('cuda:0')
 
 ```python
 # 设置随机数种子，保证在不同电脑上运行时下面的输出一致
-t.manual_seed(1000) 
+t.manual_seed(1000)
 
 def get_fake_data(batch_size=8):
     ''' 产生随机数据：y=x*2+3，加上了一些噪声'''
@@ -2060,39 +2060,39 @@ lr =0.02 # 学习率
 
 for ii in range(500):
     x, y = get_fake_data(batch_size=4)
-    
+
     # forward：计算loss
     y_pred = x.mm(w) + b.expand_as(y) # x@W等价于x.mm(w);for python3 only
     loss = 0.5 * (y_pred - y) ** 2 # 均方误差
     loss = loss.mean()
-    
+
     # backward：手动计算梯度
     dloss = 1
     dy_pred = dloss * (y_pred - y)
-    
+
     dw = x.t().mm(dy_pred)
     db = dy_pred.sum()
-    
+
     # 更新参数
     w.sub_(lr * dw)
     b.sub_(lr * db)
-    
+
     if ii%50 ==0:
-       
+
         # 画图
         display.clear_output(wait=True)
         x = t.arange(0, 6).view(-1, 1)
         y = x.float().mm(w) + b.expand_as(x)
         plt.plot(x.cpu().numpy(), y.cpu().numpy()) # predicted
-        
-        x2, y2 = get_fake_data(batch_size=32) 
+
+        x2, y2 = get_fake_data(batch_size=32)
         plt.scatter(x2.numpy(), y2.numpy()) # true data
-        
+
         plt.xlim(0, 5)
         plt.ylim(0, 13)
         plt.show()
         plt.pause(0.5)
-        
+
 print('w: ', w.item(), 'b: ', b.item())
 ```
 
@@ -2101,7 +2101,7 @@ print('w: ', w.item(), 'b: ', b.item())
 
 
     w:  1.91150105 b:  3.04418444633
-    
+
 
 可见程序已经基本学出w=2、b=3，并且图中直线和数据已经实现较好的拟合。
 
@@ -2260,7 +2260,7 @@ c.grad is None
 
     <ipython-input-10-c3cc3bfeb5d8>:3: UserWarning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the gradient for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more informations.
       c.grad is None
-    
+
 
 
 
@@ -2551,7 +2551,7 @@ print(x.grad)
 ```
 
     tensor([-1.])
-    
+
 
 
 ```python
@@ -2626,7 +2626,7 @@ x.grad
 
 
 
-变量的`requires_grad`属性默认为False，如果某一个节点requires_grad被设置为True，那么所有依赖它的节点`requires_grad`都是True。这其实很好理解，对于$ \textbf{x}\to \textbf{y} \to \textbf{z}$，x.requires_grad = True，当需要计算$\partial z \over \partial x$时，根据链式法则，$\frac{\partial z}{\partial x} = \frac{\partial z}{\partial y} \frac{\partial y}{\partial x}$，自然也需要求$ \frac{\partial z}{\partial y}$，所以y.requires_grad会被自动标为True. 
+变量的`requires_grad`属性默认为False，如果某一个节点requires_grad被设置为True，那么所有依赖它的节点`requires_grad`都是True。这其实很好理解，对于$ \textbf{x}\to \textbf{y} \to \textbf{z}$，x.requires_grad = True，当需要计算$\partial z \over \partial x$时，根据链式法则，$\frac{\partial z}{\partial x} = \frac{\partial z}{\partial y} \frac{\partial y}{\partial x}$，自然也需要求$ \frac{\partial z}{\partial y}$，所以y.requires_grad会被自动标为True.
 
 
 
@@ -2836,7 +2836,7 @@ z.backward()
 
     <ipython-input-48-69117e5a29ad>:3: UserWarning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the gradient for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more informations.
       (x.grad, w.grad, y.grad)
-    
+
 
 
 
@@ -2884,7 +2884,7 @@ hook_handle.remove()
 ```
 
     y的梯度： tensor([1., 1., 1.])
-    
+
 
 最后再来看看variable中grad属性和backward函数`grad_variables`参数的含义，这里直接下结论：
 
@@ -2948,14 +2948,14 @@ x.grad
 ```python
 
 class Mul(Function):
-                                                            
+
     @staticmethod
     def forward(ctx, w, x, b, x_requires_grad = True):
         ctx.x_requires_grad = x_requires_grad
         ctx.save_for_backward(w,x)
         output = w * x + b
         return output
-        
+
     @staticmethod
     def backward(ctx, grad_output):
         w,x = ctx.saved_tensors
@@ -3141,7 +3141,7 @@ x = t.randn(100, 100, requires_grad=True)
     383 µs ± 113 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
     409 µs ± 69.6 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
     212 µs ± 11.6 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
-    
+
 
 显然`f_sigmoid`要比单纯利用`autograd`加减和乘方操作实现的函数快不少，因为f_sigmoid的backward优化了反向传播的过程。另外可以看出系统实现的built-in接口(t.sigmoid)更快。
 
@@ -3240,7 +3240,7 @@ print(w.item(), b.item())
 
 
     1.9818145036697388 3.028766632080078
-    
+
 
 
 ```python
@@ -3285,7 +3285,7 @@ class Linear(nn.Module): # 继承nn.Module
         super(Linear, self).__init__() # 等价于nn.Module.__init__(self)
         self.w = nn.Parameter(t.randn(in_features, out_features))
         self.b = nn.Parameter(t.randn(out_features))
-    
+
     def forward(self, x):
         x = x.mm(self.w) # x.@(self.w)
         return x + self.b.expand_as(x)
@@ -3310,7 +3310,7 @@ output
 
 ```python
 for name, parameter in layer.named_parameters():
-    print(name, parameter) # w and b 
+    print(name, parameter) # w and b
 ```
 
     w Parameter containing:
@@ -3320,7 +3320,7 @@ for name, parameter in layer.named_parameters():
             [ 0.1598, -0.3302,  0.3646]])
     b Parameter containing:
     tensor([-1.5881, -0.8368, -0.5220])
-    
+
 
 可见，全连接层的实现非常简单，其代码量不超过10行，但需注意以下几点：
 - 自定义层`Linear`必须继承`nn.Module`，并且在其构造函数中需调用`nn.Module`的构造函数，即`super(Linear, self).__init__()` 或`nn.Module.__init__(self)`，推荐使用第一种用法，尽管第二种写法更直观。
@@ -3361,7 +3361,7 @@ for name, param in perceptron.named_parameters():
     layer1.b torch.Size([4])
     layer2.w torch.Size([4, 1])
     layer2.b torch.Size([1])
-    
+
 
 可见，即使是稍复杂的多层感知机，其实现依旧很简单。 构造函数`__init__`中，可利用前面自定义的Linear层(module)，作为当前module对象的一个子module，它的可学习参数，也会成为当前module的可学习参数。
 
@@ -3407,7 +3407,7 @@ lena
 
 ```python
 # 输入是一个batch，batch_size＝1
-input = to_tensor(lena).unsqueeze(0) 
+input = to_tensor(lena).unsqueeze(0)
 
 # 锐化卷积核
 kernel = t.ones(3, 3)/-9.
@@ -3540,7 +3540,7 @@ print(output) # 小于0的都被截断为0
             [ 1.5909, -1.3795,  0.5264]])
     tensor([[ 1.2836,  2.0970,  0.0000],
             [ 1.5909,  0.0000,  0.5264]])
-    
+
 ReLU函数有个inplace参数，如果设为True，它会把输出直接覆盖到输入中，这样可以节省内存/显存。之所以可以覆盖是因为在计算ReLU的反向传播时，只需根据输出就能够推算出反向传播的梯度。但是只有少数的autograd操作支持inplace操作（如tensor.sigmoid_()），除非你明确地知道自己在做什么，否则一般不要使用inplace操作。
 在以上的例子中，基本上都是将每一层的输出直接作为下一层的输入，这种网络称为前馈传播网络（feedforward neural network）。对于此类网络如果每次都写复杂的forward函数会有些麻烦，在此就有两种简化方式，ModuleList和Sequential。其中Sequential是一个特殊的module，它包含几个子Module，前向传播时会将输入一层接一层的传递下去。ModuleList也是一个特殊的module，可以包含几个子module，可以像用list一样使用它，但不能直接把输入传给ModuleList。下面举例说明。
 
@@ -3584,7 +3584,7 @@ print('net3:', net3)
       (bn1): BatchNorm2d(3, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
       (relu1): ReLU()
     )
-    
+
 
 
 ```python
@@ -3657,7 +3657,7 @@ for name, param in model.named_parameters():
 
     module_list.0.weight torch.Size([3, 3, 3, 3])
     module_list.0.bias torch.Size([3])
-    
+
 
 可见，list中的子module并不能被主module所识别，而ModuleList中的子module能够被主module所识别。这意味着如果用list保存子module，将无法调整其参数，因其未加入到主module的参数中。
 
@@ -3689,7 +3689,7 @@ out
     tensor([[[-0.3610, -0.1643,  0.1631],
              [-0.0613, -0.4937, -0.1642],
              [ 0.5080, -0.4175,  0.2502]],
-    
+
             [[-0.0703, -0.0393, -0.0429],
              [ 0.2085, -0.3005, -0.2686],
              [ 0.1482, -0.4728,  0.1425]]])
@@ -3717,7 +3717,7 @@ t.stack(out)
     tensor([[[-0.3610, -0.1643,  0.1631],
              [-0.0613, -0.4937, -0.1642],
              [ 0.5080, -0.4175,  0.2502]],
-    
+
             [[-0.0703, -0.0393, -0.0429],
              [ 0.2085, -0.3005, -0.2686],
              [ 0.1482, -0.4728,  0.1425]]])
@@ -3849,7 +3849,7 @@ optimizer
         momentum: 0
         nesterov: False
         weight_decay: 0
-    
+
     Parameter Group 1
         dampening: 0
         lr: 0.01
@@ -3885,7 +3885,7 @@ optimizer
         momentum: 0
         nesterov: False
         weight_decay: 0
-    
+
     Parameter Group 1
         dampening: 0
         lr: 0.01
@@ -3919,7 +3919,7 @@ optimizer1
         momentum: 0
         nesterov: False
         weight_decay: 0
-    
+
     Parameter Group 1
         dampening: 0
         lr: 0.010000000000000002
@@ -3948,7 +3948,7 @@ optimizer
         momentum: 0
         nesterov: False
         weight_decay: 0
-    
+
     Parameter Group 1
         dampening: 0
         lr: 0.0010000000000000002
@@ -4126,7 +4126,7 @@ class Net(nn.Module):
         super(Net, self).__init__()
         # 等价与self.register_parameter('param1' ,nn.Parameter(t.randn(3, 3)))
         self.param1 = nn.Parameter(t.rand(3, 3))
-        self.submodel1 = nn.Linear(3, 4) 
+        self.submodel1 = nn.Linear(3, 4)
     def forward(self, input):
         x = self.param1.mm(input)
         x = self.submodel1(x)
@@ -4195,7 +4195,7 @@ for name, param in net.named_parameters():
     param1 torch.Size([3, 3])
     submodel1.weight torch.Size([4, 3])
     submodel1.bias torch.Size([4])
-    
+
 
 
 ```python
@@ -4207,7 +4207,7 @@ for name, submodel in net.named_modules():
       (submodel1): Linear(in_features=3, out_features=4, bias=True)
     )
     submodel1 Linear(in_features=3, out_features=4, bias=True)
-    
+
 
 
 ```python
@@ -4271,7 +4271,7 @@ net.training, net.submodel1.training
 ```
 
     True True
-    
+
 
 
 
@@ -4301,7 +4301,7 @@ features = t.Tensor()
 def hook(module, input, output):
     '''把这层的输出拷贝到features中'''
     features.copy_(output.data)
-    
+
 handle = model.layer8.register_forward_hook(hook)
 _ = model(input)
 # 用完hook后删除
@@ -4343,7 +4343,7 @@ print("__dict__['submodules']:",module.__dict__.get('submodules'))
 
     _modules:  OrderedDict()
     __dict__['submodules']: [Linear(in_features=2, out_features=2, bias=True), Linear(in_features=2, out_features=2, bias=True)]
-    
+
 
 
 ```python
@@ -4360,7 +4360,7 @@ print("__dict__['submodules']:", module.__dict__.get('submodules'))
       (1): Linear(in_features=2, out_features=2, bias=True)
     ))])
     __dict__['submodules']: None
-    
+
 
 因`_modules`和`_parameters`中的item未保存在`__dict__`中，所以默认的getattr方法无法获取它，因而`nn.Module`实现了自定义的`__getattr__`方法，如果默认的`getattr`无法处理，就调用自定义的`__getattr__`方法，尝试从`_modules`、`_parameters`和`_buffers`这三个字典中获取。
 
@@ -4431,7 +4431,7 @@ net2
 
     /usr/local/lib/python3.5/dist-packages/torch/serialization.py:158: UserWarning: Couldn't retrieve source code for container of type Net. It won't be checked for correctness upon loading.
       "type " + obj.__name__ + ". It won't be checked "
-    
+
 
 
 
@@ -4531,7 +4531,7 @@ class ResNet(nn.Module):
                 nn.BatchNorm2d(64),
                 nn.ReLU(inplace=True),
                 nn.MaxPool2d(3, 2, 1))
-        
+
         # 重复的layer，分别有3，4，6，3个residual block
         self.layer1 = self._make_layer( 64, 64, 3)
         self.layer2 = self._make_layer( 64, 128, 4, stride=2)
@@ -4540,7 +4540,7 @@ class ResNet(nn.Module):
 
         #分类用的全连接
         self.fc = nn.Linear(512, num_classes)
-    
+
     def _make_layer(self,  inchannel, outchannel, block_num, stride=1):
         '''
         构建layer,包含多个residual block
@@ -4548,17 +4548,17 @@ class ResNet(nn.Module):
         shortcut = nn.Sequential(
                 nn.Conv2d(inchannel,outchannel,1,stride, bias=False),
                 nn.BatchNorm2d(outchannel))
-        
+
         layers = []
         layers.append(ResidualBlock(inchannel, outchannel, stride, shortcut))
-        
+
         for i in range(1, block_num):
             layers.append(ResidualBlock(outchannel, outchannel))
         return nn.Sequential(*layers)
-        
+
     def forward(self, x):
         x = self.pre(x)
-        
+
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
@@ -4603,7 +4603,7 @@ model = models.resnet34()
 
 
 ```python
-%env LS_COLORS = None 
+%env LS_COLORS = None
 !tree --charset ascii  data/dogcat/
 ```
 
@@ -4626,7 +4626,7 @@ model = models.resnet34()
 
     `-- dog.12499.jpg
 
-    
+
 
     0 directories, 8 files
 
@@ -4650,7 +4650,7 @@ class DogCat(data.Dataset):
         # 所有图片的绝对路径
         # 这里不实际加载图片，只是指定路径，当调用__getitem__时才会真正读图片
         self.imgs = [os.path.join(root, img) for img in imgs]
-        
+
     def __getitem__(self, index):
         img_path = self.imgs[index]
         # dog->1， cat->0
@@ -4659,7 +4659,7 @@ class DogCat(data.Dataset):
         array = np.asarray(pil_img)
         data = t.from_numpy(array)
         return data, label
-    
+
     def __len__(self):
         return len(self.imgs)
 ```
@@ -4680,7 +4680,7 @@ for img, label in dataset:
     torch.Size([375, 499, 3]) tensor(150.5086) 1
     torch.Size([400, 300, 3]) tensor(128.1548) 1
     torch.Size([500, 497, 3]) tensor(106.4917) 0
-    
+
 
 通过上面的代码，我们学习了如何自定义自己的数据集，并可以依次获取。但这里返回的数据不适合实际使用，因其具有如下两方面问题：
 - 返回样本的形状不一，因每张图片的大小不一样，这对于需要取batch训练的神经网络来说很不友好
@@ -4720,7 +4720,7 @@ class DogCat(data.Dataset):
         imgs = os.listdir(root)
         self.imgs = [os.path.join(root, img) for img in imgs]
         self.transforms=transforms
-        
+
     def __getitem__(self, index):
         img_path = self.imgs[index]
         label = 0 if 'dog' in img_path.split('/')[-1] else 1
@@ -4728,7 +4728,7 @@ class DogCat(data.Dataset):
         if self.transforms:
             data = self.transforms(data)
         return data, label
-    
+
     def __len__(self):
         return len(self.imgs)
 
@@ -4746,7 +4746,7 @@ for img, label in dataset:
     torch.Size([3, 224, 224]) 0
     torch.Size([3, 224, 224]) 0
     torch.Size([3, 224, 224]) 1
-    
+
 
 除了上述操作之外，transforms还可通过`Lambda`封装自定义的转换策略。例如想对PIL Image进行随机旋转，则可写成这样`trans=T.Lambda(lambda img: img.rotate(random()*360))`。
 
@@ -4791,7 +4791,7 @@ label是按照文件夹名顺序排序后存成字典，即{类名:类序号(从
 
         `-- dog.12499.jpg
 
-    
+
 
     2 directories, 8 files
 
@@ -4896,7 +4896,7 @@ to_img(dataset[0][0]*0.2+0.4)
 
 `Dataset`只负责数据的抽象，一次调用`__getitem__`只返回一个样本。前面提到过，在训练神经网络时，最好是对一个batch的数据进行操作，同时还需要对数据进行shuffle和并行加速等。对此，PyTorch提供了`DataLoader`帮助我们实现这些功能。
 
-DataLoader的函数定义如下： 
+DataLoader的函数定义如下：
 `DataLoader(dataset, batch_size=1, shuffle=False, sampler=None, num_workers=0, collate_fn=default_collate, pin_memory=False, drop_last=False)`
 
 - dataset：加载的数据集(Dataset对象)
@@ -4986,7 +4986,7 @@ dataset[5]
               [-0.9020, -0.8627, -0.8235,  ...,  0.0392,  0.2745,  0.4314],
               [-0.9216, -0.8824, -0.8235,  ...,  0.0588,  0.2745,  0.4314],
               [-0.9412, -0.9020, -0.8431,  ...,  0.0980,  0.3137,  0.4510]],
-     
+
              [[ 3.0000,  2.9608,  2.8824,  ...,  2.5294,  2.6275,  2.6863],
               [ 3.0000,  2.9804,  2.9216,  ...,  2.5098,  2.6275,  2.6863],
               [ 3.0000,  2.9804,  2.9608,  ...,  2.5098,  2.6078,  2.6667],
@@ -4994,7 +4994,7 @@ dataset[5]
               [-1.0392, -1.0000, -0.9608,  ..., -0.0196,  0.1961,  0.3333],
               [-1.0392, -1.0000, -0.9608,  ...,  0.0000,  0.1961,  0.3333],
               [-1.0392, -1.0196, -0.9804,  ...,  0.0392,  0.2353,  0.3529]],
-     
+
              [[ 2.1765,  2.1961,  2.2157,  ...,  1.5882,  1.6863,  1.7451],
               [ 2.2157,  2.2157,  2.2353,  ...,  1.6078,  1.7255,  1.7843],
               [ 2.2157,  2.2353,  2.2549,  ...,  1.6667,  1.7647,  1.8235],
@@ -5017,7 +5017,7 @@ for batch_datas, batch_labels in dataloader:
     torch.Size([2, 3, 224, 224]) torch.Size([2])
     torch.Size([2, 3, 224, 224]) torch.Size([2])
     torch.Size([1, 3, 224, 224]) torch.Size([1])
-    
+
 
 来看一下上述batch_size的大小。其中第2个的batch_size为1，这是因为有一张图片损坏，导致其无法正常返回。而最后1个的batch_size也为1，这是因为共有9张（包括损坏的文件）图片，无法整除2（batch_size），因此最后一个batch的数据会少于batch_szie，可通过指定`drop_last=True`来丢弃最后一个不足batch_size的batch。
 
@@ -5104,7 +5104,7 @@ for datas, labels in dataloader:
     [1, 0, 1]
     [0, 0, 1]
     [1, 0, 1]
-    
+
 
 可见猫狗样本比例约为1:2，另外一共只有8个样本，但是却返回了9个，说明肯定有被重复返回的，这就是replacement参数的作用，下面将replacement设为False试试。
 
@@ -5118,7 +5118,7 @@ for datas, labels in dataloader:
 
     [0, 1, 1, 1]
     [1, 0, 0, 0]
-    
+
 
 在这种情况下，num_samples等于dataset的样本总数，为了不重复选取，sampler会将每个样本都返回，这样就失去weight参数的意义了。
 
@@ -5147,7 +5147,7 @@ resnet34.fc=nn.Linear(512, 10)
       init.kaiming_uniform(m.weight.data)
     /usr/lib/python3.6/site-packages/torchvision/models/squeezenet.py:92: UserWarning: nn.init.normal is now deprecated in favor of nn.init.normal_.
       init.normal(m.weight.data, mean=0.0, std=0.01)
-    
+
 
 
 ```python
@@ -5161,7 +5161,7 @@ Transforms中涵盖了大部分对Tensor和PIL Image的常用处理，这些已�
 
 
 ```python
-from torchvision import transforms 
+from torchvision import transforms
 to_pil = transforms.ToPILImage()
 to_pil(t.randn(3, 64, 64))
 ```
@@ -5323,7 +5323,7 @@ vis.line(X=x, Y=y, win='sinx', opts={'title': 'y=sin(x)'})
 ```
 
     Without the incoming socket you cannot receive events from the server or register event handlers to your Visdom client.
-    
+
 
 
 
@@ -5347,7 +5347,7 @@ vis.line(X=x, Y=y, win='sinx', opts={'title': 'y=sin(x)'})
     - bar：绘制柱状图
     - pie：绘制饼状图
     - 更多操作可参考visdom的github主页
-    
+
 这里主要介绍深度学习中常见的line、image和text操作。
 
 Visdom同时支持PyTorch的tensor和Numpy的ndarray两种数据结构，但不支持Python的int、float等类型，因此每次传入时都需先将数据转成ndarray或tensor。上述操作的参数一般不同，但有两个参数是绝大多数操作都具备的：
@@ -5364,7 +5364,7 @@ for ii in range(0, 10):
     x = t.Tensor([ii])
     y = x
     vis.line(X=x, Y=y, win='polynomial', update='append' if ii>0 else None)
-    
+
 # updateTrace 新增一条线
 x = t.arange(0, 9, 0.1)
 y = (x ** 2) / 9
@@ -5413,7 +5413,7 @@ vis.images(t.randn(36, 3, 64, 64).numpy(), nrow=6, win='random3', opts={'title':
 ```python
 vis.text(u'''<h1>Hello Visdom</h1><br>Visdom是Facebook专门为<b>PyTorch</b>开发的一个可视化工具，
          在内部使用了很久，在2017年3月份开源了它。
-         
+
          Visdom十分轻量级，但是却有十分强大的功能，支持几乎所有的科学运算可视化任务''',
          win='visdom',
          opts={'title': u'visdom简介' }
@@ -5462,7 +5462,7 @@ tensor.is_cuda # False
           2 # 返回一个新的tensor，保存在第1块GPU上，但原来的tensor并没有改变
     ----> 3 tensor.cuda(0)
           4 tensor.is_cuda # False
-    
+
 
     RuntimeError: torch.cuda.FloatTensor is not enabled.
 
@@ -5502,7 +5502,7 @@ class VeryBigModule(nn.Module):
         super(VeryBigModule, self).__init__()
         self.GiantParameter1 = t.nn.Parameter(t.randn(100000, 20000)).cuda(0)
         self.GiantParameter2 = t.nn.Parameter(t.randn(20000, 100000)).cuda(1)
-    
+
     def forward(self, x):
         x = self.GiantParameter1.mm(x.cuda(0))
         x = self.GiantParameter2.mm(x.cuda(1))
@@ -5538,7 +5538,7 @@ criterion._buffers
 
 
 
-    OrderedDict([('weight', 
+    OrderedDict([('weight',
                    1
                    3
                   [torch.cuda.FloatTensor of size 2 (GPU 0)])])
@@ -5556,7 +5556,7 @@ y = t.FloatTensor(2, 3).cuda()
 # y.get_device() == 0
 
 # 指定默认使用GPU 1
-with t.cuda.device(1):    
+with t.cuda.device(1):
     # 在GPU 1上构建tensor
     a = t.cuda.FloatTensor(2, 3)
 
@@ -5579,7 +5579,7 @@ with t.cuda.device(1):
     True
     True
     False
-    
+
 
 
 ```python
@@ -5634,13 +5634,13 @@ a = t.Tensor(3, 4)
 if t.cuda.is_available():
         a = a.cuda(1) # 把a转为GPU1上的tensor,
         t.save(a,'a.pth')
-        
+
         # 加载为b, 存储于GPU1上(因为保存时tensor就在GPU1上)
         b = t.load('a.pth')
-        
+
         # 加载为c, 存储于CPU
         c = t.load('a.pth', map_location=lambda storage, loc: storage)
-        
+
         # 加载为d, 存储于GPU0上
         d = t.load('a.pth', map_location={'cuda:1':'cuda:0'})
 ```
@@ -5658,7 +5658,7 @@ model.state_dict().keys()
       init.kaiming_uniform(m.weight.data)
     /usr/lib/python3.6/site-packages/torchvision/models/squeezenet.py:92: UserWarning: nn.init.normal is now deprecated in favor of nn.init.normal_.
       init.normal(m.weight.data, mean=0.0, std=0.01)
-    
+
 
 
 

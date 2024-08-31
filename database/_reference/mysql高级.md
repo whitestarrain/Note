@@ -155,7 +155,7 @@ mysql_secure_installation
 - 登录至 mysql root 账号
 
 ```bash
-mysql -uroot -p 
+mysql -uroot -p
 ```
 
 > **设置 mysql 开机启动**
@@ -1364,7 +1364,7 @@ mysql> EXPLAIN SELECT id, author_id FROM article WHERE category_id = 1 AND comme
 - 创建索引的 SQL 命令
 
 ```mysql
-# ALTER TABLE article ADD INDEX idx_article_ccv('category_id', 'comments', 'views'); 
+# ALTER TABLE article ADD INDEX idx_article_ccv('category_id', 'comments', 'views');
 create index idx_article_ccv on article(category_id, comments, views);
 ```
 
@@ -1448,7 +1448,7 @@ mysql> SHOW INDEX FROM article;
 - 创建索引的 SQL 指令
 
 ```mysql
-# ALTER TABLE article ADD INDEX idx_article_ccv('category_id',  'views'); 
+# ALTER TABLE article ADD INDEX idx_article_ccv('category_id',  'views');
 create index idx_article_ccv on article(category_id, views);
 ```
 
@@ -2603,7 +2603,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c4='a4' AND c3='a3' AND c2='a2' AND c1
 - c3 列使用了索引进行排序，并没有进行查找，导致 c4 无法用索引进行查找
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c3>'a3' AND c4='a4'; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c3>'a3' AND c4='a4';
 +----+-------------+--------+-------+------------------+------------------+---------+------+------+-----------------------+
 | id | select_type | table  | type  | possible_keys    | key              | key_len | ref  | rows | Extra                 |
 +----+-------------+--------+-------+------------------+------------------+---------+------+------+-----------------------+
@@ -2616,7 +2616,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c3>'a3' AND c4
 - mysql 优化器进行了优化，所以我们的索引都生效了，在 c4 时进行了范围搜索
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4>'a4' AND c3='a3'; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4>'a4' AND c3='a3';
 +----+-------------+--------+-------+------------------+------------------+---------+------+------+-----------------------+
 | id | select_type | table  | type  | possible_keys    | key              | key_len | ref  | rows | Extra                 |
 +----+-------------+--------+-------+------------------+------------------+---------+------+------+-----------------------+
@@ -2629,7 +2629,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4>'a4' AND c3
 - c3 列将索引用于排序，而不是查找，c4 列没有用到索引
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4='a4' ORDER BY c3; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4='a4' ORDER BY c3;
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
 | id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                              |
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
@@ -2642,7 +2642,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c4='a4' ORDER 
 - 那不就和上面一样的嘛~~~，c4 列都没有用到索引
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c3; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c3;
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
 | id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                              |
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
@@ -2656,7 +2656,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c3;
 - 看到 Using filesort 就要知道：此句 SQL 必须优化
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c4; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c4;
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+----------------------------------------------------+
 | id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                                              |
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+----------------------------------------------------+
@@ -2670,7 +2670,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c4;
 - 难道因为排序的时候，c2 紧跟在 c1 之后，所以就不用 filesort 吗？
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c5='a5' ORDER BY c2, c3; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c5='a5' ORDER BY c2, c3;
 +----+-------------+--------+------+------------------+------------------+---------+-------+------+------------------------------------+
 | id | select_type | table  | type | possible_keys    | key              | key_len | ref   | rows | Extra                              |
 +----+-------------+--------+------+------------------+------------------+---------+-------+------+------------------------------------+
@@ -2683,7 +2683,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c5='a5' ORDER BY c2, c3;
 - 出现了filesort，我们建的索引是1234，它没有按照顺序来，32颠倒了
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c5='a5' ORDER BY c3, c2; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c5='a5' ORDER BY c3, c2;
 +----+-------------+--------+------+------------------+------------------+---------+-------+------+----------------------------------------------------+
 | id | select_type | table  | type | possible_keys    | key              | key_len | ref   | rows | Extra                                              |
 +----+-------------+--------+------+------------------+------------------+---------+-------+------+----------------------------------------------------+
@@ -2696,7 +2696,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c5='a5' ORDER BY c3, c2;
 - 用c1、c2两个字段索引，但是c2、c3用于排序，无filesort
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c2, c3; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c2, c3;
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
 | id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                              |
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
@@ -2709,7 +2709,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' ORDER BY c2, c3;
 - 和 c5 这个坑爹货没啥关系
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c5='a5' ORDER BY c2, c3; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c5='a5' ORDER BY c2, c3;
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
 | id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                              |
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
@@ -2722,7 +2722,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c5='a5' ORDER 
 - 注意查询条件 c2=‘a2’ ，我都把 c2 查出来了（c2 为常量），我还给它排序作甚，所以没有产生 filesort
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c5='a5' ORDER BY c3, c2; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c5='a5' ORDER BY c3, c2;
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
 | id | select_type | table  | type | possible_keys    | key              | key_len | ref         | rows | Extra                              |
 +----+-------------+--------+------+------------------+------------------+---------+-------------+------+------------------------------------+
@@ -2735,7 +2735,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c2='a2' AND c5='a5' ORDER 
 - 顺序为 1 2 3 ，没有产生文件排序
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c2, c3; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c2, c3;
 +----+-------------+--------+------+------------------+------------------+---------+-------+------+------------------------------------+
 | id | select_type | table  | type | possible_keys    | key              | key_len | ref   | rows | Extra                              |
 +----+-------------+--------+------+------------------+------------------+---------+-------+------+------------------------------------+
@@ -2749,7 +2749,7 @@ mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c2, c3;
 - Using temporary; Using filesort 两个都有，我只能说是灭绝师太
 
 ```
-mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2; 
+mysql> EXPLAIN SELECT * FROM test03 WHERE c1='a1' AND c4='a4' GROUP BY c3, c2;
 +----+-------------+--------+------+------------------+------------------+---------+-------+------+---------------------------------------------------------------------+
 | id | select_type | table  | type | possible_keys    | key              | key_len | ref   | rows | Extra                                                               |
 +----+-------------+--------+------+------------------+------------------+---------+-------+------+---------------------------------------------------------------------+
@@ -3293,7 +3293,7 @@ mysql> show global variables like 'long_query_time';
   - 怼个 select sleep(4); 超过 3s ，肯定会被记录到日志中
 
   ```
-  mysql> select sleep(4); 
+  mysql> select sleep(4);
   +----------+
   | sleep(4) |
   +----------+
@@ -3323,7 +3323,7 @@ mysql> show global variables like 'long_query_time';
   - 查看慢查询日志中的内容
 
   ```
-  [root@Heygo mysql]# cat Heygo-slow.log 
+  [root@Heygo mysql]# cat Heygo-slow.log
   /usr/sbin/mysqld, Version: 5.6.49 (MySQL Community Server (GPL)). started with:
   Tcp port: 3306  Unix socket: /var/lib/mysql/mysql.sock
   Time                 Id Command    Argument
@@ -3354,7 +3354,7 @@ mysql> show global status like '%Slow_queries%';
 
 ```
 slow_query_log=1；
-slow_query_log_file=/var/lib/mysql/Heygo-slow.log 
+slow_query_log_file=/var/lib/mysql/Heygo-slow.log
 long_query_time=3；
 log_output=FILE
 ```
@@ -3388,7 +3388,7 @@ Parse and summarize the MySQL slow query log. Options are
                  c: count
                  l: lock time
                  r: rows sent
-                 t: query time  
+                 t: query time
   -r           reverse the sort order (largest last instead of first)
   -t NUM       just show the top n queries
   -a           don't abstract all numbers to N and strings to 'S'
@@ -3480,7 +3480,7 @@ CREATE TABLE emp
   - `log_bin_trust_function_creators = OFF` ，默认必须为 function 传递一个参数
 
   ```
-  mysql> show variables like 'log_bin_trust_function_creators'; 
+  mysql> show variables like 'log_bin_trust_function_creators';
   +---------------------------------+-------+
   | Variable_name                   | Value |
   +---------------------------------+-------+
@@ -3492,9 +3492,9 @@ CREATE TABLE emp
   - 通过 `set global log_bin_trust_function_creators=1;`我们可以不用为 function 传参
 
   ```
-  mysql> set global log_bin_trust_function_creators=1; 
+  mysql> set global log_bin_trust_function_creators=1;
   Query OK, 0 rows affected (0.00 sec)
-  
+
   mysql> show variables like 'log_bin_trust_function_creators';
   +---------------------------------+-------+
   | Variable_name                   | Value |
@@ -3666,7 +3666,7 @@ mysql> show variables like 'profiling%';
 - `set profiling=on;` 开启 Show Profile
 
 ```
-mysql> set profiling=on; 
+mysql> set profiling=on;
 Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 mysql> show variables like 'profiling%';
@@ -4598,7 +4598,7 @@ PING 10.206.207.131 (10.206.207.131) 56(84) bytes of data.
 --- 10.206.207.131 ping statistics ---
 4 packets transmitted, 4 received, 0% packet loss, time 3719ms
 rtt min/avg/max/mdev = 0.421/0.835/1.279/0.373 ms
-[root@Heygo 桌面]# 
+[root@Heygo 桌面]#
 ```
 
 - Windows 中 ping Linux
@@ -4810,7 +4810,7 @@ mysql> show master status;
 
 ```
 [root@Heygo 桌面]# mysql -h 10.206.207.131 -uHeygo -p
-Enter password: 
+Enter password:
 ERROR 1130 (HY000): Host 'windows10.microdone.cn' is not allowed to connect to this MySQL server
 ```
 
@@ -4853,7 +4853,7 @@ mysql> select user,host,plugin from user;
 
 ```
 [root@Heygo 桌面]# mysql -h 10.206.207.131 -uHeygo -p
-Enter password: 
+Enter password:
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 33
 Server version: 5.5.15-log MySQL Community Server (GPL)
@@ -4872,13 +4872,13 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 - 从机进行认证
 
 ```bash
-CHANGE MASTER TO 
+CHANGE MASTER TO
 MASTER_HOST='主机 IP',
 MASTER_USER='创建用户名',
 MASTER_PASSWORD='创建的密码',
 MASTER_LOG_FILE='File 名字',
 MASTER_LOG_POS=Position数字;
-CHANGE MASTER TO 
+CHANGE MASTER TO
 MASTER_HOST='10.206.207.131',
 MASTER_USER='Heygo',
 MASTER_PASSWORD='123456',
@@ -4909,47 +4909,47 @@ mysql> show slave status\G;
         Relay_Master_Log_File: mysql-bin.000052
              Slave_IO_Running: Yes
             Slave_SQL_Running: Yes
-              Replicate_Do_DB: 
-          Replicate_Ignore_DB: 
-           Replicate_Do_Table: 
-       Replicate_Ignore_Table: 
-      Replicate_Wild_Do_Table: 
-  Replicate_Wild_Ignore_Table: 
+              Replicate_Do_DB:
+          Replicate_Ignore_DB:
+           Replicate_Do_Table:
+       Replicate_Ignore_Table:
+      Replicate_Wild_Do_Table:
+  Replicate_Wild_Ignore_Table:
                    Last_Errno: 0
-                   Last_Error: 
+                   Last_Error:
                  Skip_Counter: 0
           Exec_Master_Log_Pos: 4274
               Relay_Log_Space: 4749
               Until_Condition: None
-               Until_Log_File: 
+               Until_Log_File:
                 Until_Log_Pos: 0
            Master_SSL_Allowed: No
-           Master_SSL_CA_File: 
-           Master_SSL_CA_Path: 
-              Master_SSL_Cert: 
-            Master_SSL_Cipher: 
-               Master_SSL_Key: 
+           Master_SSL_CA_File:
+           Master_SSL_CA_Path:
+              Master_SSL_Cert:
+            Master_SSL_Cipher:
+               Master_SSL_Key:
         Seconds_Behind_Master: 0
 Master_SSL_Verify_Server_Cert: No
                 Last_IO_Errno: 0
-                Last_IO_Error: 
+                Last_IO_Error:
                Last_SQL_Errno: 0
-               Last_SQL_Error: 
-  Replicate_Ignore_Server_Ids: 
+               Last_SQL_Error:
+  Replicate_Ignore_Server_Ids:
              Master_Server_Id: 1
-                  Master_UUID: 
+                  Master_UUID:
              Master_Info_File: /var/lib/mysql/master.info
                     SQL_Delay: 0
           SQL_Remaining_Delay: NULL
       Slave_SQL_Running_State: Slave has read all relay log; waiting for the slave I/O thread to update it
            Master_Retry_Count: 86400
-                  Master_Bind: 
-      Last_IO_Error_Timestamp: 
-     Last_SQL_Error_Timestamp: 
-               Master_SSL_Crl: 
-           Master_SSL_Crlpath: 
-           Retrieved_Gtid_Set: 
-            Executed_Gtid_Set: 
+                  Master_Bind:
+      Last_IO_Error_Timestamp:
+     Last_SQL_Error_Timestamp:
+               Master_SSL_Crl:
+           Master_SSL_Crlpath:
+           Retrieved_Gtid_Set:
+            Executed_Gtid_Set:
                 Auto_Position: 0
 1 row in set (0.00 sec)
 ```

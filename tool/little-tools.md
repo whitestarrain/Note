@@ -240,6 +240,10 @@ curl http://ifconfig.me
 
 也支持进行日程管理，可以考虑作为emacs org的代替品。
 
+# 音乐可视化 cava
+
+https://github.com/karlstav/cava
+
 # CR常见术语
 
 - CR: Code Review. 请求代码审查。

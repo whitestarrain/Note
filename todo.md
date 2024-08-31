@@ -43,7 +43,7 @@
 - [x] [clashtui](https://github.com/JohanChane/clashtui)
   - 算了，还是直接wget 订阅链接比较简单
 - [ ] dotfiles 实现 Dockerfile
-- [ ] netty 框架
+- [ ] netty 框架源码
 - [ ] Zmodem 协议，sz rz 实现远程图片上传
   - 怎么触发local host的sz
 - [ ] tmux中使用nvim 时错位
@@ -140,8 +140,9 @@
   - [ ] 阿里巴巴数据库内核月报目录爬虫
 - lang
   - [ ] C/C++
-    - linux 触摸板驱动。参考：[OS-X-Voodoo-PS2-Controller](https://github.com/RehabMan/OS-X-Voodoo-PS2-Controller)
-    - 10分钟定时截图工具
+    - [ ] 10分钟定时截图工具
+    - [ ] 动态桌面，展示 todo
+    - [ ] linux 触摸板驱动。参考：[OS-X-Voodoo-PS2-Controller](https://github.com/RehabMan/OS-X-Voodoo-PS2-Controller)
   - [ ] go
     - [ ] **练手项目：博客评论系统后端，针对业务逻辑编写测试**
   - [x] lua
@@ -608,6 +609,8 @@ cookie和session攻击
       - **archlinux**
   - **操作系统导论**
 - [多路复用](https://juejin.cn/post/6844903935648497678)
+- [含桌面的完整操作系统 Essence](https://nakst.gitlab.io/essence)
+- TempleOS
 
 ### algorithm
 
@@ -821,4 +824,8 @@ rss 配置
 
 - [udemy](www.udemy.com)
 <!-- [bilibili搬运](https://www.bilibili.com/video/BV1vA4y197C7/?spm_id_from=333.337.search-card.all.click&vd_source=c8e13c17fa73d1d5aca51505a5d3170d) -->
+
+# 词典
+
+- [自由在线计算机词典](https://foldoc.org/)
 

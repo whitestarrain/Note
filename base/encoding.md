@@ -47,6 +47,7 @@
       ![encryption-2](./image/encryption-2.png)
       </details>
 
+
 # 2. 流程说明（网页传输为例）
 
 > 使用mysql的 `hex(convert("[字符串]",using [编码]))` 获取指定16进制
@@ -88,25 +89,32 @@
 
 ## 2.2. 识别
 
-- 检测文件头的字节顺序标识（Byte Order Mark，BOM）
-  - 不是标准，windows程序(如windows记事本)会携带。一些微软程序、如excel也会基于BOM来识别文本编码
-  - Posix系统明确不建议使用 字节顺序标识(BOM)。不是所有软件都支持BOM。
-  - 如果需要在文件开头提那家 BOM， 可以使用类似 `utf-8-sig` 的文件编码。
-  - 常见BOM：
+### 2.2.1. BOM
 
-    ```
-    EF BB BF UTF-8
-    FE FF UTF-16/UCS-2, big endian
-    FF FE UTF-16/UCS-2, little endian
-    FF FE 00 00 UTF-32/UCS-4, little endian.
-    00 00 FE FF UTF-32/UCS-4, big-endian.
-    ```
+检测文件头的字节顺序标识（Byte Order Mark，BOM）
 
-- 软件自己根据编码规则猜测当前文件的编码。
-  - 响应体中的content-type字段中的编码信息
+- 不是标准，windows程序(如windows记事本)会携带。一些微软程序、如excel也会基于BOM来识别文本编码
+- Posix系统明确不建议使用 字节顺序标识(BOM)。不是所有软件都支持BOM。
+- 如果需要在文件开头提那家 BOM， 可以使用类似 `utf-8-sig` 的文件编码。
+- 常见BOM：
 
-    ![encryption-5](./image/encryption-5.png)
-  - html和xml文档中的编码声明：
+  ```
+  EF BB BF UTF-8
+  FE FF UTF-16/UCS-2, big endian
+  FF FE UTF-16/UCS-2, little endian
+  FF FE 00 00 UTF-32/UCS-4, little endian.
+  00 00 FE FF UTF-32/UCS-4, big-endian.
+  ```
+
+### 2.2.2. 软件检测
+
+软件自己根据编码规则猜测当前文件的编码。
+
+- 响应体中的content-type字段中的编码信息
+
+  ![encryption-5](./image/encryption-5.png)
+- html和xml文档中的编码声明：
+
   ```xml
   <!-- html -->
   <meta charset="UTF-8">
@@ -216,9 +224,18 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 00 00 FE FF UTF-32/UCS-4, big-endian.
 ```
 
-# 5. 现代编码模型（扩展）
+# 5. 编码模型
 
-## 5.1. 说明
+存在两种编码模型
+
+## 5.1. 简单字符集
+
+- 在这种编码模型里，一个字符集定义了这个字符集里包含什么字符，同时把每个字符如何对应成计算机里的比特也进行了定义。
+- 例如 ASCII，在 ASCII 里直接定义了 A -> 0100 0001。也就是 ASCII 直接完成了现代编码模型的前三步工作。
+
+## 5.2. 现代编码模型
+
+### 5.2.1. 说明
 
 - 现代编码模型自底向上分为五个层次：
   - 第1层 抽象字符表ACR(Abstract Character Repertoire)：明确字符的范围(即确定支持哪些字符)
@@ -227,9 +244,11 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
   - 第4层 字符编码模式CES(Character Encoding Scheme)：将逻辑上的码元序列映射为物理上的字节序列(即物理字符编码)
   - 第5层 传输编码语法TES(Transfer Encoding Syntax)：将字节序列作进一步的适应性编码处理
 
-- 来源：[Unicode Technical Report (UTR统一码技术报告)](http://www.unicode.org/reports/tr17/#Repertoire)
+- 来源：
+  - [Unicode Technical Report (UTR统一码技术报告)](http://www.unicode.org/reports/tr17/#Repertoire)
+  - [现代编码模型](https://zh.wikipedia.org/wiki/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81#%E7%8E%B0%E4%BB%A3%E7%BC%96%E7%A0%81%E6%A8%A1%E5%9E%8B)
 
-## 5.2. 抽象字符表 ACR (Abstract Character Repertoire)
+### 5.2.2. 抽象字符表 ACR (Abstract Character Repertoire)
 
 - **抽象字符** (Abstract Character) [维基](https://zh.wikipedia.org/wiki/%E5%AD%97%E7%AC%A6_(%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6))
   - 字符是指字母、数字、标点、表意文字（如汉字）、符号、或者其他文本形式的书写“原子”。
@@ -258,7 +277,7 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
   haha_acr = { 'a', '吼', 'あ', ' α', 'Д' }
   ```
 
-## 5.3. 编码字符集 CCS (Coded Character Set)
+### 5.2.3. 编码字符集 CCS (Coded Character Set)
 
 - **编码字符集**
   - 是一个每个所属字符都分配了**码位**的抽象**字符集**。
@@ -288,6 +307,7 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
       > - **0xD800~0xDBFF** 称为**High-surrogate**
       > - **0xDC00~0xDFFF** 称为**Low-surrogate**
     - 如果直接尝试去输出这个码位段的'字符'，结果会告诉你这是个非法字符。
+
       ```python
       >>> print u'\UDDDD'
       File "<stdin>", line 1
@@ -295,11 +315,12 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
       ```
 
 - 例：为haha抽象字符集进行编码，就可以得到haha编码字符集。
+
   ```python
   haha_ccs = { 'a' : 0x0, '吼':0x1 , 'あ':0x2 , ' α':0x3 , 'Д':0x4  }
   ```
 
-## 5.4. 字符编码表 CEF (Character Encoding Form)
+### 5.2.4. 字符编码表 CEF (Character Encoding Form)
 
 - 问题：在讲抽象字符集ACR的时候曾经提起，UCS是一个**开放字符集**，未来可能有更多的符号加入到这个字符集中来
   - 也就是说UCS需要的**码位**，理论上是**无限**的。
@@ -339,15 +360,29 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
     ![](./image/encryption-7.png)
 
 
-## 5.5. 字符编码方案 CES (Character Encoding Schema)
+### 5.2.5. 字符编码方案 CES (Character Encoding Schema)
 
-<!-- TODO: 加密算法。有时间继续整理一下吧 -->
-
-## 5.6. 传输编码语法 TES (Transfer Encoding Syntax)
+### 5.2.6. 传输编码语法 TES (Transfer Encoding Syntax)
 
 # 6. 应用与问题
 
 ## 6.1. mysql处理emoji
+
+## 6.2. UTF-16, UTF-16LE, UTF-16BE的区别
+
+UTF-16, UTF-16LE, UTF-16BE, 及其区别BOM
+
+- 先说UTF-16BE (big endian), 也就是大端
+  - 比如说char 'a', ascii为 0x61, 那么它的utf-8, 则为 [0x61],
+  - 但utf-16是16位的, 所以为[0x00, 0x61]
+- 再说UTF-16LE(little endian), 小端, 这个是比较常用的
+  - 还是char 'a', 它的代码却反过来: [0x61, 0x00], 主要和机器字节序有关
+- 然后说UTF-16
+  - 要从代码里自动判断一个文件到底是UTF-16LE还是BE, 对于单纯的英文字符来说还比较好办,
+  - 但要有特殊字符, 图形符号, 汉字, 法文, 俄语之类的话, 就比较难自动识别,
+  - unicode组织引入了BOM的概念, 即byte order mark, 顾名思义, 就是表名这个文件到底是LE还是BE的,
+  - 其方法就是, 在UTF-16文件的头2个字节里做个标记: LE [0xFF, 0xFE], BE [0xFE, 0xFF]
+  - 注意：在处理UTF-16时，需要注意前两个BOM字节
 
 # 7. 参考资料
 
@@ -361,3 +396,7 @@ FF FE 00 00 UTF-32/UCS-4, little endian.
 - [ ] [字符编码：Unicode、UTF-8、GBK](https://senitco.github.io/2017/06/06/character-encoding/)
 - [ ] [深入浅出了解Java程序中的乱码](https://blog.csdn.net/weixin_43465312/article/details/106124420)
 - [ ] [让 MySQL 支持存储 emoji 表情](https://juejin.cn/post/6844903847018627079)
+- [ ] [彻底弄懂Unicode编码](https://liyucang-git.github.io/2019/06/17/%E5%BD%BB%E5%BA%95%E5%BC%84%E6%87%82Unicode%E7%BC%96%E7%A0%81/)
+- [ ] [unicode 转义序列标准：ASCII Escaping of Unicode Characters](https://liyucang-git.github.io/2019/06/17/%E5%BD%BB%E5%BA%95%E5%BC%84%E6%87%82Unicode%E7%BC%96%E7%A0%81/)
+- [x] [UTF-8, UTF-16, UTF-16LE, UTF-16BE的区别](https://www.cnblogs.com/xubin0523/archive/2012/10/19/2730913.html)
+- [ ] [dencode: unicode-escape](https://dencode.com/string/unicode-escape)

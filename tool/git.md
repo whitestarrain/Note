@@ -21,6 +21,7 @@
   - `git commit --amend [file1] [file2] ...` 重做上一次commit，并包括指定文件的新变化
   - `git commit --amend --no-edit（或者新字符串）` 覆盖上次提交 但 id 会变
   - `git commit --amend --date='Mon Jul 15 00:47:47 2024 +0800'` 修改 AuthorDate
+  - `GIT_COMMITTER_DATE="Mon Jul 15 00:47:47 2024 +0800" git commit` 修改 CommitDate
   - `git commit -am "sign"` ：直接添加并 commit 上去但必须是已经追踪的文件，这条命令无法添加追踪 **所以不太推荐**
   - `git commit -v` 提交时显示所有diff信息
     > git中*好要加转义字符，因为 因为 Git 有它自己的文件模式扩展匹配方式，所以我们不用 shell 来帮忙展开。 <br />
@@ -350,12 +351,14 @@
       - git add .
       - git rebase --continue
       - 完成后可以使用 git gc 回收垃圾
-  - `git rebase --abor` ：任何时候都行，终止 rebase 操作，回到 rebase 开始前状态
+  - `git rebase --abort` ：任何时候都行，终止 rebase 操作，回到 rebase 开始前状态
   - `git rebase --onto master server client`：选中在 client 分支里但不在 server 分支里的修改，将它们在 master 分支上重放
     > 看官方文档吧
 - commit 合并变基
   - `git rebase -i ref` 合并从此处到指定 id 的所有 commit
   - `git rebase -i HARD~2` 合并前两个 commit
+- 修改merge节点之前的 commit
+  - `git rebase --rebase-merges -i <commit>`
 
 ## 1.14. cherry-pick和patch
 

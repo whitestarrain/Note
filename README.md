@@ -36,7 +36,7 @@
 - **数据库**
   - [mysql](./database/mysql.md)
   - [redis](./database/redis.md)
-- **大数据(笔记没时间更完，看一下[资料](./big_data/资料)吧)**
+- **大数据(笔记没时间更完，看一下[资料](./big_data/_reference)吧)**
   - [hadoop(hdfs,MR,HBase),hive](./big_data/hadoop.md)
     > 好像是以前跟着视频边学边记的。更到HBase后就没时间更了。
   - [storm](./big_data/storm.md)
@@ -64,12 +64,12 @@
   - [k8s](./container/k8s.md)
     > 占位
 - **前端**
-  - [html基础(资料)](./front_end/资料/HTML.md)
-  - [css基础(资料)](./front_end/资料/CSS.md)
-  - [css-BFC(资料)](./front_end/资料/BFC.md)
-  - [javascript基础(资料+个人整理)](./front_end/资料/JavaScript基础.md)
-  - [javascript深入(资料+个人整理)](./front_end/资料/JavaScript高级.md)
-  - [web api(资料+个人整理)](./front_end/资料/Web-API.md)
+  - [html基础(资料)](./front_end/_reference/HTML.md)
+  - [css基础(资料)](./front_end/_reference/CSS.md)
+  - [css-BFC(资料)](./front_end/_reference/BFC.md)
+  - [javascript基础(资料+个人整理)](./front_end/_reference/JavaScript基础.md)
+  - [javascript深入(资料+个人整理)](./front_end/_reference/JavaScript高级.md)
+  - [web api(资料+个人整理)](./front_end/_reference/Web-API.md)
   - [JS模块化规范](./front_end/JS模块化规范.md)
     > 待进一步整理
   - [es6规范](./front_end/ECMAScript6.md)

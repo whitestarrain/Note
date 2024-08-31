@@ -524,7 +524,9 @@ TODO: linux XDG 目录规范
     ```
 - less(推荐)
 
-### 2.9.4. od
+## 2.10. 二进制文件处理
+
+### 2.10.1. od
 
 输出文件的八进制、十六进制、对应ascii码等格式编码的字节
 
@@ -532,7 +534,44 @@ TODO: linux XDG 目录规范
 od -tx1 -tc -Ax file
 ```
 
-## 2.10. 文件切分 split
+### 2.10.2. xxd
+
+hexdump 或者 将hex转为文本
+
+```bash
+❯ echo "测试" | xxd
+00000000: e6b5 8be8 af95 0a                        .......
+
+❯ echo "测试" | xxd -p
+e6b58be8af950a
+
+❯ echo e6b5 8be8 af95 0a | xxd -r -p
+测试
+```
+
+- If your locale's charset (see output of `locale charmap`) is not UTF-8 (but can represent all the characters in the encoded string), add a `| iconv -f UTF-8`.
+- If it cannot represent all the characters, you could try `| iconv -f UTF-8 -t //TRANSLIT` to get an approximation.
+
+### 2.10.3. iconv
+
+unicode 转义序列标准：[ASCII Escaping of Unicode Characters](https://www.rfc-editor.org/rfc/rfc5137)
+
+unicode 转义序列 输出为文本，转义序列一般使用的是大端 utf-16
+
+```
+# 使用utf-16大端
+echo -ne '\x09\x65' | iconv -f utf-16be
+# 等价
+echo -ne '\x65\x09' | iconv -f utf-16le
+```
+
+bash 4.2 版本以上可以使用：
+
+```
+echo $'\u0965'
+```
+
+## 2.11. 文件切分 split
 
 文件夹内，每500个文件打一个压缩包
 
@@ -560,7 +599,7 @@ find ./images -type f -print0  | {
 }
 ```
 
-## 2.11. ln, readlink
+## 2.12. ln, readlink
 
 - 创建符号链接/硬链接:
 
@@ -1245,7 +1284,7 @@ GPT 分区表管理
 
 ## 7.2. stty
 
-## 7.3. terminfo:
+## 7.3. terminfo
 
 ### 7.3.1. tic
 
@@ -1678,7 +1717,7 @@ passwd示例：
 
 ### 8.8.4. 常见问题
 
-#### 密码输入次数太多被锁定
+#### 8.8.4.1. 密码输入次数太多被锁定
 
 查看报错
 
