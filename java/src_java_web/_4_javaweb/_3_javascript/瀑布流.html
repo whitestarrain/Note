@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>瀑布流</title>
+		<style>
+			* {
+				margin: 0px;
+				padding: 0px;
+			}
+
+			.img {
+				width: 20%;
+				padding: 5px;
+				border: 1px solid black;
+				position: absolute;
+				display: block;
+				visibility: hidden;
+			}
+
+			#box {
+				width: 100%;
+				height: 500px;
+				/* 绝对定位无法撑开盒子,但可以用js实现，这里使用margin-left实现居中
+				 原因：定位时margin也会导致位置移动
+				 */
+				position: absolute;
+				left: 50%;
+				transform: translate(-50%,0);
+			}
+		</style>
+	</head>
+	<body>
+		<!-- 瀑布流容器 -->
+		<div id="box">
+
+		</div>
+	</body>
+	<script>
+		addImgs();
+		var box = document.getElementById("box")
+		var gap = 10;
+		var imgs = box.children;
+		window.onload = function() {
+			while (getClient().height + getScrollTop() >= imgs[imgs.length - 1].offsetTop) {
+				addImgs();
+				waterfull();
+			}
+
+
+			waterfull()
+			// 该代码一定要在onload里面，否则无法获取图片高度
+			function waterfull() {
+
+				var imgWidth = imgs[0].offsetWidth;
+				var pageWidth = box.clientWidth;
+				var columnNum = Math.floor((pageWidth - gap) / (imgWidth + gap));
+				var arr = [];
+				//设置第一行的图片
+				for (var i = 0; i < columnNum && i < imgs.length; i++) {
+					imgs[i].style.left = gap * (i + 1) + imgWidth * i + 'px';
+					imgs[i].style.top = 0 + 'px'
+					arr[i] = imgs[i].offsetHeight + gap;
+					imgs[i].style.visibility='visible'
+				}
+				//设置剩余所有的图片
+				for (var i = columnNum; i < imgs.length; i++) {
+					var minIndex = getMinIndex(arr);
+					imgs[i].style.top = arr[minIndex] + 'px';
+					imgs[i].style.left = gap * (minIndex + 1) + imgWidth * minIndex + 'px'
+					arr[minIndex] += imgs[i].offsetHeight + gap;
+					imgs[i].style.visibility='visible'
+				}
+
+				// 通过margin-left进行box的居中
+				box.style.marginLeft=(getClient().width-(columnNum+1)*gap-columnNum*imgWidth)/2+'px';
+			}
+			//暴露给外面
+			window.waterfull = waterfull;
+
+		}
+
+		function getMinIndex(arr) {
+			var index = 0;
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i] < arr[index]) {
+					index = i;
+				}
+			}
+			return index;
+		}
+		window.onresize = function() {
+			//窗口大小改变时
+			waterfull();
+		}
+
+		function addImgs() {
+			//以后这里可以用ajax获取新的，这里重复用了
+			var imgPath = [
+				"image.png",
+			];
+			for (var i = 0; i < imgPath.length; i++) {
+				var box = document.getElementById('box');
+				var img = document.createElement('img');
+				img.className = 'img';
+				img.src = imgPath[i];
+				box.appendChild(img)
+			}
+		}
+		window.onscroll = function() {
+			if (getClient().height + getScrollTop() >= imgs[imgs.length - 1].offsetTop) {
+				addImgs();
+				waterfull();
+			}
+		}
+
+		// clientWidth 处理兼容性
+		function getClient() {
+			return {
+				width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+				height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+			}
+		}
+		// scrollTop兼容性处理
+		function getScrollTop() {
+			return window.pageYOffset || document.documentElement.scrollTop;
+		}
+	</script>
+</html>
