@@ -13,7 +13,6 @@
 - `:scriptnames`输出`source`或者`runtime`过的所有脚本
 - `gQ`:进入Ex模式
 
-
 ## 1.2. 移动
 
 - hjkl:移动
@@ -35,8 +34,8 @@
   > 在可视行模式，选择一块时挺好用的
       - ma 在当前位置做标记，通过'a可以回来
 - L:最后一行行首
-- ctrl-y: 向上滚动屏幕
-- ctrl-e: 向下滚动屏幕
+- c-y: 向上滚动屏幕
+- c-e: 向下滚动屏幕
 
 ## 1.3. 搜索
 
@@ -320,7 +319,7 @@
 - ssh-keygen -p 重新设置ssh的密码
 - Q: 进入Ex模式
 
-# 2. 代码跳转操作
+## 1.16. 代码跳转操作
 
 - %
   - 跳转到光标所在括号的另一个配对括号上，适用于小括号()、大括号{}、方括号[]。
@@ -394,15 +393,30 @@
   - 其他命令的说明可以类似查看。
   - 可以用 :help gd 和 :help gD 命令来查看帮助说明，这两个命令的帮助说明是相邻的。
 
-# 3. 实用命令
+# 2. 模式说明
+
+## 2.1. 插入模式 (Insert Mode)
+
+## 2.2. 替换模式(Replace Mode)
+
+## 2.3. 可视化模式 (Visual Mode)
+
+## 2.4. 选择模式 (Select Mode)
+
+## 2.5. 命令行模式 (Command-line Mode)
+
+## 2.6. Ex模式 (Ex Mode)
+
+# 3. 进阶
 
 [w3school-vim命令大全](https://www.w3cschool.cn/vim/cjtr1pu3.html)
 
-- `:v/./.,/./-1join` 压缩空行(多行空行合并为一行)
-- `:g/^$/,/./-j`  压缩空行(多行空行合并为一行)
+## 3.1. quickfix 和 location
+
+`help quickfix`
+
 - `vimgrep /content/ *.* | copen`
-  <details>
-  <summary style="color:red;">说明</summary>
+  > help: `grep` `lgrep` `vimgrep`
 
   ```
   vim[grep][!] /{pattern}/[g][j] {file} ...
@@ -423,88 +437,6 @@
     4. 可以在多个路径中搜索  vimgrep // path1/** path2/** | copen
     5. 所有指定类型文件中搜索 vimgrep // ./**/*.md | copen
   ```
-  </details>
-
-- `<c-a>` `<c-x>`:数字加一减一
-
-- `g<c-a>`编号，`sort`排序
-  > help v_g_CTRL-A 查看帮助
-  ```
-  原始：
-    aaa
-    aaa
-    aaa
-
-  添加初始编号
-    0aaa
-    0aaa
-    0aaa
-
-  g<c-a>
-    1aaa
-    2aaa
-    3aaa
-
-  sort sort默认使用字典序，数字排序的话，使用 sort n
-  ```
-- `<c-a>`:increase number
-- `echo expand("%:p")`: 查看当前文件路径
-- visual模式下`g+<c-g>`:查看选中字符个数
-- `ctrl-a` 数字加一。`ctrl-x` 数字减一
-- 将输出写出到文件
-
-  ```
-  :redir > highlight.txt
-  :highlight
-  :redir END
-  ```
-- 输出所有highlight到buffer: `:runtime syntax/hitest.vim`
-- 检查语法高亮花费的时间
-
-  ```vim
-  syntime on
-  syntime report
-  ```
-- 正则替换
-
-  ```
-  将 `## 标题 ##` 替换为 `## 标题`
-
-  %s/\(#\+\)\(.\{-}\) \1/\1\2/g
-
-  .\{-} 是 .* 的非贪婪模式
-  ```
-
-- 调用外部命令(`help filter`, `help w_c`)
-  - 调用命令并replace
-    - `:%!sort -k2` 整个文件的内容作为stdin，调用sort程序，参数为`-k2`，输出到buffer
-    - `:'<,'>!awk '{print $1}'` 选定内容作为stdin，调用awk程序，输出到buffer
-    - `:'<,'>!sh` 执行选中的命令，输出到buffer
-
-      ```bash
-      # 多行命令也支持，多行命令+多行stdin的可以用这种 here doc 的形式
-      tr [:lower:] [:upper:] \
-      <<_exit
-        sdfsdf
-        sdfsdsdf
-        sdfsdd
-      _exit
-      # :%!sh
-      ```
-  - 调用命令并输出到message
-    - `:w !ls` 执行指定命令，并写入到message
-    - `:'<,'>w !sh` 执行选中的命令(将选中的数据作为stdin传给sh)，输出到message
-  - 调用命令并追加
-    > :read 不支持读取buffer作为stdin
-    - `:r !ls` 执行指定命令，并写入到buffer。
-
-- visual block 模式下的 replace
-
-  ```
-  :'<,'>s/\%Vpattern1/pattern2/g
-  或者
-  :'<,'>s/\%Vpattern1\%V/pattern2/g
-  ```
 
 - cdo, cfdo, ldo, bufdo, windo, tabdo, argdo
 
@@ -513,23 +445,11 @@
   :copen
   :cdo lua print(vim.inspect(vim.api.nvim_win_get_cursor(0)))
   :cdo lua print(vim.fn.expand("cfile"))
+  :cdo execute "normal! f]D"
   ```
-- 打出'^M':
-  - 插入模式下，`<c-v><c-m>`
-- excel 打开 csv 中文乱码
 
-  ```vim
-  " help encoding-names
-  set fileencoding=prc
-  set fileencoding=cp936
-  ```
-- 已指定编码打开文件
-  ```vim
-  " 打开新文件
-  :e ++encoding=gbk file_name
-  " 已其他编码加载当前文件
-  :e ++encoding=gbk
-  ```
+## 3.2. 全局命令(Global Command)
+
 - `:g` 全局命令, `help :g`
 
   ```vim
@@ -557,13 +477,206 @@
   :g/./yank|put|-1s/'/"/g|s/.*/Print '&'/
   ```
 
-# 4. vim插件
+## 3.3. 过滤器(filter)
+
+- 调用外部命令(`help filter`, `help w_c`)
+  - 调用命令并replace
+    - `:%!sort -k2` 整个文件的内容作为stdin，调用sort程序，参数为`-k2`，输出到buffer
+    - `:'<,'>!awk '{print $1}'` 选定内容作为stdin，调用awk程序，输出到buffer
+    - `:'<,'>!sh` 执行选中的命令，输出到buffer
+
+      ```bash
+      # 多行命令也支持，多行命令+多行stdin的可以用这种 here doc 的形式
+      tr [:lower:] [:upper:] \
+      <<_exit
+        sdfsdf
+        sdfsdsdf
+        sdfsdd
+      _exit
+      # :%!sh
+      ```
+  - 调用命令并输出到message
+    - `:w !ls` 执行指定命令，并写入到message
+    - `:'<,'>w !sh` 执行选中的命令(将选中的数据作为stdin传给sh)，输出到message
+  - 调用命令并追加
+    > :read 不支持读取buffer作为stdin
+    - `:r !ls` 执行指定命令，并写入到buffer。
+
+## 3.4. 编码处理
+
+- set encoding	设置Vim的内部编码方式
+- set termencoding	设置Vim的屏幕显示编码
+- set fileencoding	设置文件的编码方式
+- set fileencodings	设置Vim的解码列表
+
+指定编码打开文件:
+
+```vim
+" 打开新文件
+:e ++encoding=gbk file_name
+" 已其他编码加载当前文件
+:e ++encoding=gbk
+```
+
+- excel 打开 csv 中文乱码
+
+  ```vim
+  " help encoding-names
+  set fileencoding=prc
+  set fileencoding=cp936
+  ```
+
+## 3.5. 自动补全
+
+`help popmenu-keys`
+
+- 关键字补全：`<C-N>`, `<C-p>`
+- ^X模式（Ctrl-X Mode） 补全
+  - Ctrl-]: 标签(tags)补全
+  - Ctrl-D: 定义补全
+  - Ctrl-E: 向上滚动文本
+  - Ctrl-F: 文件名补全
+  - Ctrl-I: 当前文件以及包含进来的文件补全
+  - Ctrl-K: 字典补全
+  - Ctrl-L: 整行补全
+  - Ctrl-N: 当前文件内的关键字补全，向下选择匹配项
+  - Ctrl-O: 全能补全
+  - Ctrl-P: 当前文件内的关键字补全，向上选择匹配项
+  - Ctrl-S: 拼写建议补全
+  - Ctrl-U: 用户自定义补全
+  - Ctrl-V: Vim命令补全
+  - Ctrl-Y: 向下滚动文本
+
+
+# 4. 命令 tips
+
+- `<c-a>` `<c-x>`:数字加一减一
+- `g<c-a>`编号，`sort`排序
+  > help v_g_CTRL-A 查看帮助
+  ```
+  原始：
+    aaa
+    aaa
+    aaa
+
+  添加初始编号
+    0aaa
+    0aaa
+    0aaa
+
+  g<c-a>
+    1aaa
+    2aaa
+    3aaa
+
+  sort sort默认使用字典序，数字排序的话，使用 sort n
+  ```
+- `<c-a>`:increase number
+- `:v/./.,/./-1join` 压缩空行(多行空行合并为一行)
+- `:g/^$/,/./-j`  压缩空行(多行空行合并为一行)
+- `echo expand("%:p")`: 查看当前文件路径
+- visual模式下`g+<c-g>`:查看选中字符个数
+- `ctrl-a` 数字加一。`ctrl-x` 数字减一
+- 将输出写出到文件
+
+  ```
+  :redir > highlight.txt
+  :highlight
+  :redir END
+  ```
+- 输出所有highlight到buffer: `:runtime syntax/hitest.vim`
+- 检查语法高亮花费的时间
+
+  ```vim
+  syntime on
+  syntime report
+  ```
+- 正则替换
+
+  ```
+  将 `## 标题 ##` 替换为 `## 标题`
+
+  %s/\(#\+\)\(.\{-}\) \1/\1\2/g
+
+  .\{-} 是 .* 的非贪婪模式
+  ```
+- visual block 模式下的 replace
+
+  ```
+  :'<,'>s/\%Vpattern1/pattern2/g
+  或者
+  :'<,'>s/\%Vpattern1\%V/pattern2/g
+  ```
+- 打出'^M':
+  - 插入模式下，`<c-v><c-m>`
+
+# 5. 自定义系统
+
+## 5.1. mapping, leader
+
+## 5.2. modeline
+
+将以下模式行放置到文件开头，将在打开该文件时设置制表符为4个空格：
+
+```
+/* vim:set tabstop=4: */
+```
+
+## 5.3. autocmd
+
+## 5.4. wildmenu
+
+## 5.5. 缩写(Abbreviations)
+
+# 6. 外部系统交互
+
+## 6.1. 作业 job
+
+## 6.2. 定时器(timeer)
+
+## 6.3. 通道(channel)
+
+# 7. 代码开发支持
+
+## 7.1. 模板(Template)
+
+## 7.2. 配色方案(Color Scheme)
+
+## 7.3. 色彩测试(colortest)
+
+## 7.4. 语法高亮文件 (Syntax)
+
+## 7.5. 语法高亮度(Syntax Highlight)
+
+## 7.6. 语法高亮度-日志文件(Syntax Logfile)
+
+## 7.7. 折叠(Fold)
+
+## 7.8. 非可见字符(Listchars)
+
+## 7.9. 缩进(Indent)
+
+## 7.10. 多重色彩括号(Parentheses)
+
+## 7.11. Zeavim离线文档查看器
+
+# 8. Tag标签
+
+## 8.1. 生成标签文件(Generates Tags File)
+
+## 8.2. 匹配单个标签(Matching Single Tag)
+
+## 8.3. 匹配多个标签(Matching Multiple Tags)
+
+## 8.4. 标签选项(Tag Option)
+
+# 9. vim插件(已过时)
 
 **详细插件配置：[dotfiles](https://github.com/whitestarrain/dotfiles)**
 
-## 4.1. 插件
+## 9.1. 插件
 
-## 4.2. 插件安装示例
+## 9.2. 插件安装示例
 
 - 插件管理器：vim-plug
 	> 更多其实看github上的文档就行
@@ -583,13 +696,13 @@
 		- 将插件文件夹下的文件夹（仅文件夹）和vimfiles下的文件夹 合并
 		- 不要替换tag，把所有插件的tag放到一个文件夹中
 
-## 4.3. 寻找插件
+## 9.3. 寻找插件
 
 - 大多数插件都托管在github上，google关键词搜索
 - 使用网站： http://vimawesome.com/ (十分推荐)
 - 浏览网上开源的vimrc配置。
 
-## 4.4. 美化插件
+## 9.4. 美化插件
 
 - 启动界面：vim-startify
 - 状态栏：vim-airline
@@ -605,7 +718,7 @@
 	- 要持久化的话要在配置中加上 colorscheme XXX
 	- 简单点也可以把hybird.vim下载后放到安装目录的colors下
 
-## 4.5. 实用插件
+## 9.5. 实用插件
 
 - 文件树安装：
 	- 安装:Plug 'scrooloose/nerdtree'
@@ -788,7 +901,7 @@
 - 格式化工具：
   - Prettier:支持全局格式化和局部格式化的好插件
 
-# 5. 联合工具
+# 10. 联合工具
 
 -  Tmux
 	- 功能：
@@ -883,13 +996,13 @@
 	- PegasusWang/vim-config(视频作者配置)
 	- 不建议新手直接用，越复杂成本越高。可以看一下SpaceVim，牛炸，用的时候就相当于黑盒
 
-# 6. vimscript
+# 11. vimscript
 
-## 6.1. 前言
+## 11.1. 前言
 
 尽管都转到了lua，vimscript还是稍微学一下吧
 
-## 6.2. 基本vim配置
+## 11.2. 基本vim配置
 
 - 目的：
 	- 持久化配置，比如行号，高亮等
@@ -928,9 +1041,9 @@
 - 查看配置项配置位置：
   - `verbose set ...`，如`verbose set number`
 
-# 7. 其他
+# 12. 其他
 
-## 7.1. Vim中的^M
+## 12.1. Vim中的^M
 
 Unix uses 0xA for a newline character. Windows uses a combination of two characters: 0xD 0xA. 0xD is the carriage return character. `^M` happens to be the way vim displays 0xD (0x0D = 13, M is the 13th letter in the English alphabet).
 
@@ -946,11 +1059,12 @@ This expression will replace all occurrences of `^M` with the empty string (i.e.
 
 - window上，如果有^M符号，编译不会报错，但会导致lsp各种毛病。命令行模式Ctrl-v-m 可以打出这个符号
 
-# 8. vim启动过程
+# 13. vim启动过程
 
-# 9. 参考资料
+# 14. 参考资料
 
 - **help**
+- **[VIM学习笔记](https://yyq123.github.io/learn-vim/)**
 - [Vim-一些实用技巧](https://tkstorm.com/posts-list/os/linux/vim-usages/)
 - 《笨方法学vimscript》
 - [What does ^M character mean in Vim?](https://stackoverflow.com/questions/5843495/what-does-m-character-mean-in-vim)
