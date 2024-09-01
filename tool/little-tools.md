@@ -244,6 +244,10 @@ curl http://ifconfig.me
 
 https://github.com/karlstav/cava
 
+# KeyCastOW
+
+监听并显示按键
+
 # CR常见术语
 
 - CR: Code Review. 请求代码审查。
