@@ -274,6 +274,7 @@ cookie和session攻击
 - [ ] lsp semantic token highlighting 优先级调成比 treesitter高
   - 这样就能实现vscode上，引用不存在成员，不highlight为红色的效果了
   - 当前默认关了lsp的语义高亮
+- lisp编辑辅助插件：nvim([parpar](https://github.com/dundalek/parpar.nvim)) = emacs(Parinfer + Paredit)
 
 ### emacs
 
@@ -301,6 +302,7 @@ cookie和session攻击
 - [emacs 作者 Richard Stallman 我的Lisp经历和GNU Emacs的开发](https://www.gnu.org/gnu/rms-lisp.zh-cn.html)
 - [emacs2ram，把emacs放到内存中](https://github.com/lujun9972/emacs-document/blob/master/emacs-common/十倍提升Emacs性能.org)
 - [21 天学会 Emacs](https://book.emacs-china.org/)
+- [emacs zenburn theme， 感觉看起来不错](https://github.com/bbatsov/zenburn-emacs)
 
 ### vscode
 
@@ -784,6 +786,7 @@ cookie和session攻击
   - [配置示例](https://github.com/spencerwooo/dotfiles-archive/blob/master/macOS/_yabairc)
 - [protobuf](https://github.com/protocolbuffers/protobuf)
   - 由 Google 开发的二进制序列化格式和相关的技术，它用于高效地序列化和反序列化结构化数据，通常用于网络通信、数据存储等场景
+- [Iosevka字体](https://github.com/be5invis/Iosevka)
 
 # 优秀公开课
 

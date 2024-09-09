@@ -536,7 +536,7 @@ od -tx1 -tc -Ax file
 
 ### 2.10.2. xxd
 
-hexdump 或者 将hex转为文本
+hexdump 或者 将hex转为文本。vim中基于xxd编辑二进制文件
 
 ```bash
 ❯ echo "测试" | xxd

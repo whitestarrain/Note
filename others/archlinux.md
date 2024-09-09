@@ -571,6 +571,13 @@ Bluetooth: hci0: HCI LE Coded PHY feature bit is set, but its usage is not suppo
 
 ### 4.2.6. cpu调频
 
+- 获取cpu频率信息
+
+  ```
+  cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+  cat /sys/devices/system/cpu/cpu0/cpufreq/scalling_cur_freq
+  ```
+
 - thermald
 - cpupower
 - auto-cpufreq
