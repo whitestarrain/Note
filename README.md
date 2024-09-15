@@ -229,29 +229,6 @@
 - [大数据与深度学习笔记](https://github.com/whitestarrain/big_data)
 - [python学习笔记](https://github.com/whitestarrain/python_learn)
 
-# 目录调整
-
-之前目录调整用来`git mv`图片的代码。因为`git mv`不支持正则表达式匹配，所以只能使用awk了。
-
-```awk
-awk 'BEGIN{
-      target = "../javaFrame/image"  # 图片移动位置
-      print target
-    }
-    {
-      a = match($0,/!\[.*\](.*)/);
-      if(a!=0){
-        str = substr($0,a);
-        i = index(str,"(");
-        j = index(str,")");
-        image_path = substr(str,i+1,j-i-1);
-        command = sprintf("git mv %s %s",image_path,target);
-        print command
-        system(command)
-      }
-    }' Spring.md  # 移动图片所关联的md文件
-```
-
 # TODO
 
 [todo](./todo.md)

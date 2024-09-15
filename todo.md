@@ -1,3 +1,5 @@
+
+
 # 优先级较高项
 
 - [ ] [emacs GTD 日程管理](https://www.cnblogs.com/yangruiGB2312/p/9101838.html)
@@ -55,6 +57,41 @@
 - [ ] 逆向工程
   - utools 禁用更新
 
+# 首选资料
+
+- [CS自学指南](https://csdiy.wiki/)
+
+---
+
+- [编程指北](https://csguide.cn/)
+- [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)
+- [MIT 6.828 JOS与NJU ICS NEMU源码精读](https://knowledgehive.github.io/6.828/#)
+- [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
+- lc-3
+  - [主页 Introduction to Computing Systems](https://highered.mheducation.com/sites/0072467509/student_view0/)
+  - [模拟器 LC 3 Simulator Windows Version 3.01 (385.0K)](https://highered.mheducation.com/sites/dl/free/0072467509/104652/LC301.exe)
+  - [指令手册 AppendixA.pdf](https://highered.mheducation.com/sites/dl/free/0072467509/104691/pat67509_appa.pdf)
+- [编译原理](https://csguide.cn/roadmap/basic/compiler.html)
+- [计算机导论：CS 50](https://cs50.harvard.edu/college/2021/spring)
+  - [b站视频](https://www.bilibili.com/video/BV1Rb411378V)
+- 清华大学 ucore OS
+  - [ucore实验指导书](https://nankai.gitbook.io/ucore-os-on-risc-v64/)
+- MIT 6.828: Operating System Engineering
+
+# 优秀博客
+
+- [bellard 博客，quickjs,tcc等](https://bellard.org/)
+
+# 付费课程
+
+- [udemy](www.udemy.com)
+<!-- [bilibili搬运](https://www.bilibili.com/video/BV1vA4y197C7/?spm_id_from=333.337.search-card.all.click&vd_source=c8e13c17fa73d1d5aca51505a5d3170d) -->
+
+# 词典
+
+- [自由在线计算机词典](https://foldoc.org/)
+
+
 # 待做项(备忘录草稿)
 
 > 完成项会可能继续完善更新，以下不一定为最新。
@@ -79,8 +116,6 @@
   - [ ] [CORS跨域完善+整理](./safety/CSRF与CORS.md)
   - [ ] [linux常用命令&工具系统整理](./base/linux.md)
   - [x] [bash编程系统整理](./base/bash.md)
-    - [ ] 寻找练手
-    - [ ] 语法深入
   - [x] 鉴权认证
   - [x] 分布式缓存算法整理
   - [x] JVM字节码与类的加载
@@ -303,6 +338,15 @@ cookie和session攻击
 - [emacs2ram，把emacs放到内存中](https://github.com/lujun9972/emacs-document/blob/master/emacs-common/十倍提升Emacs性能.org)
 - [21 天学会 Emacs](https://book.emacs-china.org/)
 - [emacs zenburn theme， 感觉看起来不错](https://github.com/bbatsov/zenburn-emacs)
+- [Emacs 自力求生指南 ── 来写自己的配置吧](https://nyk.ma/posts/emacs-write-your-own/)
+- lisp edit
+  - [lispy](https://github.com/abo-abo/lispy)
+  - [lispyville: lispy + evil](https://github.com/noctuid/lispyville)
+  - parinfer
+    - [parinfer-rust-mode](https://github.com/justinbarclay/parinfer-rust-mode)
+    - [parinfer-mode](https://github.com/DogLooksGood/parinfer-mode)
+  - paredit
+- [org-mode 编辑大文件](https://emacs-china.org/t/org-mode/7448)
 
 ### vscode
 
@@ -574,6 +618,11 @@ cookie和session攻击
   - 主要是为了解决cpolar不支持udp的问题，抽时间可以研究下
 - [AUR(arch user package)管理工具 paru，与yay类似](https://linux.cn/article-13122-1.html)
 
+### nix
+
+- [NixOS 与 Flakes 一份非官方的新手指南](https://nixos-and-flakes.thiscute.world/zh/)
+- [Nix 和 NixOS：你们安利方法错了](https://nyk.ma/posts/nix-and-nixos/)
+
 ## lang
 
 ### java
@@ -616,6 +665,7 @@ cookie和session攻击
 
 ### algorithm
 
+- **[欧拉计划](https://projecteuler.net/about)**
 - [图论(graph theory)算法原理、实现和应用全解](https://www.srcmini.com/1635.html)
 - [知乎涉及算法查漏补缺, leetcode.md](https://www.zhihu.com/question/29316754/answer/2135428383)
 - [关于加密、证书的那些事](https://www.cnblogs.com/sewain/p/14250884.html#%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86)
@@ -719,6 +769,16 @@ cookie和session攻击
   - [blaze](https://github.com/kwai/blaze)
   - [gluten](https://github.com/apache/incubator-gluten)
 
+## AI
+
+- [python实现反向传播](https://www.cnblogs.com/chenzhen0530/p/10830112.html)
+- [文图生成模型架构](https://developer.aliyun.com/article/989767)
+- [nlp 入门](https://github.com/PKU-TANGENT/nlp-tutorial?tab=readme-ov-file)
+- [全连接，python实现](https://zhuanlan.zhihu.com/p/84153154)
+- [大模型(llm)学习笔记（让天下没有难学的大模型）](https://github.com/liguodongiot/llm-action)
+- [llm 实现：c/cuda实现gpt-2](https://github.com/karpathy/llm.c)
+- [omniparse 将视频，图片等转换为markdown、json等](https://github.com/adithya-s-k/omniparse)
+
 ## others
 
 - [vim命令模式技巧，regex 速查表](https://www.cnblogs.com/outman123/p/12493186.html)
@@ -787,48 +847,5 @@ cookie和session攻击
 - [protobuf](https://github.com/protocolbuffers/protobuf)
   - 由 Google 开发的二进制序列化格式和相关的技术，它用于高效地序列化和反序列化结构化数据，通常用于网络通信、数据存储等场景
 - [Iosevka字体](https://github.com/be5invis/Iosevka)
-
-# 优秀公开课
-
-> 任何方向的学习，可以去：[编程指北](https://csguide.cn/) 找一下资源
-
-- [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)
-- [MIT 6.828 JOS与NJU ICS NEMU源码精读](https://knowledgehive.github.io/6.828/#)
-- [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
-- lc-3
-  - [主页 Introduction to Computing Systems](https://highered.mheducation.com/sites/0072467509/student_view0/)
-  - [模拟器 LC 3 Simulator Windows Version 3.01 (385.0K)](https://highered.mheducation.com/sites/dl/free/0072467509/104652/LC301.exe)
-  - [指令手册 AppendixA.pdf](https://highered.mheducation.com/sites/dl/free/0072467509/104691/pat67509_appa.pdf)
-- [编译原理](https://csguide.cn/roadmap/basic/compiler.html)
-- [计算机导论：CS 50](https://cs50.harvard.edu/college/2021/spring)
-  - [b站视频](https://www.bilibili.com/video/BV1Rb411378V)
-- 清华大学 ucore OS
-  - [ucore实验指导书](https://nankai.gitbook.io/ucore-os-on-risc-v64/)
-- MIT 6.828: Operating System Engineering
-
-# 优秀博客
-
-rss 配置
-
-- [bellard 博客，quickjs,tcc等](https://bellard.org/)
-- [小土刀 2.0](https://wdxtub.com/work/)
-
-# AI
-
-- [python实现反向传播](https://www.cnblogs.com/chenzhen0530/p/10830112.html)
-- [文图生成模型架构](https://developer.aliyun.com/article/989767)
-- [nlp 入门](https://github.com/PKU-TANGENT/nlp-tutorial?tab=readme-ov-file)
-- [全连接，python实现](https://zhuanlan.zhihu.com/p/84153154)
-- [大模型(llm)学习笔记（让天下没有难学的大模型）](https://github.com/liguodongiot/llm-action)
-- [llm 实现：c/cuda实现gpt-2](https://github.com/karpathy/llm.c)
-- [omniparse 将视频，图片等转换为markdown、json等](https://github.com/adithya-s-k/omniparse)
-
-# 付费课程
-
-- [udemy](www.udemy.com)
-<!-- [bilibili搬运](https://www.bilibili.com/video/BV1vA4y197C7/?spm_id_from=333.337.search-card.all.click&vd_source=c8e13c17fa73d1d5aca51505a5d3170d) -->
-
-# 词典
-
-- [自由在线计算机词典](https://foldoc.org/)
-
+- [所有人都能懂的正规方程](https://blog.csdn.net/weixin_41075215/article/details/104880912)
+  - 线性代数，有时间可以复习下

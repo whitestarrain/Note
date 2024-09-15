@@ -16,8 +16,8 @@
 | C-a           | beginning-of-line   | 移到行首                                  |
 | C-e           | end-of-line         | 移到行尾                                  |
 | M-m           | back-toindentation  | 将光标移动到行首的第一个非空白字符        |
-| M-e           | forward-sentence    | 移到句首                                  |
-| M-a           | backward-sentence   | 移到句尾                                  |
+| M-e           | forward-sentence    | 移到句尾                                  |
+| M-a           | backward-sentence   | 移到句首                                  |
 | M-}           | forward-paragraph   | 下移一段                                  |
 | M-{           | backward-paragraph  | 上移一段                                  |
 | C-v           | scroll-up           | 下移一屏                                  |
@@ -109,11 +109,12 @@
 
 ## 文件操作
 
-| 按键                        | 命令                          | 功能                                               |
-| C-x C-f                     | find-file                     | 打开文件                                           |
-| C-x C-v                     | find-alternate-file           | 打开另一个文件                                     |
-| C-x C-s                     | save-buffer                   | 保存文件                                           |
-| C-x C-w                     | write-file                    | 另存文件                                           |
+| 按键    | 命令                | 功能           |
+| :------ | :------------------ | :------------- |
+| C-x C-f | find-file           | 打开文件       |
+| C-x C-v | find-alternate-file | 打开另一个文件 |
+| C-x C-s | save-buffer         | 保存文件       |
+| C-x C-w | write-file          | 另存文件       |
 
 - C-x C-f 寻找，打开文件
 - C-x C-s 储存文件
@@ -308,7 +309,12 @@ C-u 重复执行， C-u 8 C-f 会向前移动 8 个字符。
 - C-h a 命令搜索
 - C-h i 阅读emacs手册
 
-# elisp
+# 插件
+
+- Emacs 自力求生指南
+  - https://nyk.ma/posts/emacs-write-your-own/
+  - https://nyk.ma/posts/emacs-intro/
+- [Emacs User Survey 2020 Results](https://emacssurvey.org/2020/)
 
 # 参考
 
