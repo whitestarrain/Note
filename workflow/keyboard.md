@@ -13,6 +13,8 @@ poker2 没有开关支持，只能靠软件了
 - linux:
   - gui: xmodmap
   - tty: /etc/default/keyboard
+- android:
+  - [caps2ctrl](https://github.com/shiftrot/caps2ctrl)
 
 ## 上下左右
 
@@ -66,3 +68,4 @@ poker2 没有开关支持，只能靠软件了
   pn+f = <shift>
   ```
 - 配置完了记得检查下 pn + hjkl 又没有受影响
+

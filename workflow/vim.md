@@ -36,6 +36,7 @@
 - L:最后一行行首
 - c-y: 向上滚动屏幕
 - c-e: 向下滚动屏幕
+- `;`: 重复搜索 `f`, `t`, `F`, `T` 时搜索的字符
 
 ## 1.3. 搜索
 
@@ -98,10 +99,13 @@
 - 复制
   - `ctrl-y`复制上一行相同列的字符
   - `ctrl-e`复制下一行相同列的字符
+- indent
+  - `ctrl-f`，插入模式调整indent，输入太多空格时可以使用
+    - `:help i_CTRL-F`
+  - `ctrl-t` `ctrl-d` 调整 indent
 - 粘贴寄存器内容
   - `ctrl-r` + `寄存器名称`:插入指定寄存器中的内容，会自动调整缩进
   - `ctrl-r ctrl-p` + `寄存器名称`: 插入指定寄存器中的内容，按原义插入文本，并不会修正不必要的缩进
-
 - 使用表达式寄存器
 - 输入非常用字符
 - 自动补全
@@ -263,21 +267,21 @@
     - "byy 把当前所在行复制到b寄存器中
     - "ap 把寄存器a中的内容赋值
 - 宏
-- 说明：宏可以看成一系列命令的集合，可以将操作进行录制后，再进行回放
-- 基础操作：
-  - q开始录制宏，q结束录制宏
-  - qa 将录制内容存储到寄存器a中
-  - @a 调用a寄存器中的宏
-- 调用宏
-  - V 进行选择要调用的内容
-  - 输入 `:normal @a` (表示再normal模式下每行执行a寄存器里的宏)
-    - 注意，也可以再normal后直接输入命令操作，@a本身就是调用存储在寄存器中的命令
+  - 说明：宏可以看成一系列命令的集合，可以将操作进行录制后，再进行回放
+  - 基础操作：
+    - q开始录制宏，q结束录制宏
+    - qa 将录制内容存储到寄存器a中
+    - @a 调用a寄存器中的宏
+  - 调用宏
+    - V 进行选择要调用的内容
+    - 输入 `:normal @a` (表示再normal模式下每行执行a寄存器里的宏)
+      - 注意，也可以再normal后直接输入命令操作，@a本身就是调用存储在寄存器中的命令
 - 补全（这里只说主要用的，不再系统讲）：
-- C-n,C-p 补全单词
-- C-x C-f **补全文件名**。
-- C-x C-o 代码补全，需要开启文档类型检查，安装插件
-  - filetype on 开启文档类型检查。 set filetype 查看文档类型
-  - 插件设置看后面
+  - C-n,C-p 补全单词
+  - C-x C-f **补全文件名**。
+  - C-x C-o 代码补全，需要开启文档类型检查，安装插件
+    - filetype on 开启文档类型检查。 set filetype 查看文档类型
+    - 插件设置看后面
 
 ## 1.13. 命令
 
@@ -410,9 +414,9 @@
 
 # 3. 进阶
 
-[w3school-vim命令大全](https://www.w3cschool.cn/vim/cjtr1pu3.html)
+## 3.1. 批量操作
 
-## 3.1. quickfix 和 location
+### 3.1.1. quickfix 和 location
 
 `help quickfix`
 
@@ -439,7 +443,7 @@
     5. 所有指定类型文件中搜索 vimgrep // ./**/*.md | copen
   ```
 
-- cdo, cfdo, ldo, bufdo, windo, tabdo, argdo
+- cdo, cfdo, ldo
 
   ```vim
   :grep foo "%:p"
@@ -448,6 +452,17 @@
   :cdo lua print(vim.fn.expand("cfile"))
   :cdo execute "normal! f]D"
   ```
+
+### 3.1.2. 参数列表(arglist)
+
+- `args` 指定参数列表内容
+  - `args: temp.html`
+  - `args: *.md`
+  - `args: **/*.js **/*.css`
+- `argdo`: 对arglist中的每个每个buffer进行操作
+  - `:argdo normal @a`
+
+### 3.1.3. bufdo, windo, tabdo
 
 ## 3.2. 全局命令(Global Command)
 

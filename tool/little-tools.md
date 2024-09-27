@@ -248,6 +248,22 @@ https://github.com/karlstav/cava
 
 监听并显示按键
 
+# 字体
+
+## Iosevka: 等宽字体
+
+https://github.com/be5invis/Iosevka
+
+## victor-mono: 关键字手写体
+
+https://github.com/rubjo/victor-mono
+
+# 浏览器
+
+## Arc
+
+高颜值，极简：https://arc.net/
+
 # CR常见术语
 
 - CR: Code Review. 请求代码审查。

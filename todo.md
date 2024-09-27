@@ -56,6 +56,11 @@
     - 应该是这个，mac上ssh链接，没有这个问题。windows上 可以复现。之后强制调用 openssh 试试
 - [ ] 逆向工程
   - utools 禁用更新
+- [ ] 通过network socket 控制 nvim unix domain socket 的 client 的 输入
+  - nvim 启动server后，会有一个 unix domain socket 进行通信
+  - remote 端，通过tcp socket和本地机器通信
+  - 然后通过管道连接 unix domain socket client 的输入和输出
+  - (总感觉还不如ssh呢，ssh至少人家有加密)
 
 # 首选资料
 
@@ -78,9 +83,11 @@
   - [ucore实验指导书](https://nankai.gitbook.io/ucore-os-on-risc-v64/)
 - MIT 6.828: Operating System Engineering
 
-# 优秀博客
+# 神级程序员 博客
 
-- [bellard 博客，quickjs,tcc等](https://bellard.org/)
+- [bellard](https://bellard.org/)
+- [Daniel Holden](https://www.theorangeduck.com/)
+- [Thomas E. Dickey](https://invisible-island.net/)
 
 # 付费课程
 
@@ -322,18 +329,16 @@ cookie和session攻击
 - [emacs 入门教程](https://github.com/Pavinberg/emacs-book)
 - [emacs lisp简明教程](https://smacs.github.io/elisp/)
 - [emac chinese document](https://github.com/lujun9972/emacs-document)
-- emacs
-  - 中英混打：https://emacs-china.org/t/os-smart-input-source/13436
-  - org, org-roam（obsidian的双链）
-  - 强大的org mode(https://www.zmonster.me/2015/07/12/org-mode-introduction.html)
-  - emacs甚至支持ditta，并输出图片。https://ditaa.sourceforge.net/
-- emacs
-  - [从操作系统架构的角度谈Emacs的学习](http://www.nituchao.com/os-tool/emacs-os-arch.html)
-  - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
-  - [doom emacs](https://github.com/doomemacs/doomemacs)
-  - [Centaur Emacs](https://github.com/seagle0128/.emacs.d)
-    - [Centaur markdown 预览支持语法高亮和各类图](https://emacs-china.org/t/centaur-markdown/12170)
-  - [专业emacs入门](https://zhuanlan.zhihu.com/p/385214753)
+- 中英混打：https://emacs-china.org/t/os-smart-input-source/13436
+- org, org-roam（obsidian的双链）
+- 强大的org mode(https://www.zmonster.me/2015/07/12/org-mode-introduction.html)
+- emacs甚至支持ditta，并输出图片。https://ditaa.sourceforge.net/
+- [从操作系统架构的角度谈Emacs的学习](http://www.nituchao.com/os-tool/emacs-os-arch.html)
+- [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
+- [doom emacs](https://github.com/doomemacs/doomemacs)
+- [Centaur Emacs](https://github.com/seagle0128/.emacs.d)
+  - [Centaur markdown 预览支持语法高亮和各类图](https://emacs-china.org/t/centaur-markdown/12170)
+- [专业emacs入门](https://zhuanlan.zhihu.com/p/385214753)
 - [emacs 作者 Richard Stallman 我的Lisp经历和GNU Emacs的开发](https://www.gnu.org/gnu/rms-lisp.zh-cn.html)
 - [emacs2ram，把emacs放到内存中](https://github.com/lujun9972/emacs-document/blob/master/emacs-common/十倍提升Emacs性能.org)
 - [21 天学会 Emacs](https://book.emacs-china.org/)
@@ -347,6 +352,9 @@ cookie和session攻击
     - [parinfer-mode](https://github.com/DogLooksGood/parinfer-mode)
   - paredit
 - [org-mode 编辑大文件](https://emacs-china.org/t/org-mode/7448)
+- [Emacs smartparens auto-indent](https://xenodium.com/emacs-smartparens-auto-indent/)
+- [simple c mode](https://github.com/rexim/simpc-mode)
+- [一些杂乱的emacs中文文档，可以过一遍](http://blog.lujun9972.win/emacs-document/)
 
 ### vscode
 
@@ -488,11 +496,14 @@ cookie和session攻击
 - [linux性能分析](https://mp.weixin.qq.com/s/i55jZoQ1DbkYCedwg5RPLg)
 - cat /dev/null
 - [Bash脚本进阶指南](https://github.com/LinuxStory/Advanced-Bash-Scripting-Guide-in-Chinese)
-- [终端显示配色和样式，比如`\e[4:3m`](https://www.cnblogs.com/linuxprobe/p/14354824.html)
 - [here doc, here string](https://askubuntu.com/questions/678915/whats-the-difference-between-and-in-bash)
 - [btop，比较酷炫的性能监视工具](https://github.com/aristocratos/btop)
 - [Linux内核，后台执行: ctrl-z/fg/bg/nohup/setsid/()与&/disown/screen](https://www.cnblogs.com/aaronLinux/p/6345072.html)
 - [nc 常用场景](https://www.sqlsec.com/2019/10/nc.html)
+- ANSI Escape Sequences
+  - [终端显示配色和样式，比如`\e[4:3m`](https://www.cnblogs.com/linuxprobe/p/14354824.html)
+  - [ANSI Escape Sequences](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797)
+  - [ANSI Escape Sequence 下落的方块](https://blog.csdn.net/baiyu33/article/details/136088169)
 
 ### linux/c
 
@@ -566,6 +577,7 @@ cookie和session攻击
   - [How to actually get italics and true colour to work in iTerm + tmux + vim](https://medium.com/@dubistkomisch/how-to-actually-get-italics-and-true-colour-to-work-in-iterm-tmux-vim-9ebe55ebc2be)
   - [shell bash终端中输出的颜色和格式详解（超详细）](https://www.cnblogs.com/unclemac/p/12783387.html)
   - curse, ncurse库
+  - [linux 终端重新认识（2）——屏幕的输出](https://www.cnblogs.com/mmxingye/p/16332581.html)
 - [Does tar create new inodes to be archived?](https://unix.stackexchange.com/questions/138594/does-tar-create-new-inodes-to-be-archived)
   - [tar posix header](https://git.savannah.gnu.org/cgit/tar.git/tree/src/tar.h)
 
@@ -849,3 +861,5 @@ cookie和session攻击
 - [Iosevka字体](https://github.com/be5invis/Iosevka)
 - [所有人都能懂的正规方程](https://blog.csdn.net/weixin_41075215/article/details/104880912)
   - 线性代数，有时间可以复习下
+- [网易云音乐ncm格式分析以及ncm与mp3格式转换](https://www.cnblogs.com/cyx-b/p/13443003.html)
+
