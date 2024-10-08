@@ -8714,6 +8714,8 @@ int main(int argc, char** argv)
 - 不仅如此，在这个 **结构体的末尾也有三个字节的填充** ，所以 `sizeof(s)` 的值是 12。
 - 注意，`printf` 的 `%u` 转换说明表示无符号数，`sizeof` 的值是 `size_t` 类型的，是某种无符号整型。
 
+TODO: 结构体的 const 成员 是不是也放到 `.rodata` 段了
+
 #### 2.6.4.2. 对齐(Alignment)
 
 为什么编译器要这样处理呢

@@ -31,6 +31,8 @@
 | C-l           | recenter            | 将当前位置放到页面中间(Emacs最喜欢的地方) |
 | M-num         | digit-argument      | 重复下个命令n次                           |
 | C-u num       | universal-argument  | 重复下个命令n次，n默认为4                 |
+| C-M-left      | backward-sexp       | 可用来匹配左括号                          |
+| C-M-right     | forward-sexp        | 可用来匹配右括号                          |
 
 - 其他窗格
   - C-M-v 或 ESC C-v 向下滚动下方窗格
@@ -41,64 +43,64 @@
 > 除了Del和C-d其他的删除命令都会按顺序保存起来，用C-y或者M-y来取出，
 > 如果想更好的使用undo功能，可以了解undo tree，在Emacs中一切皆可undo，包括undo本身也可以被undo
 
-| 按键            | 命令                    | 功能                                               |
-| :-------------- | :---------------------- | :------------------------------------------------- |
-| C-q (n)         | quoted-insert           | 插入字符，n表示字符的八进制ASCII码                 |
-| C-x 8           | ucs-insert              | 插入Unicode字符                                    |
-| C-d             | delete-char             | 删除光标处字符                                     |
-| Backspace       | delete-backward-char    | 删除光标前字符                                     |
-| M-d             | kill-word               | 删除光标起单词                                     |
-| M-Backspace     | backward-kill-word      | 删除光标前单词                                     |
-| C-k             | kill-line               | 删除光标起当前行                                   |
-| M-k             | kill-sentence           | 删除光标起句子                                     |
-| C-x Backspace   | backward-kill-sentence  | 删除光标前句子                                     |
-| (none)          | kill-paragraph          | 删除光标起段落                                     |
-| (none)          | backward-kill-paragraph | 删除光标前段落                                     |
-| C-/             | undo                    | 撤销                                               |
-| C-\_            | undo                    | 撤销                                               |
-| C-x u           | undo                    | 撤销                                               |
-| C-g             | keyboard-quit           | 撤销命令                                           |
-| C-h t           | help-with-tutorial      | 调出Emacs Tutorial                                 |
-| C-h r           | info-emacs-manual       | 调出Emacs Manual                                   |
-| C-h k (command) | describe-key            | 查看对应command帮助                                |
-| C-o             | open-line               | 插入空行                                           |
-| C-x C-o         | delete-blank-line       | 删除空行                                           |
-| C-x z           | repeat                  | 重复前个命令                                       |
-| C-@             | set-mark-command        | 设定标记                                           |
-| C-x C-x         | exchange-point-and-mark | 交换标记和光标位置                                 |
-| C-w             | kill-region             | 删除区域中内容                                     |
-| C-x C-u         | upcase-region           | 将区域中字母改为大写                               |
-| C-x C-l         | upcase-region           | 将区域中字母改为小写                               |
-| C-x h           | mark-whole-buffer       | 全选                                               |
-| C-x C-p         | mark-page               | 选取一页                                           |
-| M-h             | mark-paragraph          | 选取一段                                           |
-| M-@             | mark-word               | 选取一个单词                                       |
-| C-@ C-@         |                         | 加入点到标记环                                     |
-| C-u C-@         |                         | 在标记环中跳跃                                     |
-| C-x C-@         | pop-global-mark         | 在全局标记环中跳跃                                 |
-| (none)          | transient-mark-mode     | 非持久化标记模式                                   |
-| `M-\`           | delete-horizontal-space | 删除光标处的所有空格和Tab字符                      |
-| M-SPC           | just-one-space          | 删除光标处的所有空格和Tab字符，但留下一个          |
-| C-x C-o         | delete-blank-lines      | 删除光标周围的空白行，保留当前行                   |
-| M-^             | delete-indentation      | 将两行合为一行，删除之间的空白和缩进               |
-| C-S-Backspace   | kill-whole-line         | 删除整行                                           |
-| C-w             | kill-region             | 删除区域                                           |
-| M-w             | kill-ring-save          | 复制到kill 环，而不删除                            |
-| M-z char        | zap-to-char             | 删至字符char为止                                   |
-| C-y             | yank                    | 召回                                               |
-| M-y             | yank-pop                | C-y 后使用，召回前一个                             |
-| C-M-w           | append-next-kill        | 下一个删掉内容和上次删除合并                       |
-| C-h v           | describe-variable       | 显示变量内容                                       |
-| (none)          | append-to-buffer        | 将区域中内容加入到一个buffer中                     |
-| (none)          | prepend-to-buffer       | 将区域中内容加入到一个buffer光标前                 |
-| (none)          | copy-to-buffer          | 区域中内容加入到一个buffer中，删除该buffer原有内容 |
-| (none)          | insert-buffer           | 在该位置插入指定的buffer中所有内容                 |
-| (none)          | append-to-file          | 将区域中内容复制到一个文件中                       |
-| (none)          | cua-mode                | 启用/停用CUA绑定                                   |
-|                 | kill-read-only-ok       | 是否在只读文件启用kill 命令                        |
-|                 | kill-ring               | kill环                                             |
-|                 | kill-ring-max           | kill环容量                                         |
-
+| 按键            | 命令                    | 功能                                                                      |
+| :-------------- | :---------------------- | :------------------------------------------------------------------------ |
+| C-q (n)         | quoted-insert           | 插入字符，n表示字符的八进制ASCII码                                        |
+| C-x 8           | ucs-insert              | 插入Unicode字符                                                           |
+| C-d             | delete-char             | 删除光标处字符                                                            |
+| Backspace       | delete-backward-char    | 删除光标前字符                                                            |
+| M-d             | kill-word               | 删除光标起单词                                                            |
+| M-Backspace     | backward-kill-word      | 删除光标前单词，如果有特殊字符，会一并删除。比如`void *` 会看作为一个单词 |
+| C-k             | kill-line               | 删除光标起当前行                                                          |
+| M-k             | kill-sentence           | 删除光标起句子                                                            |
+| C-x Backspace   | backward-kill-sentence  | 删除光标前句子                                                            |
+| (none)          | kill-paragraph          | 删除光标起段落                                                            |
+| (none)          | backward-kill-paragraph | 删除光标前段落                                                            |
+| C-/             | undo                    | 撤销                                                                      |
+| C-\_            | undo                    | 撤销                                                                      |
+| C-x u           | undo                    | 撤销                                                                      |
+| C-g             | keyboard-quit           | 撤销命令                                                                  |
+| C-h t           | help-with-tutorial      | 调出Emacs Tutorial                                                        |
+| C-h r           | info-emacs-manual       | 调出Emacs Manual                                                          |
+| C-h k (command) | describe-key            | 查看对应command帮助                                                       |
+| C-o             | open-line               | 插入空行                                                                  |
+| C-x C-o         | delete-blank-line       | 删除空行                                                                  |
+| C-x z           | repeat                  | 重复前个命令                                                              |
+| C-@             | set-mark-command        | 设定标记                                                                  |
+| C-x C-x         | exchange-point-and-mark | 交换标记和光标位置                                                        |
+| C-w             | kill-region             | 删除区域中内容                                                            |
+| C-x C-u         | upcase-region           | 将区域中字母改为大写                                                      |
+| C-x C-l         | upcase-region           | 将区域中字母改为小写                                                      |
+| C-x h           | mark-whole-buffer       | 全选                                                                      |
+| C-x C-p         | mark-page               | 选取一页                                                                  |
+| M-h             | mark-paragraph          | 选取一段                                                                  |
+| M-@             | mark-word               | 选取一个单词                                                              |
+| C-@ C-@         |                         | 加入点到标记环                                                            |
+| C-u C-@         |                         | 在标记环中跳跃                                                            |
+| C-x C-@         | pop-global-mark         | 在全局标记环中跳跃                                                        |
+| (none)          | transient-mark-mode     | 非持久化标记模式                                                          |
+| `M-\`           | delete-horizontal-space | 删除光标处的所有空格和Tab字符                                             |
+| M-SPC           | just-one-space          | 删除光标处的所有空格和Tab字符，但留下一个                                 |
+| C-x C-o         | delete-blank-lines      | 删除光标周围的空白行，保留当前行                                          |
+| M-^             | delete-indentation      | 将两行合为一行，删除之间的空白和缩进                                      |
+| C-S-Backspace   | kill-whole-line         | 删除整行                                                                  |
+| C-w             | kill-region             | 删除区域                                                                  |
+| M-w             | kill-ring-save          | 复制到kill 环，而不删除                                                   |
+| M-z char        | zap-to-char             | 删至字符char为止                                                          |
+| C-y             | yank                    | 召回                                                                      |
+| M-y             | yank-pop                | C-y 后使用，召回前一个                                                    |
+| C-M-w           | append-next-kill        | 下一个删掉内容和上次删除合并                                              |
+| C-h v           | describe-variable       | 显示变量内容                                                              |
+| C-0 C-k         |                         | 删除当前光标到行首的内容                                                  |
+| (none)          | append-to-buffer        | 将区域中内容加入到一个buffer中                                            |
+| (none)          | prepend-to-buffer       | 将区域中内容加入到一个buffer光标前                                        |
+| (none)          | copy-to-buffer          | 区域中内容加入到一个buffer中，删除该buffer原有内容                        |
+| (none)          | insert-buffer           | 在该位置插入指定的buffer中所有内容                                        |
+| (none)          | append-to-file          | 将区域中内容复制到一个文件中                                              |
+| (none)          | cua-mode                | 启用/停用CUA绑定                                                          |
+|                 | kill-read-only-ok       | 是否在只读文件启用kill 命令                                               |
+|                 | kill-ring               | kill环                                                                    |
+|                 | kill-ring-max           | kill环容量                                                                |
 
 - 文件找回
   - `M-x recover-file emacs`定期自动保存文件到其他地方，可以在修改丢失时恢复文件
@@ -318,6 +320,8 @@ C-u 重复执行， C-u 8 C-f 会向前移动 8 个字符。
 
 # 参考
 
+- [The Emacs Editor](https://www.gnu.org/software/emacs/manual/html_node/emacs/index.html)
+  > 这里面有emacs常用的一切，不过大多数文档还是emacs自己里面比较全面
 - [Emacs常用快捷键](https://www.clloz.com/programming/assorted/emacs-vim/2019/04/14/emacs-keybinding/)
 - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
 

@@ -1,8 +1,256 @@
 # C到C++
 
-c++与c的联系以及标准
+- cpp 代码可以编译为 c，但通过纯c实现cpp特性，代码可读性会很差。
+- 如果有 c 的基础，在阅读 cpp 时，可以思考下转换成 c 如何实现，这对理解 cpp 的工作原理很有帮助。
+- 可实现的编译器详见：[convert cpp to c](https://isocpp.org/wiki/faq/compiler-dependencies#convert-to-c)
 
-# 字符串与数组
+## namespace
+
+## 引用
+
+### 引用变量
+
+一种语法糖: 本质就是一个指针，不过会自动 dereference ，使用起来像直接操作变量对应的值一样
+
+```cpp
+int a = 5;
+// 引用
+int &a_ref = a;
+a_ref = 10;
+cout << a << "\n" << a_ref << "\n";
+// 指针
+int *a_ptr = &a;
+*a_ptr = 20;
+cout << a << "\n" << *a_ptr << "\n";
+```
+
+### 引用形参
+
+同理，指针的语法糖
+
+### 返回引用
+
+同理，指针的语法糖
+
+## 函数
+
+### 默认形参
+
+### 函数重载
+
+## 面向对象
+
+### 类的声明
+
+> c 里面也可以通过结构体和函数指针来模拟 cpp 中的类，进行面向对象编程
+
+- cpp 中，class 和 struct 都可以声明类
+  - struct 的成员默认都是 public 的
+  - class 的成员默认都是 private 的
+
+- 类，实际就是 `struct + 全局函数`
+  - 成员变量: struct 中的成员
+  - 成员函数，静态成员函数 等函数: 全局函数
+  - this 指针: 就是当前对象的指针
+
+```cpp
+class HelloC {
+  int i;
+  int j;
+  int k;
+
+public:
+  void hello() { cout << "hello" << endl; }
+};
+```
+
+也可以写为：
+
+```cpp
+struct HelloC{
+  int i;
+  int j;
+  int k;
+  void hello() { cout << "hello" << endl; }
+};
+```
+
+或者：
+
+```cpp
+struct HelloC{
+  int i;
+  int j;
+  int k;
+  void hello(); // 函数声明
+};
+void HelloC::hello() { cout << "hello" << endl; } // 函数实现
+```
+
+### this 指针
+
+### 生命周期函数
+
+#### 构造函数
+
+#### 拷贝构造函数
+
+浅拷贝与深拷贝
+
+#### 析构函数
+
+### 访问控制
+
+TODO: c++ 访问控制原理
+访问控制是不是编译时检查的，所有成员函数应该就是全局函数，在编译的时候根据成员的访问控制类型，进行检查？
+可以编译为 c 代码看看，尤其是友元函数，是不是没有额外的代码，就是告诉编译器，能访问通过？
+
+#### 成员种类
+
+#### 友元
+
+- 友元关系不能被继承
+- 友元关系是单向的，不具有交换性。若类B是类A的友元，类A不一定是类B的友元，要看在类中是否有相应的声明
+- 友元关系不具有传递性。若类B是类A的友元，类C是B的友元，类C不一定是类A的友元，同样要看类中是否有相应的声明
+- 友元函数并不是类的成员函数，因此在类外定义的时候不能加上class::function name
+
+##### 友元函数
+
+##### 友元类
+
+#### 常函数
+
+不允许修改
+
+### 运算符重载
+
+可以和友元函数和常函数一起定义，
+
+- 友元函数: 访问 private 和 projected 成员
+- 常函数: 限制运算符修改实例对象
+
+### 继承与派生
+
+#### 继承方式
+
+#### 构造和析构
+
+#### 虚基类
+
+在多继承关系中，如果一个派生类的从两个父类那里继承过来，并且这两个父类又恰恰是从一个基类那里继承而来，
+通过虚基类只维护一份一个基类对象，避免二义性。
+
+### 多态性
+
+#### 虚函数
+
+#### 虚析构函数
+
+#### 抽象类、纯虚函数 (接口)
+
+## 内存分配、实例化
+
+对象、结构体的实例化方式：
+
+- 方式1: 直接声明创建:
+  - 分配在栈中，就是声明一个结构体。
+  - 声明的为一个对象本身，而不是指针。
+  - 不可作为返回值。
+  - 栈帧弹出时对象失效。
+- 方式2: 通过new创建:
+  - 分配在堆中，相当于调用 malloc 为结构体分配内存。
+  - 返回一个对象指针。
+  - 可作为返回值。
+  - 最后需要del，否则会有内存泄漏。
+
+```cpp
+int main(){
+  // 栈上分配内存创建对象。
+  HelloC h;
+  // 堆上分配内存创建对象。
+  // 等价于 c 中的: struct HelloC = *malloc(sizeof(struct HelloC));
+  HelloC *h_ptr = new HelloC();
+  del h_ptr;
+}
+```
+
+## 方法调用
+
+### 传值方式
+
+比c多了一种传引用的方式，但基本上也就是传指针的语法糖
+
+- 传值
+- 传指针
+- 传引用： 传指针的语法糖
+
+```cpp
+#include <iostream>
+#include <string>
+
+using namespace ::std;
+
+class Student {
+public:
+  int age;
+  int height;
+  int weight;
+  string name;
+};
+
+void print_student_obj(Student s) {
+  cout << "size: " << sizeof(s) << endl;
+  cout << "student" << s.age << "  " << s.name << endl;
+}
+
+void print_student_ptr(Student *s) {
+  cout << "size: " << sizeof(*s) << endl;
+  cout << "student" << s->age << "  " << s->name << endl;
+}
+
+void print_student_ref(Student &s) {
+  cout << "size: " << sizeof(s) << endl;
+  cout << "student" << s.age << "  " << s.name << endl;
+}
+
+int main(int argc, char *argv[]) {
+  Student s1;
+  s1.name = "s1";
+  s1.age = 10;
+  s1.height = 140;
+  s1.weight = 30;
+
+  Student *s2 = new Student;
+  s2->name = "s2";
+  s2->age = 10;
+  s2->height = 140;
+  s2->weight = 30;
+
+  print_student_obj(s1);
+  print_student_ptr(&s1);
+  print_student_obj(*s2);
+  print_student_ptr(s2);
+  print_student_ref(s1);
+  print_student_ref(*s2);
+  return 0;
+}
+```
+
+### 方法模版下的调用
+
+## 模版
+
+### 函数模版
+
+### 对象模版
+
+## 异常处理
+
+TODO
+
+# c++ 基础
+
+## 字符串与数组
 
 ```
 1.字符串
@@ -17,7 +265,7 @@ c++与c的联系以及标准
 2.5 多维数组
 ```
 
-# 函数
+## 函数
 
 ```
 1.函数参数
@@ -38,7 +286,7 @@ c++与c的联系以及标准
 6.4 作为形参与返回值
 ```
 
-# 类
+## 类
 
 ```
 1.关键字
@@ -64,7 +312,7 @@ c++与c的联系以及标准
 7.1 右值引用
 ```
 
-# 重载运算与类型转换
+## 重载运算与类型转换
 
 ```
 1.重载运算
@@ -77,7 +325,7 @@ c++与c的联系以及标准
 2.2 避免转换出现二义性
 ```
 
-# 继承体系
+## 继承体系
 
 ```
 1.虚函数
@@ -103,7 +351,7 @@ c++与c的联系以及标准
 8.3 构造与拷贝控制
 ```
 
-# 容器
+## 容器
 
 ```
 1.容器通用操作
@@ -131,7 +379,7 @@ c++与c的联系以及标准
 2.3 priority_queue
 ```
 
-# 泛型算法
+## 泛型算法
 
 ```
 1.常用算法
@@ -148,7 +396,7 @@ c++与c的联系以及标准
 4.链表的算法
 ```
 
-# 模板与泛型编程
+## 模板与泛型编程
 
 ```
 1.模板函数
@@ -174,7 +422,7 @@ c++与c的联系以及标准
 7.模板特例化
 ```
 
-# 内存管理
+## 内存管理
 
 ```
 1.new和delete
@@ -187,7 +435,7 @@ c++与c的联系以及标准
 2.4 weak_ptr
 ```
 
-# 输入输出
+## 输入输出
 
 ```
 1.I/O流
@@ -211,7 +459,7 @@ c++与c的联系以及标准
 7.1 刷新缓冲区
 ```
 
-# 输入输出
+## 输入输出
 
 ```
 1.I/O流
@@ -235,7 +483,7 @@ c++与c的联系以及标准
 7.1 刷新缓冲区
 ```
 
-# STL 
+# STL
 
 ## 什么是 STL
 
@@ -742,9 +990,10 @@ c++与c的联系以及标准
 - [ ] [gcc与clang对比](https://blog.csdn.net/sinat_36629696/article/details/79979274)
 - [ ] gcc,LLVM,clang,VC 关系：
   - [Clang、LLVM与GCC介绍](https://blog.csdn.net/weichuang_1/article/details/48632321)
-  - [Clang、GCC和LLVM是什么](https://www.cnblogs.com/hercules-chung/p/12438808.html)
   - [LLVM,Clang,GCC](https://blog.csdn.net/ShockYu/article/details/102793708)
   - [VC, GCC, Clang/LLVM区别 ](https://www.cnblogs.com/xuesu/p/14542821.html)
 - [ ] [cstdio和stdio.h的区别](https://blog.csdn.net/Abigial_/article/details/54799629)
 - [ ] [Google的C++开源代码项目以及经典C++库](https://www.cnblogs.com/zhoug2020/p/5812578.html)
 - [C/C++中关于静态链接库(.a)、动态链接库（.so）的编译与使用](https://blog.csdn.net/qq_27825451/article/details/105700361)
+- [从C到C++](https://nu-ll.github.io/2020/06/23/%E4%BB%8EC%E5%88%B0C++/)
+- [gnu libstdc++ doc](https://gcc.gnu.org/)

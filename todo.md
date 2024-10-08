@@ -61,6 +61,9 @@
   - remote 端，通过tcp socket和本地机器通信
   - 然后通过管道连接 unix domain socket client 的输入和输出
   - (总感觉还不如ssh呢，ssh至少人家有加密)
+- 编程范式
+  - [ ] [ocaml 函数式编程](https://ocaml.org/exercises)
+- [ ] c的热重载
 
 # 首选资料
 
@@ -317,6 +320,7 @@ cookie和session攻击
   - 这样就能实现vscode上，引用不存在成员，不highlight为红色的效果了
   - 当前默认关了lsp的语义高亮
 - lisp编辑辅助插件：nvim([parpar](https://github.com/dundalek/parpar.nvim)) = emacs(Parinfer + Paredit)
+- [oil.nvim](https://github.com/stevearc/oil.nvim)
 
 ### emacs
 
@@ -355,6 +359,17 @@ cookie和session攻击
 - [Emacs smartparens auto-indent](https://xenodium.com/emacs-smartparens-auto-indent/)
 - [simple c mode](https://github.com/rexim/simpc-mode)
 - [一些杂乱的emacs中文文档，可以过一遍](http://blog.lujun9972.win/emacs-document/)
+- [awesome emacs](https://github.com/emacs-tw/awesome-emacs)
+- [**Emacs beginner resources**](https://sachachua.com/blog/2014/04/emacs-beginner-resources/)
+- [关于 Emacs 中的变量你需要知道的事情](https://linux.cn/article-12150-1.html)
+- [manateelazycat: 我平常是怎么使用 Emacs 的？](https://manateelazycat.github.io/2022/11/07/how-i-use-emacs/)
+  - 有非常多花里胡哨的东西，我估计是不会用的。有太多的第三方依赖项，太脏了。
+  - 尤其是那个[ESA](https://github.com/emacs-eaf/emacs-application-framework)
+  - 而且有不少人性化的功能，都是vim自带的，这里面都是自定义elisp函数实现的，而且需要自己考虑绑定的key吧
+  - 这也让我看到了emacs，不人性化的地方有不少
+  - 作为编辑器，inbox的功能，我个人还是更喜欢vim了。
+- [Emacs 插件开发手册](https://manateelazycat.github.io/2022/11/18/write-emacs-plugin/)
+  - 配置emacs前必须要看一下，插件加载的流程
 
 ### vscode
 

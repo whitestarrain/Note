@@ -16,9 +16,9 @@ https://github.com/be5invis/Iosevka
 
 https://github.com/rubjo/victor-mono
 
-# 命令行workflow
+# workflow
 
-## 搜索工具
+## search
 
 ### grep
 
@@ -28,23 +28,29 @@ https://github.com/rubjo/victor-mono
 
 ### fzf
 
+[fzf theme generator](https://vitormv.github.io/fzf-themes/)
+
 ### fd
 
 [fd](https://github.com/sharkdp/fd?tab=readme-ov-file)
 
 简单、快速、友好的 find 替代品
 
-## z 快速跳转路径
+## quick cd
 
-## 文件管理器
+### z
+
+### zoxide
+
+### z.lua
+
+## file manager
 
 ### ranger
 
 ### lf
 
-## 软链管理
-
-### stow
+## stow: symlink manager
 
 管理文件夹之间的映射
 
@@ -60,7 +66,7 @@ Gnu Stow 使用两个文件夹来管理两个文件树之间的映射，分别�
 `stow dir`下每一个顶层的子文件夹都是一个单独的文件树,
 `target dir`下是多个这样的文件树在同一起始路径的层叠展开，后者的文件树使用**符号链接**指向前者的文件树。
 
-#### 收集配置文件场景
+### 收集配置文件场景
 
 第一次收集配置文件时，推荐使用`--adopt`选项转移配置文件。具体操作如下：
 
@@ -83,7 +89,7 @@ Gnu Stow 使用两个文件夹来管理两个文件树之间的映射，分别�
 
 **注意**: `--adopt`选项会修改`stow dir`下的内容，非第一次收集配置文件，或者`stow dir`没有被版本控制软件管理前，请谨慎使用。
 
-#### 将收集的配置文件应用到新的系统中
+### 将收集的配置文件应用到新的系统中
 
 将项目拉取到新的机器的家目录，切换到`stow dir`，执行`stow -S bash`可以将bash的配置文件展开到家目录下。
 你也可以使用多个组合命令：`stow -S pkg1 pkg2 -D pkg3 pkg4 -S pkg5 -R pkg6`
@@ -112,7 +118,7 @@ GNU Stow 不会对冲突的文件做任何处理，并中断所有操作，我�
 
 更多信息请参见 [GNU Stow 手册页](https://www.gnu.org/software/stow/manual/stow.html)
 
-#### 软件包备份和恢复
+### 软件包备份和恢复
 
 ```sh
 # 获取当前系统中主动安装的包
@@ -127,9 +133,9 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 
 更多信息请参见 [pacman archlinux wiki](https://wiki.archlinux.org/index.php/Pacman/Tips_and_tricks#Install_packages_from_a_list)
 
-## 刷题
+## leetcode
 
-### leetcode-cli工具
+### leetcode-cli
 
 - [链接](https://github.com/skygragon/leetcode-cli)
 - 说明：拿命令行进行刷题
@@ -149,11 +155,38 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 - [leetgo](https://github.com/j178/leetgo)
 - 支持leetcode-cn
 
-## 自动纠错
+## delta: git pager
 
-### thefuck
+`~/.gitconfig`:
+
+```
+[core]
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true    # use n and N to move between diff sections
+
+    # delta detects terminal colors automatically; set one of these to disable auto-detection
+    # dark = true
+    # light = true
+
+[merge]
+    conflictstyle = diff3
+
+[diff]
+    colorMoved = default
+```
+
+## thefuck: autofix command
 
 - [thefuck](https://github.com/nvbn/thefuck)
+
+## bat: better cat
+
+## tldr: cheatsheet
 
 # charm 开源终端工具集
 
@@ -163,7 +196,7 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 
 制作终端gif
 
-# 开发
+# Development
 
 ## croc 文件传输
 
@@ -209,6 +242,12 @@ curl http://ifconfig.me
 ## Tengine
 
 淘宝基于 nginx 进行优化开发的版本
+
+# gf2
+
+[gf](https://github.com/nakst/gf)
+
+GDB 前端
 
 # 软件
 

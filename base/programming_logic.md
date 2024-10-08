@@ -100,17 +100,26 @@
 
 # 3. 范式
 
-## 3.1. 过程式编程
+共四种编程范式，没有优劣，某一种或几种也不是银弹，也不存在鄙视链，只有适合的场景。
+但是在某种场景下选用特定的模式对代码会带来更好的可读性、可维护性和减少代码出错的概率，故值得我们去学习他们的不同之处。
 
-## 3.2. 命令式编程
+## 3.1. 过程式编程 (Procedural Paradigm)
 
-## 3.3. 面向对象编程
+『Procedural Paradigm』用一系列流程去完成任务，比如 VBScript 中的 procedure，没有返回值，存在副作用。
 
-## 3.4. 声明式编程
+VB 中的调用（Procedures）通常是为了组织代码和复用代码，分为函数（Function Procedures）调用和过程（Sub Procedures）调用。
 
-TODO: 声明式编程和DSL
+二者的区别是函数有返回值，过程无返回值，有副作用，因为就是通过副作用达到其目的。
 
-### 3.4.1. 基本说明
+## 3.2. 命令式编程 (Procedural Paradigm)
+
+『Imperative Paradigm』强调实现细节，focus on How not What
+
+## 3.3. 声明式编程 (Declarative Paradigm)
+
+『Declarative Paradigm』只声明目标不指定细节，focus on What not How
+
+### 3.3.1. 基本说明
 
 - 声明式编程(Declarative programming)是一种编程范式
   - 与命令式编程相对立。
@@ -134,11 +143,11 @@ TODO: 声明式编程和DSL
 
 通过适当的封装、组件化，命令式也可以变成目标导向，变得更加“声明式”
 
-### 3.4.2. 子编程范式
+### 3.3.2. 子编程范式
 
 > 声明式编程是一个笼统的概念，其下包含一些有名的子编程范式
 
-#### 3.4.2.1. 领域专属语言 DSL
+#### 3.3.2.1. 领域专属语言 DSL
 
 ##### 基本说明
 
@@ -205,15 +214,35 @@ TODO: 声明式编程和DSL
 
 ##### 优缺点
 
-#### 3.4.2.2. 约束式编程
+#### 3.3.2.2. 函数式编程 (Functional Paradigm)
 
-#### 3.4.2.3. 函数式编程
+『Functional Paradigm』用一系列函数去完成任务，有返回值，函数一般没有副作用，即入参决定出参，且单测友好。
 
-#### 3.4.2.4. 逻辑式编程
+#### 3.3.2.3. 逻辑式编程 (Logic Paradigm)
+
+程序员描述问题的逻辑关系，然后由计算机找出满足这些逻辑关系的解。典型代表：Prolog
+
+#### 3.3.2.4. 约束式编程 (Constraints Programming)
+
+在约束式编程中，用户以声明方式声明对一组决策变量的可行解决方案的约束。
+用于寻找可行解的方法，解决以约束条件表示的问题
+
+约束可以与函数式编程、术语重写和命令式语言混合使用，而不是逻辑编程。
+内置支持约束的编程语言包括Oz （函数式编程）和Kaleidscope （命令式编程）
+
+[Google OR-tools](https://developers.google.com/optimization/introduction?hl=zh-cn)
+
+## 3.4. 面向对象编程 (Object-Oriented Paradigm)
+
+核心理念是将现实世界中的实体抽象为对象，通过定义类（Class）来描述对象的属性和行为。
+
+在OOP中，软件系统的设计和开发过程主要集中在对象的创建以及对象间的交互和关系定义上。OOP的主要目标是提高软件的可重用性，可维护性和可扩展性，同时也增强了软件的模块化能力。
+
+在面向对象编程中，对象是类的实例，类定义了对象的数据和方法。这些对象具有状态（也就是属性或字段）和行为（也就是方法）。
 
 ## 3.5. 事件驱动编程
 
-java Swing、Pyqt等
+程序的执行流程由外部事件（如用户输入、网络消息等）驱动。这种范式常见于图形用户界面和服务器开发。典型代表：JavaScript 和 Node.js
 
 ## 3.6. 元编程
 
@@ -410,11 +439,12 @@ TODO: ※ 重要。编程语言类型系统，学ts，看看这个挺启发的
 
 ### 5.1.5. 面条代码与面向对象的平衡
 
-
 # 6. 参考资料
 
 待补充
 
+- [ ] [wiki: 编程范式](https://zh.wikipedia.org/wiki/编程范型)
+- [ ] [The Differences Between Procedural, Functional, Imperative, and Declarative Programming Paradigms](https://amzotti.github.io/programming%20paradigms/2015/02/13/what-is-the-difference-between-procedural-function-imperative-and-declarative-programming-paradigms/)
 - [ ] [谈谈编程思想](https://blog.p2hp.com/archives/4978)
 - [x] [What to know before debating type systems](http://blogs.perl.org/users/ovid/2010/08/what-to-know-before-debating-type-systems.html)
   - [x] [翻译](https://www.zhihu.com/question/19918532)

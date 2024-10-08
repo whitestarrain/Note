@@ -358,6 +358,9 @@
 - commit 合并变基
   - `git rebase -i ref` 合并从此处到指定 id 的所有 commit
   - `git rebase -i HARD~2` 合并前两个 commit
+- fixup
+  - `git commit --fixup <commit-id>`: 提交一个commit-id的fixup
+  - `git rebase [-i] --autosquash <commit-id>` 自动合并 fixup。（和rebase -i 然后squash效果相同）
 - 修改merge节点之前的 commit
   - `git rebase --rebase-merges -i <commit>`
 
