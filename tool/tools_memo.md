@@ -155,6 +155,16 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 - [leetgo](https://github.com/j178/leetgo)
 - 支持leetcode-cn
 
+## monitor
+
+### htop
+
+[htop](https://github.com/htop-dev/htop)
+
+### bashtop
+
+[bashtop](https://github.com/aristocratos/bashtop)
+
 ## delta: git pager
 
 `~/.gitconfig`:

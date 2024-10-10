@@ -1,3 +1,5 @@
+<!-- vim: wrap
+-->
 <!-
 ```bash
 cat -n ansi_common_lisp.md | grep '```' | awk 'NR%2{print $1}' | xargs -I {} sed -i '{}s/```/```lisp/g' ansi_common_lisp.md

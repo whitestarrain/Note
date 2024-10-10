@@ -1,26 +1,37 @@
 
+> todo 和一些想之后看的资料
 
 # 优先级较高项
 
 - [ ] [emacs GTD 日程管理](https://www.cnblogs.com/yangruiGB2312/p/9101838.html)
-
-- [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
-  - 编译原理打算复习一下大学资料的，一直没时间看
-- emacs, elisp
+- [ ] [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
+- [ ] 迁移 nixos
+  - 一段时间不 `pacman -Syu`，就会有些包因为版本问题没办法使用
+  - 看看迁移成本，以及看看，以及 nix 管理方式下，在想尝试新东西的时候，会不会很繁琐
+    - ok, nix shell, 完美
+  - [x] 编译原理复习
+- [ ] emacs, elisp
+  - common ansi lisp
   - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
-  - [面向产品经理的emacs教程](https://remacs.fun/posts/面向产品经理的emacs教程1.-emacs初识/)
-- 博客里面，写上今年规划，以及多写一些博客吧
-- csapp
+- [ ] 博客里面，写上今年规划，以及多写一些博客吧
+- 深度学习进阶，自然语言处理
+  - 主要是用于整理日期，进行总结
+- [ ] 完工遗留的 blog 草稿
+- [ ] [常用 bash 命令](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
+  - star 不少，可以过一遍，看看有没有自己眼生的，总结到 linux.md 或者 bash.md 中
+- [ ] 使用 make 安装 dotfiles
+  - 参考： https://github.com/jessfraz/dotfiles
+  - 主要是为了解决 home 下软链目录还是软链文件的问题,stow 会自动 merge ，这会导致目录结构不同时，行为不一致
+- [ ] NAS 搭建 && 数据备份
+  - 参考：[ntzyz, nas 和数据备份](https://ntzyz.space/zh-cn/post/nas-and-backup/)
+  - 主要是因为网易云音乐相关，想搞个公共存储
+- [ ] 网易云音乐解密+备份+同步 脚本
+- [ ] effective cpp
+  - 主要是为了刷题，同时复习一下cpp
+- [ ] csapp
   - [csapp labs](http://csapp.cs.cmu.edu/3e/labs.html)
   - [lab 资料](https://hansimov.gitbook.io/csapp/labs/labs-overview)
 - ucore
-- 深度学习进阶，自然语言处理
-
-- [ ] 完工遗留的blog草稿
-- [ ] [常用bash命令](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
-  - 可以看看有没有自己眼生的
-- [ ] 使用 make 安装 dotfiles
-  - 参考：https://github.com/jessfraz/dotfiles
 
 # 小任务
 
@@ -63,7 +74,8 @@
   - (总感觉还不如ssh呢，ssh至少人家有加密)
 - 编程范式
   - [ ] [ocaml 函数式编程](https://ocaml.org/exercises)
-- [ ] c的热重载
+- [x] c的热重载
+- [ ] 《effective c++》
 
 # 首选资料
 
@@ -202,7 +214,8 @@
   - [ ] php 工作中，有项目用，可以看看
   - [ ] Elixir
   - [ ] rust
-  - [ ] kotlin 好像挺火的
+  - [ ] kotlin
+    - poweramp 联网获取歌词插件，说不定可以基于这个做二次开发[LyricsForPowerAmp](https://github.com/abhishekabhi789/LyricsForPowerAmp)
   - [ ] lisp
   - [ ] ruby
 - 机器学习&深度学习
@@ -370,6 +383,8 @@ cookie和session攻击
   - 作为编辑器，inbox的功能，我个人还是更喜欢vim了。
 - [Emacs 插件开发手册](https://manateelazycat.github.io/2022/11/18/write-emacs-plugin/)
   - 配置emacs前必须要看一下，插件加载的流程
+- 未解决问题
+  - [ ] `emacs -q sqlite.c` 内存没有快速增加，但把 `-q` 去掉就不行
 
 ### vscode
 
@@ -649,6 +664,14 @@ cookie和session攻击
 
 - [NixOS 与 Flakes 一份非官方的新手指南](https://nixos-and-flakes.thiscute.world/zh/)
 - [Nix 和 NixOS：你们安利方法错了](https://nyk.ma/posts/nix-and-nixos/)
+- [nix基础](https://juejin.cn/post/7165305697561755679)
+- [Nix 详解（三） nix 领域特定语言](https://www.rectcircle.cn/posts/nix-3-nix-dsl/)
+  - 没有提供源码的专有软件，会通过patchelf ld-linux.so 位置到 /nix/store/xxx-glibc-xxx/lib. [wiki](https://nixos.wiki/wiki/Packaging/Binaries)
+- [使用 nix 包管理器解决 glibc 兼容问题](https://v2ex.com/t/892346)
+- [nixos wiki](https://nixos.wiki/wiki/Main_Page)
+- [nix 学习经验：安装和打包](https://linux.cn/article-16332-1.html)
+- [Nix Reference Manual](https://nix.dev/manual/nix/2.18/introduction)
+- [nix](https://lazamar.co.uk/nix-versions/)
 
 ## lang
 
@@ -805,6 +828,7 @@ cookie和session攻击
 - [大模型(llm)学习笔记（让天下没有难学的大模型）](https://github.com/liguodongiot/llm-action)
 - [llm 实现：c/cuda实现gpt-2](https://github.com/karpathy/llm.c)
 - [omniparse 将视频，图片等转换为markdown、json等](https://github.com/adithya-s-k/omniparse)
+- 自然语言处理，分析日记
 
 ## others
 

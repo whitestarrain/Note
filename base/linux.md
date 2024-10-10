@@ -779,6 +779,9 @@ sort -bd data # 忽略像空格之类的前导空白字符
 
 - uniq去重功能，只能针对连续的多行进行去重，只剩下唯一的一条
 - 因此一般都会和sort一起使用
+- **fileformat 为 dos 和 unix 的文件，因为换行符不同，不会去重**
+  - vim 的 `set fileformat=unix` 不会 将 BOM 删除，导致首行 uniq 的时候会有问题
+  - dos 转 unix 的时候最好使用 dos2unix 命令
 
 > **应用示例**
 
@@ -1165,7 +1168,7 @@ UUID=13d0663f-4cbd-412d-aa9f-975eb18da590 /boot                   xfs     defaul
 - `mount --bind` 和 硬链接
 
   ```
-  mount /temp1 /temp2
+  mount /temp1 /test2
 
   当mount --bind命令执行后，Linux将会把被挂载目录的目录项（也就是该目录文件的block，记录了下级目录的信息）屏蔽，
   在本例里就是 /test2 的下级路径被隐藏起来了（注意，只是隐藏不是删除，数据都没有改变，只是访问不到了）
@@ -3823,6 +3826,10 @@ modinfo
 ## 17.5. telnet
 
 ## 17.6. netcat(nc)/ncat
+
+- BSD: netcat
+- GNU: natcat
+  - 没有代理功能
 
 透过使用TCP或UDP协议的网络连接去读写数据
 

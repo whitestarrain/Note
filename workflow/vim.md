@@ -690,13 +690,31 @@
 
 ## 8.4. 标签选项(Tag Option)
 
-# 9. vim插件(已过时)
+# 9. 性能排查
+
+## 9.1. profile
+
+```vim
+profile start temp_profile.txt
+profile func *
+profile file *
+
+" after file ...
+
+profile dump
+" or
+profile stop
+```
+
+## 9.2. syntime
+
+# 10. vim插件(已过时)
 
 **详细插件配置：[dotfiles](https://github.com/whitestarrain/dotfiles)**
 
-## 9.1. 插件
+## 10.1. 插件
 
-## 9.2. 插件安装示例
+## 10.2. 插件安装示例
 
 - 插件管理器：vim-plug
 	> 更多其实看github上的文档就行
@@ -716,13 +734,13 @@
 		- 将插件文件夹下的文件夹（仅文件夹）和vimfiles下的文件夹 合并
 		- 不要替换tag，把所有插件的tag放到一个文件夹中
 
-## 9.3. 寻找插件
+## 10.3. 寻找插件
 
 - 大多数插件都托管在github上，google关键词搜索
 - 使用网站： http://vimawesome.com/ (十分推荐)
 - 浏览网上开源的vimrc配置。
 
-## 9.4. 美化插件
+## 10.4. 美化插件
 
 - 启动界面：vim-startify
 - 状态栏：vim-airline
@@ -738,7 +756,7 @@
 	- 要持久化的话要在配置中加上 colorscheme XXX
 	- 简单点也可以把hybird.vim下载后放到安装目录的colors下
 
-## 9.5. 实用插件
+## 10.5. 实用插件
 
 - 文件树安装：
 	- 安装:Plug 'scrooloose/nerdtree'
@@ -921,108 +939,52 @@
 - 格式化工具：
   - Prettier:支持全局格式化和局部格式化的好插件
 
-# 10. 联合工具
+# 11. 其他工具
 
--  Tmux
-	- 功能：
-		- 复用终端
-		- 分屏
-		- 托管进程
-	- window上基本没法用，以后具体使用时看视频和文章吧
-	- 文章位置:https://zhuanlan.zhihu.com/p/43687973：
+## tmux
 
-- 嵌入开发工具
-	- vsc超牛
-		- 配置：
-			```json
-			// 按键快捷键配置
-			{
-				"key": "ctrl+s",
-				"command": "cursorEnd",
-				"when": "editorFocus && vim.mode == 'Insert'"
-			},
-			{
-				"key": "ctrl+j",
-				"command":"cursorLeft",
-				"when": "editorFocus && vim.mode == 'Insert'"
-			},
-			{
-				"key": "ctrl+k",
-				"command": "cursorDown",
-				"when": "editorFocus && vim.mode == 'Insert'"
-			}
-			,{
-				"key": "ctrl+i",
-				"command":"cursorUp",
-				"when": "editorFocus && vim.mode == 'Insert'"
-			},
-			{
-				"key": "ctrl+l",
-				"command": "cursorRight",
-				"when": "editorFocus && vim.mode == 'Insert'"
-			}
-			```
-			```json
-			// 设置配置
-			"editor.lineNumbers": "relative",
-			"vim.vimrc.path": "D:\\learn\\Microsoft VS code-workplace\\工作区\\vimrc",
-			"vim.vimrc.enable": true,
-			"vim.easymotion": true,
-			"vim.foldfix": true,
-			"vim.leader": "<space>",
-			"vim.surround": true,
-			"vim.easymotionDimBackground": false,
-			"vim.easymotionMarkerBackgroundColor": "#FF4826",
-			"vim.easymotionMarkerForegroundColorOneChar": "#FFFFFF",
-			"vim.easymotionMarkerForegroundColorTwoChar": "#FFFFFF",
-			"vim.hlsearch": true,
-			"vim.incsearch": true,
-			"vim.autoindent": true
-			```
-		```
-		快速定位到行首（注：<leader> 表示上面设置的空格键）
-		<leader> + <leader> j，定位光标以下的行首
-		<leader> + <leader> k，定位光标以上的行首
-		快速定位单词首
-		<leader> + <leader> w，定位光标后面的单词首
-		<leader> + <leader> b，定位光标前面的单词首
-		快速定位单词尾
-		<leader> + <leader> e，定位光标后面的单词尾
-		<leader> + <leader> ge，定位光标前面的单词尾
+## vsc 插件
 
-		设置了相对行后
-		往上跳转 n 行: n + k
-		往下跳转 n 行: n + j
+## neovide
 
-		surround-input：和插件一样
-		ys添加 ds删除 cs改变
-		实例：ysiw( ds( cs(]
+连接远程nvim实例
 
-		ctrl+w h 用来把光标切换到目录栏（vscode）
-		ctrl+; 展示大纲，并可以跳转
-		ctrl+shift+, 切换false true，提高数字，其他用途不清楚
-		ctrl+shift+. 切换false true，降低数字，其他用途不清楚
-		```
+参考文档：[neovide-features](https://neovide.dev/features.html)
 
-- neovim
-	- vim的一个分支
-	- 改掉vim老旧的代码
-	- 开发更活跃，更丰富的特性和扩展
-	- 可以嵌入到很多GUI中
-	- 基本上可以完全替代vim
+- tcp socket:
+  - remote
 
-- 开源配置：
-	- SpaceVim/SpaceVim
-	- PegasusWang/vim-config(视频作者配置)
-	- 不建议新手直接用，越复杂成本越高。可以看一下SpaceVim，牛炸，用的时候就相当于黑盒
+    ```bash
+    nvim --headless --listen 0.0.0.0:6666
+    ```
+  - local
 
-# 11. vimscript
+    ```bash
+    ssh -L 6666:localhost:6666 ip.of.remote.machine
+    ```
+    ```bash
+    neovide  --server=localhost:6666
+    ```
 
-## 11.1. 前言
+- unix domain socket
+  - remote
+
+    ```bash
+    nvim --headless --listen /path/to/remote/socket
+    ```
+  - local
+
+    ```bash
+    ssh -L /path/to/local/socket:/path/to/remote/socket ip.of.remote.machine
+    ```
+
+# 12. vimscript
+
+## 12.1. 前言
 
 尽管都转到了lua，vimscript还是稍微学一下吧
 
-## 11.2. 基本vim配置
+## 12.2. 基本vim配置
 
 - 目的：
 	- 持久化配置，比如行号，高亮等
@@ -1061,9 +1023,9 @@
 - 查看配置项配置位置：
   - `verbose set ...`，如`verbose set number`
 
-# 12. 其他
+# 13. 其他
 
-## 12.1. Vim中的^M
+## 13.1. Vim中的^M
 
 Unix uses 0xA for a newline character. Windows uses a combination of two characters: 0xD 0xA. 0xD is the carriage return character. `^M` happens to be the way vim displays 0xD (0x0D = 13, M is the 13th letter in the English alphabet).
 
@@ -1079,9 +1041,9 @@ This expression will replace all occurrences of `^M` with the empty string (i.e.
 
 - window上，如果有^M符号，编译不会报错，但会导致lsp各种毛病。命令行模式Ctrl-v-m 可以打出这个符号
 
-# 13. vim启动过程
+# 14. vim启动过程
 
-# 14. 参考资料
+# 15. 参考资料
 
 - **help**
 - **[VIM学习笔记](https://yyq123.github.io/learn-vim/)**

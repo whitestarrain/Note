@@ -980,11 +980,46 @@ TODO
   }
   ```
 
+# Effective C++
+
+TODO
+
+```
+[已过时内容](https://book.douban.com/review/14560548/)
+
+这本书（Effective C++）在2011年出版，里面的代码讲解都是基于C++98/03的内容，但目前C++20已经发布，C++23也在制定之中。就本书里面的55条条款（items）而言，还是很实用的，只是部分举例有点过时。
+部分（个人认为）已经过时的内容以及补充，还请各位指正：
+
+条款54：如今已经将扩展库tr1的内容并入到了C++标准程序库中了，因此可以直接使用，不需要加tr1。std::...即可。
+
+条款05/06：在C++11中，除了默认构造函数、拷贝构造函数、析构函数和拷贝赋值运算符之外，编译器还会“默默编写”下面两个函数:
+ClassName(ClassName&&); // 移动构造函数
+ClassName& operator=(ClassName&&); // 移动赋值运算符
+
+条款06/14，目前不再需要书中的方法，只需要使用=delete阻止拷贝类对象
+
+条款07/36/39：C++11中已经可以通过定义类为final来阻止继承；虚函数也可以有override和final指示符。
+
+条款13：auto_ptr已被废弃，取而代之的是unique_ptr。
+
+条款29/51：表示函数不会抛出异常的动态异常声明throw()已经被新的noexcept异常声明所取代。在C++98中，new可能会包含一些抛出的std::bad_alloc异常，而在C++11中，则使用noexcept(false)来进行替代。
+
+条款37：C++11已经允许类内初始化。（不过按照这一条款说法还是不建议用hhh）
+
+条款38：如果担心标准库中set的开销，可以用unordered_set。
+
+条款42：新标准已经允许为类模板定义一个类型别名。（其实新标准后，类型别名就大行其道了）
+
+条款47：（我选择快乐的auto类型推导。）traits和函数模板参数推导的技巧，利用C++11才出现的auto和decltype似乎可以很轻松的解决。C++14甚至引入decltype(auto) 来自动推导精确类型。除此之外返回值不确定时还有尾置返回这种东西，C++14连尾置返回都可以省了。
+
+条款06：C++11后引入了delete关键字，现在想阻止编译器默认的合成行为只需在函数声明的尾部写上 = delete 即可。无需再采用书中的方式。
+
+条款17：C++11后，更推荐直接使用 make_shared<T>(args) 来一次性完成“new对象并放入智能指针”的工作
+```
+
 # 参考资料
 
 - [ ] 《Essential c++》
-- [ ] [c++笔记(C++Primer以及各种乱七八糟的)](https://github.com/arkingc/note)
-- [ ] [c++笔记(侯捷老师课程)](https://github.com/yangsoon/cpptest)
 - [ ] 《现代C++教程》
 - [ ] [CMake、CMakeLists.txt、GCC、Clang、LLVM、MinGW、交叉编译](https://zhupite.com/program/CMake-GCC-Clang-LLVM-MinGW-CrossCompile.html)
 - [ ] [gcc与clang对比](https://blog.csdn.net/sinat_36629696/article/details/79979274)
@@ -997,3 +1032,5 @@ TODO
 - [C/C++中关于静态链接库(.a)、动态链接库（.so）的编译与使用](https://blog.csdn.net/qq_27825451/article/details/105700361)
 - [从C到C++](https://nu-ll.github.io/2020/06/23/%E4%BB%8EC%E5%88%B0C++/)
 - [gnu libstdc++ doc](https://gcc.gnu.org/)
+- [重述《Effective C++》](https://normaluhr.github.io/2020/12/31/Effective-C++/)
+

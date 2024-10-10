@@ -78,9 +78,9 @@ public class SingleResponsibility2 {
 		RoadVehicle roadVehicle = new RoadVehicle();
 		roadVehicle.run("摩托车");
 		roadVehicle.run("汽车");
-		
+
 		AirVehicle airVehicle = new AirVehicle();
-		
+
 		airVehicle.run("飞机");
 	}
 
@@ -138,11 +138,11 @@ class Vehicle2 {
 		//处理
 		System.out.println(vehicle + " 在公路上运行....");
 	}
-	
+
 	public void runAir(String vehicle) {
 		System.out.println(vehicle + " 在天空上运行....");
 	}
-	
+
 	public void runWater(String vehicle) {
 		System.out.println(vehicle + " 在水中运行....");
 	}
@@ -417,7 +417,7 @@ class C { // C 类通过接口Interface1,Interface3 依赖(使用) D类，但是
 - 依赖倒转(倒置)的中心思想是**面向接口编程**
   - **使用接口或抽象类的目的是制定好规范**，而不涉及任何具体的操作
   - **把展现细节的任务交给他们的实现类去完成**
- 
+
 #### 1.2.3.2. 案例
 
 <details>
@@ -666,7 +666,7 @@ class OpenAndClose implements IOpenAndClose {
     ```
     如果对每个类型为T1的对象o1，都有类型为T2的对象o2，
     使得以T1定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变化
-    那么类型T2是类型T1的子类型。 
+    那么类型T2是类型T1的子类型。
     换句话说，所有引用基类的地方必须能透明地使用其子类的对象
     ```
   - 里氏替换原则通俗来讲就是： **子类可以扩展父类的功能，但不能改变父类原有的功能** 。
@@ -732,14 +732,14 @@ class B extends A {
 public class Liskov {
 
 	public static void main(String[] args) {
-		
+
 		A a = new A();
 		System.out.println("11-3=" + a.func1(11, 3));
 		System.out.println("1-8=" + a.func1(1, 8));
 
 		System.out.println("-----------------------");
 		B b = new B();
-		
+
 		// 因为B类不再继承A类，因此调用者，不会再func1是求减法
 		// 调用完成的功能就会很明确
 		System.out.println("11+3=" + b.func1(11, 3));// 这里本意是求出11+3
@@ -886,7 +886,7 @@ class CollegeManager {
 
 //学校管理类
 //分析 SchoolManager 类的直接朋友类有哪些 Employee、CollegeManager
-//CollegeEmployee 不是 直接朋友 而是一个陌生类，这样违背了 迪米特法则 
+//CollegeEmployee 不是 直接朋友 而是一个陌生类，这样违背了 迪米特法则
 class SchoolManager {
 	// 返回学校总部的员工
 	public List<Employee> getAllEmployee() {
@@ -1259,17 +1259,17 @@ class OtherGraphic extends Shape {
 ```java
 public class PersonServiceBean {
     private PersonDao personDao;//类
-    
+
     public void save(Person person){}
-    
+
     public IDCard getIDCard(Integer personid){
         return null;
     }
-    
+
     public void modify(){
     	Department department = new Department();
     }
-} 
+}
 
 public class PersonDao{}
 
@@ -1298,7 +1298,7 @@ public class Person {
 }
 
 public class IDCard{
-    
+
 }
 
 // 双向一对一关系
@@ -1325,16 +1325,16 @@ public class IDCard{
 ```java
 public abstract class DaoSupport{
     public void save(Object entity){
-        
+
     }
-    
+
     public void delete(Object id){
-        
+
     }
 }
 
 public class PersonServiceBean extends Daosupport{
-    
+
 }
 ```
 
@@ -1351,11 +1351,11 @@ public class PersonServiceBean extends Daosupport{
 ```java
 public interface PersonService {
 	public void delete(Integer id);
-} 
+}
 
 public class PersonServiceBean implements PersonService {
 	public void delete(Integer id){
-        
+
     }
 }
 ```
@@ -2004,8 +2004,8 @@ public class Runtime {
     - 有一点需要注意的地方就是复杂对象适合使用工厂模式，
     - 而简单对象，特别是只需要通过 new 就可以完成创建的对象，无需使用工厂模式 如果使用工厂模式，就需要引入一个工厂类，会增加系统的复杂度。
   - 示例
-    - 1、日志记录器：记录可能记录到本地硬盘、系统事件、远程服务器等，用户可以选择记录日志到什么地方。 
-    - 2、数据库访问，当用户不知道最后系统采用哪一类数据库，以及数据库可能有变化时。 
+    - 1、日志记录器：记录可能记录到本地硬盘、系统事件、远程服务器等，用户可以选择记录日志到什么地方。
+    - 2、数据库访问，当用户不知道最后系统采用哪一类数据库，以及数据库可能有变化时。
     - 3、设计一个连接服务器的框架，需要三个协议，"POP3"、"IMAP"、"HTTP"，可以把这三个作为产品类，共同实现一个接口。
 
 - 工厂模式种类
@@ -2040,31 +2040,31 @@ public class Runtime {
    ```java
    //将Pizza 类做成抽象
    public abstract class Pizza {
-   	
+
    	protected String name; //名字
-   	
+
    	public void setName(String name) {
    		this.name = name;
    	}
-   	
+
    	//准备原材料, 不同的披萨不一样，因此，我们做成抽象方法
    	public abstract void prepare();
-   
+
    	// 烘烤
    	public void bake() {
    		System.out.println(name + " baking;");
    	}
-   
+
    	// 切割
    	public void cut() {
    		System.out.println(name + " cutting;");
    	}
-   
+
    	//打包
    	public void box() {
    		System.out.println(name + " boxing;");
    	}
-   
+
    }
    ```
 
@@ -2105,7 +2105,7 @@ public class Runtime {
 
    ```java
    public class OrderPizza {
-   
+
    	// 构造器
    	public OrderPizza() {
    		Pizza pizza = null;
@@ -2129,10 +2129,10 @@ public class Runtime {
    			pizza.bake();
    			pizza.cut();
    			pizza.box();
-   
+
    		} while (true);
    	}
-   
+
    	// 写一个方法，可以获取客户希望订购的披萨种类
    	private String getType() {
    		try {
@@ -2145,7 +2145,7 @@ public class Runtime {
    			return "";
    		}
    	}
-   
+
    }
    ```
 
@@ -2154,11 +2154,11 @@ public class Runtime {
    ```java
    //相当于一个客户端，发出订购
    public class PizzaStore {
-   
+
    	public static void main(String[] args) {
    		 new OrderPizza();
    	}
-   
+
    }
    ```
 
@@ -2199,7 +2199,7 @@ public class Runtime {
    ```java
    //简单工厂类
    public class SimpleFactory {
-   
+
    	// 根据orderType 返回对应的Pizza 对象
    	public Pizza createPizza(String orderType) {
    		Pizza pizza = null;
@@ -2216,7 +2216,7 @@ public class Runtime {
    		}
    		return pizza;
    	}
-   
+
    }
    ```
 
@@ -2224,16 +2224,16 @@ public class Runtime {
 
    ```java
    public class OrderPizza {
-   
+
    	// 定义一个简单工厂对象
    	SimpleFactory simpleFactory;
    	Pizza pizza = null;
-   
+
    	// 构造器
    	public OrderPizza(SimpleFactory simpleFactory) {
    		setFactory(simpleFactory);
    	}
-   
+
    	public void setFactory(SimpleFactory simpleFactory) {
    		String orderType = ""; // 用户输入的
    		this.simpleFactory = simpleFactory; // 设置简单工厂对象
@@ -2253,7 +2253,7 @@ public class Runtime {
    			}
    		} while (true);
    	}
-   
+
    	// 写一个方法，可以获取客户希望订购的披萨种类
    	private String getType() {
    		try {
@@ -2266,7 +2266,7 @@ public class Runtime {
    			return "";
    		}
    	}
-   
+
    }
    ```
 
@@ -2275,13 +2275,13 @@ public class Runtime {
    ```java
    //相当于一个客户端，发出订购
    public class PizzaStore {
-   
+
    	public static void main(String[] args) {
    		// 使用简单工厂模式
    		new OrderPizza(new SimpleFactory());
    		System.out.println("~~退出程序~~");
    	}
-   
+
    }
    ```
 
@@ -2355,31 +2355,31 @@ public class SimpleFactory {
    ```java
    //将Pizza 类做成抽象
    public abstract class Pizza {
-   
+
    	protected String name; // 名字
-   
+
    	public void setName(String name) {
    		this.name = name;
    	}
-   
+
    	// 准备原材料, 不同的披萨不一样，因此，我们做成抽象方法
    	public abstract void prepare();
-   
+
    	// 烘烤
    	public void bake() {
    		System.out.println(name + " baking;");
    	}
-   
+
    	// 切割
    	public void cut() {
    		System.out.println(name + " cutting;");
    	}
-   
+
    	// 打包
    	public void box() {
    		System.out.println(name + " boxing;");
    	}
-   
+
    }
    ```
 
@@ -2435,10 +2435,10 @@ public class SimpleFactory {
 
    ```java
    public abstract class OrderPizza {
-   	
+
    	// 定义一个抽象方法，createPizza , 让各个工厂子类自己实现
    	abstract Pizza createPizza(String orderType);
-   
+
    	// 构造器
    	public OrderPizza() {
    		Pizza pizza = null;
@@ -2454,7 +2454,7 @@ public class SimpleFactory {
    			System.out.println();
    		} while (true);
    	}
-   
+
    	// 写一个方法，可以获取客户希望订购的披萨种类
    	private String getType() {
    		try {
@@ -2467,7 +2467,7 @@ public class SimpleFactory {
    			return "";
    		}
    	}
-   	
+
    }
    ```
 
@@ -2509,7 +2509,7 @@ public class SimpleFactory {
 
    ```java
    public class PizzaStore {
-   
+
    	public static void main(String[] args) {
    		String loc = "bj"; // 假设这里是用户输入的位置信息
    		if (loc.equals("bj")) {
@@ -2520,7 +2520,7 @@ public class SimpleFactory {
    			new LDOrderPizza();
    		}
    	}
-   
+
    }
    ```
 
@@ -2570,7 +2570,7 @@ public class SimpleFactory {
    ```java
    //这是工厂子类
    public class BJFactory implements AbsFactory {
-   
+
    	@Override
    	public Pizza createPizza(String orderType) {
    		System.out.println("~使用的是抽象工厂模式~");
@@ -2582,7 +2582,7 @@ public class SimpleFactory {
    		}
    		return pizza;
    	}
-   
+
    }
    ```
 
@@ -2590,7 +2590,7 @@ public class SimpleFactory {
 
    ```java
    public class LDFactory implements AbsFactory {
-   
+
    	@Override
    	public Pizza createPizza(String orderType) {
    		System.out.println("~使用的是抽象工厂模式~");
@@ -2602,7 +2602,7 @@ public class SimpleFactory {
    		}
    		return pizza;
    	}
-   
+
    }
    ```
 
@@ -2610,14 +2610,14 @@ public class SimpleFactory {
 
    ```java
    public class OrderPizza {
-   
+
    	AbsFactory factory;
-   
+
    	// 构造器
    	public OrderPizza(AbsFactory factory) {
    		setFactory(factory);
    	}
-   
+
    	private void setFactory(AbsFactory factory) {
    		Pizza pizza = null;
    		String orderType = ""; // 用户输入
@@ -2638,7 +2638,7 @@ public class SimpleFactory {
    			}
    		} while (true);
    	}
-   
+
    	// 写一个方法，可以获取客户希望订购的披萨种类
    	private String getType() {
    		try {
@@ -2658,12 +2658,12 @@ public class SimpleFactory {
 
    ```java
    public class PizzaStore {
-   
+
    	public static void main(String[] args) {
    		//new OrderPizza(new BJFactory());
    		new OrderPizza(new LDFactory());
    	}
-   
+
    }
    ```
 
@@ -2683,12 +2683,12 @@ public class SimpleFactory {
 public class Factory {
 
 	public static void main(String[] args) {
-		
+
 		// getInstance 是 Calendar 静态方法
 		Calendar cal = Calendar.getInstance();
 	    // 注意月份下标从0开始，所以取月份要+1
 	    System.out.println("年:" + cal.get(Calendar.YEAR));
-	    System.out.println("月:" + (cal.get(Calendar.MONTH) + 1));       
+	    System.out.println("月:" + (cal.get(Calendar.MONTH) + 1));
 	    System.out.println("日:" + cal.get(Calendar.DAY_OF_MONTH));
 	    System.out.println("时:" + cal.get(Calendar.HOUR_OF_DAY));
 	    System.out.println("分:" + cal.get(Calendar.MINUTE));
@@ -2766,7 +2766,7 @@ public class Factory {
           }
       }
       return cal;
-  } 
+  }
   ```
 
 ### 3.2.4. 原型模式（Prototype Pattern）
@@ -2815,17 +2815,17 @@ public class Factory {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 传统的方法
    		Sheep sheep = new Sheep("tom", 1, "白色");
-   
+
    		Sheep sheep2 = new Sheep(sheep.getName(), sheep.getAge(), sheep.getColor());
    		Sheep sheep3 = new Sheep(sheep.getName(), sheep.getAge(), sheep.getColor());
    		Sheep sheep4 = new Sheep(sheep.getName(), sheep.getAge(), sheep.getColor());
    		Sheep sheep5 = new Sheep(sheep.getName(), sheep.getAge(), sheep.getColor());
    		// ....
-   
+
    		System.out.println(sheep);
    		System.out.println(sheep2);
    		System.out.println(sheep3);
@@ -2833,7 +2833,7 @@ public class Factory {
    		System.out.println(sheep5);
    		// ...
    	}
-   
+
    }
    ```
 
@@ -2865,7 +2865,7 @@ public class Factory {
    	private String name;
    	private int age;
    	private String color;
-   
+
    	// 克隆该实例，使用默认的clone方法来完成
    	@Override
    	protected Object clone() {
@@ -2877,7 +2877,7 @@ public class Factory {
    		}
    		return sheep;
    	}
-       
+
        // ...
    ```
 
@@ -2885,23 +2885,23 @@ public class Factory {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		System.out.println("原型模式完成对象的创建");
-   		
+
    		Sheep sheep = new Sheep("tom", 1, "白色");
-   		
+
    		Sheep sheep2 = (Sheep) sheep.clone(); // 克隆
    		Sheep sheep3 = (Sheep) sheep.clone(); // 克隆
    		Sheep sheep4 = (Sheep) sheep.clone(); // 克隆
    		Sheep sheep5 = (Sheep) sheep.clone(); // 克隆
-   
+
    		System.out.println("sheep2 =" + sheep2 + "sheep2.hashCoe=" + sheep2.hashCode());
    		System.out.println("sheep3 =" + sheep3 + "sheep3.hashCoe=" + sheep3.hashCode());
    		System.out.println("sheep4 =" + sheep4 + "sheep4.hashCoe=" + sheep4.hashCode());
    		System.out.println("sheep5 =" + sheep5 + "sheep5.hashCoe=" + sheep5.hashCode());
    	}
-   
+
    }
    ```
 
@@ -2928,7 +2928,7 @@ public class Factory {
    	private Integer id = 10;
    	private String nickname = "牛魔王";
    	private String skill = "芭蕉扇";
-       
+
        public Monster() {
    		System.out.println("monster 创建..");
    	}
@@ -2945,22 +2945,22 @@ public class Factory {
 
    ```java
    public class ProtoType {
-   
+
    	public static void main(String[] args) {
    		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
-   		
+
    		// 获取monster[通过id获取monster]
    		Object bean = applicationContext.getBean("id01");
    		System.out.println("bean" + bean); // 输出 "牛魔王" .....
-   
+
    		Object bean2 = applicationContext.getBean("id01");
    		System.out.println("bean2" + bean2); // 输出 "牛魔王" .....
-   
+
    		System.out.println(bean == bean2); // false
-   
+
    		// ConfigurableApplicationContext
    	}
-   
+
    }
    ```
 
@@ -3016,10 +3016,10 @@ public class Factory {
    protected <T> T doGetBean(
    		final String name, final Class<T> requiredType, final Object[] args, boolean typeCheckOnly)
    		throws BeansException {
-   
+
    	final String beanName = transformedBeanName(name);
    	Object bean;
-   
+
    	// Eagerly check singleton cache for manually registered singletons.
    	Object sharedInstance = getSingleton(beanName);
    	if (sharedInstance != null && args == null) {
@@ -3034,14 +3034,14 @@ public class Factory {
    		}
    		bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
    	}
-   
+
    	else {
    		// Fail if we're already creating this bean instance:
    		// We're assumably within a circular reference.
    		if (isPrototypeCurrentlyInCreation(beanName)) {
    			throw new BeanCurrentlyInCreationException(beanName);
    		}
-   
+
    		// Check if bean definition exists in this factory.
    		BeanFactory parentBeanFactory = getParentBeanFactory();
    		if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
@@ -3056,15 +3056,15 @@ public class Factory {
    				return parentBeanFactory.getBean(nameToLookup, requiredType);
    			}
    		}
-   
+
    		if (!typeCheckOnly) {
    			markBeanAsCreated(beanName);
    		}
-   
+
    		try {
    			final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
    			checkMergedBeanDefinition(mbd, beanName, args);
-   
+
    			// Guarantee initialization of beans that the current bean depends on.
    			String[] dependsOn = mbd.getDependsOn();
    			if (dependsOn != null) {
@@ -3077,7 +3077,7 @@ public class Factory {
    					getBean(dependsOnBean);
    				}
    			}
-   
+
    			// Create bean instance.
         // ****判断是否为单例模式****
    			if (mbd.isSingleton()) {
@@ -3098,7 +3098,7 @@ public class Factory {
    				});
    				bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
    			}
-   
+
         //****是否为原型****
         // 不为单例对象的话，判断是否为原型
    			else if (mbd.isPrototype()) {
@@ -3114,7 +3114,7 @@ public class Factory {
    				}
    				bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
    			}
-   
+
    			else {
    				String scopeName = mbd.getScope();
    				final Scope scope = this.scopes.get(scopeName);
@@ -3149,7 +3149,7 @@ public class Factory {
    			throw ex;
    		}
    	}
-   
+
    	// Check if required type matches the type of the actual bean instance.
    	if (requiredType != null && bean != null && !requiredType.isAssignableFrom(bean.getClass())) {
    		try {
@@ -3192,7 +3192,7 @@ public class Factory {
    	private String color;
    	private String address = "蒙古";
    	public Sheep friend; // 对象克隆时会如何处理，默认是浅拷贝
-   
+
    	// 克隆该实例，使用默认的clone方法来完成
    	@Override
    	protected Object clone() {
@@ -3204,7 +3204,7 @@ public class Factory {
    		}
    		return sheep;
    	}
-       
+
        // ...
    ```
 
@@ -3212,24 +3212,24 @@ public class Factory {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		System.out.println("原型模式完成对象的创建");
-   		
+
    		Sheep sheep = new Sheep("tom", 1, "白色");
    		sheep.friend = new Sheep("jack", 2, "黑色");
-   		
+
    		Sheep sheep2 = (Sheep) sheep.clone(); // 克隆
    		Sheep sheep3 = (Sheep) sheep.clone(); // 克隆
    		Sheep sheep4 = (Sheep) sheep.clone(); // 克隆
    		Sheep sheep5 = (Sheep) sheep.clone(); // 克隆
-   
+
    		System.out.println("sheep2 =" + sheep2 + "sheep2.friend=" + sheep2.friend.hashCode());
    		System.out.println("sheep3 =" + sheep3 + "sheep3.friend=" + sheep3.friend.hashCode());
    		System.out.println("sheep4 =" + sheep4 + "sheep4.friend=" + sheep4.friend.hashCode());
    		System.out.println("sheep5 =" + sheep5 + "sheep5.friend=" + sheep5.friend.hashCode());
    	}
-   
+
    }
    ```
 
@@ -3259,17 +3259,17 @@ public class Factory {
    ```java
    public class DeepCloneableTarget implements Serializable, Cloneable {
    	private static final long serialVersionUID = 1L;
-   
+
    	private String cloneName;
-   
+
    	private String cloneClass;
-   
+
    	// 构造器
    	public DeepCloneableTarget(String cloneName, String cloneClass) {
    		this.cloneName = cloneName;
    		this.cloneClass = cloneClass;
    	}
-   
+
    	// 因为该类的属性，都是String , 因此我们这里使用默认的clone完成即可
    	@Override
    	protected Object clone() throws CloneNotSupportedException {
@@ -3282,28 +3282,28 @@ public class Factory {
 
    ```java
    public class DeepProtoType implements Serializable, Cloneable {
-   
+
    	public String name; // String 属性
    	public DeepCloneableTarget deepCloneableTarget;// 引用类型
-   
+
    	public DeepProtoType() {
    		super();
    	}
-   
+
    	// 深拷贝 - 方式 1 使用clone 方法
    	@Override
    	protected Object clone() throws CloneNotSupportedException {
    		Object deep = null;
-   		
+
    		// 这里完成对基本数据类型(属性)和String的克隆
-   		deep = super.clone();		
+   		deep = super.clone();
    		DeepProtoType deepProtoType = (DeepProtoType) deep;
    		// 对引用类型的属性，进行单独处理
    		deepProtoType.deepCloneableTarget = (DeepCloneableTarget) deepCloneableTarget.clone();
-   
+
    		return deepProtoType;
    	}
-   
+
    	// 深拷贝 - 方式2 通过对象的序列化实现 (推荐)
    	public Object deepClone() {
    		// 创建流对象
@@ -3311,18 +3311,18 @@ public class Factory {
    		ObjectOutputStream oos = null;
    		ByteArrayInputStream bis = null;
    		ObjectInputStream ois = null;
-   
+
    		try {
    			// 序列化
    			bos = new ByteArrayOutputStream();
    			oos = new ObjectOutputStream(bos);
    			oos.writeObject(this); // 当前这个对象以对象流的方式输出
-   
+
    			// 反序列化
    			bis = new ByteArrayInputStream(bos.toByteArray());
    			ois = new ObjectInputStream(bis);
    			DeepProtoType copyObj = (DeepProtoType) ois.readObject(); // 从流中读入对象
-   
+
    			return copyObj;
    		} catch (Exception e) {
    			// TODO handle exception
@@ -3340,7 +3340,7 @@ public class Factory {
    			}
    		}
    	}
-   
+
    }
    ```
 
@@ -3348,23 +3348,23 @@ public class Factory {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) throws Exception {
    		DeepProtoType p = new DeepProtoType();
    		p.name = "宋江";
    		p.deepCloneableTarget = new DeepCloneableTarget("大牛", "小牛");
-   
+
    		// 方式1 完成深拷贝
    		DeepProtoType p2 = (DeepProtoType) p.clone();
    		System.out.println("p.name=" + p.name + "；p.deepCloneableTarget.hashCode=" + p.deepCloneableTarget.hashCode());
    		System.out.println("p2.name=" + p2.name + "；p2.deepCloneableTarget.hashCode=" + p2.deepCloneableTarget.hashCode());
-   
+
    		// 方式2 完成深拷贝
    //		DeepProtoType p2 = (DeepProtoType) p.deepClone();
    //		System.out.println("p.name=" + p.name + "；p.deepCloneableTarget.hashCode=" + p.deepCloneableTarget.hashCode());
    //		System.out.println("p2.name=" + p2.name + "；p2.deepCloneableTarget.hashCode=" + p2.deepCloneableTarget.hashCode());
    	}
-   
+
    }
    ```
 
@@ -3426,23 +3426,23 @@ public class Factory {
 
    ```java
    public abstract class AbstractHouse {
-   
+
    	// 打地基
    	public abstract void buildBasic();
-   
+
    	// 砌墙
    	public abstract void buildWalls();
-   
+
    	// 封顶
    	public abstract void roofed();
-   
+
    	// 建造房子的具体流程
    	public void build() {
    		buildBasic();
    		buildWalls();
    		roofed();
    	}
-   
+
    }
    ```
 
@@ -3450,22 +3450,22 @@ public class Factory {
 
    ```java
    public class CommonHouse extends AbstractHouse {
-   
+
    	@Override
    	public void buildBasic() {
    		System.out.println(" 普通房子打地基 ");
    	}
-   
+
    	@Override
    	public void buildWalls() {
    		System.out.println(" 普通房子砌墙 ");
    	}
-   
+
    	@Override
    	public void roofed() {
    		System.out.println(" 普通房子封顶 ");
    	}
-   
+
    }
    ```
 
@@ -3473,23 +3473,23 @@ public class Factory {
 
    ```java
    public class HighBuilding extends AbstractHouse{
-   
+
    	@Override
    	public void buildBasic() {
    		System.out.println(" 高楼的打地基100米 ");
    	}
-   
+
    	@Override
    	public void buildWalls() {
    		System.out.println(" 高楼的砌墙20cm ");
    	}
-   
+
    	@Override
    	public void roofed() {
    		System.out.println(" 高楼的透明屋顶 ");
    	}
-   
-   
+
+
    }
    ```
 
@@ -3497,12 +3497,12 @@ public class Factory {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		CommonHouse commonHouse = new CommonHouse();
    		commonHouse.build();
    	}
-   
+
    }
    ```
 
@@ -3540,21 +3540,21 @@ public class Factory {
    ```java
    // 抽象的建造者
    public abstract class HouseBuilder {
-   
+
    	protected House house = new House();
-   
+
    	// 将建造的流程写好, 抽象的方法
    	public abstract void buildBasic();
-   
+
    	public abstract void buildWalls();
-   
+
    	public abstract void roofed();
-   
+
    	// 建造房子好， 将产品(房子) 返回
    	public House buildHouse() {
    		return house;
    	}
-   
+
    }
    ```
 
@@ -3562,22 +3562,22 @@ public class Factory {
 
    ```java
    public class CommonHouse extends HouseBuilder {
-   
+
    	@Override
    	public void buildBasic() {
    		house.setBase("普通房子打地基5米");
    	}
-   
+
    	@Override
    	public void buildWalls() {
    		house.setWall("普通房子砌墙10cm");
    	}
-   
+
    	@Override
    	public void roofed() {
    		house.setRoofed("普通房子屋顶");
    	}
-   
+
    }
    ```
 
@@ -3585,22 +3585,22 @@ public class Factory {
 
    ```java
    public class HighBuilding extends HouseBuilder {
-   
+
    	@Override
    	public void buildBasic() {
    		house.setBase("高楼的打地基100米");
    	}
-   
+
    	@Override
    	public void buildWalls() {
    		house.setWall("高楼的砌墙20cm");
    	}
-   
+
    	@Override
    	public void roofed() {
    		house.setRoofed("高楼的透明屋顶");
    	}
-   
+
    }
    ```
 
@@ -3609,19 +3609,19 @@ public class Factory {
    ```java
    //指挥者，这里去指定制作流程，返回产品
    public class HouseDirector {
-   
+
    	HouseBuilder houseBuilder = null;
-   
+
    	// 构造器传入 houseBuilder
    	public HouseDirector(HouseBuilder houseBuilder) {
    		this.houseBuilder = houseBuilder;
    	}
-   
+
    	// 通过setter 传入 houseBuilder
    	public void setHouseBuilder(HouseBuilder houseBuilder) {
    		this.houseBuilder = houseBuilder;
    	}
-   
+
    	// 如何处理建造房子的流程，交给指挥者
    	public House constructHouse() {
    		houseBuilder.buildBasic();
@@ -3629,7 +3629,7 @@ public class Factory {
    		houseBuilder.roofed();
    		return houseBuilder.buildHouse();
    	}
-   
+
    }
    ```
 
@@ -3646,7 +3646,7 @@ public class Factory {
    		House house = houseDirector.constructHouse();
    		// 查看建造的普通房子
    		System.out.println(house);
-   
+
    		System.out.println("--------------------------");
    		// 盖高楼
    		HighBuilding highBuilding = new HighBuilding();
@@ -3686,13 +3686,13 @@ public class Factory {
        implements java.io.Serializable, CharSequence
    {
        // ...
-       
+
        @Override
        public StringBuilder append(String str) {
            super.append(str);
            return this;
        }
-       
+
        // ...
    ```
 
@@ -3704,27 +3704,27 @@ public class Factory {
         * The value is used for character storage.
         */
        char[] value;
-   
+
        /**
         * The count is the number of characters used.
         */
        int count;
-   
+
        /**
         * This no-arg constructor is necessary for serialization of subclasses.
         */
        AbstractStringBuilder() {
        }
-   
+
        /**
         * Creates an AbstractStringBuilder of the specified capacity.
         */
        AbstractStringBuilder(int capacity) {
            value = new char[capacity];
        }
-       
+
        // ...
-       
+
        public AbstractStringBuilder append(String str) {
            if (str == null)
                return appendNull();
@@ -3734,7 +3734,7 @@ public class Factory {
            count += len;
            return this;
        }
-       
+
        // ...
    ```
 
@@ -3742,11 +3742,11 @@ public class Factory {
 
    ```java
    public interface Appendable {
-   
+
        Appendable append(CharSequence csq) throws IOException;
-   
+
        Appendable append(CharSequence csq, int start, int end) throws IOException;
-   
+
        Appendable append(char c) throws IOException;
    }
    ```
@@ -3876,13 +3876,13 @@ public class Factory {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		System.out.println(" === 类适配器模式 ====");
    		Phone phone = new Phone();
    		phone.charging(new VoltageAdapter());
    	}
-   
+
    }
    ```
 
@@ -3930,14 +3930,14 @@ public class Factory {
    ```java
    //适配器类
    public class VoltageAdapter implements IVoltage5V {
-   
+
    	private Voltage220V voltage220V; // 关联关系-聚合
-   
+
    	// 通过构造器，传入一个 Voltage220V 实例
    	public VoltageAdapter(Voltage220V voltage220v) {
    		this.voltage220V = voltage220v;
    	}
-   
+
    	@Override
    	public int output5V() {
    		int dst = 0;
@@ -3949,7 +3949,7 @@ public class Factory {
    		}
    		return dst;
    	}
-   
+
    }
    ```
 
@@ -3959,13 +3959,13 @@ public class Factory {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		System.out.println(" === 对象适配器模式 ====");
    		Phone phone = new Phone();
    		phone.charging(new VoltageAdapter(new Voltage220V()));
    	}
-   
+
    }
    ```
 
@@ -4005,11 +4005,11 @@ public class Factory {
    ```java
    public interface Interface4 {
    	public void m1();
-   
+
    	public void m2();
-   
+
    	public void m3();
-   
+
    	public void m4();
    }
    ```
@@ -4021,19 +4021,19 @@ public class Factory {
    public abstract class AbsAdapter implements Interface4 {
    	// 默认实现
    	public void m1() {
-   
+
    	}
-   
+
    	public void m2() {
-   
+
    	}
-   
+
    	public void m3() {
-   
+
    	}
-   
+
    	public void m4() {
-   
+
    	}
    }
    ```
@@ -4043,7 +4043,7 @@ public class Factory {
    ```java
    public class Client {
    	public static void main(String[] args) {
-   
+
    		AbsAdapter absAdapter = new AbsAdapter() {
    			// 只需要去覆盖我们 需要使用 接口方法
    			@Override
@@ -4051,7 +4051,7 @@ public class Factory {
    				System.out.println("使用了m1的方法");
    			}
    		};
-   
+
    		absAdapter.m1();
    	}
    }
@@ -4077,23 +4077,23 @@ public class Factory {
        @Override //默认实现
        public void onAnimationCancel(Animator animation) {
        }
-       
+
        @Override
        public void onAnimationEnd(Animator animation) {
        }
-       
+
        @Override
        public void onAnimationRepeat(Animator animation) {
        }
-       
+
        @Override
        public void onAnimationStart(Animator animation) {
        }
-       
+
        @Override
        public void onAnimationPause(Animator animation) {
        }
-       
+
        @Override
        public void onAnimationResume(Animator animation) {
        }
@@ -4152,27 +4152,27 @@ public class Factory {
    	HttpServletRequest processedRequest = request;
    	HandlerExecutionChain mappedHandler = null;
    	boolean multipartRequestParsed = false;
-   
+
    	WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
-   
+
    	try {
    		ModelAndView mv = null;
    		Exception dispatchException = null;
-   
+
    		try {
    			processedRequest = checkMultipart(request);
    			multipartRequestParsed = processedRequest != request;
-   
+
    			// Determine handler for the current request.
    			mappedHandler = getHandler(processedRequest);
    			if (mappedHandler == null || mappedHandler.getHandler() == null) {
    				noHandlerFound(processedRequest, response);
    				return;
    			}
-   
+
    			// Determine handler adapter for the current request.
    			HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
-   
+
    			// Process last-modified header, if supported by the handler.
    			String method = request.getMethod();
    			boolean isGet = "GET".equals(method);
@@ -4186,11 +4186,11 @@ public class Factory {
    					return;
    				}
    			}
-   
+
    			if (!mappedHandler.applyPreHandle(processedRequest, response)) {
    				return;
    			}
-   
+
    			try {
    				// Actually invoke the handler.
    				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
@@ -4200,7 +4200,7 @@ public class Factory {
    					return;
    				}
    			}
-   
+
    			applyDefaultViewName(request, mv);
    			mappedHandler.applyPostHandle(processedRequest, response, mv);
    		}
@@ -4255,7 +4255,7 @@ public class Factory {
 
    ```java
    public interface HandlerAdapter {
-   
+
    	/**
    	 * Given a handler instance, return whether or not this {@code HandlerAdapter}
    	 * can support it. Typical HandlerAdapters will base the decision on the handler
@@ -4268,7 +4268,7 @@ public class Factory {
    	 * @return whether or not this object can use the given handler
    	 */
    	boolean supports(Object handler);
-   
+
    	/**
    	 * Use the given handler to handle this request.
    	 * The workflow that is required may vary widely.
@@ -4282,7 +4282,7 @@ public class Factory {
    	 * model data, or {@code null} if the request has been handled directly
    	 */
    	ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
-   
+
    	/**
    	 * Same contract as for HttpServlet's {@code getLastModified} method.
    	 * Can simply return -1 if there's no support in the handler class.
@@ -4293,7 +4293,7 @@ public class Factory {
    	 * @see org.springframework.web.servlet.mvc.LastModified#getLastModified
    	 */
    	long getLastModified(HttpServletRequest request, Object handler);
-   
+
    }
    ```
 
@@ -4321,23 +4321,23 @@ public class Factory {
 1. `Controller` 接口及其实现类
 
    ```java
-   //多种Controller实现  
+   //多种Controller实现
    public interface Controller {
-   
+
    }
-   
+
    class HttpController implements Controller {
    	public void doHttpHandler() {
    		System.out.println("http...");
    	}
    }
-   
+
    class SimpleController implements Controller {
    	public void doSimplerHandler() {
    		System.out.println("simple...");
    	}
    }
-   
+
    class AnnotationController implements Controller {
    	public void doAnnotationHandler() {
    		System.out.println("annotation...");
@@ -4348,50 +4348,50 @@ public class Factory {
 2. `HandlerAdapter` 接口及其实现类
 
    ```java
-   //定义一个Adapter接口 
+   //定义一个Adapter接口
    public interface HandlerAdapter {
    	// 当前 HandlerAdapter 对象是否支持 handler（判断 handler 的类型是否为具体的子类类型）
    	public boolean supports(Object handler);
-   
+
    	// 执行目标方法（将 handler 对象强转后，调用对应的方法）
    	public void handle(Object handler);
    }
-   
+
    // 多种适配器类
    class SimpleHandlerAdapter implements HandlerAdapter {
-   
+
    	public void handle(Object handler) {
    		((SimpleController) handler).doSimplerHandler();
    	}
-   
+
    	public boolean supports(Object handler) {
    		return (handler instanceof SimpleController);
    	}
-   
+
    }
-   
+
    class HttpHandlerAdapter implements HandlerAdapter {
-   
+
    	public void handle(Object handler) {
    		((HttpController) handler).doHttpHandler();
    	}
-   
+
    	public boolean supports(Object handler) {
    		return (handler instanceof HttpController);
    	}
-   
+
    }
-   
+
    class AnnotationHandlerAdapter implements HandlerAdapter {
-   
+
    	public void handle(Object handler) {
    		((AnnotationController) handler).doAnnotationHandler();
    	}
-   
+
    	public boolean supports(Object handler) {
    		return (handler instanceof AnnotationController);
    	}
-   
+
    }
    ```
 
@@ -4399,31 +4399,31 @@ public class Factory {
 
    ```java
    public class DispatchServlet {
-   
+
    	public static List<HandlerAdapter> handlerAdapters = new ArrayList<HandlerAdapter>();
-   
+
    	// 组合了多个 HandlerAdapter 的实现类
    	public DispatchServlet() {
    		handlerAdapters.add(new AnnotationHandlerAdapter());
    		handlerAdapters.add(new HttpHandlerAdapter());
    		handlerAdapters.add(new SimpleHandlerAdapter());
    	}
-   
+
    	public void doDispatch() {
-   
+
    		// 此处模拟SpringMVC从request取handler的对象，
    		// 适配器可以获取到希望的Controller
    		HttpController controller = new HttpController();
    		// AnnotationController controller = new AnnotationController();
    		// SimpleController controller = new SimpleController();
-   		
+
    		// 得到对应适配器
    		HandlerAdapter adapter = getHandler(controller);
    		// 通过适配器执行对应的controller对应方法
    		adapter.handle(controller);
-   
+
    	}
-   
+
    	public HandlerAdapter getHandler(Controller controller) {
    		// 遍历：根据得到的controller(handler), 返回对应适配器
    		for (HandlerAdapter adapter : this.handlerAdapters) {
@@ -4433,11 +4433,11 @@ public class Factory {
    		}
    		return null;
    	}
-   
+
    	public static void main(String[] args) {
    		new DispatchServlet().doDispatch(); // http...
    	}
-   
+
    }
    ```
 
@@ -4522,9 +4522,9 @@ public class Factory {
    //接口
    public interface Brand {
    	void open();
-   
+
    	void close();
-   
+
    	void call();
    }
    ```
@@ -4533,22 +4533,22 @@ public class Factory {
 
    ```java
    public class XiaoMi implements Brand {
-   
+
    	@Override
    	public void open() {
    		System.out.println(" 小米手机开机 ");
    	}
-   
+
    	@Override
    	public void close() {
    		System.out.println(" 小米手机关机 ");
    	}
-   
+
    	@Override
    	public void call() {
    		System.out.println(" 小米手机打电话 ");
    	}
-   
+
    }
    ```
 
@@ -4556,22 +4556,22 @@ public class Factory {
 
    ```java
    public class Vivo implements Brand {
-   
+
    	@Override
    	public void open() {
    		System.out.println(" Vivo手机开机 ");
    	}
-   
+
    	@Override
    	public void close() {
    		System.out.println(" Vivo手机关机 ");
    	}
-   
+
    	@Override
    	public void call() {
    		System.out.println(" Vivo手机打电话 ");
    	}
-   
+
    }
    ```
 
@@ -4579,27 +4579,27 @@ public class Factory {
 
    ```java
    public abstract class Phone {
-   
+
    	// 组合品牌
    	private Brand brand;
-   
+
    	// 构造器
    	public Phone(Brand brand) {
    		this.brand = brand;
    	}
-   
+
    	protected void open() {
    		this.brand.open();
    	}
-   
+
    	protected void close() {
    		this.brand.close();
    	}
-   
+
    	protected void call() {
    		this.brand.call();
    	}
-   
+
    }
    ```
 
@@ -4608,30 +4608,30 @@ public class Factory {
    ```java
    //折叠式手机类，继承 抽象类 Phone
    public class FoldedPhone extends Phone {
-   
+
    	// 构造器
    	public FoldedPhone(Brand brand) {
    		super(brand);
    	}
-   
+
    	@Override
    	public void open() {
    		super.open();
    		System.out.println(" 折叠样式手机 ");
    	}
-   
+
    	@Override
    	public void close() {
    		super.close();
    		System.out.println(" 折叠样式手机 ");
    	}
-   
+
    	@Override
    	public void call() {
    		super.call();
    		System.out.println(" 折叠样式手机 ");
    	}
-   
+
    }
    ```
 
@@ -4639,30 +4639,30 @@ public class Factory {
 
    ```java
    public class UpRightPhone extends Phone {
-   
+
    	// 构造器
    	public UpRightPhone(Brand brand) {
    		super(brand);
    	}
-   
+
    	@Override
    	public void open() {
    		super.open();
    		System.out.println(" 直立样式手机 ");
    	}
-   
+
    	@Override
    	public void close() {
    		super.close();
    		System.out.println(" 直立样式手机 ");
    	}
-   
+
    	@Override
    	public void call() {
    		super.call();
    		System.out.println(" 直立样式手机 ");
    	}
-   	
+
    }
    ```
 
@@ -4670,38 +4670,38 @@ public class Factory {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
-   
+
    		// 折叠式的小米手机 (样式 + 品牌 )
    		Phone phone1 = new FoldedPhone(new XiaoMi());
    		phone1.open();
    		phone1.call();
    		phone1.close();
    		System.out.println("=======================");
-   
+
    		// 折叠式的Vivo手机 (样式 + 品牌 )
    		Phone phone2 = new FoldedPhone(new Vivo());
    		phone2.open();
    		phone2.call();
    		phone2.close();
    		System.out.println("==============");
-   
+
    		// 直立式的小米手机 (样式 + 品牌 )
    		UpRightPhone phone3 = new UpRightPhone(new XiaoMi());
    		phone3.open();
    		phone3.call();
    		phone3.close();
    		System.out.println("==============");
-   
+
    		// 直立式的Vivo手机 (样式 + 品牌 )
    		UpRightPhone phone4 = new UpRightPhone(new Vivo());
    		phone4.open();
    		phone4.call();
    		phone4.close();
-   		
+
    	}
-   
+
    }
    ```
 
@@ -4734,7 +4734,7 @@ public class Factory {
    @CallerSensitive
    public static Connection getConnection(String url,
        java.util.Properties info) throws SQLException {
-   
+
        return (getConnection(url, info, Reflection.getCallerClass()));
    }
    ```
@@ -4743,25 +4743,25 @@ public class Factory {
 
    ```java
    public interface Connection  extends Wrapper, AutoCloseable {
-       
-       // ...  
+
+       // ...
        PreparedStatement prepareStatement(String sql, int resultSetType,
                                           int resultSetConcurrency, int resultSetHoldability)
            throws SQLException;
-   
+
        CallableStatement prepareCall(String sql, int resultSetType,
                                      int resultSetConcurrency,
                                      int resultSetHoldability) throws SQLException;
-   
+
        PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
            throws SQLException;
-   
+
        PreparedStatement prepareStatement(String sql, int columnIndexes[])
            throws SQLException;
-   
+
        PreparedStatement prepareStatement(String sql, String columnNames[])
            throws SQLException;
-   
+
        // ...
    ```
 
@@ -4825,7 +4825,7 @@ public class Factory {
   - 优点：装饰类和被装饰类可以独立发展，不会相互耦合，装饰模式是继承的一个替代模式，装饰模式可以动态扩展一个实现类的功能。
   - 缺点：多层装饰比较复杂。
 
-- 使用场景： 
+- 使用场景：
   - 1、扩展一个类的功能。
   - 2、动态增加功能，动态撤销。
 
@@ -4908,29 +4908,29 @@ public class Factory {
 
    ```java
    public abstract class Drink {
-   
+
    	public String des; // 描述
    	private float price = 0.0f; // 价格
-   	
+
    	// 计算费用的抽象方法，由子类来实现
    	public abstract float cost();
-   
+
    	public String getDes() {
    		return des;
    	}
-   
+
    	public void setDes(String des) {
    		this.des = des;
    	}
-   
+
    	public float getPrice() {
    		return price;
    	}
-   
+
    	public void setPrice(float price) {
    		this.price = price;
    	}
-   
+
    }
    ```
 
@@ -4955,21 +4955,21 @@ public class Factory {
    		setPrice(6.0f);
    	}
    }
-   
+
    public class LongBlack extends Coffee {
    	public LongBlack() {
    		setDes(" longblack ");
    		setPrice(5.0f);
    	}
    }
-   
+
    public class ShortBlack extends Coffee {
    	public ShortBlack() {
    		setDes(" shortblack ");
    		setPrice(4.0f);
    	}
    }
-   
+
    public class DeCaf extends Coffee {
    	public DeCaf() {
    		setDes(" 无因咖啡 ");
@@ -4983,20 +4983,20 @@ public class Factory {
    ```java
    // 装饰者
    public class Decorator extends Drink {
-       
+
    	private Drink obj; // 聚合一个单品咖啡（被装饰者）
-   
+
    	public Decorator(Drink obj) {
    		this.obj = obj;
    	}
-   
+
    	@Override
    	public float cost() {
    		// super.getPrice：调味品（装饰者）的价格
    		// obj.cost()：单品咖啡（被装饰者）的价格
    		return super.getPrice() + obj.cost();
    	}
-   
+
    	@Override
    	public String getDes() {
    		// des：调味品（装饰者）的描述信息
@@ -5004,7 +5004,7 @@ public class Factory {
    		// obj.getDes()：单品咖啡（被装饰者）的信息
    		return des + " " + getPrice() + " && " + obj.getDes();
    	}
-   
+
    }
    ```
 
@@ -5019,7 +5019,7 @@ public class Factory {
    		setPrice(3.0f); // 调味品 的价格
    	}
    }
-   
+
    public class Milk extends Decorator {
    	public Milk(Drink obj) {
    		super(obj);
@@ -5027,7 +5027,7 @@ public class Factory {
    		setPrice(2.0f);
    	}
    }
-   
+
    public class Soy extends Decorator {
    	public Soy(Drink obj) {
    		super(obj);
@@ -5041,36 +5041,36 @@ public class Factory {
 
    ```java
    public class CoffeeBar {
-   
+
    	public static void main(String[] args) {
    		// 装饰者模式下的订单：2份巧克力+一份牛奶+LongBlack
-   
+
    		// 1. 点一份 LongBlack
    		Drink order = new LongBlack();
    		System.out.println("LongBlack的费用=" + order.cost());
    		System.out.println("LongBlack的描述=" + order.getDes());
-   
+
    		// 2. order 加入一份牛奶
    		order = new Milk(order);
    		System.out.println("order 加入一份牛奶 费用 =" + order.cost());
    		System.out.println("order 加入一份牛奶 描述 = " + order.getDes());
-   
+
    		// 3. order 加入一份巧克力
    		order = new Chocolate(order);
    		System.out.println("order 加入一份牛奶 加入一份巧克力  费用 =" + order.cost());
    		System.out.println("order 加入一份牛奶 加入一份巧克力 描述 = " + order.getDes());
-   
+
    		// 3. order 加入一份巧克力
    		order = new Chocolate(order);
    		System.out.println("order 加入一份牛奶 加入2份巧克力   费用 =" + order.cost());
    		System.out.println("order 加入一份牛奶 加入2份巧克力 描述 = " + order.getDes());
    		System.out.println("===========================");
-   
+
    		// 牛奶+无卡咖啡
    		Drink order2 = new DeCaf();
    		System.out.println("order2 无因咖啡  费用 =" + order2.cost());
    		System.out.println("order2 无因咖啡 描述 = " + order2.getDes());
-   
+
    		order2 = new Milk(order2);
    		System.out.println("order2 无因咖啡 加入一份牛奶  费用 =" + order2.cost());
    		System.out.println("order2 无因咖啡 加入一份牛奶 描述 = " + order2.getDes());
@@ -5082,18 +5082,18 @@ public class Factory {
 
    ```
    LongBlack的费用=5.0
-   LongBlack的描述= longblack 
+   LongBlack的描述= longblack
    order 加入一份牛奶 费用 =7.0
-   order 加入一份牛奶 描述 =  牛奶  2.0 &&  longblack 
+   order 加入一份牛奶 描述 =  牛奶  2.0 &&  longblack
    order 加入一份牛奶 加入一份巧克力  费用 =10.0
-   order 加入一份牛奶 加入一份巧克力 描述 =  巧克力  3.0 &&  牛奶  2.0 &&  longblack 
+   order 加入一份牛奶 加入一份巧克力 描述 =  巧克力  3.0 &&  牛奶  2.0 &&  longblack
    order 加入一份牛奶 加入2份巧克力   费用 =13.0
-   order 加入一份牛奶 加入2份巧克力 描述 =  巧克力  3.0 &&  巧克力  3.0 &&  牛奶  2.0 &&  longblack 
+   order 加入一份牛奶 加入2份巧克力 描述 =  巧克力  3.0 &&  巧克力  3.0 &&  牛奶  2.0 &&  longblack
    ===========================
    order2 无因咖啡  费用 =1.0
-   order2 无因咖啡 描述 =  无因咖啡 
+   order2 无因咖啡 描述 =  无因咖啡
    order2 无因咖啡 加入一份牛奶  费用 =3.0
-   order2 无因咖啡 加入一份牛奶 描述 =  牛奶  2.0 &&  无因咖啡 
+   order2 无因咖啡 加入一份牛奶 描述 =  牛奶  2.0 &&  无因咖啡
    ```
 
 </details>
@@ -5128,18 +5128,18 @@ public class Factory {
 
       ![design-patterns-47.png](./image/design-patterns-47.png)
       </details>
-  - 何时使用： 
-    - 1、您想表示对象的部分-整体层次结构（树形结构）。 
+  - 何时使用：
+    - 1、您想表示对象的部分-整体层次结构（树形结构）。
     - 2、您希望用户忽略组合对象与单个对象的不同，用户将统一地使用组合结构中的所有对象。
   - 如何解决：树枝和叶子实现统一接口，树枝内部组合该接口。
   - 关键代码：树枝内部组合该接口，并且含有内部属性 List，里面放 Component。
 
-- 应用实例： 
-  - 1、算术表达式包括操作数、操作符和另一个操作数，其中，另一个操作数也可以是操作数、操作符和另一个操作数。 
+- 应用实例：
+  - 1、算术表达式包括操作数、操作符和另一个操作数，其中，另一个操作数也可以是操作数、操作符和另一个操作数。
   - 2、在 JAVA AWT 和 SWING 中，对于 Button 和 Checkbox 是树叶，Container 是树枝。
 
 - 优缺点
-  - 优点： 
+  - 优点：
     - 1、高层模块调用简单。
     - 2、节点自由增加。
   - 缺点：在使用组合模式时，其叶子和树枝的声明都是实现类，而不是接口，违反了依赖倒置原则。
@@ -5192,46 +5192,46 @@ public class Factory {
 
    ```java
    public abstract class OrganizationComponent {
-   
+
    	private String name; // 名字
    	private String des; // 说明
-   
+
    	protected void add(OrganizationComponent organizationComponent) {
    		// 默认实现，叶子节点无需添加此方法
    		throw new UnsupportedOperationException();
    	}
-   
+
    	protected void remove(OrganizationComponent organizationComponent) {
    		// 默认实现，叶子节点无需添加此方法
    		throw new UnsupportedOperationException();
    	}
-   
+
    	// 方法print, 做成抽象的, 子类都需要实现
    	protected abstract void print();
-   
+
    	// 构造器
    	public OrganizationComponent(String name, String des) {
    		super();
    		this.name = name;
    		this.des = des;
    	}
-   
+
    	public String getName() {
    		return name;
    	}
-   
+
    	public void setName(String name) {
    		this.name = name;
    	}
-   
+
    	public String getDes() {
    		return des;
    	}
-   
+
    	public void setDes(String des) {
    		this.des = des;
    	}
-   
+
    }
    ```
 
@@ -5240,27 +5240,27 @@ public class Factory {
    ```java
    //University 就是 Composite , 可以管理College
    public class University extends OrganizationComponent {
-   
+
    	// List 中 存放的College
    	List<OrganizationComponent> organizationComponents = new ArrayList<OrganizationComponent>();
-   
+
    	// 构造器
    	public University(String name, String des) {
    		super(name, des);
    	}
-   
+
    	// 重写add
    	@Override
    	protected void add(OrganizationComponent organizationComponent) {
    		organizationComponents.add(organizationComponent);
    	}
-   
+
    	// 重写remove
    	@Override
    	protected void remove(OrganizationComponent organizationComponent) {
    		organizationComponents.remove(organizationComponent);
    	}
-   
+
    	// print方法，就是输出University 包含的学院
    	@Override
    	protected void print() {
@@ -5270,17 +5270,17 @@ public class Factory {
    			organizationComponent.print();
    		}
    	}
-   
+
    	@Override
    	public String getName() {
    		return super.getName();
    	}
-   
+
    	@Override
    	public String getDes() {
    		return super.getDes();
    	}
-   
+
    }
    ```
 
@@ -5288,28 +5288,28 @@ public class Factory {
 
    ```java
    public class College extends OrganizationComponent {
-   
+
    	// List 中 存放的Department
    	List<OrganizationComponent> organizationComponents = new ArrayList<OrganizationComponent>();
-   
+
    	// 构造器
    	public College(String name, String des) {
    		super(name, des);
    	}
-   
+
    	// 重写add
    	@Override
    	protected void add(OrganizationComponent organizationComponent) {
    		// 将来实际业务中，Colleage 的 add 和 University add 不一定完全一样
    		organizationComponents.add(organizationComponent);
    	}
-   
+
    	// 重写remove
    	@Override
    	protected void remove(OrganizationComponent organizationComponent) {
    		organizationComponents.remove(organizationComponent);
    	}
-   
+
    	// print方法，就是输出学院包含的系
    	@Override
    	protected void print() {
@@ -5319,17 +5319,17 @@ public class Factory {
    			organizationComponent.print();
    		}
    	}
-   
+
    	@Override
    	public String getName() {
    		return super.getName();
    	}
-   
+
    	@Override
    	public String getDes() {
    		return super.getDes();
    	}
-   
+
    }
    ```
 
@@ -5337,31 +5337,31 @@ public class Factory {
 
    ```java
    public class Department extends OrganizationComponent {
-   
+
    	// 没有集合
-   
+
    	public Department(String name, String des) {
    		super(name, des);
    	}
-   
+
    	// add , remove 就不用写了，因为他是叶子节点
-   
+
    	@Override
    	protected void print() {
             // 输出系名
    		System.out.println(getName());
    	}
-   
+
    	@Override
    	public String getName() {
    		return super.getName();
    	}
-   
+
    	@Override
    	public String getDes() {
    		return super.getDes();
    	}
-   
+
    }
    ```
 
@@ -5369,31 +5369,31 @@ public class Factory {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
-   
+
    		// 从大到小创建对象 学校
    		OrganizationComponent university = new University("清华大学", " 中国顶级大学 ");
-   
+
    		// 创建 学院
    		OrganizationComponent computerCollege = new College("计算机学院", " 计算机学院 ");
    		OrganizationComponent infoEngineercollege = new College("信息工程学院", " 信息工程学院 ");
-   
+
    		// 创建各个学院下面的系(专业)
    		computerCollege.add(new Department("软件工程", " 软件工程不错 "));
    		computerCollege.add(new Department("网络工程", " 网络工程不错 "));
    		computerCollege.add(new Department("计算机科学与技术", " 计算机科学与技术是老牌的专业 "));
    		infoEngineercollege.add(new Department("通信工程", " 通信工程不好学 "));
    		infoEngineercollege.add(new Department("信息工程", " 信息工程好学 "));
-   
+
    		// 将学院加入到 学校
    		university.add(computerCollege);
    		university.add(infoEngineercollege);
-   
+
    		university.print();
    		// infoEngineercollege.print();
    	}
-   
+
    }
    ```
 
@@ -5451,10 +5451,10 @@ public class Composite {
    ```java
    public interface Map<K,V> {
        // ...
-       
+
        V put(K key, V value);
        void putAll(Map<? extends K, ? extends V> m);
-       
+
        // ...
    ```
 
@@ -5462,18 +5462,18 @@ public class Composite {
 
    ```java
    public abstract class AbstractMap<K,V> implements Map<K,V> {
-       
+
        // ...
-       
+
        public V put(K key, V value) {
            throw new UnsupportedOperationException();
        }
-       
+
        public void putAll(Map<? extends K, ? extends V> m) {
            for (Map.Entry<? extends K, ? extends V> e : m.entrySet())
                put(e.getKey(), e.getValue());
        }
-       
+
    	// ...
    ```
 
@@ -5482,17 +5482,17 @@ public class Composite {
    ```java
    public class HashMap<K,V> extends AbstractMap<K,V>
        implements Map<K,V>, Cloneable, Serializable {
-       
+
        // ...
-       
+
        public V put(K key, V value) {
            return putVal(hash(key), key, value, false, true);
        }
-       
+
        public void putAll(Map<? extends K, ? extends V> m) {
            putMapEntries(m, true);
        }
-       
+
        // ...
    ```
 
@@ -5500,23 +5500,23 @@ public class Composite {
 
    ```java
    static class Node<K,V> implements Map.Entry<K,V> {
-   
+
        // ...
-   
+
        public final K getKey()        { return key; }
        public final V getValue()      { return value; }
        public final String toString() { return key + "=" + value; }
-   
+
        public final int hashCode() {
            return Objects.hashCode(key) ^ Objects.hashCode(value);
        }
-   
+
        public final V setValue(V newValue) {
            V oldValue = value;
            value = newValue;
            return oldValue;
        }
-   
+
        // ...
    ```
 
@@ -5541,7 +5541,7 @@ public class Composite {
     - 外观模式（`Facade`）， 也叫过程模式，外观模式为子系统中的一组接口提供一个一致的界面，此模式定义了一个高层接口，这个接口使得这一子系统更加容易使用
     - 外观模式通过定义一个一致的接口，用以屏蔽内部子系统的细节，使得调用端只需跟这个接口发生调用，而无需关心这个子系统的内部细节
   - 主要解决：降低访问复杂系统的内部子系统时的复杂度，简化客户端之间的接口。
-  - 何时使用： 
+  - 何时使用：
     - 1、客户端不需要知道系统内部的复杂联系，整个系统只需提供一个"接待员"即可。
     - 2、定义系统的入口。
   - 如何解决：客户端不与系统耦合，外观类与系统耦合。
@@ -5552,7 +5552,7 @@ public class Composite {
   - 缺点：不符合开闭原则，如果要改东西很麻烦，继承重写都不合适。
 
 - 使用场景：
-  - 1、为复杂的模块或子系统提供外界访问的模块。 
+  - 1、为复杂的模块或子系统提供外界访问的模块。
   - 2、子系统相对独立。
   - 3、预防调用底层系统带来的风险。
 
@@ -5603,31 +5603,31 @@ public class Composite {
 
    ```java
    public class DVDPlayer {
-   
+
    	// 使用单例模式, 使用饿汉式
    	private static DVDPlayer instance = new DVDPlayer();
-   
+
    	public static DVDPlayer getInstanc() {
    		return instance;
    	}
-   
+
    	public void on() {
    		System.out.println(" dvd on ");
    	}
-   
+
    	public void off() {
    		System.out.println(" dvd off ");
    	}
-   
+
    	public void play() {
    		System.out.println(" dvd is playing ");
    	}
-   
+
    	// ....
    	public void pause() {
    		System.out.println(" dvd pause ..");
    	}
-   	
+
    }
    ```
 
@@ -5635,25 +5635,25 @@ public class Composite {
 
    ```java
    public class Popcorn {
-   
+
    	private static Popcorn instance = new Popcorn();
-   
+
    	public static Popcorn getInstance() {
    		return instance;
    	}
-   
+
    	public void on() {
    		System.out.println(" popcorn on ");
    	}
-   
+
    	public void off() {
    		System.out.println(" popcorn ff ");
    	}
-   
+
    	public void pop() {
    		System.out.println(" popcorn is poping  ");
    	}
-   	
+
    }
    ```
 
@@ -5661,27 +5661,27 @@ public class Composite {
 
    ```java
    public class Projector {
-   
+
    	private static Projector instance = new Projector();
-   
+
    	public static Projector getInstance() {
    		return instance;
    	}
-   
+
    	public void on() {
    		System.out.println(" Projector on ");
    	}
-   
+
    	public void off() {
    		System.out.println(" Projector ff ");
    	}
-   
+
    	public void focus() {
    		System.out.println(" Projector is Projector  ");
    	}
-   
+
    	// ...
-   	
+
    }
    ```
 
@@ -5689,21 +5689,21 @@ public class Composite {
 
    ```java
    public class Screen {
-   
+
    	private static Screen instance = new Screen();
-   
+
    	public static Screen getInstance() {
    		return instance;
    	}
-   
+
    	public void up() {
    		System.out.println(" Screen up ");
    	}
-   
+
    	public void down() {
    		System.out.println(" Screen down ");
    	}
-   
+
    }
    ```
 
@@ -5711,25 +5711,25 @@ public class Composite {
 
    ```java
    public class Stereo {
-   
+
    	private static Stereo instance = new Stereo();
-   
+
    	public static Stereo getInstance() {
    		return instance;
    	}
-   
+
    	public void on() {
    		System.out.println(" Stereo on ");
    	}
-   
+
    	public void off() {
    		System.out.println(" Screen off ");
    	}
-   
+
    	public void up() {
    		System.out.println(" Screen up.. ");
    	}
-   
+
    	// ...
    }
    ```
@@ -5738,25 +5738,25 @@ public class Composite {
 
    ```java
    public class TheaterLight {
-   
+
    	private static TheaterLight instance = new TheaterLight();
-   
+
    	public static TheaterLight getInstance() {
    		return instance;
    	}
-   
+
    	public void on() {
    		System.out.println(" TheaterLight on ");
    	}
-   
+
    	public void off() {
    		System.out.println(" TheaterLight off ");
    	}
-   
+
    	public void dim() {
    		System.out.println(" TheaterLight dim.. ");
    	}
-   
+
    	public void bright() {
    		System.out.println(" TheaterLight bright.. ");
    	}
@@ -5767,7 +5767,7 @@ public class Composite {
 
    ```java
    public class HomeTheaterFacade {
-   
+
    	// 定义各个子系统对象
    	private TheaterLight theaterLight;
    	private Popcorn popcorn;
@@ -5775,7 +5775,7 @@ public class Composite {
    	private Projector projector;
    	private Screen screen;
    	private DVDPlayer dVDPlayer;
-   
+
    	// 构造器
    	public HomeTheaterFacade() {
    		super();
@@ -5786,9 +5786,9 @@ public class Composite {
    		this.screen = Screen.getInstance();
    		this.dVDPlayer = DVDPlayer.getInstanc();
    	}
-   
+
    	// 操作分成 4 步
-       
+
    	public void ready() {
    		popcorn.on();
    		popcorn.pop();
@@ -5798,15 +5798,15 @@ public class Composite {
    		dVDPlayer.on();
    		theaterLight.dim();
    	}
-   
+
    	public void play() {
    		dVDPlayer.play();
    	}
-   
+
    	public void pause() {
    		dVDPlayer.pause();
    	}
-   
+
    	public void end() {
    		popcorn.off();
    		theaterLight.bright();
@@ -5815,7 +5815,7 @@ public class Composite {
    		stereo.off();
    		dVDPlayer.off();
    	}
-   
+
    }
    ```
 
@@ -5823,17 +5823,17 @@ public class Composite {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 这里直接调用。。。很麻烦，也不利于扩展
-           
+
            // 使用外观模式
    		HomeTheaterFacade homeTheaterFacade = new HomeTheaterFacade();
    		homeTheaterFacade.ready();
    		homeTheaterFacade.play();
    		homeTheaterFacade.end();
    	}
-   
+
    }
    ```
 
@@ -5850,41 +5850,41 @@ public class Composite {
 
    ```java
    public class Configuration {
-   
+
        // ...
-       
+
        protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
        protected ObjectFactory objectFactory = new DefaultObjectFactory();
        protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
        protected MapperRegistry mapperRegistry = new MapperRegistry(this);
-       
+
        // ...
-       
+
    	public MetaObject newMetaObject(Object object) {
            return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
        }
-   
+
    	// ...
-       
+
    ```
 
 2. 在 `MetaObject.forObject()` 静态方法中，调用 `MetaObject` 类的构造器创建 `MetaObject` 对象，其具体步骤为判断形参 `object` 的类型，将 `object` 强转为对应类型的对象。
 
    ```java
    public class MetaObject {
-   
+
        private Object originalObject;
        private ObjectWrapper objectWrapper;
        private ObjectFactory objectFactory;
        private ObjectWrapperFactory objectWrapperFactory;
        private ReflectorFactory reflectorFactory;
-   
+
        private MetaObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {
            this.originalObject = object;
            this.objectFactory = objectFactory;
            this.objectWrapperFactory = objectWrapperFactory;
            this.reflectorFactory = reflectorFactory;
-   
+
            if (object instanceof ObjectWrapper) {
                this.objectWrapper = (ObjectWrapper) object;
            } else if (objectWrapperFactory.hasWrapperFor(object)) {
@@ -5897,7 +5897,7 @@ public class Composite {
                this.objectWrapper = new BeanWrapper(this, object);
            }
        }
-   
+
        public static MetaObject forObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {
            if (object == null) {
                return SystemMetaObject.NULL_META_OBJECT;
@@ -5905,7 +5905,7 @@ public class Composite {
                return new MetaObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
            }
        }
-       
+
        // ...
    ```
 
@@ -5929,11 +5929,11 @@ public class Composite {
 - 概述
   - 目的：运用共享技术有效地支持大量细粒度的对象。
   - 主要解决：在有大量对象时，有可能会造成内存溢出，我们把其中共同的部分抽象出来，如果有相同的业务请求，直接返回在内存中已有的对象，避免重新创建。
-  - 何时使用： 
-    - 1、系统中有大量对象。 
-    - 2、这些对象消耗大量内存。 
+  - 何时使用：
+    - 1、系统中有大量对象。
+    - 2、这些对象消耗大量内存。
     - 3、这些对象的状态大部分可以外部化。
-    - 4、这些对象可以按照内蕴状态分为很多组，当把外蕴对象从对象中剔除出来时，每一组对象都可以用一个对象来代替。 
+    - 4、这些对象可以按照内蕴状态分为很多组，当把外蕴对象从对象中剔除出来时，每一组对象都可以用一个对象来代替。
     - 5、系统不依赖于这些对象身份，这些对象是不可分辨的。
   - 如何解决：用唯一标识码判断，如果在内存中有，则返回这个唯一标识码所标识的对象。
   - 关键代码：使用HashMap等创建池
@@ -6013,9 +6013,9 @@ public class Composite {
 
    ```java
    public abstract class WebSite {
-   	
+
    	public abstract void use(User user);// 抽象方法
-   	
+
    }
    ```
 
@@ -6024,20 +6024,20 @@ public class Composite {
    ```java
    //具体网站
    public class ConcreteWebSite extends WebSite {
-   
+
    	// 共享的部分，内部状态
    	private String type = ""; // 网站发布的形式(类型)
-   
+
    	// 构造器
    	public ConcreteWebSite(String type) {
    		this.type = type;
    	}
-   
+
    	@Override
    	public void use(User user) {
    		System.out.println("网站的发布形式为:" + type + " 在使用中 .. 使用者是" + user.getName());
    	}
-   
+
    }
    ```
 
@@ -6046,25 +6046,25 @@ public class Composite {
    ```java
    // 网站工厂类，根据需要返回压一个网站
    public class WebSiteFactory {
-   
+
    	// 集合， 充当池的作用
    	private HashMap<String, ConcreteWebSite> pool = new HashMap<>();
-   
+
    	// 根据网站的类型，返回一个网站, 如果没有就创建一个网站，并放入到池中,并返回
    	public WebSite getWebSiteCategory(String type) {
    		if (!pool.containsKey(type)) {
    			// 就创建一个网站，并放入到池中
    			pool.put(type, new ConcreteWebSite(type));
    		}
-   
+
    		return (WebSite) pool.get(type);
    	}
-   
+
    	// 获取网站分类的总数 (池中有多少个网站类型)
    	public int getWebSiteCount() {
    		return pool.size();
    	}
-   	
+
    }
    ```
 
@@ -6072,22 +6072,22 @@ public class Composite {
 
    ```java
    public class User {
-   
+
    	private String name;
-   
+
    	public User(String name) {
    		super();
    		this.name = name;
    	}
-   
+
    	public String getName() {
    		return name;
    	}
-   
+
    	public void setName(String name) {
    		this.name = name;
    	}
-   
+
    }
    ```
 
@@ -6095,32 +6095,32 @@ public class Composite {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
-   
+
    		// 创建一个工厂类
    		WebSiteFactory factory = new WebSiteFactory();
-   
+
    		// 客户要一个以新闻形式发布的网站
    		WebSite webSite1 = factory.getWebSiteCategory("新闻");
    		webSite1.use(new User("tom"));
-   
+
    		// 客户要一个以博客形式发布的网站
    		WebSite webSite2 = factory.getWebSiteCategory("博客");
    		webSite2.use(new User("jack"));
-   
+
    		// 客户要一个以博客形式发布的网站
    		WebSite webSite3 = factory.getWebSiteCategory("博客");
    		webSite3.use(new User("smith"));
-   
+
    		// 客户要一个以博客形式发布的网站
    		WebSite webSite4 = factory.getWebSiteCategory("博客");
    		webSite4.use(new User("king"));
-   
+
    		System.out.println("网站的分类个数=" + factory.getWebSiteCount());
-   		
+
    	}
-   
+
    }
    ```
 
@@ -6140,7 +6140,7 @@ public class Composite {
 public class FlyWeight {
 
   public static void main(String[] args) {
-    
+
     // 如果 Integer.valueOf(x) x 在 -128 --- 127 直接，就是使用享元模式返回,如果不在该范围类，则仍然 new
 
     // 小结:
@@ -6152,7 +6152,7 @@ public class FlyWeight {
     Integer y = new Integer(127); // 得到 y 实例，类型 Integer
     Integer z = Integer.valueOf(127);// ..
     Integer w = new Integer(127);
-    
+
     System.out.println(x.equals(y)); // 大小，true
     System.out.println(x == y); // false
     System.out.println(x == z); // true
@@ -6185,7 +6185,7 @@ public class FlyWeight {
        static final int low = -128;
        static final int high;
        static final Integer cache[];
-   
+
        static {
            // high value may be configured by property
            int h = 127;
@@ -6202,16 +6202,16 @@ public class FlyWeight {
                }
            }
            high = h;
-   
+
            cache = new Integer[(high - low) + 1];
            int j = low;
            for(int k = 0; k < cache.length; k++)
                cache[k] = new Integer(j++);
-   
+
            // range [-128, 127] must be interned (JLS7 5.1.7)
            assert IntegerCache.high >= 127;
        }
-   
+
        private IntegerCache() {}
    }
    ```
@@ -6246,31 +6246,31 @@ public class FlyWeight {
   - RPC
 
 - 优缺点
-  - 优点： 
+  - 优点：
     - 1、职责清晰。
     - 2、高扩展性。
     - 3、智能化。
   - 缺点：
-    - 1、由于在客户端和真实主题之间增加了代理对象，因此有些类型的代理模式可能会造成请求的处理速度变慢。 
+    - 1、由于在客户端和真实主题之间增加了代理对象，因此有些类型的代理模式可能会造成请求的处理速度变慢。
     - 2、实现代理模式需要额外的工作，有些代理模式的实现非常复杂。
 
 - 使用场景：按职责来划分，通常有以下使用场景：
-  - 1、远程代理。 
+  - 1、远程代理。
   - 2、虚拟代理。
   - 3、Copy-on-Write 代理。
   - 4、保护（Protect or Access）代理。
   - 5、Cache代理。
   - 6、防火墙（Firewall）代理。
-  - 7、同步化（Synchronization）代理。 
+  - 7、同步化（Synchronization）代理。
   - 8、智能引用（Smart Reference）代理。
 
 - 注意事项：
-  - 1、和适配器模式的区别：**适配器模式主要改变所考虑对象的接口，而代理模式不能改变所代理类的接口** 
+  - 1、和适配器模式的区别：**适配器模式主要改变所考虑对象的接口，而代理模式不能改变所代理类的接口**
   - 2、和装饰器模式的区别：**装饰器模式为了增强功能，而代理模式是为了加以控制**
 
 - 主要有两种：
   - 静态代理
-  - 动态代理 
+  - 动态代理
     - `JDK`代理(接口代理)
     - `Cglib`代理(可以在内存动态的创建对象，而不需要实现接口)
 
@@ -6302,9 +6302,9 @@ public class FlyWeight {
    ```java
    //接口
    public interface ITeacherDao {
-   
+
    	void teach(); // 授课的方法
-   	
+
    }
    ```
 
@@ -6312,12 +6312,12 @@ public class FlyWeight {
 
    ```java
    public class TeacherDao implements ITeacherDao {
-   
+
    	@Override
    	public void teach() {
    		System.out.println(" 老师授课中  。。。。。");
    	}
-   
+
    }
    ```
 
@@ -6326,21 +6326,21 @@ public class FlyWeight {
    ```java
    //代理对象,静态代理
    public class TeacherDaoProxy implements ITeacherDao {
-   
+
    	private ITeacherDao target; // 目标对象，通过接口来聚合
-   
+
    	// 构造器
    	public TeacherDaoProxy(ITeacherDao target) {
    		this.target = target;
    	}
-   
+
    	@Override
    	public void teach() {
    		System.out.println("开始代理  完成某些操作。。。。。 ");// 方法
    		target.teach();
    		System.out.println("提交。。。。。");// 方法
    	}
-   
+
    }
    ```
 
@@ -6348,19 +6348,19 @@ public class FlyWeight {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 创建目标对象(被代理对象)
    		TeacherDao teacherDao = new TeacherDao();
-   
+
    		// 创建代理对象, 同时将被代理对象传递给代理对象
    		TeacherDaoProxy teacherDaoProxy = new TeacherDaoProxy(teacherDao);
-   
+
    		// 通过代理对象，调用到被代理对象的方法
    		// 即：执行的是代理对象的方法，代理对象再去调用目标对象的方法
    		teacherDaoProxy.teach();
    	}
-   
+
    }
    ```
 
@@ -6387,11 +6387,11 @@ public class FlyWeight {
    ```java
    //接口
    public interface ITeacherDao {
-   
+
    	void teach(); // 授课方法
-   
+
    	void sayHello(String name);
-   	
+
    }
    ```
 
@@ -6399,17 +6399,17 @@ public class FlyWeight {
 
    ```java
    public class TeacherDao implements ITeacherDao {
-   
+
    	@Override
    	public void teach() {
    		System.out.println(" 老师授课中.... ");
    	}
-   
+
    	@Override
    	public void sayHello(String name) {
    		System.out.println("hello " + name);
    	}
-   
+
    }
    ```
 
@@ -6417,24 +6417,24 @@ public class FlyWeight {
 
    ```java
    public class ProxyFactory {
-   
+
    	// 维护一个目标对象 , Object
    	private Object target;
-   
+
    	// 构造器 ， 对target 进行初始化
    	public ProxyFactory(Object target) {
    		this.target = target;
    	}
-   
+
    	// 给目标对象 生成一个代理对象
    	public Object getProxyInstance() {
-   
+
    		// 说明
    		/*
    		 * public static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h)
-   		 * 
-   		 * 1. ClassLoader loader ： 指定当前目标对象使用的类加载器, 获取加载器的方法固定 
-   		 * 2. Class<?>[] interfaces: 目标对象实现的接口类型，使用泛型方法确认类型 
+   		 *
+   		 * 1. ClassLoader loader ： 指定当前目标对象使用的类加载器, 获取加载器的方法固定
+   		 * 2. Class<?>[] interfaces: 目标对象实现的接口类型，使用泛型方法确认类型
    		 * 3. InvocationHandler h : 事情处理，执行目标对象的方法时，会触发事情处理器方法, 会把当前执行的目标对象方法作为参数传入
    		 */
    		return Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(),
@@ -6454,7 +6454,7 @@ public class FlyWeight {
    					}
    				});
    	}
-   
+
    }
    ```
 
@@ -6462,23 +6462,23 @@ public class FlyWeight {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 创建目标对象
    		ITeacherDao target = new TeacherDao();
-   
+
    		// 给目标对象，创建代理对象, 可以转成 ITeacherDao
    		ITeacherDao proxyInstance = (ITeacherDao) new ProxyFactory(target).getProxyInstance();
-   
+
    		// proxyInstance=class com.sun.proxy.$Proxy0 内存中动态生成了代理对象
    		System.out.println("proxyInstance=" + proxyInstance.getClass());
-   
+
    		// 通过代理对象，调用目标对象的方法
    		proxyInstance.teach();
-   
+
    		proxyInstance.sayHello(" tom ");
    	}
-   
+
    }
    ```
 </details>
@@ -6546,12 +6546,12 @@ public class FlyWeight {
 
    ```java
    public class TeacherDao {
-   
+
    	public String teach() {
    		System.out.println(" 老师授课中  ， 我是cglib代理，不需要实现接口 ");
    		return "hello";
    	}
-   	
+
    }
    ```
 
@@ -6559,15 +6559,15 @@ public class FlyWeight {
 
    ```java
    public class ProxyFactory implements MethodInterceptor {
-   
+
    	// 维护一个目标对象
    	private Object target;
-   
+
    	// 构造器，传入一个被代理的对象
    	public ProxyFactory(Object target) {
    		this.target = target;
    	}
-   
+
    	// 返回一个代理对象: 是 target 对象的代理对象
    	public Object getProxyInstance() {
    		// 1. 创建一个工具类
@@ -6579,7 +6579,7 @@ public class FlyWeight {
    		// 4. 创建子类对象，即代理对象
    		return enhancer.create();
    	}
-   
+
    	// 重写 intercept 方法，会调用目标对象的方法
    	@Override
    	public Object intercept(Object arg0, Method method, Object[] args, MethodProxy arg3) throws Throwable {
@@ -6588,7 +6588,7 @@ public class FlyWeight {
    		System.out.println("Cglib代理模式 ~~ 提交");
    		return returnVal;
    	}
-   
+
    }
    ```
 
@@ -6596,14 +6596,14 @@ public class FlyWeight {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 创建目标对象
    		TeacherDao target = new TeacherDao();
-   		
+
    		// 获取到代理对象，并且将目标对象传递给代理对象
    		TeacherDao proxyInstance = (TeacherDao) new ProxyFactory(target).getProxyInstance();
-   
+
    		// 执行代理对象的方法，触发intecept 方法，从而实现 对目标对象的调用
    		String res = proxyInstance.teach();
    		System.out.println("res=" + res);
@@ -6665,14 +6665,14 @@ public class FlyWeight {
   - Spring IOC容器初始化流程中的的refresh函数（初始化容器，载入资源）
     > 典型的资源类加载处理模型，[跳转](../javaFrame/Spring.md)
 - 优缺点
-  - 优点： 
+  - 优点：
     - 1、封装不变部分，扩展可变部分。
-    - 2、提取公共代码，便于维护。 
+    - 2、提取公共代码，便于维护。
     - 3、行为由父类控制，子类实现。
   - 缺点：
     - 每一个不同的实现都需要一个子类来实现，导致类的个数增加，使得系统更加庞大。
-- 使用场景： 
-  - 1、有多个子类共有的方法，且逻辑相同。 
+- 使用场景：
+  - 1、有多个子类共有的方法，且逻辑相同。
   - 2、重要的、复杂的方法，可以考虑作为模板方法。
 - 注意事项：**为防止恶意操作，一般模板方法都加上 final 关键词**
 - 类图原理
@@ -6706,30 +6706,30 @@ public class FlyWeight {
    ```java
    //抽象类，表示豆浆
    public abstract class SoyaMilk {
-   
+
    	// 模板方法, make , 模板方法可以做成final , 不让子类去覆盖
    	final void make() {
-   
+
    		select();
    		addCondiments();
    		soak();
    		beat();
-   
+
    	}
-   
+
    	// 选材料
    	void select() {
    		System.out.println("第一步：选择好的新鲜黄豆  ");
    	}
-   
+
    	// 添加不同的配料, 抽象方法, 子类具体实现
    	abstract void addCondiments();
-   
+
    	// 浸泡
    	void soak() {
    		System.out.println("第三步， 黄豆和配料开始浸泡， 需要3小时 ");
    	}
-   
+
    	void beat() {
    		System.out.println("第四步：黄豆和配料放到豆浆机去打碎  ");
    	}
@@ -6740,12 +6740,12 @@ public class FlyWeight {
 
    ```java
    public class RedBeanSoyaMilk extends SoyaMilk {
-   
+
    	@Override
    	void addCondiments() {
    		System.out.println(" 加入上好的红豆 ");
    	}
-   
+
    }
    ```
 
@@ -6753,12 +6753,12 @@ public class FlyWeight {
 
    ```java
    public class PeanutSoyaMilk extends SoyaMilk {
-   
+
    	@Override
    	void addCondiments() {
    		System.out.println(" 加入上好的花生 ");
    	}
-   
+
    }
    ```
 
@@ -6766,19 +6766,19 @@ public class FlyWeight {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 制作红豆豆浆
    		System.out.println("----制作红豆豆浆----");
    		SoyaMilk redBeanSoyaMilk = new RedBeanSoyaMilk();
    		redBeanSoyaMilk.make();
-   
+
             // 制作花生豆浆
    		System.out.println("----制作花生豆浆----");
    		SoyaMilk peanutSoyaMilk = new PeanutSoyaMilk();
    		peanutSoyaMilk.make();
    	}
-   
+
    }
    ```
 </details>
@@ -6804,10 +6804,10 @@ public class FlyWeight {
    ```java
    //抽象类，表示豆浆
    public abstract class SoyaMilk {
-   
+
    	// 模板方法, make , 模板方法可以做成final , 不让子类去覆盖.
    	final void make() {
-   
+
    		select();
    		if (customerWantCondiments()) {
    			addCondiments();
@@ -6815,24 +6815,24 @@ public class FlyWeight {
    		soak();
    		beat();
    	}
-   
+
    	// 选材料
    	void select() {
    		System.out.println("第一步：选择好的新鲜黄豆  ");
    	}
-   
+
    	// 添加不同的配料， 抽象方法, 子类具体实现
    	abstract void addCondiments();
-   
+
    	// 浸泡
    	void soak() {
    		System.out.println("第三步， 黄豆和配料开始浸泡， 需要3小时 ");
    	}
-   
+
    	void beat() {
    		System.out.println("第四步：黄豆和配料放到豆浆机去打碎  ");
    	}
-   
+
    	// 钩子方法，决定是否需要添加配料
    	boolean customerWantCondiments() {
    		return true;
@@ -6844,17 +6844,17 @@ public class FlyWeight {
 
    ```java
    public class PureSoyaMilk extends SoyaMilk{
-   
+
    	@Override
    	void addCondiments() {
    		//空实现
    	}
-   	
+
    	@Override
    	boolean customerWantCondiments() {
    		return false;
    	}
-    
+
    }
    ```
 
@@ -6862,24 +6862,24 @@ public class FlyWeight {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 制作红豆豆浆
    		System.out.println("----制作红豆豆浆----");
    		SoyaMilk redBeanSoyaMilk = new RedBeanSoyaMilk();
    		redBeanSoyaMilk.make();
-   
+
    		// 制作花生豆浆
    		System.out.println("----制作花生豆浆----");
    		SoyaMilk peanutSoyaMilk = new PeanutSoyaMilk();
    		peanutSoyaMilk.make();
-   
+
    		// 制作纯豆浆
    		System.out.println("----制作纯豆浆----");
    		SoyaMilk pureSoyaMilk = new PureSoyaMilk();
    		pureSoyaMilk.make();
    	}
-   
+
    }
    ```
 
@@ -6911,61 +6911,61 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
    public abstract class AbstractApplicationContext extends DefaultResourceLoader
    		implements ConfigurableApplicationContext, DisposableBean {
        // ...
-       
+
    	@Override
    	public void refresh() throws BeansException, IllegalStateException {
    		synchronized (this.startupShutdownMonitor) {
    			// Prepare this context for refreshing.
    			prepareRefresh();
-   
+
    			// Tell the subclass to refresh the internal bean factory.
    			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
-   
+
    			// Prepare the bean factory for use in this context.
    			prepareBeanFactory(beanFactory);
-   
+
    			try {
    				// Allows post-processing of the bean factory in context subclasses.
    				postProcessBeanFactory(beanFactory);
-   
+
    				// Invoke factory processors registered as beans in the context.
    				invokeBeanFactoryPostProcessors(beanFactory);
-   
+
    				// Register bean processors that intercept bean creation.
    				registerBeanPostProcessors(beanFactory);
-   
+
    				// Initialize message source for this context.
    				initMessageSource();
-   
+
    				// Initialize event multicaster for this context.
    				initApplicationEventMulticaster();
-   
+
    				// Initialize other special beans in specific context subclasses.
    				onRefresh();
-   
+
    				// Check for listener beans and register them.
    				registerListeners();
-   
+
    				// Instantiate all remaining (non-lazy-init) singletons.
    				finishBeanFactoryInitialization(beanFactory);
-   
+
    				// Last step: publish corresponding event.
    				finishRefresh();
    			}
-   
+
    			catch (BeansException ex) {
    				// Destroy already created singletons to avoid dangling resources.
    				destroyBeans();
-   
+
    				// Reset 'active' flag.
    				cancelRefresh(ex);
-   
+
    				// Propagate exception to caller.
    				throw ex;
    			}
    		}
    	}
-   
+
        // ...
    ```
 
@@ -6989,9 +6989,9 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 
 ```java
 public abstract class AbstractRefreshableApplicationContext extends AbstractApplicationContext {
-    
+
     // ...
-    
+
     @Override
 	public final ConfigurableListableBeanFactory getBeanFactory() {
 		synchronized (this.beanFactoryMonitor) {
@@ -7019,8 +7019,8 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
     - 另外也有并不知道请求的接收者是谁， 也不知道被请求的操作是哪个的情况
   - 如何解决：通过调用者调用接受者执行命令，顺序：调用者→命令→接受者。
   - 关键代码：定义三个角色：
-    - 1、received 真正的命令执行对象 
-    - 2、Command 
+    - 1、received 真正的命令执行对象
+    - 2、Command
     - 3、invoker 使用命令对象的入口
 
 - 应用实例：
@@ -7077,13 +7077,13 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    //创建命令接口
    public interface Command {
-   
+
    	// 执行动作(操作)
    	public void execute();
-   
+
    	// 撤销动作(操作)
    	public void undo();
-   	
+
    }
    ```
 
@@ -7091,27 +7091,27 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class LightOnCommand implements Command {
-   
+
    	// 聚合LightReceiver
    	LightReceiver light;
-   
+
    	// 构造器
    	public LightOnCommand(LightReceiver light) {
    		this.light = light;
    	}
-   
+
    	@Override
    	public void execute() {
    		// 调用接收者的方法
    		light.on();
    	}
-   
+
    	@Override
    	public void undo() {
    		// 调用接收者的方法
    		light.off();
    	}
-   
+
    }
    ```
 
@@ -7119,21 +7119,21 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class LightOffCommand implements Command {
-   
+
    	// 聚合LightReceiver
    	LightReceiver light;
-   
+
    	// 构造器
    	public LightOffCommand(LightReceiver light) {
    		this.light = light;
    	}
-   
+
    	@Override
    	public void execute() {
    		// 调用接收者的方法
    		light.off();
    	}
-   
+
    	@Override
    	public void undo() {
    		// 调用接收者的方法
@@ -7146,15 +7146,15 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class LightReceiver {
-   
+
    	public void on() {
    		System.out.println(" 电灯打开了.. ");
    	}
-   
+
    	public void off() {
    		System.out.println(" 电灯关闭了.. ");
    	}
-   	
+
    }
    ```
 
@@ -7162,21 +7162,21 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class TVOnCommand implements Command {
-   
+
    	// 聚合TVReceiver
    	TVReceiver tv;
-   
+
    	// 构造器
    	public TVOnCommand(TVReceiver tv) {
    		this.tv = tv;
    	}
-   
+
    	@Override
    	public void execute() {
    		// 调用接收者的方法
    		tv.on();
    	}
-   
+
    	@Override
    	public void undo() {
    		// 调用接收者的方法
@@ -7189,21 +7189,21 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class TVOffCommand implements Command {
-   
+
    	// 聚合TVReceiver
    	TVReceiver tv;
-   
+
    	// 构造器
    	public TVOffCommand(TVReceiver tv) {
    		this.tv = tv;
    	}
-   
+
    	@Override
    	public void execute() {
    		// 调用接收者的方法
    		tv.off();
    	}
-   
+
    	@Override
    	public void undo() {
    		// 调用接收者的方法
@@ -7216,15 +7216,15 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class TVReceiver {
-   
+
    	public void on() {
    		System.out.println(" 电视机打开了.. ");
    	}
-   
+
    	public void off() {
    		System.out.println(" 电视机关闭了.. ");
    	}
-   	
+
    }
    ```
 
@@ -7234,17 +7234,17 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    // 没有任何命令，即空执行: 用于初始化每个按钮, 当调用空命令时，对象什么都不做
    // 其实，这样是一种设计模式, 可以省掉对空判断
    public class NoCommand implements Command {
-   
+
    	@Override
    	public void execute() {
-   
+
    	}
-   
+
    	@Override
    	public void undo() {
-   
+
    	}
-   
+
    }
    ```
 
@@ -7252,31 +7252,31 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class RemoteController {
-   
+
    	// 开 按钮的命令数组
    	Command[] onCommands;
    	Command[] offCommands;
-   
+
    	// 执行撤销的命令
    	Command undoCommand;
-   
+
    	// 构造器，完成对按钮初始化
    	public RemoteController() {
    		onCommands = new Command[5];
    		offCommands = new Command[5];
-   
+
    		for (int i = 0; i < 5; i++) {
    			onCommands[i] = new NoCommand(); // 初始化时，设置为空操作，避免空指针判断
    			offCommands[i] = new NoCommand(); // 初始化时，设置为空操作，避免空指针判断
    		}
    	}
-   
+
    	// 给我们的按钮设置你需要的命令
    	public void setCommand(int no, Command onCommand, Command offCommand) {
    		onCommands[no] = onCommand;
    		offCommands[no] = offCommand;
    	}
-   
+
    	// 按下开按钮
    	public void onButtonWasPushed(int no) { // no 0
    		// 找到你按下的开的按钮， 并调用对应方法
@@ -7284,7 +7284,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		// 记录这次的操作，用于撤销
    		undoCommand = onCommands[no];
    	}
-   
+
    	// 按下关按钮
    	public void offButtonWasPushed(int no) { // no 0
    		// 找到你按下的关的按钮， 并调用对应方法
@@ -7292,7 +7292,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		// 记录这次的操作，用于撤销
    		undoCommand = offCommands[no];
    	}
-   
+
    	// 按下撤销按钮
    	public void undoButtonWasPushed() {
    		undoCommand.undo();
@@ -7304,50 +7304,50 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
     ```java
     public class Client {
-    
+
     	public static void main(String[] args) {
-    
+
     		// 使用命令设计模式，完成通过遥控器，对电灯的操作
     		// 创建电灯的对象(接受者)
     		LightReceiver lightReceiver = new LightReceiver();
-    
+
     		// 创建电灯相关的开关命令
     		LightOnCommand lightOnCommand = new LightOnCommand(lightReceiver);
     		LightOffCommand lightOffCommand = new LightOffCommand(lightReceiver);
-    
+
     		// 需要一个遥控器
     		RemoteController remoteController = new RemoteController();
-    
+
     		// 给我们的遥控器设置命令, 比如 no = 0 是电灯的开和关的操作
     		remoteController.setCommand(0, lightOnCommand, lightOffCommand);
-    
+
     		System.out.println("--------按下灯的开按钮-----------");
     		remoteController.onButtonWasPushed(0);
     		System.out.println("--------按下灯的关按钮-----------");
     		remoteController.offButtonWasPushed(0);
     		System.out.println("--------按下撤销按钮-----------");
     		remoteController.undoButtonWasPushed();
-    
+
     		// 使用命令设计模式，完成通过遥控器，对电视机的操作
     		System.out.println("=========使用遥控器操作电视机==========");
-    
+
     		TVReceiver tvReceiver = new TVReceiver();
-    
+
     		TVOffCommand tvOffCommand = new TVOffCommand(tvReceiver);
     		TVOnCommand tvOnCommand = new TVOnCommand(tvReceiver);
-    
+
     		// 给我们的遥控器设置命令, 比如 no = 1 是电视机的开和关的操作
     		remoteController.setCommand(1, tvOnCommand, tvOffCommand);
-    
+
     		System.out.println("--------按下电视机的开按钮-----------");
     		remoteController.onButtonWasPushed(1);
     		System.out.println("--------按下电视机的关按钮-----------");
     		remoteController.offButtonWasPushed(1);
     		System.out.println("--------按下撤销按钮-----------");
     		remoteController.undoButtonWasPushed();
-    
+
     	}
-    
+
     }
     ```
 
@@ -7359,9 +7359,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public interface StatementCallback<T> {
-   
+
    	T doInStatement(Statement stmt) throws SQLException, DataAccessException;
-   
+
    }
    ```
 
@@ -7369,9 +7369,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
-   
+
        // ...
-   
+
    	@Override
    	public <T> T query(final String sql, final ResultSetExtractor<T> rse) throws DataAccessException {
    		Assert.notNull(sql, "SQL must not be null");
@@ -7402,7 +7402,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		}
    		return execute(new QueryStatementCallback());
    	}
-       
+
        // ...
    ```
 
@@ -7410,13 +7410,13 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
-   
+
        // ...
-       
+
    	@Override
    	public <T> T execute(StatementCallback<T> action) throws DataAccessException {
    		Assert.notNull(action, "Callback object must not be null");
-   
+
    		Connection con = DataSourceUtils.getConnection(getDataSource());
    		Statement stmt = null;
    		try {
@@ -7449,7 +7449,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    			DataSourceUtils.releaseConnection(con, getDataSource());
    		}
    	}
-       
+
        // ...
    ```
 
@@ -7487,23 +7487,23 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 - 应用实例：您在朋友家做客，您是访问者，朋友接受您的访问，您通过朋友的描述，然后对朋友的描述做出一个判断，这就是访问者模式。
 
 - 优缺点
-  - 优点： 
-    - 1、符合单一职责原则。 
-    - 2、优秀的扩展性。 
+  - 优点：
+    - 1、符合单一职责原则。
+    - 2、优秀的扩展性。
     - 3、灵活性。
   - 缺点：
     - 1、具体元素对访问者公布细节，违反了迪米特原则。
-    - 2、具体元素变更比较困难。 
+    - 2、具体元素变更比较困难。
     - 3、违反了依赖倒置原则，依赖了具体类，没有依赖抽象。
 
 - 使用场景：
-  - 1、对象结构中对象对应的类很少改变，但经常需要在此对象结构上定义新的操作。 
+  - 1、对象结构中对象对应的类很少改变，但经常需要在此对象结构上定义新的操作。
   - 2、需要对一个对象结构中的对象进行很多不同的并且不相关的操作，而需要避免让这些操作"污染"这些对象的类，也不希望在增加新操作时修改这些类。
 
 - 注意事项：访问者可以对功能进行统一，可以做报表、UI、拦截器与过滤器。
 
 - 原理类图
- 
+
   1. `Visitor` 是抽象访问者，定义访问者的行为规范
   2. `ConcreteVisitor` ：是一个具体的访问者，继承(或实现) `Visitor`，实现 `Visitor` 中定义的每个方法，实现具体的行为逻辑
   3. `Element` 定义一个`accept` 方法，用于接收一个访问者对象(`Visitor` 的具体实现类)
@@ -7544,10 +7544,10 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public abstract class Action {
-   
+
    	// 得到观众的评价
    	public abstract void getResult(Person person);
-   
+
    }
    ```
 
@@ -7555,12 +7555,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class Success extends Action {
-   
+
    	@Override
    	public void getResult(Person person) {
    		System.out.println(person.gender + "给的评价该歌手很成功 !");
    	}
-   
+
    }
    ```
 
@@ -7568,12 +7568,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class Fail extends Action {
-   
+
    	@Override
    	public void getResult(Person person) {
    		System.out.println(person.gender + "给的评价该歌手失败 !");
    	}
-   
+
    }
    ```
 
@@ -7581,12 +7581,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class Wait extends Action {
-   
+
    	@Override
    	public void getResult(Person person) {
    		System.out.println(person.gender + "给的评价是该歌手待定 ..");
    	}
-   
+
    }
    ```
 
@@ -7594,12 +7594,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public abstract class Person {
-   	
+
    	String gender;
-   
+
    	// 提供一个方法，让访问者可以访问
    	public abstract void accept(Action action);
-   
+
    }
    ```
 
@@ -7610,16 +7610,16 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    //1. 这里我们使用到了双分派, 即首先在客户端程序中，将具体状态作为参数传递Man中(第一次分派)
    //2. 然后Man 类调用作为参数的 "具体方法" 中方法getResult, 同时将自己(this)作为参数传入，完成第二次的分派
    public class Man extends Person {
-   
+
    	public Man() {
    		gender = "男性";
    	}
-   
+
    	@Override
    	public void accept(Action action) {
    		action.getResult(this);
    	}
-   
+
    }
    ```
 
@@ -7630,16 +7630,16 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    //1. 这里我们使用到了双分派, 即首先在客户端程序中，将具体状态作为参数传递Woman中(第一次分派)
    //2. 然后Woman 类调用作为参数的 "具体方法" 中方法getResult, 同时将自己(this)作为参数传入，完成第二次的分派
    public class Woman extends Person{
-   
+
    	public Woman() {
    		gender = "女性";
    	}
-   	
+
    	@Override
    	public void accept(Action action) {
    		action.getResult(this);
    	}
-   
+
    }
    ```
 
@@ -7648,20 +7648,20 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    //数据结构，管理很多人（Man , Woman）
    public class ObjectStructure {
-   
+
    	// 维护了一个集合
    	private List<Person> persons = new LinkedList<>();
-   
+
    	// 增加到list
    	public void attach(Person p) {
    		persons.add(p);
    	}
-   
+
    	// 移除
    	public void detach(Person p) {
    		persons.remove(p);
    	}
-   
+
    	// 显示测评情况
    	public void display(Action action) {
    		for (Person p : persons) {
@@ -7675,29 +7675,29 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 创建ObjectStructure
    		ObjectStructure objectStructure = new ObjectStructure();
-   
+
    		objectStructure.attach(new Man());
    		objectStructure.attach(new Woman());
-   
+
    		// 成功
    		Success success = new Success();
    		objectStructure.display(success);
-   
+
    		// 失败
    		System.out.println("===============");
    		Fail fail = new Fail();
    		objectStructure.display(fail);
-   
+
    		// 待定
    		System.out.println("=======给的是待定的测评========");
    		Wait wait = new Wait();
    		objectStructure.display(wait);
    	}
-   
+
    }
    ```
 
@@ -7729,15 +7729,15 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
 - 优缺点
   - 优点：
-    - 1、它支持以不同的方式遍历一个聚合对象。 
-    - 2、迭代器简化了聚合类。 
-    - 3、在同一个聚合上可以有多个遍历。 
+    - 1、它支持以不同的方式遍历一个聚合对象。
+    - 2、迭代器简化了聚合类。
+    - 3、在同一个聚合上可以有多个遍历。
     - 4、在迭代器模式中，增加新的聚合类和迭代器类都很方便，无须修改原有代码。
 
   - 缺点：由于迭代器模式将存储数据和遍历数据的职责分离，增加新的聚合类需要对应增加新的迭代器类，类的个数成对增加，这在一定程度上增加了系统的复杂性。
 
-- 使用场景： 
-  - 1、访问一个聚合对象的内容而无须暴露它的内部表示。 
+- 使用场景：
+  - 1、访问一个聚合对象的内容而无须暴露它的内部表示。
   - 2、需要为聚合对象提供多种遍历方式。
   - 3、为遍历不同的聚合结构提供一个统一的接口。
 
@@ -7785,31 +7785,31 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    //系
    public class Department {
-   
+
    	private String name;
    	private String desc;
-   
+
    	public Department(String name, String desc) {
    		this.name = name;
    		this.desc = desc;
    	}
-   
+
    	public String getName() {
    		return name;
    	}
-   
+
    	public void setName(String name) {
    		this.name = name;
    	}
-   
+
    	public String getDesc() {
    		return desc;
    	}
-   
+
    	public void setDesc(String desc) {
    		this.desc = desc;
    	}
-   
+
    }
    ```
 
@@ -7817,15 +7817,15 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class ComputerCollegeIterator implements Iterator {
-   
+
    	// 这里我们需要Department 是以怎样的方式存放=>数组
    	Department[] departments;
    	int position = 0; // 遍历的位置
-   
+
    	public ComputerCollegeIterator(Department[] departments) {
    		this.departments = departments;
    	}
-   
+
    	// 判断是否还有下一个元素
    	@Override
    	public boolean hasNext() {
@@ -7835,20 +7835,20 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    			return true;
    		}
    	}
-   
+
    	@Override
    	public Object next() {
    		Department department = departments[position];
    		position += 1;
    		return department;
    	}
-   
+
    	// 删除的方法，默认空实现
    	@Override
    	public void remove() {
-   
+
    	}
-   
+
    }
    ```
 
@@ -7856,14 +7856,14 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class InfoColleageIterator implements Iterator {
-   
+
    	List<Department> departmentList; // 信息工程学院是以List方式存放系
    	int index = -1;// 索引
-   
+
    	public InfoColleageIterator(List<Department> departmentList) {
    		this.departmentList = departmentList;
    	}
-   
+
    	// 判断list中还有没有下一个元素
    	@Override
    	public boolean hasNext() {
@@ -7874,18 +7874,18 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    			return true;
    		}
    	}
-   
+
    	@Override
    	public Object next() {
    		return departmentList.get(index);
    	}
-   
+
    	// 空实现remove
    	@Override
    	public void remove() {
-   
+
    	}
-   
+
    }
    ```
 
@@ -7893,15 +7893,15 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public interface College {
-   
+
    	public String getName();
-   
+
    	// 增加系的方法
    	public void addDepartment(String name, String desc);
-   
+
    	// 返回一个迭代器,遍历
    	public Iterator createIterator();
-   	
+
    }
    ```
 
@@ -7909,10 +7909,10 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class ComputerCollege implements College {
-   
+
    	Department[] departments;
    	int numOfDepartment = 0;// 保存当前数组的对象个数
-   
+
    	public ComputerCollege() {
    		departments = new Department[5];
    		addDepartment("Java专业", " Java专业 ");
@@ -7920,24 +7920,24 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		addDepartment("大数据专业", " 大数据专业 ");
    		numOfDepartment = 3;
    	}
-   
+
    	@Override
    	public String getName() {
    		return "计算机学院";
    	}
-   
+
    	@Override
    	public void addDepartment(String name, String desc) {
    		Department department = new Department(name, desc);
    		departments[numOfDepartment] = department;
    		numOfDepartment += 1;
    	}
-   
+
    	@Override
    	public Iterator createIterator() {
    		return new ComputerCollegeIterator(departments);
    	}
-   
+
    }
    ```
 
@@ -7945,32 +7945,32 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class InfoCollege implements College {
-   
+
    	List<Department> departmentList;
-   
+
    	public InfoCollege() {
    		departmentList = new ArrayList<Department>();
    		addDepartment("信息安全专业", " 信息安全专业 ");
    		addDepartment("网络安全专业", " 网络安全专业 ");
    		addDepartment("服务器安全专业", " 服务器安全专业 ");
    	}
-   
+
    	@Override
    	public String getName() {
    		return "信息工程学院";
    	}
-   
+
    	@Override
    	public void addDepartment(String name, String desc) {
    		Department department = new Department(name, desc);
    		departmentList.add(department);
    	}
-   
+
    	@Override
    	public Iterator createIterator() {
    		return new InfoColleageIterator(departmentList);
    	}
-   
+
    }
    ```
 
@@ -7978,19 +7978,19 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class OutPutImpl {
-   
+
    	// 学院集合
    	List<College> collegeList;
-   
+
    	public OutPutImpl(List<College> collegeList) {
    		this.collegeList = collegeList;
    	}
-   
+
    	// 遍历所有学院,然后调用printDepartment 输出各个学院的系
    	public void printCollege() {
    		// 从collegeList 取出所有学院, Java 中的 List 已经实现Iterator
    		Iterator<College> iterator = collegeList.iterator();
-   
+
    		while (iterator.hasNext()) {
    			// 取出一个学院
    			College college = iterator.next();
@@ -7998,7 +7998,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    			printDepartment(college.createIterator()); // 得到对应迭代器
    		}
    	}
-   
+
    	// 输出学院的系
    	public void printDepartment(Iterator iterator) {
    		while (iterator.hasNext()) {
@@ -8006,7 +8006,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    			System.out.println(d.getName());
    		}
    	}
-   
+
    }
    ```
 
@@ -8014,21 +8014,21 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 创建学院
    		List<College> collegeList = new ArrayList<College>();
-   
+
    		ComputerCollege computerCollege = new ComputerCollege();
    		InfoCollege infoCollege = new InfoCollege();
-   
+
    		collegeList.add(computerCollege);
    		collegeList.add(infoCollege);
-   
+
    		OutPutImpl outPutImpl = new OutPutImpl(collegeList);
    		outPutImpl.printCollege();
    	}
-   
+
    }
    ```
 
@@ -8052,21 +8052,21 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public interface Iterator<E> {
-       
+
        boolean hasNext();
-   
+
        E next();
-   
+
        default void remove() {
            throw new UnsupportedOperationException("remove");
        }
-   
+
        default void forEachRemaining(Consumer<? super E> action) {
            Objects.requireNonNull(action);
            while (hasNext())
                action.accept(next());
        }
-       
+
    }
    ```
 
@@ -8074,11 +8074,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public interface List<E> extends Collection<E> {
-       
+
        // ...
-       
+
        Iterator<E> iterator();
-       
+
        // ...
    ```
 
@@ -8087,13 +8087,13 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    public class ArrayList<E> extends AbstractList<E>
            implements List<E>, RandomAccess, Cloneable, java.io.Serializable
-       
+
        // ...
-       
+
        public Iterator<E> iterator() {
            return new Itr();
-       }    
-      
+       }
+
        // ...
    ```
 
@@ -8104,11 +8104,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
        int cursor;       // index of next element to return
        int lastRet = -1; // index of last element returned; -1 if no such
        int expectedModCount = modCount;
-   
+
        public boolean hasNext() {
            return cursor != size;
        }
-   
+
        @SuppressWarnings("unchecked")
        public E next() {
            checkForComodification();
@@ -8121,12 +8121,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
            cursor = i + 1;
            return (E) elementData[lastRet = i];
        }
-   
+
        public void remove() {
            if (lastRet < 0)
                throw new IllegalStateException();
            checkForComodification();
-   
+
            try {
                ArrayList.this.remove(lastRet);
                cursor = lastRet;
@@ -8136,7 +8136,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
                throw new ConcurrentModificationException();
            }
        }
-   
+
        @Override
        @SuppressWarnings("unchecked")
        public void forEachRemaining(Consumer<? super E> consumer) {
@@ -8158,7 +8158,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
            lastRet = i - 1;
            checkForComodification();
        }
-   
+
        final void checkForComodification() {
            if (modCount != expectedModCount)
                throw new ConcurrentModificationException();
@@ -8178,12 +8178,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
   - 关键代码：在抽象类里有一个 ArrayList 存放观察者们。
 
 - 优缺点
-  - 优点： 
+  - 优点：
     - 1、观察者和被观察者是抽象耦合的。
     - 2、建立一套触发机制。
   - 缺点：
-    - 1、如果一个被观察者对象有很多的直接和间接的观察者的话，将所有的观察者都通知到会花费很多时间。 
-    - 2、如果在观察者和观察目标之间有循环依赖的话，观察目标会触发它们之间进行循环调用，可能导致系统崩溃。 
+    - 1、如果一个被观察者对象有很多的直接和间接的观察者的话，将所有的观察者都通知到会花费很多时间。
+    - 2、如果在观察者和观察目标之间有循环依赖的话，观察目标会触发它们之间进行循环调用，可能导致系统崩溃。
     - 3、观察者模式没有相应的机制让观察者知道所观察的目标对象是怎么发生变化的，而仅仅只是知道观察目标发生了变化。
 
 - 使用场景：
@@ -8194,7 +8194,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
 - 注意事项：
   - 1、JAVA 中已经有了对观察者模式的支持类。
-  - 2、避免循环引用。 
+  - 2、避免循环引用。
   - 3、如果顺序执行，某一观察者错误会导致系统卡壳，一般采用异步方式。
 
 - 原理说明
@@ -8251,7 +8251,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    	private float temperature;
    	private float pressure;
    	private float humidity;
-   
+
    	// 更新 天气情况，是由 WeatherData 来调用，我使用推送模式
    	public void update(float temperature, float pressure, float humidity) {
    		this.temperature = temperature;
@@ -8259,7 +8259,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		this.humidity = humidity;
    		display();
    	}
-   
+
    	// 显示
    	public void display() {
    		System.out.println("***Today mTemperature: " + temperature + "***");
@@ -8273,7 +8273,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    /**
-    * 1. 包含最新的天气情况信息 
+    * 1. 包含最新的天气情况信息
     * 2. 含有 CurrentConditions 对象
     * 3. 当数据有更新时，就主动的调用   CurrentConditions对象update方法(含 display), 这样他们（接入方）就看到最新的信息
     *
@@ -8283,28 +8283,28 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    	private float pressure;
    	private float humidity;
    	private CurrentConditions currentConditions;
-   	
+
    	public WeatherData(CurrentConditions currentConditions) {
    		this.currentConditions = currentConditions;
    	}
-   
+
    	public float getTemperature() {
    		return temperatrue;
    	}
-   
+
    	public float getPressure() {
    		return pressure;
    	}
-   
+
    	public float getHumidity() {
    		return humidity;
    	}
-   
+
    	public void dataChange() {
    		// 调用 接入方的 update
    		currentConditions.update(getTemperature(), getPressure(), getHumidity());
    	}
-   
+
    	// 当数据有更新时，就调用 setData
    	public void setData(float temperature, float pressure, float humidity) {
    		this.temperatrue = temperature;
@@ -8325,14 +8325,14 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		CurrentConditions currentConditions = new CurrentConditions();
    		// 创建 WeatherData 并将 接入方 currentConditions 传递到 WeatherData中
    		WeatherData weatherData = new WeatherData(currentConditions);
-   
+
    		// 更新天气情况
    		weatherData.setData(30, 150, 40);
-   
+
    		// 天气情况变化
    		System.out.println("============天气情况变化=============");
    		weatherData.setData(40, 160, 20);
-   
+
    	}
    }
    ```
@@ -8361,9 +8361,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    //观察者接口，有观察者来实现
    public interface Observer {
-   
+
    	public void update(float temperature, float pressure, float humidity);
-   
+
    }
    ```
 
@@ -8371,12 +8371,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class CurrentConditions implements Observer {
-   
+
    	// 温度，气压，湿度
    	private float temperature;
    	private float pressure;
    	private float humidity;
-   
+
    	// 更新 天气情况，是由 WeatherData 来调用，我使用推送模式
    	public void update(float temperature, float pressure, float humidity) {
    		this.temperature = temperature;
@@ -8384,7 +8384,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		this.humidity = humidity;
    		display();
    	}
-   
+
    	// 显示
    	public void display() {
    		System.out.println("***Today mTemperature: " + temperature + "***");
@@ -8398,12 +8398,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class BaiduSite implements Observer {
-   
+
    	// 温度，气压，湿度
    	private float temperature;
    	private float pressure;
    	private float humidity;
-   
+
    	// 更新 天气情况，是由 WeatherData 来调用，我使用推送模式
    	public void update(float temperature, float pressure, float humidity) {
    		this.temperature = temperature;
@@ -8411,7 +8411,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		this.humidity = humidity;
    		display();
    	}
-   
+
    	// 显示
    	public void display() {
    		System.out.println("===百度网站====");
@@ -8419,22 +8419,22 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		System.out.println("***百度网站 气压: " + pressure + "***");
    		System.out.println("***百度网站 湿度: " + humidity + "***");
    	}
-   
+
    }
    ```
 
 4. `Subject`：主题的抽象类，定义了操作观察者的规范，有添加、移除、通知操作者，通过调用 `registerObserver()` 方法订阅该主题
 
    ```java
-   //接口, 让WeatherData 来实现 
+   //接口, 让WeatherData 来实现
    public interface Subject {
-   
+
    	public void registerObserver(Observer o);
-   
+
    	public void removeObserver(Observer o);
-   
+
    	public void notifyObservers();
-   	
+
    }
    ```
 
@@ -8443,7 +8443,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    /**
     * 类是核心
-    * 1. 包含最新的天气情况信息 
+    * 1. 包含最新的天气情况信息
     * 2. 含有 观察者集合，使用ArrayList管理
     * 3. 当数据有更新时，就主动通知所有的（接入方）就看到最新的信息
     * @author Administrator
@@ -8455,23 +8455,23 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    	private float humidity;
    	// 观察者集合
    	private ArrayList<Observer> observers;
-   
+
    	public WeatherData() {
    		observers = new ArrayList<Observer>();
    	}
-   
+
    	public float getTemperature() {
    		return temperatrue;
    	}
-   
+
    	public float getPressure() {
    		return pressure;
    	}
-   
+
    	public float getHumidity() {
    		return humidity;
    	}
-   
+
    	// 当数据有更新时，就调用 setData
    	public void setData(float temperature, float pressure, float humidity) {
    		this.temperatrue = temperature;
@@ -8480,13 +8480,13 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		// 调用notifyObservers， 将最新的信息 推送给观察者
    		notifyObservers();
    	}
-   
+
    	// 注册一个观察者
    	@Override
    	public void registerObserver(Observer o) {
    		observers.add(o);
    	}
-   
+
    	// 移除一个观察者
    	@Override
    	public void removeObserver(Observer o) {
@@ -8494,7 +8494,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    			observers.remove(o);
    		}
    	}
-   
+
    	// 遍历所有的观察者，并通知
    	@Override
    	public void notifyObservers() {
@@ -8509,31 +8509,31 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// TODO Auto-generated method stub
    		// 创建一个WeatherData
    		WeatherData weatherData = new WeatherData();
-   
+
    		// 创建观察者
    		CurrentConditions currentConditions = new CurrentConditions();
    		BaiduSite baiduSite = new BaiduSite();
-   
+
    		// 注册到weatherData
    		weatherData.registerObserver(currentConditions);
    		weatherData.registerObserver(baiduSite);
-   
+
    		// 测试
    		System.out.println("通知各个注册的观察者, 看看信息");
    		weatherData.setData(10f, 100f, 30.3f);
-   
+
    		weatherData.removeObserver(currentConditions);
    		// 测试
    		System.out.println();
    		System.out.println("通知各个注册的观察者, 看看信息");
    		weatherData.setData(10f, 100f, 30.3f);
    	}
-   
+
    }
    ```
 
@@ -8561,11 +8561,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    public class Observable {
        private boolean changed = false;
        private Vector<Observer> obs;
-   
+
        public Observable() {
            obs = new Vector<>();
        }
-   
+
        public synchronized void addObserver(Observer o) {
            if (o == null)
                throw new NullPointerException();
@@ -8576,41 +8576,41 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
        public synchronized void deleteObserver(Observer o) {
            obs.removeElement(o);
        }
-   
+
        public void notifyObservers() {
            notifyObservers(null);
        }
-   
+
        public void notifyObservers(Object arg) {
            Object[] arrLocal;
-   
+
            synchronized (this) {
                if (!changed)
                    return;
                arrLocal = obs.toArray();
                clearChanged();
            }
-   
+
            for (int i = arrLocal.length-1; i>=0; i--)
                ((Observer)arrLocal[i]).update(this, arg);
        }
-   
+
        public synchronized void deleteObservers() {
            obs.removeAllElements();
        }
-   
+
        protected synchronized void setChanged() {
            changed = true;
        }
-   
+
        protected synchronized void clearChanged() {
            changed = false;
        }
-   
+
        public synchronized boolean hasChanged() {
            return changed;
        }
-   
+
        public synchronized int countObservers() {
            return obs.size();
        }
@@ -8635,19 +8635,19 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
   - 何时使用：多个类相互耦合，形成了网状结构。
   - 如何解决：将上述网状结构分离为星型结构。
   - 关键代码：对象 Colleague 之间的通信封装到一个类中单独处理。
-  - 应用实例： 
-    - 1、机场调度系统。 
+  - 应用实例：
+    - 1、机场调度系统。
     - 2、MVC 框架，其中C（控制器）就是 M（模型）和 V（视图）的中介者。
 
 - 优缺点
   - 优点：
-    - 1、降低了类的复杂度，将一对多转化成了一对一。 
-    - 2、各个类之间的解耦。 
+    - 1、降低了类的复杂度，将一对多转化成了一对一。
+    - 2、各个类之间的解耦。
     - 3、符合迪米特原则。
   - 缺点：中介者会庞大，变得复杂难以维护。
 
-- 使用场景： 
-  - 1、系统中对象之间存在比较复杂的引用关系，导致它们之间的依赖关系结构混乱而且难以复用该对象。 
+- 使用场景：
+  - 1、系统中对象之间存在比较复杂的引用关系，导致它们之间的依赖关系结构混乱而且难以复用该对象。
   - 2、想通过一个中间类来封装多个类中的行为，而又不想生成太多的子类。
 
 - 注意事项：不应当在职责混乱的时候使用。
@@ -8704,17 +8704,17 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    public abstract class Colleague {
    	private Mediator mediator;
    	public String name;
-   
+
    	public Colleague(Mediator mediator, String name) {
    		this.mediator = mediator;
    		this.name = name;
-   
+
    	}
-   
+
    	public Mediator GetMediator() {
    		return this.mediator;
    	}
-   
+
    	public abstract void SendMessage(int stateChange);
    }
    ```
@@ -8724,24 +8724,24 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    //具体的同事类
    public class Alarm extends Colleague {
-   
+
    	// 构造器
    	public Alarm(Mediator mediator, String name) {
    		super(mediator, name);
    		// 在创建Alarm 同事对象时，将自己放入到ConcreteMediator 对象中[集合]
    		mediator.Register(name, this);
    	}
-   
+
    	public void SendAlarm(int stateChange) {
    		SendMessage(stateChange);
    	}
-   
+
    	@Override
    	public void SendMessage(int stateChange) {
    		// 调用的中介者对象的getMessage
    		this.GetMediator().GetMessage(stateChange, this.name);
    	}
-   
+
    }
    ```
 
@@ -8749,21 +8749,21 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class CoffeeMachine extends Colleague {
-   
+
    	public CoffeeMachine(Mediator mediator, String name) {
    		super(mediator, name);
    		mediator.Register(name, this);
    	}
-   
+
    	@Override
    	public void SendMessage(int stateChange) {
    		this.GetMediator().GetMessage(stateChange, this.name);
    	}
-   
+
    	public void StartCoffee() {
    		System.out.println("It's time to startcoffee!");
    	}
-   
+
    	public void FinishCoffee() {
    		System.out.println("After 5 minutes!");
    		System.out.println("Coffee is ok!");
@@ -8776,21 +8776,21 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class TV extends Colleague {
-   
+
    	public TV(Mediator mediator, String name) {
    		super(mediator, name);
    		mediator.Register(name, this);
    	}
-   
+
    	@Override
    	public void SendMessage(int stateChange) {
    		this.GetMediator().GetMessage(stateChange, this.name);
    	}
-   
+
    	public void StartTv() {
    		System.out.println("It's time to StartTv!");
    	}
-   
+
    	public void StopTv() {
    		System.out.println("StopTv!");
    	}
@@ -8801,21 +8801,21 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class Curtains extends Colleague {
-   
+
    	public Curtains(Mediator mediator, String name) {
    		super(mediator, name);
    		mediator.Register(name, this);
    	}
-   
+
    	@Override
    	public void SendMessage(int stateChange) {
    		this.GetMediator().GetMessage(stateChange, this.name);
    	}
-   
+
    	public void UpCurtains() {
    		System.out.println("I am holding Up Curtains!");
    	}
-   
+
    }
    ```
 
@@ -8823,15 +8823,15 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public abstract class Mediator {
-   	
+
    	// 将给中介者对象，加入到集合中
    	public abstract void Register(String colleagueName, Colleague colleague);
-   
+
    	// 接收消息, 消息由具体的同事对象发出
    	public abstract void GetMessage(int stateChange, String colleagueName);
-   
+
    	public abstract void SendMessage();
-   	
+
    }
    ```
 
@@ -8843,16 +8843,16 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    	// 集合，放入所有的同事对象
    	private HashMap<String, Colleague> colleagueMap;
    	private HashMap<String, String> interMap;
-   
+
    	public ConcreteMediator() {
    		colleagueMap = new HashMap<String, Colleague>();
    		interMap = new HashMap<String, String>();
    	}
-   
+
    	@Override
    	public void Register(String colleagueName, Colleague colleague) {
    		colleagueMap.put(colleagueName, colleague);
-   
+
    		if (colleague instanceof Alarm) {
    			interMap.put("Alarm", colleagueName);
    		} else if (colleague instanceof CoffeeMachine) {
@@ -8863,7 +8863,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    			interMap.put("Curtains", colleagueName);
    		}
    	}
-   
+
    	// 具体中介者的核心方法
    	// 1. 根据得到消息，完成对应任务
    	// 2. 中介者在这个方法，协调各个具体的同事对象，完成任务
@@ -8885,12 +8885,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    			// 如果是以窗帘发出的消息，这里处理...
    		}
    	}
-   
+
    	@Override
    	public void SendMessage() {
-   
+
    	}
-   
+
    }
    ```
 
@@ -8898,27 +8898,27 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class ClientTest {
-   
+
    	public static void main(String[] args) {
    		// 创建一个中介者对象
    		Mediator mediator = new ConcreteMediator();
-   
+
    		// 创建Alarm 并且加入到 ConcreteMediator 对象的HashMap
    		Alarm alarm = new Alarm(mediator, "alarm");
-   
+
    		// 创建了CoffeeMachine 对象，并 且加入到 ConcreteMediator 对象的HashMap
    		CoffeeMachine coffeeMachine = new CoffeeMachine(mediator, "coffeeMachine");
-   
+
    		// 创建 Curtains , 并 且加入到 ConcreteMediator 对象的HashMap
    		Curtains curtains = new Curtains(mediator, "curtains");
    		TV tV = new TV(mediator, "TV");
-   
+
    		// 让闹钟发出消息
    		alarm.SendAlarm(0);
    		coffeeMachine.FinishCoffee();
    		alarm.SendAlarm(1);
    	}
-   
+
    }
    ```
 
@@ -8983,30 +8983,30 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    //请求类
    public class PurchaseRequest {
-   
+
    	private int type = 0; // 请求类型
    	private float price = 0.0f; // 请求金额
    	private int id = 0;
-   
+
    	// 构造器
    	public PurchaseRequest(int type, float price, int id) {
    		this.type = type;
    		this.price = price;
    		this.id = id;
    	}
-   
+
    	public int getType() {
    		return type;
    	}
-   
+
    	public float getPrice() {
    		return price;
    	}
-   
+
    	public int getId() {
    		return id;
    	}
-   
+
    }
    ```
 
@@ -9014,22 +9014,22 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public abstract class Approver {
-   
+
    	Approver approver; // 下一个处理者
    	String name; // 名字
-   
+
    	public Approver(String name) {
    		this.name = name;
    	}
-   
+
    	// 下一个处理者
    	public void setApprover(Approver approver) {
    		this.approver = approver;
    	}
-   
+
    	// 处理审批请求的方法，得到一个请求, 处理是子类完成，因此该方法做成抽象
    	public abstract void processRequest(PurchaseRequest purchaseRequest);
-   
+
    }
    ```
 
@@ -9037,11 +9037,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class DepartmentApprover extends Approver {
-   
+
    	public DepartmentApprover(String name) {
    		super(name);
    	}
-   
+
    	@Override
    	public void processRequest(PurchaseRequest purchaseRequest) {
    		if (purchaseRequest.getPrice() <= 5000) {
@@ -9050,7 +9050,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    			approver.processRequest(purchaseRequest);
    		}
    	}
-   
+
    }
    ```
 
@@ -9058,11 +9058,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class CollegeApprover extends Approver {
-   
+
    	public CollegeApprover(String name) {
    		super(name);
    	}
-   
+
    	@Override
    	public void processRequest(PurchaseRequest purchaseRequest) {
    		if (purchaseRequest.getPrice() < 5000 && purchaseRequest.getPrice() <= 10000) {
@@ -9078,11 +9078,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class ViceSchoolMasterApprover extends Approver {
-   
+
    	public ViceSchoolMasterApprover(String name) {
    		super(name);
    	}
-   
+
    	@Override
    	public void processRequest(PurchaseRequest purchaseRequest) {
    		if (purchaseRequest.getPrice() < 10000 && purchaseRequest.getPrice() <= 30000) {
@@ -9098,11 +9098,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class SchoolMasterApprover extends Approver {
-   
+
    	public SchoolMasterApprover(String name) {
    		super(name);
    	}
-   
+
    	@Override
    	public void processRequest(PurchaseRequest purchaseRequest) {
    		if (purchaseRequest.getPrice() > 30000) {
@@ -9118,27 +9118,27 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 创建一个请求
    		PurchaseRequest purchaseRequest = new PurchaseRequest(1, 31000, 1);
-   
+
    		// 创建相关的审批人
    		DepartmentApprover departmentApprover = new DepartmentApprover("张主任");
    		CollegeApprover collegeApprover = new CollegeApprover("李院长");
    		ViceSchoolMasterApprover viceSchoolMasterApprover = new ViceSchoolMasterApprover("王副校");
    		SchoolMasterApprover schoolMasterApprover = new SchoolMasterApprover("佟校长");
-   
+
    		// 需要将各个审批级别的下一个设置好 (处理人构成环形: )
    		departmentApprover.setApprover(collegeApprover);
    		collegeApprover.setApprover(viceSchoolMasterApprover);
    		viceSchoolMasterApprover.setApprover(schoolMasterApprover);
    		schoolMasterApprover.setApprover(departmentApprover);
-   
+
    		departmentApprover.processRequest(purchaseRequest);
    		viceSchoolMasterApprover.processRequest(purchaseRequest);
    	}
-   
+
    }
    ```
 
@@ -9164,27 +9164,27 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    	HttpServletRequest processedRequest = request;
    	HandlerExecutionChain mappedHandler = null;
    	boolean multipartRequestParsed = false;
-   
+
    	WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
-   
+
    	try {
    		ModelAndView mv = null;
    		Exception dispatchException = null;
-   
+
    		try {
    			processedRequest = checkMultipart(request);
    			multipartRequestParsed = processedRequest != request;
-   
+
    			// Determine handler for the current request.
    			mappedHandler = getHandler(processedRequest);
    			if (mappedHandler == null || mappedHandler.getHandler() == null) {
    				noHandlerFound(processedRequest, response);
    				return;
    			}
-   
+
    			// Determine handler adapter for the current request.
    			HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
-   
+
    			// Process last-modified header, if supported by the handler.
    			String method = request.getMethod();
    			boolean isGet = "GET".equals(method);
@@ -9198,11 +9198,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    					return;
    				}
    			}
-   
+
    			if (!mappedHandler.applyPreHandle(processedRequest, response)) {
    				return;
    			}
-   
+
    			try {
    				// Actually invoke the handler.
    				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
@@ -9212,7 +9212,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    					return;
    				}
    			}
-   
+
    			applyDefaultViewName(request, mv);
    			mappedHandler.applyPostHandle(processedRequest, response, mv);
    		}
@@ -9257,7 +9257,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
        }
        return true;
    }
-   
+
    public HandlerInterceptor[] getInterceptors() {
        if (this.interceptors == null && this.interceptorList != null) {
            this.interceptors = this.interceptorList.toArray(new HandlerInterceptor[this.interceptorList.size()]);
@@ -9285,7 +9285,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    void triggerAfterCompletion(HttpServletRequest request, HttpServletResponse response, Exception ex)
    		throws Exception {
-   
+
    	if (getInterceptors() == null) {
    		return;
    	}
@@ -9365,7 +9365,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    /**
     * 抽象类表达式，通过HashMap 键值对, 可以获取到变量的值
-    * 
+    *
     * @author Administrator
     *
     */
@@ -9382,18 +9382,18 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    /**
     * 变量的解释器
-    * 
+    *
     * @author Administrator
     *
     */
    public class VarExpression extends Expression {
-   
+
    	private String key; // key=a,key=b,key=c
-   
+
    	public VarExpression(String key) {
    		this.key = key;
    	}
-   
+
    	// var 就是{a=10, b=20}
    	// interpreter 根据 变量名称，返回对应值
    	@Override
@@ -9409,20 +9409,20 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    /**
     * 抽象运算符号解析器 这里，每个运算符号，都只和自己左右两个数字有关系，
     * 但左右两个数字有可能也是一个解析的结果，无论何种类型，都是Expression类的实现类
-    * 
+    *
     * @author Administrator
     *
     */
    public abstract class SymbolExpression extends Expression {
-   
+
    	protected Expression left;
    	protected Expression right;
-   
+
    	public SymbolExpression(Expression left, Expression right) {
    		this.left = left;
    		this.right = right;
    	}
-   
+
    	// 因为 SymbolExpression 是让其子类来实现，因此 interpreter 是一个默认实现
    	@Override
    	public int interpreter(HashMap<String, Integer> var) {
@@ -9436,16 +9436,16 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    /**
     * 加法解释器
-    * 
+    *
     * @author Administrator
     *
     */
    public class AddExpression extends SymbolExpression {
-   
+
    	public AddExpression(Expression left, Expression right) {
    		super(left, right);
    	}
-   
+
    	// 处理相加
    	// var 仍然是 {a=10,b=20}..
    	// 一会我们debug 源码,就ok
@@ -9462,16 +9462,16 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    ```java
    /**
     * 减法解释器
-    * 
+    *
     * @author Administrator
     *
     */
    public class SubExpression extends SymbolExpression {
-   
+
    	public SubExpression(Expression left, Expression right) {
    		super(left, right);
    	}
-   
+
    	// 求出left 和 right 表达式相减后的结果
    	public int interpreter(HashMap<String, Integer> var) {
    		return left.interpreter(var) - right.interpreter(var);
@@ -9483,17 +9483,17 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class Calculator {
-   
+
    	// 定义表达式
    	private Expression expression;
-   
+
    	// 构造函数传参，并解析
    	public Calculator(String expStr) { // expStr = a+b
    		// 安排运算先后顺序
    		Stack<Expression> stack = new Stack<>();
    		// 表达式拆分成字符数组
    		char[] charArray = expStr.toCharArray();// [a, +, b]
-   
+
    		Expression left = null;
    		Expression right = null;
    		// 遍历我们的字符数组， 即遍历 [a, +, b]
@@ -9519,7 +9519,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    		// 当遍历完整个 charArray 数组后，stack 就得到最后Expression
    		this.expression = stack.pop();
    	}
-   
+
    	public int run(HashMap<String, Integer> var) {
    		// 最后将表达式a+b和 var = {a=10,b=20}
    		// 然后传递给expression的interpreter进行解释执行
@@ -9532,24 +9532,24 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
    ```java
    public class ClientTest {
-   
+
    	public static void main(String[] args) throws IOException {
    		String expStr = getExpStr(); // a+b
    		HashMap<String, Integer> var = getValue(expStr);// var {a=10, b=20}
    		Calculator calculator = new Calculator(expStr);
    		System.out.println("运算结果：" + expStr + "=" + calculator.run(var));
    	}
-   
+
    	// 获得表达式
    	public static String getExpStr() throws IOException {
    		System.out.print("请输入表达式：");
    		return (new BufferedReader(new InputStreamReader(System.in))).readLine();
    	}
-   
+
    	// 获得值映射
    	public static HashMap<String, Integer> getValue(String expStr) throws IOException {
    		HashMap<String, Integer> map = new HashMap<>();
-   
+
    		for (char ch : expStr.toCharArray()) {
    			if (ch != '+' && ch != '-') {
    				if (!map.containsKey(String.valueOf(ch))) {
@@ -9559,7 +9559,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
    				}
    			}
    		}
-   
+
    		return map;
    	}
    }
@@ -9595,11 +9595,11 @@ public class Interpreter {
 
    ```java
    public interface ExpressionParser {
-   
+
    	Expression parseExpression(String expressionString) throws ParseException;
-   
+
    	Expression parseExpression(String expressionString, ParserContext context) throws ParseException;
-   
+
    }
    ```
 
@@ -9607,21 +9607,21 @@ public class Interpreter {
 
    ```java
    public abstract class TemplateAwareExpressionParser implements ExpressionParser {
-       
+
        // ...
-       
+
         @Override
         public Expression parseExpression(String expressionString) throws ParseException {
           return parseExpression(expressionString, NON_TEMPLATE_PARSER_CONTEXT);
         }
-   
+
         @Override
         public Expression parseExpression(String expressionString, ParserContext context)
             throws ParseException {
           if (context == null) {
             context = NON_TEMPLATE_PARSER_CONTEXT;
           }
-      
+
           if (context.isTemplate()) {
             return parseTemplate(expressionString, context); // 创建 CompositeStringExpression 对象
           }
@@ -9629,9 +9629,9 @@ public class Interpreter {
             return doParseExpression(expressionString, context); // 创建 SpelExpression 对象
           }
         }
-       
+
        // ...
-       
+
         private Expression parseTemplate(String expressionString, ParserContext context)
            	throws ParseException {
           if (expressionString.length() == 0) {
@@ -9645,10 +9645,10 @@ public class Interpreter {
             return new CompositeStringExpression(expressionString, expressions);
           }
         }
-       
+
         protected abstract Expression doParseExpression(String expressionString,
         ParserContext context) throws ParseException;
-   
+
        // ...
    ```
 
@@ -9656,14 +9656,14 @@ public class Interpreter {
 
    ```java
    public class SpelExpressionParser extends TemplateAwareExpressionParser {
-       
+
        // ...
-       
+
        @Override
    	protected SpelExpression doParseExpression(String expressionString, ParserContext context) throws ParseException {
    		return new InternalSpelExpressionParser(this.configuration).doParseExpression(expressionString, context);
    	}
-       
+
        // ...
    ```
 
@@ -9673,33 +9673,33 @@ public class Interpreter {
 
    ```java
    public interface Expression {
-   
+
       Object getValue() throws EvaluationException;
-    
+
       Object getValue(Object rootObject) throws EvaluationException;
-    
+
       <T> T getValue(Class<T> desiredResultType) throws EvaluationException;
-    
+
       <T> T getValue(Object rootObject, Class<T> desiredResultType) throws EvaluationException;
 
       // ...
-       
+
    ```
 
 5. `SpelExpression` 实现了 `Expression` 接口，重写了超多的 `getValue()` 方法，主要是通过调用 `SpelNodeImpl` 类中的方法来实现 `Expresssion` 中的 `getValue()` 方法
 
    ```java
    public class SpelExpression implements Expression {
-   
+
    	private final String expression;
-   
+
    	private final SpelNodeImpl ast;
-   
+
    	private final SpelParserConfiguration configuration;
-   
+
    	// the default context is used if no override is supplied by the user
    	private EvaluationContext defaultContext;
-   
+
    	/**
    	 * Construct an expression, only used by the parser.
    	 */
@@ -9708,41 +9708,41 @@ public class Interpreter {
    		this.ast = ast;
    		this.configuration = configuration;
    	}
-   
+
    	// implementing Expression
-   
+
    	@Override
    	public Object getValue() throws EvaluationException {
    		ExpressionState expressionState = new ExpressionState(getEvaluationContext(), this.configuration);
    		return this.ast.getValue(expressionState);
    	}
-   
+
    	@Override
    	public Object getValue(Object rootObject) throws EvaluationException {
    		ExpressionState expressionState = new ExpressionState(getEvaluationContext(), toTypedValue(rootObject), this.configuration);
    		return this.ast.getValue(expressionState);
    	}
-   
+
    	@Override
    	public <T> T getValue(Class<T> expectedResultType) throws EvaluationException {
    		ExpressionState expressionState = new ExpressionState(getEvaluationContext(), this.configuration);
    		TypedValue typedResultValue = this.ast.getTypedValue(expressionState);
    		return ExpressionUtils.convertTypedValue(expressionState.getEvaluationContext(), typedResultValue, expectedResultType);
    	}
-   
+
    	@Override
    	public <T> T getValue(Object rootObject, Class<T> expectedResultType) throws EvaluationException {
    		ExpressionState expressionState = new ExpressionState(getEvaluationContext(), toTypedValue(rootObject), this.configuration);
    		TypedValue typedResultValue = this.ast.getTypedValue(expressionState);
    		return ExpressionUtils.convertTypedValue(expressionState.getEvaluationContext(), typedResultValue, expectedResultType);
    	}
-   
+
    	@Override
    	public Object getValue(EvaluationContext context) throws EvaluationException {
    		Assert.notNull(context, "The EvaluationContext is required");
    		return this.ast.getValue(new ExpressionState(context, this.configuration));
    	}
-       
+
        // ...
    ```
 
@@ -9803,28 +9803,28 @@ public class Interpreter {
 
 <details>
 <summary style="color:red;">展开</summary>
-  
+
 1. `Originator`：实体类，该类的实例为需要保存状态的对象，`saveStateMemento()` 方法用于返回一个备忘录对象，`getStateFromMemento()` 方法用于从备忘录
 
    ```java
    public class Originator {
-   
+
    	private String state;// 状态信息
-   
+
    	public String getState() {
    		return state;
    	}
-   
+
    	public void setState(String state) {
    		this.state = state;
    	}
-   
+
    	// 编写一个方法，可以保存一个状态对象 Memento
    	// 因此编写一个方法，返回 Memento
    	public Memento saveStateMemento() {
    		return new Memento(state);
    	}
-   
+
    	// 通过备忘录对象，恢复状态
    	public void getStateFromMemento(Memento memento) {
    		state = memento.getState();
@@ -9837,16 +9837,16 @@ public class Interpreter {
    ```java
    public class Memento {
    	private String state;
-   
+
    	// 构造器
    	public Memento(String state) {
    		this.state = state;
    	}
-   
+
    	public String getState() {
    		return state;
    	}
-   
+
    }
    ```
 
@@ -9854,19 +9854,19 @@ public class Interpreter {
 
    ```java
    public class Caretaker {
-   
+
    	// 在List 集合中会有很多的备忘录对象
    	private List<Memento> mementoList = new ArrayList<Memento>();
-   
+
    	public void add(Memento memento) {
    		mementoList.add(memento);
    	}
-   
+
    	// 获取到第index个Originator 的 备忘录对象(即保存状态)
    	public Memento get(int index) {
    		return mementoList.get(index);
    	}
-   	
+
    }
    ```
 
@@ -9874,30 +9874,30 @@ public class Interpreter {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
-   
+
    		Originator originator = new Originator();
    		Caretaker caretaker = new Caretaker();
-   
+
    		originator.setState(" 状态#1 攻击力 100 "); // 设置攻击速度
    		caretaker.add(originator.saveStateMemento()); // 保存了当前的状态
-   		
+
    		originator.setState(" 状态#2 攻击力 80 "); // 设置攻击速度
    		caretaker.add(originator.saveStateMemento()); // 保存了当前的状态
-   		
+
    		originator.setState(" 状态#3 攻击力 50 "); // 设置攻击速度
    		caretaker.add(originator.saveStateMemento()); // 保存了当前的状态
-   
+
    		System.out.println("当前的状态是 =" + originator.getState());
-   
+
    		// 希望得到状态 1, 将 originator 恢复到状态1
    		originator.getStateFromMemento(caretaker.get(0)); // 恢复对象属性
    		System.out.println("恢复到状态1 , 当前的状态是");
    		System.out.println("当前的状态是 =" + originator.getState());
-   
+
    	}
-   
+
    }
    ```
 </details>
@@ -9905,7 +9905,7 @@ public class Interpreter {
 > **备忘录模式解决游戏角色恢复**
 
 - 情景
-  - 游戏角色有攻击力和防御力，在大战`Boss`前保存自身的状态(攻击力和防御力)， 
+  - 游戏角色有攻击力和防御力，在大战`Boss`前保存自身的状态(攻击力和防御力)，
   - 当大战`Boss`后攻击力和防御力下降， 然后从备忘录对象恢复到大战前的状态
 
 - 类图
@@ -9921,42 +9921,42 @@ public class Interpreter {
 
    ```java
    public class GameRole {
-   
+
    	private int vit;
    	private int def;
-   
+
    	// 创建Memento ,即根据当前的状态得到Memento
    	public Memento createMemento() {
    		return new Memento(vit, def);
    	}
-   
+
    	// 从备忘录对象，恢复GameRole的状态
    	public void recoverGameRoleFromMemento(Memento memento) {
    		this.vit = memento.getVit();
    		this.def = memento.getDef();
    	}
-   
+
    	// 显示当前游戏角色的状态
    	public void display() {
    		System.out.println("游戏角色当前的攻击力：" + this.vit + " 防御力: " + this.def);
    	}
-   
+
    	public int getVit() {
    		return vit;
    	}
-   
+
    	public void setVit(int vit) {
    		this.vit = vit;
    	}
-   
+
    	public int getDef() {
    		return def;
    	}
-   
+
    	public void setDef(int def) {
    		this.def = def;
    	}
-   
+
    }
    ```
 
@@ -9964,33 +9964,33 @@ public class Interpreter {
 
    ```java
    public class Memento {
-   
+
    	// 攻击力
    	private int vit;
    	// 防御力
    	private int def;
-   
+
    	public Memento(int vit, int def) {
    		this.vit = vit;
    		this.def = def;
    	}
-   
+
    	public int getVit() {
    		return vit;
    	}
-   
+
    	public void setVit(int vit) {
    		this.vit = vit;
    	}
-   
+
    	public int getDef() {
    		return def;
    	}
-   
+
    	public void setDef(int def) {
    		this.def = def;
    	}
-   
+
    }
    ```
 
@@ -9999,24 +9999,24 @@ public class Interpreter {
    ```java
    //守护者对象, 保存游戏角色的状态
    public class Caretaker {
-   
+
    	// 如果只保存一次状态
    	private Memento memento;
-   	
+
    	// 对GameRole 保存多次状态
    	// private ArrayList<Memento> mementos;
-   	
+
    	// 对多个游戏角色保存多个状态
    	// private HashMap<String, ArrayList<Memento>> rolesMementos;
-   
+
    	public Memento getMemento() {
    		return memento;
    	}
-   
+
    	public void setMemento(Memento memento) {
    		this.memento = memento;
    	}
-   
+
    }
    ```
 
@@ -10024,31 +10024,31 @@ public class Interpreter {
 
    ```java
    public class Client {
-   
+
    	public static void main(String[] args) {
    		// 创建游戏角色
    		GameRole gameRole = new GameRole();
    		gameRole.setVit(100);
    		gameRole.setDef(100);
-   
+
    		System.out.println("和boss大战前的状态");
    		gameRole.display();
-   
+
    		// 把当前状态保存caretaker
    		Caretaker caretaker = new Caretaker();
    		caretaker.setMemento(gameRole.createMemento());
-   
+
    		System.out.println("和boss大战~~~");
    		gameRole.setDef(30);
    		gameRole.setVit(30);
    		gameRole.display();
-   
+
    		System.out.println("大战后，使用备忘录对象恢复元气");
    		gameRole.recoverGameRoleFromMemento(caretaker.getMemento());
    		System.out.println("恢复后的状态");
    		gameRole.display();
    	}
-   
+
    }
    ```
 
@@ -10107,21 +10107,21 @@ public class Interpreter {
    ```java
    /**
     * 状态抽象类
-    * 
+    *
     * @author Administrator
     *
     */
    public abstract class State {
-   
+
    	// 扣除积分 - 50
    	public abstract void deductMoney();
-   
+
    	// 是否抽中奖品
    	public abstract boolean raffle();
-   
+
    	// 发放奖品
    	public abstract void dispensePrize();
-   
+
    }
    ```
 
@@ -10130,33 +10130,33 @@ public class Interpreter {
    ```java
    /**
     * 不能抽奖状态
-    * 
+    *
     * @author Administrator
     *
     */
    public class NoRaffleState extends State {
-   
+
    	// 初始化时传入活动引用，扣除积分后改变其状态
    	RaffleActivity activity;
-   
+
    	public NoRaffleState(RaffleActivity activity) {
    		this.activity = activity;
    	}
-   
+
    	// 当前状态可以扣积分 , 扣除后，将状态设置成可以抽奖状态
    	@Override
    	public void deductMoney() {
    		System.out.println("扣除50积分成功，您可以抽奖了");
    		activity.setState(activity.getCanRaffleState());
    	}
-   
+
    	// 当前状态不能抽奖
    	@Override
    	public boolean raffle() {
    		System.out.println("扣了积分才能抽奖喔！");
    		return false;
    	}
-   
+
    	// 当前状态不能发奖品
    	@Override
    	public void dispensePrize() {
@@ -10170,24 +10170,24 @@ public class Interpreter {
    ```java
    /**
     * 可以抽奖的状态
-    * 
+    *
     * @author Administrator
     *
     */
    public class CanRaffleState extends State {
-   
+
    	RaffleActivity activity;
-   
+
    	public CanRaffleState(RaffleActivity activity) {
    		this.activity = activity;
    	}
-   
+
    	// 已经扣除了积分，不能再扣
    	@Override
    	public void deductMoney() {
    		System.out.println("已经扣取过了积分");
    	}
-   
+
    	// 可以抽奖, 抽完奖后，根据实际情况，改成新的状态
    	@Override
    	public boolean raffle() {
@@ -10206,7 +10206,7 @@ public class Interpreter {
    			return false;
    		}
    	}
-   
+
    	// 不能发放奖品
    	@Override
    	public void dispensePrize() {
@@ -10220,30 +10220,30 @@ public class Interpreter {
    ```java
    /**
     * 发放奖品的状态
-    * 
+    *
     * @author Administrator
     *
     */
    public class DispenseState extends State {
-   
+
    	// 初始化时传入活动引用，发放奖品后改变其状态
    	RaffleActivity activity;
-   
+
    	public DispenseState(RaffleActivity activity) {
    		this.activity = activity;
    	}
-   
+
    	@Override
    	public void deductMoney() {
    		System.out.println("不能扣除积分");
    	}
-   
+
    	@Override
    	public boolean raffle() {
    		System.out.println("不能抽奖");
    		return false;
    	}
-   
+
    	// 发放奖品
    	@Override
    	public void dispensePrize() {
@@ -10258,7 +10258,7 @@ public class Interpreter {
    			// System.out.println("抽奖活动结束");
    			// System.exit(0);
    		}
-   
+
    	}
    }
    ```
@@ -10268,30 +10268,30 @@ public class Interpreter {
    ```java
    /**
     * 奖品发放完毕状态 说明，当我们activity 改变成 DispenseOutState， 抽奖活动结束
-    * 
+    *
     * @author Administrator
     *
     */
    public class DispenseOutState extends State {
-   
+
    	// 初始化时传入活动引用
    	RaffleActivity activity;
-   
+
    	public DispenseOutState(RaffleActivity activity) {
    		this.activity = activity;
    	}
-   
+
    	@Override
    	public void deductMoney() {
    		System.out.println("奖品发送完了，请下次再参加");
    	}
-   
+
    	@Override
    	public boolean raffle() {
    		System.out.println("奖品发送完了，请下次再参加");
    		return false;
    	}
-   
+
    	@Override
    	public void dispensePrize() {
    		System.out.println("奖品发送完了，请下次再参加");
@@ -10304,23 +10304,23 @@ public class Interpreter {
    ```java
    /**
     * 抽奖活动
-    * 
+    *
     * @author Administrator
     *
     */
    public class RaffleActivity {
-   
+
    	// state 表示活动当前的状态，是变化的
    	State state = null;
    	// 奖品数量
    	int count = 0;
-   
+
    	// 四个属性，表示四种状态
    	State noRafflleState = new NoRaffleState(this);
    	State canRaffleState = new CanRaffleState(this);
    	State dispenseState = new DispenseState(this);
    	State dispensOutState = new DispenseOutState(this);
-   
+
    	// 构造器
    	// 1. 初始化当前的状态为 noRafflleState（即不能抽奖的状态）
    	// 2. 初始化奖品的数量
@@ -10328,12 +10328,12 @@ public class Interpreter {
    		this.state = getNoRafflleState();
    		this.count = count;
    	}
-   
+
    	// 扣分, 调用当前状态的 deductMoney
    	public void debuctMoney() {
    		state.deductMoney();
    	}
-   
+
    	// 抽奖
    	public void raffle() {
    		// 如果当前的状态是抽奖成功
@@ -10341,16 +10341,16 @@ public class Interpreter {
    			// 领取奖品
    			state.dispensePrize();
    		}
-   
+
    	}
-   
+
    	// 这里请大家注意，每领取一次奖品，count--
    	public int getCount() {
    		int curCount = count;
    		count--;
    		return curCount;
    	}
-       
+
        // Getter and Setter
    ```
 
@@ -10359,27 +10359,27 @@ public class Interpreter {
    ```java
    /**
     * 状态模式测试类
-    * 
+    *
     * @author Administrator
     *
     */
    public class ClientTest {
-   
+
    	public static void main(String[] args) {
    		// 创建活动对象，奖品有1个奖品
    		RaffleActivity activity = new RaffleActivity(1);
-   
+
    		// 我们连续抽300次奖
    		for (int i = 0; i < 30; i++) {
    			System.out.println("--------第" + (i + 1) + "次抽奖----------");
    			// 参加抽奖，第一步点击扣除积分
    			activity.debuctMoney();
-   
+
    			// 第二步抽奖
    			activity.raffle();
    		}
    	}
-   
+
    }
    ```
 </details>
@@ -10430,52 +10430,52 @@ public class Interpreter {
    ```java
    /**
     * 状态接口
-    * 
+    *
     * @author Administrator
     *
     */
    public interface State {
-   
+
    	/**
    	 * 电审
    	 */
    	void checkEvent(Context context);
-   
+
    	/**
    	 * 电审失败
    	 */
    	void checkFailEvent(Context context);
-   
+
    	/**
    	 * 定价发布
    	 */
    	void makePriceEvent(Context context);
-   
+
    	/**
    	 * 接单
    	 */
    	void acceptOrderEvent(Context context);
-   
+
    	/**
    	 * 无人接单失效
    	 */
    	void notPeopleAcceptEvent(Context context);
-   
+
    	/**
    	 * 付款
    	 */
    	void payOrderEvent(Context context);
-   
+
    	/**
    	 * 接单有人支付失效
    	 */
    	void orderFailureEvent(Context context);
-   
+
    	/**
    	 * 反馈
    	 */
    	void feedBackEvent(Context context);
-   
+
    	String getCurrentState();
    }
    ```
@@ -10484,47 +10484,47 @@ public class Interpreter {
 
    ```java
    public abstract class AbstractState implements State {
-   
+
    	protected static final RuntimeException EXCEPTION = new RuntimeException("操作流程不允许");
-   
+
    	// 抽象类，默认实现了 State 接口的所有方法
    	// 该类的所有方法，其子类(具体的状态类)，可以有选择的进行重写
-   
+
    	@Override
    	public void checkEvent(Context context) {
    		throw EXCEPTION;
    	}
-   
+
    	@Override
    	public void checkFailEvent(Context context) {
    		throw EXCEPTION;
    	}
-   
+
    	@Override
    	public void makePriceEvent(Context context) {
    		throw EXCEPTION;
    	}
-   
+
    	@Override
    	public void acceptOrderEvent(Context context) {
    		throw EXCEPTION;
    	}
-   
+
    	@Override
    	public void notPeopleAcceptEvent(Context context) {
    		throw EXCEPTION;
    	}
-   
+
    	@Override
    	public void payOrderEvent(Context context) {
    		throw EXCEPTION;
    	}
-   
+
    	@Override
    	public void orderFailureEvent(Context context) {
    		throw EXCEPTION;
    	}
-   
+
    	@Override
    	public void feedBackEvent(Context context) {
    		throw EXCEPTION;
@@ -10537,94 +10537,94 @@ public class Interpreter {
    ```java
    //各种具体状态类
    class FeedBackState extends AbstractState {
-   
+
    	@Override
    	public String getCurrentState() {
    		return StateEnum.FEED_BACKED.getValue();
    	}
    }
-   
+
    class GenerateState extends AbstractState {
-   
+
    	@Override
    	public void checkEvent(Context context) {
    		context.setState(new ReviewState());
    	}
-   
+
    	@Override
    	public void checkFailEvent(Context context) {
    		context.setState(new FeedBackState());
    	}
-   
+
    	@Override
    	public String getCurrentState() {
    		return StateEnum.GENERATE.getValue();
    	}
    }
-   
+
    class NotPayState extends AbstractState {
-   
+
    	@Override
    	public void payOrderEvent(Context context) {
    		context.setState(new PaidState());
    	}
-   
+
    	@Override
    	public void feedBackEvent(Context context) {
    		context.setState(new FeedBackState());
    	}
-   
+
    	@Override
    	public String getCurrentState() {
    		return StateEnum.NOT_PAY.getValue();
    	}
    }
-   
+
    class PaidState extends AbstractState {
-   
+
    	@Override
    	public void feedBackEvent(Context context) {
    		context.setState(new FeedBackState());
    	}
-   
+
    	@Override
    	public String getCurrentState() {
    		return StateEnum.PAID.getValue();
    	}
    }
-   
+
    class PublishState extends AbstractState {
-   
+
    	@Override
    	public void acceptOrderEvent(Context context) {
    		// 把当前状态设置为 NotPayState。。。
    		// 至于应该变成哪个状态，有流程图来决定
    		context.setState(new NotPayState());
    	}
-   
+
    	@Override
    	public void notPeopleAcceptEvent(Context context) {
    		context.setState(new FeedBackState());
    	}
-   
+
    	@Override
    	public String getCurrentState() {
    		return StateEnum.PUBLISHED.getValue();
    	}
    }
-   
+
    class ReviewState extends AbstractState {
-   
+
    	@Override
    	public void makePriceEvent(Context context) {
    		context.setState(new PublishState());
    	}
-   
+
    	@Override
    	public String getCurrentState() {
    		return StateEnum.REVIEWED.getValue();
    	}
-   
+
    }
    ```
 
@@ -10635,63 +10635,63 @@ public class Interpreter {
    public class Context extends AbstractState {
    	// 当前的状态 state, 根据我们的业务流程处理，不停的变化
    	private State state;
-   
+
    	@Override
    	public void checkEvent(Context context) {
    		state.checkEvent(this);
    		getCurrentState();
    	}
-   
+
    	@Override
    	public void checkFailEvent(Context context) {
    		state.checkFailEvent(this);
    		getCurrentState();
    	}
-   
+
    	@Override
    	public void makePriceEvent(Context context) {
    		state.makePriceEvent(this);
    		getCurrentState();
    	}
-   
+
    	@Override
    	public void acceptOrderEvent(Context context) {
    		state.acceptOrderEvent(this);
    		getCurrentState();
    	}
-   
+
    	@Override
    	public void notPeopleAcceptEvent(Context context) {
    		state.notPeopleAcceptEvent(this);
    		getCurrentState();
    	}
-   
+
    	@Override
    	public void payOrderEvent(Context context) {
    		state.payOrderEvent(this);
    		getCurrentState();
    	}
-   
+
    	@Override
    	public void orderFailureEvent(Context context) {
    		state.orderFailureEvent(this);
    		getCurrentState();
    	}
-   
+
    	@Override
    	public void feedBackEvent(Context context) {
    		state.feedBackEvent(this);
    		getCurrentState();
    	}
-   
+
    	public State getState() {
    		return state;
    	}
-   
+
    	public void setState(State state) {
    		this.state = state;
    	}
-   
+
    	@Override
    	public String getCurrentState() {
    		System.out.println("当前状态 : " + state.getCurrentState());
@@ -10705,14 +10705,14 @@ public class Interpreter {
    ```java
    /** 测试类 */
    public class ClientTest {
-   
+
    	public static void main(String[] args) {
    		// 创建context 对象
    		Context context = new Context();
    		// 将当前状态设置为 PublishState
    		context.setState(new PublishState());
    		System.out.println(context.getCurrentState());
-   
+
    		// publish --> not pay
    		context.acceptOrderEvent(context);
    		// not pay --> paid
@@ -10784,25 +10784,25 @@ public class Interpreter {
 
    ```java
    public abstract class Duck {
-   
+
    	public Duck() {
-   
+
    	}
-   
+
    	public abstract void display();// 显示鸭子信息
-   
+
    	public void quack() {
    		System.out.println("鸭子嘎嘎叫~~");
    	}
-   
+
    	public void swim() {
    		System.out.println("鸭子会游泳~~");
    	}
-   
+
    	public void fly() {
    		System.out.println("鸭子会飞翔~~~");
    	}
-   
+
    }
    ```
 
@@ -10810,12 +10810,12 @@ public class Interpreter {
 
    ```java
    public class WildDuck extends Duck {
-   
+
    	@Override
    	public void display() {
    		System.out.println(" 这是野鸭 ");
    	}
-   
+
    }
    ```
 
@@ -10823,18 +10823,18 @@ public class Interpreter {
 
    ```java
    public class PekingDuck extends Duck {
-   
+
    	@Override
    	public void display() {
    		System.out.println("~~北京鸭~~~");
    	}
-   
+
    	// 因为北京鸭不能飞翔，因此需要重写fly
    	@Override
    	public void fly() {
    		System.out.println("北京鸭不能飞翔");
    	}
-   
+
    }
    ```
 
@@ -10842,21 +10842,21 @@ public class Interpreter {
 
    ```java
    public class ToyDuck extends Duck {
-   
+
    	@Override
    	public void display() {
    		System.out.println("玩具鸭");
    	}
-   
+
    	// 需要重写父类的所有方法
    	public void quack() {
    		System.out.println("玩具鸭不能叫~~");
    	}
-   
+
    	public void swim() {
    		System.out.println("玩具鸭不会游泳~~");
    	}
-   
+
    	public void fly() {
    		System.out.println("玩具鸭不会飞翔~~~");
    	}
@@ -10898,12 +10898,12 @@ public class Interpreter {
 
    ```java
    public class NoFlyBehavior implements FlyBehavior {
-   
+
    	@Override
    	public void fly() {
    		System.out.println(" 不会飞翔  ");
    	}
-   
+
    }
    ```
 
@@ -10911,12 +10911,12 @@ public class Interpreter {
 
    ```java
    public class BadFlyBehavior implements FlyBehavior {
-   
+
    	@Override
    	public void fly() {
    		System.out.println(" 飞翔技术一般 ");
    	}
-   
+
    }
    ```
 
@@ -10924,12 +10924,12 @@ public class Interpreter {
 
    ```java
    public class GoodFlyBehavior implements FlyBehavior {
-   
+
    	@Override
    	public void fly() {
    		System.out.println(" 飞翔技术高超 ~~~");
    	}
-   
+
    }
    ```
 
@@ -10945,12 +10945,12 @@ public class Interpreter {
 
    ```java
    public class NoQuackBehavior implements QuackBehavior {
-   
+
    	@Override
    	public void quack() {
    		System.out.println("不能叫");
    	}
-   
+
    }
    ```
 
@@ -10958,12 +10958,12 @@ public class Interpreter {
 
    ```java
    public class GeGeQuackBehavior implements QuackBehavior {
-   
+
    	@Override
    	public void quack() {
    		System.out.println("咯咯叫");
    	}
-   
+
    }
    ```
 
@@ -10971,12 +10971,12 @@ public class Interpreter {
 
    ```java
    public class GaGaQuackBehavior implements QuackBehavior {
-   
+
    	@Override
    	public void quack() {
    		System.out.println("嘎嘎叫");
    	}
-   
+
    }
    ```
 
@@ -10984,43 +10984,43 @@ public class Interpreter {
 
    ```java
    public abstract class Duck {
-   
+
    	// 属性, 策略接口
    	FlyBehavior flyBehavior;
    	// 其它属性<->策略接口
    	QuackBehavior quackBehavior;
-   
+
    	public Duck() {
-   
+
    	}
-   
+
    	public abstract void display();// 显示鸭子信息
-   
+
    	public void quack() {
    		if (quackBehavior != null) {
    			quackBehavior.quack();
    		}
    	}
-   
+
    	public void swim() {
    		System.out.println("鸭子会游泳~~");
    	}
-   
+
    	public void fly() {
    		// 改进
    		if (flyBehavior != null) {
    			flyBehavior.fly();
    		}
    	}
-   
+
    	public void setFlyBehavior(FlyBehavior flyBehavior) {
    		this.flyBehavior = flyBehavior;
    	}
-   
+
    	public void setQuackBehavior(QuackBehavior quackBehavior) {
    		this.quackBehavior = quackBehavior;
    	}
-   
+
    }
    ```
 
@@ -11028,18 +11028,18 @@ public class Interpreter {
 
     ```java
     public class WildDuck extends Duck {
-    
+
     	// 构造器，传入FlyBehavior 和 QuackBehavior 的对象
     	public WildDuck() {
     		flyBehavior = new GoodFlyBehavior();
     		quackBehavior = new GeGeQuackBehavior();
     	}
-    
+
     	@Override
     	public void display() {
     		System.out.println(" 这是野鸭 ");
     	}
-    
+
     }
     ```
 
@@ -11047,18 +11047,18 @@ public class Interpreter {
 
     ```java
     public class PekingDuck extends Duck {
-    
+
     	// 假如北京鸭可以飞翔，但是飞翔技术一般
     	public PekingDuck() {
     		flyBehavior = new BadFlyBehavior();
     		quackBehavior = new GaGaQuackBehavior();
     	}
-    
+
     	@Override
     	public void display() {
     		System.out.println("~~北京鸭~~~");
     	}
-    
+
     }
     ```
 
@@ -11066,21 +11066,21 @@ public class Interpreter {
 
     ```java
     public class ToyDuck extends Duck {
-    
+
     	public ToyDuck() {
     		flyBehavior = new NoFlyBehavior();
     		quackBehavior = new NoQuackBehavior();
     	}
-    
+
     	@Override
     	public void display() {
     		System.out.println("玩具鸭");
     	}
-    
+
     	public void swim() {
     		System.out.println("玩具鸭不会游泳~~");
     	}
-    
+
     }
     ```
 
@@ -11088,23 +11088,23 @@ public class Interpreter {
 
     ```java
     public class Client {
-    
+
     	public static void main(String[] args) {
     		WildDuck wildDuck = new WildDuck();
     		wildDuck.fly();
-    
+
     		ToyDuck toyDuck = new ToyDuck();
     		toyDuck.fly();
-    
+
     		PekingDuck pekingDuck = new PekingDuck();
     		pekingDuck.fly();
-    
+
     		// 动态改变某个对象的行为, 北京鸭 不能飞
     		pekingDuck.setFlyBehavior(new NoFlyBehavior());
     		System.out.println("北京鸭的实际飞翔能力");
     		pekingDuck.fly();
     	}
-    
+
     }
     ```
 </details>
@@ -11139,13 +11139,13 @@ public class Interpreter {
           }
         };
       };
-      
+
       // 说明
       /*
       * public static <T> void sort(T[] a, Comparator<? super T> c) {
               if (c == null) {
                   sort(a); //默认方法
-              } else { 
+              } else {
                   if (LegacyMergeSort.userRequested)
                       legacyMergeSort(a, c); //使用策略对象c
                   else
@@ -11154,7 +11154,7 @@ public class Interpreter {
               }
           }
       */
-      //方式1 
+      //方式1
       Arrays.sort(data, comparator);
 
       System.out.println(Arrays.toString(data)); // 降序排序
