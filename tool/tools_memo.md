@@ -253,11 +253,17 @@ curl http://ifconfig.me
 
 淘宝基于 nginx 进行优化开发的版本
 
-# gf2
+## gf2
 
 [gf](https://github.com/nakst/gf)
 
 GDB 前端
+
+## gpref
+
+linux profile 工具
+
+[gpref](https://github.com/gperftools/gperftools)
 
 # 软件
 
@@ -359,6 +365,19 @@ https://github.com/karlstav/cava
 - IMO: In My Opinion. 在我看来。
 - TBD: To Be Done. 未完成，待续。
 - TL;DR: Too Long; Didn't Read. 太长懒得看。常见于README文档。
+
+## 大文件测试
+
+```bash
+# imgui.h
+wget https://raw.githubusercontent.com/ocornut/imgui/fb7f6cab8c322731da336e553915e944bf386e62/imgui.h
+# sqlite.c:
+wget https://raw.githubusercontent.com/IreneKnapp/direct-sqlite/a74cc50c735053c7c49c487a66e7756b524db883/cbits/sqlite3.c
+```
+
+## linux 吉祥物
+
+[penger.city](https://penger.city/)
 
 # 参考
 
