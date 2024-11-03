@@ -3,39 +3,60 @@
 
 # 优先级较高项
 
-- [ ] [emacs GTD 日程管理](https://www.cnblogs.com/yangruiGB2312/p/9101838.html)
 - [ ] [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
+  - [x] 编译原理复习
+
+- [ ] emacs, elisp
+  - common ansi lisp
+  - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
+
+- [ ] effective cpp
+  - 主要是为了刷题，同时复习一下cpp
+
+- [ ] [常用 bash 命令](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
+  - star 不少，可以过一遍，看看有没有自己眼生的，总结到 linux.md 或者 bash.md 中
+
 - [ ] 迁移 nixos
   - 一段时间不 `pacman -Syu`，就会有些包因为版本问题没办法使用
   - 看看迁移成本，以及看看，以及 nix 管理方式下，在想尝试新东西的时候，会不会很繁琐
     - ok, nix shell, 完美
-  - [x] 编译原理复习
-- [ ] emacs, elisp
-  - common ansi lisp
-  - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
-- [ ] 博客里面，写上今年规划，以及多写一些博客吧
-- 深度学习进阶，自然语言处理
-  - 主要是用于整理日期，进行总结
-- [ ] 完工遗留的 blog 草稿
-- [ ] [常用 bash 命令](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
-  - star 不少，可以过一遍，看看有没有自己眼生的，总结到 linux.md 或者 bash.md 中
-- [ ] 使用 make 安装 dotfiles
-  - 参考： https://github.com/jessfraz/dotfiles
-  - 主要是为了解决 home 下软链目录还是软链文件的问题,stow 会自动 merge ，这会导致目录结构不同时，行为不一致
+  - 流程：
+    - [x] nix 基础
+    - [x] 系统盘
+    - [ ] nix配置
+    - [ ] 数据备份
+    - [ ] 系统安装
+
 - [ ] NAS 搭建 && 数据备份
   - 参考：[ntzyz, nas 和数据备份](https://ntzyz.space/zh-cn/post/nas-and-backup/)
   - 主要是因为网易云音乐相关，想搞个公共存储
-- [ ] 网易云音乐解密+备份+同步 脚本
-- [ ] effective cpp
-  - 主要是为了刷题，同时复习一下cpp
+  - [ ] 网易云音乐解密+备份+同步 脚本
+
+- [ ] 使用 make 安装 dotfiles
+  - 参考： https://github.com/jessfraz/dotfiles
+  - 主要是为了解决 home 下软链目录还是软链文件的问题,stow 会自动 merge ，这会导致目录结构不同时，行为不一致
+
 - [ ] csapp
   - [csapp labs](http://csapp.cs.cmu.edu/3e/labs.html)
   - [lab 资料](https://hansimov.gitbook.io/csapp/labs/labs-overview)
+
 - ucore
+
+- [ ] 博客
+  - [ ] 完工遗留的 blog 草稿
+  - [ ] 博客里面，写上今年规划，以及多写一些博客吧
+
+- 深度学习进阶，自然语言处理
+  - 主要是用于整理日记，进行总结
+
+- [ ] [emacs GTD 日程管理](https://www.cnblogs.com/yangruiGB2312/p/9101838.html)
+
+- [ ] [DN42 实验网络介绍及注册教程](https://lantian.pub/article/modify-website/dn42-experimental-network-2020.lantian/)
 
 # 小任务
 
-- [ ] 路由追踪实现
+- [ ] traceroute 实现
+  - [优雅地在 Traceroute 里膜 拜大佬](https://lantian.pub/article/creations/traceroute-chain.lantian/)
 - [ ] nginx转发
   - [x] markdown preview
   - [ ] [awesome rss](https://github.com/HenryQW/Awesome-TTRSS)
@@ -75,15 +96,16 @@
 - 编程范式
   - [ ] [ocaml 函数式编程](https://ocaml.org/exercises)
 - [x] c的热重载
-- [ ] 《effective c++》
+- [ ] c 实现旋转面包圈
+  - 计算机图形学，下面可以找到公开课
+  - [Spinning Cube](https://www.youtube.com/watch?v=p09i_hoFdd0)
+  - [旋转矩阵](https://zh.wikipedia.org/wiki/旋转矩阵)
 
-# 首选资料
+# 首选资料、公开课
 
-- [CS自学指南](https://csdiy.wiki/)
+> - [CS自学指南](https://csdiy.wiki/)
+> - [编程指北](https://csguide.cn/)
 
----
-
-- [编程指北](https://csguide.cn/)
 - [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)
 - [MIT 6.828 JOS与NJU ICS NEMU源码精读](https://knowledgehive.github.io/6.828/#)
 - [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
@@ -97,6 +119,7 @@
 - 清华大学 ucore OS
   - [ucore实验指导书](https://nankai.gitbook.io/ucore-os-on-risc-v64/)
 - MIT 6.828: Operating System Engineering
+- [SysY 语言编译到 RISC-V-北大编译实践在线文档](https://pku-minic.github.io/online-doc/#/)
 
 # 神级程序员 博客
 
@@ -136,7 +159,7 @@
   - [x] [RabbitMQ基础整理](./Middleware/RabbitMQ.md)
   - [x] [鉴权方式整理](./others/authentication.md)
   - [ ] [CORS跨域完善+整理](./safety/CSRF与CORS.md)
-  - [ ] [linux常用命令&工具系统整理](./base/linux.md)
+  - [ ] [linux常用命令&工具系统整理](./base/linux_basic.md)
   - [x] [bash编程系统整理](./base/bash.md)
   - [x] 鉴权认证
   - [x] 分布式缓存算法整理
@@ -234,6 +257,12 @@ cookie和session攻击
 数据库 分区分库分表
 
 -->
+
+# 想做的
+
+- 歌词动效
+  - amazarashi 专辑里面的效果
+  - 网易云，节奏前线 效果
 
 # todo refs
 
@@ -695,6 +724,7 @@ cookie和session攻击
 - [pytest基础使用](https://juejin.cn/post/7221769090834481189)
 - [python, 实现cheatengine类似的功能](https://blog.csdn.net/wuchenlhy/article/details/135976268)
 - [dataclass `__hash__` method](https://stackoverflow.com/questions/52390576/how-can-i-make-a-python-dataclass-hashable)
+- [Python 闭包不支持修改 upvalue，有什么替代的解决方案](https://v2ex.com/t/251731)
 
 ## base
 

@@ -355,6 +355,14 @@
   - 但它是二进制兼容 glibc 的，就是说如果代码之前依赖 eglibc 库，那么换成 glibc 后也不需要重新编译。
   - ubuntu 系统用的就是 eglibc（而不是 glibc），可以用 ldd -version 或者在 （32位系统）/lib/i386-linux-gnu/libc.so.6 （64位系统）/lib/x86_64-linux-gnu/libc.so.6 看看，可以显示 eglibc/glibc 的版本信息。
 
+- musl libc: 比 glibc 更标准，更简单
+  - 大小和速度：musl libc 要小得多，因为它没有像 glibc 那样提供大量的额外功能。相反，musl libc 专注于尽可能减少代码大小和函数调用开销，以提高性能。
+  - 兼容性：glibc 是 Linux 系统上最常见的 C 标准库，并且具有广泛的兼容性，支持许多架构和操作系统。相比之下，musl libc 对其他平台和操作系统的移植性较差。
+  - 实现方法：musl libc 是使用静态链接编译的，这使得它更易于构建和管理，并且不需要动态链接器。相反，glibc 使用动态链接器，这也使得它更灵活，因为它可以动态加载所需的库。
+  - POSIX 标准：musl libc 更加严格地遵循 POSIX 标准，而glibc 则添加了一些扩展，以提供更多的功能和兼容性。
+  - 错误处理：musl libc 实现的错误处理更严格和更规范，而 glibc 则有更多的错误处理选项，并且支持不同的语言环境。
+  - 版权问题：由于采用了 BSD 许可证，musl libc 比 glibc 更容易以开源、商业和专有软件的形式使用。
+
 #### 1.1.6.4. glib
 
 - glib 和 glibc 基本上没有太大的联系，都是 C 编程需要调用的库而已。
@@ -8033,7 +8041,11 @@ int foo(int a, int b)
 
 这两条指令合起来是把原来 `ebp` 的值保存在栈上，然后又给 `ebp` 赋了新值。
 
-**在每个函数的栈帧中，`ebp` 指向栈底，而 `esp` 指向栈顶** ，在函数执行过程中 `esp` 随着压栈和出栈操作随时变化，而 `ebp` 是不动的，
+**在每个函数的栈帧中，`ebp` 指向栈底，而 `esp` 指向栈顶** :
+
+- 在函数执行过程中，进入函数调用的时候，此时 `ebp` 上保存着上一个函数的栈底，所以先压入栈
+- 此时，当前栈帧是空的，所以esp指向的就是栈底、把 `esp` 赋值给 `ebp`
+- 之后 `esp` 随着压栈和出栈操作随时变化，而 `ebp` 是不动的
 
 **函数的参数和局部变量都是通过 `ebp` 的值加上一个偏移量来访问** ，例如 `foo` 函数的参数 `a` 和 `b` 分别通过 `ebp+8` 和 `ebp+12` 来访问。 `ebp + 8` 才能访问到第一个参数是因为 压入了 `call 命令的下一条指令的地址` 和 `栈帧的栈顶地址`
 
@@ -24098,6 +24110,28 @@ errout:
 ```
 
 下面是自己动手时间，请利用以上模块编写完整的客户端/服务器通讯的程序。
+
+### /proc/pid/fd 下的 number
+
+参考：[/proc/PID/fd/X link number](https://unix.stackexchange.com/questions/10050/proc-pid-fd-x-link-number)
+
+linux 中，一切皆文件。
+
+socket 和 pipe 后的数值，为 inode number，不同文件系统中的 inode,
+
+两个fd连接同一个管道，inode number也会相同
+
+```
+l-wx------ 1 user user 64 Mar 24 00:05 1 -> pipe:[6839]
+l-wx------ 1 user user 64 Mar 24 00:05 2 -> pipe:[6839]
+lrwx------ 1 user user 64 Mar 24 00:05 3 -> socket:[3142925]
+lrwx------ 1 user user 64 Mar 24 00:05 4 -> socket:[3142926]
+lr-x------ 1 user user 64 Mar 24 00:05 5 -> pipe:[3142927]
+l-wx------ 1 user user 64 Mar 24 00:05 6 -> pipe:[3142927]
+lrwx------ 1 user user 64 Mar 24 00:05 7 -> socket:[3142930]
+lrwx------ 1 user user 64 Mar 24 00:05 8 -> socket:[3142932]
+lr-x------ 1 user user 64 Mar 24 00:05 9 -> pipe:[9837788]
+```
 
 ### 3.10.5. 练习：实现简单的 Web 服务器
 

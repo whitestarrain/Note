@@ -1,4 +1,4 @@
-# 字体
+# Font
 
 ## Nerd Font
 
@@ -16,7 +16,7 @@ https://github.com/be5invis/Iosevka
 
 https://github.com/rubjo/victor-mono
 
-# workflow
+# Workflow
 
 ## search
 
@@ -165,6 +165,16 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 
 [bashtop](https://github.com/aristocratos/bashtop)
 
+## terminal
+
+### urxvt
+
+### st
+
+### alacritty
+
+### wezterm
+
 ## delta: git pager
 
 `~/.gitconfig`:
@@ -197,12 +207,6 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 ## bat: better cat
 
 ## tldr: cheatsheet
-
-# charm 开源终端工具集
-
-[charm](https://github.com/charmbracelet)
-
-## vhs
 
 制作终端gif
 
@@ -253,17 +257,65 @@ curl http://ifconfig.me
 
 淘宝基于 nginx 进行优化开发的版本
 
-## gf2
+## supervisor
 
-[gf](https://github.com/nakst/gf)
+## ab
 
-GDB 前端
+压测工具
 
-## gpref
+## Die (Detect It Easy)
 
-linux profile 工具
+支持查看 elf 在内多种文件类型的反汇编与查看。
 
-[gpref](https://github.com/gperftools/gperftools)
+# Linux
+
+## Arch
+
+自由，激进，滚动发布系统与软件的最新版本。
+
+完善的文档。
+
+有基于 Arch linux 的稳定发行版本： Manjaro Linux
+
+## Gentoo
+
+开放，稳定，滚动发布，基于源码构建系统与软件。
+
+支持历史硬件。
+
+## Void
+
+稳定、灵活，滚动发布。
+
+抛弃了笨重的systemd，使用runit
+
+支持选择 glibc 还是 musl
+
+## Nixos
+
+基于nix配置的系统构建， 稳定的版本管理与可复现性
+
+文档饱受诟病。
+
+## Kail
+
+安全与渗透测试
+
+# USB OS
+
+## rufus
+
+- [rufus](https://github.com/pbatard/rufus)
+
+## Ventoy
+
+- [Ventoy](https://github.com/ventoy/Ventoy)
+
+# charm 开源终端工具集
+
+[charm](https://github.com/charmbracelet)
+
+## vhs
 
 # 软件
 

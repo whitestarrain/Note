@@ -25,7 +25,7 @@
     > 没开始整理。看上面那个也行。之前打算抽时间重新梳理一下的。不过看上面那个也行
   - [设计模式](./base/design_pattern.md)
     > 这东西感觉得经常看啊
-  - [linux常用命令，工具与shell](./base/linux.md)
+  - [linux常用命令，工具与shell](./base/linux_basic.md)
     > 抽时间完善中
   - [bash入门笔记](./base/bash.md)
     > 由bash-handbook-zh-CN整理而成

@@ -1261,6 +1261,8 @@ GPT 分区表管理
 
 ## 5.7. dd
 
+复制文件并对原文件的内容进行转换和格式化处理
+
 ## 5.8. cpio
 
 # 6. 数据与系统备份工具
@@ -3761,9 +3763,11 @@ modinfo
 
 ## 16.9. dmidecode
 
-# 17. 网络工具
+# 17. 网络
 
-## 17.1. wget 下载
+## 17.1. 网络工具
+
+### 17.1.1. wget 下载
 
 - 直接下载文件或者网页:
 
@@ -3775,11 +3779,11 @@ modinfo
   # -c：断点续传
   ```
 
-## 17.2. curl
+### 17.1.2. curl
 
 - 使用标准输入： `--data-binary @-`
 
-## 17.3. ftp sftp lftp
+### 17.1.3. ftp sftp lftp
 
 - ftp/sftp文件传输:
 
@@ -3802,7 +3806,7 @@ modinfo
   lftp user@host:~> mirror -n
   ```
 
-## 17.4. ssh, scp
+### 17.1.4. ssh, scp
 
 - 免密登录
   ```bash
@@ -3823,9 +3827,9 @@ modinfo
   $scp -r ID@site:path localpath
   ```
 
-## 17.5. telnet
+### 17.1.5. telnet
 
-## 17.6. netcat(nc)/ncat
+### 17.1.6. netcat(nc)/ncat
 
 - BSD: netcat
 - GNU: natcat
@@ -3835,9 +3839,9 @@ modinfo
 
 [参考](https://www.cnblogs.com/pandana/p/15881273.html)
 
-# 18. 网络管理
+## 17.2. 网络管理
 
-## 18.1. netstat 查询网络服务和端口 (通过 ss 和 ip 代替)
+### 17.2.1. netstat 查询网络服务和端口 (通过 ss 和 ip 代替)
 
 > netstat 命令用于显示各种网络相关信息，如网络连接，路由表，接口状态 (Interface Statistics)，masquerade 连接，多播成员 (Multicast Memberships) 等等。
 
@@ -3872,21 +3876,21 @@ modinfo
   25501 ?        Ssl   28:21 ./redis-server ./redis.conf
   ```
 
-## 18.2. 网络路由
+### 17.2.2. 网络路由
 
-### 18.2.1. route (ip 代替)
+#### 17.2.2.1. route (ip 代替)
 
-### 18.2.2. ping
+#### 17.2.2.2. ping
 
-### 18.2.3. host
+#### 17.2.2.3. host
 
-### 18.2.4. traceroute
+#### 17.2.2.4. traceroute
 
-## 18.3. iwd
+### 17.2.3. iwd
 
-## 18.4. ip
+### 17.2.4. ip
 
-## 18.5. ss
+### 17.2.5. ss
 
 检查端口占用的进程
 
@@ -3894,11 +3898,25 @@ modinfo
 ss -tlnp | grep pid/port
 ```
 
-## 18.6. network manager
+### 17.2.6. network manager
 
-# 19. 软件安装
+## 17.3. 虚拟网络
 
-## 19.1. yum 和 rpm
+TODO: linux 虚拟网络
+
+### 17.3.1. namespace
+
+### 17.3.2. tap/tun
+
+### 17.3.3. veth
+
+### 17.3.4. brctl (bridge)
+
+### 17.3.5. iptables
+
+# 18. 软件安装
+
+## 18.1. yum 和 rpm
 
 - 编译安装(自己编译安装)
   - 说明：
@@ -4048,15 +4066,15 @@ ss -tlnp | grep pid/port
   - yum install man-pages-zh-CN
   - 看 man bash
 
-## 19.2. pacman
+## 18.2. pacman
 
-# 20. 第三方其他工具
+# 19. 第三方其他工具
 
-## 20.1. gdb 调试利器
+## 19.1. gdb 调试利器
 
-## 20.2. ldd 查看程序依赖库
+## 19.2. ldd 查看程序依赖库
 
-## 20.3. lsof 一切皆文件
+## 19.3. lsof 一切皆文件
 
 - lsof（list open files）
   - 定义：是一个查看当前系统文件的工具
@@ -4092,29 +4110,29 @@ ss -tlnp | grep pid/port
 
 注意：`lsof`输出的一列中有tid，也就是线程id（但一个进程内不同线程间使用的同一个fd），而`lsof -p`或`lsof +D`输出时则没有线程id
 
-## 20.4. pstack 跟踪进程栈
+## 19.4. pstack 跟踪进程栈
 
-## 20.5. strace 跟踪进程中的系统调用
+## 19.5. strace 跟踪进程中的系统调用
 
-## 20.6. ipcs 查询进程间通信状态
+## 19.6. ipcs 查询进程间通信状态
 
-## 20.7. vmstat 监视内存使用情况
+## 19.7. vmstat 监视内存使用情况
 
-## 20.8. iostat 监视 I/O 子系统
+## 19.8. iostat 监视 I/O 子系统
 
-## 20.9. sar 找出系统瓶颈的利器
+## 19.9. sar 找出系统瓶颈的利器
 
-## 20.10. readelf elf 文件格式分析
+## 19.10. readelf elf 文件格式分析
 
-## 20.11. objdump 二进制文件分析
+## 19.11. objdump 二进制文件分析
 
-## 20.12. nm 目标文件格式分析
+## 19.12. nm 目标文件格式分析
 
-## 20.13. size 查看程序内存映像大小
+## 19.13. size 查看程序内存映像大小
 
-## 20.14. tcpdump 抓包工具
+## 19.14. tcpdump 抓包工具
 
-### 20.14.1. 介绍
+### 19.14.1. 介绍
 
 - crontab命令
   - 是cron table的简写
@@ -4129,7 +4147,7 @@ ss -tlnp | grep pid/port
     - /etc/cron.weekly
     - /etc/cron.monthly
 
-### 20.14.2. 使用
+### 19.14.2. 使用
 
 - 语法
   ```bash
@@ -4153,7 +4171,7 @@ ss -tlnp | grep pid/port
     - - 从X到Z
     - ，散列数字
 
-### 20.14.3. 实例
+### 19.14.3. 实例
 
 - 实例 1：每 1 分钟执行一次 myCommand
   ```bash
@@ -4204,9 +4222,9 @@ ss -tlnp | grep pid/port
   0 23-7/1 * * * /etc/init.d/smb restart
   ```
 
-## 20.15. 内网穿透frp
+## 19.15. 内网穿透frp
 
-### 20.15.1. 基本说明
+### 19.15.1. 基本说明
 
 - 说明
   - 简单地说，frp就是一个反向代理软件，
@@ -4216,7 +4234,7 @@ ss -tlnp | grep pid/port
 
   ![linux-1](./image/linux-1.png)
 
-### 20.15.2. 服务端设置
+### 19.15.2. 服务端设置
 
 - **部署在vps上**
 - 下载frp
@@ -4257,7 +4275,7 @@ ss -tlnp | grep pid/port
 
 - 启动：`./start_server.sh`
 
-### 20.15.3. 客户端设置
+### 19.15.3. 客户端设置
 
 - 安装
   ```bash
@@ -4313,39 +4331,29 @@ ss -tlnp | grep pid/port
 - 注意：**一个服务端可以同时给多个客户端使用**
 - 启动客户端 `./frpc.exe -c frpc.ini`
 
-## 20.16. neofetch
+## 19.16. gf2
 
-- 安装 epel-release
-  ```bash
-  sudo yum install epel-release
-  ```
-- 添加第三方软件源
-  ```
-  curl -o /etc/yum.repos.d/konimex-neofetch-epel-7.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo
-  ```
-- 使用包管理器安装 neofetch
-  ```
-  sudo yum install neofetch
-  ```
-- 效果
+[gf](https://github.com/nakst/gf)
 
-  ![linux-2](./image/linux-2.png)
+GDB 前端
 
-## 20.17. Supervisor
+## 19.17. gpref
 
-### 20.17.1. 基本说明
+linux profile 工具
 
-TODO: supervisor
+[gpref](https://github.com/gperftools/gperftools)
 
-## 20.18. ab 压测工具
+## 19.18. gpp
 
-# 21. bash
+GPP, a generic preprocessor
+
+# 20. bash
 
 > [bash-handbook](./bash.md)
 
 <!-- TODO: 小任务，这里看看有没有什么有用的东西整理到bash.md -->
 
-## 21.1. 开始
+## 20.1. 开始
 
 - /etc/profile 是 shell 打开时要读取的配置文件，里面有环境变量的定义等
 - pstree:展示进程树
@@ -4393,7 +4401,7 @@ TODO: supervisor
   - 函数
   - 磁盘目录下的可执行文件
 
-## 21.2. 文本流，重定向
+## 20.2. 文本流，重定向
 
 - 预先知识
 
@@ -4503,7 +4511,7 @@ TODO: supervisor
           cat 0<& 9  # 将输入重定向到0
           ```
 
-## 21.3. 变量
+## 20.3. 变量
 
 - 种类：
   - 本地
@@ -4555,7 +4563,7 @@ TODO: supervisor
       - sleep 20 ：睡眠 20 秒
       - linux 中的 fork()函数
 
-## 21.4. 引用&命令替换
+## 20.4. 引用&命令替换
 
 > 三种引用机制查看 man bash
 
@@ -4610,7 +4618,7 @@ TODO: supervisor
     lines=$(< scriptfile)
     ```
 
-## 21.5. 退出状态&逻辑判断
+## 20.5. 退出状态&逻辑判断
 
 - 退出状态：
   - echo \$?
@@ -4635,7 +4643,7 @@ TODO: supervisor
     后执行的命令的返回状态。
   ```
 
-## 21.6. 表达式
+## 20.6. 表达式
 
 > man bash shell 语法>表达式
 
@@ -4666,7 +4674,7 @@ TODO: supervisor
   # 因此中括号和表达式必须要用空格分开
   ```
 
-## 21.7. 流程控制
+## 20.7. 流程控制
 
 > **全部通过 help 进行学习**
 
@@ -4690,7 +4698,7 @@ TODO: supervisor
 
   ```
 
-## 21.8. 练习
+## 20.8. 练习
 
 - shell 编程一切皆命令
 - 习惯通过 `$?` 进行逻辑判断
@@ -4802,7 +4810,7 @@ TODO: supervisor
   }
 ```
 
-## 21.9. 七个扩展
+## 20.9. 七个扩展
 
 > man bash 吧，所有都在 man bash
 
@@ -4816,11 +4824,11 @@ TODO: supervisor
 - 8，引用删除 echo "hello"
 - \*，重定向 >
 
-# 22. linux常见问题
+# 21. linux常见问题
 
-## 22.1. 线程数量过多
+## 21.1. 线程数量过多
 
-# 23. 参考文档
+# 22. 参考文档
 
 - [x] [鸟哥的Linux私房菜：基础学习篇 第四版](https://wizardforcel.gitbooks.io/vbird-linux-basic-4e/content/)
 - [ ] [linux常用命令](https://tkstorm.com/linux-doc/)
