@@ -100,6 +100,7 @@
   - 计算机图形学，下面可以找到公开课
   - [Spinning Cube](https://www.youtube.com/watch?v=p09i_hoFdd0)
   - [旋转矩阵](https://zh.wikipedia.org/wiki/旋转矩阵)
+- [ ] [hash可视化](https://superuser.com/questions/22535/what-is-randomart-produced-by-ssh-keygen)
 
 # 首选资料、公开课
 
@@ -412,8 +413,7 @@ cookie和session攻击
   - 作为编辑器，inbox的功能，我个人还是更喜欢vim了。
 - [Emacs 插件开发手册](https://manateelazycat.github.io/2022/11/18/write-emacs-plugin/)
   - 配置emacs前必须要看一下，插件加载的流程
-- 未解决问题
-  - [ ] `emacs -q sqlite.c` 内存没有快速增加，但把 `-q` 去掉就不行
+- [ ] [专业emacs入门](https://pavinberg.github.io/emacs-book/zh/)
 
 ### vscode
 
@@ -931,4 +931,6 @@ cookie和session攻击
 - [所有人都能懂的正规方程](https://blog.csdn.net/weixin_41075215/article/details/104880912)
   - 线性代数，有时间可以复习下
 - [网易云音乐ncm格式分析以及ncm与mp3格式转换](https://www.cnblogs.com/cyx-b/p/13443003.html)
+- [CloudFlare Tunnel 免费内网穿透的简明教程](https://sspai.com/post/79278)
+
 
