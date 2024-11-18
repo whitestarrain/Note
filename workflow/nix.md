@@ -1672,6 +1672,206 @@ nix-env -e my-nix-package-demo-by-build-go-module-0.0.1 ; nix-collect-garbage -d
 
 敏感数据处理
 
+# vmare虚拟机安装
+
+## 配置虚拟机网络
+
+在使用vmare练习安装之前，要确保下面两个服务已经打开
+
+![nix-20241117225858-311901.png](./image/nix-20241117225858-311901.png)
+
+然后按照下面图示配置 vmare 虚拟nat设备的 ip 以及 宿主机新增 `虚拟 vmware vmnet8 网卡` 的ip
+（下面示例图中，vmare nat环境使用的子网是 `192.168.62.0/24`，里面的 `62` 是可以按需改变的，后续实操截图用用的则是 `192.168.179.0/24`）
+
+![nix-20241117225858-314766.png](./image/nix-20241117225858-314766.png)
+
+> 注意：上图中的 Vmnet8(虚拟交换机) 应该是一个三层交换机，有路由的功能。
+
+- 其中虚拟机通过虚拟NAT设备，连接主机网卡，访问外网；
+- 而虚拟Vmnet8交换机，连接宿主机与虚拟机，保证宿主机与虚拟机间的网络连通
+
+首先 配置虚拟机所在子网：
+
+![nix-20241117225858-317593.png](./image/nix-20241117225858-317593.png)
+
+然后配置 虚拟nat设备 在虚拟机子网内的 ip，vmare的虚拟机，都需要配置此ip作为默认网关，经过虚拟nat设备，连接外网。任意选择子网下的一个ip即可
+
+![nix-20241117225858-320564.png](./image/nix-20241117225858-320564.png)
+
+最后配置主机的`虚拟 vmware vmnet8 网卡`，确保虚拟机能够 ping 通主机，任意选择子网下的一个ip即可，然后默认网关与上面那个虚拟nat设备子网内ip保持一致即可。
+
+![nix-20241117225858-323358.png](./image/nix-20241117225858-323358.png)
+
+注意： 在分配ip时候， 主机的`虚拟 vmware vmnet8 网卡`，虚拟nat设备 在虚拟机子网内的 ip (网关)， 以及虚拟机的ip不要重复
+
+## nixos 安装
+
+进入root环境，之后的操作都是在root环境内操作的
+
+```bash
+sudo -i
+```
+
+### 配置 nixos 网络
+
+配置虚拟机 ip 与路由
+
+```bash
+# 查看当前ip
+ip addr
+
+# 为网卡添加ip
+ip addr add 192.168.179.151 dev ens33
+
+# 查看当前路由配置
+ip route # 或者 route -n
+
+# 添加同一子网内的路由表 (一般会自动生成的，但并没有)
+ip route add 192.168.179.0/24 dev ens33 proto kernel scope link src 192.168.179.151
+# 删除因上个操作出现的一个没有用的路由
+ip route del 0.0.0.0/0 dev ens33
+
+# 添加默认路由
+ip route add default via 192.168.179.2 dev ens33 onlink
+```
+
+路由表：
+
+```
+[nixos@nixos:~]$ route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         192.168.179.2   0.0.0.0         UG    0      0        0 ens33
+169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 ens33
+192.168.179.0   0.0.0.0         255.255.255.0   U     0      0        0 ens33
+```
+
+配置 dns 解析服务器地址
+
+```bash
+vim /etc/resolv.conf
+# 新增:
+# nameserver 8.8.8.8
+# nameserver 114.114.114.114
+```
+
+ping 一下测试：
+
+```bash
+# 虚拟机
+ping www.baidu.com # 可能慢一点儿
+ping 197.168.179.1 # 宿主机防火墙可能需要关一下
+# 宿主机，两个ip应该都可以ping通
+ping 197.168.179.151 # 虚拟机子网ip
+ping 197.168.124.6 # 外部子网ipe
+```
+
+ssh 登陆
+
+```bash
+# 因为默认密码为空，需要设置一下密码
+passwd nixos
+```
+
+如果宿主机上有代理，也可以配置一下，就不要用第三方源了
+
+```
+# clash 的话，需要开启允许虚拟机
+export http_proxy=http://192.168.179.1:7890
+export https_proxy=http://192.168.179.1:7890
+export all_proxy=http://192.168.179.1:7890
+```
+
+### 分区与格式化
+
+```
+lsblk
+
+parted /dev/sda  # 分区该设备
+mklabel gpt  # 创建 GPT 表
+mkpart ESP fat32 1MiB 256MiB  # 在 1 MiB - 256 MiB 的位置创建引导分区
+p  # 打印当前分区表
+set 1 esp on  # 将序号为 1 的分区标识为可启动
+mkpart primary 256MiB -8GiB  # 在自 256MiB 至分区尾前 8GiB 的位置创建主分区
+mkpart primary linux-swap -8GiB 100%  # 余下的 8GiB 用于创建交换分区
+p  # 确认当前分区情况
+quit  # 退出
+```
+
+```
+mkfs.fat -F 32 /dev/sda1  # 格式化引导分区为 FAT32 格式
+mkfs.btrfs -L nixos /dev/sda2  # 格式化根分区为 Btrfs 格式
+mkswap -L swap /dev/sda3  # 设置交换分区
+mount /dev/sda2 /mnt  # 将根分区挂载到 /mnt 下
+btrfs subvolume create /mnt/root  # 创建 root 子卷
+btrfs subvolume create /mnt/home  # 创建 home 子卷
+btrfs subvolume create /mnt/nix  # 创建 nix 子卷
+umount /mnt  # 取消挂载
+mount -o compress=zstd,subvol=root /dev/sda2 /mnt  # 启用透明压缩参数挂载 root 子卷
+mkdir /mnt/{home,nix,boot}  # 创建 home，nix，boot 目录
+mount -o compress=zstd,subvol=home /dev/sda2 /mnt/home  # 启用透明压缩参数挂载 home 子卷
+mount -o compress=zstd,noatime,subvol=nix /dev/sda2 /mnt/nix  # 启用透明压缩并不记录时间戳参数挂载 nix 子卷
+mount /dev/sda1 /mnt/boot  # 挂载 boot
+swapon /dev/sda3  # 启用交换分区
+```
+
+### nixos 安装
+
+生成默认配置
+
+```bash
+nixos-generate-config --root /mnt
+```
+
+根据注释调整配置，(不同版本系统下，生成的配置可能不同)
+
+```bash
+vim /mnt/etc/nixos/configuration.nix
+```
+```nix
+{ config, pkgs, ...}:
+{
+    imports = [
+        ./hardware-configuration.nix
+    ]
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  networking.networkmanager.enable = true;
+  networking.hostName = "nixos";
+  time.timeZone = "Asia/Shanghai";
+  i18n.defaultLocale = "en_US.UTF-8";
+  environment.systemPackages = with pkgs; [
+    vim
+    alacritty
+    neovim
+  ];
+  hardware.pulseaudio.enable = true;
+  system.stateVersion = "24.06";
+}
+```
+
+添加没有生成的，挂载 Btrfs 子卷的参数
+
+```bash
+vim /mnt/etc/nixos/hardware-configuration.nix
+# 比如 "compress=zstd" 和 "noatime"
+```
+
+开始安装：
+
+```bash
+nixos-install
+```
+
+配置用户
+
+```
+nixos-enter  # 进入部署好的系统，类似 arch 的 chroot
+passwd root  # 重置 root 密码
+useradd -m -G wheel wsain  # 添加普通用户，并加入 wheel 组
+passwd wsain  # 设置普通账户密码
+```
+
 # 参考
 
 - [NixOS 与 Flakes 一份非官方的新手指南](https://nixos-and-flakes.thiscute.world/zh/)

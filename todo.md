@@ -3,7 +3,7 @@
 
 # 优先级较高项
 
-- [ ] [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
+- [x] [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
   - [x] 编译原理复习
 
 - [ ] emacs, elisp
@@ -23,7 +23,7 @@
   - 流程：
     - [x] nix 基础
     - [x] 系统盘
-    - [ ] nix配置
+    - [ ] 初始化nix配置
     - [ ] 数据备份
     - [ ] 系统安装
 
@@ -701,6 +701,10 @@ cookie和session攻击
 - [nix 学习经验：安装和打包](https://linux.cn/article-16332-1.html)
 - [Nix Reference Manual](https://nix.dev/manual/nix/2.18/introduction)
 - [nix](https://lazamar.co.uk/nix-versions/)
+- [nix安装](https://medium.com/@realLanta/一个配置文件就能在各个电脑装一模一样的系统和软件-保姆级教你轻松掌握nixos-7f026b539242)
+- case记录:
+  - 因为没有使用FHS，所以一些工具一起使用的时候可能有问题， 比如
+    - vscode的terminal中使用gdb，需要使用 vscode FHS environment: [Getting gdb to work in vscode](https://www.reddit.com/r/NixOS/comments/1aep3c5/getting_gdb_to_work_in_vscode/)
 
 ## lang
 

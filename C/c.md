@@ -6300,15 +6300,15 @@ C99 规定 Integer Promotion 适用于以下几种情况：
 
 <p id="t15-3">表 15.3. 如何做类型转换</p>
 
-| 待转换的类型                                 | M > N 的情况                                                 | M == N 的情况                                                | `M < N` 的情况      |
-| -------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ----------------- |
-| signed integer to signed integer             | 如果 X 在目标类型的取值范围内则值不变，否则 Implementation-defined | 值不变                                                       | 值不变            |
-| unsigned integer to signed integer           | 如果 X 在目标类型的取值范围内则值不变，否则 Implementation-defined | 如果 X 在目标类型的取值范围内则值不变，否则 Implementation-defined | 值不变            |
-| signed integer to unsigned integer           | X % 2<sup>N</sup>                                            | X % 2<sup>N</sup>                                            | X % 2<sup>N</sup> |
-| unsigned integer to unsigned integer         | X % 2<sup>N</sup>                                            | 值不变                                                       | 值不变            |
-| floating-point to signed or unsigned integer | Truncate toward Zero，如果 X 的整数部分超出目标类型的取值范围则 Undefined |                                                              |                   |
-| signed or unsigned integer to floating-point | 如果 X 在目标类型的取值范围内则值不变，但有可能损失精度，如果 X 超出目标类型的取值范围则 Undefined |                                                              |                   |
-| floating-point to floating-point             | 如果 X 在目标类型的取值范围内则值不变，但有可能损失精度，如果 X 超出目标类型的取值范围则 Undefined | 值不变                                                       | 值不变            |
+| 待转换的类型                                 | M > N 的情况                                                                                       | M == N 的情况                                                      | `M < N` 的情况    |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------- |
+| signed integer to signed integer             | 如果 X 在目标类型的取值范围内则值不变，否则 Implementation-defined                                 | 值不变                                                             | 值不变            |
+| unsigned integer to signed integer           | 如果 X 在目标类型的取值范围内则值不变，否则 Implementation-defined                                 | 如果 X 在目标类型的取值范围内则值不变，否则 Implementation-defined | 值不变            |
+| signed integer to unsigned integer           | X % 2<sup>N</sup>                                                                                  | X % 2<sup>N</sup>                                                  | X % 2<sup>N</sup> |
+| unsigned integer to unsigned integer         | X % 2<sup>N</sup>                                                                                  | 值不变                                                             | 值不变            |
+| floating-point to signed or unsigned integer | Truncate toward Zero，如果 X 的整数部分超出目标类型的取值范围则 Undefined                          |                                                                    |                   |
+| signed or unsigned integer to floating-point | 如果 X 在目标类型的取值范围内则值不变，但有可能损失精度，如果 X 超出目标类型的取值范围则 Undefined |                                                                    |                   |
+| floating-point to floating-point             | 如果 X 在目标类型的取值范围内则值不变，但有可能损失精度，如果 X 超出目标类型的取值范围则 Undefined | 值不变                                                             | 值不变            |
 
 注意上表中的 X % 2<sup>N</sup>，我想表达的意思是「把 X 加上或者减去 2<sup>N</sup> 的整数倍，使结果落入 [0, 2<sup>N-1</sup>] 的范围内」，当 X 是负数时运算结果也得是正数，即运算结果和除数同号而不是和被除数同号，这不同于 C 语言 % 运算的定义。写程序时不要故意用上表中的规则，尤其不要触碰 Implementation-defined 和 Undefined 的情况，但程序出错时可以借助上表分析错误原因。
 

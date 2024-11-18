@@ -5010,7 +5010,7 @@ Or nourish, lik’ning spiritual, I have thou appear.
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 |                                                              |                                                              |
 
-# 第九章：数字[¶](https://acl.readthedocs.io/en/latest/zhCN/ch9-cn.html#id1)
+# 第九章：数字
 
 处理数字是 Common Lisp 的强项之一。Common Lisp 有着丰富的数值类型，而 Common Lisp 操作数字的特性与其他语言比起来更受人喜爱。
 

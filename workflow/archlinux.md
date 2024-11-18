@@ -147,7 +147,7 @@ TODO: archlinux
 - 确实。你或许会问，那后66字节算什么呢，那些难道也是程序嘛？
   - 确实，一般来说那些都不是程序。
   - 但是你细品MBR的加载过程，其实只是运行了一段程序而已，所以你完全可以在后64字节写程序（最后2字节的标志还是要留的）。
-- 之前我提到，BIOS实际上是一个低层次的操作系统。
+- 之前提到，BIOS实际上是一个低层次的操作系统。
   - 所以你完全可以用这510字节写点引导之外的程序。
   - 事实上，还真有人干过这事。YouTube频道主8-Bit Guy就介绍过两个[写在引导扇区的游戏](https://www.youtube.com/watch?v=1UzTf0Qo37A&ab_channel=The8-BitGuy)
   - 好家伙，系统都不进了，搁BIOS那玩游戏呢。
@@ -723,7 +723,7 @@ cpio –icduv < /opt/etc.cpio
 
 # 7. pacman
 
-## 常用命令
+## 7.1. 常用命令
 
 ```bash
 pacman --help
@@ -761,13 +761,13 @@ pacman -U /var/cache/pacman/pkg/xxx.zst
 pacman -U https://archive.archlinux.org/packages/n/neovim/xxxx.zst
 ```
 
-## AUR
+## 7.2. AUR
 
 > Arch User Package
 
-## yay
+## 7.3. yay
 
-## paru
+## 7.4. paru
 
 # 8. 参考资料
 
