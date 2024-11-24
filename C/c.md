@@ -24304,7 +24304,6 @@ binutils 需要在源码目录下configure和make
 
 **动态链接器是硬编码到可执行文件中的** ，使用 LD_LIBRARY_PATH 可以指定动态库路径，但是不可以指定dynamic-linker 路径
 
-
 - 方案1：编译时指定 glibc path 和 dynamic-linker
 
   ```

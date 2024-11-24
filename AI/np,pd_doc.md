@@ -1613,6 +1613,21 @@ TODO: pandas 数据处理相关
 - get()和slice()方法还能支持对split()返回的**列表**进行取值操作。例如我们使用split()和get()方法可以提取出每个人的姓：
   > monte.str.split().str.get(-1)
 
+## 其他
+
+### 相关性
+
+- `dataframe.corr()`
+  - method:
+    - pearson : standard correlation coefficient
+    - kendall : Kendall Tau correlation coefficient
+    - spearman : Spearman rank correlation
+    - callable: callable with input two 1d ndarrays
+  - min_periods
+    - minimum number of observations required per pair of columns to have a valid result. Currently only available for Pearson and Spearman correlation.
+  - numeric_onlybool, default False
+    - include only float, int or boolean data.
+
 # 3. 数据处理常用方法
 
 - 了解数据

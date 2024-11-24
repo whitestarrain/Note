@@ -1,12 +1,8 @@
-# nix 和 nixos
-
-# 基础
-
-## nix 语言
+# nix 语言
 
 [示例代码库](https://github.com/rectcircle/learn-nix-demo)
 
-### 概述
+## 概述
 
 为了更好的描述一个包，从源码到制品的过程，nix 设计了一套领域特定语言（DSL），来声明一个包。这个语言就叫做 nix 语言。
 
@@ -18,7 +14,7 @@ nix 是一种特定领域的、纯函数式的、惰性求值的、动态类型�
 - 在 `shell.nix` 中使用，正如之前文章所讲，其可以为一个项目定义一个可重现的隔离的开发环境。
 - 在 NixOS 中，来定义操作系统环境，本系列不多赘述。
 
-### Hello World
+## Hello World
 
 ```
 # nix-lang-demo/01-hello.nix
@@ -37,7 +33,7 @@ in msg
 
 关于 `let in` 参见下文：`局部变量`
 
-### 程序结构
+## 程序结构
 
 和常规的命令式通用编程语言不同，nix 是一种声明式的表达式语言。
 
@@ -47,13 +43,13 @@ in msg
 
 在执行一个正确的 nix 程序时，解释器最终会推导出一个且必须推导出一个值出来。这个值，必须是 nix 支持的几种数据类型之一，参见下文。
 
-### 数据类型
+## 数据类型
 
 nix 的数据类型类似于 JSON，可以分为基本数据类型、列表和属性集。
 
-#### 基本数据类型
+### 基本数据类型
 
-##### 字符串
+#### 字符串
 
 支持多种表达方式。
 
@@ -87,11 +83,11 @@ nix 的数据类型类似于 JSON，可以分为基本数据类型、列表和�
 
 最后，符合 [RFC 2396](http://www.ietf.org/rfc/rfc2396.txt) 的 URL 可以不使用引号包裹，可以直接使用。
 
-##### 数字
+#### 数字
 
 支持且不区分整型和浮点型，格式如 `123`、`123.43`、`.27e13`
 
-##### 路径
+#### 路径
 
 如 `/bin/sh`、`./abc`、`abc/123`，包含一个斜杠的会被识别为路径类型。nix 会把这些路径都转换为绝对路径， **注意 nix 中的相对路径都是相对于 `.nix` 源代码文件的** 。
 
@@ -105,15 +101,15 @@ nix 还支持一种特殊写法，如 `<nixpkgs>`，nix 在 `NIX_PATH` 环境变
 
 注意，通过 `nix-instantiate --eval` 执行文件时， **如果使用 `--strict` 启用严格模式** ，则需要保证所有的 PATH 都必须存在， **且 nix 会将这些文件或目录复制到 `/nix/store` 中** ， **路径变量的值将变为 `/nix/store/$hash-$name`** 。
 
-##### bool
+#### bool
 
 可选值为 true 或 false。
 
-##### null
+#### null
 
 空值，表示 null。
 
-##### 示例
+#### 示例
 
 完整示例 (`nix-lang-demo/02-primitives-data-type.nix`)。
 
@@ -171,7 +167,7 @@ in {
 }
 ```
 
-#### 函数类型
+### 函数类型
 
 nix 语言是函数式的，其函数也是一种数据类型，也就是说 nix 的函数可以作为返回值，也可以作为函数参数、可以赋值给变量。
 
@@ -244,7 +240,7 @@ in {
 }
 ```
 
-#### 列表
+### 列表
 
 nix 通过方括号 `[]` 定义一个列表。和其他语言不同， **列表中的元素通过空格而不是逗号分割** 。
 
@@ -279,7 +275,7 @@ in
 }
 ```
 
-#### 属性集
+### 属性集
 
 nix 通过花括号 `{}` 定义一个属性集。属性集的每个元素（属性）为一个键值对，key 和 value 使用 `=` 分割，以 `;` 结尾。
 
@@ -435,9 +431,9 @@ in
 }
 ```
 
-### 变量
+## 变量
 
-#### 局部变量
+### 局部变量
 
 nix 通过 `let in` 来创建一个作用域，并定义一批变量，如：
 
@@ -451,7 +447,7 @@ in
 
 如上写法等价于： `1 + 2`。
 
-#### 属性继承
+### 属性继承
 
 当我们想构造一个属性集，并想将作用域中的某些属性作为该属性集的属性时，一般的写法如下：
 
@@ -509,7 +505,7 @@ in {
 }
 ```
 
-#### with 表达式
+### with 表达式
 
 类似于 python 的 with。通过 with 可以创建一个作用域，并将一个属性集中属性作为作用域中的变量。
 
@@ -543,7 +539,7 @@ in with x;
 a + b
 ```
 
-#### 示例
+### 示例
 
 ```
 nix-lang-demo/06-var.nix
@@ -583,9 +579,9 @@ in with attrs2;
 }
 ```
 
-### 流程控制
+## 流程控制
 
-#### 条件表达式
+### 条件表达式
 
 语法如下：
 
@@ -602,13 +598,13 @@ in if x > 0 then "x > 0" else "x <= 0"
 
 返回， “x > 0”。
 
-#### 循环
+### 循环
 
 nix 是个无副作用的函数式的表达式语言。因此，nix 没有命令式编程语言的 while 或者 for 循环。
 
 一般情况，需要循环场景，就是对列表或者属性集进行转换。nix 可以通过内置高阶函数，如 `builtins.filter`、 `builtins.map`，来达到类似的效果。
 
-#### 示例
+### 示例
 
 ```nix
 # nix-lang-demo/07-flow-control.nix
@@ -634,9 +630,9 @@ in {
 }
 ```
 
-### 错误处理
+## 错误处理
 
-#### 断言
+### 断言
 
 通过 assert 可以检查某些条件是否成立，语法如下：
 
@@ -649,7 +645,7 @@ assert e1; e2
 - `assert true; 1` 将返回 1。
 - `assert false; 1` 将报错。
 
-#### 抛出错误
+### 抛出错误
 
 nix 的错误抛出，由内置函数提供，语法如下：
 
@@ -659,7 +655,7 @@ builtins.throw s
 
 抛出错误，如果上层没有处理，解释器会打印消息 `s`，并停止运行（评估）。
 
-#### 错误终止
+### 错误终止
 
 nix 的错误终止，由内置函数提供，语法如下：
 
@@ -669,7 +665,7 @@ builtins.abort s
 
 上层不能捕捉abort的异常，解释器会打印消息 `s`，并停止运行（评估）。
 
-#### 错误捕捉
+### 错误捕捉
 
 nix 的错误捕捉，由内置函数提供，语法如下：
 
@@ -686,7 +682,7 @@ builtins.tryEval e
     - 如果 `success = false`，则该参数为 `false`，注意，不是错误消息（参见：[issue](https://github.com/NixOS/nix/issues/356)）。
     - 否则是该参数 e 的值。
 
-#### 示例
+### 示例
 
 ```nix
 nix-lang-demo/08-err-handle.nix
@@ -726,7 +722,7 @@ in {
 }
 ```
 
-### 操作符
+## 操作符
 
 > 参见：[Nix 手册 Operators](https://nixos.org/manual/nix/stable/language/operators.html#operators)
 
@@ -798,7 +794,7 @@ in
 }
 ```
 
-### 内置常量和内置函数
+## 内置常量和内置函数
 
 - 内置常量：
 
@@ -826,7 +822,7 @@ in
 
 - 其他内置函数，参见：[Nix 手册 - 内置函数](https://nixos.org/manual/nix/stable/language/builtins.html)。
 
-### fetch 相关函数
+## fetch 相关函数
 
 nix 提供了一些从网络上下载文件的内置函数，执行这些函数，nix 会将这些文件下载下来，并存储到 `/nix/store` 中，并返回存储的路径。
 
@@ -955,7 +951,9 @@ in
 }
 ```
 
-### 模块系统
+# nixpkg 构建推导
+
+## 模块系统
 
 nix 通过 `import path`， 执行其他文件的代码，并返回执行的结果。在 nix 中 import 是一个内置函数。这里的 path 可以是一个 `.nix` 文件，也可以是一个目录，如果是一个目录或压缩包的话，将执行该目录中的 `default.nix` 文件。示例如下：
 
@@ -1022,11 +1020,11 @@ in
 }
 ```
 
-### 推导 (derivation)
+## 推导 (derivation)
 
 > 参考: [nix-pills/our-first-derivation](https://nixos.org/guides/nix-pills/our-first-derivation.html) | [nix-pills/working-derivation.html](https://nixos.org/guides/nix-pills/working-derivation.html)
 
-#### 概述
+### 概述
 
 前文，我们一直将 nix 定位为一个包管理工具。但从本质上来说，nix 的核心是一个包构建系统。
 
@@ -1034,7 +1032,7 @@ in
 
 而推导（derivation）就是这样一个最重要的的一个内置函数。是 nix 作为一个构建系统的核心。
 
-#### 参数说明
+### 参数说明
 
 在 nix 中， derivation 内置函数，定义一个软件包重源码到二进制产物的过程，该函数传递一个属性集作为参数，包含如下属性：
 
@@ -1056,9 +1054,9 @@ in
   - bool 类型 true，会转换为 1。bool 类型 false、null 会转换为空串。
   - 列表类型，元素会转换为字符串，然后用空格分隔拼接成一个字符串。
 
-#### 示例
+### 示例
 
-##### 源码
+#### 源码
 
 假设我们有一个 Go 项目，该项目是一个命令行工具，希望通过 nix 编译和发行该包。本部分实现一下该项目：
 
@@ -1077,7 +1075,7 @@ func main() {
 }
 ```
 
-##### 定义 derivation
+#### 定义 derivation
 
 ```nix
 # nix-lang-demo/12-derivation.nix
@@ -1130,7 +1128,7 @@ derivation {
 }
 ```
 
-##### 测试和输出分析
+#### 测试和输出分析
 
 执行 `drv_path=$(nix-instantiate nix-lang-demo/12-derivation.nix) && echo "drv_path: $drv_path" && echo "drv: $()" && nix-store -r $drv_path && nix-store --read-log $drv_path` 命令，输出可以分为三部分。
 
@@ -1300,13 +1298,13 @@ drwxr-xr-x 3 nixbld nixbld    4096 Mar 12 07:27 ..
 
 - `ls -al /` 可以看出，nix 应该利用了 Linux 的 Mount 和 User namespace 实现的构建隔离。
 
-##### 恢复现场
+#### 恢复现场
 
 ```bash
 nix-env -e my-nix-package-demo-0.0.1 ; nix-collect-garbage -d
 ```
 
-#### derivation 和 stdenv.mkDerivation
+### derivation 和 stdenv.mkDerivation
 
 这里可以看出，写一个 derivation 启动一个 bash 还是比较麻烦的，最麻烦的是，需要手动设置 PATH 环境变量。
 
@@ -1316,7 +1314,7 @@ nix-env -e my-nix-package-demo-0.0.1 ; nix-collect-garbage -d
 
 关于 `stdenv.mkDerivation` 参见下文 [nixpkgs 分析]()。
 
-### 常见 shell.nix 分析
+## 常见 shell.nix 分析
 
 上一篇文章，我们使用 shell.nix 定义了一个项目的开发依赖。代码 `nix-package-demo/shell.nix` 如下所示：
 
@@ -1421,7 +1419,7 @@ drv: {
 
 而 `nix-shell` 的流程就是，先调用 `nix-instantiate nix-package-demo/shell.nix`，生成一个 `.drv` 文件，然后根据该文件配置，启动一个 Shell。
 
-### nixpkgs 分析
+## nixpkgs 分析
 
 > 参考： [nixpkgs github](https://github.com/NixOS/nixpkgs) | [nixpkgs 手册](https://nixos.org/manual/nixpkgs/stable/) |
 
@@ -1476,7 +1474,7 @@ nix --extra-experimental-features nix-command show-derivation /nix/store/7ky0zmi
 
 注意：不管是 nativeBuildInputs 还是 buildInputs，即使其产物在 Cache 中存在，也都会自动下载下来。 **似乎并不存在 build-only 方式的声明** ，参见： [issue](https://github.com/NixOS/nix/issues/8107)。
 
-### 自定义 channel
+## 自定义 channel
 
 根据 nixpkgs 分析章节，做一个自定义 channel 会非常的简单。
 
@@ -1574,9 +1572,9 @@ nix-env -iA my-nix-package-demo-by-build-go-module_0_0_1 -f ./
 nix-env -e my-nix-package-demo-by-build-go-module-0.0.1 ; nix-collect-garbage -d  # 彻底卸载。
 ```
 
-### 其他说明
+## 其他说明
 
-#### 纯函数性
+### 纯函数性
 
 最后，讨论一下 nix 语言如何保证 nix 工具是一个纯函数包管理工具。
 
@@ -1600,7 +1598,7 @@ nix-env -e my-nix-package-demo-by-build-go-module-0.0.1 ; nix-collect-garbage -d
 - 不要使用 `fetchurl`。
 - 在编写 shell 脚本时，不要使用 curl 下载内容，时刻注意该 shell 脚本是否是可重现的。
 
-#### 各种 Name
+### 各种 Name
 
 至此，当我们要安装一个包时，我们会遇到好几种 Name，在这里总结下这些 Name 之间的关系。
 
@@ -1624,7 +1622,7 @@ nix-env -e my-nix-package-demo-by-build-go-module-0.0.1 ; nix-collect-garbage -d
     - 安装包 `nix-env -iA $channel_name.$attr_name`。
     - 安装包 `nix-env -iA $attr_name -f path/to/channel`。
 
-#### 包存储结构
+### 包存储结构
 
 传统的 Unix 包存储结构规范是 [FHS](https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard) 。这个规范有如下特点：
 
@@ -1652,17 +1650,171 @@ nix-env -e my-nix-package-demo-by-build-go-module-0.0.1 ; nix-collect-garbage -d
     - 下载常规 Linux 版本可执行文件，然后通过 [patchelf](https://github.com/NixOS/patchelf) 工具修改 [ld-linux.so](https://linux.die.net/man/8/ld-linux.so) 到 `/nix/store/xxx-glibc-xxx/lib` 路径即可
     - 详见：[wiki](https://nixos.wiki/wiki/Packaging/Binaries)。
 
-## nix 包管理器
+# Nixpkgs 模块系统
 
-## nixos
+NixOS 的配置文件是通过一个个可复用的模块实现的，我们之前说过一个 Nix 文件就可以是一个函数，你可以在里面写任意表达式，求值这个 Nix 文件都会有输出。但是不是每一个 Nix 文件都是一个模块，因为模块对格式有特殊要求。
 
-## Flake
+## 模块的工作原理
 
-# 基本操作
+一个成熟的模块大概由三个部分组成：导入（imports）、选项（options）与配置（config，或者叫做定义）。下面是个简单的示例，请你将这三部分单独看待：
 
-## 更新系统
+```nix
+{
+  imports = [
+    # 这里导入其他模块
+  ];
+  options = {
+    # 这里声明选项供其他模块设置
+  };
+  config = {
+    # 选项被激活以后进行的动作
+  };
+}
+```
 
-## 降级或升级软件包
+我们先把 `imports` 数组撇一边去，先观察 `options` 与 `config`，两行注释还不足以诠释具体操作，我们直接上例子：
+
+
+
+```nix
+{ config, pkgs, ... }:  # 这些参数由构建系统自动输入，你先别管
+
+{
+    /*
+    我们开始在下面的 options 属性集中声明这个模块的选项了，
+    你可以将模块声明成你任意喜欢的名字，这里示例用 “myModule”，注意小驼峰规范。
+    同时请注意一件事，那就是模块名称只取决于现在你在 options 的命名，而不是该模块的文件名，
+    我们将模块命名与文件名一致也是出于直观？
+    */
+
+    options = {
+        myModule.enable = mkOption {
+        type = types.bool;  # 此选项的类型是布尔类型
+        default = false;  # 默认情况下，此选项被禁用
+        description = "描述一下这个模块";
+        };
+    };
+
+    config = mkIf config.myModule.enable {
+        systemd.services.myService = {  # 创建新的 systemd 服务
+        wantedBy = [ "multi-user.target" ];  # 此服务希望在多用户目标下启动
+        script = ''  # 服务启动时运行此脚本
+                echo "Hello, NixOS!"
+            '';
+        };
+    };
+}
+```
+
+在上面的代码中，我们通过向 `mkOption` 函数传递了一个属性集生成了一个布尔选项，下面的 `mkIf` 则生成第一个参数为 `true` 才执行的动作。
+
+提示
+
+这些工具函数可以在[函数库](https://nixos-cn.org/tutorials/lang/Utils.html)查询到。
+
+好的，现在我们办成了两件事，声明选项，以及定义了启用选项后会触发的动作。不知道你是否足够细心？注意到 `mkIf` 后面是 `config.myModule.enable`，即它是从参数 `config` 输入来的，我们不是在 `options` 里声明过这个选项了吗？为什么不直接通过 `options.myModule.enable` 来求值呢？
+
+直接去求值 `options.myModule.enable` 是没有意义的，因为这个选项是未经设置的，这只会求值出它的默认值。接下来就是 `imports` 的作用了，我们通过将一个模块导入到另一个模块，从而在其他模块设置（定义）被包含的模块的 `options`。
+
+被包含的模块只有 `options` 是对外部可见的，里面定义的函数与常量都是在本地作用域定义的，对其他文件不可见。同时，被 `imports` 组织的模块集合中的任意模块都能访问任意模块的 `options`，也就是说，只要是被 `imports` 组织的模块，其 `options` 是全局可见的。
+
+接下来构建系统会提取你所有模块中的 `options`，然后求值所有模块中对 `options` 的定义：
+
+提示
+
+如果一个模块没有任何声明，就直接开始定义（`config`）部分。注意不需要使用 `config = {}` 包装，因为这个模块不包含任何声明，只有定义。你可以将这里的定义理解为一种无条件配置，因为我们没有使用 `mkIf` 之类的函数。
+
+```nix
+{
+  imports = [
+    ./myModule.nix
+  ];
+  myModule.enable = true;
+}
+```
+
+![nix-20241124180828-460667.png](./image/nix-20241124180828-460667.png)
+
+然后构建系统再将所有的配置项（即被定义后的 `options`）求值，然后作为参数 `config` 输入到每个模块，这就是每个模块通常要在第一行输入 `config` 的原因，然后下面的 `config` 会根据最终值触发一系列配置动作，从而达到求值模块以生成系统目的。
+
+## 模块的常见输入
+
+|    参数名     | 描述                   |
+| :-----------: | :--------------------- |
+|   `config`    | 所有 `option` 的最终值 |
+|     `lib`     | nixpkgs 提供的库       |
+|    `pkgs`     | nixpkgs 提供的包集合   |
+|   `options`   | 所有模块声明的选项     |
+| `specialArgs` | 特殊参数               |
+|    `utils`    | 工具库                 |
+| `modulesPath` | 模块路径               |
+
+## 模块的组织方案
+
+由于 `options` 是全局可见的，所以我们需要一种规范组织模块，区分模块的声明与定义部分，不然一切都会被搞砸的。并且尽量不要在零散的地方定义其他模块的 `options`，这样会让模块的维护异常困难，还可能触发难以想象的副作用。
+
+我们只让模块声明属于自己职能的部分，一个模块只完成它应该干的一件事。举个简单的例子，现在有两个模块，对于 `a.nix`，我们将它放到 `services` 文件夹下。你可以注意下面模块名，这表示了从属关系：
+
+```nix
+{ config, lib, pkgs, ... }:
+
+{
+  options.services.a = {
+    enable = lib.mkEnableOption "service a";
+  };
+
+  config = lib.mkIf config.services.a.enable {
+    # 模块 a 的实现
+  };
+}
+```
+
+对于 `./b.nix`：
+
+```nix
+{ config, lib, pkgs, ... }:
+
+{
+  imports = [ ./services/a.nix ]; # 导入模块 a
+
+  options.b = {
+    enable = lib.mkEnableOption "service b";
+  };
+
+  config = lib.mkIf config.b.enable {
+    services.a.enable = true;  # 不要这么做
+    # 模块 b 的实现
+  };
+}
+```
+
+b 模块不能这样写。假如我们定义 `b.enable = true`，则带来了 `services.a.enable = true` 的副作用，而模块自治的写法是删掉 b 模块中启用 a `option` 的语句，然后再更加顶层的一个中心文件完成所有模块的 `options` 的定义。
+
+```nix
+{ config, lib, pkgs, ... }:
+
+{
+  imports = [
+      ./a.nix
+      ./b.nix
+  ];  # 导入模块 a 和 b
+
+  services.a.enable = true;  # 在系统配置中启用模块 a
+  b.enable = true;  # 在系统配置中启用模块 b
+}
+```
+
+我们在上面的文件上定义这些 `options` ，正如我们在 `/etc/nixos/configuration.nix` 所做的一致。综上，我们应该使用无副作用的组合来组织模块，并在统一的模块中定义所有模块的 `options`。
+
+## 默认的导入模块
+
+我们在平时修改 `/etc/nixos/configuration.nix` 时，发现我们能定义一些“不存在”的模块的 `options`，它们并不是不存在，而是被默认导入了，你可以点击[这里](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/module-list.nix)查看默认导入的模块列表。
+
+## 如何找到 Options
+
+安装系统的时候，我们也仅仅是将教程上的 options 抄下来或者根据已有的模板微调就形成了基本的配置。但是该从何处才能查询到 NixOS 提供的更多 `Options` 呢？
+
+答案是本站头顶上检索工具里的 `Options` 检索工具，这个工具是官方在维护。
 
 # 社区工具
 
@@ -1721,12 +1873,12 @@ sudo -i
 ip addr
 
 # 为网卡添加ip
-ip addr add 192.168.179.151 dev ens33
+ip addr add 192.168.179.151/24 dev ens33
 
 # 查看当前路由配置
 ip route # 或者 route -n
 
-# 添加同一子网内的路由表 (一般会自动生成的，但并没有)
+# 添加同一子网内的路由表 (一般会自动生成的，若以生成，则不需要添加)
 ip route add 192.168.179.0/24 dev ens33 proto kernel scope link src 192.168.179.151
 # 删除因上个操作出现的一个没有用的路由
 ip route del 0.0.0.0/0 dev ens33
@@ -1846,7 +1998,7 @@ vim /mnt/etc/nixos/configuration.nix
     neovim
   ];
   hardware.pulseaudio.enable = true;
-  system.stateVersion = "24.06";
+  system.stateVersion = "24.05";
 }
 ```
 
@@ -1872,6 +2024,48 @@ useradd -m -G wheel wsain  # 添加普通用户，并加入 wheel 组
 passwd wsain  # 设置普通账户密码
 ```
 
+# 基本操作 memo
+
+## 更新系统
+
+## 降级或升级软件包
+
+## build版本管理
+
+- 列出历史build版本
+
+  ```
+  nixos-rebuild list-generations
+  # 或者
+  nix profile history --profile /nix/var/nix/profiles/system
+  ```
+
+- 清理历史build版本
+
+  ```bash
+  # 列出 generations
+  nix profile history --profile /nix/var/nix/profiles/system
+  nix-env -p /nix/var/nix/profiles/system --list-generations
+  nixos-rebuild list-generations
+
+  # 清理 7 天之前的所有历史版本
+  sudo nix profile wipe-history --older-than 7d --profile /nix/var/nix/profiles/system
+  # 或者使用nix-env，删除当前之外的 generation
+  nix-env -p /nix/var/nix/profiles/system --delete-generations old
+
+  # 清理历史版本并不会删除数据，还需要以 root 身份运行 gc 命令来删除所有未使用的包
+  sudo nix-collect-garbage --delete-old
+
+  # 因为如下 issue，还需要以当前用户身份运行 gc 命令来删除 home-manager 的历史版本和包
+  # https://github.com/NixOS/nix/issues/8508
+  nix-collect-garbage --delete-old
+
+  # 触发 build，清理 /boot/loader/entirs 下的无用 entry
+  sudo nixos-rebuild switch
+  # 或者也可以手动清理，但是不推荐
+  # sudo bash -c "cd /boot/loader/entries; ls | grep -v <current-generation-name> | xargs rm"
+  ```
+
 # 参考
 
 - [NixOS 与 Flakes 一份非官方的新手指南](https://nixos-and-flakes.thiscute.world/zh/)
@@ -1887,9 +2081,12 @@ passwd wsain  # 设置普通账户密码
   - [nix 基础](https://juejin.cn/post/7165305697561755679)
   - [使用 nix 包管理器解决 glibc 兼容问题](https://v2ex.com/t/892346)
   - [nix 学习经验：安装和打包](https://linux.cn/article-16332-1.html)
-- nix包
+- nixpkgs
   - [nix 版本与 reversion](https://lazamar.co.uk/nix-versions/)
     - [原理](https://lazamar.github.io/download-specific-package-version-with-nix/)
+  - [nix channel](https://channels.nixos.org/)
+  - [nix options](https://search.nixos.org/options)
+  - [Nixpkgs Reference Manual](https://nixos.org/manual/nixpkgs/stable/)
 - nixos
   - [nixos wiki](https://nixos.wiki/wiki/Main_Page)
   - [nixos options](https://search.nixos.org/options)
@@ -1901,4 +2098,7 @@ passwd wsain  # 设置普通账户密码
 - 杂谈
   - [OS as Code - 我的 NixOS 使用体会](https://thiscute.world/posts/my-experience-of-nixos/)
   - [Nix 和 NixOS ：你们安利方法错了](https://nyk.ma/posts/nix-and-nixos/)
-
+- 其他
+  - [nix-ld: Run unpatched dynamic binaries on NixOS](https://github.com/nix-community/nix-ld)
+  - [reddit: "global" c libaries in nixos?](https://www.reddit.com/r/NixOS/comments/zwps3n/global_c_libaries_in_nixos/?rdt=46803)
+  - steam-run: Run commands in the same FHS environment that is used for Steam

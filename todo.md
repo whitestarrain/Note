@@ -23,7 +23,7 @@
   - 流程：
     - [x] nix 基础
     - [x] 系统盘
-    - [ ] 初始化nix配置
+    - [x] 初始化nix配置
     - [ ] 数据备份
     - [ ] 系统安装
 
@@ -414,6 +414,7 @@ cookie和session攻击
 - [Emacs 插件开发手册](https://manateelazycat.github.io/2022/11/18/write-emacs-plugin/)
   - 配置emacs前必须要看一下，插件加载的流程
 - [ ] [专业emacs入门](https://pavinberg.github.io/emacs-book/zh/)
+- [ ] [org-modern](https://github.com/minad/org-modern)
 
 ### vscode
 
@@ -705,6 +706,7 @@ cookie和session攻击
 - case记录:
   - 因为没有使用FHS，所以一些工具一起使用的时候可能有问题， 比如
     - vscode的terminal中使用gdb，需要使用 vscode FHS environment: [Getting gdb to work in vscode](https://www.reddit.com/r/NixOS/comments/1aep3c5/getting_gdb_to_work_in_vscode/)
+  - [No starship prompt under nix-shell?](https://github.com/starship/starship/discussions/5378)
 
 ## lang
 
@@ -936,5 +938,6 @@ cookie和session攻击
   - 线性代数，有时间可以复习下
 - [网易云音乐ncm格式分析以及ncm与mp3格式转换](https://www.cnblogs.com/cyx-b/p/13443003.html)
 - [CloudFlare Tunnel 免费内网穿透的简明教程](https://sspai.com/post/79278)
+- anki 记忆卡，fsrs 算法
 
 
