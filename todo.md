@@ -1,20 +1,24 @@
 
 > todo 和一些想之后看的资料
 
+```
+You can't connect the dots looking forward; you can only connect them looking backwards.
+So you have to trust that the dots will somehow connect in future.
+You have to trust in something - your gut, destiny, life, karma, whatever.
+This approach has never let me down, and it has made all the difference in my life.
+
+你展望人生的时候，不可能把这些点连起来；只有当你回顾人生的时候，才能发现它们之间的联系。
+所以你必须有信心，相信这些点总会以某种方式，对你的未来产生影响。
+你必须相信一些事情----你的勇气、命运、人生、缘分等等。
+这样做从未令我失望，反而决定了我人生中所有与众不同之处。
+
+> 乔布斯在斯坦福大学毕业典礼上的演讲
+```
+
 # 优先级较高项
 
 - [x] [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
   - [x] 编译原理复习
-
-- [ ] emacs, elisp
-  - common ansi lisp
-  - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
-
-- [ ] effective cpp
-  - 主要是为了刷题，同时复习一下cpp
-
-- [ ] [常用 bash 命令](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
-  - star 不少，可以过一遍，看看有没有自己眼生的，总结到 linux.md 或者 bash.md 中
 
 - [ ] 迁移 nixos
   - 一段时间不 `pacman -Syu`，就会有些包因为版本问题没办法使用
@@ -26,6 +30,18 @@
     - [x] 初始化nix配置
     - [ ] 数据备份
     - [ ] 系统安装
+
+- [ ] emacs, elisp
+  - common ansi lisp
+  - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
+
+- [ ] effective cpp
+  - 主要是为了刷题，同时复习一下cpp
+
+- [ ] [常用 bash 命令](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
+  - star 不少，可以过一遍，看看有没有自己眼生的，总结到 linux.md 或者 bash.md 中
+
+- [个人数据安全不完全指南](https://thiscute.world/posts/an-incomplete-guide-to-data-security/#%E9%9B%B6%E5%89%8D%E8%A8%80)
 
 - [ ] NAS 搭建 && 数据备份
   - 参考：[ntzyz, nas 和数据备份](https://ntzyz.space/zh-cn/post/nas-and-backup/)
@@ -51,7 +67,11 @@
 
 - [ ] [emacs GTD 日程管理](https://www.cnblogs.com/yangruiGB2312/p/9101838.html)
 
+- [ ] linux 系统编程
+
 - [ ] [DN42 实验网络介绍及注册教程](https://lantian.pub/article/modify-website/dn42-experimental-network-2020.lantian/)
+
+- [ ] [深入架构原理与事件](https://www.thebyte.com.cn/)
 
 # 小任务
 
@@ -122,11 +142,14 @@
 - MIT 6.828: Operating System Engineering
 - [SysY 语言编译到 RISC-V-北大编译实践在线文档](https://pku-minic.github.io/online-doc/#/)
 
-# 神级程序员 博客
+# 博客、社区
 
-- [bellard](https://bellard.org/)
-- [Daniel Holden](https://www.theorangeduck.com/)
-- [Thomas E. Dickey](https://invisible-island.net/)
+- 神级程序员
+  - [bellard](https://bellard.org/)
+  - [Daniel Holden](https://www.theorangeduck.com/)
+  - [Thomas E. Dickey](https://invisible-island.net/)
+- 社区
+  - [0xffff平台帖子：有什么值得一看的博客推荐](https://0xffff.one/d/12)
 
 # 付费课程
 
@@ -696,8 +719,7 @@ cookie和session攻击
 - [Nix 和 NixOS：你们安利方法错了](https://nyk.ma/posts/nix-and-nixos/)
 - [nix基础](https://juejin.cn/post/7165305697561755679)
 - [Nix 详解（三） nix 领域特定语言](https://www.rectcircle.cn/posts/nix-3-nix-dsl/)
-  - 没有提供源码的专有软件，会通过patchelf ld-linux.so 位置到 /nix/store/xxx-glibc-xxx/lib. [wiki](https://nixos.wiki/wiki/Packaging/Binaries)
-- [使用 nix 包管理器解决 glibc 兼容问题](https://v2ex.com/t/892346)
+  - 没有提供源码的专有软件，会通过patchelf ld-linux.so 位置到 /nix/store/xxx-glibc-xxx/lib. [wiki](https://nixos.wiki/wiki/Packaging/Binaries) [使用 nix 包管理器解决 glibc 兼容问题](https://v2ex.com/t/892346)
 - [nixos wiki](https://nixos.wiki/wiki/Main_Page)
 - [nix 学习经验：安装和打包](https://linux.cn/article-16332-1.html)
 - [Nix Reference Manual](https://nix.dev/manual/nix/2.18/introduction)
@@ -707,6 +729,7 @@ cookie和session攻击
   - 因为没有使用FHS，所以一些工具一起使用的时候可能有问题， 比如
     - vscode的terminal中使用gdb，需要使用 vscode FHS environment: [Getting gdb to work in vscode](https://www.reddit.com/r/NixOS/comments/1aep3c5/getting_gdb_to_work_in_vscode/)
   - [No starship prompt under nix-shell?](https://github.com/starship/starship/discussions/5378)
+- 如果想学习操作系统，nix wrap了那么多层，是不是更需要理解，比较一下 nixos 和 arch 的根目录
 
 ## lang
 
@@ -939,5 +962,6 @@ cookie和session攻击
 - [网易云音乐ncm格式分析以及ncm与mp3格式转换](https://www.cnblogs.com/cyx-b/p/13443003.html)
 - [CloudFlare Tunnel 免费内网穿透的简明教程](https://sspai.com/post/79278)
 - anki 记忆卡，fsrs 算法
+- [物联网 Arduino 入门](http://www.taichi-maker.com/homepage/arduino-tutorial-index/)
 
 

@@ -913,7 +913,7 @@ tr '[:lower:]' '[:upper:]'
 tab 作为分割符的两个csv文件，根据第一列join起来:
 
 ```
-join -t, -a1 -a2 -o 0,1.2,1.3,1.4,1.5,1.6,2.6,2.7,2.8 -e '?' \
+join -t, -11 -21 -a1 -a2 -o 0,1.2,1.3,1.4,1.5,1.6,2.6,2.7,2.8 -e '?' \
   <(sed 1d file1.csv | sed 's/\t/,/g' | sort -t ',' -k 1,1) \
   <(sed 1d file2.csv | sed 's/\t/,/g' | sort -t ',' -k 1,1) \
   > dataset.csv
@@ -2478,6 +2478,8 @@ uptime查看系统启动时间与工作负载
 
 ## 11.2. cron
 
+### 11.2.1. 介绍
+
 - 执行权限，二选一
   - /etc/cron.allow
   - /etc/cron.deny
@@ -2488,7 +2490,106 @@ uptime查看系统启动时间与工作负载
     - `/etc/cron.d/*`
 - 执行记录：/var/log/cron
 
-周与日月不可共存
+- crontab命令
+  - 是cron table的简写
+  - corn table是cron的配置文件，也可以叫它作业列表
+  - 可以在以下文件夹内找到相关配置文件。
+    - /var/spool/cron/ 目录下存放的是每个用户包括root的crontab任务，每个任务以创建者的名字命名
+    - /etc/crontab 这个文件负责调度各种管理和维护任务。
+    - /etc/cron.d/ 这个目录用来存放任何要执行的crontab文件或脚本。
+  - 还可以把脚本放在一下目录，让它每小时/天/星期、月执行一次。
+    - /etc/cron.hourly
+    - /etc/cron.daily
+    - /etc/cron.weekly
+    - /etc/cron.monthly
+
+### 11.2.2. 使用
+
+- 语法
+  ```bash
+  crontab [-u username]　　　　# 省略用户表表示操作当前用户的crontab
+      -e      # 编辑工作表
+      -l      # 列出工作表里的命令
+      -r      # 删除工作作
+  ```
+
+- crontab -e进入当前用户的工作表编辑
+  - 是常见的vim界面
+  - 每行是一条命令。
+
+- cron 命令格式
+  - crontab的命令构成为 时间+动作
+  - 时间有
+    - 分、时、日、月、周五种
+    - 周与日月不可共存
+  - 操作符有
+    - * 取值范围内的所有数字
+    - / 每过多少个数字
+    - - 从X到Z
+    - ，散列数字
+
+### 11.2.3. 实例
+
+- 实例 1：每 1 分钟执行一次 myCommand
+
+  ```bash
+  * * * * * myCommand
+  ```
+- 实例 2：每小时的第 3 和第 15 分钟执行
+
+  ```
+  3,15 * * * * myCommand
+  ```
+- 实例 3：在上午 8 点到 11 点的第 3 和第 15 分钟执行
+
+  ```
+  3,15 8-11 * * * myCommand
+  ```
+- 实例 4：每隔两天的上午 8 点到 11 点的第 3 和第 15 分钟执行
+
+  ```
+  3,15 8-11 */2  *  * myCommand
+  ```
+- 实例 5：每周一上午 8 点到 11 点的第 3 和第 15 分钟执行
+
+  ```
+  3,15 8-11 * * 1 myCommand
+  ```
+- 实例 6：每晚的 21:30 重启 smb
+
+  ```
+  30 21 * * * /etc/init.d/smb restart
+  ```
+- 实例 7：每月 1、10、22 日的 4 : 45 重启 smb
+
+  ```
+  45 4 1,10,22 * * /etc/init.d/smb restart
+  ```
+- 实例 8：每周六、周日的 1 : 10 重启 smb
+
+  ```
+  10 1 * * 6,0 /etc/init.d/smb restart
+  ```
+- 实例 9：每天 18 : 00 至 23 : 00 之间每隔 30 分钟重启 smb
+
+  ```
+  0,30 18-23 * * * /etc/init.d/smb restart
+  ```
+- 实例 10：每星期六的晚上 11 : 00 pm 重启 smb
+
+  ```
+  0 23 * * 6 /etc/init.d/smb restart
+  ```
+- 实例 11：每一小时重启 smb
+
+  ```
+  0 */1 * * * /etc/init.d/smb restart
+  ```
+- 实例 12：晚上 11 点到早上 7 点之间，每隔一小时重启 smb
+
+  ```
+  0 23-7/1 * * * /etc/init.d/smb restart
+  ```
 
 ## 11.3. anacron
 
@@ -4012,6 +4113,16 @@ modinfo
 
 - 使用标准输入： `--data-binary @-`
 
+- 使用中遇见的RST处理case:
+
+  ```
+  21:14:44.255886 IP 10.11.174.174.vcom-tunnel > yq01-bi-dev.yq01.xxxxx.com.19092: Flags [.], ack 245, win 261, length 0
+  21:14:44.255984 IP 10.11.174.174.vcom-tunnel > yq01-bi-dev.yq01.xxxxx.com.19092: Flags [.], ack 7829, win 320, length 0
+  21:16:14.476374 IP 10.11.174.174.vcom-tunnel > yq01-bi-dev.yq01.xxxxx.com.19092: Flags [R], seq 26669779, win 0, length 0
+  ```
+  第三行，尽管发送了 RST，但是 curl 也不会断掉
+  (104, Connection reset by peer) 对 curl 不生效
+
 ### 17.1.3. ftp sftp lftp
 
 - ftp/sftp文件传输:
@@ -4406,96 +4517,6 @@ TODO: linux 虚拟网络
 ## 19.13. size 查看程序内存映像大小
 
 ## 19.14. tcpdump 抓包工具
-
-### 19.14.1. 介绍
-
-- crontab命令
-  - 是cron table的简写
-  - corn table是cron的配置文件，也可以叫它作业列表
-  - 可以在以下文件夹内找到相关配置文件。
-    - /var/spool/cron/ 目录下存放的是每个用户包括root的crontab任务，每个任务以创建者的名字命名
-    - /etc/crontab 这个文件负责调度各种管理和维护任务。
-    - /etc/cron.d/ 这个目录用来存放任何要执行的crontab文件或脚本。
-  - 还可以把脚本放在一下目录，让它每小时/天/星期、月执行一次。
-    - /etc/cron.hourly
-    - /etc/cron.daily
-    - /etc/cron.weekly
-    - /etc/cron.monthly
-
-### 19.14.2. 使用
-
-- 语法
-  ```bash
-  crontab [-u username]　　　　# 省略用户表表示操作当前用户的crontab
-      -e      # 编辑工作表
-      -l      # 列出工作表里的命令
-      -r      # 删除工作作
-  ```
-
-- crontab -e进入当前用户的工作表编辑
-  - 是常见的vim界面
-  - 每行是一条命令。
-
-- cron 命令格式
-  - crontab的命令构成为 时间+动作
-  - 时间有
-    - 分、时、日、月、周五种
-  - 操作符有
-    - * 取值范围内的所有数字
-    - / 每过多少个数字
-    - - 从X到Z
-    - ，散列数字
-
-### 19.14.3. 实例
-
-- 实例 1：每 1 分钟执行一次 myCommand
-  ```bash
-  * * * * * myCommand
-  ```
-- 实例 2：每小时的第 3 和第 15 分钟执行
-  ```
-  3,15 * * * * myCommand
-  ```
-- 实例 3：在上午 8 点到 11 点的第 3 和第 15 分钟执行
-  ```
-  3,15 8-11 * * * myCommand
-  ```
-- 实例 4：每隔两天的上午 8 点到 11 点的第 3 和第 15 分钟执行
-  ```
-  3,15 8-11 */2  *  * myCommand
-  ```
-- 实例 5：每周一上午 8 点到 11 点的第 3 和第 15 分钟执行
-  ```
-  3,15 8-11 * * 1 myCommand
-  ```
-- 实例 6：每晚的 21:30 重启 smb
-  ```
-  30 21 * * * /etc/init.d/smb restart
-  ```
-- 实例 7：每月 1、10、22 日的 4 : 45 重启 smb
-  ```
-  45 4 1,10,22 * * /etc/init.d/smb restart
-  ```
-- 实例 8：每周六、周日的 1 : 10 重启 smb
-  ```
-  10 1 * * 6,0 /etc/init.d/smb restart
-  ```
-- 实例 9：每天 18 : 00 至 23 : 00 之间每隔 30 分钟重启 smb
-  ```
-  0,30 18-23 * * * /etc/init.d/smb restart
-  ```
-- 实例 10：每星期六的晚上 11 : 00 pm 重启 smb
-  ```
-  0 23 * * 6 /etc/init.d/smb restart
-  ```
-- 实例 11：每一小时重启 smb
-  ```
-  0 */1 * * * /etc/init.d/smb restart
-  ```
-- 实例 12：晚上 11 点到早上 7 点之间，每隔一小时重启 smb
-  ```
-  0 23-7/1 * * * /etc/init.d/smb restart
-  ```
 
 ## 19.15. 内网穿透frp
 

@@ -357,6 +357,9 @@
   - 只看单机代理组件(数据面板)和控制面板的Service Mesh全局部署视图如下：
 
     > ![distribute_system-44.png](./image/distribute_system-44.png)
+- 代表产品
+  - istio
+  - conduit/linkerd2
 
 > **总结说明**
 

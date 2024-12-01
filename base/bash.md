@@ -2036,6 +2036,8 @@ done
   | `-t`  | —           | 执行完第一条命令后退出                                     |
   | `-v`  | verbose     | 在执行每条命令前，向`stderr`输出该命令                     |
   | `-x`  | xtrace      | 在执行每条命令前，向`stderr`输出该命令以及该命令的扩展参数 |
+  | `-e`  |             | 脚本只要发生错误，就终止执行。                             |
+  | `-u`  |             | 执行脚本时，如果遇到不存在的变量，Bash 默认忽略它。        |
 
 - 举个例子，如果我们在脚本中指定了`-x`例如：
 
@@ -2317,19 +2319,17 @@ TODO: bash笔记
 
 dirs
 
-## 16.6. 临时文件夹
-
-## 16.7. set,shopt命令
+## 16.6. set,shopt命令
 
 [set 命令，shopt 命令](https://wangdoc.com/bash/set)
 
 [set, shopt](https://www.gnu.org/software/bash/manual/html_node/Modifying-Shell-Behavior.html)
 
-## 16.8. mktmp, trap命令
+## 16.7. mktmp, trap命令
 
-## 16.9. getoption命令
+## 16.8. getoption命令
 
-## 16.10. 命令提示符
+## 16.9. 命令提示符
 
 # 17. 后记
 

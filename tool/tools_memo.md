@@ -223,6 +223,10 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 - perl版本
 - node版本
 
+## entr 监控文件修改
+
+https://github.com/eradman/entr
+
 ## utools
 
 ## regex101 正则工具
@@ -267,6 +271,8 @@ curl http://ifconfig.me
 
 支持查看 elf 在内多种文件类型的反汇编与查看。
 
+## Justfile
+
 # Linux
 
 ## Arch
@@ -275,7 +281,7 @@ curl http://ifconfig.me
 
 完善的文档。
 
-有基于 Arch linux 的稳定发行版本： Manjaro Linux
+有基于 Arch linux 的稳定发行版本： Manjaro Linux、EndeavourOS
 
 ## Gentoo
 
@@ -300,6 +306,14 @@ curl http://ifconfig.me
 ## Kail
 
 安全与渗透测试
+
+## Alpine
+
+轻量，专注于安全、简单和高效。
+
+使用OpenRC 作为初始化（init）系统
+
+适合用来做路由器、防火墙、VPNs、VoIP 盒子以及服务器的操作系统
 
 # USB OS
 
@@ -344,6 +358,12 @@ https://github.com/karlstav/cava
 - [官网](https://sebastian.itch.io/digital-logic-sim)
 - [github](https://github.com/SebLague/Digital-Logic-Sim)
 
+## linux steam 中间层
+
+### proton
+
+### wine
+
 # 杂项,图片,gif,taag
 
 ## github 图标制作
@@ -359,6 +379,10 @@ https://github.com/karlstav/cava
 - 示例
 
   ![little-tools-2](./image/little-tools-2.gif)
+
+## typing svg生成
+
+<https://github.com/DenverCoder1/readme-typing-svg>
 
 ## 生成taag
 

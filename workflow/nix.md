@@ -187,6 +187,14 @@ in addOne 1 # 返回 2
   - 如：函数 f `x: y: x + y`，其实等价于 `x: (y: x + y)`，
   - 可以理解为，参数为 `x` 的函数返回了一个参数为 `y` 的函数，这个参数为 `y` 的函数返回 `x + y` 的值。
   - 调用方式为 `f 1 2`，其实等价于 `(f 1) 2`。
+  - **但是要注意，`:` 右侧要有一个空格，否则会识别为字符串**
+    ```
+    nix-repl> let f = x: x+1; in f
+    «lambda @ «string»:1:9»
+
+    nix-repl> let f = x:x+1; in f
+    "x:x+1"
+    ```
 
 - 命名参数函数
   - 简单场景
@@ -204,6 +212,13 @@ in addOne 1 # 返回 2
       - `f {a = 1; b = 2;}` 报错。
       - `f {a = 1; b = 2; c = 3;}` 返回 8。
       - `f {a = 1; b = 2; c = 3; d = 4;}` 返回 8。
+
+- 其他优先级问题：
+  - 数组中调用function，需要将function括起来 ` [ (func var) ]`， 否则会被识别为两个元素的数组
+  - `(config, ...)@inputs: {config.a.b=10}`，参数中的 config 和 返回值里面的config没有关系。
+    - 返回值等价于 `{config = {a={b=10;};};}`，是声明了一个新的 attribute set。
+    - 类似于json: `{"config": {a: {b:10}}}`，attribute set 的 config 键不是 参数中 config 的值
+    - 注意编程惯性。
 
 完整示例 (`nix-lang-demo/03-func-data-type.nix`)。
 
@@ -1650,15 +1665,36 @@ nix-env -e my-nix-package-demo-by-build-go-module-0.0.1 ; nix-collect-garbage -d
     - 下载常规 Linux 版本可执行文件，然后通过 [patchelf](https://github.com/NixOS/patchelf) 工具修改 [ld-linux.so](https://linux.die.net/man/8/ld-linux.so) 到 `/nix/store/xxx-glibc-xxx/lib` 路径即可
     - 详见：[wiki](https://nixos.wiki/wiki/Packaging/Binaries)。
 
-# Nixpkgs 模块系统
+# Nixos 模块系统
 
-NixOS 的配置文件是通过一个个可复用的模块实现的，我们之前说过一个 Nix 文件就可以是一个函数，你可以在里面写任意表达式，求值这个 Nix 文件都会有输出。但是不是每一个 Nix 文件都是一个模块，因为模块对格式有特殊要求。
+NixOS 的配置文件是通过一个个可复用的模块实现的，模块系统是 nix 的一个库实现的，支持：
+
+- 使用许多独立的 Nix 表达式声明一个属性集。 (imports)
+- 对该属性集中的值进行动态类型约束。(options)
+- 在不同的 Nix 表达式中定义同一属性的值，并根据其类型 **自动合并** 这些值。
+
+模块是被 [lib.evalModules](https://nixos.org/manual/nixpkgs/stable/#module-system-lib-evalModules) 进行求值的
+
+```nix
+let
+  nixpkgs = fetchTarball "https://github.com/NixOS/nixpkgs/tarball/nixos-24.05";
+  pkgs = import nixpkgs { config = {}; overlays = []; };
+in
+pkgs.lib.evalModules {
+  modules = [
+    ./default.nix
+  ];
+}
+```
 
 ## 模块的工作原理
 
-一个成熟的模块大概由三个部分组成：导入（imports）、选项（options）与配置（config，或者叫做定义）。下面是个简单的示例，请你将这三部分单独看待：
+### 整体说明
+
+模块是一个function，模块的返回值大概由三个部分组成：导入（imports）、选项（options）与配置（config，或者叫做定义）。三部分要单独看待
 
 ```nix
+{ pkgs, lib, config, ... }:
 {
   imports = [
     # 这里导入其他模块
@@ -1672,26 +1708,115 @@ NixOS 的配置文件是通过一个个可复用的模块实现的，我们之�
 }
 ```
 
-我们先把 `imports` 数组撇一边去，先观察 `options` 与 `config`，两行注释还不足以诠释具体操作，我们直接上例子：
+模块会被 [lib.evalModules](https://nixos.org/manual/nixpkgs/stable/#module-system-lib-evalModules) 进行求值:
 
+- options:
+  - 各个模块的 options 会模块系统被 **merge** 到一起，表示整个模块下的模块设置项（类似于声明）
+  - 根据 options 中的设置，也可以设置默认值，进行类型检查等。
+- config:
+  - 作用：
+    - 里面可以根据 options 中的声明，设置值
+    - 或者使用已设置的值执行其他动作
+  - 多值处理: 当多个module里面对同一属性设置不同的值
+    - 无法merge的值，根据优先级处理
+      - 可以设置优先级，优先级高的覆盖优先级低的，优先先级相等的时候报错，需要手动解决冲突
+      - 参考：lib.mkOverride, lib.mkDefault and lib.mkForce
+    - 可以 merge 的值，可以调整merge顺序
+      - 设置列表类型的合并顺序，ist 跟 string 类型都是列表类型。
+      - 参考：lib.mkOrder, lib.mkBefore 与 lib.mkAfter
+  - 语法糖： **如果一个模块中没有options，可以直接把config里面的内容写到外面**
+- imports:
+  - imports 表示 要把哪些模块merge到当前模块儿，以下个表达式完全等价
 
+    <details>
+    <summary style="color:red;">展开</summary>
+
+    ---
+
+    ```nix
+    # ab.nix
+    {lib, ...}@input: {
+      options = {
+        myconf.a = lib.mkOption {
+          type = lib.types.nullOr lib.types.int;
+          default = null;
+        };
+        myconf.b= lib.mkOption {
+          type = lib.types.nullOr lib.types.int;
+          default = null;
+        };
+      };
+      configs = {
+        myconf.a = 10;
+        myconf.b = 20;
+      };
+    }
+    ```
+    ```nix
+    # a.nix
+    {lib, ...}@input: {
+      options = {
+        myconf.a= lib.mkOption {
+          type = lib.types.nullOr lib.types.int;
+          default = null;
+        };
+        configs = {
+          myconf.a = 10;
+        };
+      };
+    }
+
+    # b.nix
+    {lib, ...}@input: {
+      options = {
+        myconf.b= lib.mkOption {
+          type = lib.types.nullOr lib.types.int;
+          default = null;
+        };
+        configs = {
+          myconf.b = 20;
+        };
+      };
+    }
+
+    # merged.nix
+    {lib, ...}@input: {
+      imports = [
+        a.nix
+        b.nix
+      ];
+    }
+    ```
+
+    ---
+
+    </details>
+
+注意： **参数中的config和属性集中的config不同**
+
+- `模块中的config` 指的是特定模块 option 的求值
+- `参数中的config` 保存 所有`模块中的config` **惰性求值** 后的结果，并会传递给所有 module
+  - 正因为 nix语言的 惰性求值 (Lazy evaluation)， 才能在所有模块求值完成前，取到所有模块的结果。
+
+### 示例
+
+先观察 `options` 与 `config`，例子：
 
 ```nix
 { config, pkgs, ... }:  # 这些参数由构建系统自动输入，你先别管
 
 {
     /*
-    我们开始在下面的 options 属性集中声明这个模块的选项了，
-    你可以将模块声明成你任意喜欢的名字，这里示例用 “myModule”，注意小驼峰规范。
-    同时请注意一件事，那就是模块名称只取决于现在你在 options 的命名，而不是该模块的文件名，
-    我们将模块命名与文件名一致也是出于直观？
+      我们开始在下面的 options 属性集中声明这个模块的选项了，
+      你可以将模块声明成你任意喜欢的名字，这里示例用 “myModule”，注意小驼峰规范。
+      同时请注意一件事，那就是模块名称只取决于现在你在 options 的命名，而不是该模块的文件名，
     */
 
     options = {
         myModule.enable = mkOption {
-        type = types.bool;  # 此选项的类型是布尔类型
-        default = false;  # 默认情况下，此选项被禁用
-        description = "描述一下这个模块";
+          type = types.bool;  # 此选项的类型是布尔类型
+          default = false;  # 默认情况下，此选项被禁用
+          description = "描述一下这个模块";
         };
     };
 
@@ -1706,23 +1831,25 @@ NixOS 的配置文件是通过一个个可复用的模块实现的，我们之�
 }
 ```
 
-在上面的代码中，我们通过向 `mkOption` 函数传递了一个属性集生成了一个布尔选项，下面的 `mkIf` 则生成第一个参数为 `true` 才执行的动作。
+在上面的代码中，我们通过向 `mkOption` 函数传递了一个属性集参数，生成了一个布尔选项，
 
-提示
+下面`config`中的 `mkIf` 则表示生成第一个参数为 `true` 才执行的动作。
 
-这些工具函数可以在[函数库](https://nixos-cn.org/tutorials/lang/Utils.html)查询到。
+现在我们办成了两件事，声明选项，以及定义了启用选项后会触发的动作。
 
-好的，现在我们办成了两件事，声明选项，以及定义了启用选项后会触发的动作。不知道你是否足够细心？注意到 `mkIf` 后面是 `config.myModule.enable`，即它是从参数 `config` 输入来的，我们不是在 `options` 里声明过这个选项了吗？为什么不直接通过 `options.myModule.enable` 来求值呢？
+注意到 `mkIf` 后面是 `config.myModule.enable`，即它是从参数 `config` 输入来的，我们不是在 `options` 里声明过这个选项了吗？为什么不直接通过 `options.myModule.enable` 来求值呢？
 
-直接去求值 `options.myModule.enable` 是没有意义的，因为这个选项是未经设置的，这只会求值出它的默认值。接下来就是 `imports` 的作用了，我们通过将一个模块导入到另一个模块，从而在其他模块设置（定义）被包含的模块的 `options`。
+直接去求值 `options.myModule.enable` 是没有意义的，因为这个选项是未经设置的，这只会求值出它的默认值。
 
-被包含的模块只有 `options` 是对外部可见的，里面定义的函数与常量都是在本地作用域定义的，对其他文件不可见。同时，被 `imports` 组织的模块集合中的任意模块都能访问任意模块的 `options`，也就是说，只要是被 `imports` 组织的模块，其 `options` 是全局可见的。
+接下来就是 `imports` 的作用了，我们通过将一个模块导入到另一个模块，从而在其他模块设置（定义）被包含的模块的 `options`。
+
+被包含的模块只有 `options` 是对外部可见的，里面定义的函数与常量都是在本地作用域定义的，对其他文件不可见。
+同时，被 `imports` 组织的模块集合中的任意模块都能访问任意模块的 `options`，也就是说，只要是被 `imports` 组织的模块，其 `options` 是全局可见的。
 
 接下来构建系统会提取你所有模块中的 `options`，然后求值所有模块中对 `options` 的定义：
 
-提示
-
-如果一个模块没有任何声明，就直接开始定义（`config`）部分。注意不需要使用 `config = {}` 包装，因为这个模块不包含任何声明，只有定义。你可以将这里的定义理解为一种无条件配置，因为我们没有使用 `mkIf` 之类的函数。
+如果一个模块没有任何声明，就直接开始定义（`config`）部分，那么就不需要使用 `config = {}` 包装，因为这个模块不包含任何声明，只有定义。
+可以将这里的定义理解为一种无条件配置，因为我们没有使用 `mkIf` 之类的函数。如下：
 
 ```nix
 {
@@ -1737,19 +1864,61 @@ NixOS 的配置文件是通过一个个可复用的模块实现的，我们之�
 
 然后构建系统再将所有的配置项（即被定义后的 `options`）求值，然后作为参数 `config` 输入到每个模块，这就是每个模块通常要在第一行输入 `config` 的原因，然后下面的 `config` 会根据最终值触发一系列配置动作，从而达到求值模块以生成系统目的。
 
-## 模块的常见输入
+## 其他说明
 
-|    参数名     | 描述                   |
-| :-----------: | :--------------------- |
-|   `config`    | 所有 `option` 的最终值 |
-|     `lib`     | nixpkgs 提供的库       |
-|    `pkgs`     | nixpkgs 提供的包集合   |
-|   `options`   | 所有模块声明的选项     |
-| `specialArgs` | 特殊参数               |
-|    `utils`    | 工具库                 |
-| `modulesPath` | 模块路径               |
+### 模块的参数
 
-## 模块的组织方案
+#### 默认参数
+
+默认有 5 个由模块系统自动生成、自动注入、无需额外声明的参数：
+
+```nix
+{lib, config, options, pkgs, ...}:
+{ }
+```
+
+- lib: nixpkgs 自带的函数库，提供了许多操作 Nix 表达式的实用函数
+  - 详见 <https://nixos.org/manual/nixpkgs/stable/#id-1.4>
+- config: 包含了当前环境中所有 option 的值
+- options: 当前环境中所有 Modules 中定义的所有 options 的集合
+- pkgs: 一个包含所有 nixpkgs 包的集合，它也提供了许多相关的工具函数
+  - 入门阶段可以认为它的默认值为 `nixpkgs.legacyPackages."${system}"`，
+  - 可通过 nixpkgs.pkgs 这个 option 来自定义 pkgs 的值
+- modulesPath:
+  - 一个 **只在 NixOS 中可用的参数** ，是一个 Path，指向 [nixpkgs/nixos/modules](https://github.com/NixOS/nixpkgs/tree/nixos-24.11/nixos/modules)
+  - 它在 <nixpkgs/nixos/lib/eval-config-minimal.nix#L43> 中被定义
+  - 通常被用于导入一些额外的 NixOS 模块，NixOS 自动生成的 hardware-configuration.nix 中基本都能看到它
+
+#### 非默认参数
+
+参考：[nixpkgs module-system.chapter](https://github.com/NixOS/nixpkgs/blob/master/doc/module-system/module-system.chapter.md)
+
+Nixpkgs 的模块系统提供了两种方式来传递非默认参数：
+
+- 在任一 Module 中使用 `_module.args` 这个 option 来传递参数
+  - 在任何 Module 中都能使用 `_module.args` 这个 option，通过它互相传递参数，这要比只能在 `nixpkgs.lib.nixosSystem` 函数中使用的 `specialArgs` 更灵活。
+  - `_module.args` 是在 Module 中声明使用的，因此必须在所有 Modules 都已经被求值后，才能使用它。
+    - 这导致 **如果你在 `imports = [ ... ];` 中使用 `_module.args` 传递的参数，会报错`infinite recursion`，这种场景下你必须改用 `specialArgs` 才行**
+  - 示例：
+
+    ```nix
+    let
+      nixpkgs = fetchTarball "https://github.com/NixOS/nixpkgs/tarball/nixos-23.11";
+      pkgs = import nixpkgs { config = {}; overlays = []; };
+    in
+    pkgs.lib.evalModules {
+      modules = [
+        ({ config, ... }: { config._module.args = { inherit pkgs; }; })
+        ./default.nix
+      ];
+    }
+    ```
+
+- nixpkgs.lib.nixosSystem 函数的 specialArgs 参数
+  - 只有在 `lib.evalModules` 调用时作为参数传进去
+  - 相比 `_module.args`， 因为并不是在module中声明的，所以 `imports` 中使用也行
+
+### 模块的组织方案
 
 由于 `options` 是全局可见的，所以我们需要一种规范组织模块，区分模块的声明与定义部分，不然一切都会被搞砸的。并且尽量不要在零散的地方定义其他模块的 `options`，这样会让模块的维护异常困难，还可能触发难以想象的副作用。
 
@@ -1806,19 +1975,203 @@ b 模块不能这样写。假如我们定义 `b.enable = true`，则带来了 `s
 
 我们在上面的文件上定义这些 `options` ，正如我们在 `/etc/nixos/configuration.nix` 所做的一致。综上，我们应该使用无副作用的组合来组织模块，并在统一的模块中定义所有模块的 `options`。
 
-## 默认的导入模块
+### 默认的导入模块
 
-我们在平时修改 `/etc/nixos/configuration.nix` 时，发现我们能定义一些“不存在”的模块的 `options`，它们并不是不存在，而是被默认导入了，你可以点击[这里](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/module-list.nix)查看默认导入的模块列表。
+我们在平时修改 `/etc/nixos/configuration.nix` 时，发现我们能定义一些“不存在”的模块的 `options`，它们并不是不存在，而是被默认导入了，
 
-## 如何找到 Options
+可以点击[这里](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/module-list.nix)查看默认导入的模块列表。
 
-安装系统的时候，我们也仅仅是将教程上的 options 抄下来或者根据已有的模板微调就形成了基本的配置。但是该从何处才能查询到 NixOS 提供的更多 `Options` 呢？
+### 如何找到 Options
 
-答案是本站头顶上检索工具里的 `Options` 检索工具，这个工具是官方在维护。
+- [nixos search options](https://search.nixos.org/options)
+- [homemanager options](https://nix-community.github.io/home-manager/options.xhtml)
+
+## options 类型与类型检查
+
+### 基础类型
+
+### strMatching
+
+### either 和 enum
+
+### between 约束
+
+### submodule
+
+#### submodule 类型
+
+#### nested submodule 类型
+
+比如 `systemd.user.units.<name>.xxxx` 就是通过这个实现的
+
+#### 带参数的 submodule
+
+## config 时的常用库
+
+### lib.mkOrder, lib.mkBefore 与 lib.mkAfter
+
+### lib.mkOverride, lib.mkDefault and lib.mkForce
+
+### callPackages
+
+## 其他特性
+
+### Override
+
+### Overlays
+
+## 源码与文档
+
+nix.dev 模块系统教程: [Module System deep dive](https://nix.dev/tutorials/module-system/deep-dive#dependencies-between-options)
+
+源码：nixpkgs 下的 [lib/modules.nix](https://github.com/NixOS/nixpkgs/blob/master/lib/modules.nix)
+
+模块系统的官方文档如下: [module-system](https://github.com/NixOS/nixpkgs/blob/master/doc/module-system/module-system.chapter.md)
+
+Nixos 模块编写指南: [Writing NixOS Modules](https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/doc/manual/development/writing-modules.chapter.md)
+
+nixos wiki: [nixos module](https://nixos.wiki/wiki/NixOS_modules)
+
+# Flake
+
+## 基本原理
+
+Flask 就是 nix 模块系统的一层wrapper，
+
+- inputs 代替了 nix-channel，同时会记录到`flake.lock`文件中
+- outputs 则规定了一些特定名称的输出，会由对应的命令识别
+
+## Inputs
+
+```
+{
+  inputs = {
+    # 以 GitHub 仓库为数据源，指定使用 master 分支，这是最常见的 input 格式
+    nixpkgs.url = "github:Mic92/nixpkgs/master";
+    # Git URL，可用于任何基于 https/ssh 协议的 Git 仓库
+    git-example.url = "git+https://git.somehost.tld/user/path?ref=branch";
+    # 同样是拉取 Git 仓库，但使用 ssh 协议 + 密钥认证，同时使用了 shallow=1 参数避免复制 .git
+    ssh-git-example.url = "git+ssh://git@github.com/ryan4yin/nix-secrets.git?shallow=1";
+    # Archive File URL, needed in case your input use LFS.
+    # Regular git input doesn't support LFS yet.
+    git-example-lfs.url = "https://codeberg.org/solver-orgz/treedome/archive/master.tar.gz";
+    # 当然也可以直接依赖本地的 git 仓库
+    git-directory-example.url = "git+file:/path/to/repo?shallow=1";
+    # 使用 `dir` 参数指定某个子目录
+    nixpkgs.url = "github:foo/bar?dir=shu";
+    # 本地文件夹 (如果使用绝对路径，可省略掉前缀 'path:')
+    directory-example.url = "path:/path/to/repo";
+
+    # 如果数据源不是一个 flake，则需要设置 flake=false
+    # `flake=false` 通常被用于引入一些额外的源代码、配置文件等
+    # 在 nix 代码中可以直接通过 "${inputs.bar}/xxx/xxx" 的方式来引用其中的文件
+    # 比如说通过 `import "${inputs.bar}/xxx/xxx.nix"` 来导入其中的 nix 文件
+    # 或者直接将 "${inputs.bar}/xx/xx" 当作某些 option 的路径参数使用
+    bar = {
+      url = "github:foo/bar/branch";
+      flake = false;
+    };
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      # `follows` 是 inputs 中的继承语法
+      # 这里使 sops-nix 的 `inputs.nixpkgs` 与当前 flake 的 inputs.nixpkgs 保持一致，
+      # 避免依赖的 nixpkgs 版本不一致导致问题
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # 将 flake 锁定在某个 commit 上
+    nix-doom-emacs = {
+      url = "github:vlaci/nix-doom-emacs?rev=238b18d7b2c8239f676358634bfb32693d3706f3";
+      flake = false;
+    };
+  };
+
+  outputs = { self, ... }@inputs: { ... };
+}
+```
+
+## Outputs
+
+`flake.nix` 中的 `outputs` 是一个 attribute set，是整个 Flake 的构建结果，每个 Flake 都可以有许多不同的 outputs。
+
+一些特定名称的 outputs 有特殊用途，会被某些 Nix 命令识别处理，比如：
+
+- Nix packages: 名称为 `apps.<system>.<name>`, `packages.<system>.<name>` 或 `legacyPackages.<system>.<name>` 的 outputs，都是 Nix 包，通常都是一个个应用程序。
+  - 可以通过 `nix build .#name` 来构建某个 nix 包
+- Nix Helper Functions: 名称为 `lib` 的 outputs 是 Flake 函数库，可以被其他 Flake 作为 inputs 导入使用。
+- Nix development environments: 名称为 `devShells` 的 outputs 是 Nix 开发环境
+  - 可以通过 `nix develop` 命令来使用该 Output 创建开发环境
+
+- NixOS configurations: 名称为 `nixosConfigurations.<hostname>` 的 outputs，是 NixOS 的系统配置。
+  - `nixos-rebuild switch .#<hostname>` 可以使用该 Output 来部署 NixOS 系统
+
+- Nix templates: 名称为 `templates` 的 outputs 是 flake 模板
+  - 可以通过执行命令 `nix flake init --template <reference>` 使用模板初始化一个 Flake 包
+- 其他用户自定义的 outputs，可能被其他 Nix 相关的工具使用
+
+nixos wiki 示例：
+
+```nix
+{
+  inputs = {
+    # ......
+  };
+
+  outputs = { self, ... }@inputs: {
+    # Executed by `nix flake check`
+    checks."<system>"."<name>" = derivation;
+    # Executed by `nix build .#<name>`
+    packages."<system>"."<name>" = derivation;
+    # Executed by `nix build .`
+    packages."<system>".default = derivation;
+    # Executed by `nix run .#<name>`
+    apps."<system>"."<name>" = {
+      type = "app";
+      program = "<store-path>";
+    };
+    # Executed by `nix run . -- <args?>`
+    apps."<system>".default = { type = "app"; program = "..."; };
+
+    # Formatter (alejandra, nixfmt or nixpkgs-fmt)
+    formatter."<system>" = derivation;
+    # Used for nixpkgs packages, also accessible via `nix build .#<name>`
+    legacyPackages."<system>"."<name>" = derivation;
+    # Overlay, consumed by other flakes
+    overlays."<name>" = final: prev: { };
+    # Default overlay
+    overlays.default = {};
+    # Nixos module, consumed by other flakes
+    nixosModules."<name>" = { config }: { options = {}; config = {}; };
+    # Default module
+    nixosModules.default = {};
+    # Used with `nixos-rebuild --flake .#<hostname>`
+    # nixosConfigurations."<hostname>".config.system.build.toplevel must be a derivation
+    nixosConfigurations."<hostname>" = {};
+    # Used by `nix develop .#<name>`
+    devShells."<system>"."<name>" = derivation;
+    # Used by `nix develop`
+    devShells."<system>".default = derivation;
+    # Hydra build jobs
+    hydraJobs."<attr>"."<system>" = derivation;
+    # Used by `nix flake init -t <flake>#<name>`
+    templates."<name>" = {
+      path = "<store-path>";
+      description = "template description goes here?";
+    };
+    # Used by `nix flake init -t <flake>`
+    templates.default = { path = "<store-path>"; description = ""; };
+  };
+}
+```
+
+## Registry
 
 # 社区工具
 
 ## home-manager
+
+用户级别软件管理
 
 ## agenix
 
@@ -1880,7 +2233,7 @@ ip route # 或者 route -n
 
 # 添加同一子网内的路由表 (一般会自动生成的，若以生成，则不需要添加)
 ip route add 192.168.179.0/24 dev ens33 proto kernel scope link src 192.168.179.151
-# 删除因上个操作出现的一个没有用的路由
+# 删除因上个操作出现的一个没有用的路由 (系统安装后倒不会有这个问题，具体是什么原因就不细查了)
 ip route del 0.0.0.0/0 dev ens33
 
 # 添加默认路由
@@ -2024,11 +2377,78 @@ useradd -m -G wheel wsain  # 添加普通用户，并加入 wheel 组
 passwd wsain  # 设置普通账户密码
 ```
 
-# 基本操作 memo
+# 常用操作 memo
 
 ## 更新系统
 
+```nix
+# 更新 flake.lock（更新所有依赖项）
+nix flake update
+
+# 或者也可以只更新特定的依赖项，比如只更新 home-manager:
+nix flake update home-manager
+
+# 部署系统
+sudo nixos-rebuild switch --flake .
+```
+
 ## 降级或升级软件包
+
+flake inputs 中添加指定版本的源，通过`_module.args`或者`specialArgs`传入到module参数中后，
+在 home-manager 中 指定版本，具体可以参考 home-manager 文档
+
+示例:
+
+```nix
+{
+  pkgs,
+  config,
+  # nix 会从 flake.nix 的 specialArgs 查找并注入此参数
+  pkgs-stable,
+  # pkgs-fd40cef8d,  # 也可以使用固定 hash 的 nixpkgs 数据源
+  ...
+}:
+
+{
+  # 这里从 pkg-stable 中引用包（而不是默认的 pkgs）
+  home.packages = with pkgs-stable; [
+    firefox-wayland
+
+    # nixos-unstable 分支中的 Chrome Wayland 支持目前存在问题，
+    # 因此这里我们将 google-chrome 回滚到 stable 分支，临时解决下 bug.
+    # 相关 Issue: https://github.com/swaywm/sway/issues/7562
+    google-chrome
+  ];
+
+  programs.vscode = {
+    enable = true;
+    # 这里也一样，从 pkgs-stable 中引用包
+    package = pkgs-stable.vscode;
+  };
+}
+```
+
+当然，也可以配制成这样，只不过没有上面的看起来舒服
+
+```nix
+{
+  pkgs,
+  config,
+  pkgs-stable,
+  ...
+}:
+
+{
+  home.packages = (with pkgs-stable; [
+    firefox-wayland
+    google-chrome
+  ]) ++ (with pkgs-stable; [ vscode ]);
+
+  programs.vscode = {
+    enable = true;
+  };
+}
+```
 
 ## build版本管理
 
@@ -2066,11 +2486,95 @@ passwd wsain  # 设置普通账户密码
   # sudo bash -c "cd /boot/loader/entries; ls | grep -v <current-generation-name> | xargs rm"
   ```
 
+- 整合上述操作，只保留一个版本，并且清理无用的包
+
+  ```bash
+  #! /usr/bin/env bash
+
+  set -e
+
+  sudo \
+  http_proxy=http://192.168.179.1:7890 \
+  https_proxy=http://192.168.179.1:7890 \
+  all_proxy=http://192.168.179.1:7890 \
+  nixos-rebuild switch
+
+  sudo nix-env -p /nix/var/nix/profiles/system --delete-generations old
+  sudo nix-collect-garbage --delete-old
+  nix-collect-garbage --delete-old
+  sudo nixos-rebuild switch
+  ```
+
+## 查询为什么某个包被安装了
+
+查询为什么某个包被安装，当前环境中的谁依赖了它:
+
+1. 进入一个带有 `nix-tree` 与 `rg` 的 shell：`nix shell nixpkgs#nix-tree nixpkgs#ripgrep`
+2. `nix-store --gc --print-roots | rg -v '/proc/' | rg -Po '(?<= -> ).*' | xargs -o nix-tree`
+3. `/<package-name>` 以查找到你想查询的包
+4. 输入 `w`，看看谁依赖了它（`why depends`），以及完整的依赖链。
+
+## 节约存储空间
+
+如下配置可以比较好的缩减 NixOS 的磁盘占用，可以考虑将它们添加到你的 NixOS 配置中：
+
+```
+{ lib, pkgs, ... }:
+
+{
+  # ......
+
+  # do not need to keep too much generations
+  boot.loader.systemd-boot.configurationLimit = 10;
+  # boot.loader.grub.configurationLimit = 10;
+
+  # do garbage collection weekly to keep disk usage low
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 1w";
+  };
+
+  # Optimise storage
+  # you can also optimise the store manually via:
+  #    nix-store --optimise
+  # https://nixos.org/manual/nix/stable/command-ref/conf-file.html#conf-auto-optimise-store
+  nix.settings.auto-optimise-store = true;
+}
+```
+
+## 运行FHS环境的软件
+
+### fhs
+
+### steam-run
+
+## home-manager 直接软链 dotfiles
+
+```nix
+{ config, pkgs, ... }: let
+  # path to your nvim config directory
+  nvimPath = "${config.home.homeDirectory}/nix-config/home/nvim";
+  # path to your doom emacs config directory
+  doomPath = "${config.home.homeDirectory}/nix-config/home/doom";
+in
+{
+  xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink nvimPath;
+  xdg.configFile."doom".source = config.lib.file.mkOutOfStoreSymlink doomPath;
+
+  # other configurations
+}
+```
+
 # 参考
 
+- [Nix Reference Manual](https://nix.dev/manual/nix/2.18/introduction)
+- [nix.dev](https://nix.dev/)
+- [Home Manager Manual](https://nix-community.github.io/home-manager/)
 - [NixOS 与 Flakes 一份非官方的新手指南](https://nixos-and-flakes.thiscute.world/zh/)
 - [NixOS 中文](https://nixos-cn.org/)
-- [Nix Reference Manual](https://nix.dev/manual/nix/2.18/introduction)
+- [awesome-nix](https://github.com/nix-community/awesome-nix)
+- [nixos-manual](https://nlewo.github.io/nixos-manual-sphinx/index.html)
 
 - nix 语言
   - [Nix 详解（三） nix 领域特定语言](https://www.rectcircle.cn/posts/nix-3-nix-dsl/)
@@ -2093,8 +2597,11 @@ passwd wsain  # 设置普通账户密码
   - [nixos 从 0 实现全集](https://dev.leiyanhui.com/nixos/start/)
   - [NixOS 系列（一）：我为什么心动了](https://lantian.pub/article/modify-website/nixos-why.lantian/)
 - nixos 配置
+  - [nix-starter-configs](https://github.com/Misterio77/nix-starter-configs)
   - [《NixOS 与 Flakes 一份非官方的新手指南》作者的 nixos 配置](https://github.com/ryan4yin/nix-config.git)
   - [lantian nixos-config](https://github.com/xddxdd/nixos-config)
+- homemanager
+  - [simple-homemanager](https://github.com/Evertras/simple-homemanager)
 - 杂谈
   - [OS as Code - 我的 NixOS 使用体会](https://thiscute.world/posts/my-experience-of-nixos/)
   - [Nix 和 NixOS ：你们安利方法错了](https://nyk.ma/posts/nix-and-nixos/)
