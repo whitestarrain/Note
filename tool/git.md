@@ -132,6 +132,14 @@
   https://<token>@github.com/<user_name>/<repo_name>.git/
   ```
 
+- 将本仓库的修改强制提交到远程机器的指定git库下
+
+  ```bash
+  # 如果 git-receive-pack 没有在PATH中，需要指定： --receive-pack=/path/to/git-receive-pack
+  git push -f ssh://wsain@192.168.100.10:[port]/path/to/gitrepo branch_name
+  ssh wsain@192.168.100.10 -p port -t 'cd /path/to/gitrepo && git reset --hard HEAD'
+  ```
+
 ## 1.6. 分支
 
 ### 1.6.1. 本地分支

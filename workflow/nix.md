@@ -1665,6 +1665,99 @@ nix-env -e my-nix-package-demo-by-build-go-module-0.0.1 ; nix-collect-garbage -d
     - 下载常规 Linux 版本可执行文件，然后通过 [patchelf](https://github.com/NixOS/patchelf) 工具修改 [ld-linux.so](https://linux.die.net/man/8/ld-linux.so) 到 `/nix/store/xxx-glibc-xxx/lib` 路径即可
     - 详见：[wiki](https://nixos.wiki/wiki/Packaging/Binaries)。
 
+# Nix 原生命令
+
+> <https://nix.dev/manual/nix/2.24/command-ref/>
+
+注意，实际执行的命令其实就是 nix，只不是在执行的时候，nix源码中会识别通过哪个命令启动的程序，从而进行不同的操作
+
+```bash
+❯ realpath $(which nix-instantiate)
+/nix/store/w4l4xvw461ywc4ia3accj5i3hh50n4r8-nix-2.24.10/bin/nix
+
+❯ realpath $(which nix-shell)
+/nix/store/w4l4xvw461ywc4ia3accj5i3hh50n4r8-nix-2.24.10/bin/nix
+
+❯ realpath $(which nix-build)
+/nix/store/w4l4xvw461ywc4ia3accj5i3hh50n4r8-nix-2.24.10/bin/nix
+
+❯ realpath $(which nix-env)
+/nix/store/w4l4xvw461ywc4ia3accj5i3hh50n4r8-nix-2.24.10/bin/nix
+
+❯ realpath $(which nix-store)
+/nix/store/w4l4xvw461ywc4ia3accj5i3hh50n4r8-nix-2.24.10/bin/nix
+```
+
+## 主要命令
+
+### nix-build
+
+nix-build: 用于构建 Nix 包，它会将构建结果放到 /nix/store 路径下，但是不会记录到 Nix 的声明式配置中。
+在 New CLI 中对应的命令为 nix build
+
+### nix-shell
+
+nix-shell: nix-shell 用于创建一个临时的 shell 环境。
+比较复杂，因此在 New CLI 中它被拆分成了三个子命令 `nix develop`, `nix shell` 以及 `nix run`
+
+### nix-store
+
+### nix-env
+
+nix-env: 用于管理用户环境的软件包，是传统 Nix 的核心命令行工具。它从 nix-channel 定义的数据源中安装软件包，所以安装的软件包版本受 channel 影响。
+通过 nix-env 安装的包不会被自动记录到 Nix 的声明式配置中，是完全脱离掌控的，无法在其他主机上复现，因此不推荐使用。
+New CLI 中对应的命令为 nix profile。
+
+设置用户级别的配置，每次软件安装都会生成一个 profile，默认路径为： `${XDG_STATE_HOME-$HOME/.local/state}/nix/profiles/profile`
+
+nix-env 和 nix profile 的作用基本一样，
+
+- 使用过`nix-env`后，再使用 `nix profile` 的时候，后者的配置会兼容前者。`nix-env` 使用 profile 下的 `manifest.nix` 记录信息，而 `nix profile` 使用 `manifest.json`
+
+  ```bash
+  # 根据命名就能区分出来profile是哪个生成的。
+  ❯ ls -lha ${XDG_STATE_HOME-$HOME/.local/state}/nix/profiles
+  lrwxrwxrwx 1 wsain users  60 Dec  8 23:44 profile-3-link -> /nix/store/c63k7y91jljhaqdznxn582hfs9m022n6-user-environment
+  lrwxrwxrwx 1 wsain users  51 Dec  8 23:44 profile-4-link -> /nix/store/2604qzjpm4lh0y5hpi5lrhibj8wmpsrc-profile
+  ```
+- 但使用过`nix profiles`后，就无法再使用`nix-env`了，会有提示：
+
+  ```bash
+  $ nix-env -f '<nixpkgs>' -iA 'hello'
+  error: nix-env
+  profile '/home/alice/.local/state/nix/profiles/profile' is incompatible with 'nix-env'; please use 'nix profile' instead
+  ```
+
+## 其他工具命令
+
+### nix-channel
+
+与 apt/yum/pacman 等其他 Linux 发行版的包管理工具类似，传统的 Nix 也以 stable/unstable/test 等 channel 的形式来管理软件包的版本，可通过此命令修改 Nix 的 channel 信息。
+
+Nix Flakes 在 flake.nix 中通过 inputs 声明依赖包的数据源，通过 flake.lock 锁定依赖版本，完全取代掉了 nix-channel 的功能。
+
+```bash
+nix-channel --add https://nixos.org/channels/nixpkgs-unstable
+cat ~/.nix-channels
+nix-channel --list
+nix-channel --update
+```
+
+### nix-collect-garbage
+
+nix-collect-garbage: 垃圾回收指令，用于清理 /nix/store 中未被使用的 Store Objects.
+在 New CLI 中有个相似的指令 `nix store gc --debug`，但它不会清理 profile 生成的历史版本，因此此命令暂无替代。
+
+### nix-copy-closure
+
+### nix-daemon
+
+### nix-hash
+
+### nix-instantiate
+
+### nix-prefetch-url
+
 # Nixos 模块系统
 
 NixOS 的配置文件是通过一个个可复用的模块实现的，模块系统是 nix 的一个库实现的，支持：
@@ -1726,7 +1819,9 @@ pkgs.lib.evalModules {
       - 参考：lib.mkOrder, lib.mkBefore 与 lib.mkAfter
   - 语法糖： **如果一个模块中没有options，可以直接把config里面的内容写到外面**
 - imports:
-  - imports 表示 要把哪些模块merge到当前模块儿，以下个表达式完全等价
+  - imports 表示 要把哪些模块merge到当前模块，
+  - 不管import关系如何，模块之间的关系可以视作 **平级**，
+  - 以下两个表达式完全等价:
 
     <details>
     <summary style="color:red;">展开</summary>
@@ -1988,6 +2083,8 @@ b 模块不能这样写。假如我们定义 `b.enable = true`，则带来了 `s
 
 ## options 类型与类型检查
 
+> 类型：<https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/doc/manual/development/option-types.section.md>
+
 ### 基础类型
 
 ### strMatching
@@ -2008,11 +2105,72 @@ b 模块不能这样写。假如我们定义 `b.enable = true`，则带来了 `s
 
 ## config 时的常用库
 
+> 赋值常用的函数: <https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/doc/manual/development/option-def.section.md>
+
+### lib.mkIf
+
+解决无限递归问题
+
+```
+# ./flake.nix
+{
+  description = "NixOS Flake for Test";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+
+  outputs = {nixpkgs, ...}: {
+    nixosConfigurations = {
+      "test" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ({config, lib, ...}: {
+            options = {
+              foo = lib.mkOption {
+                default = false;
+                type = lib.types.bool;
+              };
+            };
+
+            # 示例 1（正常）
+            config.warnings = if config.foo then ["foo"] else [];
+
+            # 示例 2（无限递归）
+            #   error: infinite recursion encountered
+            # config = if config.foo then { warnings = ["foo"];} else {};
+
+            # 示例 3（正常）
+            # config = lib.mkIf config.foo {warnings = ["foo"];};
+          })
+        ];
+      };
+    };
+  };
+}
+```
+
+- 示例一计算流程： `config.warnings` => `config.foo ` => `config`
+  1. 首先，Nix 尝试计算 `config.warnings` 的值，但发现它依赖于 `config.foo`.
+  2. 接着，Nix 尝试计算 `config.foo` 的值，它依赖于其外层的 `config`.
+  3. Nix 尝试计算 `config` 的值，`config` 中未被 `config.foo` 真正使用的内容都会被 Nix 延迟求值，因此这里不会递归依赖 `config.warnings`。
+  4. `config.foo` 求值结束，接着 `config.warnings` 被赋值，计算结束。
+
+- 示例二： `config` => `config.foo` => `config`
+  1. 首先，Nix 尝试计算 `config` 的值，但发现它依赖于 `config.foo`.
+  2. 接着，Nix 尝试计算 `config.foo` 的值，它依赖于其外层的 `config`.
+  3. Nix 尝试计算 `config` 的值，这又跳转到步骤 1，于是进入无限递归，最终报错。
+
+- 示例三：跟示例二唯一的区别是改用了 `lib.mkIf` 解决了无限递归问题。
+
+其关键就在于 `lib.mkIf` 这个函数，使用它定义的 `config` 会被 Nix 延迟求值，也就是说会在 `config.foo` 求值结束后，才会真正计算 `config = lib.mkIf ...` 的值。
+
 ### lib.mkOrder, lib.mkBefore 与 lib.mkAfter
 
 ### lib.mkOverride, lib.mkDefault and lib.mkForce
 
-### callPackages
+### pkgs.callPackages
+
+### 其他
+
+- lib.optional
 
 ## 其他特性
 
@@ -2032,18 +2190,340 @@ Nixos 模块编写指南: [Writing NixOS Modules](https://github.com/NixOS/nixpk
 
 nixos wiki: [nixos module](https://nixos.wiki/wiki/NixOS_modules)
 
+# Nix store
+
+Nix Store 是 Nix 包管理器的核心概念之一，它是一个只读文件系统，用于存储所有需要不可变这一特性的文件，包括软件包的构建结果、软件包的元数据、软件包的所有构建输入等等。
+
+Nix 包管理器使用 Nix 函数式语言来描述软件包及其依赖关系，每个软件包都被视为一个纯函数的输出，软件包的构建结果被保存在 Nix Store 中。
+
+Nix Store 中的数据具有固定的路径格式：
+
+```
+/nix/store/b6gvzjyb2pg0kjfwrjmg1vfhh54ad73z-firefox-33.1
+|--------| |------------------------------| |----------|
+store directory         digest                  name
+```
+
+可以看到，Nix Store 中的路径以一个哈希值（digest）为前缀，后面跟着软件包的名称和版本号。
+这个哈希值是基于软件包的所有输入信息（构建参数、依赖关系、依赖版本等等）计算出来的，任何构建参数或依赖关系的变化都会导致哈希值的变化，从而保证了每个软件包路径的唯一性。
+再加上 Nix Store 是一个只读文件系统，这就保证了软件包的不可变性，即软件包一旦构建完成，就不会再发生变化。
+
+因为构建结果的存储路径是基于构建流程的所有输入信息计算出来的， **同样的输入信息会得到同样的存储路径** 。
+
+这种设计也被称为输入寻址模型（*Input-addressed Model*）。
+
+## NixOS 如何使用 Nix Store
+
+NixOS 的声明式配置将会计算出哪些软件包需要被安装，然后将这些软件包在 Nix Store 中的存储路径软链接到 `/run/current-system` 中，
+再通过修改 `PATH` 等环境变量指向 `/run/current-system` 中对应的文件夹，从而实现软件包的安装。
+每次部署时，NixOS 会计算出新的系统配置，清理掉旧的软链接，再重新创建新的软链接，从而确保系统环境与声明式配置一致。
+
+home-manager 也是类似的，它会将用户配置的软件包软链接到 `/etc/profiles/per-user/your-username` 这个路径下，再通过修改 `PATH` 等环境变量指向这个路径，从而实现用户软件包的安装。
+
+```
+❯ which bash
+/etc/profiles/per-user/wsain/bin/bash
+
+❯ ls -lh /etc/profiles/per-user/wsain/bin/bash
+lrwxrwxrwx 1 root root 70 Jan  1  1970 /etc/profiles/per-user/wsain/bin/bash -> /nix/store/h891mq18hryx5z5crwivl9w5lkkq9srp-home-manager-path/bin/bash
+```
+
+而 `nix develop` 命令则是直接将软件包的存储路径添加到 `PATH` `LD_LIBRARY_PATH` 等环境变量中，使新创建的 shell 环境中可以直接使用这些软件包或库。
+
+## 添加二进制缓存
+
+Nix 提供的官方缓存服务器 <https://cache.nixos.org> 提供了绝大部分常用软件包的二进制缓存，但它并不能满足所有用户的需求。在以下情况下，我们会需要添加额外的缓存服务器：
+
+- 添加一些第三方项目的缓存服务器，例如 nix-community 的缓存服务器 https://nix-community.cachix.org 提供了社区项目的二进制缓存，可以加速这些项目的构建。
+- 添加离用户最近的缓存服务器镜像站，用于加速下载。
+- 添加自己搭建的缓存服务器，用于加速个人项目的构建速度。
+
+Nix 中通过如下几个 options 来配置缓存服务器：
+
+- [substituters](https://nixos.org/manual/nix/stable/command-ref/conf-file#conf-substituters): 它是一个字符串数组，每个字符串都是一个缓存服务器的地址，Nix 会按照数组中的顺序依次尝试从这些服务器中查找缓存。
+- `trusted-public-keys` : 为了防范恶意攻击，Nix 默认启用 require-sigs 功能，
+  - 只有附带了签名、且签名能被 trusted-public-keys 中的任意一个公钥验证通过的缓存，才会被 Nix 使用。
+  - 因此我们需要将 substituters 对应的公钥添加到 trusted-public-keys 中。
+    - 国内的镜像源都是直接从官方缓存服务器中同步的，因此它们的公钥与官方缓存服务器的公钥是一致的，我们可以直接使用官方缓存服务器的公钥，无需额外配置。
+    - 这种完全依赖公钥机制的验证方式，实际是将安全责任转嫁给了用户。用户如果希望使用某个第三方库，但又希望使用它的第三方缓存服务器加快构建速度，那就必须自己承担对应的安全风险，自行决策是否将该缓存服务器的公钥添加进 `trusted-public-keys`。为了完全解决这个信任问题，Nix 推出了实验特性 [ca-derivations](https://wiki.nixos.org/wiki/Ca-derivations)，它不依赖 `trusted-public-keys` 进行签名校验，有兴趣的可以自行了解。
+- `trusted-users`: 允许使用第三方二进制缓存的用户
+
+可通过如下几种方式来配置 `substituters` `trusted-public-keys` 两个参数：
+
+- 在 /etc/nix/nix.conf 中配置，这是全局生效的
+  - 直接手动配置。
+  - 模块中`nix.settings`属性配置：可在任一 NixOS Module 中通过 `nix.settings.substituters` 与 `nix.settings.trusted-public-keys` 来声明式地生成 `/etc/nix/nix.conf`.
+- 使用`flake.nixConfig`属性配置: 通过 `nixConfig.substituters` 来配置，此配置仅对当前 flake 生效，不会影响系统配置
+- 可通过 `nix` 指令的 `--option substituters="http://xxx"` 参数来临时设定，此配置仅对当前指令生效。
+
+上面方式中，除了第一种全局配置外，其他两种都是临时配置。如果同时使用了多种方式，那么后面的配置会直接覆盖前面的配置。
+
+但临时设置 `substituters` 存在安全风险，前面我们也解释了基于 `trusted-public-keys` 的安全验证机制存在缺陷。
+将一个不可信的缓存服务器添加到 substituters 中，可能会导致包含恶意内容的缓存被复制到 Nix Store 中。
+
+因此 Nix 对 substituters 的临时设置做出了限制，要想通过第二三种方式设定 substituers，前提是满足如下任意一个条件：
+
+- [`/etc/nix/nix.conf` 中的 `trusted-users`](https://nixos.org/manual/nix/stable/command-ref/conf-file#conf-trusted-users) 参数列表中包含当前用户。
+- [`/etc/nix/nix.conf` 中的 `trusted-substituters`](https://nixos.org/manual/nix/stable/command-ref/conf-file#conf-trusted-substituters) 参数列表中包含我们临时指定的 substituters.
+
+基于上述信息，如下是上述三种配置方式的示例。
+
+<details>
+<summary style="color:red;">展开</summary>
+
+---
+
+```nix
+{
+  lib,
+  ...
+}: {
+
+  # ...
+  nix.settings = {
+    trusted-users = ["wsain"];
+
+    substituters = [
+      "https://mirror.sjtu.edu.cn/nix-channels/store"
+      "https://cache.nixos.org"
+    ];
+
+    trusted-public-keys = [
+      # the default public key of cache.nixos.org, it's built-in, no need to add it here
+      # nixos's nix module: https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/nix.nix
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    ];
+  };
+
+}
+```
+```nix
+{
+  description = "NixOS configuration of Ryan Yin";
+
+  # the nixConfig here only affects the flake itself, not the system configuration!
+  nixConfig = {
+    # override the default substituters
+    substituters = [
+      "https://mirror.sjtu.edu.cn/nix-channels/store"
+      "https://cache.nixos.org"
+      "https://nix-community.cachix.org"
+    ];
+    trusted-public-keys = [
+      # nix community's cache server public key
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
+  };
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    # ....
+  };
+
+  outputs = inputs@{
+      self,
+      nixpkgs,
+      ...
+  }: {
+    nixosConfigurations = {
+      my-nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hardware-configuration.nix
+          ./configuration.nix
+
+          {
+            # given the users in this list the right to specify additional substituters via:
+            #    1. `nixConfig.substituters` in `flake.nix`
+            nix.settings.trusted-users = [ "wsain" ];
+          }
+          # ...
+       ];
+      };
+    };
+  };
+}
+```
+```bash
+sudo nixos-rebuild switch --option substituters "https://nix-community.cachix.org" --option trusted-public-keys "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+```
+
+---
+
+</details>
+
+## Nix options 参数的 `extra-` 前缀
+
+前面提到的三种方式配置的 `substituters` 会相互覆盖，但比较理想的情况应该是：
+
+1. 在系统层面的 `/etc/nix/nix.conf` 中仅配置最通用的 substituters 与 trusted-public-keys，例如官方缓存服务器与国内镜像源。
+2. 在每个 flake 项目的 `flake.nix` 中配置该项目特有的 substituters 与 trusted-public-keys，例如 nix-community 等非官方的缓存服务器。
+3. 在构建 flake 项目时，应该将 `flake.nix` 与 `/etx/nix/nix.conf` 中配置的 substituters 与 trusted-public-keys **合并**使用。
+
+Nix 提供了 [`extra-` 前缀](https://nixos.org/manual/nix/stable/command-ref/conf-file.html?highlight=extra#file-format)实现了这个 **合并** 功能。
+
+据官方文档介绍，如果 `xxx` 参数的值是一个列表，那么 `extra-xxx` 参数的值会被追加到 `xxx` 参数的值后面：
+
+也就是说我们可以这么用：
+
+```nix
+{
+  description = "NixOS configuration of Ryan Yin";
+
+  # the nixConfig here only affects the flake itself, not the system configuration!
+  nixConfig = {
+    # will be appended to the system-level substituters
+    extra-substituters = [
+      # nix community's cache server
+      "https://nix-community.cachix.org"
+    ];
+
+    # will be appended to the system-level trusted-public-keys
+    extra-trusted-public-keys = [
+      # nix community's cache server public key
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
+  };
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+
+    # 省略若干配置...
+  };
+
+  outputs = inputs@{
+      self,
+      nixpkgs,
+      ...
+  }: {
+    nixosConfigurations = {
+      my-nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hardware-configuration.nix
+          ./configuration.nix
+
+          {
+            # given the users in this list the right to specify additional substituters via:
+            #    1. `nixConfig.substituters` in `flake.nix`
+            nix.settings.trusted-users = [ "ryan" ];
+
+            # the system-level substituters & trusted-public-keys
+            nix.settings = {
+              substituters = [
+                # cache mirror located in China
+                # status: https://mirror.sjtu.edu.cn/
+                "https://mirror.sjtu.edu.cn/nix-channels/store"
+                # status: https://mirrors.ustc.edu.cn/status/
+                # "https://mirrors.ustc.edu.cn/nix-channels/store"
+
+                "https://cache.nixos.org"
+              ];
+
+              trusted-public-keys = [
+                # the default public key of cache.nixos.org, it's built-in, no need to add it here
+                "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+              ];
+            };
+
+          }
+          # 省略若干配置...
+       ];
+      };
+    };
+  };
+}
+```
+
+## 通过代理加速包下载
+
+> 更新：
+> 根据 [Nix Reference Manual: Proxy Environment Variables](https://nix.dev/manual/nix/2.24/installation/env-variables.html#proxy-environment-variables)
+> 当 设置了 http_proxy, https_proxy, ftp_proxy, all_proxy, no_proxy, HTTP_PROXY, HTTPS_PROXY, FTP_PROXY, ALL_PROXY, NO_PROXY 中的任意一个后再执行 nix，
+> nix 将创建一个 override file 在 `/etc/systemd/system/nix-daemon.service.d/override.conf` 以便于 `nix-daemon` 来使用这些代理。
+> 也就是现在nix已经帮助用户完成了以下操作
+
+> 参考了 Issue: [roaming laptop: network proxy configuration - NixOS/nixpkgs](https://github.com/NixOS/nixpkgs/issues/27535#issuecomment-1178444327)
+
+有些用户可能会希望能直接通过 HTTP/Socks5 代理来加速包下载。
+
+直接在 Terminal 中使用 `export HTTPS_PROXY=http://127.0.0.1:7890` 这类方式是无法生效的，因为 nix 实际干活的是一个叫 `nix-daemon` 的后台进程，而不是直接在 Terminal 中执行的命令。
+
+如果你只是临时需要使用代理，可以通过如下命令设置代理环境变量：
+
+```bash
+sudo mkdir /run/systemd/system/nix-daemon.service.d/
+cat << EOF >/run/systemd/system/nix-daemon.service.d/override.conf
+[Service]
+Environment="https_proxy=socks5h://localhost:7891"
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart nix-daemon
+```
+
+部署此配置后，可通过 `sudo cat /proc/$(pidof nix-daemon)/environ | tr '\0' '\n'` 查看 nix-daemon 进程的所有环境变量，确认环境变量的设置是否生效。
+
+位于 `/run/systemd/system/nix-daemon.service.d/override.conf` 的设置会在系统重启后被自动删除，或者你可以手动删除它并重启 nix-daemon 服务来恢复原始设置。
+
+如果你希望永久设置代理，建议将上述命令保存为 shell 脚本，在每次启动系统时运行一下。或者也可以使用旁路网关或 TUN 等全局代理方案。
+
+> 社区也有人通过 `systemd.services.nix-daemon.environment` 以声明式的方式为 nix-daemon 永久设置代理，但这种做法下一旦代理出了问题会非常麻烦，
+> nix-daemon 将无法正常工作，进而导致大多数 nix 命令无法正常运行，而且 systemd 自身的配置被设置了只读保护，无法简单地修改配置删除代理设置。
+> 因此不建议使用这种方式。
+
+> 使用一些商用代理或公共代理时你可能会遇到 GitHub 下载时报 HTTP 403 错误，可尝试通过更换代理服务器或者设置 [access-tokens](https://github.com/NixOS/nix/issues/6536) 来解决。
+
+## 搭建缓存服务器
+
+# Nix 包管理
+
+## Nix Store 的垃圾回收
+
+Nix Store 是一个中心化的存储系统，所有的软件包构建输入跟输出都会被存储在这里。随着系统的使用，Nix Store 中的软件包会越来越多，占用的磁盘空间也会越来越大。
+
+为了避免 Nix Store 无限制地增长，Nix 包管理器为本地 Nix Store 提供了垃圾回收机制，用于清理 `/nix/store` 中的旧数据、回收存储空间。
+
+根据 [Chapter 11. The Garbage Collector - nix pills](https://nixos.org/guides/nix-pills/garbage-collector) 的说法， `nix-store --gc` 命令会执行垃圾回收操作，
+它会递归遍历 `/nix/var/nix/gcroots/` 目录下的所有软链接，找出所有被引用的软件包，然后将不再被引用的软件包删除。
+
+而 `nix-collect-garbage --delete-old` 则更进一步，它会先删除掉所有旧的 [profiles](https://nixos.org/manual/nix/stable/command-ref/files/profiles)，
+再执行 `nix-store --gc` 命令清理掉不再被引用的软件包。
+
+> 实际测试，nix-collect-garbage 似乎并没有像文档说的那样删除旧的 profiles
+
+需要注意的是，`nix build`, `nix develop` 等命令的构建结果并不会被自动添加到 `/nix/var/nix/gcroots/` 目录中，所以这些构建结果会被垃圾回收机制清理掉。
+你可以通过 `nix-instantiate` 跟 `keep-outputs = true` 等手段来避免这种情况，
+
+或者搭建一个自己的二进制缓存服务器，然后在你在缓存服务器上配置一个较长的缓存时间（比如一年），将数据推送到缓存服务器上，这样既可以在所有机器上共享构建结果，
+又可以避免本地构建结果被本地的垃圾回收机制清理掉，一举两得。
+
+## Profiles
+
+- `home-manager` profile: `/etc/profiles/per-user/wsain/bin`
+  > 对应`home-manager`中配置的包，可复现
+- `nix-env` 或 `nix profile` 安装包时生成的用户级别 profile:
+  > 如果没有使用 这两个命令装过包，下面指向是不存在的。另外这种配置也是不可复现的
+  - 普通用户: `$XDG_STATE_HOME/nix/profiles`
+  - root用户: `$NIX_STATE_DIR/profiles/per-user/root`
+
+![nix-20241209004420-330421.png](./image/nix-20241209004420-330421.png)
+
 # Flake
+
+<https://nixos.wiki/wiki/Flakes>
 
 ## 基本原理
 
-Flask 就是 nix 模块系统的一层wrapper，
+Flask 就是 nix 模块系统的一层wrapper，有四个顶级的属性：
 
-- inputs 代替了 nix-channel，同时会记录到`flake.lock`文件中
-- outputs 则规定了一些特定名称的输出，会由对应的命令识别
+- `description`: 描述信息
+- `inputs`: 代替了 nix-channel，同时会记录到`flake.lock`文件中
+- `outputs`: 则规定了一些特定名称的输出，会由对应的命令识别
+- `nixConfig`: 一个属性集，与`nix.conf`中的配置相对应，二进制缓存设置可以添加到这里，但只对当前Flake生效，配置项不会写入到 `nix.conf`
 
 ## Inputs
 
-```
+```nix
 {
   inputs = {
     # 以 GitHub 仓库为数据源，指定使用 master 分支，这是最常见的 input 格式
@@ -2092,6 +2572,8 @@ Flask 就是 nix 模块系统的一层wrapper，
 ```
 
 ## Outputs
+
+> <https://nixos.wiki/wiki/Flakes>
 
 `flake.nix` 中的 `outputs` 是一个 attribute set，是整个 Flake 的构建结果，每个 Flake 都可以有许多不同的 outputs。
 
@@ -2165,17 +2647,41 @@ nixos wiki 示例：
 }
 ```
 
+## nix-command (新一代命令)
+
+> 详见：<https://nix.dev/manual/nix/2.24/command-ref/experimental-commands>
+
+> 对比 [Explaining nix commands](https://qiita-com.translate.goog/Sumi-Sumi/items/6de9ee7aab10bc0dbead?_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en)
+
+### nix shell
+
+### nix run
+
+### nix develop
+
+### 其他
+
 ## Registry
 
 # 社区工具
 
-## home-manager
+> awesome-nix: <https://github.com/nix-community/awesome-nix>
 
-用户级别软件管理
-
-## agenix
-
-敏感数据处理
+- [flake-parts](https://github.com/hercules-ci/flake-parts): 通过 Module 模块系统简化配置的编写与维护。
+- [flake-utils-plus](https://github.com/gytis-ivaskevicius/flake-utils-plus): 同样是用于简化 Flake 配置的第三方包，不过貌似更强大些
+- [nix-output-monitor](https://github.com/maralorn/nix-output-monitor): 命令的输出日志，同时打印出更详细的日志信息，以及构建计时器等额外信息，强烈推荐使用！
+- [home-manager](https://github.com/nix-community/home-manager): 用户级别软件管理
+- [agenix](https://github.com/ryantm/agenix): secrets 管理工具
+- [colmena](https://nixos-and-flakes.thiscute.world/zh/best-practices/remote-deployment): 远程 NixOS 主机部署工具
+- [nixos-generator](https://github.com/nix-community/nixos-generators): 镜像生成工具，从 nixos 配置生成 iso/qcow2 等格式的镜像
+- [lanzaboote](https://github.com/nix-community/lanzaboote):启用 secure boot
+- [impermanence](https://github.com/nix-community/impermanence): 无状态的一种实现方式，选择重启后要保留的文件，其余的会被删除
+- [devbox](https://github.com/jetify-com/devbox): 一个基于 Nix 的轻量级开发环境管理工具，类似 earthly，目标是统一开发环境与部署环境，使得开发环境与部署环境一致
+- [nixpak](https://github.com/nixpak/nixpak): 一个使用沙箱运行任何 Nix 应用程序的工具（包括 GUI 应用程序），提升系统安全性
+- [nixpacks](https://github.com/railwayapp/nixpacks): 一个将任何代码自动打包为 OCI 容器镜像的工具，类似 buildpacks
+- [disko](https://github.com/nix-community/disko): 声明式的文件系统分区和格式化，主要在安装系统的时候使用
+- [haumea](https://github.com/nix-community/haumea):基于文件系统的模块声明，基于文件路径进行模块的明明
+- [anyrun](https://github.com/anyrun-org/anyrun): wayland 环境下，程序搜索和执行工具。（类似KDE的krunner）
 
 # vmare虚拟机安装
 
@@ -2566,9 +3072,19 @@ in
 }
 ```
 
+## 不使用缓存
+
+注意： `nixos-rebuild` 只是对 `nix` 命令wrap 了一层，有些options，需要直接 `nix --help` 来看，`nixos-rebuild --help`是查不到的。
+
+```bash
+nixos-rebuild switch --option substitute false
+```
+
 # 参考
 
 - [Nix Reference Manual](https://nix.dev/manual/nix/2.18/introduction)
+- [nixos wiki](https://nixos.wiki/wiki/Main_Page)
+- [nix 源码内文档](https://github.com/NixOS/nixpkgs/tree/nixos-24.11/nixos/doc/manual/development)
 - [nix.dev](https://nix.dev/)
 - [Home Manager Manual](https://nix-community.github.io/home-manager/)
 - [NixOS 与 Flakes 一份非官方的新手指南](https://nixos-and-flakes.thiscute.world/zh/)
@@ -2592,7 +3108,6 @@ in
   - [nix options](https://search.nixos.org/options)
   - [Nixpkgs Reference Manual](https://nixos.org/manual/nixpkgs/stable/)
 - nixos
-  - [nixos wiki](https://nixos.wiki/wiki/Main_Page)
   - [nixos options](https://search.nixos.org/options)
   - [nixos 从 0 实现全集](https://dev.leiyanhui.com/nixos/start/)
   - [NixOS 系列（一）：我为什么心动了](https://lantian.pub/article/modify-website/nixos-why.lantian/)
@@ -2609,3 +3124,4 @@ in
   - [nix-ld: Run unpatched dynamic binaries on NixOS](https://github.com/nix-community/nix-ld)
   - [reddit: "global" c libaries in nixos?](https://www.reddit.com/r/NixOS/comments/zwps3n/global_c_libaries_in_nixos/?rdt=46803)
   - steam-run: Run commands in the same FHS environment that is used for Steam
+  - [Practical Nix Flakes](https://serokell.io/blog/practical-nix-flakes)

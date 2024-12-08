@@ -963,5 +963,8 @@ cookie和session攻击
 - [CloudFlare Tunnel 免费内网穿透的简明教程](https://sspai.com/post/79278)
 - anki 记忆卡，fsrs 算法
 - [物联网 Arduino 入门](http://www.taichi-maker.com/homepage/arduino-tutorial-index/)
+- firefox 主题
+  - [MaterialFox](https://github.com/muckSponge/MaterialFox)
+  - [Firefox-Rounded-Corners](https://github.com/Khalylexe/Firefox-Rounded-Theme)
 
 
