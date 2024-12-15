@@ -970,7 +970,16 @@ in
 
 ## 模块系统
 
-nix 通过 `import path`， 执行其他文件的代码，并返回执行的结果。在 nix 中 import 是一个内置函数。这里的 path 可以是一个 `.nix` 文件，也可以是一个目录，如果是一个目录或压缩包的话，将执行该目录中的 `default.nix` 文件。示例如下：
+nix 通过 `import path`， 执行其他文件的代码，并返回执行的结果。在 nix 中 import 是一个内置函数。
+
+path:
+
+- 可以是一个 `.nix` 文件，
+- 可以是一个目录，如果是一个目录或压缩包的话，将执行该目录中的 `default.nix` 文件。
+- 也可以是一个 attribute set，此时会自动将 attribute set 转换为 string，再进行 import
+  - `attriute set` 转为string主要是通过 `{ __toString = self: ...; }` 方法 或者 `{ outPath = ...; }` 参数.
+  - flake 的 inputs，一般都会有 `outPath` 属性
+  - 参考： <https://nix.dev/manual/nix/2.24/language/builtins.html?highlight=import#builtins-toString>
 
 通过 `import` 函数可以将 nix 代码拆分到文件和目录，以实现模块划分和代码复用。
 
@@ -1693,11 +1702,13 @@ nix-env -e my-nix-package-demo-by-build-go-module-0.0.1 ; nix-collect-garbage -d
 ### nix-build
 
 nix-build: 用于构建 Nix 包，它会将构建结果放到 /nix/store 路径下，但是不会记录到 Nix 的声明式配置中。
+
 在 New CLI 中对应的命令为 nix build
 
 ### nix-shell
 
 nix-shell: nix-shell 用于创建一个临时的 shell 环境。
+
 比较复杂，因此在 New CLI 中它被拆分成了三个子命令 `nix develop`, `nix shell` 以及 `nix run`
 
 ### nix-store
@@ -1705,12 +1716,12 @@ nix-shell: nix-shell 用于创建一个临时的 shell 环境。
 ### nix-env
 
 nix-env: 用于管理用户环境的软件包，是传统 Nix 的核心命令行工具。它从 nix-channel 定义的数据源中安装软件包，所以安装的软件包版本受 channel 影响。
+
 通过 nix-env 安装的包不会被自动记录到 Nix 的声明式配置中，是完全脱离掌控的，无法在其他主机上复现，因此不推荐使用。
-New CLI 中对应的命令为 nix profile。
 
-设置用户级别的配置，每次软件安装都会生成一个 profile，默认路径为： `${XDG_STATE_HOME-$HOME/.local/state}/nix/profiles/profile`
+每次软件安装都会生成一个 profile，默认路径为： `${XDG_STATE_HOME-$HOME/.local/state}/nix/profiles/profile`
 
-nix-env 和 nix profile 的作用基本一样，
+New CLI 中对应的命令为 nix profile，nix-env 和 nix profile 的作用基本一样：
 
 - 使用过`nix-env`后，再使用 `nix profile` 的时候，后者的配置会兼容前者。`nix-env` 使用 profile 下的 `manifest.nix` 记录信息，而 `nix profile` 使用 `manifest.json`
 
@@ -1728,20 +1739,27 @@ nix-env 和 nix profile 的作用基本一样，
   profile '/home/alice/.local/state/nix/profiles/profile' is incompatible with 'nix-env'; please use 'nix profile' instead
   ```
 
+如果想要这种无法复现的用户环境，直接删除 `~/.local/state/nix/profiles/profile-<num>-link` (需要为`~/.nix-profile`指向的profile，也可以查看`/nix/var/nix/gcroots/auto`) 后再进行 `nix-collect-garbage` 即可。
+
 ## 其他工具命令
 
 ### nix-channel
 
 与 apt/yum/pacman 等其他 Linux 发行版的包管理工具类似，传统的 Nix 也以 stable/unstable/test 等 channel 的形式来管理软件包的版本，可通过此命令修改 Nix 的 channel 信息。
 
-Nix Flakes 在 flake.nix 中通过 inputs 声明依赖包的数据源，通过 flake.lock 锁定依赖版本，完全取代掉了 nix-channel 的功能。
+channel 通道只是一个返回属性集的 有 default.nix 的文件夹 或 tarball，
+
+nix-channel 会影响 `nix-env`，`nix-build` 等命令的使用
 
 ```bash
-nix-channel --add https://nixos.org/channels/nixpkgs-unstable
+nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
 cat ~/.nix-channels
 nix-channel --list
 nix-channel --update
+nix-env -iA nixpkgs.nnn
 ```
+
+Nix Flakes 在 flake.nix 中通过 inputs 声明依赖包的数据源，通过 flake.lock 锁定依赖版本，完全取代掉了 nix-channel 的功能。
 
 ### nix-collect-garbage
 
@@ -1817,7 +1835,9 @@ pkgs.lib.evalModules {
     - 可以 merge 的值，可以调整merge顺序
       - 设置列表类型的合并顺序，ist 跟 string 类型都是列表类型。
       - 参考：lib.mkOrder, lib.mkBefore 与 lib.mkAfter
-  - 语法糖： **如果一个模块中没有options，可以直接把config里面的内容写到外面**
+  - 语法糖：
+    - **如果一个模块中没有options，可以直接把config里面的内容写到外面**
+    - 如果不需要inputs时，可以进一步把inputs去掉，直接一个 attribute set 作为 config
 - imports:
   - imports 表示 要把哪些模块merge到当前模块，
   - 不管import关系如何，模块之间的关系可以视作 **平级**，
@@ -1887,7 +1907,7 @@ pkgs.lib.evalModules {
 
     </details>
 
-注意： **参数中的config和属性集中的config不同**
+注意： **参数中的config和属性集中的config不同**:
 
 - `模块中的config` 指的是特定模块 option 的求值
 - `参数中的config` 保存 所有`模块中的config` **惰性求值** 后的结果，并会传递给所有 module
@@ -1979,6 +1999,7 @@ pkgs.lib.evalModules {
 - pkgs: 一个包含所有 nixpkgs 包的集合，它也提供了许多相关的工具函数
   - 入门阶段可以认为它的默认值为 `nixpkgs.legacyPackages."${system}"`，
   - 可通过 nixpkgs.pkgs 这个 option 来自定义 pkgs 的值
+  - 源码: <https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/misc/nixpkgs.nix#L102>
 - modulesPath:
   - 一个 **只在 NixOS 中可用的参数** ，是一个 Path，指向 [nixpkgs/nixos/modules](https://github.com/NixOS/nixpkgs/tree/nixos-24.11/nixos/modules)
   - 它在 <nixpkgs/nixos/lib/eval-config-minimal.nix#L43> 中被定义
@@ -2010,7 +2031,7 @@ Nixpkgs 的模块系统提供了两种方式来传递非默认参数：
     ```
 
 - nixpkgs.lib.nixosSystem 函数的 specialArgs 参数
-  - 只有在 `lib.evalModules` 调用时作为参数传进去
+  - 原理是调用 `lib.evalModules` 时作为参数传进去
   - 相比 `_module.args`， 因为并不是在module中声明的，所以 `imports` 中使用也行
 
 ### 模块的组织方案
@@ -2166,7 +2187,7 @@ b 模块不能这样写。假如我们定义 `b.enable = true`，则带来了 `s
 
 ### lib.mkOverride, lib.mkDefault and lib.mkForce
 
-### pkgs.callPackages
+### pkgs.callPackage
 
 ### 其他
 
@@ -2497,13 +2518,31 @@ Nix Store 是一个中心化的存储系统，所有的软件包构建输入跟�
 或者搭建一个自己的二进制缓存服务器，然后在你在缓存服务器上配置一个较长的缓存时间（比如一年），将数据推送到缓存服务器上，这样既可以在所有机器上共享构建结果，
 又可以避免本地构建结果被本地的垃圾回收机制清理掉，一举两得。
 
-## Profiles
+## profiles
 
-- `home-manager` profile: `/etc/profiles/per-user/wsain/bin`
-  > 对应`home-manager`中配置的包，可复现
+所有 profles:
+
+```
+❯ echo $NIX_PROFILES
+/run/current-system/sw
+/nix/var/nix/profiles/default
+/etc/profiles/per-user/wsain
+/home/wsain/.local/state/nix/profile
+/nix/profile
+/home/wsain/.nix-profile
+```
+
+- 系统级别 profile:
+  > 下面两个应该是同一个指向
+  - `/nix/var/nix/profiles/system`
+  - `/run/current-system`
+- 用户级别 profile: `/etc/profiles/per-user/<username>`
+  - 配置 `users.users.<name>.packages` 会生成。
+  - home-manager 就是配置的这个属性
 - `nix-env` 或 `nix profile` 安装包时生成的用户级别 profile:
-  > 如果没有使用 这两个命令装过包，下面指向是不存在的。另外这种配置也是不可复现的
-  - 普通用户: `$XDG_STATE_HOME/nix/profiles`
+  > 如果没有使用 这两个命令装过包，下面指向是不存在的。另外这种配置也是不可复现的。
+  > home-manager 默认也会安装到这里，不过通过设置 `home-manager.useUserPackages = true;` 可以安装到 `/etc/profiles` 下. [home-manager: NixOS module](https://nix-community.github.io/home-manager/index.xhtml#sec-install-nixos-module)
+  - 普通用户: `$XDG_STATE_HOME/.nix-profile -> $XDG_STATE_HOME/nix/profiles/profile`
   - root用户: `$NIX_STATE_DIR/profiles/per-user/root`
 
 ![nix-20241209004420-330421.png](./image/nix-20241209004420-330421.png)
@@ -2518,10 +2557,22 @@ Flask 就是 nix 模块系统的一层wrapper，有四个顶级的属性：
 
 - `description`: 描述信息
 - `inputs`: 代替了 nix-channel，同时会记录到`flake.lock`文件中
+  - `inputs.nixpkgs` 必须要配置，会作为flake系统级别的
 - `outputs`: 则规定了一些特定名称的输出，会由对应的命令识别
 - `nixConfig`: 一个属性集，与`nix.conf`中的配置相对应，二进制缓存设置可以添加到这里，但只对当前Flake生效，配置项不会写入到 `nix.conf`
 
+如果想不开启实验性功能，也想使用flake的话，可以考虑使用 [flake-compat](https://github.com/edolstra/flake-compat) 库
+
+查看当前 flake 的属性：
+
+- `nix-repl`
+- `:lf .`
+
 ## Inputs
+
+inputs
+
+### 支持的格式
 
 ```nix
 {
@@ -2571,11 +2622,13 @@ Flask 就是 nix 模块系统的一层wrapper，有四个顶级的属性：
 }
 ```
 
+### nixpkgs 的 flake.nix
+
 ## Outputs
 
 > <https://nixos.wiki/wiki/Flakes>
 
-`flake.nix` 中的 `outputs` 是一个 attribute set，是整个 Flake 的构建结果，每个 Flake 都可以有许多不同的 outputs。
+`flake.nix` 中的 `outputs` 是一个返回 attribute set 的函数，是整个 Flake 的构建结果，每个 Flake 都可以有许多不同的 outputs。
 
 一些特定名称的 outputs 有特殊用途，会被某些 Nix 命令识别处理，比如：
 
@@ -2593,6 +2646,11 @@ Flask 就是 nix 模块系统的一层wrapper，有四个顶级的属性：
 - 其他用户自定义的 outputs，可能被其他 Nix 相关的工具使用
 
 nixos wiki 示例：
+
+- `<system>`: is something like "x86_64-linux", "aarch64-linux", "i686-linux", "x86_64-darwin"
+- `<name>`: is an attribute name like "hello".
+- `<flake>`: is a flake name like "nixpkgs".
+- `<store-path>`: is a /nix/store.. path
 
 ```nix
 {
@@ -2653,15 +2711,17 @@ nixos wiki 示例：
 
 > 对比 [Explaining nix commands](https://qiita-com.translate.goog/Sumi-Sumi/items/6de9ee7aab10bc0dbead?_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en)
 
+相比原生 `nix env` 等命令依赖 `nix-channel`，新版 nix command 会依赖 `nix registry` 作为
+
 ### nix shell
 
 ### nix run
 
 ### nix develop
 
-### 其他
+## nix registry
 
-## Registry
+<https://nix.dev/manual/nix/2.17/command-ref/new-cli/nix3-registry>
 
 # 社区工具
 
@@ -2682,6 +2742,7 @@ nixos wiki 示例：
 - [disko](https://github.com/nix-community/disko): 声明式的文件系统分区和格式化，主要在安装系统的时候使用
 - [haumea](https://github.com/nix-community/haumea):基于文件系统的模块声明，基于文件路径进行模块的明明
 - [anyrun](https://github.com/anyrun-org/anyrun): wayland 环境下，程序搜索和执行工具。（类似KDE的krunner）
+- [nix-ld](https://github.com/nix-community/nix-ld): 在nixos上运行没有 patchelf 过的 二进制文件
 
 # vmare虚拟机安装
 
@@ -3083,14 +3144,16 @@ nixos-rebuild switch --option substitute false
 # 参考
 
 - [Nix Reference Manual](https://nix.dev/manual/nix/2.18/introduction)
-- [nixos wiki](https://nixos.wiki/wiki/Main_Page)
-- [nix 源码内文档](https://github.com/NixOS/nixpkgs/tree/nixos-24.11/nixos/doc/manual/development)
+- [Nixos Wiki (official)](https://wiki.nixos.org/wiki/NixOS_Wiki)
+- [Nixos Wiki (unofficial)](https://nixos.wiki/wiki/Main_Page)
 - [nix.dev](https://nix.dev/)
+- [nix 源码内文档](https://github.com/NixOS/nixpkgs/tree/nixos-24.11/nixos/doc/manual/development)
 - [Home Manager Manual](https://nix-community.github.io/home-manager/)
 - [NixOS 与 Flakes 一份非官方的新手指南](https://nixos-and-flakes.thiscute.world/zh/)
 - [NixOS 中文](https://nixos-cn.org/)
 - [awesome-nix](https://github.com/nix-community/awesome-nix)
 - [nixos-manual](https://nlewo.github.io/nixos-manual-sphinx/index.html)
+- [nix-pills](https://nixos.org/guides/nix-pills/)
 
 - nix 语言
   - [Nix 详解（三） nix 领域特定语言](https://www.rectcircle.cn/posts/nix-3-nix-dsl/)

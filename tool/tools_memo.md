@@ -208,8 +208,6 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 
 ## tldr: cheatsheet
 
-制作终端gif
-
 # Development
 
 ## croc 文件传输
@@ -330,6 +328,8 @@ curl http://ifconfig.me
 [charm](https://github.com/charmbracelet)
 
 ## vhs
+
+制作终端gif
 
 # 软件
 

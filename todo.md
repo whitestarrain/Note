@@ -408,7 +408,6 @@ cookie和session攻击
 - [doom emacs](https://github.com/doomemacs/doomemacs)
 - [Centaur Emacs](https://github.com/seagle0128/.emacs.d)
   - [Centaur markdown 预览支持语法高亮和各类图](https://emacs-china.org/t/centaur-markdown/12170)
-- [专业emacs入门](https://zhuanlan.zhihu.com/p/385214753)
 - [emacs 作者 Richard Stallman 我的Lisp经历和GNU Emacs的开发](https://www.gnu.org/gnu/rms-lisp.zh-cn.html)
 - [emacs2ram，把emacs放到内存中](https://github.com/lujun9972/emacs-document/blob/master/emacs-common/十倍提升Emacs性能.org)
 - [21 天学会 Emacs](https://book.emacs-china.org/)
