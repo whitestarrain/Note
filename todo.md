@@ -729,6 +729,8 @@ cookie和session攻击
     - vscode的terminal中使用gdb，需要使用 vscode FHS environment: [Getting gdb to work in vscode](https://www.reddit.com/r/NixOS/comments/1aep3c5/getting_gdb_to_work_in_vscode/)
   - [No starship prompt under nix-shell?](https://github.com/starship/starship/discussions/5378)
 - 如果想学习操作系统，nix wrap了那么多层，是不是更需要理解，比较一下 nixos 和 arch 的根目录
+- [nix help links mangled](https://github.com/NixOS/nixpkgs/issues/355548)
+  - nix --help 文档有问题, 多出了 `8;;`
 
 ## lang
 

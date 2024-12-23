@@ -1,4 +1,4 @@
-## [git速查](./tool/git.md)
+## [git速查](./workflow/git.md)
 
 ## [numpy,pandas速查](./AI/np,pd_doc.md)
 

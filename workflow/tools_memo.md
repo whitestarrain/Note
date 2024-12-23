@@ -271,6 +271,116 @@ curl http://ifconfig.me
 
 ## Justfile
 
+## 内网穿透frp
+
+### 基本说明
+
+- 说明
+  - 简单地说，frp就是一个反向代理软件，
+  - 它体积轻量但功能很强大，可以使处于内网或防火墙后的设备对外界提供服务，
+  - 支持HTTP、TCP、UDP等众多协议
+- 原理图
+
+  ![linux-1](./image/linux-1.png)
+
+### 服务端设置
+
+- **部署在vps上**
+- 下载frp
+  ```bash
+  wget https://github.com/fatedier/frp/releases/download/v0.33.0/frp_0.33.0_linux_amd64.tar.gz
+  ```
+- 解压
+  > 此处解压到 `/opt/frp`
+- 编辑服务端配置文件`frps.ini`
+  ```ini
+  [common]
+  # frp监听的端口，默认是7000，可以改成其他的
+  bind_port = 7000
+  # 授权码，请改成更复杂的
+  token = 13730395968
+
+  # frp管理后台端口，请按自己需求更改
+  dashboard_port = 7500
+  # frp管理后台用户名和密码，请改成自己的
+  dashboard_user = admin
+  dashboard_pwd = 13730395968
+  enable_prometheus = true
+
+  # frp日志配置
+  log_file = /var/log/frps.log
+  log_level = info
+  log_max_days = 3
+
+  vhost_http_port = 10080
+  vhost_https_port = 10443
+  ```
+- 新建一个启动文件`start_server.sh`
+  ```bash
+  nohup ./frps -c frps.ini >& output.log &
+  # chmod +x ./start_server.sh
+  # jobs 查看nohup运行任务
+  ```
+
+- 启动：`./start_server.sh`
+
+### 客户端设置
+
+- 安装
+  ```bash
+  scoop install frp
+  # 使用scoop软件管理器安装
+  ```
+- 配置`frpc.ini`
+  ```ini
+  # 服务端配置
+  [common]
+  server_addr = 服务器ip
+  # 请换成设置的服务器端口
+  server_port = 7000
+  # 换成服务端设置的token
+  token = 13730395968
+
+  # 配置ssh服务
+  [ssh]
+  type = tcp
+  local_ip = 127.0.0.1
+  local_port = 22
+  remote_port = 自定义的远程服务器端口，例如2222
+
+  # 配置http服务，可用于小程序开发、远程调试等
+  [web]
+  type = http
+  local_ip = 127.0.0.1
+  local_port = 8080
+  subdomain = test.hijk.pw
+  remote_port = 自定义的远程服务器端口，例如8080
+
+  [rdp] # 即Remote Desktop 远程桌面，Windows的RDP默认端口是3389，协议为TCP，
+        # 建议使用frp远程连接前，在局域网中测试好，能够成功连接后再使用frp穿透连接。
+  type = tcp
+  local_ip = 127.0.0.1
+  local_port = 3389
+  remote_port = 7001
+
+  [smb] # SMB，即Windows文件共享所使用的协议，默认端口号445，协议TCP，本条规则可实现远程文件访问。
+  type = tcp
+  local_ip = 127.0.0.1
+  local_port = 445
+  remote_port = 7002
+  ```
+  ```
+  说明：
+    “[xxx]”表示一个规则名称，自己定义，便于查询即可。
+    “type”表示转发的协议类型，有TCP和UDP等选项可以选择，如有需要请自行查询frp手册。
+    “local_port”是本地应用的端口号，按照实际应用工作在本机的端口号填写即可。
+    “remote_port”是该条规则在服务端开放的端口号，自己填写并记录即可。
+  ```
+
+- 注意：**一个服务端可以同时给多个客户端使用**
+- 启动客户端 `./frpc.exe -c frpc.ini`
+
+
 # Linux
 
 ## Arch
@@ -313,6 +423,16 @@ curl http://ifconfig.me
 
 适合用来做路由器、防火墙、VPNs、VoIP 盒子以及服务器的操作系统
 
+## Athena
+
+基于Arch和Nixos
+
+# Darwin
+
+## AeroSpace
+
+i3-like tiling window manager
+
 # USB OS
 
 ## rufus
@@ -347,9 +467,11 @@ https://github.com/karlstav/cava
 
 监听并显示按键
 
-## Arc 浏览器
+## Arc browser
 
 高颜值，极简：https://arc.net/
+
+## Zen browser
 
 ## Digital-Logic-Sim
 

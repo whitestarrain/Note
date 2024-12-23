@@ -1046,7 +1046,9 @@ in
 
 ## 推导 (derivation)
 
-> 参考: [nix-pills/our-first-derivation](https://nixos.org/guides/nix-pills/our-first-derivation.html) | [nix-pills/working-derivation.html](https://nixos.org/guides/nix-pills/working-derivation.html)
+> <https://nix.dev/manual/nix/2.25/language/derivations>
+> [nix-pills/our-first-derivation](https://nixos.org/guides/nix-pills/our-first-derivation.html)
+> [nix-pills/working-derivation.html](https://nixos.org/guides/nix-pills/working-derivation.html)
 
 ### 概述
 
@@ -2719,6 +2721,10 @@ nixos wiki 示例：
 
 ### nix develop
 
+- `nix develop --profile ./profile`
+  - 可以将 devshell 作为一个profile保存下来，从而防止依赖被gc掉
+  - 可以在不想清理掉devshell依赖时使用
+
 ## nix registry
 
 <https://nix.dev/manual/nix/2.17/command-ref/new-cli/nix3-registry>
@@ -2743,6 +2749,8 @@ nixos wiki 示例：
 - [haumea](https://github.com/nix-community/haumea):基于文件系统的模块声明，基于文件路径进行模块的明明
 - [anyrun](https://github.com/anyrun-org/anyrun): wayland 环境下，程序搜索和执行工具。（类似KDE的krunner）
 - [nix-ld](https://github.com/nix-community/nix-ld): 在nixos上运行没有 patchelf 过的 二进制文件
+- [nix-darwin](https://github.com/LnL7/nix-darwin): 针对 macos 的一些 nix 模块，也是基于 nixpkgs
+- [devenv](https://github.com/cachix/devenv): 声明式客可复现的开发环境
 
 # vmare虚拟机安装
 
@@ -2791,6 +2799,8 @@ sudo -i
 ```bash
 # 查看当前ip
 ip addr
+# 如果没有开启，需要手动 up
+ip link set ens33 up
 
 # 为网卡添加ip
 ip addr add 192.168.179.151/24 dev ens33
@@ -3143,22 +3153,26 @@ nixos-rebuild switch --option substitute false
 
 # 参考
 
-- [Nix Reference Manual](https://nix.dev/manual/nix/2.18/introduction)
+- [nixos.org](https://nixos.org/learn/)
+- Manual
+  - [Nix Reference Manual](https://nix.dev/manual/nix/2.25/)
+  - [Nixpkgs Reference Manual](https://nixos.org/manual/nixpkgs/stable/)
+  - [NixOS Reference Manual](https://nixos.org/manual/nixos/stable/)
+- [nix.dev](https://nix.dev/)
+- [nix-pills](https://nixos.org/guides/nix-pills/)
 - [Nixos Wiki (official)](https://wiki.nixos.org/wiki/NixOS_Wiki)
 - [Nixos Wiki (unofficial)](https://nixos.wiki/wiki/Main_Page)
-- [nix.dev](https://nix.dev/)
-- [nix 源码内文档](https://github.com/NixOS/nixpkgs/tree/nixos-24.11/nixos/doc/manual/development)
 - [Home Manager Manual](https://nix-community.github.io/home-manager/)
+- [nix 源码内文档](https://github.com/NixOS/nixpkgs/tree/nixos-24.11/nixos/doc/manual/development)
 - [NixOS 与 Flakes 一份非官方的新手指南](https://nixos-and-flakes.thiscute.world/zh/)
 - [NixOS 中文](https://nixos-cn.org/)
 - [awesome-nix](https://github.com/nix-community/awesome-nix)
-- [nixos-manual](https://nlewo.github.io/nixos-manual-sphinx/index.html)
-- [nix-pills](https://nixos.org/guides/nix-pills/)
 
 - nix 语言
   - [Nix 详解（三） nix 领域特定语言](https://www.rectcircle.cn/posts/nix-3-nix-dsl/)
     - 没有提供源码的专有软件，会通过 patchelf ld-linux.so 位置到 /nix/store/xxx-glibc-xxx/lib. [wiki](https://nixos.wiki/wiki/Packaging/Binaries)
   - [Nix 语言快速入门](https://nixos-cn.org/tutorials/lang/)
+  - builtin：<https://nix.dev/manual/nix/2.25/language/builtins>
 - nix
   - [nix详解, nix高级话题](https://www.rectcircle.cn/search/?wd=nix)
   - [nix 基础](https://juejin.cn/post/7165305697561755679)
@@ -3188,3 +3202,4 @@ nixos-rebuild switch --option substitute false
   - [reddit: "global" c libaries in nixos?](https://www.reddit.com/r/NixOS/comments/zwps3n/global_c_libaries_in_nixos/?rdt=46803)
   - steam-run: Run commands in the same FHS environment that is used for Steam
   - [Practical Nix Flakes](https://serokell.io/blog/practical-nix-flakes)
+  - Nix Hour：youtube 视频教程

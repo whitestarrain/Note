@@ -1,5 +1,5 @@
-eslint 和 prettier   
-eslint可以使用js,yaml,json进行配置，选择顺手的就行  
+eslint 和 prettier
+eslint可以使用js,yaml,json进行配置，选择顺手的就行
 vscode 和 vim都有对应使用方法
 
 # 1. 项目整合eslint
@@ -345,7 +345,7 @@ vscode 和 vim都有对应使用方法
 
 # 6. git提交规范-Angular
 
-- [跳转](../tool/git.md)
+- [跳转](../workflow/git.md)
 
 # 7. 参考资料
 

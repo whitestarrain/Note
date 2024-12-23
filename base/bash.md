@@ -2331,6 +2331,18 @@ dirs
 
 ## 16.9. 命令提示符
 
+## bash 补全原理
+
+`man bash`:
+
+- Programmable Completion
+- SHELL BUILTIN COMMANDS
+  - complete
+  - compgen
+  - compopt
+
+<https://jasonkayzk.github.io/2020/12/06/Bash命令自动补全的原理/>
+
 # 17. 后记
 
 因此如果你想了解更多，请运行`man bash`，从那里开始
