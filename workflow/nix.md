@@ -2954,6 +2954,45 @@ useradd -m -G wheel wsain  # 添加普通用户，并加入 wheel 组
 passwd wsain  # 设置普通账户密码
 ```
 
+## 记一次boot失败
+
+在rebuild的时候，强制关机，导致grub配置没有写入，出现了 Minimal BASH-like line editing is supported. 的错误， 并且停留在了grub2交互页面。
+
+不少资料中在这个界面临时修复 grub2。不过试了下应该不适用于 nixos
+
+打算使用live os重新build，先挂载分区，进入系统 rebuild
+
+```bash
+sudo -i
+mount -o compress=zstd,subvol=root /dev/sda2 /mnt
+mount -o compress=zstd,subvol=home /dev/sda2 /mnt/home
+mount -o compress=zstd,noatime,subvol=nix /dev/sda2 /mnt/nix
+mount /dev/sda1 /mnt/boot
+swapon /dev/sda3
+
+nixos-enter
+cd /etc/nixos
+nixos-rebuild switch --flake .#xxxxxx
+```
+
+结果发现报 `/boot` 无法写入。
+
+查看 `/proc/mount` 发现还真挂载为了 readonly
+
+dmesg 后发现的确有报错，按照提示使用 `fsck` 修复挂载 `/boot` 的 `/dev/sda1`
+
+```bash
+unmount /boot
+fsck /dev/sda1
+```
+
+处理完之后，重启，发现就能成功进入grub2 引导界面了
+
+参考资料：
+
+- [A rebuild erased my /boot and I cannot boot into NixOS, please help!!!](https://www.reddit.com/r/NixOS/comments/1ecxyii/urgent_a_rebuild_erased_my_boot_and_i_cannot_boot/)
+- [OSError: Errno 30 Read-only file system: '/boot/efi/nixos/...](https://github.com/NixOS/nixpkgs/issues/28817)
+
 # 常用操作 memo
 
 ## 更新系统

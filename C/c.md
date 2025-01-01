@@ -1,3 +1,6 @@
+<!-- vim: wrap
+-->
+
 > 为查询方便，根据linux-c整理为一个文件
 >
 > 大多数跳转链接未修改，
@@ -19572,6 +19575,13 @@ srwxr-xr-x 1 root        root           0 2008-10-30 00:42 synaptic.socket
     - POSIX Shared Memory（共享内存）
   - POSIX 是一个流行标准之一（另一个是Open Group），而SYS V是Unix众多版本的分支之一（其他的分支还有Linux跟BSD）
 - UNIX Domain Socket，目前最广泛使用的 IPC 机制
+
+---
+
+- dbus
+  - [freedesktop](www.freedesktop.org)提供的低延迟，低开销，高可用性 IPC 框架，底层依旧是使用socket通信
+  - 主要用于桌面应用
+  - d-feet 可以查看DBus的System Bus和Session Bus中的各个消息连接的
 
 ### 3.3.5. 练习：实现简单的 Shell
 

@@ -75,6 +75,7 @@ This approach has never let me down, and it has made all the difference in my li
 
 # 小任务
 
+- [ ] c 实现https
 - [ ] traceroute 实现
   - [优雅地在 Traceroute 里膜 拜大佬](https://lantian.pub/article/creations/traceroute-chain.lantian/)
 - [ ] nginx转发
@@ -93,7 +94,6 @@ This approach has never let me down, and it has made all the difference in my li
       ```
 - [ ] tempral 框架
 - [ ] c 实现文件上传下载
-- [ ] c 实现https
 - [x] [clashtui](https://github.com/JohanChane/clashtui)
   - 算了，还是直接wget 订阅链接比较简单
 - [ ] dotfiles 实现 Dockerfile
@@ -663,6 +663,53 @@ cookie和session攻击
 - [Does tar create new inodes to be archived?](https://unix.stackexchange.com/questions/138594/does-tar-create-new-inodes-to-be-archived)
   - [tar posix header](https://git.savannah.gnu.org/cgit/tar.git/tree/src/tar.h)
 
+### window system
+
+- x window / x11 / xorg
+  - https://www.zhihu.com/question/321725817
+- [picom](https://wiki.archlinux.org/title/picom)
+- [picom-jonaburg-git](https://github.com/jonaburg/picom)
+- [archlinux配置文件，包括picom混色器。该作者的一些tmux等配置文件也可以参考下，比如tmux插件。](https://github.com/shendypratamaa/.arch)
+- dwm
+  - [dwm arch cn wiki](https://wiki.archlinuxcn.org/wiki/Dwm)
+  - [dwm配置](https://zocoxx.com/archlinux-dwm-incomplete-guide.html)
+  - [ArchLinux+DWM不完全指北](https://zocoxx.com/archlinux-dwm-incomplete-guide.html)
+  - [dwm patches 中文说明](https://github.com/Katzeee/dwm-patches-chinese/tree/master)
+  - [dwm status bar list](https://dwm.suckless.org/status_monitor/)
+    - 可以使用c实现，也可以使用bash脚本或者python、go啥的
+- [polybar](https://github.com/polybar/polybar)
+- [eww, status bar and widget](https://github.com/elkowar/eww)
+- [rofi, replace dmenu, rainmeter, utools](https://github.com/davatorium/rofi)
+  - [A huge collection of Rofi based custom Applets, Launchers & Powermenus.](https://github.com/adi1090x/rofi)
+- [Dunst, Notification](https://github.com/dunst-project/dunst)
+- 可自动构建 patch 的 dwm 和 dmenu
+  - [dmenu-flexipatch](https://github.com/bakkeby/dmenu-flexipatch)
+  - [dwm-flexipatch](https://github.com/bakkeby/dwm-flexipatch)
+
+---
+
+- [Xephyr: 调试dwm](https://wiki.archlinux.org/title/Xephyr)
+
+---
+
+dotfiles:
+
+- 比较喜欢的一个配置：<https://github.com/elbachir-one/dotfiles.git>
+
+- i3: <https://github.com/rahriver/Arch-Linux>
+- bspwm: <https://github.com/baskerville/bspwm>
+- dwm fork
+  - [dusk](https://github.com/bakkeby/dusk)
+- dwm
+  - <https://github.com/Rashad-707/dotfiles>
+  - <https://github.com/ayamir/dotfiles>
+  - <https://github.com/seeingangelz/dotfiles?tab=readme-ov-file>
+  - [从0开始打造完美Manjaro DWM 桌面工作环境](https://mq.rs/0manjaro-dwm): <https://github.com/Arstman/dwm-dotfiles>
+
+---
+
+- [xrandr: 处理缩放，显示方向等设置](https://wiki.archlinux.org/title/Xrandr)
+
 ### archlinux
 
 - [arch 安装](https://archlinuxstudio.github.io/ArchLinuxTutorial/#/)
@@ -671,7 +718,6 @@ cookie和session攻击
 - [archlinux系统迁移](https://docs.shanyuhai.top/os/arch/archlinux-system-migration.html)
 - [少数派上，这个人的文章可以看看](https://sspai.com/post/78916)
 - [check wake on lan](https://blog.csdn.net/weixin_46517129/article/details/108572641)
-- [archlinux配置文件，包括picom混色器。该作者的一些tmux等配置文件也可以参考下，比如tmux插件。](https://github.com/shendypratamaa/.arch)
 - [dotfiles, alatritty配置，theme拆出来](https://github.com/elijahmanor/dotfiles)
 - [archlinux配置,eww的配置看起来挺酷的，也可以试试hyprland](https://zhuanlan.zhihu.com/p/646864577)
   - [主要参考的是end-4的配置](https://github.com/end-4/dots-hyprland)
@@ -687,13 +733,6 @@ cookie和session攻击
   - HandleLidSwitch=lock
   - systemctl restart systemd-logind.service
 - [archlinux cn](https://bbs.archlinuxcn.org/)
-- x window / x11 / xorg
-  - https://www.zhihu.com/question/321725817
-- dwm
-  - [dwm arch cn wiki](https://wiki.archlinuxcn.org/wiki/Dwm)
-  - [dwm配置](https://zocoxx.com/archlinux-dwm-incomplete-guide.html)
-  - [ArchLinux+DWM不完全指北](https://zocoxx.com/archlinux-dwm-incomplete-guide.html)
-- [picom](https://wiki.archlinux.org/title/picom)
 - [arch 电量管理,thermald, tlp, laptop-mode-tools, powertop, acpi](https://www.reddit.com/r/archlinux/comments/u4fldv/tlp_vs_laptopmodetools/)
 - [arch术语](https://wiki.archlinuxcn.org/wiki/Arch_%E6%9C%AF%E8%AF%AD)
 - [archlinux kernel parameters](https://wiki.archlinux.org/title/kernel_parameters)
@@ -731,6 +770,7 @@ cookie和session攻击
 - 如果想学习操作系统，nix wrap了那么多层，是不是更需要理解，比较一下 nixos 和 arch 的根目录
 - [nix help links mangled](https://github.com/NixOS/nixpkgs/issues/355548)
   - nix --help 文档有问题, 多出了 `8;;`
+- [nix working with local file](https://nix.dev/tutorials/working-with-local-files)
 
 ## lang
 

@@ -536,6 +536,11 @@ nmcli -p connection show 6-4-403
   cat /sys/class/power_supply/BAT1/status
   # 限制充电阈值
   echo 60 > /sys/class/power_supply/BAT1/charge_control_end_threshold
+
+  # 使用 upower 查看可用的设备
+  upower --enumerate
+  # 使用 upower 查看电池信息
+  upower -i /org/freedesktop/UPower/devices/battery_BAT1
   ```
 
 
@@ -683,6 +688,9 @@ cpio –icduv < /opt/etc.cpio
 ```
 
 # 5. 显示服务器(后端)
+
+- [How does Linux's display work?](https://unix.stackexchange.com/questions/596894/how-does-linuxs-display-work)
+- [Is X DPI (dot per inch) setting just meant for text scaling?](https://unix.stackexchange.com/questions/596765/is-x-dpi-dot-per-inch-setting-just-meant-for-text-scaling)
 
 ## 5.1. X Window System
 

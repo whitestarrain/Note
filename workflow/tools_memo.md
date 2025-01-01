@@ -380,6 +380,9 @@ curl http://ifconfig.me
 - 注意：**一个服务端可以同时给多个客户端使用**
 - 启动客户端 `./frpc.exe -c frpc.ini`
 
+## perf_events
+
+perf，c 性能检查工具， 可以搭配 [flamegraph](https://github.com/brendangregg/FlameGraph) 使用
 
 # Linux
 
