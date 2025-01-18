@@ -158,7 +158,19 @@ TODO: 硬件信息理解与性能判断
 
 ## 硬盘
 
+### 总线、协议、接口
+
 [硬盘总线、协议、接口](https://www.51cto.com/article/692972.html)
+
+### HDD
+
+### SDD
+
+### 检测工具
+
+smart(Self-Monitoring, Analysis, and Reporting Technology) 检查，可以检查
+
+看 `Media and Data Integrity Errors` 是否大于0，如果大于0，这硬盘大概率就要挂了
 
 ## 主板
 

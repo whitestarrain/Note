@@ -15,6 +15,11 @@
 >
 > 有些笔记不太成熟，较为随便，会慢慢抽时间整理完善。
 
+<details>
+<summary style="color:red;">展开目录索引(不太常维护，可以直接根据目录命名来翻看)</summary>
+
+---
+
 - **[速查表(强烈推荐rstacruz速查表)](./cheatsheet.md)**
 - **基础**
   - [计算机网络](./base/computer_network_question.md)
@@ -172,6 +177,10 @@
   - [OAuth2.0](./others/OAuth2.0.md)
   - [鉴权](./others/authentication.md)
   - [编码](./base/encoding.md)
+
+---
+
+</details>
 
 # 思维导图
 

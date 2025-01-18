@@ -62,6 +62,8 @@ This approach has never let me down, and it has made all the difference in my li
   - [ ] 完工遗留的 blog 草稿
   - [ ] 博客里面，写上今年规划，以及多写一些博客吧
 
+- 安全或者CTF方面可以学下，应该能学到挺多东西: [pwn](https://pwn.college/)
+
 - 深度学习进阶，自然语言处理
   - 主要是用于整理日记，进行总结
 
@@ -72,6 +74,8 @@ This approach has never let me down, and it has made all the difference in my li
 - [ ] [DN42 实验网络介绍及注册教程](https://lantian.pub/article/modify-website/dn42-experimental-network-2020.lantian/)
 
 - [ ] [深入架构原理与事件](https://www.thebyte.com.cn/)
+
+- [ ] [2021年-用更现代的方法使用PGP-上](https://ulyc.github.io/2021/01/13/2021年-用更现代的方法使用PGP-上/)
 
 # 小任务
 
@@ -663,53 +667,6 @@ cookie和session攻击
 - [Does tar create new inodes to be archived?](https://unix.stackexchange.com/questions/138594/does-tar-create-new-inodes-to-be-archived)
   - [tar posix header](https://git.savannah.gnu.org/cgit/tar.git/tree/src/tar.h)
 
-### window system
-
-- x window / x11 / xorg
-  - https://www.zhihu.com/question/321725817
-- [picom](https://wiki.archlinux.org/title/picom)
-- [picom-jonaburg-git](https://github.com/jonaburg/picom)
-- [archlinux配置文件，包括picom混色器。该作者的一些tmux等配置文件也可以参考下，比如tmux插件。](https://github.com/shendypratamaa/.arch)
-- dwm
-  - [dwm arch cn wiki](https://wiki.archlinuxcn.org/wiki/Dwm)
-  - [dwm配置](https://zocoxx.com/archlinux-dwm-incomplete-guide.html)
-  - [ArchLinux+DWM不完全指北](https://zocoxx.com/archlinux-dwm-incomplete-guide.html)
-  - [dwm patches 中文说明](https://github.com/Katzeee/dwm-patches-chinese/tree/master)
-  - [dwm status bar list](https://dwm.suckless.org/status_monitor/)
-    - 可以使用c实现，也可以使用bash脚本或者python、go啥的
-- [polybar](https://github.com/polybar/polybar)
-- [eww, status bar and widget](https://github.com/elkowar/eww)
-- [rofi, replace dmenu, rainmeter, utools](https://github.com/davatorium/rofi)
-  - [A huge collection of Rofi based custom Applets, Launchers & Powermenus.](https://github.com/adi1090x/rofi)
-- [Dunst, Notification](https://github.com/dunst-project/dunst)
-- 可自动构建 patch 的 dwm 和 dmenu
-  - [dmenu-flexipatch](https://github.com/bakkeby/dmenu-flexipatch)
-  - [dwm-flexipatch](https://github.com/bakkeby/dwm-flexipatch)
-
----
-
-- [Xephyr: 调试dwm](https://wiki.archlinux.org/title/Xephyr)
-
----
-
-dotfiles:
-
-- 比较喜欢的一个配置：<https://github.com/elbachir-one/dotfiles.git>
-
-- i3: <https://github.com/rahriver/Arch-Linux>
-- bspwm: <https://github.com/baskerville/bspwm>
-- dwm fork
-  - [dusk](https://github.com/bakkeby/dusk)
-- dwm
-  - <https://github.com/Rashad-707/dotfiles>
-  - <https://github.com/ayamir/dotfiles>
-  - <https://github.com/seeingangelz/dotfiles?tab=readme-ov-file>
-  - [从0开始打造完美Manjaro DWM 桌面工作环境](https://mq.rs/0manjaro-dwm): <https://github.com/Arstman/dwm-dotfiles>
-
----
-
-- [xrandr: 处理缩放，显示方向等设置](https://wiki.archlinux.org/title/Xrandr)
-
 ### archlinux
 
 - [arch 安装](https://archlinuxstudio.github.io/ArchLinuxTutorial/#/)
@@ -1004,8 +961,103 @@ dotfiles:
 - [CloudFlare Tunnel 免费内网穿透的简明教程](https://sspai.com/post/79278)
 - anki 记忆卡，fsrs 算法
 - [物联网 Arduino 入门](http://www.taichi-maker.com/homepage/arduino-tutorial-index/)
-- firefox 主题
-  - [MaterialFox](https://github.com/muckSponge/MaterialFox)
-  - [Firefox-Rounded-Corners](https://github.com/Khalylexe/Firefox-Rounded-Theme)
+
+
+# current dotfiles
+
+- [x] nvim
+  - bigfile
+    - [x] treesitter default disable, enable through event
+      - [x] treesitter should be disable by BufReaPre
+    - ~[ ] abstract as feature~
+    - [x] autocmd support `once` param, create BufReadPost event in BufReaPre callback
+    - [x] skip nobuflisted buffer
+    - [ ] big file trim space too slow, default disable trim
+    - [x] java single file run
+  - lsp
+    - [ ] lsp rename file support: [nvim-lsp-file-operations](https://github.com/antosha417/nvim-lsp-file-operations)
+  - plugins
+    - compile mode
+      - [x] autocomplete (update plugin)
+      - [ ] support max line
+    - [x] replace netrw: [nvim dired](https://github.com/X3eRo0/dired.nvim)
+      - [x] fork and add file type support: socket, pipe, byte service, char service
+      - [x] don't change cwd
+      - [ ] fix: python venv cursor position
+      - [ ] go_up function, history
+      - [ ] nvim_set_current_dir
+      - [ ] nvim-dired slower than emacs-dired when too many files (like /nix/store), why?
+        - because every file need read_link or other additional operations?
+    - [x] when using vim-matchup, nvim-cmp can't complete 'for' in bashscript file
+    - [ ] markdown highlight strickthrough
+      - [Any way to enable true markdown strikethrough](https://www.reddit.com/r/vim/comments/g631im/any_way_to_enable_true_markdown_strikethrough/)
+    - [ ] try replace nvim-spectre with grug-far
+    - [ ] ssr.nvim: Treesitter based structural search and replace plugin for Neovim.
+    - [ ] use folke/flash.nvim replace hop.nvim? no....
+  - treesitter
+    - [treesitter-textobjects](https://github.com/nvim-treesitter/nvim-treesitter-textobjects)
+  - tools
+    - range diff
+
+      ```
+      text1
+      =============
+      text2
+      ```
+- bash
+  - [x] history drop dup
+  - [ ] parse markdown, repo collect
+- tmux
+  - [ ] color theme, color as variable
+    - [samoshkin's tmux config](https://github.com/samoshkin/tmux-config/blob/master/tmux/tmux.conf)
+  - [x] iterm2 osc, mac need set clipboard
+
+    ```tmux
+    # set -as terminal-overrides ',tmux*:Ms=\\E]52;%p1%s;%p2%s\\007'
+    # set -as terminal-overrides ',screen*:Ms=\\E]52;%p1%s;%p2%s\\007'
+    set -s set-clipboard on
+    ```
+  - terminfo support delete_line
+- [ ] md-section-number plugin, create command through lua rather than vimscript
+  - vimscript can't hold lazy.nvim's VeryLazy event
+- nixos
+  - ~[ ] urxvt doesn't support true color, show some error info when start tmux~
+    - use st
+  - [x] switch to firefox
+    - fxxk chrome, fxxk gemini
+  - dwm
+    - [ ] mod key: mod4 for win
+    - [x] dwm mod-m, toggle zoom
+    - [ ] read dwm source code and patch it
+      - [x] gap between window
+      - [x] more smooth config <https://www.reddit.com/r/suckless/comments/pq7ruc/dwm_lagging_when_dragging_and_resizing_floating/>
+      - [ ] color status
+  - [ ] may be need auto scale: xrandr
+  - fhs
+    - [ ] nix-ld to use mason.nvim
+    - [ ] fhs command
+    - [ ] stream run
+  - picom
+    - [x] glx(openal interface for mesa(openal implement on linux)) or xrender
+    - [ ] adjust animation, blur ... config
+  - nixpak, or flatpak to control firefox, qq and other gui apps's auth
+    - [ ] firefox config, and chrome
+    - [ ] maybe can only use bubblewrap to sandbox application
+  - [ ] check memory usage
+  - copy manager
+    - [ ] copyq, with dmenu
+  - check lantian's minimal-components config
+    - fstrim
+    - irqbalance
+  - daily
+    - [ ] volumn
+    - [ ] brightness
+    - [ ] bluetooth
+    - [ ] wifi
+  - later
+    - lightdm-slick-gretter
+    - cursor theme
+
+
 
 

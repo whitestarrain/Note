@@ -2717,6 +2717,31 @@ nixos wiki 示例：
 
 ### nix shell
 
+
+nix shell 只会将一些 bin 放到 PATH 中，而不会构建开发环境，比如添加 NIX_CFLAGS_COMPILE, GI_TYPELIB_PATH 等环境变量。
+
+nix shell 的定位和未来的发展可能需要进一步演化。
+
+参考：
+
+> [Nix-shell, nix shell and nix develop](https://discourse.nixos.org/t/nix-shell-nix-shell-and-nix-develop/25964/4)
+> ["Lighter" and "cleaner" shell for nix develop and nix shell](https://github.com/NixOS/nix/issues/4609#issuecomment-792331255)
+
+```
+nix-shell was originally designed to debug derivation build processes. You hand it a derivation, and instead of building it, it drops you into a shell very similar to the derivation’s build env, so you can walk through the stdenv phases and explore what’s actually happening.
+
+nix-shell turned out to have 2 other significant and unforseen usecases. Over time, features were added to support them:
+
+Making development environments. Rather than debugging a nix build, people would just work on their source code from within the shell. pkgs.mkShell was added to support this usecase.
+Temporarily getting access to a package. People would use nix-shell when they wanted to run something without actually permanently installing it. nix-shell -p made this much much easier.
+When the flakes-centered CLI redesign came along, one of the things people wanted to do was split this up a bit:
+
+nix shell is built for that last usecase (temporary access to a package). All it does is add a package’s bin directory to PATH, without any of the development stuff. It also takes multiple package arguments, as that makes sense for this usecase. It’s similar to nix-shell -p foo when not used for development purposes, as it doesn’t do all the stdenv stuff that makes dev tools work properly, but nix-shell -p actually does.
+nix develop takes on the other 2 usecases (debugging derivation builds and development environments). Its argument is still the package whose build environment one wants to enter, and you can still use pkgs.mkShell to create a “package” with a build environment good for development work. It’s similar to nix-shell -A foo, nix-shell foo.nix, and nix-shell.
+So there’s some replication of functionality because we’re in the middle of a CLI redesign which is still experimental (nix shell and nix develop are still experimental, so nix-shell is sticking around despite doing the same thing). There are also some unforseen usecases which we’re now trying to support in less hacky ways.
+```
+
+
 ### nix run
 
 ### nix develop
@@ -2725,9 +2750,21 @@ nixos wiki 示例：
   - 可以将 devshell 作为一个profile保存下来，从而防止依赖被gc掉
   - 可以在不想清理掉devshell依赖时使用
 
+- [nix develop ，子 bash 输出有问题](https://discourse.nixos.org/t/how-to-use-nix-shell-inside-nix-develop/11395/3)
+  - 原因应该是构建的环境中，也有 bash ， PATH 被修改了，非 interactive 的 bash 优先级更高，
+  - 导致执行`bash`时，执行的是非 interactive 的 bash
+  - 临时方案：`nix develop nixpkgs#st -c nix shell nixpkgs#bashInteractive -c bash`
+  - 因为`nix develop` 时，bash指定了`rcfile`，所以暂时没有额外的方式调整PATH中目录的顺序
+
 ## nix registry
 
 <https://nix.dev/manual/nix/2.17/command-ref/new-cli/nix3-registry>
+
+# Nix 打包
+
+case:
+
+- [pygobject3 相关](https://github.com/NixOS/nixpkgs/issues/45662#issuecomment-416193370)
 
 # 社区工具
 
@@ -2743,7 +2780,9 @@ nixos wiki 示例：
 - [lanzaboote](https://github.com/nix-community/lanzaboote):启用 secure boot
 - [impermanence](https://github.com/nix-community/impermanence): 无状态的一种实现方式，选择重启后要保留的文件，其余的会被删除
 - [devbox](https://github.com/jetify-com/devbox): 一个基于 Nix 的轻量级开发环境管理工具，类似 earthly，目标是统一开发环境与部署环境，使得开发环境与部署环境一致
-- [nixpak](https://github.com/nixpak/nixpak): 一个使用沙箱运行任何 Nix 应用程序的工具（包括 GUI 应用程序），提升系统安全性
+- 基于 flatpak 的沙盒运行环境：
+  - [nixpak](https://github.com/nixpak/nixpak):
+  - [nix-flatpak](https://github.com/gmodena/nix-flatpak):
 - [nixpacks](https://github.com/railwayapp/nixpacks): 一个将任何代码自动打包为 OCI 容器镜像的工具，类似 buildpacks
 - [disko](https://github.com/nix-community/disko): 声明式的文件系统分区和格式化，主要在安装系统的时候使用
 - [haumea](https://github.com/nix-community/haumea):基于文件系统的模块声明，基于文件路径进行模块的明明
@@ -2751,6 +2790,7 @@ nixos wiki 示例：
 - [nix-ld](https://github.com/nix-community/nix-ld): 在nixos上运行没有 patchelf 过的 二进制文件
 - [nix-darwin](https://github.com/LnL7/nix-darwin): 针对 macos 的一些 nix 模块，也是基于 nixpkgs
 - [devenv](https://github.com/cachix/devenv): 声明式客可复现的开发环境
+- [devbox](https://github.com/jetify-com/devbox): go 实现的隔离开发环境，非nix环境下的一种选择，也但使用nixpkgs
 
 # vmare虚拟机安装
 
@@ -3192,7 +3232,7 @@ nixos-rebuild switch --option substitute false
 
 # 参考
 
-- [nixos.org](https://nixos.org/learn/)
+- [nixos.org](httpk://nixos.org/learn/)
 - Manual
   - [Nix Reference Manual](https://nix.dev/manual/nix/2.25/)
   - [Nixpkgs Reference Manual](https://nixos.org/manual/nixpkgs/stable/)
@@ -3202,6 +3242,7 @@ nixos-rebuild switch --option substitute false
 - [Nixos Wiki (official)](https://wiki.nixos.org/wiki/NixOS_Wiki)
 - [Nixos Wiki (unofficial)](https://nixos.wiki/wiki/Main_Page)
 - [Home Manager Manual](https://nix-community.github.io/home-manager/)
+- [how-to-learn-nix](https://ianthehenry.com/posts/how-to-learn-nix/)
 - [nix 源码内文档](https://github.com/NixOS/nixpkgs/tree/nixos-24.11/nixos/doc/manual/development)
 - [NixOS 与 Flakes 一份非官方的新手指南](https://nixos-and-flakes.thiscute.world/zh/)
 - [NixOS 中文](https://nixos-cn.org/)
@@ -3242,3 +3283,7 @@ nixos-rebuild switch --option substitute false
   - steam-run: Run commands in the same FHS environment that is used for Steam
   - [Practical Nix Flakes](https://serokell.io/blog/practical-nix-flakes)
   - Nix Hour：youtube 视频教程
+  - [nix develop ，子bash输出有问题](https://discourse.nixos.org/t/how-to-use-nix-shell-inside-nix-develop/11395/3)
+    - 原因应该是构建的环境中，也有bash，但不是interactive的bash，执行非interactive导致一些shopt设置失败以及prompt展示有问题
+    - 临时方案：`nix develop nixpkgs#st -c nix shell nixpkgs#bashInteractive -c bash`
+

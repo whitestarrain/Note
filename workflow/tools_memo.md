@@ -384,6 +384,50 @@ curl http://ifconfig.me
 
 perf，c 性能检查工具， 可以搭配 [flamegraph](https://github.com/brendangregg/FlameGraph) 使用
 
+## flatpak
+
+<https://ubuntukylin.github.io/wiki/快速入门/4.其他/震惊！没想到你是这样的flatpak/>
+
+用于构建，分发，安装和运行应用程序，支持多版本安装，运行时隔离，限制访问的目录权限、网络、DBUS等。
+
+主要基于：
+
+- bubblewrap：依赖它作为沙箱的底层实现, 限制了应用程序访问操作系统或用户数据的能力，并且提供了非特权用户使用容器的能力。
+- Systemd：将各个subsystem和cgroup树关联并挂载好，为沙箱创建 cgroups。
+- D-Bus, 为应用程序提供高层APIs。
+- 使用Open Container Initiative的OCI格式作为单文件的传输格式，方便传输。
+- 使用OSTree系统用于版本化和分发文件系统树。
+- 使用Appstream 元数据，使得Flatpak应用程序在软件中心可以完美呈现出来。
+
+而其中最重要的当属bubblewrap，它是整个应用沙箱构建的关键，主要利用了如下内核特性：
+
+- Namespaces: 命名空间是对全局系统资源的一个封装隔离，使得处于不同namespace的进程拥有独立的全局系统资源，改变一个namespace中的系统资源只会影响当前namespace里的进程，对其他namespace中的进程没有影响。它控制了进程的可见范围，例如网络、挂载点、进程等等。同时使得非特权用户可以创建沙箱。它有以下几类：
+  - Mount namespace (CLONE_NEWNS):
+    - 用来隔离文件系统的挂载点, 使得不同的mount namespace拥有自己独立的挂载点信息，不同的namespace之间不会相互影响，这对于构建用户或者容器自己的文件系统目录非常有用。
+    - bubblewrap 总是创建一个新的mount namespace, root挂载在tmpfs上，用户可以明确指定文件系统的哪个部分在沙盒中是可见的。
+  - User namespaces (CLONE_NEWUSER):
+    - 用来隔离用户权限相关的Linux资源，包括用户ID 和组ID， 在不同的user namespace中，同样一个用户的user ID 和group ID可以不一样，
+    - 换句话说，一个用户可以在父user namespace中是普通用户，在子user namespace中是超级用户（超级用户只相对于子user namespace所拥有的资源，无法访问其他user namespace中需要超级用户才能访问资源）。
+  - IPC namespaces (CLONE_NEWIPC):
+    - 沙箱会得到所有不同形式的IPCs的一份拷贝，比如SysV 共享内存和信号量等。
+  - PID namespaces (CLONE_NEWPID):
+    - 用来隔离进程的ID空间，沙箱内的程序看不见任何沙箱外的进程，此外, bubblewrap 会运行一个pid为1的程序在容器中,用来处理回收子进程的需求。
+  - Network namespaces (CLONE_NEWNET):
+    - 用来隔绝网络，在它自己的network namespace中只有一个回环设备。
+  - UTS namespace (CLONE_NEWUTS):
+    - 允许沙箱拥有自己独立的hostname和domain name.
+- Cgroups:
+  - cgroup和namespace类似，也是将进程进行分组，
+  - 但它的目的和namespace不一样，namespace是为了隔离进程组之间的资源，而cgroup是为了对一组进程进行统一的资源监控和限制。
+- Bind Mount:
+  - 将一个目录（或文件）中的内容挂载到另一个目录（或文件）上.
+- Seccomp rules：
+  - Linux kernel 所支持的一种简洁的sandboxing机制。它能使一个进程进入到一种“安全”运行模式，
+  - 该模式下的进程只能调用4种系统调用（system calls），即read(), write(), exit()和sigreturn()，否则进程便会被终止。
+
+同时，bubblewrap 使用PR_SET_NO_NEW_PRIVS 关闭 setuid 二进制程序。
+当一个进程或其子进程设置了PR_SET_NO_NEW_PRIVS 属性,则其不能访问一些无法share的操作,如setuid, 和chroot。
+
 # Linux
 
 ## Arch
@@ -393,6 +437,8 @@ perf，c 性能检查工具， 可以搭配 [flamegraph](https://github.com/bren
 完善的文档。
 
 有基于 Arch linux 的稳定发行版本： Manjaro Linux、EndeavourOS
+
+基于 Arch linux 的，且使用 openrc 而不是 systemd 作为初始化系统的发行版
 
 ## Gentoo
 
@@ -421,6 +467,8 @@ perf，c 性能检查工具， 可以搭配 [flamegraph](https://github.com/bren
 ## Alpine
 
 轻量，专注于安全、简单和高效。
+
+适合 ARM 架构，对硬件要求低，更为安全
 
 使用OpenRC 作为初始化（init）系统
 
