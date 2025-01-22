@@ -2792,9 +2792,12 @@ case:
 - [devenv](https://github.com/cachix/devenv): 声明式客可复现的开发环境
 - [devbox](https://github.com/jetify-com/devbox): go 实现的隔离开发环境，非nix环境下的一种选择，也但使用nixpkgs
 
-# vmare虚拟机安装
 
-## 配置虚拟机网络
+# 安装
+
+## vmare虚拟机安装
+
+### 配置虚拟机网络
 
 在使用vmare练习安装之前，要确保下面两个服务已经打开
 
@@ -2824,7 +2827,7 @@ case:
 
 注意： 在分配ip时候， 主机的`虚拟 vmware vmnet8 网卡`，虚拟nat设备 在虚拟机子网内的 ip (网关)， 以及虚拟机的ip不要重复
 
-## nixos 安装
+### nixos 安装
 
 进入root环境，之后的操作都是在root环境内操作的
 
@@ -2832,7 +2835,7 @@ case:
 sudo -i
 ```
 
-### 配置 nixos 网络
+#### 配置 nixos 网络
 
 配置虚拟机 ip 与路由
 
@@ -2904,7 +2907,7 @@ export https_proxy=http://192.168.179.1:7890
 export all_proxy=http://192.168.179.1:7890
 ```
 
-### 分区与格式化
+#### 分区与格式化
 
 ```
 lsblk
@@ -2937,7 +2940,7 @@ mount /dev/sda1 /mnt/boot  # 挂载 boot
 swapon /dev/sda3  # 启用交换分区
 ```
 
-### nixos 安装
+#### nixos 安装
 
 生成默认配置
 
@@ -3229,6 +3232,28 @@ in
 ```bash
 nixos-rebuild switch --option substitute false
 ```
+
+## nvidia prime mode
+
+> sync mode is harmful to the GPU and seems to be being retired.
+
+xrandr: 查看连接的显示器，配置显示设置。
+
+注意: sync mode 和 offload mode 下的屏幕名称不同
+
+- sync mode
+  - 自动开启外接屏
+  - R9000K 165hz 屏幕, 鼠标指针闪, firefox 下刷新率低(可以120 和 165 间来回切下): `xrandr --output eDP-1-1 --mode 2560x1600 --rate 165`
+  - 启用外接屏幕: `xrandr --output DP-2 --mode 2560x1440 --rate 144 --scale 1.2x1.2`
+  - 可选，关闭默认屏幕: `xrandr --output eDP-1-1 --off`
+  - 合起来: `xrandr --output DP-2 --mode 2560x1440 --rate 144 --scale 1.2x1.2 --output eDP-1-1 --off`
+
+- offload mode
+  - `xrandr --scale` 时, 屏幕会有问题
+  - keneral module 缺 amdgpu, 而且 nvidia-settings 里面也能检测到外接屏
+  - 临时方案
+    - 不进行 scale：`xrandr --output DP-1-2 --mode 2560x1440 --rate 144 --scale 1x1 --output eDP-1 --off`
+    - 调整 xserver 的 dpi 设置
 
 # 参考
 

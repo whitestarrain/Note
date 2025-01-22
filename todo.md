@@ -974,6 +974,8 @@ cookie和session攻击
     - [x] skip nobuflisted buffer
     - [ ] big file trim space too slow, default disable trim
     - [x] java single file run
+  - md-section-number
+    - [ ] vimscript can't hold lazy.nvim's VeryLazy event, create command through lua rather than vimscript
   - lsp
     - [ ] lsp rename file support: [nvim-lsp-file-operations](https://github.com/antosha417/nvim-lsp-file-operations)
   - plugins
@@ -1018,45 +1020,63 @@ cookie和session攻击
     set -s set-clipboard on
     ```
   - terminfo support delete_line
-- [ ] md-section-number plugin, create command through lua rather than vimscript
-  - vimscript can't hold lazy.nvim's VeryLazy event
 - nixos
   - ~[ ] urxvt doesn't support true color, show some error info when start tmux~
     - use st
   - [x] switch to firefox
     - fxxk chrome, fxxk gemini
   - dwm
-    - [ ] mod key: mod4 for win
+    - [x] mod key: mod4 for win
     - [x] dwm mod-m, toggle zoom
-    - [ ] read dwm source code and patch it
+    - read dwm source code and patch it
       - [x] gap between window
-      - [x] more smooth config <https://www.reddit.com/r/suckless/comments/pq7ruc/dwm_lagging_when_dragging_and_resizing_floating/>
-      - [ ] color status
-  - [ ] may be need auto scale: xrandr
+      - [x] more smooth config <https://www.reddit.com/r/suckless/comments/pq7ruc/dwm_lagging_when_dragging_and_resizing_floatingg>
+      - ~[ ] color status~
   - fhs
     - [ ] nix-ld to use mason.nvim
     - [ ] fhs command
     - [ ] stream run
   - picom
-    - [x] glx(openal interface for mesa(openal implement on linux)) or xrender
-    - [ ] adjust animation, blur ... config
+    - [x] glx(opengl interface for mesa(opengl implement on linux)) or xrender
+    - ~[ ] adjust animation, blur ... config~
   - nixpak, or flatpak to control firefox, qq and other gui apps's auth
     - [ ] firefox config, and chrome
     - [ ] maybe can only use bubblewrap to sandbox application
   - [ ] check memory usage
   - copy manager
-    - [ ] copyq, with dmenu
+    - [x] copyq, with dmenu
   - check lantian's minimal-components config
-    - fstrim
-    - irqbalance
-  - daily
-    - [ ] volumn
-    - [ ] brightness
+    - [x] fstrim
+    - [x] irqbalance
+  - need
+    - [ ] volume contorl
+    - [ ] brightness contorl
+    - [ ] volume pop! when shutdown
+    - [ ] wifi, need `sudo rfkill unlock all`
     - [ ] bluetooth
-    - [ ] wifi
   - later
-    - lightdm-slick-gretter
-    - cursor theme
+    - [ ] lightdm-slick-gretter
+    - [ ] cursor theme
+    - [ ] grub2 theme
+    - [ ] pin kernel version to fix sound
+      - R9000K issue in comment, need kernel 6.1: <https://bbs.archlinux.org/viewtopic.php?id=291507>
+      - <https://discourse.nixos.org/t/pin-kernel-version/50630>
+    - when enable nvidia's office driver
+      - [ ] firefox in external monitor refresh rate low?
+        - test in <https://www.testufo.com/>
+      - [ ] prime offload mode, can't correct `xrandr --scale`
+    - [ ] tlp make lan can't use, and make wifi default soft blocked
+      - don't disable wake-on-lan ?
+      - soft block is control by <https://linrunner.de/tlp/settings/radio.html>
+    - [ ] repalce interaction-tool with keyd, switch ctrl and caps
+    - R9000K speaker sound, upgrade or downgrade linux kernel, check speaker sound
+        - down to 6.1 (longterm): [Y9000K issue](https://bbs.archlinux.org/viewtopic.php?id=291507)
+        - up to 6.7 or down to 6.5 (middle version): [Family HD Audio Controller issue](https://bbs.archlinux.org/viewtopic.php?id=291324)
+        - up to 6.12 (stable)
+    - [ ] config windows's time config: <https://sspai.com/post/55983>
+    - [ ] services.logind.extraConfig, config suspend event to ignore
+    - [ ] use external monitor when boot
+      - boot.initrd.kernelModules = [ amdgpu ];
 
 
 
