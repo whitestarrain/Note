@@ -974,6 +974,7 @@ cookie和session攻击
     - [x] skip nobuflisted buffer
     - [ ] big file trim space too slow, default disable trim
     - [x] java single file run
+    - [ ] high cpu usage and slow when has indented code block in markdown file
   - md-section-number
     - [ ] vimscript can't hold lazy.nvim's VeryLazy event, create command through lua rather than vimscript
   - lsp
@@ -996,6 +997,7 @@ cookie和session攻击
     - [ ] try replace nvim-spectre with grug-far
     - [ ] ssr.nvim: Treesitter based structural search and replace plugin for Neovim.
     - [ ] use folke/flash.nvim replace hop.nvim? no....
+    - [ ] fcitx.vim
   - treesitter
     - [treesitter-textobjects](https://github.com/nvim-treesitter/nvim-treesitter-textobjects)
   - tools
@@ -1032,6 +1034,10 @@ cookie和session攻击
       - [x] gap between window
       - [x] more smooth config <https://www.reddit.com/r/suckless/comments/pq7ruc/dwm_lagging_when_dragging_and_resizing_floatingg>
       - ~[ ] color status~
+    - [ ] toggle monsole shortcut
+    - [ ] taglayouts
+  - st
+    - [ ] can't zoom chinese
   - fhs
     - [ ] nix-ld to use mason.nvim
     - [ ] fhs command
@@ -1042,42 +1048,112 @@ cookie和session攻击
   - nixpak, or flatpak to control firefox, qq and other gui apps's auth
     - [ ] firefox config, and chrome
     - [ ] maybe can only use bubblewrap to sandbox application
-  - [ ] check memory usage
+  - [x] check memory usage
   - copy manager
     - [x] copyq, with dmenu
   - check lantian's minimal-components config
     - [x] fstrim
     - [x] irqbalance
-  - need
+  - dwm bar
     - [ ] volume contorl
     - [ ] brightness contorl
-    - [ ] volume pop! when shutdown
     - [ ] wifi, need `sudo rfkill unlock all`
     - [ ] bluetooth
+    - [ ] float mode run st: [Opening certain terminal applications in floating mode?](https://www.reddit.com/r/suckless/comments/mqd4ol/opening_certain_terminal_applications_in_floating/)
   - later
     - [ ] lightdm-slick-gretter
     - [ ] cursor theme
     - [ ] grub2 theme
-    - [ ] pin kernel version to fix sound
-      - R9000K issue in comment, need kernel 6.1: <https://bbs.archlinux.org/viewtopic.php?id=291507>
-      - <https://discourse.nixos.org/t/pin-kernel-version/50630>
+    - [ ] clash-verge autostart
+    - [ ] volume pop! when shutdown
     - when enable nvidia's office driver
       - [ ] firefox in external monitor refresh rate low?
         - test in <https://www.testufo.com/>
-      - [ ] prime offload mode, can't correct `xrandr --scale`
-    - [ ] tlp make lan can't use, and make wifi default soft blocked
+      - ~[ ] prime offload mode, can't correct `xrandr --scale`~
+        - switch to sync mode when use external monitor
+    - [x] tlp make lan can't use, and make wifi default soft blocked
       - don't disable wake-on-lan ?
       - soft block is control by <https://linrunner.de/tlp/settings/radio.html>
     - [ ] repalce interaction-tool with keyd, switch ctrl and caps
-    - R9000K speaker sound, upgrade or downgrade linux kernel, check speaker sound
+    - [x] R9000K speaker sound, upgrade or downgrade linux kernel, check speaker sound
         - down to 6.1 (longterm): [Y9000K issue](https://bbs.archlinux.org/viewtopic.php?id=291507)
         - up to 6.7 or down to 6.5 (middle version): [Family HD Audio Controller issue](https://bbs.archlinux.org/viewtopic.php?id=291324)
-        - up to 6.12 (stable)
-    - [ ] config windows's time config: <https://sspai.com/post/55983>
-    - [ ] services.logind.extraConfig, config suspend event to ignore
-    - [ ] use external monitor when boot
-      - boot.initrd.kernelModules = [ amdgpu ];
+        - [x] up to 6.12 (stable)
+    - [x] config windows's time config: <https://sspai.com/post/55983>
+    - [x] services.logind.extraConfig, config suspend event to ignore
+    - [x] use external monitor when boot
+      - sync mode + xrandr
+    - gpu issue (or maybe just gpu driver problem)
+      - nvidia-smi itself will turn on gpu, check if the GPU is actually powered on or suspended: `cat /proc/driver/nvidia/gpus/(PCI BUS ID)/power`
+        > <https://discourse.nixos.org/t/power-managment-with-nvidia-gpu/27947/18>
+      - [x] **high gpu usage when idle**: fixed by config monitor in `display-setup-script`
+        - <https://forums.linuxmint.com/viewtopic.php?t=422079>
+        - may be just a 'feature' of nvidia monitoring, because in different power?
+        - Check the clock frequency because if its low then thats fine
+          - it means that something like wallpaper engine or shadowplay are running in the background at low clock but high utilisation.
+          - Which i assume is for better efficiency
+        - high power draw: <https://forums.developer.nvidia.com/t/bug-report-idle-power-draw-is-astronomical-with-rtx-3090/155632/78?page=3>
+        - <https://wiki.archlinux.org/title/PRIME#PRIME_render_offload>
 
+        ```
+        https://forums.developer.nvidia.com/t/bug-id-4341092-40-permanent-gpu-usage-but-all-gpu-processes-are-idle-ubuntu-23-10/270044
+        https://askubuntu.com/questions/1451808/use-integrated-gpu-for-desktop-display-and-leave-dedicated-gpu-for-computing-tas
+        linux laptop dp use Integrated graphics
+        # nvidia-settings -q CurrentMetaMode
+        disable ForceFullCompositionPipeline
+        ```
+      - [ ] higher gpu usage after xrandr
+      - [ ] higher gpu clock speed in linux when play video
+        - may be nvidia driver bug:
+          - <https://forums.developer.nvidia.com/t/nvidia-driver-has-a-habit-of-keeping-my-gpu-at-the-highest-performance-level/118113/18>
+          - <https://forums.developer.nvidia.com/t/if-you-have-gpu-clock-boost-problems-please-try-gl-experimentalperfstrategy-1/71762>
+        - may be need to disable Hardware Acceleration, but also may be not a problem: <https://forums.tomshardware.com/threads/why-does-my-gpu-reach-max-clock-speed-when-just-watching-youtube.1721910/#post-12164173>
+        - change: nvidia-settings -> GPU 0 -> PowerMizer -> preferred mode
+      - try:
+        - maybe can adjust dpi and use kernel param to select monitor, avoid use xrandr ?
+        - disable force composition pipeline ? <https://forums.developer.nvidia.com/t/bug-id-4341092-40-permanent-gpu-usage-but-all-gpu-processes-are-idle-ubuntu-23-10/270044/5>
+        - update driver to nvidia_X11 or nvidia_X11_beta ?
+        - try disable picom ?
+        - xserver.videoDriver = ["amdgpu"]
+    - auto check external monitor
+      - autorandr, can switche xrandr profiles automatically when it detects that the conditions match.
+      - show grub on external monitory:
+        - disable mlaptop monitor at startup(boot): https://bbs.archlinux.org/viewtopic.php?id=150413
+      - scripts:
+
+```
+#!/bin/sh
+
+IN=$(xrandr | grep "eDP" | grep " connected" | sed -e "s/\([A-Z0-9]\+\) connected.*/\1/")
+EXT=$(xrandr | grep "HDMI" | grep " connected" | sed -e "s/\([A-Z0-9]\+\) connected.*/\1/")
+
+if (xrandr | grep "$EXT disconnected"); then
+    xrandr --output $EXT --off --output $IN --auto
+else
+    xrandr --output $IN --off --output $EXT --auto
+fi
+
+#!/bin/bash
+
+# Get the name of the connected HDMI output
+HDMI_OUTPUT=$(xrandr | grep "HDMI-A-0 connected" | cut -d ' ' -f 1)
+
+# Check if HDMI is connected
+if [ -n "$HDMI_OUTPUT" ]; then
+    # Enable HDMI-A-0 and disable laptop monitor (eDP)
+    xrandr --output $HDMI_OUTPUT --auto --primary --output eDP --off
+else
+    # Enable laptop monitor (eDP) and disable HDMI-A-0
+    xrandr --output eDP --auto --primary --output HDMI-A-0 --off
+fi
+
+services.xserver.displayManager.setupCommands = ''
+    LEFT='DVI-D-0'
+    CENTER='DVI-I-1'
+    RIGHT='HDMI-A-0'
+    ${pkgs.xorg.xrandr}/bin/xrandr --output $CENTER --rotate left --output $LEFT --rotate left --left-of $CENTER --output $RIGHT --right-of $CENTER
+'';
+```
 
 
 

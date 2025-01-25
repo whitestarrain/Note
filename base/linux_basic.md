@@ -573,7 +573,7 @@ echo $'\u0965'
 
 ## 2.11. 文件切分 split
 
-文件夹内，每500个文件打一个压缩包
+按文件数量打包: 文件夹内，每500个文件打一个压缩包
 
 ```bash
 find target_path -type f | split -l 500 -d --filter 'tar cvf ImagePackage-$FILE.tar --files-from=- --null'

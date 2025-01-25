@@ -3233,28 +3233,6 @@ in
 nixos-rebuild switch --option substitute false
 ```
 
-## nvidia prime mode
-
-> sync mode is harmful to the GPU and seems to be being retired.
-
-xrandr: 查看连接的显示器，配置显示设置。
-
-注意: sync mode 和 offload mode 下的屏幕名称不同
-
-- sync mode
-  - 自动开启外接屏
-  - R9000K 165hz 屏幕, 鼠标指针闪, firefox 下刷新率低(可以120 和 165 间来回切下): `xrandr --output eDP-1-1 --mode 2560x1600 --rate 165`
-  - 启用外接屏幕: `xrandr --output DP-2 --mode 2560x1440 --rate 144 --scale 1.2x1.2`
-  - 可选，关闭默认屏幕: `xrandr --output eDP-1-1 --off`
-  - 合起来: `xrandr --output DP-2 --mode 2560x1440 --rate 144 --scale 1.2x1.2 --output eDP-1-1 --off`
-
-- offload mode
-  - `xrandr --scale` 时, 屏幕会有问题
-  - keneral module 缺 amdgpu, 而且 nvidia-settings 里面也能检测到外接屏
-  - 临时方案
-    - 不进行 scale：`xrandr --output DP-1-2 --mode 2560x1440 --rate 144 --scale 1x1 --output eDP-1 --off`
-    - 调整 xserver 的 dpi 设置
-
 # 参考
 
 - [nixos.org](httpk://nixos.org/learn/)
