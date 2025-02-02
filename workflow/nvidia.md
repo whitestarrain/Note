@@ -110,10 +110,16 @@ R9000K 不同模式下的屏幕接口：
   - 外接屏幕：
     - 待测试
 
+# nvidia clock
+
+设置gpu工作频率
 
 # reference
 
 - [nvidia-prime](https://wiki.archlinux.org/title/PRIME)
 - [nvidia prime-sync pdf](https://www.x.org/wiki/Events/XDC2016/Program/xdc-2016-prime-sync.pdf)
+- [NVIDIA-SMI系列命令详解(8)-设备修改选项(3) ](https://juejin.cn/post/7121912988948234253)
+- [Advanced API Performance: SetStablePowerState](https://developer.nvidia.com/blog/advanced-api-performance-setstablepowerstate/)
+- [seful nvidia-smi Queries](https://nvidia.custhelp.com/app/answers/detail/a_id/3751/~/useful-nvidia-smi-queries)
 
 

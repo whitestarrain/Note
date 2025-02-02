@@ -504,11 +504,15 @@ i3-like tiling window manager
 
 # 软件
 
-## logseq 笔记软件
+## 笔记
+
+### logseq
 
 支持markdown，org mode，支持双链
 
 也支持进行日程管理，可以考虑作为emacs org的代替品。
+
+### siyuan
 
 ## 音乐可视化 cava
 

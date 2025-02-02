@@ -20,7 +20,7 @@ This approach has never let me down, and it has made all the difference in my li
 - [x] [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
   - [x] 编译原理复习
 
-- [ ] 迁移 nixos
+- [x] 迁移 nixos
   - 一段时间不 `pacman -Syu`，就会有些包因为版本问题没办法使用
   - 看看迁移成本，以及看看，以及 nix 管理方式下，在想尝试新东西的时候，会不会很繁琐
     - ok, nix shell, 完美
@@ -28,8 +28,9 @@ This approach has never let me down, and it has made all the difference in my li
     - [x] nix 基础
     - [x] 系统盘
     - [x] 初始化nix配置
-    - [ ] 数据备份
-    - [ ] 系统安装
+    - [x] 数据备份
+    - [x] 系统安装 & 配置
+    - [ ] hardening app: qq, wechat ...
 
 - [ ] emacs, elisp
   - common ansi lisp
@@ -76,6 +77,8 @@ This approach has never let me down, and it has made all the difference in my li
 - [ ] [深入架构原理与事件](https://www.thebyte.com.cn/)
 
 - [ ] [2021年-用更现代的方法使用PGP-上](https://ulyc.github.io/2021/01/13/2021年-用更现代的方法使用PGP-上/)
+
+- [ ] [计算机教育中缺失的一课](https://missing-semester-cn.github.io/): 查一下漏
 
 # 小任务
 
@@ -1033,21 +1036,20 @@ cookie和session攻击
     - read dwm source code and patch it
       - [x] gap between window
       - [x] more smooth config <https://www.reddit.com/r/suckless/comments/pq7ruc/dwm_lagging_when_dragging_and_resizing_floatingg>
-      - ~[ ] color status~
-    - [ ] toggle monsole shortcut
-    - [ ] taglayouts
+    - ~[ ] toggle monsole shortcut~
+    - ~[ ] taglayouts~
+    - [x] clickable icon
+    - [ ] st-float, float mode run st: [Opening certain terminal applications in floating mode?](https://www.reddit.com/r/suckless/comments/mqd4ol/opening_certain_terminal_applications_in_floating/)
   - st
     - [ ] can't zoom chinese
   - fhs
-    - [ ] nix-ld to use mason.nvim
-    - [ ] fhs command
-    - [ ] stream run
+    - [x] nix-ld to use mason.nvim
   - picom
     - [x] glx(opengl interface for mesa(opengl implement on linux)) or xrender
     - ~[ ] adjust animation, blur ... config~
   - nixpak, or flatpak to control firefox, qq and other gui apps's auth
     - [ ] firefox config, and chrome
-    - [ ] maybe can only use bubblewrap to sandbox application
+    - [ ] qq and wechat
   - [x] check memory usage
   - copy manager
     - [x] copyq, with dmenu
@@ -1055,26 +1057,27 @@ cookie和session攻击
     - [x] fstrim
     - [x] irqbalance
   - dwm bar
-    - [ ] volume contorl
+    - [x] volume contorl
     - [ ] brightness contorl
-    - [ ] wifi, need `sudo rfkill unlock all`
-    - [ ] bluetooth
-    - [ ] float mode run st: [Opening certain terminal applications in floating mode?](https://www.reddit.com/r/suckless/comments/mqd4ol/opening_certain_terminal_applications_in_floating/)
+    - [x] wifi
+    - [x] bluetooth
   - later
     - [ ] lightdm-slick-gretter
     - [ ] cursor theme
     - [ ] grub2 theme
-    - [ ] clash-verge autostart
-    - [ ] volume pop! when shutdown
+    - [x] clash-verge autostart
+    - [ ] volume pop! when reboot, poweroff is ok
+    - [ ] clean duplicate history command when startup
     - when enable nvidia's office driver
-      - [ ] firefox in external monitor refresh rate low?
-        - test in <https://www.testufo.com/>
+      - test fps: <https://www.testufo.com/>
+      - ~[ ] firefox in external monitor refresh rate low?~
       - ~[ ] prime offload mode, can't correct `xrandr --scale`~
         - switch to sync mode when use external monitor
     - [x] tlp make lan can't use, and make wifi default soft blocked
       - don't disable wake-on-lan ?
       - soft block is control by <https://linrunner.de/tlp/settings/radio.html>
-    - [ ] repalce interaction-tool with keyd, switch ctrl and caps
+    - [ ] ~repalce interaction-tool with keyd, switch ctrl and caps~
+      - just use x11 xkb options
     - [x] R9000K speaker sound, upgrade or downgrade linux kernel, check speaker sound
         - down to 6.1 (longterm): [Y9000K issue](https://bbs.archlinux.org/viewtopic.php?id=291507)
         - up to 6.7 or down to 6.5 (middle version): [Family HD Audio Controller issue](https://bbs.archlinux.org/viewtopic.php?id=291324)
@@ -1089,9 +1092,6 @@ cookie和session攻击
       - [x] **high gpu usage when idle**: fixed by config monitor in `display-setup-script`
         - <https://forums.linuxmint.com/viewtopic.php?t=422079>
         - may be just a 'feature' of nvidia monitoring, because in different power?
-        - Check the clock frequency because if its low then thats fine
-          - it means that something like wallpaper engine or shadowplay are running in the background at low clock but high utilisation.
-          - Which i assume is for better efficiency
         - high power draw: <https://forums.developer.nvidia.com/t/bug-report-idle-power-draw-is-astronomical-with-rtx-3090/155632/78?page=3>
         - <https://wiki.archlinux.org/title/PRIME#PRIME_render_offload>
 
@@ -1102,58 +1102,24 @@ cookie和session攻击
         # nvidia-settings -q CurrentMetaMode
         disable ForceFullCompositionPipeline
         ```
-      - [ ] higher gpu usage after xrandr
-      - [ ] higher gpu clock speed in linux when play video
+      - [x] higher gpu usage after xrandr
+        - config xrandr in lightdm setup script
+      - [x] higher gpu clock speed in linux when play video
         - may be nvidia driver bug:
           - <https://forums.developer.nvidia.com/t/nvidia-driver-has-a-habit-of-keeping-my-gpu-at-the-highest-performance-level/118113/18>
           - <https://forums.developer.nvidia.com/t/if-you-have-gpu-clock-boost-problems-please-try-gl-experimentalperfstrategy-1/71762>
         - may be need to disable Hardware Acceleration, but also may be not a problem: <https://forums.tomshardware.com/threads/why-does-my-gpu-reach-max-clock-speed-when-just-watching-youtube.1721910/#post-12164173>
-        - change: nvidia-settings -> GPU 0 -> PowerMizer -> preferred mode
+        - ~change: nvidia-settings -> GPU 0 -> PowerMizer -> preferred mode~
+        - [x] can config nvidia clock rate by `nvidia-smi` command
       - try:
-        - maybe can adjust dpi and use kernel param to select monitor, avoid use xrandr ?
-        - disable force composition pipeline ? <https://forums.developer.nvidia.com/t/bug-id-4341092-40-permanent-gpu-usage-but-all-gpu-processes-are-idle-ubuntu-23-10/270044/5>
-        - update driver to nvidia_X11 or nvidia_X11_beta ?
-        - try disable picom ?
-        - xserver.videoDriver = ["amdgpu"]
-    - auto check external monitor
+        - ~maybe can adjust dpi and use kernel param to select monitor, avoid use xrandr ?~
+        - ~disable force composition pipeline ? <https://forums.developer.nvidia.com/t/bug-id-4341092-40-permanent-gpu-usage-but-all-gpu-processes-are-idle-ubuntu-23-10/270044/5>~
+        - ~update driver to nvidia_X11 or nvidia_X11_beta ?~
+        - ~try disable picom ?~
+        - ~xserver.videoDriver = ["amdgpu"]~
+    - ~auto check external monitor~
       - autorandr, can switche xrandr profiles automatically when it detects that the conditions match.
       - show grub on external monitory:
         - disable mlaptop monitor at startup(boot): https://bbs.archlinux.org/viewtopic.php?id=150413
-      - scripts:
-
-```
-#!/bin/sh
-
-IN=$(xrandr | grep "eDP" | grep " connected" | sed -e "s/\([A-Z0-9]\+\) connected.*/\1/")
-EXT=$(xrandr | grep "HDMI" | grep " connected" | sed -e "s/\([A-Z0-9]\+\) connected.*/\1/")
-
-if (xrandr | grep "$EXT disconnected"); then
-    xrandr --output $EXT --off --output $IN --auto
-else
-    xrandr --output $IN --off --output $EXT --auto
-fi
-
-#!/bin/bash
-
-# Get the name of the connected HDMI output
-HDMI_OUTPUT=$(xrandr | grep "HDMI-A-0 connected" | cut -d ' ' -f 1)
-
-# Check if HDMI is connected
-if [ -n "$HDMI_OUTPUT" ]; then
-    # Enable HDMI-A-0 and disable laptop monitor (eDP)
-    xrandr --output $HDMI_OUTPUT --auto --primary --output eDP --off
-else
-    # Enable laptop monitor (eDP) and disable HDMI-A-0
-    xrandr --output eDP --auto --primary --output HDMI-A-0 --off
-fi
-
-services.xserver.displayManager.setupCommands = ''
-    LEFT='DVI-D-0'
-    CENTER='DVI-I-1'
-    RIGHT='HDMI-A-0'
-    ${pkgs.xorg.xrandr}/bin/xrandr --output $CENTER --rotate left --output $LEFT --rotate left --left-of $CENTER --output $RIGHT --right-of $CENTER
-'';
-```
-
-
+    - [x] finally, fix the issue by use dgpu mode, disable igpu
 

@@ -1715,6 +1715,14 @@ nix-shell: nix-shell 用于创建一个临时的 shell 环境。
 
 ### nix-store
 
+```
+nix-store -q --references `which hello`
+nix-store -q --referrers `which hello`
+
+nix-store -qR `which man`
+nix-store -q --tree `which man`
+```
+
 ### nix-env
 
 nix-env: 用于管理用户环境的软件包，是传统 Nix 的核心命令行工具。它从 nix-channel 定义的数据源中安装软件包，所以安装的软件包版本受 channel 影响。
@@ -2720,6 +2728,11 @@ nixos wiki 示例：
 
 nix shell 只会将一些 bin 放到 PATH 中，而不会构建开发环境，比如添加 NIX_CFLAGS_COMPILE, GI_TYPELIB_PATH 等环境变量。
 
+但是nix shell下，可以查询到依赖的 man page，而nix-shell下不行。比如 `nix shell nixpkgs#xorg.libXcursor`。
+
+经测试发现，man会自动检查 `PATH` 变量里面可执行文件(不管是否真的存在)上一级目录下的`share/man`目录，从而获取到相应的的 man 文档。
+而使用 `nix shell` 时，不管有没有可执行文件，都会为`PATH`中添加`$out/bin` 目录
+
 nix shell 的定位和未来的发展可能需要进一步演化。
 
 参考：
@@ -2740,7 +2753,6 @@ nix shell is built for that last usecase (temporary access to a package). All it
 nix develop takes on the other 2 usecases (debugging derivation builds and development environments). Its argument is still the package whose build environment one wants to enter, and you can still use pkgs.mkShell to create a “package” with a build environment good for development work. It’s similar to nix-shell -A foo, nix-shell foo.nix, and nix-shell.
 So there’s some replication of functionality because we’re in the middle of a CLI redesign which is still experimental (nix shell and nix develop are still experimental, so nix-shell is sticking around despite doing the same thing). There are also some unforseen usecases which we’re now trying to support in less hacky ways.
 ```
-
 
 ### nix run
 
@@ -2791,6 +2803,7 @@ case:
 - [nix-darwin](https://github.com/LnL7/nix-darwin): 针对 macos 的一些 nix 模块，也是基于 nixpkgs
 - [devenv](https://github.com/cachix/devenv): 声明式客可复现的开发环境
 - [devbox](https://github.com/jetify-com/devbox): go 实现的隔离开发环境，非nix环境下的一种选择，也但使用nixpkgs
+- [nvfetcher](https://github.com/berberman/nvfetcher): 自动更新维护 nix 包，做nur的时候比较有用。
 
 
 # 安装
@@ -3250,6 +3263,7 @@ nixos-rebuild switch --option substitute false
 - [NixOS 与 Flakes 一份非官方的新手指南](https://nixos-and-flakes.thiscute.world/zh/)
 - [NixOS 中文](https://nixos-cn.org/)
 - [awesome-nix](https://github.com/nix-community/awesome-nix)
+- [noogle: nix function exploring](https://noogle.dev/)
 
 - nix 语言
   - [Nix 详解（三） nix 领域特定语言](https://www.rectcircle.cn/posts/nix-3-nix-dsl/)

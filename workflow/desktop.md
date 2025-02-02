@@ -7,16 +7,17 @@
 
 mime type，默认打开程序设置
 
-todo:
-
 - [ranger support swallow](https://github.com/ranger/ranger/issues/2837)
 - [tag-previews](https://dwm.suckless.org/patches/tag-previews/)
 - [dwm, alt-tab](https://gist.github.com/smblott-github/5cc6595f6627244fdeac897668a19d72)
 - [dwm-anybar](https://github.com/mihirlad55/dwm-anybar)
 - [stacker](https://dwm.suckless.org/patches/stacker/)
+- [status2d](https://dwm.suckless.org/patches/status2d/)
+- [tag layouts](https://dwm.suckless.org/patches/taglayouts/)
+- [statuscolors](https://dwm.suckless.org/patches/statuscolors/)
 - dwm systray
 - dwmblocks
-  - get cpu usage: <https://rosettacode.org/wiki/Linux_CPU_utilization>
+  > get cpu usage: <https://rosettacode.org/wiki/Linux_CPU_utilization>
 
 # st: terminal
 
@@ -62,6 +63,8 @@ todo:
 
 # status bar
 
+## dwm's bar
+
 ## polybar
 
 ## lemonbar
@@ -99,13 +102,22 @@ todo:
   ```
   xev
   ```
-- cursor theme: https://wiki.archlinux.org/title/Cursor_themes
-  > The following cursor themes need to be set separately
-  - X
-  - gtk
-  - qt
-  - suckless: dwm and st, (need patch)
-    - check .xresource ?
+- cursor theme:
+  - https://wiki.archlinux.org/title/Cursor_themes
+  - same problem: <https://www.reddit.com/r/NixOS/comments/1fmawjl/dwm_statusbar_ignoring_cursor_theme/?show=original>
+  - patch for st: <https://st.suckless.org/patches/themed_cursor/>
+  - x11 cursor shape: <https://tronche.com/gui/x/xlib/appendix/b/>
+  - The following cursor themes need to be set separately
+    - X
+    - gtk
+    - qt
+    - suckless: dwm and st, (need patch)
+      - check .xresource ?
+- control config:
+  - wifi: `impala`
+  - brightnes: edit `/sys/class/backlight/nvidia_0/brightness`
+  - bluetooth: `bluetuith`
+  - sound: `pulsmeixer`
 
 # reference
 
@@ -127,6 +139,7 @@ todo:
     - <https://github.com/seeingangelz/dotfiles?tab=readme-ov-file>
     - [从0开始打造完美Manjaro DWM 桌面工作环境](https://mq.rs/0manjaro-dwm): <https://github.com/Arstman/dwm-dotfiles>
     - [gylt37's dwm-config](https://github.com/gylt37/dwm-config)
+    - [tagmask](https://dwm.suckless.org/customisation/tagmask/)
   - xmonad
   - sway
   - hyprland
@@ -137,6 +150,7 @@ todo:
   - [dwm patches 中文说明](https://github.com/Katzeee/dwm-patches-chinese/tree/master)
   - [dwm status bar list](https://dwm.suckless.org/status_monitor/)
     - 可以使用c实现，也可以使用bash脚本或者python、go啥的
+  - [chadwm: Making dwm as beautiful as possible](https://github.com/siduck/chadwm)
 - bar
   - [polybar](https://github.com/polybar/polybar)
   - [waybar](https://github.com/Alexays/Waybar)
@@ -156,5 +170,5 @@ todo:
   - [archlinux配置文件，包括picom混色器。该作者的一些tmux等配置文件也可以参考下，比如tmux插件。](https://github.com/shendypratamaa/.arch)
   - [dwm archlinux config ayamir](https://github.com/ayamir/dotfiles)
 - others
+  - [awesome-tuis](https://github.com/rothgar/awesome-tuis)
   - [xrandr: 处理缩放，显示方向等设置](https://wiki.archlinux.org/title/Xrandr)
-
