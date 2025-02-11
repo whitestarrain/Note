@@ -1426,6 +1426,8 @@ UUID=13d0663f-4cbd-412d-aa9f-975eb18da590 /boot                   xfs     defaul
 
 ### 4.6.2. loop设备挂载
 
+`man loop`
+
 dd空文件, iso文件等
 
 ```bash

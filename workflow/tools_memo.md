@@ -30,6 +30,11 @@ https://github.com/rubjo/victor-mono
 
 [fzf theme generator](https://vitormv.github.io/fzf-themes/)
 
+others:
+
+- skim
+- atuin
+
 ### fd
 
 [fd](https://github.com/sharkdp/fd?tab=readme-ov-file)

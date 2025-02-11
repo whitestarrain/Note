@@ -2468,19 +2468,16 @@ Nix 提供了 [`extra-` 前缀](https://nixos.org/manual/nix/stable/command-ref/
 
 ## 通过代理加速包下载
 
-> 更新：
-> 根据 [Nix Reference Manual: Proxy Environment Variables](https://nix.dev/manual/nix/2.24/installation/env-variables.html#proxy-environment-variables)
-> 当 设置了 http_proxy, https_proxy, ftp_proxy, all_proxy, no_proxy, HTTP_PROXY, HTTPS_PROXY, FTP_PROXY, ALL_PROXY, NO_PROXY 中的任意一个后再执行 nix，
-> nix 将创建一个 override file 在 `/etc/systemd/system/nix-daemon.service.d/override.conf` 以便于 `nix-daemon` 来使用这些代理。
-> 也就是现在nix已经帮助用户完成了以下操作
-
 > 参考了 Issue: [roaming laptop: network proxy configuration - NixOS/nixpkgs](https://github.com/NixOS/nixpkgs/issues/27535#issuecomment-1178444327)
 
-有些用户可能会希望能直接通过 HTTP/Socks5 代理来加速包下载。
+有些用户可能会希望能直接通过 HTTP/Socks5 代理来加速包下载:
 
-直接在 Terminal 中使用 `export HTTPS_PROXY=http://127.0.0.1:7890` 这类方式是无法生效的，因为 nix 实际干活的是一个叫 `nix-daemon` 的后台进程，而不是直接在 Terminal 中执行的命令。
+- root下，nix 命令会自己处理构建请求
+  - 设置了 `http_proxy` `https_proxy` `all_proxy` 之后
+  - sudo 执行时，需要带上 `-E`， 保留环境变量
+- 而非root下，nix会把请求发给一个叫 `nix-daemon` 的后台进程，所以需要设置 `nix-daemon` 的环境变量
 
-如果你只是临时需要使用代理，可以通过如下命令设置代理环境变量：
+如果你只是临时需要使用代理，可以通过如下命令设置nix-daemon代理环境变量：
 
 ```bash
 sudo mkdir /run/systemd/system/nix-daemon.service.d/
@@ -2503,6 +2500,12 @@ sudo systemctl restart nix-daemon
 > 因此不建议使用这种方式。
 
 > 使用一些商用代理或公共代理时你可能会遇到 GitHub 下载时报 HTTP 403 错误，可尝试通过更换代理服务器或者设置 [access-tokens](https://github.com/NixOS/nix/issues/6536) 来解决。
+
+可以使用代理的方式:
+
+- `export http_proxy....` + `sudo -E nixos-rebuild switch`
+- `nix-daemon` 代理 + `nixos-rebuild switch`
+  - 下载好资源后，如果报权限不够，再`sudo nixos-rebuild switch`
 
 ## 搭建缓存服务器
 
@@ -2821,9 +2824,7 @@ case:
 
 ![nix-20241117225858-314766.png](./image/nix-20241117225858-314766.png)
 
-> 注意：上图中的 Vmnet8(虚拟交换机) 应该是一个三层交换机，有路由的功能。
-
-- 其中虚拟机通过虚拟NAT设备，连接主机网卡，访问外网；
+- 其中虚拟机通过虚拟NAT设备(NAT设备就是有nat功能的路由器)，连接主机网卡，访问外网；
 - 而虚拟Vmnet8交换机，连接宿主机与虚拟机，保证宿主机与虚拟机间的网络连通
 
 首先 配置虚拟机所在子网：
@@ -3284,7 +3285,7 @@ nixos-rebuild switch --option substitute false
 - nixos
   - [nixos options](https://search.nixos.org/options)
   - [nixos 从 0 实现全集](https://dev.leiyanhui.com/nixos/start/)
-  - [NixOS 系列（一）：我为什么心动了](https://lantian.pub/article/modify-website/nixos-why.lantian/)
+  - [NixOS 系列（四）：“无状态”操作系统](https://lantian.pub/article/modify-computer/nixos-impermanence.lantian/)， - [NixOS 系列（一）：我为什么心动了](https://lantian.pub/article/modify-website/nixos-why.lantian/)
 - nixos 配置
   - [nix-starter-configs](https://github.com/Misterio77/nix-starter-configs)
   - [《NixOS 与 Flakes 一份非官方的新手指南》作者的 nixos 配置](https://github.com/ryan4yin/nix-config.git)

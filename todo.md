@@ -31,13 +31,15 @@ This approach has never let me down, and it has made all the difference in my li
     - [x] 数据备份
     - [x] 系统安装 & 配置
     - [ ] hardening app: qq, wechat ...
-
 - [ ] emacs, elisp
   - common ansi lisp
   - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
 
 - [ ] effective cpp
   - 主要是为了刷题，同时复习一下cpp
+
+- [ ] 手机系统切 LineageOS
+  - 参考: [用 Nix 编译自定义 Android 内核](https://lantian.pub/article/modify-computer/build-custom-android-kernel-with-nix.lantian/)
 
 - [ ] [常用 bash 命令](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
   - star 不少，可以过一遍，看看有没有自己眼生的，总结到 linux.md 或者 bash.md 中
@@ -82,9 +84,15 @@ This approach has never let me down, and it has made all the difference in my li
 
 # 小任务
 
-- [ ] c 实现https
-- [ ] traceroute 实现
-  - [优雅地在 Traceroute 里膜 拜大佬](https://lantian.pub/article/creations/traceroute-chain.lantian/)
+- 计算机网络相关
+  - [ ] c 实现https (tls)
+  - [ ] traceroute 实现
+    - [优雅地在 Traceroute 里膜 拜大佬](https://lantian.pub/article/creations/traceroute-chain.lantian/)
+  - [ ] eNSP: 网络仿真平台
+  - [ ] 杂项资料
+    - <https://github.com/crisxuan/bestJavaer/blob/master/computer-network/computer-howtolearn.md>
+    - <https://www.cloudflare-cn.com/learning/>
+    - <https://developer.mozilla.org/zh-CN/docs/Web/HTTP>
 - [ ] nginx转发
   - [x] markdown preview
   - [ ] [awesome rss](https://github.com/HenryQW/Awesome-TTRSS)
@@ -594,7 +602,7 @@ cookie和session攻击
   - [ANSI Escape Sequences](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797)
   - [ANSI Escape Sequence 下落的方块](https://blog.csdn.net/baiyu33/article/details/136088169)
 
-### linux/c
+### linux-c
 
 - [gcc升级，及标准库升级](https://blog.csdn.net/wolfGuiDao/article/details/103813086)
 - [理清gcc、libc、libstdc++的关系](https://blog.csdn.net/fuhanghang/article/details/113886318)
@@ -1026,6 +1034,12 @@ cookie和session攻击
     ```
   - terminfo support delete_line
 - nixos
+  - [x] why proxy environment doesn't passed to curl under root
+    - common user, nixos-rebuild can get the proxy env from nix-daemon
+    - `sudo -E`
+  - [ ] agenix
+  - [x] aria2
+  - [ ] firewall?
   - ~[ ] urxvt doesn't support true color, show some error info when start tmux~
     - use st
   - [x] switch to firefox
@@ -1047,6 +1061,8 @@ cookie和session攻击
   - picom
     - [x] glx(opengl interface for mesa(opengl implement on linux)) or xrender
     - ~[ ] adjust animation, blur ... config~
+    - [x] picom drop my refresh rate !!!! (test under ufoetest)
+      - glx and vsync (At the expense of some gpu and memory)
   - nixpak, or flatpak to control firefox, qq and other gui apps's auth
     - [ ] firefox config, and chrome
     - [ ] qq and wechat
@@ -1061,6 +1077,14 @@ cookie和session攻击
     - [ ] brightness contorl
     - [x] wifi
     - [x] bluetooth
+  - disk
+    - [ ] nix add win_d disk mount config
+    - [ ] use a steam game disk for win_10 and linux：
+      - <https://github.com/ValveSoftware/Proton/wiki/Using-a-NTFS-disk-with-Linux-and-Windows>
+      - <https://blog.l3zc.com/2024/04/mount-ntfs-drive-as-steam-lib-on-linux/>
+    - add gvfs support, thunar auto mount disk
+      - <https://discourse.nixos.org/t/permission-error-when-trying-to-mount-local-disk-in-thunar/39474>
+      - <https://nixos.wiki/wiki/Thunar>
   - later
     - [ ] lightdm-slick-gretter
     - [ ] cursor theme
@@ -1087,6 +1111,7 @@ cookie和session攻击
     - [x] use external monitor when boot
       - sync mode + xrandr
     - gpu issue (or maybe just gpu driver problem)
+      > [x] finally, fix the issue by use dgpu mode, disable igpu
       - nvidia-smi itself will turn on gpu, check if the GPU is actually powered on or suspended: `cat /proc/driver/nvidia/gpus/(PCI BUS ID)/power`
         > <https://discourse.nixos.org/t/power-managment-with-nvidia-gpu/27947/18>
       - [x] **high gpu usage when idle**: fixed by config monitor in `display-setup-script`
@@ -1112,7 +1137,7 @@ cookie和session攻击
         - ~change: nvidia-settings -> GPU 0 -> PowerMizer -> preferred mode~
         - [x] can config nvidia clock rate by `nvidia-smi` command
       - try:
-        - ~maybe can adjust dpi and use kernel param to select monitor, avoid use xrandr ?~
+        - ~maybe can adjust dpi and use kernel param to select monitor, without using xrandr ?~
         - ~disable force composition pipeline ? <https://forums.developer.nvidia.com/t/bug-id-4341092-40-permanent-gpu-usage-but-all-gpu-processes-are-idle-ubuntu-23-10/270044/5>~
         - ~update driver to nvidia_X11 or nvidia_X11_beta ?~
         - ~try disable picom ?~
@@ -1121,5 +1146,6 @@ cookie和session攻击
       - autorandr, can switche xrandr profiles automatically when it detects that the conditions match.
       - show grub on external monitory:
         - disable mlaptop monitor at startup(boot): https://bbs.archlinux.org/viewtopic.php?id=150413
-    - [x] finally, fix the issue by use dgpu mode, disable igpu
+    - [ ] mime type for terminal command
+      - <https://unix.stackexchange.com/questions/177976/set-default-xdg-open-application-to-terminal-program>
 
