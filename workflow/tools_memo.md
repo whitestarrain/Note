@@ -270,6 +270,10 @@ curl http://ifconfig.me
 
 压测工具
 
+## hey
+
+压测工具
+
 ## Die (Detect It Easy)
 
 支持查看 elf 在内多种文件类型的反汇编与查看。
@@ -433,6 +437,10 @@ perf，c 性能检查工具， 可以搭配 [flamegraph](https://github.com/bren
 同时，bubblewrap 使用PR_SET_NO_NEW_PRIVS 关闭 setuid 二进制程序。
 当一个进程或其子进程设置了PR_SET_NO_NEW_PRIVS 属性,则其不能访问一些无法share的操作,如setuid, 和chroot。
 
+# wireshark
+
+抓包工具
+
 # Linux
 
 ## Arch
@@ -482,6 +490,12 @@ perf，c 性能检查工具， 可以搭配 [flamegraph](https://github.com/bren
 ## Athena
 
 基于Arch和Nixos
+
+## Asahi
+
+为支持mac芯片的linux
+
+[mac安装asahi linux](https://cloud-atlas.readthedocs.io/zh-cn/latest/linux/asahi_linux/index.html)
 
 # Darwin
 

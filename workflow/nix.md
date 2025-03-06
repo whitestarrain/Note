@@ -3218,7 +3218,7 @@ flake inputs 中添加指定版本的源，通过`_module.args`或者`specialArg
 
 ## 运行FHS环境的软件
 
-### fhs
+### nix-ld
 
 ### steam-run
 
@@ -3286,6 +3286,7 @@ nixos-rebuild switch --option substitute false
   - [nixos options](https://search.nixos.org/options)
   - [nixos 从 0 实现全集](https://dev.leiyanhui.com/nixos/start/)
   - [NixOS 系列（四）：“无状态”操作系统](https://lantian.pub/article/modify-computer/nixos-impermanence.lantian/)， - [NixOS 系列（一）：我为什么心动了](https://lantian.pub/article/modify-website/nixos-why.lantian/)
+  - [Install NixOS on Apple Silicon Macs](https://github.com/tpwrules/nixos-apple-silicon?tab=readme-ov-file)
 - nixos 配置
   - [nix-starter-configs](https://github.com/Misterio77/nix-starter-configs)
   - [《NixOS 与 Flakes 一份非官方的新手指南》作者的 nixos 配置](https://github.com/ryan4yin/nix-config.git)

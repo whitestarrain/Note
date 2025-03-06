@@ -522,7 +522,12 @@ TODO: linux XDG 目录规范
     ```bash
     $ ls -al | more
     ```
-- less(推荐)
+- less
+
+  ```
+  # 展示颜色
+  grep --color=always "2025-02-25 08:38" info* | less -R
+  ```
 
 ## 2.10. 二进制文件处理
 
@@ -977,6 +982,11 @@ join -t, -11 -21 -a1 -a2 -o 0,1.2,1.3,1.4,1.5,1.6,2.6,2.7,2.8 -e '?' \
 
 ```bash
 sed '100s/aaa/bbb/'
+```
+
+```bash
+# 将多行拼接为单行，并用指定分隔符分割。如果最后一行有换行，需要删除分隔符。
+echo "$multilines" | tr '\n' ':' | sed 's/.$//g'
 ```
 
 [References](./References/sed.md)
@@ -4185,6 +4195,19 @@ modinfo
 
   ```bash
   $scp -r ID@site:path localpath
+  ```
+
+- ssh命令进行socks5网络代理
+
+  ```bash
+  # 1.1.1.1 是代理机器
+  nohup ssh -qTfnN -D 127.0.0.1:7890 root@1.1.1.1 "vmstat 10" 2>&1 >/dev/null &
+  ```
+- ssh 映射 tcp 端口，（也支持 unix socket 映射，详见man文档）
+
+  ```
+  ssh -L 8080:localhost:8080 user@ip.of.remote.machine // 在本地监听8080，转发给远程机器的8080端口
+  ssh -CNfL 0.0.0.0:8088:10.1.1.123:8083 user@10.1.1.123 // 在本地启动一个8088的端口，将这个8088端口映射到10.1.1.123的8083端口上
   ```
 
 ### 17.1.5. telnet

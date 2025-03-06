@@ -31,9 +31,14 @@ This approach has never let me down, and it has made all the difference in my li
     - [x] 数据备份
     - [x] 系统安装 & 配置
     - [ ] hardening app: qq, wechat ...
+
+- [ ] 体验一下 rust
+  - lightnovel-cli
+
 - [ ] emacs, elisp
   - common ansi lisp
   - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
+  - [99 lisp problems](https://www.ic.unicamp.br/~meidanis/courses/mc336/problemas-lisp/L-99_Ninety-Nine_Lisp_Problems.html)
 
 - [ ] effective cpp
   - 主要是为了刷题，同时复习一下cpp
@@ -85,7 +90,11 @@ This approach has never let me down, and it has made all the difference in my li
 # 小任务
 
 - 计算机网络相关
-  - [ ] c 实现https (tls)
+  - https
+    - [ ] c 实现https (tls)
+    - [ ] c 实现文件上传下载
+  - x11
+    - picom support dynamic wallpaper
   - [ ] traceroute 实现
     - [优雅地在 Traceroute 里膜 拜大佬](https://lantian.pub/article/creations/traceroute-chain.lantian/)
   - [ ] eNSP: 网络仿真平台
@@ -108,7 +117,6 @@ This approach has never let me down, and it has made all the difference in my li
         ubuntu /bin/bash
       ```
 - [ ] tempral 框架
-- [ ] c 实现文件上传下载
 - [x] [clashtui](https://github.com/JohanChane/clashtui)
   - 算了，还是直接wget 订阅链接比较简单
 - [ ] dotfiles 实现 Dockerfile
@@ -165,6 +173,8 @@ This approach has never let me down, and it has made all the difference in my li
   - [Thomas E. Dickey](https://invisible-island.net/)
 - 社区
   - [0xffff平台帖子：有什么值得一看的博客推荐](https://0xffff.one/d/12)
+- rss 博客
+  - [plantegg](https://plantegg.github.io/)
 
 # 付费课程
 
@@ -763,6 +773,13 @@ cookie和session攻击
 - [python, 实现cheatengine类似的功能](https://blog.csdn.net/wuchenlhy/article/details/135976268)
 - [dataclass `__hash__` method](https://stackoverflow.com/questions/52390576/how-can-i-make-a-python-dataclass-hashable)
 - [Python 闭包不支持修改 upvalue，有什么替代的解决方案](https://v2ex.com/t/251731)
+- uvloop, asyncio 和 gevent
+  - asyncio + uvloop > gevent
+
+### new
+
+- haskell: 函数式
+- nim: 有点儿兴趣
 
 ## base
 
@@ -972,7 +989,13 @@ cookie和session攻击
 - [CloudFlare Tunnel 免费内网穿透的简明教程](https://sspai.com/post/79278)
 - anki 记忆卡，fsrs 算法
 - [物联网 Arduino 入门](http://www.taichi-maker.com/homepage/arduino-tutorial-index/)
-
+- [声卡采样率](https://zhuanlan.zhihu.com/p/624168796)
+- [review doom3](https://www.youtube.com/watch?v=C_ymp74yobE)
+  - 7:55: 使用一个神奇的数字加速平方根的计算
+    - <https://linux.cn/article-1513-1.html>
+    - <https://en.wikipedia.org/wiki/Fast_inverse_square_root>
+- 生成明暗主题一分为二的图表: <https://emacs-china.org/t/topic/20216/33>
+- 暗色和亮色主题讨论：<https://ux.stackexchange.com/questions/53264/dark-or-white-color-theme-is-better-for-the-eyes>
 
 # current dotfiles
 
@@ -989,6 +1012,8 @@ cookie和session攻击
   - md-section-number
     - [ ] vimscript can't hold lazy.nvim's VeryLazy event, create command through lua rather than vimscript
   - lsp
+    - [x] add nix language server support
+    - [x] select lsp by input
     - [ ] lsp rename file support: [nvim-lsp-file-operations](https://github.com/antosha417/nvim-lsp-file-operations)
   - plugins
     - compile mode
@@ -1037,7 +1062,6 @@ cookie和session攻击
   - [x] why proxy environment doesn't passed to curl under root
     - common user, nixos-rebuild can get the proxy env from nix-daemon
     - `sudo -E`
-  - [ ] agenix
   - [x] aria2
   - [ ] firewall?
   - ~[ ] urxvt doesn't support true color, show some error info when start tmux~
@@ -1053,7 +1077,7 @@ cookie和session攻击
     - ~[ ] toggle monsole shortcut~
     - ~[ ] taglayouts~
     - [x] clickable icon
-    - [ ] st-float, float mode run st: [Opening certain terminal applications in floating mode?](https://www.reddit.com/r/suckless/comments/mqd4ol/opening_certain_terminal_applications_in_floating/)
+    - [x] st-float, float mode run st: [Opening certain terminal applications in floating mode?](https://www.reddit.com/r/suckless/comments/mqd4ol/opening_certain_terminal_applications_in_floating/)
   - st
     - [ ] can't zoom chinese
   - fhs
@@ -1078,23 +1102,28 @@ cookie和session攻击
     - [x] wifi
     - [x] bluetooth
   - disk
-    - [ ] nix add win_d disk mount config
-    - [ ] use a steam game disk for win_10 and linux：
+    - [x] nix add win_d disk mount config
+    - [x] use a steam game disk for win_10 and linux：
       - <https://github.com/ValveSoftware/Proton/wiki/Using-a-NTFS-disk-with-Linux-and-Windows>
       - <https://blog.l3zc.com/2024/04/mount-ntfs-drive-as-steam-lib-on-linux/>
-    - add gvfs support, thunar auto mount disk
+    - [x] add gvfs support, thunar auto mount disk
       - <https://discourse.nixos.org/t/permission-error-when-trying-to-mount-local-disk-in-thunar/39474>
       - <https://nixos.wiki/wiki/Thunar>
+  - secret
+    - [ ] agenix
+    - [ ] [sops-nix](https://github.com/Mic92/sops-nix)
+      - [GPG & SSH key pairs management](https://discourse.nixos.org/t/gpg-ssh-key-pairs-management/28604)
   - later
     - [ ] lightdm-slick-gretter
     - [ ] cursor theme
     - [ ] grub2 theme
     - [x] clash-verge autostart
     - [ ] volume pop! when reboot, poweroff is ok
-    - [ ] clean duplicate history command when startup
+    - [x] clean duplicate history command when startup
     - when enable nvidia's office driver
       - test fps: <https://www.testufo.com/>
       - ~[ ] firefox in external monitor refresh rate low?~
+        - caused by picom
       - ~[ ] prime offload mode, can't correct `xrandr --scale`~
         - switch to sync mode when use external monitor
     - [x] tlp make lan can't use, and make wifi default soft blocked
@@ -1146,6 +1175,17 @@ cookie和session攻击
       - autorandr, can switche xrandr profiles automatically when it detects that the conditions match.
       - show grub on external monitory:
         - disable mlaptop monitor at startup(boot): https://bbs.archlinux.org/viewtopic.php?id=150413
-    - [ ] mime type for terminal command
-      - <https://unix.stackexchange.com/questions/177976/set-default-xdg-open-application-to-terminal-program>
+    - [x] mime type
+      - st as default terminal emulator for terminal desktop item
+        - <https://unix.stackexchange.com/questions/177976/set-default-xdg-open-application-to-terminal-program>
+        - use `xdg-terminal-exec`
+      - home-manager mime config for systemd thunar.service, options:
+        - add `XDG_XXXXXXX` env for thunar.service
+          - thunar service thread has more path in XDG_XXXXXXXXX.....
+          - check again?
+            - ` diff --side-by-side  <( cat /proc/$(pidof picom)/environ | tr '\0' '\n' | sort ) <( env | sort )`
+          - add env, <https://wiki.archlinux.org/title/Systemd/User>
+        - ~config mime in system-wide, instead of using home-manager~
+          - no effect
+        - [x] disable thunar.service
 

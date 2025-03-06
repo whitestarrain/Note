@@ -77,6 +77,15 @@ mime type，默认打开程序设置
 
 ## eww
 
+# dynamic wallpaper
+
+- [paperview](https://github.com/glouw/paperview)
+  - reddit: <https://www.reddit.com/r/unixporn/comments/i1dr44/dwm_high_performance_animated_wallpapers/?rdt=48263>
+  - pixel gif artist: waneella
+  - 8bit style gif: <https://www.8bitdash.com/>
+- [hidamari](https://github.com/jeffshee/hidamari)
+- [Xwinwrap + mpv](https://www.linuxuprising.com/2019/05/livestream-wallpaper-for-your-gnome.html)
+
 # other apps
 
 - play music: mpd + ncmpcpp
@@ -158,6 +167,7 @@ mime type，默认打开程序设置
   - [eww, status bar and widget](https://github.com/elkowar/eww)
   - [rofi, replace dmenu, rainmeter, utools](https://github.com/davatorium/rofi)
     - [A huge collection of Rofi based custom Applets, Launchers & Powermenus.](https://github.com/adi1090x/rofi)
+  - conky
 - notify
   - [Dunst, Notification](https://github.com/dunst-project/dunst)
 - 可自动构建 patch 的 dwm 和 dmenu
