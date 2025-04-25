@@ -10,7 +10,9 @@
 
 ### 引用变量
 
-一种语法糖: 本质就是一个指针，不过会自动 dereference ，使用起来像直接操作变量对应的值一样
+变量的别名
+
+像是一种语法糖: 是指针，但会自动 dereference ，使用起来像直接操作变量对应的值一样
 
 ```cpp
 int a = 5;
@@ -32,11 +34,22 @@ cout << a << "\n" << *a_ptr << "\n";
 
 同理，指针的语法糖
 
+### 右值引用
+
+> https://www.cnblogs.com/ishen/p/13771991.html
+> https://www.cnblogs.com/kekec/p/10810507.html
+
+### 万能引用
+
 ## 函数
 
 ### 默认形参
 
 ### 函数重载
+
+### 函数式编程
+
+> https://zzy979.github.io/posts/cpp-functional-programming/
 
 ## 面向对象
 
@@ -159,6 +172,38 @@ Box operator+(const Box&);
 ```cpp
 Box operator+(const Box&, const Box&);
 ```
+
+### 类与结构体
+
+C++中的 struct 和 class 基本是通用的，唯有几个细节不同：
+
+- 使用 class 时，类中的成员默认都是 private 属性的；而使用 struct 时，结构体中的成员默认都是 public 属性的。
+- class 继承默认是 private 继承，而 struct 继承默认是 public 继承。
+- class 可以使用模板，而 struct 不能。
+
+比如结构体的构造函数：
+
+```cpp
+struct Node {
+	int key;
+	int val;
+	Node *prev;
+	Node *next;
+	Node(): key(0), val(0), prev(NULL), next(NULL){};
+	Node(int key, int val): key(key), val(val), prev(NULL), next(NULL){};
+};
+
+// 定义了构造函数后，下面的方法都会调用构造函数
+// 调用构造函数
+Node(1,2)
+// 统一初始化语法，C++11 引入
+Node{1,2}
+Node n = {1,2}
+// designated initializer, C99引入， C++20引入有限支持。C++在有构造函数的时候，无法使用。
+Node n = {.key=1,.val=2}
+```
+
+> https://www.cnblogs.com/tengzijian/p/17964231
 
 ## 可重载运算符/不可重载运算符
 

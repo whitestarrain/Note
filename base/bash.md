@@ -507,6 +507,16 @@ export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 - `$$`	当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。
 - `$_`  上一个命令的最后一个参数
 
+  ```bash
+  # decode url
+  function urldecode() {
+    # : 冒号是无操作
+    : "${*//+/ }"
+    # $_ 会取到上一个命令的最后一个参数
+    echo -e "${_//%/\\x}"
+  }
+  ```
+
 ## 7.5. 默认值
 
 - 变量可以有 _默认_ 值。我们可以用如下语法来指定默认值：

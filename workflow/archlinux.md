@@ -767,6 +767,9 @@ pacman -U /var/cache/pacman/pkg/xxx.zst
 
 # 从网络源中恢复指定包的版本
 pacman -U https://archive.archlinux.org/packages/n/neovim/xxxx.zst
+
+# 更新所有包
+pacman -Syu
 ```
 
 ## 7.2. AUR

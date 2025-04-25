@@ -296,6 +296,8 @@
     - git commit：将修改作为下一个提交
     - git reset HEAD 取消暂存，恢复到git stash pop后该有的状态
   - git stash drop stash@{0}
+- `git fsck --lost-found`: 打印出所有dangling commit, 可找回意外丢失的 stash 修改
+  - git statsh pop 后的得到的 commit-id，如果未丢失，也可以直接 `git apply`
 
 ## 1.12. 重置
 
@@ -421,9 +423,20 @@
 - `git push --recurse-submodules=check`: 检查子模块哪些需要push，并建议后续的push方式
 - `git submodule foreach 'git stash'`: 子模块遍历运行
 
-## 1.19. 配置文件
+## 1.19. git worktree
 
-### 1.19.1. gitignore
+- `git worktree add ../hotfix`
+- `git worktree remove`
+- `git worktree list`
+- `git worktree move`
+- `git worktree lock`
+- `git worktree unlock`
+- `git worktree prune`: 手动删除了 worktree 对应的目录后，清理 worktree 信息
+- `git worktree repair`
+
+## 1.20. 配置文件
+
+### 1.20.1. gitignore
 
 - 说明
 
@@ -492,11 +505,11 @@
   relative/path/to/dir/anotherfile
   ```
 
-### 1.19.2. .gitattributes
+### 1.20.2. .gitattributes
 
 **Git 只会在检入与检出时对文件进行处理，具体点说就是 git add 与 git checkout 操作中。因此 Git 并不会自动将工作目录中正在编写的文本文件自动转换换行符。**
 
-#### 1.19.2.1. 使用说明
+#### 1.20.2.1. 使用说明
 
 - .gitattributes示例
 
@@ -531,7 +544,7 @@
   git reset --hard HEAD
   ```
 
-#### 1.19.2.2. 原理说明
+#### 1.20.2.2. 原理说明
 
 > 本地测试结论：
 
@@ -546,14 +559,14 @@
   - 之后每次暂存入库的时候，会统一转为 `\n`,
   - 在checkout的时候，会根据.gitattributes中的配置转换为指定换行符
 
-## 1.20. 别名
+## 1.21. 别名
 
 - `git config --global alias.st status` /*设置st为status的别名，git st即为git status*/
 - `git config --global alias.unstage 'reset HEAD'`
 - `git config --global alias.last 'log -1'` /*最后一次提交信息*/
 - `git config --global alias.tree "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"`
 
-## 1.21. 工具
+## 1.22. 工具
 
 - tig
   - 使用
@@ -570,7 +583,7 @@
 - gitk:图形化工具
 - lazygit: tui 工具
 
-## 1.22. 常见问题
+## 1.23. 常见问题
 
 - git乱码：
   - 右键->option->text

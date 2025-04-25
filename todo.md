@@ -87,6 +87,10 @@ This approach has never let me down, and it has made all the difference in my li
 
 - [ ] [计算机教育中缺失的一课](https://missing-semester-cn.github.io/): 查一下漏
 
+- [ ] 图形库
+  - raylib
+  - SDL
+
 # 小任务
 
 - 计算机网络相关
@@ -803,7 +807,6 @@ cookie和session攻击
 - **[欧拉计划](https://projecteuler.net/about)**
 - [图论(graph theory)算法原理、实现和应用全解](https://www.srcmini.com/1635.html)
 - [知乎涉及算法查漏补缺, leetcode.md](https://www.zhihu.com/question/29316754/answer/2135428383)
-- [关于加密、证书的那些事](https://www.cnblogs.com/sewain/p/14250884.html#%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86)
 - [labuladong算法小抄](https://labuladong.github.io/algo/)
 
 ### compile
@@ -914,6 +917,8 @@ cookie和session攻击
 - [llm 实现：c/cuda实现gpt-2](https://github.com/karpathy/llm.c)
 - [omniparse 将视频，图片等转换为markdown、json等](https://github.com/adithya-s-k/omniparse)
 - 自然语言处理，分析日记
+- [适合翻译的模型](https://linux.do/t/topic/400512)
+- [pdf to markdown](https://github.com/VikParuchuri/marker)
 
 ## others
 
@@ -996,6 +1001,9 @@ cookie和session攻击
     - <https://en.wikipedia.org/wiki/Fast_inverse_square_root>
 - 生成明暗主题一分为二的图表: <https://emacs-china.org/t/topic/20216/33>
 - 暗色和亮色主题讨论：<https://ux.stackexchange.com/questions/53264/dark-or-white-color-theme-is-better-for-the-eyes>
+- dns 解析
+  - [就是要你懂DNS--一文搞懂域名解析相关问题](https://plantegg.github.io/2019/06/09/一文搞懂域名解析相关问题/)
+  - [systemd-resolv](https://www.keepnight.com/archives/1772/)
 
 # current dotfiles
 

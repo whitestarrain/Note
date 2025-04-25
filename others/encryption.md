@@ -193,6 +193,7 @@
 
 <!-- TODO: 加密算法。有时间继续整理一下吧 -->
 
+- [关于加密、证书的那些事](https://www.cnblogs.com/sewain/p/14250884.html)
 - [廖雪峰-加密与安全](https://www.liaoxuefeng.com/wiki/1252599548343744/1255943717668160)
 - [hashids库说明](https://zhuanlan.zhihu.com/p/32671455)
   - [Cryptanalysis of hashids](http://carnage.github.io/2015/08/cryptanalysis-of-hashids)

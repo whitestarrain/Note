@@ -32,6 +32,7 @@ mime type，默认打开程序设置
 - vertcenter
 - scrollback
 - boxdraw_v2
+- nerd icon truncate 问题：[Support for proper glyph rendering in ST](https://www.reddit.com/r/suckless/comments/jt90ai/update_support_for_proper_glyph_rendering_in_st/)
 
 # dmenu: dynamic menu
 

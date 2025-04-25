@@ -2765,6 +2765,39 @@ So there’s some replication of functionality because we’re in the middle of 
   - 可以将 devshell 作为一个profile保存下来，从而防止依赖被gc掉
   - 可以在不想清理掉devshell依赖时使用
 
+- `nix develop .#dev-shll`
+  - 读取`flake.nix` outputs 下的 `devShells.dev-shell` 属性，创建开发环境
+
+    <details>
+    <summary style="color:red;">example</summary>
+
+    ---
+    ```nix
+    {
+      description = "dev shell";
+      inputs = {
+        nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+      };
+      outputs = { self, nixpkgs, ...}@flake-inputs:
+      let
+          pkgs = nixpkgs.legacyPackages."x86_64-linux";
+      in
+        {
+          devShells.x86_64-linux = {
+            prefect = pkgs.mkShell {
+                nativeBuildInputs = [
+                  pkgs.python311Packages.python
+                ];
+                LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
+              };
+          };
+        };
+    }
+    ```
+    ---
+
+    </details>
+
 - [nix develop ，子 bash 输出有问题](https://discourse.nixos.org/t/how-to-use-nix-shell-inside-nix-develop/11395/3)
   - 原因应该是构建的环境中，也有 bash ， PATH 被修改了，非 interactive 的 bash 优先级更高，
   - 导致执行`bash`时，执行的是非 interactive 的 bash
@@ -2774,6 +2807,12 @@ So there’s some replication of functionality because we’re in the middle of 
 ## nix registry
 
 <https://nix.dev/manual/nix/2.17/command-ref/new-cli/nix3-registry>
+
+## nix repl
+
+```
+:help 查看所有支持的命令
+```
 
 # Nix 打包
 
@@ -3219,6 +3258,45 @@ flake inputs 中添加指定版本的源，通过`_module.args`或者`specialArg
 ## 运行FHS环境的软件
 
 ### nix-ld
+
+
+- python venv 报错 `ImportError: libstdc++.so.6`:
+
+  ```
+  Nix-ld is only used by unpatched executables that use the link loader at /lib or /lib64.
+  If you use for example python from nixpkgs than it will not pick up NIX_LD_LIBRARY_PATH and NIX_LD since these types of binaries are configured to use a glibc from the nix store.
+  If you encounter these cases i.e. when you are trying to use python packages installed in a virtualenv than you need to set LD_LIBRARY_PATH directly.
+  You can also create yourself a wrapper like this:
+
+  (pkgs.writeShellScriptBin "python" ''
+    export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
+    exec ${pkgs.python3}/bin/python "$@"
+  '')
+  ```
+
+  或者也可以直接 wrap 命令([参考](https://discourse.nixos.org/t/importerror-libstdc-so-6-cannot-open-shared-object-file-no-such-file-or-directory/41988/4)):
+
+  ```nix
+  localPython = writeScriptBin "local-python"
+  ''
+  .venv/bin/python "$@"
+  '';
+
+  # Wrap only python with the required lib files
+  python =
+    runCommand "python" {
+      nativeBuildInputs = [ makeWrapper  ];
+      buildInputs = [ libGL libGLU localPython];
+    } ''
+    makeWrapper ${localPython}/bin/local-python $out/bin/py \
+    --prefix LD_LIBRARY_PATH : /usr/lib/wsl/lib \
+    --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [pkgs.stdenv.cc.cc pkgs.cudaPackages.cudatoolkit pkgs.cudaPackages.cudnn libGL libGLU]}
+    '';
+  ```
+
+  也可以参照wiki使用buildFHSUserEnv: [nixos wiki: python](https://nixos.wiki/wiki/Python)
+
+  本质上就是保证python能够读取到一些动态库
 
 ### steam-run
 

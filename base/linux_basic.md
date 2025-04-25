@@ -570,6 +570,19 @@ echo -ne '\x09\x65' | iconv -f utf-16be
 echo -ne '\x65\x09' | iconv -f utf-16le
 ```
 
+```
+# echo "你好" | iconv -f utf-8 -t utf-16le | od -Ax -tx -tc
+000000        597d4f60        0000000a
+         `   O   }   Y  \n  \0
+000006
+
+# echo "你好" | iconv -f utf-8 -t utf-16be | od -Ax -tx -tc
+000000        7d59604f        00000a00
+         O   `   Y   }  \0  \n
+000006
+
+```
+
 bash 4.2 版本以上可以使用：
 
 ```
@@ -777,6 +790,7 @@ cmp -l file1.bin file2.bin | gawk '{printf "%08X %02X %02X\n", $1-1, strtonum(0$
     > sort -t' ' -k2 以空格为分隔符，通过第二列字典序进行排序
     - t:自定义分隔符
     - k:选择排序列
+      - `-k field.offset,filed.offset`
   - r:倒序
   - u:合并相同行
   - f:忽略大小写
@@ -786,6 +800,18 @@ cmp -l file1.bin file2.bin | gawk '{printf "%08X %02X %02X\n", $1-1, strtonum(0$
 ```bash
 sort -nrk 1 data.txt
 sort -bd data # 忽略像空格之类的前导空白字符
+```
+
+```bash
+# 空格分割，
+# 1.2,1.2: 第二个字段，第二个字母 到 第二个字段，第二个字母
+# 3,3:  第三个字段 到 第三个字段
+# 如果没有逗号，就是到最后
+sort -t ' ' -k 1.2,1.2 -nrk 3,3 facebook.txt
+baidu 100 5000
+google 110 5000
+sohu 100 4500
+guge 50 3000
 ```
 
 ## 3.4. uniq 消除重复行
@@ -834,7 +860,7 @@ sort -bd data # 忽略像空格之类的前导空白字符
 
 ```
 # 读入mysql标准输入的时候，是没有特殊符号的，只有输出的时候才有
-cat <(mysql -e "select id,name from t1" 2>/dev/null)
+cat <(mysql -e "select id,name from t1" 2>/dev/null) | column -t
 ```
 
 ## 3.7. wc 统计行和字符的工具
@@ -4209,6 +4235,8 @@ modinfo
   ssh -L 8080:localhost:8080 user@ip.of.remote.machine // 在本地监听8080，转发给远程机器的8080端口
   ssh -CNfL 0.0.0.0:8088:10.1.1.123:8083 user@10.1.1.123 // 在本地启动一个8088的端口，将这个8088端口映射到10.1.1.123的8083端口上
   ```
+
+> [SSH 技巧](https://plantegg.github.io/2019/06/02/史上最全_SSH_暗黑技巧详解--收藏保平安/)
 
 ### 17.1.5. telnet
 
