@@ -56,7 +56,16 @@
 - 而对于命令的具体参数及使用方法，我们需要用到强大的man；
   - 在只记得部分命令关键字的场合，我们可通过man -k来搜索；
 
-## 1.1. whatis 查看命令的简要说明
+## 1.1. type
+
+- type 可以显示Linux命令的路径
+- 会展示命令的类型：
+  - built-in
+  - alias
+  - function
+  - external command
+
+## 1.2. whatis 查看命令的简要说明
 
 - 简要说明命令的作用（显示命令所处的man分类页面）:
 
@@ -70,13 +79,13 @@
   $whatis -w "loca*"
   ```
 
-## 1.2. info 更加详细的说明文档
+## 1.3. info 更加详细的说明文档
 
 ```
 $info command
 ```
 
-## 1.3. 使用man
+## 1.4. 使用man
 
 - 查询命令command的说明文档:
 
@@ -132,10 +141,12 @@ $info command
 
   ```
   # eg：查找GNOME的config配置工具命令:
-  $man -k GNOME config| grep 1
+  man -k GNOME config| grep 1
+  # 查看utmp相关条目
+  man -k utmp
   ```
 
-## 1.4. whereis which 查看路径
+## 1.5. whereis which 查看路径
 
 - 查看程序的binary文件所在路径:
 
@@ -153,12 +164,7 @@ $info command
   ```
 
   - 当系统中安装了同一软件的多个版本时，不确定使用的是哪个版本时，这个命令就能派上用场；
-
-- 查看外部命令路径：type
-  - type 能指定磁盘位置的命令，也就是从 PATH 中查询的命令，被称为**外部命令**,外部命令执行时都会变为一个进程
-  - 外部命令都可以通过`man 命令名称`查看文档
-  - 可能是可执行程序，也可能是脚本（比如 python 脚本等）
-  - 如果 type 返回 shell builtin，则是内部命令。shell 内部的。比如 cd，echo
+  - 可以查到二进制可执行文件、源代码、man文档路径
 
 # 2. 文件及目录管理
 
@@ -654,9 +660,16 @@ cmp -l file1.bin file2.bin | gawk '{printf "%08X %02X %02X\n", $1-1, strtonum(0$
   grep match_patten file # 默认访问匹配行
   cat file | grep match _pattern
   ```
+- `grep` 正则表达式
+  - Basic 规范: 字符 `?+{}|()` 应解释为普通字符，要表示上述特殊含义则需要加 `\` 转义 。
+  - Extended 规范: `egrep`，或者加 `-E` 参数
 
 - 常用参数
   - -o 只输出匹配的文本行
+    ```bash
+    # 所有子进程
+    pstree -p <38343> | grep -o '([0-9]\+)' | grep -o '[0-9]\+'
+    ```
   - -v 只输出没有匹配的文本行
   - -c 统计文件中包含文本的次数: `grep -c "text" filename`
   - -n 打印匹配的行号
@@ -2822,7 +2835,22 @@ kill %number: 杀掉job，需要加`%`
 
 `cat /proc/meminfo`
 
-## 12.5. vmstat
+### pmap
+
+```bash
+# 获取进程的内存分布
+pmap -x pid
+```
+- Address：表示此内存段的起始地址
+- Kbytes：表示此内存段的大小(ps：这是虚拟内存)
+- RSS：表示此内存段实际分配的物理内存，这是由于Linux是延迟分配内存的，进程调用malloc时Linux只是分配了一段虚拟内存块，直到进程实际读写此内存块中部分时，Linux会通过缺页中断真正分配物理内存。
+- Dirty：此内存段中被修改过的内存大小，使用mmap系统调用申请虚拟内存时，可以关联到某个文件，也可不关联，当关联了文件的内存段被访问时，会自动读取此文件的数据到内存中，若此段某一页内存数据后被更改，即为Dirty，而对于非文件映射的匿名内存段(anon)，此列与RSS相等。
+- Mode：内存段是否可读(r)可写(w)可执行(x)
+- Mapping：内存段映射的文件，匿名内存段显示为anon，非匿名内存段显示文件名(加-p可显示全路径)。
+
+## 12.5. io
+
+### 12.5.1. vmstat
 
 CPU/内存/磁盘输入输出状态
 
@@ -4617,6 +4645,12 @@ linux profile 工具
 
 GPP, a generic preprocessor
 
+## 19.19. criu
+
+[criu](https://github.com/checkpoint-restore/criu)
+
+linux 进程 checkpoint 和 restore工具
+
 # 20. bash
 
 > [bash-handbook](./bash.md)
@@ -5109,6 +5143,7 @@ GPP, a generic preprocessor
 - [ ] [一文掌握 Linux 性能分析之内存篇](https://segmentfault.com/a/1190000018553950)
 - [ ] [Linux系统的PAM模块认证文件含义说明总结](https://www.cnblogs.com/fengdejiyixx/p/14804741.html)
 - [ ] [Btrfs 和 LVM-ext4 该如何选择？](https://linux.cn/article-13043-1.html)
+- [ ] [阮一峰 Systemd 入门教程](https://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
 - 日志
   - [Linux日志管理系统rsyslog](https://www.cnblogs.com/qiuhom-1874/p/12091118.html)
   - [Linux下Rsyslog日志远程集中式管理](https://www.cnblogs.com/zhangwencheng/p/14862190.html)

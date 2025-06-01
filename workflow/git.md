@@ -72,7 +72,7 @@
   - `git log --follow [file]` 显示某个文件的版本历史，包括文件改名
   - `git log <commit_start> <commit_end> [^<not_from_commit>]` 查看从commit_start开始到commit_end结束的提交,且不来自于no_from_commit
   - `git log --since="2023-09-10" --before="2023-09-30"` 查看指定时间内的提交统计
-  - `git log -L110,110:path/to/file` 查看指定文件指定行的各版本修改
+  - `git log -L<start>,<end>:<file>` 查看指定文件指定行的各版本修改
   - `git shortlog -sn` 显示所有提交过的用户，按提交次数排序
   - `git reflog --all` HEAD移动记录
   - `gitk --all` 图形化界面展现分支，十分推荐。**加上all更全面直观**

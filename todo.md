@@ -32,8 +32,9 @@ This approach has never let me down, and it has made all the difference in my li
     - [x] 系统安装 & 配置
     - [ ] hardening app: qq, wechat ...
 
+- [ ] assembly language
+
 - [ ] 体验一下 rust
-  - lightnovel-cli
 
 - [ ] emacs, elisp
   - common ansi lisp
@@ -90,6 +91,9 @@ This approach has never let me down, and it has made all the difference in my li
 - [ ] 图形库
   - raylib
   - SDL
+
+- 金融和量化相关的知识也可以看看
+  - https://www.zhihu.com/question/402824103/answer/1314615280
 
 # 小任务
 
@@ -168,6 +172,7 @@ This approach has never let me down, and it has made all the difference in my li
   - [ucore实验指导书](https://nankai.gitbook.io/ucore-os-on-risc-v64/)
 - MIT 6.828: Operating System Engineering
 - [SysY 语言编译到 RISC-V-北大编译实践在线文档](https://pku-minic.github.io/online-doc/#/)
+- [awesome toolbox: 收集的一些工具和库](https://github.com/lqhuang/awesome)
 
 # 博客、社区
 
@@ -414,7 +419,9 @@ cookie和session攻击
 - [ ] lsp semantic token highlighting 优先级调成比 treesitter高
   - 这样就能实现vscode上，引用不存在成员，不highlight为红色的效果了
   - 当前默认关了lsp的语义高亮
-- lisp编辑辅助插件：nvim([parpar](https://github.com/dundalek/parpar.nvim)) = emacs(Parinfer + Paredit)
+- lisp编辑辅助插件：
+  - nvim([parpar](https://github.com/dundalek/parpar.nvim)) = emacs(Parinfer + Paredit)
+  - nvim-parinfer
 - [oil.nvim](https://github.com/stevearc/oil.nvim)
 
 ### emacs
@@ -466,6 +473,7 @@ cookie和session攻击
   - 配置emacs前必须要看一下，插件加载的流程
 - [ ] [专业emacs入门](https://pavinberg.github.io/emacs-book/zh/)
 - [ ] [org-modern](https://github.com/minad/org-modern)
+- [ ] [paw.el外语学习，高亮笔记，单词本，分词断句(英、日)，等一体的新插件](https://emacs-china.org/t/paw-el-emacs-lingq/27331)
 
 ### vscode
 
@@ -548,34 +556,12 @@ cookie和session攻击
 
 ## linux
 
+### basic
+
+- [我的内存呢？Linux MemAvailable 如何计算](https://lotabout.me/2021/Linux-Available-Memory/)
+- [nixcraft](https://www.cyberciti.biz/)
+
 ### bash/shell
-
-- bash的case与shift:
-  ```bash
-  while [ $# -gt 0 ]
-  do
-    case $1 in
-      -h|--help) print_usage; exit;;
-      # For options with required arguments, an additional shift is needed.
-      -i|--ip) IP="$2" ; shift;;
-      -p|--port) PORT="$2" ; shift;;
-      -f|--file) FILE="$2" ; shift;;
-      -t|--type) TYPE="$2" ; shift;;
-      (--) shift; break;;
-      (-*) echo "$0: invalid option $1" 1>&2; exit 1;;
-      (*) break;;
-    esac
-    shift
-  done
-  ```
-
-- tar『-C』说明
-  ```bash
-  # 解压后，会得到output/${APP}/....，这种方式会保留文件夹层级
-  tar -czf output/${APP}.tar.gz output/${APP}
-  # -C 相当于cd到指定目录再压缩，后面跟着一个"."，表示压缩 "output/${APP}" 目录
-  tar -czf output/${APP}.tar.gz -C output/${APP} .
-  ```
 
 - [Use { ..; } instead of (..) to avoid subshell overhead](https://www.shellcheck.net/wiki/SC2235)
 - [`What is the difference between the Bash operators [[ vs [ vs ( vs ((?`](https://unix.stackexchange.com/questions/306111/what-is-the-difference-between-the-bash-operators-vs-vs-vs)
@@ -615,6 +601,8 @@ cookie和session攻击
   - [终端显示配色和样式，比如`\e[4:3m`](https://www.cnblogs.com/linuxprobe/p/14354824.html)
   - [ANSI Escape Sequences](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797)
   - [ANSI Escape Sequence 下落的方块](https://blog.csdn.net/baiyu33/article/details/136088169)
+  - [ANSI Escape Codes](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797)
+  - [Sequin: Human-readable ANSI sequences](https://github.com/charmbracelet/sequin)
 
 ### linux-c
 
@@ -664,7 +652,6 @@ cookie和session攻击
   - [Linux系统句柄问题分析----linux系统文件删除后，空间却不释放原因分析](https://blog.csdn.net/Keyuchen_01/article/details/108568375)
 - [systemd和systemctl详解](https://www.liuvv.com/p/c9c96ac3.html)
 - 内存
-  - [我的内存呢？Linux MemAvailable 如何计算](https://lotabout.me/2021/Linux-Available-Memory/)
   - [linuxatemyram](https://www.linuxatemyram.com/)
   - [linux内存占用分析之meminfo](https://segmentfault.com/a/1190000022518282#item-5)
   - man top
@@ -1004,6 +991,17 @@ cookie和session攻击
 - dns 解析
   - [就是要你懂DNS--一文搞懂域名解析相关问题](https://plantegg.github.io/2019/06/09/一文搞懂域名解析相关问题/)
   - [systemd-resolv](https://www.keepnight.com/archives/1772/)
+
+# wiki
+
+一些乱七八糟的概念
+
+- [SDF Public Access Unix System](https://en.wikipedia.org/wiki/SDF_Public_Access_Unix_System)
+  - [SDF wiki](https://wiki.sdf.org/doku.php?id=start)
+  - [anonradio](https://anonradio.net/)
+- [平方根倒数速算法, 0x5f3759df](https://zh.wikipedia.org/wiki/平方根倒数速算法)
+    - [doom-3](https://github.com/id-Software/DOOM-3/blob/a9c49da5afb18201d31e3f0a429a037e56ce2b9a/neo/idlib/math/Math.h#L246)
+    - [quake-3](https://github.com/id-Software/Quake-III-Arena/blob/dbe4ddb10315479fc00086f08e25d968b4b43c49/code/game/q_math.c#L561)
 
 # current dotfiles
 

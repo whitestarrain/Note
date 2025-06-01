@@ -4,6 +4,8 @@
 
 # 参考资料
 
+TODO: learn to hack
+
 - [pwn](https://pwn.college/)
   > 说明：<https://chinggg.github.io/post/pwncollege/>
 - [CTF wiki](https://ctf-wiki.org/)

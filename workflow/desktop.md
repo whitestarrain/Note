@@ -92,6 +92,7 @@ mime type，默认打开程序设置
 - play music: mpd + ncmpcpp
 - generate color schema throw wallpaper: [pywal](https://github.com/dylanaraps/pywal)
 - icon, cursor theme, grub theme...: [pling](https://www.pling.com/)
+- convert anything in the most popular palettes: [ImageGoNord-web](https://github.com/Schroedinger-Hat/ImageGoNord-web)
 
 # memo
 
@@ -180,6 +181,8 @@ mime type，默认打开程序设置
   - nix hyperland config: <https://github.com/Frost-Phoenix/nixos-config>
   - [archlinux配置文件，包括picom混色器。该作者的一些tmux等配置文件也可以参考下，比如tmux插件。](https://github.com/shendypratamaa/.arch)
   - [dwm archlinux config ayamir](https://github.com/ayamir/dotfiles)
+  - [gh0stzk/dotfiles](https://github.com/gh0stzk/dotfiles)
+    > 参考优化下 picom 动画配置？
 - others
   - [awesome-tuis](https://github.com/rothgar/awesome-tuis)
   - [xrandr: 处理缩放，显示方向等设置](https://wiki.archlinux.org/title/Xrandr)

@@ -23893,7 +23893,42 @@ int main(int argc, char *argv[])
 
 编译运行 server，在两个终端里各开一个 client 与 server 交互，看看 server 是否具有并发服务的能力。用 Ctrl-C 关闭 server，然后再运行 server，看此时 client 还能否和 server 联系上。和前面 TCP 程序的运行结果相比较，体会无连接的含义。
 
-### 3.10.4. UNIX Domain Socket IPC
+### 3.10.4. 监听socket 和 连接socket
+
+tcp server：
+
+- socket()：
+  - 创建socket描述符（socket descriptor），可以通过它来进行一些读写操作。
+  - 这个socket是主动socket（active socket）
+- bind()：
+  - IP：绑定IP到socket。根据监听的网卡，可以是一个IP，也可以是多个IP
+  - PORT：绑定端口到socket
+- listen()：
+  - 将此socket转变为 **监听socket** ： {*，*，本机 IP，本机端口 }，并监听客户端通过connect()发出连接请求，进行三次握手建立连接
+- accept()：
+  - 默认会阻塞进程，拿出一个已经完成的连接进行处理。如果还没有完成，就要继续阻塞
+  - 完成处理之后返回一个 **已连接socket** ：{ 对端 IP，对端端口，本机 IP，本机端口 }
+    - **已连接socket并没有占用新的端口与客户端通信，依然使用的是与监听socket一样的端口号**
+    - 因为可以通过 `{对端 IP，对端端口}` 来区分
+- read()/white()：accept完成之后，就可以进行网络I/O操作，即类同于普通文件的读写I/O操作
+
+为什么会有了监听socket还需要建立已连接socket:
+
+- 如果只使用监听socket来处理，那么监听socket在阻塞监听客户端连接请求时，
+  - 同时需要建立{ 本机 IP，本机端口 } : {对端 IP，对端端口}，1对多的数据结构，
+  - 且还需要接受read()/write()处理。
+  - 聚合多个复杂逻辑的处理与计算机发展逻辑冲突，分层分治才是更优的解决办法
+- 确保职责分工，分层协作，提高服务端性能
+  - 监听socket只接受accept()处理
+  - 已连接socket只接受read()/write()处理
+
+---
+
+UDP server:
+
+- 不需要记录客户状态信息（UDP 是无状态的），使用一个监听端口即可
+
+### 3.10.5. UNIX Domain Socket IPC
 
 socket API 原本是为网络通讯设计的，但后来在 socket 的框架上发展出一种 IPC 机制，就是 UNIX Domain Socket。
 
@@ -24123,7 +24158,7 @@ errout:
 
 下面是自己动手时间，请利用以上模块编写完整的客户端/服务器通讯的程序。
 
-### 3.10.5. /proc/pid/fd 下的 number
+### 3.10.6. /proc/pid/fd 下的 number
 
 参考：[/proc/PID/fd/X link number](https://unix.stackexchange.com/questions/10050/proc-pid-fd-x-link-number)
 
@@ -24145,7 +24180,7 @@ lrwx------ 1 user user 64 Mar 24 00:05 8 -> socket:[3142932]
 lr-x------ 1 user user 64 Mar 24 00:05 9 -> pipe:[9837788]
 ```
 
-### 3.10.6. 练习：实现简单的 Web 服务器
+### 3.10.7. 练习：实现简单的 Web 服务器
 
 实现一个简单的 Web 服务器 myhttpd。服务器程序启动时要读取配置文件 /etc/myhttpd.conf，其中需要指定服务器监听的端口号和服务目录，例如：
 
@@ -24156,7 +24191,7 @@ Directory=/var/www
 
 注意，1024 以下的端口号需要超级用户才能开启服务。如果你的系统中已经安装了某种 Web 服务器（例如 Apache），应该为 myhttpd 选择一个不同的端口号。当浏览器向服务器请求文件时，服务器就从服务目录（例如 /var/www）中找出这个文件，加上 HTTP 协议头一起发给浏览器。但是，如果浏览器请求的文件是可执行的则称为 CGI 程序，服务器并不是将这个文件发给浏览器，而是在服务器端执行这个程序，将它的标准输出发给浏览器，服务器不发送完整的 HTTP 协议头，CGI 程序自己负责输出一部分 HTTP 协议头。
 
-#### 3.10.6.1. 基本 HTTP 协议
+#### 3.10.7.1. 基本 HTTP 协议
 
 打开浏览器，输入服务器 IP，例如 http://192.168.0.3 ，如果端口号不是 80，例如是 8000，则输入 http://192.168.0.3:8000 。这时浏览器向服务器发送的 HTTP 协议头如下：
 
@@ -24241,7 +24276,7 @@ Content-Type: text/html
 <html><body>request file not found</body></html>
 ```
 
-#### 3.10.6.2. 执行 CGI 程序
+#### 3.10.7.2. 执行 CGI 程序
 
 如果浏览器请求的是一个可执行文件（不管是什么样的可执行文件，即使是 shell 脚本也一样），那么服务器并不把这个文件本身发给浏览器，而是把它的执行结果标准输出发给浏览器。例如一个 shell 脚本 `/var/www/myscript.sh`（注意一定要加可执行权限）：
 

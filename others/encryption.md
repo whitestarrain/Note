@@ -113,11 +113,17 @@
 | SHA-256    | 256 bits       | 32 bytes         |
 | SHA-512    | 512 bits       | 64 bytes         |
 
-## 2.4. java 库-BouncyCastle
+## 2.4. 高级hash算法：
 
-## 2.5. 变种
+### 2.4.1. murmurhash
 
-### 2.5.1. hashids
+### 2.4.2. cityhash
+
+## 2.5. java 库-BouncyCastle
+
+## 2.6. 变种
+
+### 2.6.1. hashids
 
 > [github 源码](https://github.com/davidaurelio/hashids-python)
 
@@ -167,23 +173,23 @@
 
 # 10. uuid算法
 
-## uuid各版本
+## 10.1. uuid各版本
 
 > 版本 1/2 适用于需要高度唯一性且无需重复的场景；
 > 版本 3/5 适用于一定范围内唯一且需要或可能会重复生成UUID的环境下；
 > 版本 4 适用于对唯一性要求不太严格且追求简单的场景。
 
-### 基于时间
+### 10.1.1. 基于时间
 
-### 分布式安全
+### 10.1.2. 分布式安全
 
-### 基于namespace(MD5)
+### 10.1.3. 基于namespace(MD5)
 
-### 基于随机数
+### 10.1.4. 基于随机数
 
-### 基于namespace(SHA1)
+### 10.1.5. 基于namespace(SHA1)
 
-## 10.1. GUID
+## 10.2. GUID
 
 - GUID有两种解释：
   - 就是UUID
