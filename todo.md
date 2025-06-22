@@ -34,6 +34,8 @@ This approach has never let me down, and it has made all the difference in my li
 
 - [ ] assembly language
 
+- [ ] hack
+
 - [ ] 体验一下 rust
 
 - [ ] emacs, elisp
@@ -43,6 +45,10 @@ This approach has never let me down, and it has made all the difference in my li
 
 - [ ] effective cpp
   - 主要是为了刷题，同时复习一下cpp
+
+- 树莓派
+
+- [ ] 微机原理。使用电路模拟器实现一个计算器
 
 - [ ] 手机系统切 LineageOS
   - 参考: [用 Nix 编译自定义 Android 内核](https://lantian.pub/article/modify-computer/build-custom-android-kernel-with-nix.lantian/)
@@ -299,6 +305,7 @@ This approach has never let me down, and it has made all the difference in my li
     - poweramp 联网获取歌词插件，说不定可以基于这个做二次开发[LyricsForPowerAmp](https://github.com/abhishekabhi789/LyricsForPowerAmp)
   - [ ] lisp
   - [ ] ruby
+  - [ ] zig
 - 机器学习&深度学习
   - [ ] opencv 系统整理
   - [ ] 深度学习笔记系统整理（暂时抽不出时间）

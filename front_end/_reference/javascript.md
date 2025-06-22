@@ -30961,7 +30961,7 @@ newOption.selected // false
 
 ```html
 <audio id="music">
-  <source src="music.mp3" type="audio/mpeg">  
+  <source src="music.mp3" type="audio/mpeg">
   <source src="music.ogg" type='audio/ogg; codec="vorbis"'>
 </audio>
 ```

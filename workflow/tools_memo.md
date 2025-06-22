@@ -547,12 +547,14 @@ https://github.com/karlstav/cava
 
 ## Zen browser
 
-## Digital-Logic-Sim
+## 电路模拟器
 
-简单的数字逻辑模拟器:
-
-- [官网](https://sebastian.itch.io/digital-logic-sim)
-- [github](https://github.com/SebLague/Digital-Logic-Sim)
+- Digital-Logic-Sim: 简单的数字逻辑模拟器
+  - [官网](https://sebastian.itch.io/digital-logic-sim)
+  - [github](https://github.com/SebLague/Digital-Logic-Sim)
+- [logisim-evolution](https://github.com/logisim-evolution/logisim-evolution)
+- [openvcb](https://github.com/kittybupu/openVCB/)
+- [logiccircuit](https://github.com/eugenelepekhin/LogicCircuit)
 
 ## linux steam 中间层
 
@@ -650,6 +652,10 @@ wget https://raw.githubusercontent.com/IreneKnapp/direct-sqlite/a74cc50c735053c7
 ## linux 吉祥物
 
 [penger.city](https://penger.city/)
+
+## ascii art
+
+- [textik 画图](https://textik.com)
 
 # 参考
 

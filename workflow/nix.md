@@ -2733,6 +2733,9 @@ nix shell 只会将一些 bin 放到 PATH 中，而不会构建开发环境，�
 
 但是nix shell下，可以查询到依赖的 man page，而nix-shell下不行。比如 `nix shell nixpkgs#xorg.libXcursor`。
 
+nix-shell 也会可以触发pkg-config hook，比如 `nix-shell -p harfbuzzFull pkg-config`，pkg-config 可以查到 harfbuzz 库的路径(`PKG_CONFIG_PATH_FOR_TARGET` 环境变量)。
+但是用`nix shell nixpkgs#harfbuzzFull nixpkgs#pkg-config` 就不行
+
 经测试发现，man会自动检查 `PATH` 变量里面可执行文件(不管是否真的存在)上一级目录下的`share/man`目录，从而获取到相应的的 man 文档。
 而使用 `nix shell` 时，不管有没有可执行文件，都会为`PATH`中添加`$out/bin` 目录
 

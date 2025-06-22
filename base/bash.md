@@ -1330,10 +1330,12 @@ echo ${food:-Cake}  #=> $food or "Cake"
 
   ```bash
   echo ${fruits[@]:0:2} # Apple Desert fig
+  echo ${fruits[@]:2} # fig
   ```
 
   - `${fruits[@]}`扩展为整个数组
   - `:0:2`取出了数组中从0开始，长度为2的元素。
+  - `:2`取出了从2开始，到最后的所有元素
 
 ## 10.4. 向数组中添加元素
 

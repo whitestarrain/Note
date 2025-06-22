@@ -964,6 +964,16 @@ tr '[:lower:]' '[:upper:]'
 
 ### 3.10.1. join
 
+对排序之后的文件进行join
+
+- `-t` 分隔符
+- `-11 -21` 第一个文件的第一列，和第二个文件的第一列，join
+- `-a1` 第一个文件没有join上的列，也输出
+- `-o` 输出列，格式`FILENUM.FIELD`, 也支持关键字 `auto`
+  - `-o 1.2,2.3` 输出第一个文件的第二列和第二个文件的第三列
+
+注意：join的时候，sort要根据join依据的一列进行sort (`-k n,n`)，不要sort一整行
+
 tab 作为分割符的两个csv文件，根据第一列join起来:
 
 ```
@@ -973,7 +983,20 @@ join -t, -11 -21 -a1 -a2 -o 0,1.2,1.3,1.4,1.5,1.6,2.6,2.7,2.8 -e '?' \
   > dataset.csv
 ```
 
-注意：join的时候，sort要根据join依据的一列进行sort，不要sort一整行
+
+`\t` 作为分隔符, join 三个文件
+```
+join -t "|" -14 -21 -o 1.1,1.2,1.3,1.4,2.2,2.3 \
+  <(
+    join -t"|" -11 -21 -o 2.1,2.2,1.2,1.3 \
+      <(sed 1d file1.txt | sed 's/\t/|/g'  | sort -t'|' -k 1,1) \
+      <(sed 1d file2.txt | sed 's/\t/|/g'  | sort -t'|' -k 1,1) \
+      | sort -t'|' -k 4,4
+  ) \
+  <(sed 1d file3.txt | sed 's/\t/|/g'  | sort -t'|' -k 1,1) \
+  | sort -t '|' -n -r -k 5,5 \
+  | sed 's/|/,/g' >> output.txt
+```
 
 ### 3.10.2. paste 按列拼接文本
 
@@ -2811,8 +2834,6 @@ kill %number: 杀掉job，需要加`%`
 
 ### 12.3.5. nice, renice 优先级调整
 
-### 12.3.6. pmap 获取进程内存信息
-
 ### 12.3.7. 程序与signal
 
 查询signal: `kill -l` 或者 `man 7 signal`
@@ -2840,6 +2861,7 @@ kill %number: 杀掉job，需要加`%`
 ```bash
 # 获取进程的内存分布
 pmap -x pid
+cat /proc/pid/maps
 ```
 - Address：表示此内存段的起始地址
 - Kbytes：表示此内存段的大小(ps：这是虚拟内存)

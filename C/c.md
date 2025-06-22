@@ -8025,7 +8025,10 @@ int main(void)
  80483e9:   b8 00 00 00 00          mov    $0x0,%eax
 ```
 
-要调用函数 `foo` 先要把参数准备好，第二个参数保存在 `esp+4` 指向的内存位置，第一个参数保存在 `esp` 指向的内存位置，可见参数是从右向左依次压栈的。然后执行 `call` 指令，这个指令有两个作用：
+要调用函数 `foo` 先要把参数准备好，第二个参数保存在 `esp+4` 指向的内存位置，第一个参数保存在 `esp` 指向的内存位置，可见参数是从右向左依次压栈的。
+（ **不同环境和gcc版本，编译结果可能不同。x86-64, gcc7 环境，参数为从左到右依次压栈。并且会使用寄存器存储参数** ）
+
+然后执行 `call` 指令，这个指令有两个作用：
 
 1. `foo` 函数调用完之后要返回到 `call` 的下一条指令继续执行，所以把 `call` 的下一条指令的地址 0x80483e9 压栈，同时把 `esp` 的值减 4，`esp` 的值现在是 0xbf822d18。
 2. 修改程序计数器 `eip`，跳转到 `foo` 函数的开头执行。
@@ -8736,23 +8739,52 @@ TODO: 结构体的 const 成员 是不是也放到 `.rodata` 段了
 
 为什么编译器要这样处理呢
 
-- 对齐(Alignment)
-  - 有一个知识点我此前一直回避没讲，那就是大多数计算机体系统结构对于访问内存的指令是有限制的，
-    - 在 32 位平台上，访问 4 字节的指令（比如上面的 `movl`）所访问的内存地址应该是 4 的整数倍，
-    - 访问两字节的指令（比如上面的 `movw`）所访问的内存地址应该是两字节的整数倍，这称为 **对齐（Alignment）** 。
+- `alignof()` 可以获取需要对齐的字节数
+
+- 大多数计算机体系统结构对于访问内存的指令是有限制的，
+  - 在 32 位平台上，访问 4 字节的指令（比如上面的 `movl`）所访问的内存地址应该是 4 的整数倍，
+  - 访问两字节的指令（比如上面的 `movw`）所访问的内存地址应该是两字节的整数倍，这称为 **对齐（Alignment）** 。
   - 以前举的所有例子中的内存访问指令都满足这个限制条件，读者可以回头检验一下。
-  - 如果指令所访问的内存地址没有正确对齐会怎么样呢？
-    - 在有些平台上将不能访问内存，而是引发一个异常，
-    - 在 x86 平台上倒是仍然能访问内存，但是不对齐的指令执行效率比对齐的指令要低，
-    - 所以编译器在安排各种变量的地址时都会考虑到对齐的问题。
-  - 对于本例中的结构体，编译器会把它的基地址对齐到4字节边界，也就是说，`ebp-0x10` 这个地址一定是4的整数倍。
-    - `s.a` 占一个字节，没有对齐的问题。
-    - `s.b` 占两个字节，如果 `s.b` 紧挨在 `s.a` 后面，它的地址就不能是两字节的整数倍了，所以编译器会在结构体中插入一个填充字节，使 `s.b` 的地址也是两字节的整数倍。
-    - `s.c` 占 4 字节，紧挨在 `s.b` 的后面就可以了，因为 `ebp-0xc` 这个地址也是 4 的整数倍。
-    - 那么为什么 `s.d` 的后面也要有填充位填充到 4 字节边界呢？
-      - 这是为了便于安排这个结构体后面的变量的地址，
-      - 假如用这种结构体类型组成一个数组，那么后一个结构体只需和前一个结构体紧挨着排列就可以保证它的基地址仍然对齐到4字节边界了，因为在前一个结构体的末尾已经有了填充字节。
-      - 事实上， **C 标准规定数组元素必须紧挨着排列，不能有空隙** ，这样才能保证每个元素的地址可以按「基地址 + n × 元素大小」简单计算出来。
+
+- 硬件层面的具体原因：
+
+  > <https://cs.brown.edu/courses/csci1310/2020/notes/l05.html>
+  >
+  >   The reason for this lies in the way hardware is constructed: to end up with simpler wiring and logic, computers often move fixed amounts of data around. In particular, when the computer's process accesses memory, it actually does not go directly to RAM (the random access memory whose chips hold our bytes). Instead, it accesses a fast piece of memory that contains a tiny subset of the contents of RAM (this is called a "cache" and we'll learn more about it in future lectures!). But building logic that can copy memory at any arbitrary byte address in RAM into this smaller memory would be hugely complicated, so the hardware designers chunk RAM into fixed-size "blocks" that can be copied efficiently. The size of these blocks differs between computers, but their existence reveals why alignment is necessary.
+  >
+  >   Let's assume there were no alignment constraints, and consider a situation like the one shown in the following:
+  >
+  >                   | 4B int  |     <-- unaligned integer stored across block boundary
+  >                   | 2B | 2B |     <-- 2 bytes in block k, 2 bytes in block k+1
+  >       ----+-----------+-----------+-----------+--
+  >       ...  | block k   | block k+1 | block k+2 |   ...  <- memory blocks ("cache lines")
+  >       ----+-----------+-----------+-----------+--
+  >
+  >   An unaligned integer could end up being stored across the boundary between two memory blocks. This would require the processor to fetch two blocks of RAM into its fast cache memory, which would not only take longer, but also make the circuits much harder to build. With alignment, the circuit can assume that every integer (and indeed, every primitive type in C) is always contained entirely in one memory block.
+  >
+  >                       | 4B int  |     <-- aligned integer stored entirely in one block
+  >                       | 4B      |     <-- all 4 bytes in block k+1
+  >       ----+-----------+-----------+-----------+--
+  >       ...  | block k   | block k+1 | block k+2 |   ...  <- memory blocks ("cache lines")
+  >       ----+-----------+-----------+-----------+--
+
+- 如果指令所访问的内存地址没有正确对齐会怎么样呢？
+  - 在有些平台上将不能访问内存，而是引发一个异常，
+  - 在 x86 平台上倒是仍然能访问内存，但是不对齐的指令执行效率比对齐的指令要低，
+  - 所以编译器在安排各种变量的地址时都会考虑到对齐的问题。
+- 对于本例中的结构体，编译器会把它的基地址对齐到4字节边界，也就是说，`ebp-0x10` 这个地址一定是4的整数倍。
+  - `s.a` 占一个字节，没有对齐的问题。
+  - `s.b` 占两个字节，如果 `s.b` 紧挨在 `s.a` 后面，它的地址就不能是两字节的整数倍了，所以编译器会在结构体中插入一个填充字节，使 `s.b` 的地址也是两字节的整数倍。
+  - `s.c` 占 4 字节，紧挨在 `s.b` 的后面就可以了，因为 `ebp-0xc` 这个地址也是 4 的整数倍。
+  - 那么为什么 `s.d` 的后面也要有填充位填充到 4 字节边界呢？
+    - 这是为了便于安排这个结构体后面的变量的地址，
+    - 假如用这种结构体类型组成一个数组，那么后一个结构体只需和前一个结构体紧挨着排列就可以保证它的基地址仍然对齐到4字节边界了，因为在前一个结构体的末尾已经有了填充字节。
+    - 事实上， **C 标准规定数组元素必须紧挨着排列，不能有空隙** ，这样才能保证每个元素的地址可以按「基地址 + n × 元素大小」简单计算出来。
+  - 总结一下：
+    - 对于结构体，`alignof()` 是取每个成员最大 align 来计算的，与顺序无关
+    - 个结构体的 `sizeof()` 永远都会填充到 `alignof()` 的整数倍，
+      - 在数组中存放时，能够保证每个元素都满足对齐要求
+      - 所以使用 `sizeof(A) * count` 来申请内存时，只要首地址满足对齐要求了，从来不需要关心什么第二个、第三个元素的对齐
 
 - 节省存储空间处理
   - **合理设计结构体各成员的排列顺序可以节省存储空间** ，例如上例中的结构体改成这样就可以避免产生填充字节：
@@ -8776,6 +8808,8 @@ TODO: 结构体的 const 成员 是不是也放到 `.rodata` 段了
         char d;
     } __attribute__((packed)) s;
     ```
+- 另外，64 位系统上，malloc 返回的指针会16字节对齐。[参见gnu](https://www.gnu.org/software/libc/manual/html_node/Aligned-Memory-Blocks.html)
+  - 原因： <https://stackoverflow.com/questions/70692795/why-is-malloc-16-byte-aligned>
 
 #### 2.6.4.3. Bit-field
 
@@ -8958,7 +8992,11 @@ int main(void)
 
 用 C 写程序比直接用汇编写程序更简洁，可读性更好，但效率可能不如汇编程序，因为 C 程序毕竟要经由编译器生成汇编代码，尽管现代编译器的优化已经做得很好了，但还是不如手写的汇编代码。另外，有些平台相关的指令必须手写，在 C 语言中没有等价的语法，因为 C 语言的语法和概念是对各种平台的抽象，而各种平台特有的一些东西就不会在 C 语言中出现了，例如 x86 是端口 I/O，而 C 语言就没有这个概念，所以 `in/out` 指令必须用汇编来写。
 
-C 语言简洁易读，容易组织规模较大的代码，而汇编效率高，而且写一些特殊指令必须用汇编，为了把这两方面的好处都占全了，`gcc` 提供了一种扩展语法可以在 C 代码中使用内联汇编（Inline Assembly）。最简单的格式是 `__asm__("assembly code");`，例如 `__asm__("nop");` ，`nop` 这条指令什么都不做，只是让 CPU 空转一个指令执行周期。如果需要执行多条汇编指令，则应该用 `\n\t` 将各条指令分隔开，例如：
+C 语言简洁易读，容易组织规模较大的代码，而汇编效率高，而且写一些特殊指令必须用汇编，为了把这两方面的好处都占全了，`gcc` 提供了一种扩展语法可以在 C 代码中使用内联汇编（Inline Assembly）。
+
+最简单的格式是 `__asm__("assembly code");`，例如 `__asm__("nop");` ，`nop` 这条指令什么都不做，只是让 CPU 空转一个指令执行周期。
+
+如果需要执行多条汇编指令，则应该用 `\n\t` 将各条指令分隔开，例如：
 
 ```asm6502
 __asm__("movl $1, %eax\n\t"
@@ -8976,7 +9014,15 @@ __asm__(assembler template
     );
 ```
 
-这种格式由四部分组成，第一部分是汇编指令，和上面的例子一样，第二部分和第三部分是约束条件，第二部分指示汇编指令的运算结果要输出到哪些 C 操作数中，C 操作数应该是左值表达式，第三部分指示汇编指令需要从哪些 C 操作数获得输入，第四部分是在汇编指令中被修改过的寄存器列表，指示编译器哪些寄存器的值在执行这条 `__asm__` 语句时会改变。后三个部分都是可选的，如果有就填写，没有就空着只写个 `:` 号。例如：
+这种格式由四部分组成:
+
+- 第一部分是汇编指令，和上面的例子一样，
+- 第二部分和第三部分是约束条件，
+  - 第二部分指示汇编指令的运算结果要输出到哪些 C 操作数中，C 操作数应该是左值表达式，
+  - 第三部分指示汇编指令需要从哪些 C 操作数获得输入，
+- 第四部分是在汇编指令中被修改过的寄存器列表，指示编译器哪些寄存器的值在执行这条 `__asm__` 语句时会改变。
+
+后三个部分都是可选的，如果有就填写，没有就空着只写个 `:` 号。例如：
 
 <p id="e19-6">例 19.6. 内联汇编</p>
 
@@ -8998,7 +9044,16 @@ __asm__(assembler template
   }
 ```
 
-这个程序将变量 `a` 的值赋给 `b`。`"r"(a)` 指示编译器分配一个寄存器保存变量 `a` 的值，作为汇编指令的输入，也就是指令中的 `%1`（按照约束条件的顺序，`b` 对应 `%0`，`a` 对应 `1%`），至于 `%1` 究竟代表哪个寄存器则由编译器自己决定。汇编指令首先把 `%1` 所代表的寄存器的值传给 `eax`（为了和 `%1` 这种占位符区分，`eax` 前面要求加两个 `%` 号），然后把 `eax` 的值再传给 `%0` 所代表的寄存器。`"=r"(b)` 就表示把 `%0` 所代表的寄存器的值输出给变量 `b`。在执行这两条指令的过程中，寄存器 `eax` 的值被改变了，所以把 `"%eax"` 写在第四部分，告诉编译器在执行这条 `__asm__` 语句时 `eax` 要被改写，所以在此期间不要用 `eax` 保存其它值。
+这个程序将变量 `a` 的值赋给 `b`:
+
+- `"r"(a)` 指示编译器分配一个寄存器保存变量 `a` 的值，作为汇编指令的输入，
+  - 也就是指令中的 `%1`
+  - （按照约束条件的顺序，`b` 对应 `%0`，`a` 对应 `1%`）
+  - 至于 `%1` 究竟代表哪个寄存器则由编译器自己决定
+- 汇编指令首先把 `%1` 所代表的寄存器的值传给 `eax`（为了和 `%1` 这种占位符区分，`eax` 前面要求加两个 `%` 号），
+- 然后把 `eax` 的值再传给 `%0` 所代表的寄存器。
+  - `"=r"(b)` 就表示把 `%0` 所代表的寄存器的值输出给变量 `b`。
+- 在执行这两条指令的过程中，寄存器 `eax` 的值被改变了，所以把 `"%eax"` 写在第四部分，告诉编译器在执行这条 `__asm__` 语句时 `eax` 要被改写，所以在此期间不要用 `eax` 保存其它值。
 
 我们看一下这个程序的反汇编结果：
 
@@ -9569,7 +9624,7 @@ int main(void)
 注意:
 
 - 变量声明和函数声明有一点不同，函数声明的 `extern` 可写可不写，而 **变量声明如果不写 `extern` 意思就完全变了**
-  - 如果上面的例子不写 `extern` 就表示在 `main` 函数中定义一个局部变量 `top`。
+  - 如果上面的例子不写 `extern` 就表示在 `main` 函数中定义一个局部变量 `top`（因为在block作用域，详细规则参照`变量声明的规则`）
 - 另外，`stack.c` 中的定义是 `int top = -1;`，而 `main.c` 中的 **声明不能加 Initializer** ，
   - 如果上面的例子写成 `extern int top = -1;` 则编译器会报错。
 
@@ -20526,6 +20581,14 @@ efg
 
 **以上介绍的是 `grep` 正则表达式的 Extended 规范，Basic 规范也有这些语法，只是字符 `?+{}|()` 应解释为普通字符，要表示上述特殊含义则需要加 `\` 转义** 。如果用 `grep` 而不是 `egrep`，并且不加 `-E` 参数，则应该遵照 Basic 规范来写正则表达式。
 
+
+- 四种模式，默认basic：
+  - -E: --extended-regexp
+  - -F: --fixed-strings
+  - -G: --basic-regexp
+  - -P: --perl-regexp
+    - perl regex 支持非贪婪模式 (`.*?`)
+
 ### 3.5.3. sed
 
 `sed` 意为流编辑器（Stream Editor），在 Shell 脚本和 Makefile 中作为过滤器使用非常普遍，也就是把前一个程序的输出引入 sed 的输入，经过一系列编辑命令转换为另一种格式输出。`sed` 和 `vi` 都源于早期 UNIX 的 `ed` 工具，所以很多 `sed` 命令和 `vi` 的末行命令是相同的。
@@ -24366,6 +24429,7 @@ binutils 需要在源码目录下configure和make
 
 # 5. 参考资料
 
+- [ ] [The GNU C Library](https://www.gnu.org/software/libc/manual/html_node/)
 - [ ] **[Linux C编程一站式学习](http://akaedu.github.io/book/)(重要)**
   - [markdown版本](https://github.com/52fhy/linux-c) **[本地](./资料/linux-c/README.md)**
 - [ ] [关于C或C++的#include搜索路径，lib库搜索路径](https://blog.csdn.net/yjk13703623757/article/details/83154578)

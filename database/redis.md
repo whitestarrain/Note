@@ -217,7 +217,7 @@
     - CAP理论就是说在分布式存储系统中，最多只能实现上面的两点。
   - 运用
     - 而由于当前的网络硬件肯定会出现延迟丢包等问题， **所以分区容忍性是我们必须需要实现的** 。
-    - 所以我们只能 **在一致性和可用性之间进行权衡** 
+    - 所以我们只能 **在一致性和可用性之间进行权衡**
       >多余大多数web应用，其实并不需要强一致性。因此牺牲C换取P，这是目前分布式数据库产品的方向。
     - **没有NoSQL系统能同时保证这三点**。
   - 实际示例
@@ -590,7 +590,9 @@
 | 2    | PFCOUNT key [key ...]                     | 返回给定 HyperLogLog 的基数估算值。       |
 | 3    | PFMERGE destkey sourcekey [sourcekey ...] | 将多个 HyperLogLog 合并为一个 HyperLogLog |
 
-## 3.9. 关于过期删除
+## 3.9. bitmap
+
+## 3.10. 关于过期删除
 
 > 详情看下面的过期淘汰机制
 
@@ -608,7 +610,7 @@
 
 **注意：当然无论redis删没删掉这个key外界都是查不到的；只是没删的话还占着内存而已**
 
-## 3.10. 常用命令
+## 3.11. 常用命令
 
 <details>
 <summary style="color:red;">常用命令</summary>
@@ -623,7 +625,7 @@ string:
 hash:
   hexists hget hdel hset hsetnx hlen hincr hvals hkeys
 
-list: 
+list:
   [b](l/r)(pop/push) llen lrange lset lindex
 
 set:
@@ -807,7 +809,7 @@ Redis的过期删除策略就是：**惰性删除和定期删除两种策略配�
 
 ### 6.1.2. 原理
 
-- Redis会单独创建（fork）一个子进程来进行持久化，会先将数据写入到 一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。 
+- Redis会单独创建（fork）一个子进程来进行持久化，会先将数据写入到 一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。
   > Fork:Fork的作用是复制一个与当前进程一样的进程。新进程的所有数据（变量、环境变量、程序计数器等） 数值都和原进程一致，但是是一个全新的进程，并作为原进程的子进程
 - 整个过程中，主进程是不进行任何IO操作的，这就确保了极高的性能。
 - 如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。
@@ -933,7 +935,7 @@ Redis的过期删除策略就是：**惰性删除和定期删除两种策略配�
 ### 6.2.1. 说明
 
 - 说明
-  - **以日志的形式来记录每个写操作，select操作，以及Flushall操作** ，将Redis执行过的所有写指令记录下来(读操作不记录)， 
+  - **以日志的形式来记录每个写操作，select操作，以及Flushall操作** ，将Redis执行过的所有写指令记录下来(读操作不记录)，
   - 只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，
   - 换言之，redis 重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作
 
@@ -961,7 +963,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
 
 ### 6.2.2. 原理
 
-- 开启 AOF 机制后，所有的写入命令都会 **追加到 aof_buf 缓冲区中** ，并按照指定的策略 **定时将缓冲区中的数据同步到磁盘上(appendfsync)** 。 
+- 开启 AOF 机制后，所有的写入命令都会 **追加到 aof_buf 缓冲区中** ，并按照指定的策略 **定时将缓冲区中的数据同步到磁盘上(appendfsync)** 。
   - **有专门的子进程去调用fsync()函数把数据从aof_buf写入到aof文件**
   - 默认每秒1次
 - AOF 除了记录每条命令外，还会在适当的时候 fork 出一个子进程对 AOF 文件进行重写，
@@ -1029,7 +1031,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   </details>
 
 - 原理：
-  - **AOF 文件重写并不是对原文件进行重新整理** 
+  - **AOF 文件重写并不是对原文件进行重新整理**
   - 而是 **直接读取服务器现有的键值对** ，然后用一条命令去代替之前记录这个键值对的多条命令，生成一个新的文件后去替换原来的 AOF 文件。
 
 - 触发
@@ -1126,9 +1128,9 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - 这种简单的字符串表示方式 **不符合 Redis 对字符串在安全性、效率以及功能方面的要求**。
 
 - 造成问题：
-  - **获取字符串长度为 O(N) 级别的操作** 
+  - **获取字符串长度为 O(N) 级别的操作**
     - 因为 C 不保存数组的长度，每次都需要遍历一遍整个数组；
-  - 不能很好的杜绝 **缓冲区溢出/内存泄漏** 的问题 
+  - 不能很好的杜绝 **缓冲区溢出/内存泄漏** 的问题
     - 跟上述问题原因一样，如果执行拼接 or 缩短字符串的操作，如果操作不当就很容易造成上述问题；
   - C 字符串 **只能保存文本数据**
   - 因为 C 语言中的字符串必须符合某种编码（比如 ASCII），例如中间出现的 `'\0'` 可能会被判定为提前结束的字符串而识别不了；
@@ -1143,7 +1145,7 @@ RDB 持久化方式就是将 str1,str2,str3 这三个键值对保存到 RDB文�
   - flags: 总是占用一个字节。其中的最低3个bit用来表示header的类型。
   - buf：字符串内容
 
-- 源码位置：`sds.h/sdshdr` 
+- 源码位置：`sds.h/sdshdr`
   > 可以看到 SDS 完整的实现细节
 
 - 优化
@@ -1222,7 +1224,7 @@ linkedlist是标准的双向链表，Node节点包含prev和next指针，可以�
   ![redis-45](./image/redis-45.png)
 
   - previous_entry_length：
-    - 说明：以字节为单位,记录了压缩列表中 **前一个节点的长度** 。 
+    - 说明：以字节为单位,记录了压缩列表中 **前一个节点的长度** 。
     - 长度：previous_entry_length属性的长度可以是1字节或者5字节。
       - 如果前一节点的长度小于254字节,那么 previous_entry_length属性的长度为1字节，前一节点的长度就保存在这一个字节里面。
       - 如果前一节点的长度大于等于254字节,那么 previous_entry_length属性的长度为5字节:其中属性的第一字节会被设置为0xFE(十进制值254),而之后的四个字节则用于保存前一节点的长度.
@@ -1420,7 +1422,7 @@ linkedlist是标准的双向链表，Node节点包含prev和next指针，可以�
 
     ![redis-62](./image/redis-62.png)
     ![redis-63](./image/redis-63.png)
-    ![redis-64](./image/redis-64.png) 
+    ![redis-64](./image/redis-64.png)
     ![redis-65](./image/redis-65.png)
     ![redis-66](./image/redis-66.png)
     ![redis-67](./image/redis-67.png)
@@ -1437,7 +1439,7 @@ linkedlist是标准的双向链表，Node节点包含prev和next指针，可以�
 
 - 当 hash 表因为元素逐渐被删除变得越来越稀疏时，Redis 会对 hash 表进行缩容来减少 hash 表的第一维数组空间占用
 - 所用的条件是 **元素个数低于数组长度的 10%（负载因子小于0.1）**
-- 缩容不会考虑 Redis 是否在做 `bgsave`。	
+- 缩容不会考虑 Redis 是否在做 `bgsave`。
 
 ### 7.2.5. intset 整数集合
 
@@ -1458,11 +1460,11 @@ typedef struct intset {
     int8_t contents[];  // 柔性数组
     // 可以看出，虽然contents部分指明的类型是int8_t，但是数据并不以这个类型存放。详细看升级操作
     // 数据以int16_t类型存放，每个占2个字节，能存放-32768~32767范围内的整数
-    // #define INTSET_ENC_INT16 (sizeof(int16_t)) 
+    // #define INTSET_ENC_INT16 (sizeof(int16_t))
     // 数据以int32_t类型存放，每个占4个字节，能存放-2^32-1~2^32范围内的整数
-    // #define INTSET_ENC_INT32 (sizeof(int32_t)) 
+    // #define INTSET_ENC_INT32 (sizeof(int32_t))
     // 数据以int64_t类型存放，每个占8个字节，能存放-2^64-1~2^64范围内的整数
-    // #define INTSET_ENC_INT64 (sizeof(int64_t)) 
+    // #define INTSET_ENC_INT64 (sizeof(int64_t))
 } intset;
 ```
 
@@ -1489,7 +1491,7 @@ typedef struct intset {
 
 > **问题引入**
 
-- zset 
+- zset
   - 要支持随机的插入和删除，所以它 **不宜使用数组来实现**
   - 关于排序问题，可以想到 **红黑树/ 平衡树** 这样的树形结构
 
@@ -1503,7 +1505,7 @@ typedef struct intset {
 
 - 普通链表
 
-  ![redis-49](./image/redis-49.png) 
+  ![redis-49](./image/redis-49.png)
 
   - 我们需要这个链表按照 score 值进行排序，
   - 然后因为链表不能像数组一样定位，因此查找复杂度依旧为:O(N)
@@ -1945,7 +1947,7 @@ TODO: redis geohash
 - 冤头债主: **类似于java的运行时异常** ，比如对字符串执行incr
   > ![redis-17](./image/redis-17.png)
 - 事务提交前监控变量没有修改
-  > ![redis-18](./image/redis-18.png) 
+  > ![redis-18](./image/redis-18.png)
 - 事务提交前监控变量被修改
   > ![redis-19](./image/redis-19.png)
 
@@ -2187,7 +2189,7 @@ TODO: redis cluster分片集群 搭建
 
 TODO: redis 3种缓存策略
 
-<!--file:///D:/learn/githubRepo/JavaGuide/docs/database/Redis/3%E7%A7%8D%E5%B8%B8%E7%94%A8%E7%9A%84%E7%BC%93%E5%AD%98%E8%AF%BB%E5%86%99%E7%AD%96%E7%95%A5.md-->
+<https://javaguide.cn/database/redis/3-commonly-used-cache-read-and-write-strategies.html>
 
 ### 12.1.1. 旁路缓存模式
 
@@ -2411,7 +2413,7 @@ TODO: redis 3种缓存策略
       * @param leaseTime  锁有效时间
       * @param unit       时间单位 小时、分、秒、毫秒等
       */
-      void lockInterruptibly(long leaseTime, TimeUnit unit);  
+      void lockInterruptibly(long leaseTime, TimeUnit unit);
   }
   ```
   </details>
@@ -2449,7 +2451,7 @@ TODO: redis 3种缓存策略
         /**
         * 2、另一个中断锁的方法
         */
-        void lockInterruptibly(long leaseTime, TimeUnit unit) throws InterruptedException 
+        void lockInterruptibly(long leaseTime, TimeUnit unit) throws InterruptedException
         /**
         * 3、这里已经设置了锁的有效时间默认为30秒  （commandExecutor.getConnectionManager().getCfg().getLockWatchdogTimeout()=30）
         */
@@ -2524,7 +2526,7 @@ TODO: redis 3种缓存策略
     - key 存在，但是 field 在 Hash 中不存在，说明自己不是锁持有者，无权释放锁，返回 `nil`。
     - 因为锁可重入，所以释放锁时不能把所有已获取的锁全都释放掉，一次只能释放一把锁，因此执行 `hincrby` 对锁的值**减一**。
     - 释放一把锁后，如果还有剩余的锁，则刷新锁的失效时间并返回 `0`；如果刚才释放的已经是最后一把锁，则执行 `del` 命令删除锁的 key，并发布锁释放消息，返回 `1`。
-   
+
     <details>
     <summary style="color:red;">源码</summary>
 
@@ -2608,7 +2610,7 @@ redis锁每秒并发量只有几万，如何增大并发量
   - 也就是不能去所整个方法，应该根据商品id去锁
 
 ## 12.3. 布隆过滤器
- 
+
  待补充
 
 [Redis(5)——亿级数据过滤和布隆过滤器](https://www.wmyskxz.com/2020/03/11/redis-5-yi-ji-shu-ju-guo-lu-he-bu-long-guo-lu-qi/)
@@ -2646,7 +2648,7 @@ redis锁每秒并发量只有几万，如何增大并发量
 
 ## 13.3. Redis 和 memcached 区别
 
-- 共同点 
+- 共同点
   - 都是基于内存的数据库，一般都用来当做缓存使用。
   - 都有过期策略。
   - 两者的性能都非常高。
@@ -2910,7 +2912,7 @@ TODO: redis引入多线程
   - 如果数据比较关键，某个 Slave 开启 AOF 备份数据，策略为每秒同步一次。
   - 为了主从复制的速度和连接的稳定性，Slave 和 Master 最好在同一个局域网内。
   - 尽量避免在压力较大的主库上增加从库。
-  - Master 调用 BGREWRITEAOF 重写 AOF 文件，AOF 在重写的时候会占大量的 CPU 和内存资源，导致服务 load 过高，出现短暂服务暂停现象。 
+  - Master 调用 BGREWRITEAOF 重写 AOF 文件，AOF 在重写的时候会占大量的 CPU 和内存资源，导致服务 load 过高，出现短暂服务暂停现象。
   - 为了 Master 的稳定性，主从复制不要用图状结构，用单向链表结构更稳定，即主从关系为：`Master<–Slave1<–Slave2<–Slave3…`，这样的结构也方便解决单点故障问题，实现 Slave 对 Master 的替换，也即，如果 Master 挂了，可以立马启用 Slave1 做 Master，其他不变。
 
 - 假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如何将它们全部找出来？

@@ -40,7 +40,7 @@ mime type，默认打开程序设置
 
 # picom: compositor
 
-动画需要额外的fork: [pijulius/picom](https://github.com/pijulius/picom)
+一些动画需要额外的fork: [pijulius/picom](https://github.com/pijulius/picom)
 
 # clipmenu: clipboard manager
 
@@ -80,10 +80,13 @@ mime type，默认打开程序设置
 
 # dynamic wallpaper
 
+- pixel wallpaper:
+  - artist: waneella
+  - 8bit style gif: <https://www.8bitdash.com/>
 - [paperview](https://github.com/glouw/paperview)
   - reddit: <https://www.reddit.com/r/unixporn/comments/i1dr44/dwm_high_performance_animated_wallpapers/?rdt=48263>
-  - pixel gif artist: waneella
-  - 8bit style gif: <https://www.8bitdash.com/>
+  - high performance a
+- [asetroot](https://github.com/Wilnath/asetroot)
 - [hidamari](https://github.com/jeffshee/hidamari)
 - [Xwinwrap + mpv](https://www.linuxuprising.com/2019/05/livestream-wallpaper-for-your-gnome.html)
 
