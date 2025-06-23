@@ -682,7 +682,10 @@ POPQ %rax
 2. 被调用函数使用栈上的参数，完成函数的功能，然后返回结果到`eax`寄存器中。
 3. 调用者删除栈上的参数。
 
-但是，64位代码为了尽可能多的利用X86-64架构中的寄存器，使用了新的调用习惯。称之为 **System V ABI** ，详细的细节可以参考[ABI接口规范文档](https://software.intel.com/sites/default/files/article/402129/mpx-linux64-abi.pdf)。这儿，我们总结如下：
+但是，64位代码为了尽可能多的利用X86-64架构中的寄存器，使用了新的调用习惯。称之为 **System V ABI** ，
+详细的细节可以参考[ABI接口规范文档](https://software.intel.com/sites/default/files/article/402129/mpx-linux64-abi.pdf) 或者[wiki: x86 calling conventions](https://en.wikipedia.org/wiki/X86_calling_conventions#x86-64_Calling_Conventions)
+
+这儿，我们总结如下：
 
 ![assembly-20250622170331-613619.png](./image/assembly-20250622170331-613619.png)
 
@@ -690,12 +693,18 @@ POPQ %rax
   - 处理参数：
     - 前6个参数（包括指针和其它可以存储为整形的类型）依次保存在寄存器`%rdi`、`%rsi`、`%rdx`、`%rcx`、`%r8`和`%r9`。
     - 前8个浮点型参数依次存储在寄存器`%xmm0`-`%xmm7`
-    - 超过这些寄存器个数的参数才被压栈。
-    - 如果函数接受可变数量的参数(如printf)，则必须将`%rax`寄存器设置为浮动参数的数量。
+    - 超过这些寄存器个数的参数才被压栈。这些压栈的参数是 **从右边向左** 压栈。
+      - 也就是说，如果是int类型:第7个参数，位置为`8(%rsp)`，第8个为`16(%rsp)`
+    - 如果函数接受可变数量的参数(如printf)，则必须将`%rax`寄存器设置为浮点参数的数量。
   - 如果需要的话，保存 **caller-saved** 寄存器的值 (入栈)
   - 执行 `callq function` 的时候，会将下一条指令的地址压入栈，然后跳转到callee的地址。
-    > 类似：`pushq $NEXT_INSTRUCTION; jmp FUNCTION` 或者 ` subq $8, %rsp; movq $NEXT_INSTRUCTION, (%rsp); jmp FUNCTION`
-    > 其中`NEXT_INSTRUCTION`是`callq`之后的指令的地址
+    - 基本等价：
+      - `pushq $NEXT_INSTRUCTION; jmp FUNCTION` 或者 ` subq $8, %rsp; movq $NEXT_INSTRUCTION, (%rsp); jmp FUNCTION`
+      - 其中`NEXT_INSTRUCTION`是`callq`之后的指令的地址
+    - 对齐注意：
+      - 在执行函数调用 (CALL) 之前，`%rsp` 必须 **16-byte** 对齐。
+      - `call`会把8 字节的地址压入堆栈，因此当函数获得控制权时，`%rsp` 是不对齐的。
+      - 必须提前自行腾出额外的空间，例如压入某些内容或从 %RSP 中减去 8。
 - callee:
   - 此时 %rsp 指向为 `entry %rsp` (表示开始执行 callee 指令时，`%rsp`指向的地址)
   - `pushq %rbp`: 把 **caller的栈底地址** 压到 callee 的栈中 (`%rbp` 是 callee-saved)
@@ -713,14 +722,16 @@ POPQ %rax
   - 清理为参数准备的空间
   - 如果需要的话，恢复 **caller-saved** 寄存器的值(出栈)
 
+
 调用者保存( **caller-saved** )和 被调用者保存( **callee-saved** ):
 
 - 有一些是 **调用者保存**
   - 意味着函数在调用其它函数之前必须保存这些值。
   - 比如栈顶和栈底指针
 - 另外一些则由 **被调用者保存** ，
-  - 也就是说，这些寄存器可能会在被调用函数中修改，
+  - 也就是说，这些寄存器可能会在被调用函数中修改
   - 被调用的函数可以使用这些寄存器，但它必须保证这些寄存器恢复到原来的值
+  - 其他寄存器，callee可以随便修改
 - 保存参数和结果的寄存器根本不需要保存
 
 下表详细地展示了这些细节：
@@ -1749,8 +1760,10 @@ compute:
 - [linux内核1-GNU汇编入门\_X86-64&ARM](https://tupelo-shen.github.io/2020/03/08/linux内核1-GNU汇编入门_X86-64&ARM)
 - [x64 体系结构](https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/x64-architecture)
 - [How many registers does an x86-64 CPU have?](https://blog.yossarian.net/2020/11/30/How-many-registers-does-an-x86-64-cpu-have)
-- [GNU Assembler Examples](https://cs.lmu.edu/~ray/notes/gasexamples/)
-- [x86-64 assembly from scratch](https://www.conradk.com/x86-64-assembly-from-scratch/)
+- x86-64 code example:
+  - [GNU Assembler Examples](https://cs.lmu.edu/~ray/notes/gasexamples/)
+  - [x86-64 assembly from scratch](https://www.conradk.com/x86-64-assembly-from-scratch/)
+  - [Hello x86-64 Assembly](https://adonis0147.github.io/post/hello_x86_64_assembly/)
 - extra
     - Intel64 and IA-32 Architectures Software Developer Manuals. Intel Corp., 2017. http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html
     - System V Application Binary Interface, Jan Hubicka, Andreas Jaeger, Michael Matz, and Mark Mitchell (editors), 2013. https://software.intel.com/sites/default/files/article/402129/mpx-linux64-abi.pdf
