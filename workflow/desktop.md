@@ -78,7 +78,17 @@ mime type，默认打开程序设置
 
 ## eww
 
-# dynamic wallpaper
+## quickshell
+
+比eww更好
+
+[Hyprland's 4th ricing competition](https://www.youtube.com/watch?v=DxEKF0cuEzc)
+
+[quickshell](https://quickshell.outfoxxed.me/)
+
+# wallpaper
+
+## dynamic wallpaper
 
 - pixel wallpaper:
   - artist: waneella
@@ -90,12 +100,28 @@ mime type，默认打开程序设置
 - [hidamari](https://github.com/jeffshee/hidamari)
 - [Xwinwrap + mpv](https://www.linuxuprising.com/2019/05/livestream-wallpaper-for-your-gnome.html)
 
+## color schema
+
+catppuccin: <https://github.com/catppuccin/catppuccin>:
+
+- make wallpaper fit colorscheme[farbenfroh](https://farbenfroh.io/)
+
+---
+
+others:
+
+- generate color schema throw wallpaper: [pywal](https://github.com/dylanaraps/pywal)
+- convert anything in the most popular palettes: [ImageGoNord-web](https://github.com/Schroedinger-Hat/ImageGoNord-web)
+- Recolor images to a certain palette: [repalette](https://github.com/ziap/repalette)
+
+# music
+
+- Mpris(Media Player Remote Interfacing Specification)
+- play music: mpd + ncmpcpp
+
 # other apps
 
-- play music: mpd + ncmpcpp
-- generate color schema throw wallpaper: [pywal](https://github.com/dylanaraps/pywal)
 - icon, cursor theme, grub theme...: [pling](https://www.pling.com/)
-- convert anything in the most popular palettes: [ImageGoNord-web](https://github.com/Schroedinger-Hat/ImageGoNord-web)
 
 # memo
 

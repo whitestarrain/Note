@@ -32,11 +32,18 @@ This approach has never let me down, and it has made all the difference in my li
     - [x] 系统安装 & 配置
     - [ ] hardening app: qq, wechat ...
 
+- [ ] 图灵完备通关
+
+- [ ] 《深入理解现代操作系统》
+
 - [ ] assembly language
+  - 协程实现
 
 - [ ] hack
 
 - [ ] 体验一下 rust
+  - 音乐爬虫：`https://www.flac.life/`
+  - 顺便： mpc + ncmpcpp
 
 - [ ] emacs, elisp
   - common ansi lisp
@@ -45,10 +52,6 @@ This approach has never let me down, and it has made all the difference in my li
 
 - [ ] effective cpp
   - 主要是为了刷题，同时复习一下cpp
-
-- 树莓派
-
-- [ ] 微机原理。使用电路模拟器实现一个计算器
 
 - [ ] 手机系统切 LineageOS
   - 参考: [用 Nix 编译自定义 Android 内核](https://lantian.pub/article/modify-computer/build-custom-android-kernel-with-nix.lantian/)
@@ -88,7 +91,10 @@ This approach has never let me down, and it has made all the difference in my li
 
 - [ ] [DN42 实验网络介绍及注册教程](https://lantian.pub/article/modify-website/dn42-experimental-network-2020.lantian/)
 
-- [ ] [深入架构原理与事件](https://www.thebyte.com.cn/)
+- 网站(空闲时翻翻)
+  - [ ] [深入架构原理与事件](https://www.thebyte.com.cn/)
+  - [ ] [OI wiki](https://oi-wiki.org/)
+  - [ ] [CTF PWN入门](wiki.scuctf.com)
 
 - [ ] [2021年-用更现代的方法使用PGP-上](https://ulyc.github.io/2021/01/13/2021年-用更现代的方法使用PGP-上/)
 
@@ -97,6 +103,12 @@ This approach has never let me down, and it has made all the difference in my li
 - [ ] 图形库
   - raylib
   - SDL
+
+- 电路
+  - [电子入坑百科全书](https://www.emoe.xyz/all-about-electronics/#53-gt)
+  - [嘉立创](https://lceda.cn/)
+  - [ ] 微机原理。使用电路模拟器实现一个计算器
+  - [ ] 树莓派
 
 - 金融和量化相关的知识也可以看看
   - https://www.zhihu.com/question/402824103/answer/1314615280
@@ -567,6 +579,9 @@ cookie和session攻击
 
 - [我的内存呢？Linux MemAvailable 如何计算](https://lotabout.me/2021/Linux-Available-Memory/)
 - [nixcraft](https://www.cyberciti.biz/)
+- [linux运维，包括iptables](https://www.zsythink.net/)
+- [linux性能分析](https://mp.weixin.qq.com/s/i55jZoQ1DbkYCedwg5RPLg)
+- [kcp](https://github.com/skywind3000/kcp)
 
 ### bash/shell
 
@@ -596,8 +611,6 @@ cookie和session攻击
     }
   ```
 - ncat/nc/netcat 传输文件
-- [linux运维，包括iptables](https://www.zsythink.net/)
-- [linux性能分析](https://mp.weixin.qq.com/s/i55jZoQ1DbkYCedwg5RPLg)
 - cat /dev/null
 - [Bash脚本进阶指南](https://github.com/LinuxStory/Advanced-Bash-Scripting-Guide-in-Chinese)
 - [here doc, here string](https://askubuntu.com/questions/678915/whats-the-difference-between-and-in-bash)

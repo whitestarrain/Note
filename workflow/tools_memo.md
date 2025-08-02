@@ -656,6 +656,8 @@ wget https://raw.githubusercontent.com/IreneKnapp/direct-sqlite/a74cc50c735053c7
 ## ascii art
 
 - [textik 画图](https://textik.com)
+- [ascii rain](https://github.com/nkleemann/ascii-rain)
+- [ascii 盆景](https://gitlab.com/jallbrit/cbonsai)
 
 # 参考
 

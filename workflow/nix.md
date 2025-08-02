@@ -1473,7 +1473,7 @@ nix --extra-experimental-features nix-command show-derivation /nix/store/7ky0zmi
 - `buildInputs` 声明在运行时依赖的其他包（derivation），如 glibc 等，为了支持交叉编译，还有大量 `depsXxx` 相关属性，不太理解。
 - `passthru` 该属性目前主要用户测试，该字段的变更不会影响 `.drv` 文件的生成，不会影响 hash 的生成。
 - `xxxPhase`
-  - 该函数会执行位于 `pkgs/stdenv/generic/setup.sh` 中的 `genericBuild` 函数，该函数将构建过程分成了很多各阶段。
+  - 该函数会执行位于 **`nixpkgs/pkgs/stdenv/generic/setup.sh`** 中的 `genericBuild` 函数，该函数将构建过程分成了很多各阶段。
   - 如果项目使用 autotools 来管理编译过程，则一般不用修改该类字段。
   - 如果项目中没有提供 Makefile 则需要手动提供 `buildPhase`、`installPhase` 脚本。
   - 支持的所有阶段如下（`$` 开头的表示默认没有实现）：
@@ -1495,6 +1495,8 @@ nix --extra-experimental-features nix-command show-derivation /nix/store/7ky0zmi
     distPhase
     $postPhases
     ```
+  - 其中也支持自定义各种hook，比如`prePatch`, `postPatch`, `preBuild`等，详情可以查看`nixpkgs/pkgs/stdenv/generic/setup.sh`脚本
+    - 另外，stdenv中也包含着一些常用的工具，比如`awk`, `sed`，详细可查看`nixpkgs/pkgs/stdenv/generic/common-path.nix`
 
 针对各种不同的编程语言和框架， nixpkgs 也提供了对应的便捷函数，如 `buildGoModule`，本文不多赘述，详见：[Chapter 17. Languages and frameworks](https://nixos.org/manual/nixpkgs/stable/#chap-language-support)。
 
@@ -1707,11 +1709,46 @@ nix-build: 用于构建 Nix 包，它会将构建结果放到 /nix/store 路径�
 
 在 New CLI 中对应的命令为 nix build
 
+```nix
+let
+  pkgs = import <nixpkgs> { };
+in
+derivation {
+  name = "simple";
+  builder = "${pkgs.bash}/bin/bash";
+  args = [ ./simple_builder.sh ];
+  gcc = pkgs.gcc;
+  coreutils = pkgs.coreutils;
+  src = ./simple.c;
+  system = builtins.currentSystem;
+}
+```
+
+`nix-build sample.nix` 分两步：
+
+- nix-instantiate: 解析执行sample.nix，返回 `.drv` 文件
+- nix-store -r: 基于 `.drv` 文件, 执行编译
+
+如何进入nix-build失败后的环境：<https://nixos.org/manual/nixpkgs/stable/#breakpointhook>
+
 ### nix-shell
 
 nix-shell: nix-shell 用于创建一个临时的 shell 环境。
 
+```bash
+nix-shell -E 'with import <nixpkgs> {}; callPackage ./subconverter.nix {}'
+
+unpackPhase
+patchPhase
+...
+```
+
 比较复杂，因此在 New CLI 中它被拆分成了三个子命令 `nix develop`, `nix shell` 以及 `nix run`
+
+可通过 `-I` 覆盖默认的 `$NIX_PATH`。
+其中也支持 `-I nixpkgs=channel:nixos-21.05` `-I nixpkgs=flake:nixpkgs` 这些写法
+
+<https://nix.dev/manual/nix/2.18/command-ref/new-cli/nix3-search#opt-include>
 
 ### nix-store
 
@@ -2192,6 +2229,8 @@ b 模块不能这样写。假如我们定义 `b.enable = true`，则带来了 `s
 - 示例三：跟示例二唯一的区别是改用了 `lib.mkIf` 解决了无限递归问题。
 
 其关键就在于 `lib.mkIf` 这个函数，使用它定义的 `config` 会被 Nix 延迟求值，也就是说会在 `config.foo` 求值结束后，才会真正计算 `config = lib.mkIf ...` 的值。
+
+### lib.optionalString
 
 ### lib.mkOrder, lib.mkBefore 与 lib.mkAfter
 
@@ -3332,7 +3371,7 @@ nixos-rebuild switch --option substitute false
 
 - [nixos.org](httpk://nixos.org/learn/)
 - Manual
-  - [Nix Reference Manual](https://nix.dev/manual/nix/2.25/)
+  - **[Nix Reference Manual](https://nix.dev/manual/nix/2.28/)**
   - [Nixpkgs Reference Manual](https://nixos.org/manual/nixpkgs/stable/)
   - [NixOS Reference Manual](https://nixos.org/manual/nixos/stable/)
 - [nix.dev](https://nix.dev/)
@@ -3357,6 +3396,9 @@ nixos-rebuild switch --option substitute false
   - [nix 基础](https://juejin.cn/post/7165305697561755679)
   - [使用 nix 包管理器解决 glibc 兼容问题](https://v2ex.com/t/892346)
   - [nix 学习经验：安装和打包](https://linux.cn/article-16332-1.html)
+  - 非root用户安装方案
+    - <https://github.com/NixOS/nix/issues/789#issuecomment-349145825>
+    - [nixos.wiki: Installing without root permissions](https://nixos.wiki/wiki/Nix_Installation_Guide#Installing_without_root_permissions)
 - nixpkgs
   - [nix 版本与 reversion](https://lazamar.co.uk/nix-versions/)
     - [原理](https://lazamar.github.io/download-specific-package-version-with-nix/)

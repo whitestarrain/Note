@@ -69,6 +69,7 @@ main:
     - `.string`，表示数据段中的字符串常量
     - `.type`，用于指示汇编器如何解释一个符号（例如变量名或函数名）的类型
     - `.global main`，表示符号`main`是一个全局符号，可以被其它代码模块访问
+  - 更多可以查看 [GNU 汇编器 `as` 的文档](https://sourceware.org/binutils/docs/as/index.html)
 
 - **标签(Labels)**
   - 以冒号结尾，用来把标签名和标签出现的位置关联起来。
@@ -683,7 +684,7 @@ POPQ %rax
 3. 调用者删除栈上的参数。
 
 但是，64位代码为了尽可能多的利用X86-64架构中的寄存器，使用了新的调用习惯。称之为 **System V ABI** ，
-详细的细节可以参考[ABI接口规范文档](https://software.intel.com/sites/default/files/article/402129/mpx-linux64-abi.pdf) 或者[wiki: x86 calling conventions](https://en.wikipedia.org/wiki/X86_calling_conventions#x86-64_Calling_Conventions)
+详细的细节可以参考 [System V Application Binary Interface](https://gitlab.com/x86-psABIs/x86-64-ABI) 或者[wiki: x86 calling conventions](https://en.wikipedia.org/wiki/X86_calling_conventions#x86-64_Calling_Conventions)
 
 这儿，我们总结如下：
 
@@ -1145,7 +1146,6 @@ main:
 
 unsigned finish_checksum(const char*, unsigned) __attribute__((noinline));
 
-
 unsigned checksum(const char* arg) {
     // initialize buffer
     union {
@@ -1167,11 +1167,9 @@ unsigned checksum(const char* arg) {
     return finish_checksum(buf.c, u);
 }
 
-
 unsigned finish_checksum(const char*, unsigned u) {
     return u;
 }
-
 
 // run_shell(command)
 //   Run `command` and print the first <=4096 bytes of its output.
@@ -1184,7 +1182,6 @@ void run_shell(const char* command) {
     localbuf[n] = 0;
     fputs(localbuf, stdout);
 }
-
 
 int main(int argc, char** argv) {
     for (int i = 1; i < argc; ++i) {
@@ -1255,7 +1252,7 @@ Segmentation fault (core dumped)
 但如果我们计算出有效地址并精准定位到字符串中的特定位置呢？
 
 这就是attack.txt中的攻击原理。
-通过GDB调试，我确定编译版本中run_shell函数的地址是0x400734（位于可执行文件的代码段）。
+通过GDB调试，我确定编译版本中 run_shell 函数的地址是0x400734（位于可执行文件的代码段）。
 attack.txt包含精心构造的"攻击载荷"，将0x400734这个值精准写入栈的特定位置。
 这个攻击载荷长度为115字符：其中100字符用于溢出buf，3字节存放恶意返回地址，12字节额外填充以满足x86-64 Linux栈帧的16字节对齐要求。
 
@@ -1288,17 +1285,118 @@ Segmentation fault (core dumped)
 
 其中cat attack.txt命令将攻击文件内容作为单个字符串传入程序（引号确保包含空格的攻击载荷被整体处理）。
 
-# X86-64 语法入门
+# X86-64 汇编示例
 
-TODO: 实际编写汇编入门
+gdb调试汇编程序:
 
-gdb调试汇编程序时：
 - `layout asm`
 - `b _start`
 - `start`
 - `stepi`
 - `info registers rax` (`i r rax`)
+- `x/10b 0x402000`: 展示指定地址后10个字节的值
+- `x/10i 0x402000`: 展示指定地址后10个字节对应的指令
 
+## hello world
+
+`_start` 为汇编程序入口
+
+```nasm
+# ----------------------------------------------------------------------------------------
+# Writes "Hello, World" to the console using only system calls. Runs on 64-bit Linux only.
+# To assemble and run:
+#     gcc -c hello.s && ld hello.o && ./a.out
+# or
+#     gcc -nostdlib hello.s && ./a.out
+# or
+#     as hello.s -o hello.o && ld hello.o && ./a.out
+# ----------------------------------------------------------------------------------------
+
+        .global _start
+
+        .text
+_start:
+        # write(1, message, 13)
+        mov     $1, %rax                # system call 1 is write
+        mov     $1, %rdi                # file handle 1 is stdout
+        mov     $message, %rsi          # address of string to output
+        # leaq  message(%rip), %rsi     # same as above
+        mov     $13, %rdx               # number of bytes
+        syscall                         # invoke operating system to do the write
+
+        # exit(0)
+        mov     $60, %rax               # system call 60 is exit
+        xor     %rdi, %rdi              # we want return code 0
+        syscall                         # invoke operating system to exit
+message:
+        .ascii  "Hello, world\n"
+
+```
+
+## working with c library
+
+no-pie:
+
+```nasm
+# ----------------------------------------------------------------------------------------
+# Writes "Hola, mundo" to the console using a C library. Runs on Linux or any other system
+# that does not use underscores for symbols in its C library. To assemble and run:
+#     gcc -no-pie temp.s -o temp && ./temp
+# ----------------------------------------------------------------------------------------
+
+        .global main
+
+        .text
+main:                                   # This is called by C library's startup code
+        mov     $message, %rdi          # First integer (or pointer) parameter in %rdi
+        call    puts                    # puts(message)
+        xor %rax, %rax                  # return zero
+        ret                             # Return to C library code
+message:
+        .asciz "Hola, mundo"            # asciz puts a 0 byte at the end
+```
+```
+❯ objdump -dS temp
+
+temp:     file format elf64-x86-64
+
+Disassembly of section .init:
+
+....
+0000000000401126 <main>:
+  401126:       48 c7 c7 36 11 40 00    mov    $0x401136,%rdi
+  40112d:       e8 fe fe ff ff          call   401030 <puts@plt>
+  401132:       48 31 c0                xor    %rax,%rax
+  401135:       c3                      ret
+....
+```
+
+pie (64位机器上gcc默认开启):
+
+```nasm
+# gcc temp.s -o temp && ./temp
+        .global main
+
+        .text
+main:
+        leaq message(%rip), %rdi
+        call    puts
+        xor %rax, %rax        # return zero
+        ret
+message:
+        .asciz "Hola, mundo"
+```
+```
+❯ objdump -dS temp
+
+temp:     file format elf64-x86-64
+
+0000000000001139 <main>:
+    1139:       48 8d 3d 09 00 00 00    lea    0x9(%rip),%rdi        # 1149 <message>
+    1140:       e8 eb fe ff ff          call   1030 <puts@plt>
+    1145:       48 31 c0                xor    %rax,%rax
+    1148:       c3                      ret
+```
 
 # ARM汇编基础入门
 
@@ -1753,17 +1851,19 @@ compute:
 
 # Reference
 
+- [Linux Assembly website](https://asm.sourceforge.net/)
+- x86-64 code example:
+  - [GNU Assembler Examples](https://cs.lmu.edu/~ray/notes/gasexamples/)
+  - [x86-64 assembly from scratch](https://www.conradk.com/x86-64-assembly-from-scratch/)
+  - [Hello x86-64 Assembly](https://adonis0147.github.io/post/hello_x86_64_assembly/)
+- [How many registers does an x86-64 CPU have?](https://blog.yossarian.net/2020/11/30/How-many-registers-does-an-x86-64-cpu-have)
+- [GNU assembler `as` (GNU Binutils) document](https://sourceware.org/binutils/docs/as/index.html)
 - [CS 131](https://cs.brown.edu/courses/csci1310/2020/notes/l07.html)
 - 深入浅出GNU X86-64 汇编
   - <https://blog.csdn.net/pro_technician/article/details/78173777>
   - <https://www.cnblogs.com/lsgxeva/p/11176000.html>
 - [linux内核1-GNU汇编入门\_X86-64&ARM](https://tupelo-shen.github.io/2020/03/08/linux内核1-GNU汇编入门_X86-64&ARM)
 - [x64 体系结构](https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/x64-architecture)
-- [How many registers does an x86-64 CPU have?](https://blog.yossarian.net/2020/11/30/How-many-registers-does-an-x86-64-cpu-have)
-- x86-64 code example:
-  - [GNU Assembler Examples](https://cs.lmu.edu/~ray/notes/gasexamples/)
-  - [x86-64 assembly from scratch](https://www.conradk.com/x86-64-assembly-from-scratch/)
-  - [Hello x86-64 Assembly](https://adonis0147.github.io/post/hello_x86_64_assembly/)
 - extra
     - Intel64 and IA-32 Architectures Software Developer Manuals. Intel Corp., 2017. http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html
     - System V Application Binary Interface, Jan Hubicka, Andreas Jaeger, Michael Matz, and Mark Mitchell (editors), 2013. https://software.intel.com/sites/default/files/article/402129/mpx-linux64-abi.pdf

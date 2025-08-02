@@ -45,7 +45,88 @@ cout << a << "\n" << *a_ptr << "\n";
 
 ### 默认形参
 
+```cpp
+#include<iostream>
+using namespace std;
+int add(int a=3,int b=5)
+{
+    return a+b;
+}
+int main()
+{
+    cout<<add(10,20)<<endl;
+    cout<<add(30)<<endl;
+    cout<<add()<<endl;
+    return 0;
+}
+```
+
 ### 函数重载
+
+```cpp
+#include<iostream>
+using namespace std;
+int add(int a,int b)
+{
+    cout<<"(int ,int)\t";
+    return a+b;
+}
+double add(double a,double b)
+{
+    cout<<"(doble ,double)\t";
+    return a+b;
+}
+double add(double a,int b)
+{
+    cout<<"(double ,int)\t";
+    return a+b;
+}
+double add(int a,double b)
+{
+    cout<<"(int ,double)\t";
+    return a+b;
+}
+int main()
+{
+    cout<<add(2,3)<<endl;
+    cout<<add(2.9,15.3)<<endl;
+    cout<<add(10,9.9)<<endl;
+    cout<<add(11.5,5)<<endl;
+    return 0;
+}
+```
+
+### 函数模板
+
+```cpp
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+template <typename T>
+inline T const& Max (T const& a, T const& b)
+{
+    return a < b ? b:a;
+}
+int main ()
+{
+
+    int i = 39;
+    int j = 20;
+    cout << "Max(i, j): " << Max(i, j) << endl;
+
+    double f1 = 13.5;
+    double f2 = 20.7;
+    cout << "Max(f1, f2): " << Max(f1, f2) << endl;
+
+    string s1 = "Hello";
+    string s2 = "World";
+    cout << "Max(s1, s2): " << Max(s1, s2) << endl;
+
+    return 0;
+}
+```
 
 ### 函数式编程
 
@@ -204,6 +285,81 @@ Node n = {.key=1,.val=2}
 ```
 
 > https://www.cnblogs.com/tengzijian/p/17964231
+
+### 类模板
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <string>
+#include <stdexcept>
+
+using namespace std;
+
+template <class T>
+class Stack {
+  private:
+    vector<T> elems;     // 元素
+
+  public:
+    void push(T const&);  // 入栈
+    void pop();               // 出栈
+    T top() const;            // 返回栈顶元素
+    bool empty() const{       // 如果为空则返回真。
+        return elems.empty();
+    }
+};
+
+template <class T>
+void Stack<T>::push (T const& elem)
+{
+    // 追加传入元素的副本
+    elems.push_back(elem);
+}
+
+template <class T>
+void Stack<T>::pop ()
+{
+    if (elems.empty()) {
+        throw out_of_range("Stack<>::pop(): empty stack");
+    }
+    // 删除最后一个元素
+    elems.pop_back();
+}
+
+template <class T>
+T Stack<T>::top () const
+{
+    if (elems.empty()) {
+        throw out_of_range("Stack<>::top(): empty stack");
+    }
+    // 返回最后一个元素的副本
+    return elems.back();
+}
+
+int main()
+{
+    try {
+        Stack<int>         intStack;  // int 类型的栈
+        Stack<string> stringStack;    // string 类型的栈
+
+        // 操作 int 类型的栈
+        intStack.push(7);
+        cout << intStack.top() <<endl;
+
+        // 操作 string 类型的栈
+        stringStack.push("hello");
+        cout << stringStack.top() << std::endl;
+        stringStack.pop();
+        stringStack.pop();
+    }
+    catch (exception const& ex) {
+        cerr << "Exception: " << ex.what() <<endl;
+        return -1;
+    }
+}
+```
 
 ## 可重载运算符/不可重载运算符
 

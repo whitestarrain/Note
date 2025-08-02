@@ -9716,7 +9716,7 @@ int is_empty(void)
 
 首先说为什么 `#include <stdio.h>` 用角括号，而 `#include "stack.h"` 用引号:
 
-- 对于用角括号包含的头文件
+- 对于用角括号(尖括号)包含的头文件
   - `gcc` 首先查找 `-I` 选项指定的目录
   - 然后查找系统的头文件目录（通常是 `/usr/include`，在我的系统上还包括 `/usr/lib/gcc/i486-linux-gnu/4.3.2/include`）
 - 而对于用引号包含的头文件
@@ -11232,7 +11232,8 @@ fputs(STR(strncmp("ab\"c\0d", "abc", '\4"')
 
 ##### ## 运算符 连接
 
-在宏定义中可以用 `##` 运算符 **把前后两个预处理 Token 连接成一个预处理 Token(注意是token)** ，和 `#` 运算符不同， **`##` 运算符不仅限于函数式宏定义，变量式宏定义也可以用** 。例如：
+在宏定义中可以用 `##` 运算符 **把前后两个预处理 Token 连接成一个预处理 Token(注意是token)** ，
+和 `#` 运算符不同， **`##` 运算符不仅限于函数式宏定义，变量式宏定义也可以用** 。例如：
 
 ```c
 #define CONCAT(a, b) a##b
@@ -11340,7 +11341,29 @@ printf("The first, second, and third items.");
 
   这个函数式宏定义可以这样调用：`DEBUGP("info no. %d", 1)`。也可以这样调用：`DEBUGP("info")`。
 
-  后者相当于可变参数部分传了一个空参数，但展开后并不是 `printk("info",)`，而是 `printk("info")`， **当 `__VA_ARGS` 是空参数时，`##` 运算符把它前面的 `,` 号「吃」掉了** 。
+  后者相当于可变参数部分传了一个空参数，但展开后并不是 `printk("info",)`，而是 `printk("info")`，
+  **当 `__VA_ARGS` 是空参数时，`##` 运算符把它前面的 `,` 号「吃」掉了** 。
+
+- 示例： 使用可变参数，判断第3个参数是否为有传
+
+  ```c
+  #define COUNT_ARGS(...) COUNT_ARGS_(__VA_ARGS__, 3, 2, 1, 0)
+  #define COUNT_ARGS_(a1, a2, a3, N, ...) N
+
+  #define HAS_THIRD_ARG(...) (COUNT_ARGS(__VA_ARGS__) >= 3)
+
+  #define MY_MACRO(a, b, ...) \
+      do { \
+          if (HAS_THIRD_ARG(__VA_ARGS__)) { \
+              /* 第三个参数存在 */ \
+              printf("Third arg: %s\n", #__VA_ARGS__); \
+          } else { \
+              /* 第三个参数不存在 */ \
+              printf("Only two args\n"); \
+          } \
+      } while(0)
+  ```
+
 
 #### 2.8.2.5. 宏展开的步骤
 
@@ -12773,6 +12796,8 @@ stack.o stack.d: stack.c stack.h main.h
 ### 2.9.5. 常用的 make 命令行选项
 
 `-n` 选项只打印要执行的命令，而不会真的执行命令，这个选项有助于我们检查 Makefile 写得是否正确，由于 Makefile 不是顺序执行的，用这个选项可以先看看命令的执行顺序，确认无误了再真正执行命令。
+
+或者也可以 `make SHELL='sh -x'`，这样执行的时候就能看到详细的编译命令
 
 `-C` 选项可以切换到另一个目录执行那个目录下的 Makefile，比如先退到上一级目录再执行我们的 Makefile（假设我们的源代码都放在 `testmake` 目录下）：
 

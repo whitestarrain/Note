@@ -158,9 +158,11 @@ UEFI还包含了其他功能，它支持安全引导，这意味着可以检查�
 
 - 在`MBR`分区表中，`boot.img`和`core.img`都在`MBR`中。`MBR`虽然只占用一个扇区(`512Byte`)，但是其所在的磁道是空闲的，不会用于分区，可以放下`core.img`。
 
-```livecodeserver
-Some MBR code loads additional code for a boot manager from the first track of the disk, which it assumes to be “free” space that is not allocated to any disk partition, and executes it. – MBR
-```
+  ```
+  Some MBR code loads additional code for a boot manager from the first track of the disk,
+  which it assumes to be “free” space that is not allocated to any disk partition, and executes it.
+      – MBR
+  ```
 
 - 在`GPT`分区表中，
   - bios 引导：

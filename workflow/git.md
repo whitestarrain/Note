@@ -70,7 +70,7 @@
   - `git log -S [regex]` 搜索提交历史，根据正则表达式
   - `git log --stat` 查看每次提交的修改统计
   - `git log --follow [file]` 显示某个文件的版本历史，包括文件改名
-  - `git log <commit_start> <commit_end> [^<not_from_commit>]` 查看从commit_start开始到commit_end结束的提交,且不来自于no_from_commit
+  - `git log <commit_start>..<commit_end> [^<not_from_commit>]` 查看从commit_start开始到commit_end结束的提交,且不来自于no_from_commit
   - `git log --since="2023-09-10" --before="2023-09-30"` 查看指定时间内的提交统计
   - `git log -L<start>,<end>:<file>` 查看指定文件指定行的各版本修改
   - `git shortlog -sn` 显示所有提交过的用户，按提交次数排序
@@ -418,7 +418,9 @@
 
 - `git submodule add <url>`: 添加子模块
 - `git submodule update --remote [--merge] [submodule]`: 拉取同步子模块远程提交
-- `git submodule update --init --recursive`: 根据.gitmodules，初始化或更新子模块
+- `git submodule update --init --recursive [--depth=1]`: 根据.gitmodules，初始化或更新子模块
+  - `git submodule init`: 初始化&拉取子模块
+  - `git submodule update`: 拉取远程提交
 - `git submodule sync --recursive`: 子模块url变化时，拉取新的url。操作后需要重新 `git submodule update --init --recursive`
 - `git push --recurse-submodules=check`: 检查子模块哪些需要push，并建议后续的push方式
 - `git submodule foreach 'git stash'`: 子模块遍历运行

@@ -2938,6 +2938,8 @@ Mandatory Access Control, MAC
 
 # 13. systemctl
 
+> `man systemd.unit`
+
 ## 13.1. 说明
 
 说明:
@@ -2989,10 +2991,18 @@ systemd 的 unit 类型:
 - Device unit：文件扩展名为.device，用于定义内核识别的设备；
 - Swap unit：文件扩展名为.swap, 用于标识swap设备；
 
+systemd/user:
+
+- 从 systemd 226 版本开始，`/etc/pam.d/system-login` 默认配置中的 pam_systemd 模块会在用户首次登录的时候, 自动运行一个 systemd --user 实例。
+- 只要用户还有会话存在，这个进程就不会退出；用户所有会话退出时，进程将会被销毁。
+- systemd 用户实例负责管理用户服务，用户服务可以使用systemd提供的各种便捷机制来运行守护进程或自动化任务，
+  - 如 socket 激活、定时器、依赖体系以及通过 cgroup 限制进程等。
 
 ## 13.2. 配置目录
 
-下面三个目录优先级从低到高，配置依次覆盖
+systemd的配置路径（下面三个目录优先级从低到高，配置依次覆盖）：
+
+**系统开机后默认执行 `/etc/systemd/system/` 下的脚本，一般会链接到 `/usr/lib/systemd/system/`**
 
 - `/usr/lib/systemd/system/`：
   - 每个服务最主要的启动脚本设置，有点类似以前的 /etc/init.d 下面的文件；
@@ -3007,9 +3017,15 @@ systemd 的 unit 类型:
   - 此目录下可以添加`/etc/systemd/system/<unit>.d/`文件夹
     - 文件夹下创建`.conf`文件，文件中的配置会累加或者覆盖 `/usr/lib/systemd/system/` 的配置
 
-**系统开机后默认执行 `/etc/systemd/system/` 下的脚本，一般会链接到 `/usr/lib/systemd/system/`**
 
----
+system/user 配置路径：
+
+- `/usr/lib/systemd/user/` 这里存放的是各个软件包安装的服务。
+- `~/.local/share/systemd/user/` 这里存放的是HOME目录中已安装的软件包的单元。
+- `/etc/systemd/user/` 这里存放的是由系统管理员维护的系统范围的用户服务。
+- `~/.config/systemd/user/` 这里存放的是用户自身的服务。
+
+配置与数据路径：
 
 - `/etc/sysconfig/*`：
   - 几乎所有的服务都会将初始化的一些选项设置写入到这个目录下，
@@ -4399,10 +4415,13 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
 ### 17.2.5. ss
 
-检查端口占用的进程
+检查端口占用的进程。如果权限不够的话，可能没办法获取到进程信息
 
 ```
-ss -tlnp | grep pid/port
+# 所有socket
+ss -nap | grep pid/port
+# 所有状态为listen的socket
+ss -napl | grep pid/port
 ```
 
 ### 17.2.6. network manager
@@ -4420,6 +4439,8 @@ TODO: linux 虚拟网络
 ### 17.3.4. brctl (bridge)
 
 ### 17.3.5. iptables
+
+<https://www.zsythink.net/>
 
 # 18. 软件安装
 
@@ -5171,7 +5192,7 @@ linux 进程 checkpoint 和 restore工具
   - [Linux下Rsyslog日志远程集中式管理](https://www.cnblogs.com/zhangwencheng/p/14862190.html)
   - [Understand logging in Linux](https://unix.stackexchange.com/questions/205883/understand-logging-in-linux)
 - 工具：
-  - [Linux Command](https://github.com/jaywcjlove/linux-command)
+  - [Linux Command 速查手册](https://github.com/jaywcjlove/linux-command)
 - [red hat 使用 systemd 单元文件自定义和优化您的系统](https://docs.redhat.com/zh_hans/documentation/red_hat_enterprise_linux/9/html-single/using_systemd_unit_files_to_customize_and_optimize_your_system/index)
 - [setcap 命令详解](https://www.cnblogs.com/iamfy/archive/2012/09/20/2694977.html)
 - [聊聊BIOS、UEFI、MBR、GPT、GRUB……](https://segmentfault.com/a/1190000020850901)

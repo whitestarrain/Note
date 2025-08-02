@@ -606,7 +606,7 @@ $(filter %.elc,$(files)): %.elc: %.el
     emacs -f batch-byte-compile $<
 ```
 
-$(filter %.o,$(files))表示调用Makefile的filter函数，过滤“$files”集，只要其中模式为“%.o”的内容。其它的内容，我就不用多说了吧。这个例子展示了Makefile中更大的弹性。
+`$(filter %.o,$(files))`表示调用Makefile的filter函数，过滤“`$files`”集，只要其中模式为“%.o”的内容。其它的内容，我就不用多说了吧。这个例子展示了Makefile中更大的弹性。
 
 ## 自动生成依赖性
 
@@ -1009,7 +1009,7 @@ nullstring是一个Empty变量，其中什么也没有，而我们的space的值
 dir := /foo/bar    # directory to put the frobs in
 ```
 
-dir这个变量的值是“/foo/bar”，后面还跟了4个空格，如果我们这样使用这个变量来指定别的目录——“$(dir)/file”那么就完蛋了。
+dir这个变量的值是“/foo/bar”，后面还跟了4个空格，如果我们这样使用这个变量来指定别的目录——“`$(dir)/file`”那么就完蛋了。
 
 还有一个比较有用的操作符是 `?=` ，先看示例：
 
@@ -1057,7 +1057,7 @@ y = z
 a := $($(x))
 ```
 
-在这个例子中，$(x)的值是“y”，所以$($(x))就是$(y)，于是$(a)的值就是“z”。（注意，是“x=y”，而不是“x=$(y)”）
+在这个例子中，`$(x)`的值是“y”，所以`$($(x))`就是`$(y)`，于是`$(a)`的值就是“z”。（注意，是“x=y”，而不是“`x=$(y)`”）
 
 我们还可以使用更多的层次：
 
@@ -1188,7 +1188,8 @@ variable += more
 
 ## override 指令
 
-如果有变量是通过make的命令行参数设置的，那么Makefile文件中对这个变量的赋值会被忽略。如果你想在Makefile文件中设置这类参数的值，那么，你可以使用“override”指令。其语法是:
+如果有变量是通过make的命令行参数设置的，那么Makefile文件中对这个变量的赋值会被忽略。
+**如果你想在Makefile文件中设置这类参数的值** ，那么，你可以使用“override”指令。其语法是:
 
 ```
 override <variable>; = <value>;
@@ -1196,7 +1197,7 @@ override <variable>; = <value>;
 override <variable>; := <value>;
 ```
 
-当然，你还可以追加:
+当然，你还可以 **追加** :
 
 ```
 override <variable>; += <more text>;
