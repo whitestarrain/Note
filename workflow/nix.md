@@ -1821,6 +1821,11 @@ nix-collect-garbage: 垃圾回收指令，用于清理 /nix/store 中未被使�
 
 ### nix-instantiate
 
+```
+# 输出指定包的目录
+nix-store -r $(nix-instantiate -A stdenv.cc.cc '<nixpkgs>')
+```
+
 ### nix-prefetch-url
 
 # Nixos 模块系统
@@ -2858,9 +2863,167 @@ So there’s some replication of functionality because we’re in the middle of 
 
 # Nix 打包
 
+## 打包基本流程
+
 case:
 
 - [pygobject3 相关](https://github.com/NixOS/nixpkgs/issues/45662#issuecomment-416193370)
+
+## nix 下的动态链接
+
+- nix 下的二进制文件指定`/nix`下的动态链接器
+
+  ```
+  # readelf -a `which python3`
+
+  ...
+  Program Headers:
+  Type           Offset             VirtAddr           PhysAddr
+                 FileSiz            MemSiz              Flags  Align
+  PHDR           0x0000000000000040 0x0000000000400040 0x0000000000400040
+                 0x0000000000000310 0x0000000000000310  R      0x8
+  INTERP         0x00000000000003b4 0x00000000004003b4 0x00000000004003b4
+                 0x0000000000000053 0x0000000000000053  R      0x1
+      [Requesting program interpreter: /nix/store/zdpby3l6azi78sl83cpad2qjpfj25aqx-glibc-2.40-66/lib/ld-linux-x86-64.so.2]
+  ...
+  ```
+- 且会在编译时指定动态库搜索路径
+  ```
+  # readelf -a `which python3`
+
+  ...
+  Dynamic section at offset 0x2d80 contains 32 entries:
+    Tag        Type                         Name/Value
+  0x0000000000000001 (NEEDED)             Shared library: [libpython3.13.so.1.0]
+  0x0000000000000001 (NEEDED)             Shared library: [libdl.so.2]
+  0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
+  0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
+  0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
+  0x000000000000001d (RUNPATH)            Library runpath: [/nix/store/zkaa2crvddx4cvbclym818arv5rgk4my-python3-3.13.4/lib:/nix/store/zdpby3l6azi78sl83cpad2qjpfj25aqx-glibc-2.40-66/lib:/nix/store/bmi5znnqk4kg2grkrhk6py0irc8phf6l-gcc-14.2.1.20250322-lib/lib]
+  0x000000000000000c (INIT)               0x401000
+  0x000000000000000d (FINI)               0x401138
+  0x0000000000000019 (INIT_ARRAY)         0x403d70
+  ...
+  ```
+- 并且动态链接时，默认不会根据`/etc/ld.cache` 以及 默认路径`/usr/lib`  搜索
+  > nix源码:<https://github.com/NixOS/nixpkgs/blob/8ab8ef89720a1b6be437167000d032732301bc68/pkgs/development/tools/misc/binutils/default.nix#L78-L81>
+
+---
+
+以python为例，如果使用 pip 安装 numpy 或者 torch 等调用了动态连接库的python库，在使用时可能会出现问题。
+
+import numpy是，会出现`ImportError: libstdc++.so.6: cannot open shared object file: No such file or directory` 的问题
+
+排查调用栈，可以找到一行从 `venv/lib/python3.13/site-packages/numpy/_core/_multiarray_umath.cpython-313-x86_64-linux-gnu.so` 中 import 方法的代码
+
+```python
+# numpy/_core/overrides.py
+# ...
+from numpy._core._multiarray_umath import (
+    add_docstring,  _get_implementing_args, _ArrayFunctionDispatcher)
+```
+
+检查动态库依赖，会发现有依赖 `libstdc++.so.6` 和 `libz.so.1`。
+不管是nixos还是非nixos上， 如果是使用nix下的python安装的numpy，都无法成功`import numpy`
+
+```
+# nixos上
+ldd ./venv/lib/python3.13/site-packages/numpy/_core/_multiarray_umath.cpython-313-x86_64-linux-gnu.so
+    linux-vdso.so.1 (0x00007f8b04d5c000)
+    libscipy_openblas64_-6bb31eeb.so => /home/wsain/MyRepo/_temp/cuda_test/venv/lib/python3.13/site-packages/numpy/_core/../../numpy.libs/libscipy_openblas64_-6bb31eeb.so (0x00007f8b02c00000)
+    libstdc++.so.6 => not found
+    libm.so.6 => /nix/store/zdpby3l6azi78sl83cpad2qjpfj25aqx-glibc-2.40-66/lib/libm.so.6 (0x00007f8b04c6d000)
+    libgcc_s.so.1 => /nix/store/4y1jj6cwvslmfh1bzkhbvhx77az6yf00-xgcc-14.2.1.20250322-libgcc/lib/libgcc_s.so.1 (0x00007f8b04c3f000)
+    libc.so.6 => /nix/store/zdpby3l6azi78sl83cpad2qjpfj25aqx-glibc-2.40-66/lib/libc.so.6 (0x00007f8b02800000)
+    /nix/store/zdpby3l6azi78sl83cpad2qjpfj25aqx-glibc-2.40-66/lib64/ld-linux-x86-64.so.2 (0x00007f8b04d5e000)
+    libpthread.so.0 => /nix/store/zdpby3l6azi78sl83cpad2qjpfj25aqx-glibc-2.40-66/lib/libpthread.so.0 (0x00007f8b04c38000)
+    libgfortran-040039e1-0352e75f.so.5.0.0 => /home/wsain/MyRepo/_temp/cuda_test/venv/lib/python3.13/site-packages/numpy/_core/../../numpy.libs/libgfortran-040039e1-0352e75f.so.5.0.0 (0x00007f8b02200000)
+    libquadmath-96973f99-934c22de.so.0.0.0 => /home/wsain/MyRepo/_temp/cuda_test/venv/lib/python3.13/site-packages/numpy/_core/../../numpy.libs/libquadmath-96973f99-934c22de.so.0.0.0 (0x00007f8b01e00000)
+    libz.so.1 => not found
+
+# 非nixos上。ldd会基于 /etc/ld.so.cache 以及默认 /usr/lib 查找动态库。
+# 能查到动态，但是python中因为写死了runpath，所以在python中import 时，依旧无法查到动态库
+ldd _core/_multiarray_umath.cpython-312-x86_64-linux-gnu.so
+      linux-vdso.so.1 (0x00007ffc12ffe000)
+      libscipy_openblas64_-6bb31eeb.so => /home/work/users/liyu32/baidu/medc/data-agent/.venv/lib/python3.12/site-packages/numpy/_core/../../numpy.libs/libscipy_openblas64_-6bb31eeb.so (0x00007f588f36d000)
+      libstdc++.so.6 => /opt/compiler/gcc-12/lib/libstdc++.so.6 (0x00007f588f148000)
+      libm.so.6 => /opt/compiler/gcc-12/lib/libm.so.6 (0x00007f588f008000)
+      libgcc_s.so.1 => /opt/compiler/gcc-12/lib/libgcc_s.so.1 (0x00007f588efe7000)
+      libc.so.6 => /opt/compiler/gcc-12/lib/libc.so.6 (0x00007f588ee23000)
+      /opt/compiler/gcc-12/lib64/ld-linux-x86-64.so.2 (0x00007f58911d3000)
+      libpthread.so.0 => /opt/compiler/gcc-12/lib/libpthread.so.0 (0x00007f588ee01000)
+      libgfortran-040039e1-0352e75f.so.5.0.0 => /home/work/users/liyu32/baidu/medc/data-agent/.venv/lib/python3.12/site-packages/numpy/_core/../../numpy.libs/libgfortran-040039e1-0352e75f.so.5.0.0 (0x00007f588e950000)
+      libquadmath-96973f99-934c22de.so.0.0.0 => /home/work/users/liyu32/baidu/medc/data-agent/.venv/lib/python3.12/site-packages/numpy/_core/../../numpy.libs/libquadmath-96973f99-934c22de.so.0.0.0 (0x00007f588e712000)
+      libz.so.1 => /opt/compiler/gcc-12/lib/libz.so.1 (0x00007f588e6f2000)
+```
+
+---
+
+因此在nixos上使用python时，需要额外处理。以下为几种常用的处理方式：
+
+- 通过声明式创建python环境
+
+  ```nix
+  # nix-shell
+  let
+    pkgs = import <nixpkgs> {};
+  in pkgs.mkShell {
+    packages = [
+      (pkgs.python3.withPackages (python-pkgs: [
+        python-pkgs.pandas
+        python-pkgs.requests
+      ]))
+    ];
+  }
+  ```
+
+- 依旧使用pip安装库，但在`shell.nix`，添加hook，通过`LD_LIBRARY_PATH`环境变量添加动态库搜索路径。
+
+  ```
+  {
+    pkgs ? import <nixpkgs> { },
+  }:
+  let
+    lib-path = pkgs.lib.makeLibraryPath [
+      pkgs.stdenv.cc.cc
+      # pkgs.linuxKernel.packages.linux_6_12.nvidia_x11
+      pkgs.linuxPackages.nvidia_x11
+    ];
+  in
+  pkgs.mkShell {
+    buildInputs = with pkgs; [
+      cudatoolkit
+      stdenv.cc
+    ];
+    shellHook = ''
+      # outputs.nixosConfigurations.R9000K.config.hardware.nvidia.package
+      # /nix/store/iahdfh5crqxwc9mfmsnkf21fqgqv7lh2-nvidia-x11-565.77-6.12.10/lib
+      export LD_LIBRARY_PATH=$LD_LIBRARY_PATH":${lib-path}"
+    '';
+  }
+  ```
+
+- 模拟FHS环境(参考：[nixos.wiki: python](https://nixos.wiki/wiki/Python))：
+
+  ```
+  { pkgs ? import <nixpkgs> {} }:
+  (pkgs.buildFHSUserEnv {
+    name = "pipzone";
+    targetPkgs = pkgs: (with pkgs; [
+      python314
+      python314Packages.pip
+      python314Packages.virtualenv
+      cudaPackages.cudatoolkit
+    ]);
+    runScript = "bash --init-file /etc/profile";
+  }).env
+  ```
+
+- 使用 `uv` 管理python版本和venv
+
+  ```
+  uv venv --python 3.12
+  ```
 
 # 社区工具
 
@@ -3396,6 +3559,7 @@ nixos-rebuild switch --option substitute false
   - [nix 基础](https://juejin.cn/post/7165305697561755679)
   - [使用 nix 包管理器解决 glibc 兼容问题](https://v2ex.com/t/892346)
   - [nix 学习经验：安装和打包](https://linux.cn/article-16332-1.html)
+  - [NixOS 系列（三）：软件打包，从入门到放弃](https://lantian.pub/article/modify-computer/nixos-packaging.lantian/)
   - 非root用户安装方案
     - <https://github.com/NixOS/nix/issues/789#issuecomment-349145825>
     - [nixos.wiki: Installing without root permissions](https://nixos.wiki/wiki/Nix_Installation_Guide#Installing_without_root_permissions)

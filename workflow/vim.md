@@ -483,8 +483,10 @@
 - `:g` 全局命令, `help :g`
 
   ```vim
-  " 全局删除
+  " 删除符合pattern的
   :g/pattern/d
+  " 删除不符合pattern的
+  :g!/pattern/d
   :g/^$/d "删除所有空行
 
   " 全局替换

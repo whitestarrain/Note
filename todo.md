@@ -34,7 +34,7 @@ This approach has never let me down, and it has made all the difference in my li
 
 - [ ] 图灵完备通关
 
-- [ ] 《深入理解现代操作系统》
+- [ ] CSAPP 《深入理解现代操作系统》
 
 - [ ] assembly language
   - 协程实现
@@ -66,7 +66,7 @@ This approach has never let me down, and it has made all the difference in my li
   - 主要是因为网易云音乐相关，想搞个公共存储
   - [ ] 网易云音乐解密+备份+同步 脚本
 
-- [ ] 使用 make 安装 dotfiles
+- [x] ~使用 make 安装 dotfiles~, use bashscript
   - 参考： https://github.com/jessfraz/dotfiles
   - 主要是为了解决 home 下软链目录还是软链文件的问题,stow 会自动 merge ，这会导致目录结构不同时，行为不一致
 
@@ -81,9 +81,6 @@ This approach has never let me down, and it has made all the difference in my li
   - [ ] 博客里面，写上今年规划，以及多写一些博客吧
 
 - 安全或者CTF方面可以学下，应该能学到挺多东西: [pwn](https://pwn.college/)
-
-- 深度学习进阶，自然语言处理
-  - 主要是用于整理日记，进行总结
 
 - [ ] [emacs GTD 日程管理](https://www.cnblogs.com/yangruiGB2312/p/9101838.html)
 
@@ -109,6 +106,9 @@ This approach has never let me down, and it has made all the difference in my li
   - [嘉立创](https://lceda.cn/)
   - [ ] 微机原理。使用电路模拟器实现一个计算器
   - [ ] 树莓派
+
+- 深度学习进阶，自然语言处理
+  - 主要是用于整理日记，进行总结
 
 - 金融和量化相关的知识也可以看看
   - https://www.zhihu.com/question/402824103/answer/1314615280
@@ -174,23 +174,375 @@ This approach has never let me down, and it has made all the difference in my li
 # 首选资料、公开课
 
 > - [CS自学指南](https://csdiy.wiki/)
+> - [MIT的计算课程列表](https://github.com/forthespada/Awsome-Courses?tab=readme-ov-file)
 > - [编程指北](https://csguide.cn/)
 
-- [MIT - 6.824 分布式课程](https://pdos.csail.mit.edu/6.824/)
-- [MIT 6.828 JOS与NJU ICS NEMU源码精读](https://knowledgehive.github.io/6.828/#)
-- [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
-- lc-3
-  - [主页 Introduction to Computing Systems](https://highered.mheducation.com/sites/0072467509/student_view0/)
-  - [模拟器 LC 3 Simulator Windows Version 3.01 (385.0K)](https://highered.mheducation.com/sites/dl/free/0072467509/104652/LC301.exe)
-  - [指令手册 AppendixA.pdf](https://highered.mheducation.com/sites/dl/free/0072467509/104691/pat67509_appa.pdf)
-- [编译原理](https://csguide.cn/roadmap/basic/compiler.html)
-- [计算机导论：CS 50](https://cs50.harvard.edu/college/2021/spring)
-  - [b站视频](https://www.bilibili.com/video/BV1Rb411378V)
-- 清华大学 ucore OS
-  - [ucore实验指导书](https://nankai.gitbook.io/ucore-os-on-risc-v64/)
-- MIT 6.828: Operating System Engineering
-- [SysY 语言编译到 RISC-V-北大编译实践在线文档](https://pku-minic.github.io/online-doc/#/)
-- [awesome toolbox: 收集的一些工具和库](https://github.com/lqhuang/awesome)
+<details>
+<summary style="color:red;">历史收集可简单参考。(推荐直接参考 CS自学指南)</summary>
+
+---
+
+## 入门课程
+
+- [Crash Course Computer Scienc(计算机科学速成课)](https://www.youtube.com/watch?v=tpIctyqH29Q&list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo)
+
+  这门课有很多地方都适合小白，比如视频内容精炼但不冗余，该介绍到的都介绍到了，如果你担心这门课程过于简单，那你就大错特错了。
+
+  - 从继电器讲到真空管，最后再到晶体管和集成电路；
+  - 从最原始的纸袋打孔到机器语言的出现，再到汇编语言和高级语言，如Java、C++等；
+  - 从与或非的逻辑运算到CPU运算是如何处理的；
+  - 还有机器学习、深度学习以及人工智能等最新领域的介绍
+
+  如果说唯一美中不足的点，那就是其中部分环节语速过快，对于大多数国人来说看起来比较吃力，建议英语不太好的同学看的时候调成0.75倍速去观看。
+
+  这门课并不会教你如何从0开始学会编程，而是通过不断的抽象从底层到上层进行讲解，从高层次上纵览一系列的计算机话题。
+
+  在这期间也会穿插着很多有意思的历史故事，比如在存储器的时候就会以算盘为楔子引入，告诉你算法大约出现在公元前2500年。
+
+  适当穿插历史故事，确保小白不会枯燥&中途放弃，当讲到计算机网络的时候，则是以动图的形式告诉你交换机上是如何工作的；
+
+- [CS-50](https://www.youtube.com/watch?v=8mAITcNt710)
+
+  哈佛大学公开课：计算机科学cs50是经典的计算机入门课程，他还有一个广为人知的外号：计算机速成课。
+
+- [6.0001: Introduction to Computer Science and Programming in Python](https://www.youtube.com/watch?v=xAcTmDO6NTI&list=PLUl4u3cNGP62A-ynp6v6-LGBCzeH3VAQB&index=1)
+
+  该课程适合很少或根本没有编程经验的学生。它旨在让学生了解计算在解决问题方面可以发挥的作用，并帮助所有专业的学生都有理由相信他们有能力编写小程序并使他们能够完成有用的目标。
+
+- [6.821 Structure and Interpretation of Computer Programs (SICP)](https://www.youtube.com/playlist?list=PLVFrD1dmDdvdvWFK8brOVNL7bKHpE-9w0)
+
+  SICP这门课以前在很长一段时间都是MIT入门的第一课，配套的教材SICP《计算机程序的构造和解释》也一直被认为是程序设计的经典著作，
+  其中 **研究生课程MIT 6.821** 的参考书也是这本书。
+
+- [6.042: Mathematics for Computer Science](https://www.youtube.com/playlist?list=PLUl4u3cNGP60UlabZBeeqOuoLuj_KNphQ)
+
+  本课程提供面向计算机科学和工程的离散数学的交互式介绍。主题覆盖范围大致分为三部分：
+
+  - 数学的基本概念：定义，证明，集合，函数，关系。
+  - 离散结构：图形，状态机，模块化算术，计数。
+  - 离散概率理论。
+
+
+
+## MIT 公开课
+
+### 基础科目
+
+- [6.004: Computation Structures](https://www.youtube.com/playlist?list=PLUl4u3cNGP62WVs95MNq3dQBqY2vGOtQ2)
+
+  本课程介绍了数字系统和计算机架构的设计。
+  强调以高级硬件语言表达所有硬件设计并综合设计，主题包括组合电路和顺序电路、可编程硬件指令集抽象、单周期和管道处理器实现、多级内存层次结构、虚拟内存、异常和 I/O 以及并行系统。
+
+- [6.006: Introduction to Algorithms](https://www.youtube.com/playlist?list=PLUl4u3cNGP63EdVPNLG3ToM6LaEUuStEY)
+
+  本课程介绍了计算问题的数学建模。它涵盖了用于解决这些问题的常见算法，算法范例和数据结构。
+  该课程强调算法与编程之间的关系，并介绍针对这些问题的基本性能指标和分析技术。
+
+- 6.009: Fundamentals of Programming
+
+  本课程介绍编程的基本概念。旨在培养将基本方法从编程语言应用于抽象问题的技能。
+  主题包括编程和 Python 基础知识、计算概念、软件工程、算法技术、数据类型和递归。实验组件包括软件设计、施工和设计实施。
+
+- [MIT 6.004 Computation Structures](https://www.youtube.com/playlist?list=PLDSlqjcPpoL64CJdF0Qee5oWqGS6we_Yu)
+
+- [6.005 Software Construction](https://ocw.mit.edu/courses/6-005-software-construction-spring-2016/)
+
+  Java的基础课程，可以和6.031一起学习。
+
+- [6.008 Introduction to Inference](https://web.mit.edu/6.008/www/videos/): 接口技术导论
+
+- [6.009/6.1010 Fundamentals of Programming](https://py.mit.edu/fall25): 程序设计基础
+
+- [6.033 Computer System Engineering](https://link.zhihu.com/?target=https%3A//ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-033-computer-system-engineering-spring-2018): 计算机系统
+
+- [6.034 Artificial Intelligence](https://www.youtube.com/playlist?list=PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi): 人工智能
+
+- [6.041 Probabilistic Systems Analysis and Applied Probability](https://www.youtube.com/playlist?list=PLUl4u3cNGP61MdtwGTqZA0MreSaDybji8): 概率系统分析和应用概率论
+
+- [6.042J Mathematics for Computer Science](https://www.youtube.com/playlist?list=PLB7540DEDD482705B): 计算机科学中的数学（离散数学）
+
+### 进阶科目
+
+- 6.031Software Construction (Java)
+
+  这门课主要学的是Java，没有参考书，课程链接有比较详细的线上教程；可以和6.005一起学习。
+
+- [6.033 Computer System Engineering 2005](https://www.youtube.com/playlist?list=PL6535748F59DCA484)
+
+- [6.035 Computer Language Engineering 2005](https://www.youtube.com/playlist?list=PL0300FE43396456C1)
+
+- 6.036 Introduction to Machine Learning: 机器学习导论
+
+- 6.045J Automata, Computability, and Complexity: 自动机、可计算性和复杂性
+
+- 6.046J Design and Analysis of Algorithms: 算法的设计与分析
+
+- 6.073 Creating Video Games: 视频游戏开发
+
+- 6.080/6.089 Great Ideas in Theoretical Computer Science: 计算机科学的伟大理论
+
+- 6.170 Software Studio（前端开发JavaScript）: 软件工程
+
+  这门课以前是使用Ruby的Rails和JavaScript来搭建一个全栈开发项目。
+  而现在则完全是使用JavaScript来做全栈开发，内容包含Node、MySQL、React等。
+
+- 6.171 Software Engineering for Web Applications: Web应用开发与软件工程
+
+  这门课可以和6.170一起学，主要如何构建高并发、安全、可靠等的Web应用
+
+- [6.172 Performance Engineering of Software Systems](https://www.youtube.com/playlist?list=PLUl4u3cNGP63VIBQVWguXxZZi0566y7Wf): 软件系统的性能（C语言）
+
+  这门课主要教你如何构建大型高性能的软件系统，包含性能分析、高性能、缓存优化、并行程序等，使用的是C语言。
+
+  这门课没有参考教材，倒是有一堆文章需要你阅读，具体可以去官网的Readings了解。
+
+- 6.175 Constructive Computer Architecture: 计算机体系结构
+
+    学这门课需要你掌握一门面向对象的编程语言（Java或C++）或函数式编程语言（ML或Haskell）,以及6.004、6.005
+
+- 6.207J Networks: 计算机网络
+
+- 6.338J Parallel Computing: 并行计算
+
+- 6.801 Machine Vision: 机器视觉
+
+- 6.803 The Human Intelligence Enterprise: 人工智能事业
+
+- 6.804J Computational Cognitive Science: 计算认知科学
+
+- 6.811 Principles and Practice of Assistive Technology: 辅助技术原理与实战
+
+- 6.813 User Interface Design and Implementation: 用户界面设计与实践
+
+- 6.815/6.865 Digital and Computational Photography: 数字与计算成像
+
+- 6.816/6.189 Multicore Programming Primer: 多处理器编程的艺术
+
+  这门课没有对外公开，只了解到它使用的参考教材是《多处理器编程的艺术》
+
+- 6.819/6.869：Advances in Computer Vision: 高级计算机视觉
+
+- 6.820 Fundamentals of Program Analysis: 程序分析基础
+
+- 6.837 Computer Graphics: 计算机图形学
+
+- 18.404/6.840 Theory of Computation: 计算理论导引
+
+### 专业科目
+
+- 6.034: Artificial Intelligence
+
+  本课程向学生介绍人工智能的基本知识表现、问题解决和学习方法。完成 6.034 后，学生应该能够通过组装解决方案来开发智能系统，从而解决具体的计算问题；了解知识表现、问题解决和学习在智能系统工程中的作用；并理解解决问题、视觉和语言在从计算角度理解人类智力方面的作用。
+
+- 6.033: Computer Systems Engineering (CI-M)
+
+  本课程包括有关计算机软件和硬件系统工程的主题。主题包括控制复杂性的技术；使用客户端 - 服务器设计、操作系统的强大模块化；性能，网络；命名；安全和隐私；容错系统、并发活动的原子性和协调性以及恢复；计算机系统对社会的影响。
+
+- 6.031: Elements of Software Construction
+
+  介绍软件开发的基本原则和技术：如何编写安全无错误、易于理解且易于更改的软件。主题包括规范和不变；测试、测试用例生成和覆盖范围；抽象数据类型和表示独立性；面向对象编程的设计模式；并发编程，包括消息传递和共享内存并发，死锁；函数编程，具有不可变的数据和高阶函数。
+
+- 6.036 Introduction to Machine Learning
+
+  从建模和预测的角度介绍机器学习的原则、算法和应用；制定学习问题；代表性、过度拟合、概括性；聚类、分类、概率建模；和诸如支持向量机、隐式马尔科夫模型和神经网络等方法。
+
+- 6.045: Automata, Computability, and Complexity
+
+  关于计算定义问题的数学介绍，以及计算机可以解决的问题。考虑通过有限的自动机，电路，图灵机和通信复杂性可以有效解决哪些问题。在某些情况下，为问题提供完整，严格的答案。建立根据难度对计算问题进行分类的技能。讨论其他基本问题，包括 Church-Turing 论文，P 与 NP 问题以及随机性。
+
+- 6.046: Design and Analysis of Algorithms
+
+  高效算法的设计与分析技术，强调在实践中有用的方法。主题包括排序；搜索树、堆和哈希；分而治之；动态编程；贪婪算法；摊销分析；图形算法；和最短的路径。高级主题可能包括网络流；计算几何；数字理论算法；多项式和矩阵计算；缓存；和并行计算。
+
+### 研究生课程
+
+- 6.254 Game Theory with Engineering Applications (Spring 2010) 游戏理论的工程应用
+
+- 6.823 Computer System Architecture 计算机系统架构
+
+- 6.824 Distributed Computer Systems Engineering 分布式计算机系统工程
+
+  本课程介绍分布式系统设计的抽象和实现技术。主题包括：服务器设计、网络编程、命名、存储系统、安全性和容错能力。
+
+  这门课的老师之一是Robert Morris，他是蠕虫的制造者，曾被评为5大黑客之一。
+
+- 6.825 Techniques in Artificial Intelligence (SMA 5504) 人工智能技术
+
+- 6.826 Principles of Computer Systems 计算机系统理论
+
+- 6.827 Multithreaded Parallelism: Languages and Compilers 多线程并发：语言与编译器
+
+- 6.828: Operating System Engineering 操作系统工程
+
+  前置课程是 6.033 Computer System Engineering
+
+  本课程研究操作系统工程的基本设计和实现理念。讲座以 UNIX 和研究论文的研究为基础。
+  主题包括虚拟内存、线程、上下文切换、内核、中断、系统调用、进程间通信、协调和软件和硬件之间的交互。
+  单个实验室任务涉及在 C 中实施小型操作系统，并带有一些 x86 组件。
+
+  [MIT 6.828 JOS与NJU ICS NEMU源码精读](https://knowledgehive.github.io/6.828/#)
+
+- 6.829: Computer Networks 计算机网络
+
+  全球网络基础设施如何工作，其基础是什么设计原则？
+  在实践中，这些设计原则在哪些方面受到了损害？我们如何使它在当今世界更好地工作？
+  面对快速增长的规模和异质性，我们如何确保它在未来运作良好？
+  应该如何编写 Internet 应用程序，以便它们能够为自己和使用基础结构的其他人获得最佳性能？
+  这些是本课程中正在处理的一些问题。本课程将侧重于大型联网系统的设计、实施、分析和评估。
+
+- 6.830/6.814 Database Systems 数据库系统
+
+  本课程依托数据库社区的主要阅读资料，向研究生介绍数据库系统的基础，重点介绍关系代数和数据模型、架构规范化、查询优化和事务。
+
+- 6.831 User Interface Design and Implementation 用户接口设计与应用
+
+- 6.838 Algorithms for Computer Animation 计算机动画的算法
+
+- 6.840J Theory of Computation 计算理论
+
+- 6.841J Advanced Complexity Theory 计算复杂性理论
+
+- 6.844 Computability Theory of and with Scheme（Scheme语言） 计算复杂性理论
+
+- 6.851 Advanced Data Structures 高级数据结构
+
+- 6.852J Distributed Algorithms 分布式算法
+
+- 6.854J Advanced Algorithms 高级算法
+
+- 6.855J Network Optimization 网络优化
+
+- 6.856J Randomized Algorithms 随机算法
+
+- 6.857 Network and Computer Security 网络与计算机安全
+
+- 6.858 Computer Systems Security 计算机系统安全
+
+- 6.859J Integer Programming and Combinatorial Optimization 整数规划与组合优化
+
+- 6.863J Natural Language and the Computer Representation of Knowledge 自然语言与计算机表示
+
+- 6.864 Advanced Natural Language Processing 高级自然语言处理
+
+- 6.866 Machine Vision 机器视觉
+
+- 6.867 Machine Learning 机器学习
+
+- 6.871 Knowledge-Based Applications Systems  知识型应用系统
+
+- 6.875 Cryptography and Cryptanalysis  密码学与密码分析
+
+- 6.876J Advanced Topics in Cryptography 高级密码学
+
+- 6.881 Representation and Modeling for Image Analysis 图像表示与分析方法
+
+- 6.883 Pervasive Human Centric Computing  普遍计算技术
+
+- 6.883 Program Analysis 程序分析
+
+- 6.890 Algorithmic Lower Bounds 算法复杂度分析
+
+- 6.892 Computational Models of Discourse 语篇分析的计算机模型
+
+- 6.895 Essential Coding Theory 编码要素理论
+
+- 6.895 Theory of Parallel Systems 平行系统理论
+
+- 6.896 Theory of Parallel Hardware 平行硬件理论
+
+- 6.897 Selected Topics in Cryptography 密码学论文选读
+
+### 实验课
+
+MIT针对不同的编程语言都有配套的实验课Lab，如C语言、Java、C++等
+
+- 6.087 Practical Programming in C C语言实战
+
+- 6.088 Introduction to C Memory Management and C++ Object-Oriented Programming C语言内存管理与C++面向对象
+
+- 6.090 Building Programming Experience: A Lead-In to 6.001  软件开发经验
+
+- 6.092 Introduction to Programming in Java  Java程序导论
+
+- 6.096 Introduction to C++  C++程序开发
+
+- 6.370 The Battlecode Programming Competition  人工智能竞赛
+
+## others
+
+- 操作系统
+  - [MIT 大名鼎鼎的6.828](<https://pdos.csail.mit.edu/6.828/2018/schedule.html>)
+  - [清华大学的OS课程 ucore,视频在学堂在线和bilibili均有](<http://os.cs.tsinghua.edu.cn/oscourse/OS2017spring#A.2Bi.2F56C4nGmJE->)
+  - [rust 版本ucore rcore](https://rcore-os.github.io/rCore_tutorial_doc/)
+  - [南京大学 ICS PA](https://nju-projectn.github.io/ics-pa-gitbook/ics2019/)
+  - NJU ICS PA  [Bilibili链接](https://www.bilibili.com/video/BV1qa4y1j7xk)
+  - [NJU OS](https://www.bilibili.com/video/BV1HN41197Ko?p=1)
+  - 上海交通大学 操作系统 (陈海波、夏虞斌)    [BiliBili链接](https://www.bilibili.com/video/BV1B341117Ez?from=search&seid=711317104834272627&spm_id_from=333.337.0.0)
+    - [上海交通大学 SE315](https://ipads.se.sjtu.edu.cn/courses/os/)   [视频课程（好大学在线） ](https://www.cnmooc.org/portal/course/5610/14956.mooc)   [教材 《现代操作系统——原理与实现》](https://ipads.se.sjtu.edu.cn/mospi/)   [配套 Lab](https://gitee.com/ipads-lab/chcore-lab)
+  - [CMU CSAPP 对应的课程 15213](https://www.cs.cmu.edu/~213/schedule.html)
+  - [CMU 15410/605](https://www.cs.cmu.edu/~410/)
+  - [Gate Lectures OS](https://www.youtube.com/playlist?list=PLEbnTDJUr_If_BnzJkkN_J0Tl3iXTL8vq)
+  - [清华大学 ucore OS ucore实验指导书](https://nankai.gitbook.io/ucore-os-on-risc-v64/)
+- 程序语言
+  - [Structure and Interpretation of Computer Programs](https://book.douban.com/subject/1451622/)
+  - [CIS 194(学习haskell)](https://www.seas.upenn.edu/~cis194/spring13/lectures.html)
+  - [伯克利改的Python版SICP](https://cs61a.org/)
+  - [华盛顿大学 Programming Languages](<https://www.coursera.org/lecture/programming-languages/welcome-and-some-course-mechanics-3dedE>)
+  - [浓缩版mit 6.001(SICP)](http://web.mit.edu/alexmv/6.037/)
+- 编译原理
+  - [stanford CS143](http://web.stanford.edu/class/cs143/)
+  - [stanford CS243](https://suif.stanford.edu/~courses/cs243/)
+  - [stanford CS343](http://web.stanford.edu/class/cs343/)
+  - [Gate Lectures 编译](https://www.youtube.com/playlist?list=PLEbnTDJUr_IcPtUXFy2b1sGRPsLFMghhS)
+  - [SysY 语言编译到 RISC-V-北大编译实践在线文档](https://pku-minic.github.io/online-doc/#/)
+
+- 数据库系统
+  - [CMU 15445](https://15445.courses.cs.cmu.edu/fall2019/#)
+  - [CMU 15721](https://15721.courses.cs.cmu.edu/spring2019/)
+  - [MIT 6.830/6.814](<http://db.lcs.mit.edu/6.830/sched.php>)
+  - [pingcap talent-plan](https://zhuanlan.zhihu.com/p/61340679)
+  - [instruction](https://docs.google.com/document/d/1UG0OHuL6l_hHWs3oyT9gA2n7LuYUfV23nmz0tRvXq2k/edit#heading=h.ywlair765ic9)
+  - [CS 245](http://web.stanford.edu/class/cs245/#schedule)
+  - [斯坦福 CS346](https://web.stanford.edu/class/cs346/2015/)
+  - [伯克利 CS 186](https://cs186berkeley.net/)
+  - [斯坦福 CS145](https://www.bilibili.com/video/av19616961/)
+  - [华盛顿大学 CSE444](https://courses.cs.washington.edu/courses/cse444/15sp/)
+- 分布式系统
+  - [MIT 6.824](https://pdos.csail.mit.edu/6.824/)
+  - [Stanford CS244b: Distributed systems](https://www.scs.stanford.edu/14au-cs244b/)
+  - [CMU 15-440/640, Spring 2016: Distributed Systems](https://www.cs.cmu.edu/~15-440/)
+  - **数据结构** by 邓公 from 清华：[MOOC](https://link.zhihu.com/?target=http%3A//www.xuetangx.com/courses/course-v1%3ATsinghuaX%2B30240184%2Bsp/about)
+- 数据结构与算法
+  - [UCB CS61b](https://inst.eecs.berkeley.edu/~cs61b/)
+  - [普林斯顿 Algs4](http://algs4.cs.princeton.edu/)
+  - [MIT 6.006](http://open.163.com/special/opencourse/algorithms.html)
+  - [Gate Lectures 算法和数据结构](https://www.youtube.com/playlist?list=PLEbnTDJUr_IeHYw_sfBOJ6gk5pie0yP-0)
+  - [《算法 第四版》](https://algs4.cs.princeton.edu/home/)
+  - 普林斯顿在 [Coursera](https://www.coursera.org/) 上也公开了两门对应课程：[Algorithms, Part I](https://www.coursera.org/learn/algorithms-part1) 和 [Algorightmsm, Part2](https://www.coursera.org/learn/algorithms-part2)
+  - [斯坦福 CS106b](http://open.163.com/special/opencourse/abstractions.html) (broken link)
+- 计算机网络
+  -  **计算机科学**  哈佛： [B站](https://link.zhihu.com/?target=https%3A//www.bilibili.com/video/av310513%3Ffrom%3Dsearch%26seid%3D4682685095165261117)
+  - [CMU-15441](https://computer-networks.github.io/sp19/)
+  - [cs144](https://cs144.github.io/)
+  - [top to down approach](http://uniteng.com/wiki/doku.php?id=classlog:computer_networks)
+  - [myk's top-to-down](https://github.com/moranzcw/Computer-Networking-A-Top-Down-Approach-NOTES)
+  - [伯克利 EE122](https://www2.eecs.berkeley.edu/Courses/EE122/)
+  - [Gate Lectures 计网](https://www.youtube.com/playlist?list=PLEbnTDJUr_IegfoqO4iPnPYQui46QqT0j)
+  - [斯坦福 CS144](https://www.bilibili.com/video/av11930774/)
+  - 麻省理工MIT 计算机安全与网络安全  [国内B站链接](https://www.bilibili.com/video/BV1Bm4y1o7cx?spm_id_from=333.1007.top_right_bar_window_history.content.click)
+- 计算机系统设计
+  - [nand2tetris](http://www.nand2tetris.org/)
+  - CMU 15-213 [视频](https://www.bilibili.com/video/BV1iW411d7hd)  [讲义](https://hansimov.gitbook.io/csapp/)
+  - MIT 6.828  [官网主页](https://pdos.csail.mit.edu/6.828/)   [xv6中文文档](https://th0ar.gitbooks.io/xv6-chinese/content/content/cover.html)
+  - [UCB CS61c](http://www-inst.eecs.berkeley.edu/~cs61c/)
+- 计算机图形学
+  - [game101 GAMES101: 现代计算机图形学入门](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html)
+
+
+
+---
+
+</details>
 
 # 博客、社区
 

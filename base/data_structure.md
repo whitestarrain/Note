@@ -235,6 +235,10 @@ kahn, bfs, dfs
 
 ## 3.4. Bitmap
 
+## KMP
+
+Knuth–Morris–Pratt algorithm, search word in a string
+
 # 4. 参考资料
 
 - [ ] [Indexing — Data Structures](https://medium.com/nerd-for-tech/indexing-data-structures-aa7363693c40)
