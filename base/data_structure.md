@@ -235,9 +235,23 @@ kahn, bfs, dfs
 
 ## 3.4. Bitmap
 
-## KMP
+## 3.5. KMP
 
 Knuth–Morris–Pratt algorithm, search word in a string
+
+## 3.6. distribute graph concurrent model
+
+### 3.6.1. BSP(Bulk Synchronous Parallel)
+
+<https://zh.wikipedia.org/wiki/整体同步并行>
+
+### 3.6.2. Actor model
+
+<https://en.wikipedia.org/wiki/Actor_model>
+
+[google Pregel papaer](https://15799.courses.cs.cmu.edu/fall2013/static/papers/p135-malewicz.pdf)
+
+langraph pregel
 
 # 4. 参考资料
 

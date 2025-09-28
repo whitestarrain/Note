@@ -19,6 +19,7 @@ This approach has never let me down, and it has made all the difference in my li
 
 - [x] [手把手教你构建 C 语言编译器](https://lotabout.me/2015/write-a-C-interpreter-0/)
   - [x] 编译原理复习
+  - [ ] yacc & lex
 
 - [x] 迁移 nixos
   - 一段时间不 `pacman -Syu`，就会有些包因为版本问题没办法使用
@@ -30,9 +31,10 @@ This approach has never let me down, and it has made all the difference in my li
     - [x] 初始化nix配置
     - [x] 数据备份
     - [x] 系统安装 & 配置
+    - [ ] ~kvm/qemu + gpu 直通~
     - [ ] hardening app: qq, wechat ...
 
-- [ ] 图灵完备通关
+- [ ] 图灵完备通关 80%
 
 - [ ] CSAPP 《深入理解现代操作系统》
 
@@ -41,20 +43,57 @@ This approach has never let me down, and it has made all the difference in my li
 
 - [ ] hack
 
-- [ ] 体验一下 rust
-  - 音乐爬虫：`https://www.flac.life/`
-  - 顺便： mpc + ncmpcpp
+- [ ] lang
+  - rust
+    - 拉取 clash profile && merge profile
+  - go
+    - 音乐爬虫：`https://www.flac.life/`
+    - 顺便： mpc + ncmpcpp
 
 - [ ] emacs, elisp
   - common ansi lisp
+  - [把阅读作为方法：从选书到笔记的经验分享](https://sspai.com/post/78133)
+    - 果真，我想用emacs做读书笔记，尤其是pdf书的读书笔记。扫描版pdf ocr + 导出目录我真的馋了
   - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
   - [99 lisp problems](https://www.ic.unicamp.br/~meidanis/courses/mc336/problemas-lisp/L-99_Ninety-Nine_Lisp_Problems.html)
 
 - [ ] effective cpp
   - 主要是为了刷题，同时复习一下cpp
-
-- [ ] 手机系统切 LineageOS
-  - 参考: [用 Nix 编译自定义 Android 内核](https://lantian.pub/article/modify-computer/build-custom-android-kernel-with-nix.lantian/)
+- 手机
+  - [ ] 系统切 LineageOS，参考: [用 Nix 编译自定义 Android 内核](https://lantian.pub/article/modify-computer/build-custom-android-kernel-with-nix.lantian/)
+- homelab
+  - [ ] [从零搭建 HomeLab 实践系列](https://k1r.in/posts/homelab-journey-intro/)
+  - 网络代理使用
+    - 公开
+      - [x] cloudflare
+        - [cloudflare http2](https://v2ex.com/t/1009839)
+        - [Cloudflare Tunnel前置代理支持](https://www.iots.vip/post/cloudflare-tunnel-proxy-support)
+        - [前置代理镜像](https://www.iots.vip/post/cloudflare-tunnel-proxy-support)
+      - cpolar
+    - 组网
+      - wireguard
+      - tailscale
+      - zerotier
+  - [ ] 相册同步，
+    - immich + immich app
+      - <https://www.himiku.com/archives/immich.html>
+      - <https://www.reddit.com/r/immich/comments/1h7m5da/completely_blown_away_by_image_search_once_you/>
+    - photoprism + Gallery for PhotoPrism
+  - 音乐下载：
+    - https://us.doubledouble.top/
+    - [x] 脚本开发
+      - [ ] 音乐标签支持优化
+    - 音乐标签
+      - [music-tag-web](https://github.com/xhongc/music-tag-web)
+      - [音乐标签](https://www.cnblogs.com/vinlxc/p/11347744.html)
+      - [beets](https://github.com/beetbox/beets)
+      - [musicbrainz](https://musicbrainz.org/)
+  - [ ] 音乐管理：
+    - jellyfin + finamp + jellybook
+    - [gonic](https://github.com/sentriz/gonic)
+    - [x] navidrome
+      - <https://linux.do/t/topic/56408>
+      - <https://www.navidrome.org/docs/usage/smartplaylists/>
 
 - [ ] [常用 bash 命令](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
   - star 不少，可以过一遍，看看有没有自己眼生的，总结到 linux.md 或者 bash.md 中
@@ -1346,6 +1385,7 @@ cookie和session攻击
   - [配置示例](https://github.com/spencerwooo/dotfiles-archive/blob/master/macOS/_yabairc)
 - [protobuf](https://github.com/protocolbuffers/protobuf)
   - 由 Google 开发的二进制序列化格式和相关的技术，它用于高效地序列化和反序列化结构化数据，通常用于网络通信、数据存储等场景
+  - [capnproto](https://capnproto.org/): 比protobuf更快的序列化协议，cloudflare使用
 - [Iosevka字体](https://github.com/be5invis/Iosevka)
 - [所有人都能懂的正规方程](https://blog.csdn.net/weixin_41075215/article/details/104880912)
   - 线性代数，有时间可以复习下

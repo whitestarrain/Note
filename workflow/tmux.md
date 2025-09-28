@@ -17,6 +17,7 @@ man tmux
     - `-v`: vertical-split
 
 - 修改当前window index: `move-window -t <window_id>`
+- 设置 shell 默认 init-file `set default-command "bash --init-file ~/other.sh"`
 
 # 样式配置注意
 

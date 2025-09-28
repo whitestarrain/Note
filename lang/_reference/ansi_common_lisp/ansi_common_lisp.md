@@ -994,7 +994,7 @@ Lisp 程序开发通常呼应着开发 Lisp 语言自身。在最初版本的 Li
 (A)
 ```
 
-![../_images/Figure-3.1.png](https://acl.readthedocs.io/en/latest/_images/Figure-3.1.png)
+![Figure-3.1.png](./image/Figure-3.1.png)
 
 图 3.1 一个元素的列表
 
@@ -1706,7 +1706,7 @@ T
 
 因为这个 *Cons* 对象不是一个正规列表，它用点状表示法来显示。在点状表示法，每个 *Cons* 对象的 `car` 与 `cdr` 由一个句点隔开来表示。这个 *Cons* 对象的结构展示在图 3.10 。
 
-![../_images/Figure-3.10.png](https://acl.readthedocs.io/en/latest/_images/Figure-3.10.png)
+![Figure-3.10.png](./image/Figure-3.10.png)
 
 图3.10 一个成对的 *Cons* 对象 (A cons used as a pair)
 

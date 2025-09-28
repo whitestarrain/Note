@@ -55,7 +55,7 @@
   - pkg:
     - 用于存放通过go install命令安装后的代码包的归档文件
     - （archive file，也就是以“.a”为扩展名的文件）
-  - bin: 
+  - bin:
     - 一般通过执行go install命令完成安装后，保存由Go命令源码文件生成的可执行文件（executable file）
 
 #### 1.2.1.3. GOPROXY
@@ -119,7 +119,7 @@
 
 ### 1.4.1. Go Playground
 
-- 一般小规模运行代码 或则希望把自己运行代码分享给其他人 
+- 一般小规模运行代码 或则希望把自己运行代码分享给其他人
 - 可以使用The Go Playground，这是一个可以在线运行Go的环境
 - [链接](https://play.golang.org/ )
 
@@ -249,19 +249,19 @@ Use "go help <topic>" for more information about that topic.
   ```go
   # 拉取最新
   go get github.com/foo
-  
+
   # 最新的次要版本或者修订版本(x.y.z, z是修订版本号， y是次要版本号)
   go get -u github.com/foo
-  
+
   # 升级到最新的修订版本
   go get -u=patch github.com/foo
-  
+
   # 指定版本，若存在tag，则代行使用
   go get github.com/foo@v1.2.3
-  
+
   # 指定分支
   go get github.com/foo@master
-  
+
   # 指定git提交的hash值
   go get github.com/foo@e3702bed2
   ```
@@ -366,7 +366,7 @@ Use "go help <topic>" for more information about that topic.
   var <name> <type>
   ```
 
-- var 
+- var
   - 虽然只指定了类型，但是 Go 会对其进行隐式初始化
     - 比如 string 类型就初始化为空字符串
     - int 类型就初始化为0
@@ -554,11 +554,11 @@ Use "go help <topic>" for more information about that topic.
   ```go
   package main
 
-  import (  
+  import (
       "fmt"
   )
 
-  func main() {  
+  func main() {
       i := 55      //int
       j := 67.8    //float64
       sum := i + j //不允许 int + float64
@@ -569,11 +569,11 @@ Use "go help <topic>" for more information about that topic.
   ```go
   package main
 
-  import (  
+  import (
       "fmt"
   )
 
-  func main() {  
+  func main() {
       i := 55      //int
       j := 67.8    //float64
       sum := i + int(j) //j is converted to int
@@ -1086,11 +1086,11 @@ Use "go help <topic>" for more information about that topic.
     ```go
     // 定义一个数组
     myarr := [5]int{1,2,3,4,5}
-    
+
     // 【第一种】
     // 1 表示从索引1开始，直到到索引为 2 (3-1)的元素。左闭右开
     mysli1 := myarr[1:3]
-    
+
     // 【第二种】
     // 1 表示从索引1开始，直到到索引为 2 (3-1)的元素
     mysli2 := myarr[1:3:4]
@@ -1100,17 +1100,17 @@ Use "go help <topic>" for more information about that topic.
 
       ```go
       package main
-      
+
       import "fmt"
-      
+
       func main(){
           myarr := [5]int{1,2,3,4,5}
           fmt.Printf("myarr 的长度为：%d，容量为：%d\n", len(myarr), cap(myarr))
-      
+
           mysli1 := myarr[1:3]
           fmt.Printf("mysli1 的长度为：%d，容量为：%d\n", len(mysli1), cap(mysli1))
           fmt.Println(mysli1)
-      
+
           mysli2 := myarr[1:3:4]
           fmt.Printf("mysli2 的长度为：%d，容量为：%d\n", len(mysli2), cap(mysli2))
           fmt.Println(mysli2)
@@ -1129,10 +1129,10 @@ Use "go help <topic>" for more information about that topic.
     ```go
     // 声明字符串切片
     var strList []string
-    
+
     // 声明整型切片
     var numList []int
-    
+
     // 声明一个空切片
     var numListEmpty = []int{}
     ```
@@ -1144,7 +1144,7 @@ Use "go help <topic>" for more information about that topic.
     import (
       "fmt"
     )
-    
+
     func main() {
       a := make([]int, 2)
       b := make([]int, 2, 10)
@@ -1165,7 +1165,7 @@ Use "go help <topic>" for more information about that topic.
     import (
       "fmt"
     )
-    
+
     func main() {
         a := []int{4:2}
         fmt.Println(a)
@@ -1313,7 +1313,7 @@ Use "go help <topic>" for more information about that topic.
   scores["math"] = 100
   ```
 
-- 读取元素，直接使用 `[key]` 即可 
+- 读取元素，直接使用 `[key]` 即可
   - 如果 key 不存在，也不报错，会返回其value-type 的零值。
 
   ```go
@@ -1328,7 +1328,7 @@ Use "go help <topic>" for more information about that topic.
 
 > **判断 key 是否存在**
 
-- 当key不存在，会返回value-type的零值 
+- 当key不存在，会返回value-type的零值
 - 所以你不能通过返回的结果是否是零值来判断对应的 key 是否存在，因为 key 对应的 value 值可能恰好就是零值。
 - 其实字典的下标读取可以返回两个值，使用第二个返回值都表示对应的 key 是否存在，若存在ok为true，若不存在，则ok为false
 - 示例

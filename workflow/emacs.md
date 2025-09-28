@@ -310,6 +310,8 @@ C-u 重复执行， C-u 8 C-f 会向前移动 8 个字符。
 - C-h f 显示Emcas函数的文档
 - C-h a 命令搜索
 - C-h i 阅读emacs手册
+  - 可以先搜索Info，读一下基础操作
+  - `info-apropos` 搜索所有info 文档的 index
 
 # 插件
 

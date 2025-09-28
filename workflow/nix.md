@@ -1823,6 +1823,10 @@ nix-collect-garbage: 垃圾回收指令，用于清理 /nix/store 中未被使�
 
 ```
 # 输出指定包的目录
+
+# 不会实例化
+NIXPKGS_ALLOW_UNFREE=1 nix eval --impure nixpkgs#{{pkg_name}}.outPath
+# 会实例化，把包下载下来
 nix-store -r $(nix-instantiate -A stdenv.cc.cc '<nixpkgs>')
 ```
 

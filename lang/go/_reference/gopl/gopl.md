@@ -415,11 +415,11 @@ func main() {
 
 下面的程序会演示Go语言标准库里的image这个package的用法，我们会用这个包来生成一系列的bit-mapped图，然后将这些图片编码为一个GIF动画。我们生成的图形名字叫利萨如图形（Lissajous figures），这种效果是在1960年代的老电影里出现的一种视觉特效。它们是协振子在两个纬度上振动所产生的曲线，比如两个sin正弦波分别在x轴和y轴输入会产生的曲线。图1.1是这样的一个例子：
 
-![](./image/ch1-01.png)
+![](image/ch1-01.png)
 
 译注：要看这个程序的结果，需要将标准输出重定向到一个GIF图像文件（使用 `./lissajous > output.gif` 命令）。下面是GIF图像动画效果：
 
-![](./image/ch1-01.gif)
+![](image/ch1-01.gif)
 
 这段代码里我们用了一些新的结构，包括const声明，struct结构体类型，复合声明。和我们举的其它的例子不太一样，这一个例子包含了浮点数运算。这些概念我们只在这里简单地说明一下，之后的章节会更详细地讲解。
 
@@ -696,7 +696,7 @@ URL.Path = "/help"
 
 还可以直接在浏览器里访问这个URL，然后得到返回结果，如图1.2：
 
-![](./image/ch1-02.png)
+![](image/ch1-02.png)
 
 在这个服务的基础上叠加特性是很容易的。一种比较实用的修改是为访问的url添加某种状态。比如，下面这个版本输出了同样的内容，但是会对请求的次数进行计算；对URL的请求结果会包含各种URL被访问的总次数，直接对/count这个URL的访问要除外。
 
@@ -811,7 +811,7 @@ HandleFunc函数的第二个参数是一个函数的字面值，也就是一个�
 
 做完这些修改之后，在浏览器里访问 http://localhost:8000 。每次你载入这个页面都可以看到一个像图1.3那样的动画。
 
-![](./image/ch1-03.png)
+![](image/ch1-03.png)
 
 **练习 1.12：** 修改Lissajour服务，从URL读取变量，比如你可以访问 http://localhost:8000/?cycles=20 这个URL，这样访问可以将程序里的cycles默认的5修改为20。字符串转换为数字可以调用strconv.Atoi函数。你可以在godoc里查看strconv.Atoi的详细说明。
 
@@ -2154,7 +2154,7 @@ func compute() (value float64, ok bool) {
 
 接下来的程序演示了通过浮点计算生成的图形。它是带有两个参数的z = f(x, y)函数的三维形式，使用了可缩放矢量图形（SVG）格式输出，SVG是一个用于矢量线绘制的XML标准。图3.1显示了sin(r)/r函数的输出图形，其中r是`sqrt(x*x+y*y)`。
 
-![](./image/ch3-01.png)
+![](image/ch3-01.png)
 
 <u><i>gopl.io/ch3/surface</i></u>
 ```Go
@@ -2222,7 +2222,7 @@ func f(x, y float64) float64 {
 
 第三个坐标系是一个二维的画布，起点(0,0)在左上角。画布中点的坐标用(sx,sy)表示。我们使用等角投影将三维点(x,y,z)投影到二维的画布中。
 
-![](./image/ch3-02.png)
+![](image/ch3-02.png)
 
 画布中从远处到右边的点对应较大的x值和较大的y值。并且画布中x和y值越大，则对应的z值越小。x和y的垂直和水平缩放系数来自30度角的正弦和余弦值。z的缩放系数0.4，是一个任意选择的参数。
 
@@ -2328,7 +2328,7 @@ func mandelbrot(z complex128) color.Color {
 
 用于遍历1024x1024图像每个点的两个嵌套的循环对应-2到+2区间的复数平面。程序反复测试每个点对应复数值平方值加一个增量值对应的点是否超出半径为2的圆。如果超过了，通过根据预设置的逃逸迭代次数对应的灰度颜色来代替。如果不是，那么该点属于Mandelbrot集合，使用黑色颜色标记。最终程序将生成的PNG格式分形图像输出到标准输出，如图3.3所示。
 
-![](./image/ch3-03.png)
+![](image/ch3-03.png)
 
 **练习 3.5：** 实现一个彩色的Mandelbrot图像，使用image.NewRGBA创建图像，使用color.RGBA或color.YCbCr生成颜色。
 
@@ -2468,7 +2468,7 @@ s[0] = 'L' // compile error: cannot assign to s[0]
 "Hello, world"
 ```
 
-![](./image/ch3-04.png)
+![](image/ch3-04.png)
 
 因为Go语言源文件总是用UTF8编码，并且Go语言的文本字符串也以UTF8编码的方式处理，因此我们可以将Unicode码点也写到字符串面值中。
 
@@ -2598,7 +2598,7 @@ for i := 0; i < len(s); {
 
 每一次调用DecodeRuneInString函数都返回一个r和长度，r对应字符本身，长度对应r采用UTF8编码后的编码字节数目。长度可以用于更新第i个字符在字符串中的字节索引位置。但是这种编码方式是笨拙的，我们需要更简洁的语法。幸运的是，Go语言的range循环在处理字符串的时候，会自动隐式解码UTF8字符串。下面的循环运行如图3.5所示；需要注意的是对于非ASCII，索引更新的步长将超过1个字节。
 
-![](./image/ch3-05.png)
+![](image/ch3-05.png)
 
 ```Go
 for i, r := range "Hello, 世界" {
@@ -3245,7 +3245,7 @@ months := [...]string{1: "January", /* ... */, 12: "December"}
 
 slice的切片操作s[i:j]，其中0 ≤ i≤ j≤ cap(s)，用于创建一个新的slice，引用s的从第i个元素开始到第j-1个元素的子序列。新的slice将只有j-i个元素。如果i位置的索引被省略的话将使用0代替，如果j位置的索引被省略的话将使用len(s)代替。因此，months[1:13]切片操作将引用全部有效的月份，和months[1:]操作等价；months[:]切片操作则是引用整个数组。让我们分别定义表示第二季度和北方夏天月份的slice，它们有重叠部分：
 
-![](./image/ch4-01.png)
+![](image/ch4-01.png)
 
 ```Go
 Q2 := months[4:7]
@@ -3431,11 +3431,11 @@ func main() {
 
 让我们仔细查看i=3次的迭代。当时x包含了[0 1 2]三个元素，但是容量是4，因此可以简单将新的元素添加到末尾，不需要新的内存分配。然后新的y的长度和容量都是4，并且和x引用着相同的底层数组，如图4.2所示。
 
-![](./image/ch4-02.png)
+![](image/ch4-02.png)
 
 在下一次迭代时i=4，现在没有新的空余的空间了，因此appendInt函数分配一个容量为8的底层数组，将x的4个元素[0 1 2 3]复制到新空间的开头，然后添加新的元素i，新元素的值是4。新的y的长度是5，容量是8；后面有3个空闲的位置，三次迭代都不需要分配新的空间。当前迭代中，y和x是对应不同底层数组的view。这次操作如图4.3所示。
 
-![](./image/ch4-03.png)
+![](image/ch4-03.png)
 
 内置的append函数可能使用比appendInt更复杂的内存扩展策略。因此，通常我们并不知道append调用是否导致了内存的重新分配，因此我们也不能确认新的slice和原始的slice是否引用的是相同的底层数组空间。同样，我们不能确认在原先的slice上的操作是否会影响到新的slice。因此，通常是将append返回的结果直接赋值给输入的slice变量：
 
@@ -3839,7 +3839,7 @@ charcount程序同时打印不同UTF-8编码长度的字符数目。对此，map
 
 作为一个实验，我们用charcount程序对英文版原稿的字符进行了统计。虽然大部分是英语，但是也有一些非ASCII字符。下面是排名前10的非ASCII字符：
 
-![](./image/ch4-xx-01.png)
+![](image/ch4-xx-01.png)
 
 下面是不同UTF-8编码长度的字符的数目：
 
@@ -4634,7 +4634,7 @@ $ ./issueshtml repo:golang/go commenter:gopherbot json encoder >issues.html
 
 图4.4显示了在web浏览器中的效果图。每个issue包含到Github对应页面的链接。
 
-![](./image/ch4-04.png)
+![](image/ch4-04.png)
 
 图4.4中issue没有包含会对HTML格式产生冲突的特殊字符，但是我们马上将看到标题中含有`&`和`<`字符的issue。下面的命令选择了两个这样的issue：
 
@@ -4646,7 +4646,7 @@ $ ./issueshtml repo:golang/go 3133 10535 >issues2.html
 
 我们也可以通过对信任的HTML字符串使用template.HTML类型来抑制这种自动转义的行为。还有很多采用类型命名的字符串类型分别对应信任的JavaScript、CSS和URL。下面的程序演示了两个使用不同类型的相同字符串产生的不同结果：A是一个普通字符串，B是一个信任的template.HTML字符串类型。
 
-![](./image/ch4-05.png)
+![](image/ch4-05.png)
 
 
 
@@ -4671,7 +4671,7 @@ func main() {
 
 图4.6显示了出现在浏览器中的模板输出。我们看到A的黑体标记被转义失效了，但是B没有。
 
-![](./image/ch4-06.png)
+![](image/ch4-06.png)
 
 我们这里只讲述了模板系统中最基本的特性。一如既往，如果想了解更多的信息，请自己查看包文档：
 
@@ -7320,7 +7320,7 @@ var w io.Writer
 
 在Go语言中，变量总是被一个定义明确的值初始化，即使接口类型也不例外。对于一个接口的零值就是它的类型和值的部分都是nil（图7.1）。
 
-![](./image/ch7-01.png)
+![](image/ch7-01.png)
 
 一个接口值基于它的动态类型被描述为空或非空，所以这是一个空的接口值。你可以通过使用w==nil或者w!=nil来判断接口值是否为空。调用一个空接口值上的任意方法都会产生panic:
 
@@ -7336,7 +7336,7 @@ w = os.Stdout
 
 这个赋值过程调用了一个具体类型到接口类型的隐式转换，这和显式的使用io.Writer(os.Stdout)是等价的。这类转换不管是显式的还是隐式的，都会刻画出操作到的类型和值。这个接口值的动态类型被设为`*os.File`指针的类型描述符，它的动态值持有os.Stdout的拷贝；这是一个代表处理标准输出的os.File类型变量的指针（图7.2）。
 
-![](./image/ch7-02.png)
+![](image/ch7-02.png)
 
 调用一个包含`*os.File`类型指针的接口值的Write方法，使得`(*os.File).Write`方法被调用。这个调用输出“hello”。
 
@@ -7358,7 +7358,7 @@ w = new(bytes.Buffer)
 
 现在动态类型是*bytes.Buffer并且动态值是一个指向新分配的缓冲区的指针（图7.3）。
 
-![](./image/ch7-03.png)
+![](image/ch7-03.png)
 
 Write方法的调用也使用了和之前一样的机制：
 
@@ -7384,7 +7384,7 @@ var x interface{} = time.Now()
 
 结果可能和图7.4相似。从概念上讲，不论接口值多大，动态值总是可以容下它。（这只是一个概念上的模型；具体的实现可能会非常不同）
 
-![](./image/ch7-04.png)
+![](image/ch7-04.png)
 
 接口值可以使用==和!＝来进行比较。两个接口值相等仅当它们都是nil值，或者它们的动态类型相同并且动态值也根据这个动态类型的==操作相等。因为接口值是可比较的，所以它们可以用在map的键或者作为switch语句的操作数。
 
@@ -7449,7 +7449,7 @@ if out != nil {
 
 当main函数调用函数f时，它给f函数的out参数赋了一个\*bytes.Buffer的空指针，所以out的动态值是nil。然而，它的动态类型是\*bytes.Buffer，意思就是out变量是一个包含空指针值的非空接口（如图7.5），所以防御性检查out!=nil的结果依然是true。
 
-![](./image/ch7-05.png)
+![](image/ch7-05.png)
 
 动态分配机制依然决定(\*bytes.Buffer).Write的方法会被调用，但是这次的接收者的值是nil。对于一些如\*os.File的类型，nil是一个有效的接收者（§6.2.1），但是\*bytes.Buffer类型不在这些种类中。这个方法会被调用，但是当它尝试去获取缓冲区时会发生panic。
 
@@ -7962,7 +7962,7 @@ fmt.Println(err)         // "no such file or directory"
 
 err的值图形化的呈现在图7.6中。
 
-![](./image/ch7-06.png)
+![](image/ch7-06.png)
 
 Errno是一个系统调用错误的高效表示方式，它通过一个有限的集合进行描述，并且它满足标准的错误接口。我们会在第7.11节了解到其它满足这个接口的类型。
 
@@ -8266,7 +8266,7 @@ func plot(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-![](./image/ch7-07.png)
+![](image/ch7-07.png)
 
 这个plot函数解析和检查在HTTP请求中指定的表达式并且用它来创建一个两个变量的匿名函数。这个匿名函数和来自原来surface-plotting程序中的固定函数f有相同的签名，但是它计算一个用户提供的表达式。环境变量中定义了x，y和半径r。最后plot调用surface函数，它就是gopl.io/ch3/surface中的主要函数，修改后它可以接受plot中的函数和输出io.Writer作为参数，而不是使用固定的函数f和os.Stdout。图7.7中显示了通过程序产生的3个曲面。
 
@@ -9161,7 +9161,7 @@ func main() {
 
 Channels也可以用于将多个goroutine连接在一起，一个Channel的输出作为下一个Channel的输入。这种串联的Channels就是所谓的管道（pipeline）。下面的程序用两个channels将三个goroutine串联起来，如图8.1所示。
 
-![](./image/ch8-01.png)
+![](image/ch8-01.png)
 
 第一个goroutine是一个计数器，用于生成0、1、2、……形式的整数序列，然后通过channel将该整数序列发送给第二个goroutine；第二个goroutine是一个求平方的程序，对收到的每个整数求平方，然后将平方后的结果通过第二个channel发送给第三个goroutine；第三个goroutine是一个打印程序，打印收到的每个整数。为了保持例子清晰，我们有意选择了非常简单的函数，当然三个goroutine的计算很简单，在现实中确实没有必要为如此简单的运算构建三个goroutine。
 
@@ -9321,7 +9321,7 @@ func main() {
 ch = make(chan string, 3)
 ```
 
-![](./image/ch8-02.png)
+![](image/ch8-02.png)
 
 向缓存Channel的发送操作就是向内部缓存队列的尾部插入元素，接收操作则是从队列的头部删除元素。如果内部缓存队列是满的，那么发送操作将阻塞直到因另一个goroutine执行接收操作而释放了新的队列空间。相反，如果channel是空的，接收操作将阻塞直到有另一个goroutine执行发送操作而向队列插入元素。
 
@@ -9335,7 +9335,7 @@ ch <- "C"
 
 此刻，channel的内部缓存队列将是满的（图8.3），如果有第四个发送操作将发生阻塞。
 
-![](./image/ch8-03.png)
+![](image/ch8-03.png)
 
 如果我们接收一个值，
 
@@ -9345,7 +9345,7 @@ fmt.Println(<-ch) // "A"
 
 那么channel的缓存队列将不是满的也不是空的（图8.4），因此对该channel执行的发送或接收操作都不会发生阻塞。通过这种方式，channel的缓存队列解耦了接收和发送的goroutine。
 
-![](./image/ch8-04.png)
+![](image/ch8-04.png)
 
 在某些特殊情况下，程序可能需要知道channel内部缓存的容量，可以用内置的cap函数获取：
 
@@ -9581,7 +9581,7 @@ sizes channel携带了每一个文件的大小到main goroutine，在main gorout
 
 图8.5 表明了makethumbnails6函数中事件的序列。纵列表示goroutine。窄线段代表sleep，粗线段代表活动。斜线箭头代表用来同步两个goroutine的事件。时间向下流动。注意main goroutine是如何大部分的时间被唤醒执行其range循环，等待worker发送值或者closer来关闭channel的。
 
-![](./image/ch8-05.png)
+![](image/ch8-05.png)
 
 **练习 8.4：** 修改reverb2服务器，在每一个连接中使用sync.WaitGroup来计数活跃的echo goroutine。当计数减为零时，关闭TCP连接的写入，像练习8.3中一样。验证一下你的修改版netcat3客户端会一直等待所有的并发“喊叫”完成，即使是在标准输入流已经关闭的情况下。
 
@@ -11765,7 +11765,7 @@ func (dec *Decoder) Decode(v interface{}) error
 
 第二个工具，名字也叫godoc，它提供可以相互交叉引用的HTML页面，但是包含和`go doc`命令相同以及更多的信息。图10.1演示了time包的文档，11.6节将看到godoc演示可以交互的示例程序。godoc的在线服务 https://godoc.org ，包含了成千上万的开源包的检索工具。
 
-![](./image/ch10-01.png)
+![](image/ch10-01.png)
 
 你也可以在自己的工作区目录运行godoc服务。运行下面的命令，然后在浏览器查看 http://localhost:8000/pkg 页面：
 
@@ -12439,7 +12439,7 @@ func TestCheckQuotaNotifiesUser(t *testing.T) {
 
 考虑下这两个包：net/url包，提供了URL解析的功能；net/http包，提供了web服务和HTTP客户端的功能。如我们所料，上层的net/http包依赖下层的net/url包。然后，net/url包中的一个测试是演示不同URL和HTTP客户端的交互行为。也就是说，一个下层包的测试代码导入了上层的包。
 
-![](./image/ch11-01.png)
+![](image/ch11-01.png)
 
 这样的行为在net/url包的测试代码中会导致包的循环依赖，正如图11.1中向上箭头所示，同时正如我们在10.1节所讲的，Go语言规范是禁止包的循环依赖的。
 
@@ -12447,7 +12447,7 @@ func TestCheckQuotaNotifiesUser(t *testing.T) {
 
 因为外部测试包是一个独立的包，所以能够导入那些`依赖待测代码本身`的其他辅助包；包内的测试代码就无法做到这点。在设计层面，外部测试包是在所有它依赖的包的上层，正如图11.2所示。
 
-![](./image/ch11-02.png)
+![](image/ch11-02.png)
 
 通过避免循环的导入依赖，外部测试包可以更灵活地编写测试，特别是集成测试（需要测试多个组件之间的交互），可以像普通应用程序那样自由地导入其他包。
 
@@ -12647,7 +12647,7 @@ ok      gopl.io/ch7/eval         0.032s      coverage: 68.5% of statements
 $ go tool cover -html=c.out
 ```
 
-![](./image/ch11-03.png)
+![](image/ch11-03.png)
 
 绿色的代码块被测试覆盖到了，红色的则表示没有被覆盖到。为了清晰起见，我们将背景红色文本的背景设置成了阴影效果。我们可以马上发现unary操作的Eval方法并没有被执行到。如果我们针对这部分未被覆盖的代码添加下面的测试用例，然后重新运行上面的命令，那么我们将会看到那个红色部分的代码也变成绿色了：
 
@@ -12865,7 +12865,7 @@ func ExampleIsPalindrome() {
 
 示例函数的第三个目的提供一个真实的演练场。 http://golang.org 就是由godoc提供的文档服务，它使用了Go Playground让用户可以在浏览器中在线编辑和运行每个示例函数，就像图11.4所示的那样。这通常是学习函数使用或Go语言特性最快捷的方式。
 
-![](./image/ch11-04.png)
+![](image/ch11-04.png)
 
 本书最后的两章是讨论reflect和unsafe包，一般的Go程序员很少使用它们，事实上也很少需要用到。因此，如果你还没有写过任何真实的Go程序的话，现在可以先去写些代码了。
 
@@ -13951,7 +13951,7 @@ var x struct {
 
 下面显示了对x和它的三个字段调用unsafe包相关函数的计算结果：
 
-![](./image/ch13-01.png)
+![](image/ch13-01.png)
 
 32位系统：
 

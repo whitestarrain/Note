@@ -389,7 +389,48 @@ Nginx的指令远远不止下面这些。
 location [ = | ~ | ~* | ^~ ] uri { ... }
 ```
 
-<https://stackoverflow.com/questions/5238377/nginx-location-priority>
+> <https://stackoverflow.com/questions/5238377/nginx-location-priority>
+
+From the [HTTP core module docs](https://nginx.org/en/docs/http/ngx_http_core_module.html#location):
+
+1. Directives with the "=" prefix that match the query exactly. If found, searching stops.
+2. All remaining directives with conventional strings. If this match used the "^~" prefix, searching stops.
+3. Regular expressions, in the order they are defined in the configuration file.
+4. If #3 yielded a match, that result is used. Otherwise, the match from #2 is used.
+
+Example from the documentation:
+
+```
+location  = / {
+  # matches the query / only.
+  [ configuration A ]
+}
+location  / {
+  # matches any query, since all queries begin with /, but regular
+  # expressions and any longer conventional blocks will be
+  # matched first.
+  [ configuration B ]
+}
+location /documents/ {
+  # matches any query beginning with /documents/ and continues searching,
+  # so regular expressions will be checked. This will be matched only if
+  # regular expressions don't find a match.
+  [ configuration C ]
+}
+location ^~ /images/ {
+  # matches any query beginning with /images/ and halts searching,
+  # so regular expressions will not be checked.
+  [ configuration D ]
+}
+location ~* \.(gif|jpg|jpeg)$ {
+  # matches any request ending in gif, jpg, or jpeg. However, all
+  # requests to the /images/ directory will be handled by
+  # Configuration D.
+  [ configuration E ]
+}
+```
+
+If it's still confusing, [here's a longer explanation](http://nginx.org/en/docs/http/ngx_http_core_module.html#location).
 
 #### 4.3.5.3. root指令
 

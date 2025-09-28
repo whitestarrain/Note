@@ -583,6 +583,7 @@ BASE是对基本可用（Basically Available）、软状态（ Soft State）、�
   - JSON（Javascript Object Notation）起源于弱类型语言Javascript， 是采用"Attribute－value"的方式来描述对象协议。与XML相比，其协议比较简单，解析速度比较快。
   - Protocol Buffers 是google提供的一个开源序列化框架，是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化，或者说序列化。它很适合做数据存储或 RPC 数据交换格式。可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。同 XML 相比， Protobuf 的主要优点在于性能高。它以高效的二进制方式存储，比 XML 小 3 到 10 倍，快 20 到 100 倍。
   - Thrift 既是rpc框架，同时也具有自己内部定义的传输协议规范(TProtocol)和传输数据标准(TTransports)，通过IDL脚本对传输数据的数据结构(struct) 和传输数据的业务逻辑(service)根据不同的运行环境快速的构建相应的代码，并且通过自己内部的序列化机制对传输的数据进行简化和压缩提高高并发、 大型系统中数据交互的成本。
+  - capnprot: 比 protocol 更快的序列化框架
 
 ### 4.1.4. 常见RPC框架
 
@@ -1298,5 +1299,4 @@ CRDTs 的应用场景:
 - [ ] [《数据密集型应用系统设计（DDIA）》]()
 - [ ] [阿里微服务生态体系](https://seata.io/zh-cn/)
 - [ ] [分布式数据库的一致性问题与共识算法](https://thiscute.world/posts/consistency-and-consensus-algorithm/)
-
 
