@@ -1864,6 +1864,7 @@ compute:
   - <https://www.cnblogs.com/lsgxeva/p/11176000.html>
 - [linux内核1-GNU汇编入门\_X86-64&ARM](https://tupelo-shen.github.io/2020/03/08/linux内核1-GNU汇编入门_X86-64&ARM)
 - [x64 体系结构](https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/x64-architecture)
+- [PIC、PIE 和 Copy Relocation](https://stdrc.cc/post/2021/12/30/pic-pie-and-copy-relocation/)
 - extra
     - Intel64 and IA-32 Architectures Software Developer Manuals. Intel Corp., 2017. http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html
     - System V Application Binary Interface, Jan Hubicka, Andreas Jaeger, Michael Matz, and Mark Mitchell (editors), 2013. https://software.intel.com/sites/default/files/article/402129/mpx-linux64-abi.pdf

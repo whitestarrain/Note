@@ -547,6 +547,10 @@ https://github.com/karlstav/cava
 
 ## Zen browser
 
+## nyxt browser
+
+hacker's browser
+
 ## 电路模拟器
 
 - Digital-Logic-Sim: 简单的数字逻辑模拟器

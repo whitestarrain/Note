@@ -30,3 +30,4 @@ TODO: 软件工程相关概念回顾整理
 
 - [ ] 《软件工程导论》
 - [ ] [DDD领域驱动设计落地实践](https://www.cnblogs.com/dennyzhangdd/p/14376904.html)
+- [ ] [一文读懂：领域驱动设计DDD](https://www.zhihu.com/tardis/zm/art/641295531?source_id=1003)

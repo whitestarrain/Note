@@ -1435,6 +1435,7 @@ ClassName& operator=(ClassName&&); // 移动赋值运算符
 
 # 参考资料
 
+-  **[cppreference](https://cppreference.com/)**
 - 《Essential c++》
 - 《现代C++教程》
 - [CMake、CMakeLists.txt、GCC、Clang、LLVM、MinGW、交叉编译](https://zhupite.com/program/CMake-GCC-Clang-LLVM-MinGW-CrossCompile.html)

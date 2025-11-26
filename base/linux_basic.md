@@ -4650,6 +4650,20 @@ TODO: linux 虚拟网络
 
 注意：`lsof`输出的一列中有tid，也就是线程id（但一个进程内不同线程间使用的同一个fd），而`lsof -p`或`lsof +D`输出时则没有线程id
 
+open file 数量限制 (`man proc_sys_fs`):
+
+```
+# 系统级别的 open file数量限制
+# cat /proc/sys/fs/file-max
+65536
+# 系统级别的当前的 open file 数量
+# cat /proc/sys/fs/file-nr
+40096   0       65536
+# lsof 会将许多文件重复两次或多次，例如 /dev/null，所以会比上面的多得多
+# lsof | wc -l
+521504
+```
+
 ## 19.4. pstack 跟踪进程栈
 
 ## 19.5. strace 跟踪进程中的系统调用

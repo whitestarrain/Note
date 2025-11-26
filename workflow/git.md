@@ -108,7 +108,7 @@
 
   ```bash
   # 统计所有用户的修改行数
-  log_option='<options>' && git log --format='%aN' ${log_option} | sort -u | while read name; do echo -en "$name\t"; git log --author="$name" --pretty=tformat: --numstat ${log_option} | awk '{ add += $1; subs += $2; } END { printf "added lines: %s, removed lines: %s \n", add, subs}' -; done
+  log_option='' && git log --format='%aN' ${log_option} | sort -u | while read name; do echo -en "$name\t"; git log --author="$name" --pretty=tformat: --numstat ${log_option} | awk '{ add += $1; subs += $2; } END { printf "added lines: %s, removed lines: %s \n", add, subs}' -; done
 
   # options 详见log文档或上述示例
 

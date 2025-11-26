@@ -32,6 +32,8 @@ This approach has never let me down, and it has made all the difference in my li
     - [x] 数据备份
     - [x] 系统安装 & 配置
     - [ ] ~kvm/qemu + gpu 直通~
+    - [ ] fn key bind
+      - [i3wm: 无关生产力，且远不止窗口管理](https://www.hugchange.life/posts/i3wm.html#d28da411-96cf-460d-a578-794cc878116c)
     - [ ] hardening app: qq, wechat ...
 
 - [ ] 图灵完备通关 80%
@@ -52,6 +54,7 @@ This approach has never let me down, and it has made all the difference in my li
 
 - [ ] emacs, elisp
   - common ansi lisp
+  - [Emacs 配置](https://www.hugchange.life/posts/202401_core_emacs_config.html)
   - [把阅读作为方法：从选书到笔记的经验分享](https://sspai.com/post/78133)
     - 果真，我想用emacs做读书笔记，尤其是pdf书的读书笔记。扫描版pdf ocr + 导出目录我真的馋了
   - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
@@ -252,6 +255,8 @@ This approach has never let me down, and it has made all the difference in my li
 
   SICP这门课以前在很长一段时间都是MIT入门的第一课，配套的教材SICP《计算机程序的构造和解释》也一直被认为是程序设计的经典著作，
   其中 **研究生课程MIT 6.821** 的参考书也是这本书。
+
+  [Structure and Interpretation of Computer Programs](https://sarabander.github.io/sicp/html/)
 
 - [6.042: Mathematics for Computer Science](https://www.youtube.com/playlist?list=PLUl4u3cNGP60UlabZBeeqOuoLuj_KNphQ)
 
