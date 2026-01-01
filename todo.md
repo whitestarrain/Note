@@ -122,6 +122,9 @@ This approach has never let me down, and it has made all the difference in my li
   - [ ] 完工遗留的 blog 草稿
   - [ ] 博客里面，写上今年规划，以及多写一些博客吧
 
+- llm
+  - [llm from scratch](https://github.com/rasbt/LLMs-from-scratch)
+
 - 安全或者CTF方面可以学下，应该能学到挺多东西: [pwn](https://pwn.college/)
 
 - [ ] [emacs GTD 日程管理](https://www.cnblogs.com/yangruiGB2312/p/9101838.html)
@@ -143,11 +146,12 @@ This approach has never let me down, and it has made all the difference in my li
   - raylib
   - SDL
 
-- 电路
+- 电路/嵌入式
   - [电子入坑百科全书](https://www.emoe.xyz/all-about-electronics/#53-gt)
   - [嘉立创](https://lceda.cn/)
   - [ ] 微机原理。使用电路模拟器实现一个计算器
   - [ ] 树莓派
+  - [野火-嵌入式Linux驱动开发实战指南](https://doc.embedfire.com/linux/imx6/driver/zh/latest/index.html)
 
 - 深度学习进阶，自然语言处理
   - 主要是用于整理日记，进行总结
@@ -1221,7 +1225,7 @@ cookie和session攻击
 
 ### hardware
 
-- [屏幕图像显示原理](http://chuquan.me/2018/08/26/graphics-rending-principle-gpu/#屏幕图像显示原理)
+- [屏幕图像显示原理](http://chuquan.me/2018/08/26/graphics-rending-principle-gpu/)
 
 ## tool
 

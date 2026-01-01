@@ -700,6 +700,8 @@ b b1
 
 `if(key in array)`通过这种方法判断数组中是否包含`key`键值。
 
+注意：awk不支持 `if(key not in array)`， 要写成  `if(key in array == 0)`
+
 ```shell
 #删除键值：
 awk 'BEGIN{tB["a"]="a1";tB["b"]="b1";delete tB["a"];for(k in tB){print k,tB[k];}}'

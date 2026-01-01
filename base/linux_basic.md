@@ -597,7 +597,9 @@ bash 4.2 版本以上可以使用：
 echo $'\u0965'
 ```
 
-## 2.11. 文件切分 split
+## 2.11. 文件切分
+
+### split
 
 按文件数量打包: 文件夹内，每500个文件打一个压缩包
 
@@ -624,6 +626,10 @@ find ./images -type f -print0  | {
   done
 }
 ```
+
+### csplit
+
+根据pattern切分
 
 ## 2.12. ln, readlink
 
@@ -1141,6 +1147,48 @@ echo "$multilines" | tr '\n' ':' | sed 's/.$//g'
   - 打印指定列
   - 打印指定文本区域
   - awk 常用内建函数
+
+- 注意：
+  - awk 支持 in，但不支持not in，not in可以写成：`if($1 in dict == 0){...}`
+
+- 示例：
+
+  ```
+    awk '
+      match($0, /\[(.*)\].*data-agent-.*-(.*) ->/, info) {
+          if(info[2] in start == 0){
+            start[info[2]]=info[1];
+          };
+          end[info[2]] = info[1];
+      }
+      END {
+        for(i in start) {
+          gsub(/[-:]/," ",start[i]);
+          gsub(/[-:]/," ",end[i]);
+          print(i, mktime(end[i]), mktime(start[i]));
+        }
+      }
+    ' << _exit
+    [2025-12-25 20:26:06]      Pod(6b6c74d84d): data-agent-6b6c74d84d-5m7b7 -> 拉取镜像中
+    [2025-12-25 20:26:06]      Pod(6b6c74d84d): data-agent-6b6c74d84d-r7r4n -> 拉取镜像中
+    [2025-12-25 20:26:06]      Pod(6b6c74d84d): data-agent-6b6c74d84d-8jrmb -> 拉取镜像中
+    [2025-12-25 20:26:06]      Pod(6b6c74d84d): data-agent-6b6c74d84d-lsqhz -> 拉取镜像中
+    [2025-12-25 20:26:06]      Pod(6b6c74d84d): data-agent-6b6c74d84d-q67vz -> 拉取镜像中
+    [2025-12-25 20:26:06]      Pod(6b6c74d84d): data-agent-6b6c74d84d-2zk6d -> 拉取镜像中
+    [2025-12-25 20:27:36]      Pod(6b6c74d84d): data-agent-6b6c74d84d-lsqhz -> 主容器启动完毕
+    [2025-12-25 20:27:49]      Pod(6b6c74d84d): data-agent-6b6c74d84d-8jrmb -> 主容器启动完毕
+    [2025-12-25 20:27:53]      Pod(6b6c74d84d): data-agent-6b6c74d84d-q67vz -> 主容器启动完毕
+    [2025-12-25 20:28:03]      Pod(6b6c74d84d): data-agent-6b6c74d84d-2zk6d -> 主容器启动完毕
+    [2025-12-25 20:28:08]      Pod(6b6c74d84d): data-agent-6b6c74d84d-lsqhz -> 就绪
+    [2025-12-25 20:28:09]      Pod(6b6c74d84d): data-agent-6b6c74d84d-r7r4n -> 主容器启动完毕
+    [2025-12-25 20:28:29]      Pod(6b6c74d84d): data-agent-6b6c74d84d-8jrmb -> 就绪
+    [2025-12-25 20:28:37]      Pod(6b6c74d84d): data-agent-6b6c74d84d-q67vz -> 就绪
+    [2025-12-25 20:28:53]      Pod(6b6c74d84d): data-agent-6b6c74d84d-r7r4n -> 就绪
+    [2025-12-25 20:28:54]      Pod(6b6c74d84d): data-agent-6b6c74d84d-5m7b7 -> 主容器启动完毕
+    [2025-12-25 20:28:56]      Pod(6b6c74d84d): data-agent-6b6c74d84d-2zk6d -> 就绪
+    [2025-12-25 20:29:42]      Pod(6b6c74d84d): data-agent-6b6c74d84d-5m7b7 -> 就绪
+    _exit
+  ```
 
 ## 3.16. pr 将文本文件转换成适合打印的格式
 
@@ -4327,6 +4375,13 @@ modinfo
 透过使用TCP或UDP协议的网络连接去读写数据
 
 [参考](https://www.cnblogs.com/pandana/p/15881273.html)
+
+- 文件上传
+
+  ```
+  接收端(host1) nc -l 8001 > temp.txt
+  发送端(host2) nc host1 8001 < temp.txt
+  ```
 
 ## 17.2. 网络管理
 

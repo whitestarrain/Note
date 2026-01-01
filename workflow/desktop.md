@@ -169,20 +169,24 @@ others:
     - [picom-jonaburg-git](https://github.com/jonaburg/picom)
     - [picom-pijulius](https://github.com/pijulius/picom)
 - window manager
-  - i3: <https://github.com/rahriver/Arch-Linux>
-  - bspwm: <https://github.com/baskerville/bspwm>
-  - dwm fork
-    - [dusk](https://github.com/bakkeby/dusk)
-  - dwm
-    - <https://github.com/Rashad-707/dotfiles>
-    - <https://github.com/ayamir/dotfiles>
-    - <https://github.com/seeingangelz/dotfiles?tab=readme-ov-file>
-    - [从0开始打造完美Manjaro DWM 桌面工作环境](https://mq.rs/0manjaro-dwm): <https://github.com/Arstman/dwm-dotfiles>
-    - [gylt37's dwm-config](https://github.com/gylt37/dwm-config)
-    - [tagmask](https://dwm.suckless.org/customisation/tagmask/)
-  - xmonad
-  - sway
-  - hyprland
+  - x11
+    - i3: <https://github.com/rahriver/Arch-Linux>
+    - bspwm: <https://github.com/baskerville/bspwm>
+    - dwm fork
+      - [dusk](https://github.com/bakkeby/dusk)
+    - dwm
+      - <https://github.com/Rashad-707/dotfiles>
+      - <https://github.com/ayamir/dotfiles>
+      - <https://github.com/seeingangelz/dotfiles?tab=readme-ov-file>
+      - [从0开始打造完美Manjaro DWM 桌面工作环境](https://mq.rs/0manjaro-dwm): <https://github.com/Arstman/dwm-dotfiles>
+      - [gylt37's dwm-config](https://github.com/gylt37/dwm-config)
+      - [tagmask](https://dwm.suckless.org/customisation/tagmask/)
+    - xmonad
+  - wayland
+    - [sway](https://github.com/swaywm/sway)
+    - [hyprland](https://github.com/hyprwm/Hyprland)
+    - [niri](https://github.com/YaLTeR/niri)
+    - [dwl](https://github.com/djpohly/dwl)
 - dwm
   - [dwm arch cn wiki](https://wiki.archlinuxcn.org/wiki/Dwm)
   - [dwm配置](https://zocoxx.com/archlinux-dwm-incomplete-guide.html)
@@ -207,11 +211,15 @@ others:
   - [patches](https://github.com/bakkeby/patches/wiki)
 - dotfiles:
   - 比较喜欢的一个配置：<https://github.com/elbachir-one/dotfiles.git>
-  - nix hyperland config: <https://github.com/Frost-Phoenix/nixos-config>
+  - nix hyprland config: <https://github.com/Frost-Phoenix/nixos-config>
   - [archlinux配置文件，包括picom混色器。该作者的一些tmux等配置文件也可以参考下，比如tmux插件。](https://github.com/shendypratamaa/.arch)
-  - [dwm archlinux config ayamir](https://github.com/ayamir/dotfiles)
   - [gh0stzk/dotfiles](https://github.com/gh0stzk/dotfiles)
     > 参考优化下 picom 动画配置？
+- rice
+  - [dwm archlinux config ayamir](https://github.com/ayamir/dotfiles)
+  - [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland)
+  - [caelestia-dots/shell](https://github.com/caelestia-dots/shell)
+    - [quickshell showcase](https://quickshell.org/)
 - others
   - [awesome-tuis](https://github.com/rothgar/awesome-tuis)
   - [xrandr: 处理缩放，显示方向等设置](https://wiki.archlinux.org/title/Xrandr)

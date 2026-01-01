@@ -2,7 +2,7 @@
 
 ## 1.1. 简介
 
-- 软件通常会作为一种服务来交付，即 **软件即服务(SaaS)** 
+- 软件通常会作为一种服务来交付，即 **软件即服务(SaaS)**
 - `12-factor`:
   - 衡量一个后端服务是否适合搬到云上准则
   - 描述了云端应用服务应当遵循的一些最佳实践
@@ -188,7 +188,7 @@
 - 正例：
   > 如果要实现每天跑一次的数据分析脚本，除了到机器上加crontab这个最坏的办法，还有什么其他办法呢？
   - 《The Twelve-Factor App》
-    - **可以用一次性的容器** 
+    - **可以用一次性的容器**
     - 每天创建一个容器执行脚本，确认执行成功后随即销毁，不成功可以自动重试
     - 比如Kuernetes提供的CronJob机制。
   - 《Beyond the Twelve-Factor App》
@@ -227,5 +227,8 @@
   -->
 - [ ] [12 factor](https://12factor.net/)
 - [ ] [浅析云原生12要素](https://zhuanlan.zhihu.com/p/243404169)
+- [ ] [容器与容器编排](https://blog.liaosirui.com/系统运维/E.容器与容器编排/Kubernetes/k8s简介.html)
+- [ ] [Learning Containers, Kubernetes, and Backend Development](https://iximiuz.com/en/)
+- [ ] [Kubernetes 基础](https://k8s.whuanle.cn/)
 
 

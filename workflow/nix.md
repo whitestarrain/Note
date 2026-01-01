@@ -3298,6 +3298,16 @@ fsck /dev/sda1
 - [A rebuild erased my /boot and I cannot boot into NixOS, please help!!!](https://www.reddit.com/r/NixOS/comments/1ecxyii/urgent_a_rebuild_erased_my_boot_and_i_cannot_boot/)
 - [OSError: Errno 30 Read-only file system: '/boot/efi/nixos/...](https://github.com/NixOS/nixpkgs/issues/28817)
 
+## 记一次window覆盖掉boot记录
+
+- 仿照boot失败后，进入live os后，mount目录再 nixos-enter
+- 最后nixos-rebuild的时候
+  - 如果开启了secureboot，需要先关掉
+  - rebuild命令:
+    ```
+    nixos-rebuild boot --install-bootloader
+    ```
+
 # 常用操作 memo
 
 ## 更新系统
