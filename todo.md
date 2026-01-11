@@ -635,8 +635,6 @@ MIT针对不同的编程语言都有配套的实验课Lab，如C语言、Java、
   - [x] [RabbitMQ基础整理](./Middleware/RabbitMQ.md)
   - [x] [鉴权方式整理](./others/authentication.md)
   - [ ] [CORS跨域完善+整理](./safety/CSRF与CORS.md)
-  - [ ] [linux常用命令&工具系统整理](./base/linux_basic.md)
-  - [x] [bash编程系统整理](./base/bash.md)
   - [x] 鉴权认证
   - [x] 分布式缓存算法整理
   - [x] JVM字节码与类的加载

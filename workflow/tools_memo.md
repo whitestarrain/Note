@@ -586,7 +586,7 @@ hacker's browser
 
 <https://github.com/DenverCoder1/readme-typing-svg>
 
-## 生成taag
+## 生成taag/figlet
 
 - [链接](https://patorjk.com/software/taag/)
 - 示例
