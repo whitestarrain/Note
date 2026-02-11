@@ -53,12 +53,25 @@ This approach has never let me down, and it has made all the difference in my li
     - 顺便： mpc + ncmpcpp
 
 - [ ] emacs, elisp
-  - common ansi lisp
+  - [ ] [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
   - [Emacs 配置](https://www.hugchange.life/posts/202401_core_emacs_config.html)
-  - [把阅读作为方法：从选书到笔记的经验分享](https://sspai.com/post/78133)
-    - 果真，我想用emacs做读书笔记，尤其是pdf书的读书笔记。扫描版pdf ocr + 导出目录我真的馋了
-  - [Emacs Lisp 简明教程](https://smacs.github.io/elisp/)
-  - [99 lisp problems](https://www.ic.unicamp.br/~meidanis/courses/mc336/problemas-lisp/L-99_Ninety-Nine_Lisp_Problems.html)
+  - [x] [把阅读作为方法：从选书到笔记的经验分享](https://sspai.com/post/78133)
+    - [ ] 集成easyocr扫描pdf文本 `easyocr -l ch_sim en --paragraph True --detail 0  -f image.png`
+  - [ ] [99 lisp problems](https://www.ic.unicamp.br/~meidanis/courses/mc336/problemas-lisp/L-99_Ninety-Nine_Lisp_Problems.html)
+  - [ ] common ansi lisp
+  - gtd
+    - [ ] [以Emacs-Org-mode为核心的任务管理方案](https://jihuan-tian.github.io/thoughts/2019/04/30/以Emacs-Org-mode为核心的任务管理方案.html)
+    - [ ] [emacs GTD](https://www.labri.fr/perso/nrougier/GTD/index.html)
+    - [ ] [使用 Emacs 做 GTD 软件](https://sspai.com/post/67852)
+    - [ ] [emacs GTD 日程管理](https://www.cnblogs.com/yangruiGB2312/p/9101838.html)
+    - [ ] [Emacs中的个人信息管理 — GTD收集](https://grass.show/post/pim-in-emacs-gtd-inbox/)
+    - [ ] [Emacs中的个人信息管理 — 日记/笔记/博客](https://grass.show/post/pim-in-emacs-gtd-daily-note-blog/)
+    - [ ] [谈谈我是如何高效率的工作，高效率的 Get Things Done 和让团队高效率运转](https://v2ex.com/t/887733)
+    - [ ] [https://rgb-24bit.github.io/blog/2017/org-gtd.html](https://rgb-24bit.github.io/blog/2017/org-gtd.html)
+    - [ ] [org-mode：用纯文本管理任务的简易规则](https://xlrocket.blog/2025/09/07/org-mode：用纯文本管理任务的简易规则（面向初心者）/)
+  - navigation
+    - [better-jumper](https://github.com/gilbertw1/better-jumper)
+    - [back-button](https://github.com/rolandwalker/back-button)
 
 - [ ] effective cpp
   - 主要是为了刷题，同时复习一下cpp
@@ -127,14 +140,12 @@ This approach has never let me down, and it has made all the difference in my li
 
 - 安全或者CTF方面可以学下，应该能学到挺多东西: [pwn](https://pwn.college/)
 
-- [ ] [emacs GTD 日程管理](https://www.cnblogs.com/yangruiGB2312/p/9101838.html)
-
 - [ ] linux 系统编程
 
 - [ ] [DN42 实验网络介绍及注册教程](https://lantian.pub/article/modify-website/dn42-experimental-network-2020.lantian/)
 
 - 网站(空闲时翻翻)
-  - [ ] [深入架构原理与事件](https://www.thebyte.com.cn/)
+  - [ ] [深入高可用系统原理与设计](https://www.thebyte.com.cn/)
   - [ ] [OI wiki](https://oi-wiki.org/)
   - [ ] [CTF PWN入门](wiki.scuctf.com)
 
@@ -1158,6 +1169,7 @@ cookie和session攻击
 - [nix help links mangled](https://github.com/NixOS/nixpkgs/issues/355548)
   - nix --help 文档有问题, 多出了 `8;;`
 - [nix working with local file](https://nix.dev/tutorials/working-with-local-files)
+- [使用Nix+direnv快速构建不同软件版本的开发环境](https://grass.show/post/create-environment-with-nix-and-direnv/)
 
 ## lang
 
@@ -1410,6 +1422,7 @@ cookie和session攻击
 - dns 解析
   - [就是要你懂DNS--一文搞懂域名解析相关问题](https://plantegg.github.io/2019/06/09/一文搞懂域名解析相关问题/)
   - [systemd-resolv](https://www.keepnight.com/archives/1772/)
+- [kmonad 键盘映射](https://github.com/kmonad/kmonad)
 
 # wiki
 

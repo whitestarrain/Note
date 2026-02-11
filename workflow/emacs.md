@@ -313,6 +313,10 @@ C-u 重复执行， C-u 8 C-f 会向前移动 8 个字符。
   - 可以先搜索Info，读一下基础操作
   - `info-apropos` 搜索所有info 文档的 index
 
+## 其他
+
+- `M-:` : minibuffer中执行elisp
+
 # 插件
 
 - Emacs 自力求生指南
