@@ -2,6 +2,113 @@
 
 # 基本命令
 
+## 常用整理
+
+| 按键                    | 命令                     | 功能                                                                              |
+| :---------------------- | :----------------------- | :-------------------------------------------------------------------------------- |
+| **移动**                |
+| C-f                     | forward-char             | 向前一个字符                                                                      |
+| C-b                     | backward-char            | 向后一个字符                                                                      |
+| C-p                     | previous-line            | 上移一行                                                                          |
+| C-n                     | next-line                | 下移一行                                                                          |
+| M-f                     | forward-word             | 向前一个单词                                                                      |
+| M-b                     | backward-word            | 向后一个单词                                                                      |
+| C-a                     | beginning-of-line        | 移到行首                                                                          |
+| C-e                     | end-of-line              | 移到行尾                                                                          |
+| M-m                     | back-toindentation       | 将光标移动到行首的第一个非空白字符                                                |
+| M-}                     | forward-paragraph        | 下移一段                                                                          |
+| M-{                     | backward-paragraph       | 上移一段                                                                          |
+| C-v                     | scroll-up                | 下移一屏                                                                          |
+| M-v                     | scroll-down              | 上移一屏                                                                          |
+| C-x ]                   | forward-page             | 下移一页                                                                          |
+| C-x [                   | backward-page            | 上移一页                                                                          |
+| M-<                     | beginning-of-buffer      | 移到文档头                                                                        |
+| M->                     | end-of-buffer            | 移到文档尾                                                                        |
+| M-g g num               | goto-line                | 移到第n行                                                                         |
+| M-g c                   | goto-char                | 移到第n个字符                                                                     |
+| C-l                     | recenter                 | 将当前位置放到页面中间                                                            |
+| C-u num                 | universal-argument       | 重复下个命令n次，n默认为4                                                         |
+| C-M-left                | backward-sexp            | 可用来匹配左括号                                                                  |
+| C-M-right               | forward-sexp             | 可用来匹配右括号                                                                  |
+| **删除**                |
+| C-d                     | delete-char              | 删除光标处字符                                                                    |
+| Backspace               | delete-backward-char     | 删除光标前字符                                                                    |
+| M-d                     | kill-word                | 删除光标起单词                                                                    |
+| M-Backspace/C-Backspace | backward-kill-word       | 删除光标前单词，如果有特殊字符，会一并删除。比如`void *` 会看作为一个单词         |
+| C-S-Backspace           | kill-whole-line          | 删除整行                                                                          |
+| C-k                     | kill-line                | 删除光标起当前行                                                                  |
+| C-0 C-k                 |                          | 删除当前光标到行首的内容                                                          |
+| M-k                     | kill-sentence            | 删除光标起句子                                                                    |
+| C-x Backspace           | backward-kill-sentence   | 删除光标前句子                                                                    |
+| C-x C-o                 | delete-blank-lines       | 删除光标周围的空白行，保留当前行                                                  |
+| `M-\`                   | delete-horizontal-space  | 删除光标处的所有空格和Tab字符                                                     |
+| M-SPC                   | just-one-space           | 删除光标处的所有空格和Tab字符，但留下一个                                         |
+| M-z char                | zap-to-char              | 删至字符char为止                                                                  |
+| **插入**                |
+| C-o                     | open-line                | 插入空行                                                                          |
+| **编辑**                |
+| M-^                     | delete-indentation       | 将两行合为一行，删除之间的空白和缩进                                              |
+| C-x C-u                 | upcase-region            | 将区域中字母改为大写                                                              |
+| C-x C-l                 | upcase-region            | 将区域中字母改为小写                                                              |
+| **特殊字符插入**        |
+| C-q (n)                 | quoted-insert            | 插入字符，n表示字符的八进制ASCII码                                                |
+| C-x 8                   | ucs-insert               | 插入Unicode字符，`C-x 8 RET`                                                      |
+| **撤销**                |
+| C-/                     | undo                     | 撤销                                                                              |
+| C-\_                    | undo                     | 撤销                                                                              |
+| C-x u                   | undo                     | 撤销                                                                              |
+| **粘贴**                |
+| C-y                     | yank                     | 召回                                                                              |
+| M-y                     | yank-pop                 | C-y 后使用，召回前一个                                                            |
+| **文件**                |
+| C-x C-f                 | find-file                | 打开文件                                                                          |
+| C-x C-v                 | find-alternate-file      | 打开另一个文件，kill当前buffer                                                    |
+| C-x C-s                 | save-buffer              | 保存文件                                                                          |
+| C-x s                   | save-some-buffers        | 保存所有文件                                                                      |
+| C-x C-w                 | write-file               | 另存文件                                                                          |
+| **查找**                |
+| C-s                     | isearch-forward          | 向前进行增量查找                                                                  |
+| C-r                     | isearch-backward         | 向后进行增量查找                                                                  |
+| M-c                     |                          | (查找状态)切换大写敏感                                                            |
+| C-j                     |                          | newline-and-indent\|(查找状态)输入换行符                                          |
+| M-Tab                   | isearch-complete         | (查找状态)自动匹配（从search ring中）                                             |
+| C-w                     |                          | (查找状态)将光标处单词复制到查找区域                                              |
+| M-s w                   | isearch-forward-word     | 向前进行单词查找(依旧使用c-s c-r向后向前查找)                                     |
+| **替换**                |
+| M-%                     | query-replace            | 查找替换                                                                          |
+| **窗口**                |
+| C-x 0     | delete-window                       | 关闭当前窗口                           |
+| C-x 1     | delete-other-windows                | 关闭其它窗口                           |
+| C-x 2     | split-window-vertically             | 垂直拆分窗口                           |
+| C-x 3     | split-window-horizontally           | 水平拆分窗口                           |
+| C-x 4 b   | switch-to-buffer-other-window       | 在另一个窗口打开缓冲                   |
+| C-x 4 C-o | display-buffer                      | 在另一个窗口打开缓冲，但不选中         |
+| C-x 4 f   | find-file-other-window              | 在另一个窗口打开文件                   |
+| C-x 4 d   | dired-other-window                  | 在另一个窗口打开文件夹                 |
+| C-x 4 m   | mail-other-window                   | 在另一个窗口写邮件                     |
+| C-x 4 r   | find-file-read-only-other-window    | 在另一个窗口以只读方式打开文件         |
+| C-x 4 0   | kill-buffer-and-window              | 关闭当前窗口和buffer                   |
+| C-x o     | other-window                        | 选择下一个窗口                         |
+| **窗口大小**                |
+| C-x {     | shrink-window-horizontally          | 将当前窗口变窄                         |
+| C-x }     | enlarge-window-horizontally         | 将当前窗口变宽                         |
+| C-x ^     | enlarge-window                      | 增高当前窗口                           |
+| C-x –     | shrink-window-if-larger-than-buffer | 如果窗口比缓冲大就缩小                 |
+| C-x +     | balance-windows                     | 所有窗口一样高                         |
+| **Mark**                |
+| C-x h                   | mark-whole-buffer        | 全选                                                                              |
+| C-x C-p                 | mark-page                | 选取一页                                                                          |
+| M-h                     | mark-paragraph           | 选取一段                                                                          |
+| M-@                     | mark-word                | 选取一个单词                                                                      |
+| C-w                     | kill-region              | 删除区域中内容                                                                    |
+| **Kill**                |
+| M-w (复制)              | kill-ring-save           | 复制到kill 环，而不删除                                                           |
+| **代码**                |
+| M-q                     | prog-fill-reindent-defun | fill-paragraph 和indent-region 二合一，在代码中时重新缩进，在注释中时填充或者折行 |
+| **重复执行**            |
+| C-u num                 | universal-argument       | 重复下个命令n次，n默认为4                                                         |
+| C-x z                   | repeat                   | 重复前个命令                                                                      |
+
 ## 移动
 
 | 按键          | 命令                | 功能                                      |
