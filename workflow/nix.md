@@ -1760,6 +1760,12 @@ nix-store -qR `which man`
 nix-store -q --tree `which man`
 ```
 
+实例化包
+
+```
+nix-store --realise $(nix eval nixpkgs#hello.outPath --raw)
+```
+
 ### nix-env
 
 nix-env: 用于管理用户环境的软件包，是传统 Nix 的核心命令行工具。它从 nix-channel 定义的数据源中安装软件包，所以安装的软件包版本受 channel 影响。
