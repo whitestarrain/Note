@@ -127,10 +127,10 @@
 | C-u num                 | universal-argument                  | 重复下个命令n次，n默认为4                                                         |
 | C-x z                   | repeat                              | 重复前个命令                                                                      |
 
-- org:
-
-  ```
-  Visibility Cycling:
+# Org
+## Document Structure
+```
+Visibility Cycling:
   TAB (org-cycle)
       Subtree cycling: Rotate current subtree among the states
   S-TAB (org-global-cycle)
@@ -151,7 +151,7 @@
   C-c C-x v (org-copy-visible)
       Copy the visible text in the region into the kill ring.
 
-  Motion:
+Motion:
   C-c C-n (org-next-visible-heading)
       Next heading.
   C-c C-p (org-previous-visible-heading)
@@ -165,7 +165,7 @@
   C-c C-j (org-goto)
       Jump to a different place without changing the current outline visibility.
 
-  Structure Editing:
+Structure Editing:
   M-RET (org-meta-return)
       Insert a new heading, item or row.
       If the command is used at the beginning of a line, and if there is a heading or a plain list item (see Plain Lists) at point, the new heading/item is created before the current line. When used at the beginning of a regular line of text, turn that line into a heading.
@@ -215,8 +215,148 @@
       Widen buffer to remove narrowing.
   C-c * (org-toggle-heading)
       Turn a normal line or plain list item into a headline—so that it becomes a subheading at its location. Also turn a headline into a normal line by removing the stars. If there is an active region, turn all lines in the region into headlines. If the first line in the region was an item, turn only the item lines into headlines. Finally, if the first line is a headline, remove the stars from all headlines in the region.
-  ```
 
+Sparse Trees:
+  C-c / (org-sparse-tree)
+      This prompts for an extra key to select a sparse-tree creating command.
+  C-c / r or C-c / / (org-occur)
+      Prompts for a regexp (see Regular Expressions) and shows a sparse tree with all matches. If the match is in a headline, the headline is made visible. If the match is in the body of an entry, headline and body are made visible. In order to provide minimal context, also the full hierarchy of headlines above the match is shown, as well as the headline following the match. Each match is also highlighted; the highlights disappear when the buffer is changed by an editing command, or by pressing C-c C-c. When called with a C-u prefix argument, previous highlights are kept, so several calls to this command can be stacked.
+  M-g n or M-g M-n (next-error)
+      Jump to the next sparse tree match in this buffer.
+  M-g p or M-g M-p (previous-error)
+      Jump to the previous sparse tree match in this buffer.
+
+Plain Lists:
+  TAB (org-cycle)
+      Items can be folded just like headline levels. Normally this works only if point is on a plain list item. For more details, see the variable org-cycle-include-plain-lists. If this variable is set to integrate, plain list items are treated like low-level headlines. The level of an item is then given by the indentation of the bullet/number. Items are always subordinate to real headlines, however; the hierarchies remain completely separated. In a new item with no text yet, the first TAB demotes the item to become a child of the previous one. Subsequent TABs move the item to meaningful levels in the list and eventually get it back to its initial position.
+  M-RET (org-insert-item)
+      Insert new item at current level. With a prefix argument, force a new heading (see Structure Editing). If this command is used in the middle of an item, that item is split in two, and the second part becomes the new item. If this command is executed before item’s body, the new item is created before the current one.
+  M-S-RET
+      Insert a new item with a checkbox (see Checkboxes).
+  S-UP
+  S-DOWN
+      Jump to the previous/next item in the current list, but only if org-support-shift-select is off. If not, you can still use paragraph jumping commands like C-UP and C-DOWN to quite similar effect.
+  M-UP
+  M-DOWN
+      Move the item including subitems up/down, i.e., swap with previous/next item of same indentation. If the list is ordered, renumbering is automatic.
+  M-LEFT
+  M-RIGHT
+      Decrease/increase the indentation of an item, leaving children alone.
+  M-S-LEFT
+  M-S-RIGHT
+      Decrease/increase the indentation of the item, including subitems. Initially, the item tree is selected based on current indentation. When these commands are executed several times in direct succession, the initially selected region is used, even if the new indentation would imply a different hierarchy. To use the new hierarchy, break the command chain by moving point.
+      As a special case, using this command on the very first item of a list moves the whole list. This behavior can be disabled by configuring org-list-automatic-rules. The global indentation of a list has no influence on the text after the list.
+  C-c C-c
+      If there is a checkbox (see Checkboxes) in the item line, toggle the state of the checkbox. In any case, verify bullets and indentation consistency in the whole list.
+  C-c -
+      Cycle the entire list level through the different itemize/enumerate bullets (‘-’, ‘+’, ‘*’, ‘1.’, ‘1)’) or a subset of them, depending on org-plain-list-ordered-item-terminator, the type of list, and its indentation. With a numeric prefix argument N, select the Nth bullet from this list. If there is an active region when calling this, all lines are converted to list items. With a prefix argument, the selected text is changed into a single item. If the first line already was a list item, any item marker is removed from the list. Finally, even without an active region, a normal line is converted into a list item.
+  C-c *
+      Turn a plain list item into a headline—so that it becomes a subheading at its location. See Structure Editing, for a detailed explanation.
+  C-c C-*
+      Turn the whole plain list into a subtree of the current heading. Checkboxes (see Checkboxes) become ‘TODO’, respectively ‘DONE’, keywords when unchecked, respectively checked.
+  S-LEFT
+  S-RIGHT
+      This command also cycles bullet styles when point is in on the bullet or anywhere in an item line, details depending on org-support-shift-select.
+  C-c ^
+      Sort the plain list. Prompt for the sorting method: numerically, alphabetically, by time, or by custom function.
+
+Drawer
+  C-c C-x d
+      org-insert-drawer. With a prefix argument, this command calls non-interactive function org-insert-property-drawer, which creates a ‘PROPERTIES’ drawer right below the current headline.
+      use M-TAB(C-M-i or ESC TAB ) after ':' to complete over drawer keywords.
+      M-TAB aslo can complete at many place
+  C-c C-z
+      Add a time-stamped note to the ‘LOGBOOK’ drawer.
+```
+
+## Table
+
+## hyperlink
+
+## TODO
+
+```
+Basic
+  C-c C-t (org-todo)
+      Rotate the TODO state of the current item among
+      ,-> (unmarked) -> TODO -> DONE --.
+      '--------------------------------'
+      If TODO keywords have fast access keys (see Fast access to TODO states), prompt for a TODO keyword through the fast selection interface; this is the default behavior when org-use-fast-todo-selection is non-nil.
+      The same state changing can also be done “remotely” from the agenda buffer with the t command key (see Commands in the Agenda Buffer).
+  S-RIGHT S-LEFT
+      Select the following/preceding TODO state, similar to cycling. Useful mostly if more than two TODO states are possible (see Extended Use of TODO Keywords). See also Packages that conflict with Org mode, for a discussion of the interaction with shift-selection. See also the variable org-treat-S-cursor-todo-selection-as-state-change.
+  C-c / t (org-show-todo-tree)
+      View TODO items in a sparse tree (see Sparse Trees). Folds the entire buffer, but shows all TODO items—with not-DONE state—and the headings hierarchy above them. With a prefix argument, or by using C-c / T, search for a specific TODO. You are prompted for the keyword, and you can also give a list of keywords like ‘KWD1|KWD2|...’ to list entries that match any one of these keywords. With a numeric prefix argument N, show the tree for the Nth keyword in the variable org-todo-keywords. With two prefix arguments, find all TODO states, both un-done and done.
+  M-x org-agenda t (org-todo-list)
+      Show the global TODO list. Collects the TODO items (with not-DONE states) from all agenda files (see Agenda Views) into a single buffer. The new buffer is in Org Agenda mode, which provides commands to examine and manipulate the TODO entries from the new buffer (see Commands in the Agenda Buffer). See The global TODO list, for more information.
+  S-M-RET (org-insert-todo-heading)
+      Insert a new TODO entry below the current one.
+
+Multiple keyword sets in one file:
+  C-u C-u C-c C-t
+  C-S-RIGHT
+  C-S-LEFT
+      These keys jump from one TODO sub-sequence to the next. In the above example, C-u C-u C-c C-t or C-S-RIGHT would jump from ‘TODO’ or ‘DONE’ to ‘REPORT’, and any of the words in the second row to ‘CANCELED’. Note that the C-S- key binding conflict with shift-selection (see Packages that conflict with Org mode).
+  S-RIGHT
+  S-LEFT
+      S-LEFT and S-RIGHT walk through all keywords from all sub-sequences, so for example S-RIGHT would switch from ‘DONE’ to ‘REPORT’ in the example above. For a discussion of the interaction with shift-selection, see Packages that conflict with Org mode.
+
+TODO dependencies:
+  C-c C-x o (org-toggle-ordered-property)
+      Toggle the ‘ORDERED’ property of the current entry. A property is used for this behavior because this should be local to the current entry, not inherited from entries above like a tag (see Tags). However, if you would like to track the value of this property with a tag for better visibility, customize the variable org-track-ordered-property-with-tag.
+  C-u C-u C-u C-c C-t
+      Change TODO state, regardless of any state blocking.
+  If you set the variable org-agenda-dim-blocked-tasks, TODO entries that cannot be marked as done because of unmarked children are shown in a dimmed font or even made invisible in agenda views (see Agenda Views).
+
+Priorities:
+  C-c , (org-priority)
+      Set the priority of the current headline. The command prompts for a priority character ‘A’, ‘B’ or ‘C’. When you press SPC instead, the priority cookie, if one is set, is removed from the headline. The priorities can also be changed “remotely” from the agenda buffer with the , command (see Commands in the Agenda Buffer).
+  S-UP (org-priority-up)
+  S-DOWN (org-priority-down)
+      Increase/decrease the priority of the current headline47. Note that these keys are also used to modify timestamps (see Creating Timestamps). See also Packages that conflict with Org mode for a discussion of the interaction with shift-selection.
+
+Breaking Down Tasks into Subtasks:
+  C-c C-c
+  [/] and [%] are updated each time the TODO status of a child changes, or when pressing C-c C-c on the cookie
+
+Checkboxes:
+  C-c C-c (org-toggle-checkbox)
+      Toggle checkbox status or—with prefix argument—checkbox presence at point. With a single prefix argument, add an empty checkbox or remove the current one51. With a double prefix argument, set it to ‘[-]’, which is considered to be an intermediate state.
+  C-c C-x C-b (org-toggle-checkbox)
+      Toggle checkbox status or—with prefix argument—checkbox presence at point. With double prefix argument, set it to ‘[-]’, which is considered to be an intermediate state.
+          If there is an active region, toggle the first checkbox in the region and set all remaining boxes to the same status as the first. With a prefix argument, add or remove the checkbox for all items in the region.
+          If point is in a headline, toggle checkboxes in the region between this headline and the next—so not the entire subtree.
+          If there is no active region, just toggle the checkbox at point.
+  C-c C-x C-r (org-toggle-radio-button)
+      Toggle checkbox status by using the checkbox of the item at point as a radio button: when the checkbox is turned on, all other checkboxes on the same level will be turned off. With a universal prefix argument, toggle the presence of the checkbox. With a double prefix argument, set it to ‘[-]’.
+      C-c C-c can be told to consider checkboxes as radio buttons by setting ‘#+ATTR_ORG: :radio t’ right before the list or by calling M-x org-list-checkbox-radio-mode to activate this minor mode.
+  M-S-RET (org-insert-todo-heading)
+      Insert a new item with a checkbox. This works only if point is already in a plain list item (see Plain Lists).
+  C-c C-x o (org-toggle-ordered-property)
+      Toggle the ‘ORDERED’ property of the entry, to toggle if checkboxes must be checked off in sequence. A property is used for this behavior because this should be local to the current entry, not inherited like a tag. However, if you would like to track the value of this property with a tag for better visibility, customize org-track-ordered-property-with-tag.
+  C-c # (org-update-statistics-cookies)
+      Update the statistics cookie in the current outline entry. When called with a C-u prefix, update the entire file. Checkbox statistic cookies are updated automatically if you toggle checkboxes with C-c C-c and make new ones with M-S-RET. TODO statistics cookies update when changing TODO states. If you delete boxes/entries or add/change them by hand, use this command to get things back into sync.
+```
+
+## Tags
+
+```
+Setting Tags:
+  C-c C-q (org-set-tags-command)
+      Enter new tags for the current headline. Org mode either offers completion or a special single-key interface for setting tags, see below. After pressing RET, the tags are inserted and aligned to org-tags-column. When called with a C-u prefix, all tags in the current buffer are aligned to that column, just to make things look nice. Tags are automatically realigned after promotion, demotion, and TODO state changes (see Basic TODO Functionality).
+  C-c C-c (org-set-tags-command)
+      When point is in a headline, this does the same as C-c C-q.
+
+Tag Searches:
+  C-c / m or C-c \ (org-match-sparse-tree)
+      Create a sparse tree with all headlines matching a tags search. With a C-u prefix argument, ignore headlines that are not a TODO line.
+  M-x org-agenda m (org-tags-view)
+      Create a global list of tag matches from all agenda files. See Matching tags and properties.
+  M-x org-agenda M (org-tags-view)
+      Create a global list of tag matches from all agenda files, but check only TODO items.
+```
+
+## Properties and Columns
 
 # 基本命令
 
