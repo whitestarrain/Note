@@ -358,6 +358,241 @@ Tag Searches:
 
 ## Properties and Columns
 
+```
+Property:
+  M-TAB (pcomplete)
+      After an initial colon in a line, complete property keys. All keys used in the current file are offered as possible completions.
+  C-c C-x p (org-set-property)
+      Set a property. This prompts for a property name and a value. If necessary, the property drawer is created as well.
+  C-u M-x org-insert-drawer
+      Insert a property drawer into the current entry. The drawer is inserted early in the entry, but after the lines with planning information like deadlines. If before first headline the drawer is inserted at the top of the drawer after any potential comments.
+  C-c C-c (org-property-action)
+      With point in a property drawer, this executes property commands.
+  C-c C-c s (org-set-property)
+      Set a property in the current entry. Both the property and the value can be inserted using completion.
+  S-RIGHT (org-property-next-allowed-value)
+  S-LEFT (org-property-previous-allowed-value)
+      Switch property at point to the next/previous allowed value.
+  C-c C-c d (org-delete-property)
+      Remove a property from the current entry.
+  C-c C-c D (org-delete-property-globally)
+      Globally remove a property, from all entries in the current file.
+  C-c C-c c (org-compute-property-at-point)
+      Compute the property at point, using the operator and scope from the nearest column format definition.
+
+Property Searches:
+  C-c / m or C-c \ (org-match-sparse-tree)
+      Create a sparse tree with all matching entries. With a C-u prefix argument, ignore headlines that are not a TODO line.
+  M-x org-agenda m (org-tags-view)
+      Create a global list of tag/property matches from all agenda files.
+  M-x org-agenda M (org-tags-view)
+      Create a global list of tag matches from all agenda files, but check only TODO items.
+  C-c / p
+      Create a sparse tree based on the value of a property. This first prompts for the name of a property, and then for a value. A sparse tree is created with all entries that define this property with the given value. If you enclose the value in curly braces, it is interpreted as a regular expression and matched against the property values (see Regular Expressions).
+
+  Using column view
+    Turning column view on or off
+      C-c C-x C-c (org-columns)
+          Turn on column view. If point is before the first headline in the file, column view is turned on for the entire file, using the ‘#+COLUMNS’ definition. If point is somewhere inside the outline, this command searches the hierarchy, up from point, for a ‘COLUMNS’ property that defines a format. When one is found, the column view table is established for the tree starting at the entry that contains the ‘COLUMNS’ property. If no such property is found, the format is taken from the ‘#+COLUMNS’ line or from the variable org-columns-default-format, and column view is established for the current entry and its subtree.
+      r or g on a columns view line (org-columns-redo)
+          Recreate the column view, to include recent changes made in the buffer.
+      C-c C-c or q on a columns view line (org-columns-quit)
+          Exit column view.
+    Editing values
+      LEFT, RIGHT, UP, DOWN
+          Move through the column view from field to field.
+      1..9,0
+          Directly select the Nth allowed value, 0 selects the 10th value.
+      n or S-RIGHT (org-columns-next-allowed-value)
+      p or S-LEFT (org-columns-previous-allowed-value)
+          Switch to the next/previous allowed value of the field. For this, you have to have specified allowed values for a property.
+      e (org-columns-edit-value)
+          Edit the property at point. For the special properties, this invokes the same interface that you normally use to change that property. For example, the tag completion or fast selection interface pops up when editing a ‘TAGS’ property.
+      C-c C-c (org-columns-toggle-or-columns-quit)
+          When there is a checkbox at point, toggle it. Else exit column view.
+      v (org-columns-show-value)
+          View the full value of this property. This is useful if the width of the column is smaller than that of the value.
+      a (org-columns-edit-allowed)
+          Edit the list of allowed values for this property. If the list is found in the hierarchy, the modified values are stored there. If no list is found, the new value is stored in the first entry that is part of the current column view.
+    Modifying column view on-the-fly
+      < (org-columns-narrow)
+      > (org-columns-widen)
+          Make the column narrower/wider by one character.
+      S-M-RIGHT (org-columns-new)
+          Insert a new column, to the left of the current column.
+      S-M-LEFT (org-columns-delete)
+          Delete the current column.
+      M-LEFT (org-columns-move-left)
+          Move the current column left.
+      M-RIGHT (org-columns-move-right)
+          Move the current column right.
+      M-UP (org-columns-move-row-up)
+          Move the current row up.
+      M-DOWN (org-columns-move-row-down)
+          Move the current row down.
+    Dynamic block:
+      org-columns-insert-dblock
+          Insert a dynamic block capturing a column view. Prompt for the scope or ID of the view.
+          This command can be invoked by calling org-dynamic-block-insert-dblock (C-c C-x x) and selecting “columnview” (see Dynamic Blocks).
+      C-c C-c C-c C-x C-u (org-dblock-update)
+          Update dynamic block at point. Point needs to be on the ‘#+BEGIN’ line of the dynamic block.
+      C-u C-c C-x C-u (org-update-all-dblocks)
+          Update all dynamic blocks (see Dynamic Blocks). This is useful if you have several clock table blocks, column-capturing blocks or other dynamic blocks in a buffer.
+```
+
+## Date and Times
+
+```
+Creating Timestamps
+  C-c . (org-timestamp)
+      Prompt for a date and insert a corresponding timestamp. When point is at an existing timestamp in the buffer, the command is used to modify this timestamp instead of inserting a new one. When this command is used twice in succession, a time range is inserted.
+      When called with a prefix argument, use the alternative format which contains date and time. The default time can be rounded to multiples of 5 minutes. See the option org-time-stamp-rounding-minutes.
+      With two prefix arguments, insert an active timestamp with the current time without prompting.
+      Canlendr:
+        RET	Choose date at point in calendar.
+        mouse-1	Select date by clicking on it.
+        S-RIGHT	One day forward.
+        S-LEFT	One day backward.
+        S-DOWN	One week forward.
+        S-UP	One week backward.
+        M-S-RIGHT	One month forward.
+        M-S-LEFT	One month backward.
+        >	Scroll calendar forward by one month.
+        <	Scroll calendar backward by one month.
+        M-v	Scroll calendar forward by 3 months.
+        C-v	Scroll calendar backward by 3 months.
+        C-.	Select today’s date64
+  C-c ! (org-timestamp-inactive)
+      Like C-c ., but insert an inactive timestamp that does not cause an agenda entry.
+  C-c C-c
+      Normalize timestamp, insert or fix day name if missing or wrong.
+  C-c < (org-date-from-calendar)
+      Insert a timestamp corresponding to point date in the calendar.
+  C-c > (org-goto-calendar)
+      Access the Emacs calendar for the current date. If there is a timestamp in the current line, go to the corresponding date instead.
+  C-c C-o (org-open-at-point)
+      Access the agenda for the date given by the timestamp or -range at point (see Weekly/daily agenda).
+  S-LEFT (org-timestamp-down-day), S-RIGHT (org-timestamp-up-day)
+      Change date at point by one day. These key bindings conflict with shift-selection and related modes (see Packages that conflict with Org mode).
+  S-UP (org-timestamp-up), S-DOWN (org-timestamp-down)
+      On the beginning or enclosing bracket of a timestamp, change its type. Within a timestamp, change the item under point. Point can be on a year, month, day, hour or minute. When the timestamp contains a time range like ‘15:30-16:30’, modifying the first time also shifts the second, shifting the time block with constant length. To change the length, modify the second time. Note that if point is in a headline and not at a timestamp, these same keys modify the priority of an item (see Priorities). The key bindings also conflict with shift-selection and related modes (see Packages that conflict with Org mode).
+  C-c C-y (org-evaluate-time-range)
+      Evaluate a time range by computing the difference between start and end. With a prefix argument, insert result after the time range (in a table: into the following column).
+Custom time format:
+  C-c C-x C-t ( org-toggle-timestamp-overlays )
+    Toggle the display of custom formats for dates and times.
+Inserting deadlines or schedules:
+  C-c C-d (org-deadline)
+      Insert ‘DEADLINE’ keyword along with a stamp. The insertion happens in the line directly following the headline. Remove any ‘CLOSED’ timestamp. When called with a prefix argument, also remove any existing deadline from the entry. Depending on the variable org-log-redeadline, take a note when changing an existing deadline68.
+  C-c C-s (org-schedule)
+      Insert ‘SCHEDULED’ keyword along with a stamp. The insertion happens in the line directly following the headline. Remove any ‘CLOSED’ timestamp. When called with a prefix argument, also remove the scheduling date from the entry. Depending on the variable org-log-reschedule, take a note when changing an existing scheduling time69.
+  C-c / d (org-check-deadlines)
+      Create a sparse tree with all deadlines that are either past-due, or which will become due within org-deadline-warning-days. With C-u prefix, show all deadlines in the file. With a numeric prefix, check that many days. For example, C-1 C-c / d shows all deadlines due tomorrow.
+  C-c / b (org-check-before-date)
+      Sparse tree for deadlines and scheduled items before a given date.
+  C-c / a (org-check-after-date)
+      Sparse tree for deadlines and scheduled items after a given date.
+Repeat task:
+  C-- 1 C-c C-t(org-todo) mark repeat task to done
+Clocking commands
+  C-c C-x C-i (org-clock-in)
+      Start the clock on the current item (clock-in). This inserts the ‘CLOCK’ keyword together with a timestamp. If this is not the first clocking of this item, the multiple ‘CLOCK’ lines are wrapped into a ‘LOGBOOK’ drawer (see also the variable org-clock-into-drawer). You can also overrule the setting of this variable for a subtree by setting a ‘CLOCK_INTO_DRAWER’ or ‘LOG_INTO_DRAWER’ property. When called with a C-u prefix argument, select the task from a list of recently clocked tasks. With two C-u C-u prefixes, clock into the task at point and mark it as the default task; the default task is always be available with letter d when selecting a clocking task. With three C-u C-u C-u prefixes, force continuous clocking by starting the clock when the last clock stopped.
+      While the clock is running, Org shows the current clocking time in the mode line, along with the title of the task. The clock time shown is all time ever clocked in for this task and its children. If the task has an effort estimate (see Effort Estimates), the mode line displays the current clocking time against it75. If the task is a repeating one (see Repeated tasks), show only the time since the last reset of the task76. You can exercise more control over show time with the ‘CLOCK_MODELINE_TOTAL’ property. It may have the values ‘current’ to show only the current clocking instance, ‘today’ to show all time clocked on this task today—see also the variable org-extend-today-until, all to include all time, or auto which is the default77. Clicking with mouse-1 onto the mode line entry pops up a menu with clocking options.
+  C-c C-x C-o (org-clock-out)
+      Stop the clock (clock-out). This inserts another timestamp at the same location where the clock was last started. It also directly computes the resulting time in inserts it after the time range as ‘=>HH:MM’. See the variable org-log-note-clock-out for the possibility to record an additional note together with the clock-out timestamp78.
+  C-c C-x C-x (org-clock-in-last)
+      Re-clock the last clocked task. With one C-u prefix argument, select the task from the clock history. With two C-u prefixes, force continuous clocking by starting the clock when the last clock stopped.
+  C-c C-x C-e (org-clock-modify-effort-estimate)
+      Update the effort estimate for the current clock task.
+  C-c C-c or C-c C-y (org-evaluate-time-range)
+      Recompute the time interval after changing one of the timestamps. This is only necessary if you edit the timestamps directly. If you change them with S-<cursor> keys, the update is automatic.
+  C-S-UP (org-clock-timestamps-up), C-S-DOWN (org-clock-timestamps-down)
+      On CLOCK log lines, increase/decrease both timestamps so that the clock duration keeps the same value.
+  S-M-UP (org-timestamp-up), S-M-DOWN (org-timestamp-down)
+      On ‘CLOCK’ log lines, increase/decrease the timestamp at point and the one of the previous, or the next, clock timestamp by the same duration. For example, if you hit S-M-UP to increase a clocked-out timestamp by five minutes, then the clocked-in timestamp of the next clock is increased by five minutes.
+      Only ‘CLOCK’ logs created during current Emacs session are considered when adjusting next/previous timestamp.
+  C-c C-t (org-todo)
+      Changing the TODO state of an item to DONE automatically stops the clock if it is running in this same item.
+  C-c C-x C-q (org-clock-cancel)
+      Cancel the current clock. This is useful if a clock was started by mistake, or if you ended up working on something else.
+  C-c C-x C-j (org-clock-goto)
+      Jump to the headline of the currently clocked-in task. With a C-u prefix argument, select the target task from a list of recently clocked tasks.
+  C-c C-x C-d (org-clock-display)
+      Display time summaries for each subtree in the current buffer. This puts overlays at the end of each headline, showing the total time recorded under that heading, including the time of any subheadings. You can use visibility cycling to study the tree, but the overlays disappear when you change the buffer (see variable org-remove-highlights-with-change) or press C-c C-c.
+The clock table
+  org-clock-report
+      Insert or update a clock table. When called with a prefix argument, jump to the first clock table in the current document and update it. The clock table includes archived trees.
+      This command can be invoked by calling org-dynamic-block-insert-dblock (C-c C-x x) and selecting “clocktable” (see Dynamic Blocks).
+  C-c C-c or C-c C-x C-u (org-dblock-update)
+      Update dynamic block at point. Point needs to be in the ‘BEGIN’ line of the dynamic block.
+  C-u C-c C-x C-u
+      Update all dynamic blocks (see Dynamic Blocks). This is useful if you have several clock table blocks in a buffer.
+  S-LEFT, S-RIGHT (org-clocktable-try-shift)
+      Shift the current ‘:block’ interval and update the table. Point needs to be in the ‘#+BEGIN: clocktable’ line for this command. If ‘:block’ is ‘today’, it is shifted to ‘today-1’, etc.
+Effort Estimates
+  C-c C-x e (org-set-effort)
+      Set the effort estimate for the current entry. With a prefix argument, set it to the next allowed value—see below. This command is also accessible from the agenda with the e key.
+  C-c C-x C-e (org-clock-modify-effort-estimate)
+      Modify the effort estimate of the item currently being clocked.
+Taking Notes with a Relative Timer
+  C-c C-x 0 (org-timer-start)
+      Start or reset the relative timer. By default, the timer is set to 0. When called with a C-u prefix, prompt the user for a starting offset. The prompt will default to a timer string at point (if any), providing a convenient way to restart taking notes after a break in the process. When called with a double prefix argument C-u C-u, change all timer strings in the active region by a certain amount. This can be used to fix timer strings if the timer was not started at exactly the right moment.
+  C-c C-x ; (org-timer-set-timer)
+      Start a countdown timer. The user is prompted for a duration. org-timer-default-timer sets the default countdown value. Giving a numeric prefix argument overrides this default value. This command is available as ; in agenda buffers.
+  Once started, relative and countdown timers are controlled with the same commands.
+  C-c C-x . (org-timer)
+      Insert a relative time into the buffer. The first time you use this, the timer starts. Using a prefix argument restarts it.
+  C-c C-x - (org-timer-item)
+      Insert a description list item with the current relative time. With a prefix argument, first reset the timer to 0.
+  M-RET (org-insert-heading)
+      Once the timer list is started, you can also use M-RET to insert new timer items.
+  C-c C-x , (org-timer-pause-or-continue)
+      Pause the timer, or continue it if it is already paused.
+  C-c C-x _ (org-timer-stop)
+      Stop the timer. After this, you can only start a new timer, not continue the old one. This command also removes the timer from the mode line.
+```
+
+## Refiling and Archiving
+
+```
+Refile and Copy
+  C-c C-w (org-refile)
+      Refile the entry or region at point. This command offers possible locations for refiling the entry and lets you select one with completion. The item (or all items in the region) is filed below the target heading as a sub-item. Depending on org-reverse-note-order, it is either the first or last sub-item.
+      By default, all level 1 headlines in the current buffer are considered to be targets, but you can have more complex definitions across a number of files. See the variable org-refile-targets for details. If you would like to select a location via a file-path-like completion along the outline path, see the variables org-refile-use-outline-path and org-outline-path-complete-in-steps. If you would like to be able to create new nodes as new parents for refiling on the fly, check the variable org-refile-allow-creating-parent-nodes. When the variable org-log-refile84 is set, a timestamp or a note is recorded whenever an entry is refiled.
+  C-u C-c C-w
+      Use the refile interface to jump to a heading.
+  C-u C-u C-c C-w (org-refile-goto-last-stored)
+      Jump to the location where org-refile last moved a tree to.
+  C-2 C-c C-w
+      Refile as the child of the item currently being clocked.
+  C-3 C-c C-w
+      Refile and keep the entry in place. Also see org-refile-keep to make this the default behavior, and beware that this may result in duplicated ‘ID’ properties.
+  C-0 C-c C-w or C-u C-u C-u C-c C-w (org-refile-cache-clear)
+      Clear the target cache. Caching of refile targets can be turned on by setting org-refile-use-cache. To make the command see new possible targets, you have to clear the cache with this command.
+  C-c M-w (org-refile-copy)
+      Copying works like refiling, except that the original note is not deleted.
+  C-c C-M-w (org-refile-reverse)
+      Works like refiling, except that it temporarily toggles how the value of org-reverse-note-order applies to the current buffer. So if org-refile would append the entry as the last entry under the target header, org-refile-reverse will prepend it as the first entry, and vice versa.
+Moving a tree to an archive file
+  C-c C-x C-a ( org-archive-subtree-default ) ¶
+      Archive the current entry using the command specified in the variable org-archive-default-command.
+  C-c C-x C-s or short C-c $ (org-archive-subtree)
+      Archive the subtree starting at point position to the location given by org-archive-location.
+  C-u C-c C-x C-s
+      Check if any direct children of the current headline could be moved to the archive. To do this, check each subtree for open TODO entries. If none is found, the command offers to move it to the archive location. If point is not on a headline when this command is invoked, check level 1 trees.
+  C-u C-u C-c C-x C-s
+      As above, but check subtree for timestamps instead of TODO entries. The command offers to archive the subtree if it does contain a timestamp, and that timestamp is in the past.
+Internal archiving
+  C-c C-x a (org-toggle-archive-tag)
+      Toggle the archive tag for the current headline. When the tag is set, the headline changes to a shadowed face, and the subtree below it is hidden.
+  C-u C-c C-x a
+      Check if any direct children of the current headline should be archived. To do this, check each subtree for open TODO entries. If none is found, the command offers to set the ‘ARCHIVE’ tag for the child. If point is not on a headline when this command is invoked, check the level 1 trees.
+  C-c C-TAB (org-cycle-force-archived)
+      Cycle a tree even if it is tagged with ‘ARCHIVE’.
+  C-c C-x A (org-archive-to-archive-sibling)
+      Move the current entry to the Archive Sibling. This is a sibling of the entry with the heading ‘Archive’ and the archive tag. The entry becomes a child of that sibling and in this way retains a lot of its original context, including inherited tags and approximate position in the outline.
+```
+
 # 基本命令
 
 ## 移动

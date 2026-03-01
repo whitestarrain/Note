@@ -59,7 +59,16 @@ This approach has never let me down, and it has made all the difference in my li
     - [ ] 集成easyocr扫描pdf文本 `easyocr -l ch_sim en --paragraph True --detail 0  -f image.png`
   - [ ] [99 lisp problems](https://www.ic.unicamp.br/~meidanis/courses/mc336/problemas-lisp/L-99_Ninety-Nine_Lisp_Problems.html)
   - [ ] common ansi lisp
+  - [ ] [org快速指南](https://jansky520.github.io/p/org快速指南/)
+  - [ ] [Emacs折腾日记(三十二)——org mode的基本美化](https://www.cnblogs.com/lanuage/p/19137189)
   - gtd
+    - [ ] [Emacs 折腾日记(三十四)—— org todo](https://www.cnblogs.com/lanuage/p/19468769)
+    - [ ] [我的年度总结所使用到的数据分析和可视化工具](https://www.zmonster.me/2024/01/18/tools-used-when-writing-summary.html)
+      - [ ] [org-agenda 视图配置](https://github.com/Linusp/org-agenda-example/tree/master)
+    - [ ] [用 orgmode 做 GTD 风格管理入门指南](https://www.reddit.com/r/emacs/comments/f9lgiz/help_getting_started_with_orgmode_for_gtdstyle/?tl=zh-hans)
+      - [ ] [org-mode: Organize Your Life In Plain Text!](https://doc.norang.ca/org-mode.html)
+      - [ ] [org-recur](https://github.com/mrcnski/org-recur)
+    - [ ] [Org as 地表最强的管理与计划的助手工具](https://emacs-china.org/t/05-org-as/12092/30)
     - [ ] [以Emacs-Org-mode为核心的任务管理方案](https://jihuan-tian.github.io/thoughts/2019/04/30/以Emacs-Org-mode为核心的任务管理方案.html)
     - [ ] [emacs GTD](https://www.labri.fr/perso/nrougier/GTD/index.html)
     - [ ] [使用 Emacs 做 GTD 软件](https://sspai.com/post/67852)
@@ -69,6 +78,11 @@ This approach has never let me down, and it has made all the difference in my li
     - [ ] [谈谈我是如何高效率的工作，高效率的 Get Things Done 和让团队高效率运转](https://v2ex.com/t/887733)
     - [ ] [https://rgb-24bit.github.io/blog/2017/org-gtd.html](https://rgb-24bit.github.io/blog/2017/org-gtd.html)
     - [ ] [org-mode：用纯文本管理任务的简易规则](https://xlrocket.blog/2025/09/07/org-mode：用纯文本管理任务的简易规则（面向初心者）/)
+    - [ ] [How I get work done with Emacs and org-mode](https://www.philnewton.net/blog/how-i-get-work-done-with-emacs/)
+  - diary
+    - [ ] [Org-capture 用于日记记录还是 org-journal？](https://www.reddit.com/r/emacs/comments/imxbk9/orgcapture_for_journaling_or_orgjournal/)
+      - <https://gist.github.com/amitp/7a133026dafac2131e5f023d43acbc16>
+      - <https://github.com/bastibe/org-journal>
   - navigation
     - [better-jumper](https://github.com/gilbertw1/better-jumper)
     - [back-button](https://github.com/rolandwalker/back-button)
@@ -163,6 +177,7 @@ This approach has never let me down, and it has made all the difference in my li
   - [ ] 微机原理。使用电路模拟器实现一个计算器
   - [ ] 树莓派
   - [野火-嵌入式Linux驱动开发实战指南](https://doc.embedfire.com/linux/imx6/driver/zh/latest/index.html)
+  - [太极创客 物联网 Arduino 入门](http://www.taichi-maker.com/homepage/arduino-tutorial-index/)
 
 - 深度学习进阶，自然语言处理
   - 主要是用于整理日记，进行总结
@@ -1411,7 +1426,6 @@ cookie和session攻击
 - [网易云音乐ncm格式分析以及ncm与mp3格式转换](https://www.cnblogs.com/cyx-b/p/13443003.html)
 - [CloudFlare Tunnel 免费内网穿透的简明教程](https://sspai.com/post/79278)
 - anki 记忆卡，fsrs 算法
-- [物联网 Arduino 入门](http://www.taichi-maker.com/homepage/arduino-tutorial-index/)
 - [声卡采样率](https://zhuanlan.zhihu.com/p/624168796)
 - [review doom3](https://www.youtube.com/watch?v=C_ymp74yobE)
   - 7:55: 使用一个神奇的数字加速平方根的计算

@@ -4356,6 +4356,7 @@ modinfo
   nohup ssh -qTfnN -D 127.0.0.1:7890 root@1.1.1.1 "vmstat 10" 2>&1 >/dev/null &
   ```
 - ssh 映射 tcp 端口，（也支持 unix socket 映射，详见man文档）
+  > [How to Set up SSH Tunneling (Port Forwarding)](https://linuxize.com/post/how-to-setup-ssh-tunneling/)
 
   ```
   ssh -L 8080:localhost:8080 user@ip.of.remote.machine // 在本地监听8080，转发给远程机器的8080端口
