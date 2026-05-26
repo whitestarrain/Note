@@ -917,6 +917,47 @@ C-u 重复执行， C-u 8 C-f 会向前移动 8 个字符。
   - https://nyk.ma/posts/emacs-intro/
 - [Emacs User Survey 2020 Results](https://emacssurvey.org/2020/)
 
+# Org 使用case
+
+## org-babel
+
+- 执行cpp代码，处理交互输入的场景
+
+  ```
+  #+begin_src C++ :results output :cmdline < in.txt
+  #include <iostream>
+  int main(int argc, char *argv[]) {
+    int a;
+    std::cin >> a;
+    std::cout << a + 1;
+    return 0;
+  }
+
+  #+end_src
+
+  #+RESULTS:
+  : 11
+  ```
+  ```
+  #+name: input_block
+  #+BEGIN_SRC elisp :export none :results none
+  (completing-read "a=" nil)
+
+  #+END_SRC
+
+  #+BEGIN_SRC C++  :results output :export code :tangle myfile.cpp :var input=input_block
+    #include <stdlib.h>
+    #include <iostream>
+    using namespace std;
+
+    int main()
+    {
+    int a = atoi(input);
+    cout<<a+1;
+    }
+  #+END_SRC
+  ```
+
 # 参考
 
 - [The Emacs Editor](https://www.gnu.org/software/emacs/manual/html_node/emacs/index.html)

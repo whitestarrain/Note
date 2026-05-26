@@ -202,6 +202,14 @@ void HelloC::hello() { cout << "hello" << endl; } // 函数实现
 
 如果不定义，会默认生成一个空的析构函数
 
+栈内创建（没有使用new）的对象，根据RAII机制，在销毁栈时会自动调用析构函数。
+new的对象需要手动delete
+
+如果返回了对象，根据 返回值优化（RVO）和移动语义，会返回栈内对象。（c也支持直接返回struct）
+
+- 编译器优化（RVO/NRVO）：现代编译器会通过**返回值优化（Return Value Optimization, RVO）或命名返回值优化（Named RVO, NRVO）**直接构造对象到调用方的内存中，避免拷贝。
+- 移动语义（C++11起）：如果编译器无法应用RVO，会优先使用移动构造函数（如std::string的移动构造），资源转移而非深拷贝，保证高效。
+
 ### 访问控制
 
 c++ 访问控制原理是编译阶段实现的
@@ -941,7 +949,9 @@ int main()
   vector<int> v;//定义一个vector，其中的元素为int类型
   vector<int> v[N];//定义一个vector数组，其中有N个vector
   vector<int> v(len);//定义一个长度为len的vector
-  vector<int> v(len, x);//定义一个长度为len的vector，初始化每个元素为x
+  vector<int> v(len, x);//定义一个长度为len的vector，初始化每个元素为x,下面两种写法都行
+		vector<vector<int>> v(grid.size() - k + 1, vector<int>(grid[0].size()));
+		vector<vector<int>> v = vector(grid.size() - k + 1, vector<int>(grid[0].size()));
   vector<int> v2(v1);//用v1给v2赋值，v1的类型为vector
   vector<int> v2(v1.begin(), v1.begin() + 3);//将v1中第0~2三个元素赋值给v2
   ```
@@ -1432,6 +1442,353 @@ ClassName& operator=(ClassName&&); // 移动赋值运算符
 
 条款17：C++11后，更推荐直接使用 make_shared<T>(args) 来一次性完成“new对象并放入智能指针”的工作
 ```
+
+# C++ stub
+
+## C++ Stub 原理
+
+Stub（桩）是一种替代真实实现的轻量对象，主要用于两个场景：
+
+- 1. 单元测试中的 Stub
+
+  原理：通过多态（虚函数）或模板，将真实依赖替换为可控的假实现，隔离被测代码。
+
+  ```cpp
+  // 接口定义
+  class IDatabase {
+  public:
+      virtual ~IDatabase() = default;
+      virtual std::string query(const std::string& sql) = 0;
+  };
+
+  // 真实实现
+  class MySQLDatabase : public IDatabase {
+  public:
+      std::string query(const std::string& sql) override {
+          // 实际连接数据库执行查询
+          return execute_real_query(sql);
+      }
+  };
+
+  // Stub 实现 —— 不连接数据库，返回预设结果
+  class DatabaseStub : public IDatabase {
+      std::string preset_result_;
+  public:
+      explicit DatabaseStub(std::string result) : preset_result_(std::move(result)) {}
+      std::string query(const std::string& /*sql*/) override {
+          return preset_result_;
+      }
+  };
+
+  // 被测类依赖注入接口
+  class UserService {
+      IDatabase& db_;
+  public:
+      explicit UserService(IDatabase& db) : db_(db) {}
+      std::string getUserName(int id) {
+          return db_.query("SELECT name FROM users WHERE id=" + std::to_string(id));
+      }
+  };
+
+  // 测试
+  void test_get_user_name() {
+      DatabaseStub stub("Alice");
+      UserService service(stub);
+      assert(service.getUserName(1) == "Alice");
+  }
+
+  ```
+
+- 2. RPC Stub（远程调用代理）
+
+  原理：客户端调用 stub 的方法，stub 内部将参数序列化、通过网络发送到服务端，再将响应反序列化
+  返回给调用者。调用者感知不到网络通信的存在。
+
+  ```cpp
+  // 公共接口（客户端和服务端共享）
+  class ICalculator {
+  public:
+      virtual ~ICalculator() = default;
+      virtual int add(int a, int b) = 0;
+  };
+
+  // 服务端真实实现
+  class CalculatorImpl : public ICalculator {
+  public:
+      int add(int a, int b) override { return a + b; }
+  };
+
+  // 客户端 Stub —— 伪装成本地对象，实际通过网络调用
+  class CalculatorStub : public ICalculator {
+      int server_fd_;
+  public:
+      explicit CalculatorStub(const std::string& host, int port) {
+          server_fd_ = connect_to_server(host, port); // 建立TCP连接
+      }
+
+      int add(int a, int b) override {
+          // 1. 序列化请求
+          Request req{.method = "add", .params = {a, b}};
+          std::vector<uint8_t> buf = serialize(req);
+
+          // 2. 发送到服务端
+          send(server_fd_, buf.data(), buf.size(), 0);
+
+          // 3. 接收响应并反序列化
+          std::vector<uint8_t> resp_buf(256);
+          recv(server_fd_, resp_buf.data(), resp_buf.size(), 0);
+          Response resp = deserialize(resp_buf);
+
+          return resp.result;
+      }
+
+      ~CalculatorStub() { close(server_fd_); }
+  };
+
+  // 客户端使用 —— 和调用本地对象完全一样
+  void client_main() {
+      CalculatorStub calc("127.0.0.1", 8080);
+      int result = calc.add(3, 4); // 实际走了网络
+  }
+
+  ```
+
+两者本质相同：通过接口抽象，用一个代理对象替换真实对象，对调用者透明。
+
+## 高级Stub
+
+这类技术在运行时修改目标函数的机器码或指针，将调用重定向到 stub函数。常见于热补丁、测试框架内核、Hook 框架中。
+
+### Inline Hook（指令级跳转）
+
+原理：将目标函数开头的指令替换为 jmp 到 stub 函数。
+
+```cpp
+#include <cstring>
+#include <cstdio>
+#include <sys/mman.h>
+#include <unistd.h>
+#include <cstdint>
+
+class InlineHook {
+    void* target_;
+    uint8_t original_bytes_[14]; // 保存原始指令用于恢复
+    size_t patch_size_;
+
+public:
+    // target: 被替换的函数地址, replacement: 替换为的函数地址
+    bool install(void* target, void* replacement) {
+        target_ = target;
+
+        // 修改内存页为可写可执行
+        size_t page_size = sysconf(_SC_PAGESIZE);
+        void* page_start = (void*)((uintptr_t)target & ~(page_size - 1));
+        if (mprotect(page_start, page_size * 2, PROT_READ | PROT_WRITE | PROT_EXEC) != 0)
+            return false;
+
+        // x86_64: 14字节绝对跳转
+        // mov rax, <address>; jmp rax
+        uint8_t patch[14] = {
+            0x48, 0xB8,                         // mov rax, imm64
+            0, 0, 0, 0, 0, 0, 0, 0,            // 8字节目标地址
+            0xFF, 0xE0                          // jmp rax
+        };
+        uintptr_t addr = (uintptr_t)replacement;
+        memcpy(&patch[2], &addr, sizeof(addr));
+
+        patch_size_ = sizeof(patch);
+        memcpy(original_bytes_, target, patch_size_); // 备份原始指令
+        memcpy(target, patch, patch_size_);           // 写入跳转指令
+
+        return true;
+    }
+
+    void uninstall() {
+        memcpy(target_, original_bytes_, patch_size_); // 恢复原始指令
+    }
+};
+
+// --- 使用示例 ---
+
+int real_add(int a, int b) {
+    return a + b;
+}
+
+int stub_add(int a, int b) {
+    return 42; // 无论输入返回固定值
+}
+
+int main() {
+    InlineHook hook;
+
+    printf("before hook: %d\n", real_add(1, 2)); // 输出 3
+
+    hook.install((void*)real_add, (void*)stub_add);
+    printf("after hook:  %d\n", real_add(1, 2)); // 输出 42
+
+    hook.uninstall();
+    printf("restored:    %d\n", real_add(1, 2)); // 输出 3
+}
+```
+
+### VTable Hook（虚表指针替换）
+
+原理：C++ 虚函数通过 vtable 间接调用。替换 vtable 中的函数指针即可重定向。
+
+```cpp
+#include <cstdint>
+#include <cstdio>
+#include <sys/mman.h>
+#include <unistd.h>
+
+class Animal {
+public:
+    virtual int speak() { return 1; }
+    virtual int eat()   { return 2; }
+    virtual ~Animal() = default;
+};
+
+// 获取对象的 vtable 指针（对象头部的第一个 word）
+static void** get_vtable(void* obj) {
+    return *(void***)obj;
+}
+
+// 替换 vtable 中第 index 个虚函数
+static void* replace_vtable_entry(void* obj, int index, void* new_func) {
+    void** vtable = get_vtable(obj);
+
+    // vtable 通常在只读段，需要改权限
+    size_t page_size = sysconf(_SC_PAGESIZE);
+    void* page = (void*)((uintptr_t)&vtable[index] & ~(page_size - 1));
+    mprotect(page, page_size, PROT_READ | PROT_WRITE);
+
+    void* original = vtable[index];
+    vtable[index] = new_func;
+    return original;
+}
+
+// stub 函数 —— 签名必须匹配（隐含 this 指针）
+int fake_speak(Animal* self) {
+    return 999;
+}
+
+int main() {
+    Animal cat;
+    printf("before: speak=%d\n", cat.speak()); // 1
+
+    replace_vtable_entry(&cat, 0, (void*)fake_speak); // index 0 = speak
+    printf("after:  speak=%d\n", cat.speak()); // 999
+}
+```
+
+
+### GOT/PLT Hook（动态链接劫持）
+
+原理：共享库函数通过 GOT（Global Offset Table）间接调用。修改 GOT 表项即可劫持库函数。
+
+```cpp
+#include <cstdio>
+#include <cstring>
+#include <dlfcn.h>
+#include <link.h>
+#include <elf.h>
+#include <sys/mman.h>
+#include <unistd.h>
+
+// 在 GOT 中找到目标函数并替换
+void* hook_got(const char* symbol, void* new_func) {
+    // 获取当前可执行文件的 link_map
+    void* handle = dlopen(nullptr, RTLD_NOW);
+    struct link_map* map;
+    dlinfo(handle, RTLD_DI_LINKMAP, &map);
+
+    for (; map; map = map->l_next) {
+        ElfW(Dyn)* dyn = map->l_ld;
+        ElfW(Sym)* symtab = nullptr;
+        char* strtab = nullptr;
+        ElfW(Rela)* rela = nullptr;
+        size_t rela_count = 0;
+
+        for (; dyn->d_tag != DT_NULL; ++dyn) {
+            switch (dyn->d_tag) {
+                case DT_SYMTAB:  symtab = (ElfW(Sym)*)(dyn->d_un.d_ptr); break;
+                case DT_STRTAB:  strtab = (char*)(dyn->d_un.d_ptr); break;
+                case DT_JMPREL:  rela = (ElfW(Rela)*)(dyn->d_un.d_ptr); break;
+                case DT_PLTRELSZ: rela_count = dyn->d_un.d_val / sizeof(ElfW(Rela)); break;
+            }
+        }
+        if (!symtab || !strtab || !rela) continue;
+
+        for (size_t i = 0; i < rela_count; ++i) {
+            int sym_idx = ELF64_R_SYM(rela[i].r_info);
+            const char* name = strtab + symtab[sym_idx].st_name;
+
+            if (strcmp(name, symbol) == 0) {
+                void** got_entry = (void**)(map->l_addr + rela[i].r_offset);
+
+                size_t page_size = sysconf(_SC_PAGESIZE);
+                void* page = (void*)((uintptr_t)got_entry & ~(page_size - 1));
+                mprotect(page, page_size, PROT_READ | PROT_WRITE);
+
+                void* original = *got_entry;
+                *got_entry = new_func;
+                return original;
+            }
+        }
+    }
+    return nullptr;
+}
+
+// 替换 libc 的 strlen
+size_t fake_strlen(const char* s) {
+    return 0; // 永远返回 0
+}
+
+int main() {
+    printf("before: %zu\n", strlen("hello")); // 5
+
+    hook_got("strlen", (void*)fake_strlen);
+    printf("after:  %zu\n", strlen("hello")); // 0
+}
+```
+
+### 编译期模板 Stub（零开销）
+
+原理：通过模板参数注入依赖，编译器直接内联，无虚函数开销。
+
+```cpp
+template <typename Clock = std::chrono::system_clock>
+class Timer {
+public:
+    auto now() { return Clock::now(); }
+};
+
+// 测试用 stub clock
+struct FakeClock {
+    static inline std::chrono::time_point<std::chrono::system_clock> fixed_time;
+    static auto now() { return fixed_time; }
+};
+
+// 生产代码
+Timer<> real_timer;
+// 测试代码
+Timer<FakeClock> test_timer;
+```
+
+### 总结
+
+|     技术     |    粒度    |           优点            |             缺点             |
+| :----------: | :--------: | :-----------------------: | :--------------------------: |
+| Inline Hook  |  任意函数  | 最通用，非虚函数也能 hook |   需处理指令对齐、线程安全   |
+| VTable Hook  |   虚函数   |     简单，不改代码段      | 仅限虚函数，影响同类所有实例 |
+| GOT/PLT Hook | 动态库函数 |       不修改代码段        |    仅限动态链接的外部符号    |
+|   模板注入   |   编译期   |       零运行时开销        |  需要代码本身支持模板参数化  |
+
+生产级框架参考：
+
+- frida (https://frida.re/)（跨平台 hook）
+- subhook(https://github.com/AJenbo/subhook)（轻量 inline hook）
+- Google 内部的 MockFunction 也使用类似 inline patching 技术
 
 # 参考资料
 

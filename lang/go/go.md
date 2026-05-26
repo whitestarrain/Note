@@ -1569,6 +1569,7 @@ Use "go help <topic>" for more information about that topic.
 
 - [ ] **[Go编程时光](https://golang.iswbm.com/preface.html)(可以参考知识点结构)**
 - [ ] **[Go语言学习笔记](https://www.yuque.com/baxiang/go)(知识点比较细，用来查缺补漏)**
+- [ ] [A tour of Go](https://go.dev/tour/list)
 - [ ] [Go语言圣经（中文版）](https://books.studygolang.com/gopl-zh/ch1/ch1-01.html)
 - [ ] [Go Web 编程](https://astaxie.gitbooks.io/build-web-application-with-golang/content/zh/)[github地址](https://github.com/astaxie/build-web-application-with-golang)
 - [ ] [一个小时学会用 Go 创建命令行工具](https://studygolang.com/articles/32020)

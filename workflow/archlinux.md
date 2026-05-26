@@ -708,6 +708,8 @@ cpio –icduv < /opt/etc.cpio
 
 ## 5.2. WayLand
 
+TODO: [wayland架构](https://cloud.tencent.com/developer/article/2533553)
+
 # 6. linux 桌面环境(前端)
 
 ## 6.1. DE(Desktop Enviroment, 桌面环境)

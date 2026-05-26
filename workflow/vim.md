@@ -1047,6 +1047,7 @@ profile stop
 Unix uses 0xA for a newline character. Windows uses a combination of two characters: 0xD 0xA. 0xD is the carriage return character. `^M` happens to be the way vim displays 0xD (0x0D = 13, M is the 13th letter in the English alphabet).
 
 You can remove all the `^M` characters by running the following:
+/bin/bash: line 1: ctrans: command not found
 
 ```vim
 :%s/^M//g

@@ -437,9 +437,28 @@ perf，c 性能检查工具， 可以搭配 [flamegraph](https://github.com/bren
 同时，bubblewrap 使用PR_SET_NO_NEW_PRIVS 关闭 setuid 二进制程序。
 当一个进程或其子进程设置了PR_SET_NO_NEW_PRIVS 属性,则其不能访问一些无法share的操作,如setuid, 和chroot。
 
-# wireshark
+## peekfd
+
+读取进程写和读fd的内容
+
+# 抓包
+
+## wireshark
 
 抓包工具
+
+```
+mitmproxy --set connection_strategy=lazy --listen-host 0.0.0.0 -p 8191
+```
+
+`--set connection_strategy=lazy` 可以抓到unreachable request
+> [Is it possible to show unreachable URLs in the main flow list?](https://github.com/mitmproxy/mitmproxy/discussions/7081)
+
+## whistle
+
+## mitmproxy
+
+## fiddler
 
 # Linux
 
@@ -659,9 +678,16 @@ wget https://raw.githubusercontent.com/IreneKnapp/direct-sqlite/a74cc50c735053c7
 
 ## ascii art
 
+## asciinema 记录和分享终端操作
+
 - [textik 画图](https://textik.com)
 - [ascii rain](https://github.com/nkleemann/ascii-rain)
 - [ascii 盆景](https://gitlab.com/jallbrit/cbonsai)
+
+# Awesome 系列
+
+- all awesome: [awesome-awesomeness](https://github.com/bayandin/awesome-awesomeness)
+  - [awesome-solfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted)
 
 # 参考
 

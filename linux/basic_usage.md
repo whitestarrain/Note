@@ -571,31 +571,51 @@ unicode 转义序列标准：[ASCII Escaping of Unicode Characters](https://www.
 
 unicode 转义序列 输出为文本，转义序列一般使用的是大端 utf-16
 
-```
-# 使用utf-16大端
-echo -ne '\x09\x65' | iconv -f utf-16be
-# 等价
-echo -ne '\x65\x09' | iconv -f utf-16le
-```
+- utf-8
 
-```
-# echo "你好" | iconv -f utf-8 -t utf-16le | od -Ax -tx -tc
-000000        597d4f60        0000000a
-         `   O   }   Y  \n  \0
-000006
+  ```
+  echo -n '॥' | od -Ax -tx1 -tc
+  000000  e0  a5  a5
+        340 245 245
+  000003
+  ```
+- utf-16be
 
-# echo "你好" | iconv -f utf-8 -t utf-16be | od -Ax -tx -tc
-000000        7d59604f        00000a00
-         O   `   Y   }  \0  \n
-000006
+  ```
+  echo -n '॥' | iconv -f utf-8 -t utf-16be | od -Ax -tx1 -tc
+  000000  09  65
+          \t   e
+  000002
+  ```
 
-```
+- 转义输出
 
-bash 4.2 版本以上可以使用：
+  ```
+  echo -e '\xe0\xa5\xa5' # utf-8
+  echo $'\u0965' # utf-16be, bash 4.2 版本以上可以使用
+  ```
 
-```
-echo $'\u0965'
-```
+
+- utf-16 大端和小端
+
+  ```
+  # 使用utf-16大端
+  echo -ne '\x09\x65' | iconv -f utf-16be
+  # 等价
+  echo -ne '\x65\x09' | iconv -f utf-16le
+  ```
+
+  ```
+  echo -n "你好" | iconv -f utf-8 -t utf-16le | od -Ax -tx1 -tc
+  000000  60  4f  7d  59
+          `   O   }   Y
+  000004
+
+  echo -n "你好" | iconv -f utf-8 -t utf-16be | od -Ax -tx1 -tc
+  000000  4f  60  59  7d
+          O   `   Y   }
+  000004
+  ```
 
 ## 2.11. 文件切分
 
@@ -4267,6 +4287,17 @@ modinfo
 
 ## 16.6. iostat
 
+- 查看io使用率 %util:
+
+  ```
+  iostat -x 1
+  ```
+- 检查进程级别io使用率：
+
+  ```
+  sudo iotop
+  ```
+
 ## 16.7. lsblk
 
 ## 16.8. dmesg
@@ -4274,6 +4305,19 @@ modinfo
 分析核心产生的信息
 
 ## 16.9. dmidecode
+
+dmidecode 是一个 Linux 命令行工具，用于读取硬件的 DMI（Desktop Management Interface）/ SMBIOS 表信息，
+直接从 BIOS 中提取硬件元数据，无需打开机箱。
+
+也能获取生产商以及产品Family等
+
+常见用途：
+
+- 查看服务器型号：dmidecode -t system
+- 查看内存条信息（容量、频率、插槽）：dmidecode -t memory
+- 查看 CPU 信息：dmidecode -t processor
+- 查看 BIOS 版本：dmidecode -t bios
+- 查看主板信息：dmidecode -t baseboard
 
 # 17. 网络
 
@@ -5279,4 +5323,6 @@ linux 进程 checkpoint 和 restore工具
 - [setcap 命令详解](https://www.cnblogs.com/iamfy/archive/2012/09/20/2694977.html)
 - [聊聊BIOS、UEFI、MBR、GPT、GRUB……](https://segmentfault.com/a/1190000020850901)
 - [wiki: BIOS boot partition](https://en.wikipedia.org/wiki/BIOS_boot_partition)
+- [Linux From Scratch](https://www.linuxfromscratch.org/lfs/view/stable/)
+
 

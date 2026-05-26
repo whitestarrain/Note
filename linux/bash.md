@@ -1089,8 +1089,7 @@ IFS=ab read x y z
 特殊字符需要加反斜杠转义：
 
 ```
-echo \$date
-echo \t
+echo -e "\t"
 echo "\""
 
 # 由于反斜杠在单引号里面变成了普通字符，所以如果单引号之中，还要使用单引号，不能使用转义，
@@ -1124,7 +1123,28 @@ mv /path/to/foo /path/to/bar
 ```
 上面例子中，如果一条命令过长，就可以在行尾使用反斜杠，将其改写成多行。这是常见的多行命令的写法。
 
+## ANSI C 转义字符串
 
+使用 $'...' 包裹的字符串会基于 ANSI C 对反斜杠转义字符进行转义
+
+对比：
+
+```bash
+# 普通单引号 — 原样输出，不解释转义
+echo 'hello\nworld'
+# 输出: hello\nworld
+
+# $'...' — 解释转义序列
+echo $'hello\nworld'
+# 输出:
+# hello
+# world
+
+# 输出单引号
+echo $'\''
+```
+
+它结合了单引号的"不做变量展开"和双引号的"解释转义"两个优点——不展开 $var，但会处理 \n、\t 等。
 
 ## 9.2. 拼接
 
@@ -1231,8 +1251,6 @@ echo ${food:-Cake}  #=> $food or "Cake"
 | `${FOO%%pattern}`    | 删除从右往左，最长匹配       |
 | `${FOO/str1/str2}`   | 用str2 替换 str1，只替换一次 |
 | `${FOO//str1//str2}` | 把所有str1替换为str2         |
-
-## 9.8. Here 文档 和 Here 字符串
 
 # 10. 数组
 
@@ -1460,8 +1478,16 @@ done
   |   `<`    | 重定向输入                                                    |
   |  `2>&1`  | 错误输出重定向到标准输出                                      |
   |   `<<`   | [Here 文档](http://tldp.org/LDP/abs/html/here-docs.html) 语法 |
-  |  `<<-`   | 也是here文档，但是会忽略leading tab                           |
+  |  `<<-`   | 也是here文档，但是会忽略leading tab。（注意：空格不行）       |
   |  `<<<`   | [Here 字符串](http://www.tldp.org/LDP/abs/html/x17837.html)   |
+
+  > 使用here document时，使用双引号包住 delimiter，可以禁用变量替换
+
+  ```bash
+  cat <<-"EOF"  > somefile.sh
+  Do not print current value of $1 instead evaluate it later.
+  EOF
+  ```
 
   > 细分：
 
