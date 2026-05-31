@@ -891,6 +891,18 @@ public class App {
 
 redis笔记中有谈及：[CAP定理](../database/redis.md)
 
+- 分布式系统中的一致性问题：
+  - 数据副本在多个节点上存储时，如何保证各节点数据一致
+  - 网络分区、节点故障等情况下，一致性与可用性的权衡
+  - 强一致性：任何时刻读到的都是最新写入的数据（如ZooKeeper）
+  - 最终一致性：允许短暂不一致，但最终会达到一致（如DNS）
+  - 顺序一致性：所有节点看到的操作顺序一致（ZooKeeper保证的级别）
+
+- 典型的一致性难题：
+  - 分布式事务：跨多个服务的事务如何保证原子性
+  - 脑裂(Split Brain)：网络分区时多个节点同时认为自己是Leader
+  - 数据冲突：并发写入同一数据时如何决定最终值
+
 ## 5.2. 一致性协议和算法
 
 ### 5.2.1. 说明
@@ -904,12 +916,37 @@ redis笔记中有谈及：[CAP定理](../database/redis.md)
 > PC：phase-commit 的缩写，即阶段提交
 
 - 流程
+  - 第一阶段（Prepare/投票阶段）：
+    - 协调者向所有参与者发送prepare请求
+    - 参与者执行事务操作但不提交，将undo和redo信息写入日志
+    - 参与者回复协调者Yes（可以提交）或No（不能提交）
+  - 第二阶段（Commit/提交阶段）：
+    - 如果所有参与者回复Yes：协调者发送commit请求，参与者正式提交事务
+    - 如果任一参与者回复No：协调者发送rollback请求，参与者回滚事务
 
 - 导致问题
+  - 同步阻塞：参与者在等待协调者指令期间处于阻塞状态，无法进行其他操作
+  - 单点故障：协调者崩溃后，参与者会一直阻塞等待，无法自行决定提交或回滚
+  - 数据不一致：第二阶段如果部分参与者收到commit而部分没收到，会出现数据不一致
+  - 过于保守：任何一个节点失败都会导致整个事务回滚
 
 ### 5.2.3. 三阶段提交(3PC)
 
 - 流程
+  - 第一阶段（CanCommit）：
+    - 协调者询问参与者是否可以执行事务（轻量级检查）
+    - 参与者根据自身状态回复Yes或No（不执行实际操作）
+  - 第二阶段（PreCommit）：
+    - 如果所有参与者回复Yes：协调者发送preCommit请求，参与者执行事务操作并记录日志
+    - 如果任一参与者回复No或超时：协调者发送abort请求，中止事务
+  - 第三阶段（DoCommit）：
+    - 协调者发送doCommit请求，参与者正式提交事务
+    - 关键改进：参与者如果超时未收到协调者指令，默认执行提交（超时自动提交）
+
+- 相比2PC的改进：
+  - 引入超时机制：参与者不会无限期阻塞
+  - 增加CanCommit阶段：减少不必要的资源锁定
+  - 降低了阻塞范围，但仍无法完全解决数据不一致问题
 
 ### 5.2.4. Paxos算法
 
@@ -1477,13 +1514,116 @@ List<String> childrenPaths = zkClient.getChildren().forPath("/node1");
 
 ## 8.3. 命名服务
 
+- 原理：
+  - 利用ZooKeeper节点的全局唯一路径特性，作为分布式环境下的命名服务
+  - 类似于DNS将域名映射为IP，ZooKeeper可以将服务名称映射为服务地址
+
+- 实现方式：
+  - 全局唯一ID生成：利用顺序节点的自增特性生成全局唯一ID
+    - 客户端创建顺序节点 `/id/prefix`，得到 `/id/prefix0000000001`
+    - 节点序号即为全局唯一ID，无需额外协调
+  - 服务命名：在固定路径下创建节点，节点名为服务名，数据为服务地址
+    - 如 `/services/user-service` -> `192.168.1.10:8080`
+    - 配合Watcher机制实现服务地址的动态更新
+
+- 优势：
+  - 无需部署额外的命名系统
+  - 基于ZooKeeper的强一致性保证命名信息可靠
+  - 配合Watcher可实现服务地址变更的实时通知
+
 ## 8.4. Master 选举
+
+- 与8.1节选主的区别：
+  - 8.1节是应用层面的选主实现思路
+  - 本节说明Master选举在具体场景中的使用
+
+- 典型使用场景：
+  - 数据库主备切换：主库故障时，多个备库竞争成为新主库
+  - 定时任务调度：集群中只有一个节点执行定时任务，避免重复执行
+  - 分布式计算：MapReduce中选举一个JobTracker/ResourceManager
+
+- 实现方式（Curator的LeaderLatch）：
+  ```java
+  LeaderLatch latch = new LeaderLatch(client, "/leader-election");
+  latch.start();
+  // 阻塞直到获得领导权
+  latch.await();
+  // 执行Leader逻辑
+  doLeaderWork();
+  // 释放领导权
+  latch.close();
+  ```
+
+- 注意事项：
+  - 获得Leader后应定期检查ZooKeeper连接状态
+  - Session过期后Leader身份自动丢失
+  - 重新选举期间服务短暂不可用，需要业务层面容忍
 
 ## 8.5. 集群管理和注册中心
 
+- 集群管理：
+  - 目标：实时感知集群中节点的上线、下线状态
+  - 实现原理：
+    - 每个节点启动时在 `/cluster/members` 下创建临时节点
+    - 节点宕机或断连后，临时节点自动删除
+    - 监控程序对 `/cluster/members` 设置ChildWatch，感知成员变化
+  - 应用：HBase RegionServer管理、Kafka Broker管理
+
+- 注册中心（服务发现）：
+  - 目标：服务提供者注册地址，服务消费者发现可用服务
+  - 实现原理：
+    - Provider启动时创建临时节点：`/services/user-service/provider_001`
+    - 节点数据存储服务地址和端口
+    - Consumer监听 `/services/user-service` 的子节点变化
+    - Provider下线时临时节点自动删除，Consumer实时感知
+  - 典型应用：Dubbo的注册中心默认使用ZooKeeper
+
 ## 8.6. 分布式队列
 
+- FIFO队列：
+  - 实现原理：
+    - 生产者创建持久顺序节点作为消息：`/queue/msg_0000000001`
+    - 消费者获取 `/queue` 下所有子节点，对序号排序
+    - 消费序号最小的节点，处理完毕后删除该节点
+    - 如果当前无节点，对 `/queue` 设置ChildWatch等待新消息
+  - 注意：ZooKeeper不适合做高吞吐消息队列，适用于轻量级协调场景
+
+- Barrier（屏障/同步队列）：
+  - 场景：等待所有参与者就绪后统一执行
+  - 实现原理：
+    - 设定一个Barrier节点 `/barrier`，设置参与者数量N
+    - 每个参与者就绪后在 `/barrier` 下创建子节点
+    - 所有参与者Watch子节点数量，当子节点数 == N时，所有参与者开始执行
+  - 应用：分布式计算中的MapReduce阶段同步
+
 ## 8.7. 分布式锁
+
+> 详细实现见8.2节，此处补充Curator的开箱即用方案
+
+- Curator提供的锁类型：
+  - InterProcessMutex：可重入排他锁
+  - InterProcessSemaphoreMutex：不可重入排他锁
+  - InterProcessReadWriteLock：可重入读写锁
+  - InterProcessMultiLock：多锁（同时获取多个锁）
+  - InterProcessSemaphoreV2：共享信号量
+
+- 使用示例（可重入锁）：
+  ```java
+  InterProcessMutex lock = new InterProcessMutex(client, "/locks/resource_1");
+  try {
+      if (lock.acquire(10, TimeUnit.SECONDS)) {
+          // 获取锁成功，执行业务逻辑
+          doBusiness();
+      }
+  } finally {
+      lock.release();
+  }
+  ```
+
+- 相比Redis分布式锁的优势：
+  - 不需要设置过期时间（临时节点自动清理）
+  - 天然支持公平锁（有序节点）
+  - 不存在锁续期问题
 
 
 # 9. 参考文献

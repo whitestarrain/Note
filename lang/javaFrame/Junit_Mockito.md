@@ -62,13 +62,78 @@ public @interface Component {
 
 ## 1.4. 如何优化
 
+- 核心原则：单元测试不应依赖外部环境（数据库、网络、Spring 容器）
+- 优化方向：
+  - 使用 Mockito 替代 @Autowired，mock 掉外部依赖
+  - 不使用 @SpringBootTest，避免启动整个 Spring 容器
+  - 测试单个类的逻辑，而非整个系统的集成
+  - 使用 @MockBean 或 @Mock + @InjectMocks 组合
+- 优化后的效果：
+  - 单个测试方法执行时间从秒级降到毫秒级
+  - 不依赖数据库、Redis、MQ 等外部服务
+  - 可以并行执行，不会相互影响
+
 ## 1.5. 不应该使用@Autowired
+
+- 原因：@Autowired 需要启动 Spring 容器才能注入，启动耗时长
+- 替代方案：
+  - 使用 @Mock 创建 mock 对象
+  - 使用 @InjectMocks 让 Mockito 自动注入 mock 依赖
+  - 手动通过构造方法传入 mock 对象
+- 示例：
+  ```java
+  @Mock
+  private UserDao userDao;
+  @InjectMocks
+  private UserService userService; // userDao 会被自动注入
+  ```
+- 好处：测试速度快、不依赖 Spring 环境、隔离性好
 
 ## 1.6. 不应该使用@SpringBootTest
 
+- 原因：@SpringBootTest 会启动整个 Spring Boot 应用，加载所有 Bean 和配置
+  - 启动时间长（几秒到几十秒）
+  - 可能触发 @Component 中的多线程任务
+  - 可能连接数据库、Redis 等外部服务
+- 替代方案：
+  - 纯 Mockito 测试：@ExtendWith(MockitoExtension.class)（JUnit5）或 @RunWith(MockitoJUnitRunner.class)（JUnit4）
+  - 分层测试：Controller 层用 @WebMvcTest，Service 层用纯 Mockito
+  - 需要部分 Spring 功能时用 @SpringBootTest(classes = 具体配置类.class) 缩小范围
+- 只有集成测试才需要 @SpringBootTest
+
 ## 1.7. 不应该调用数据库
 
+- 原因：
+  - 测试数据不稳定，其他人或程序可能修改数据库数据
+  - 依赖数据库连接，离线无法执行测试
+  - 测试速度慢（网络 IO + SQL 执行）
+  - 可能污染测试/开发环境数据
+- 替代方案：
+  - Mock 掉 Dao/Repository 层，指定返回值
+  - 使用内存数据库 H2（集成测试场景）
+  - 使用 @Transactional + @Rollback 回滚测试数据（仅在必须调用数据库时）
+- 正确做法：
+  ```java
+  @Mock
+  private UserMapper userMapper;
+  when(userMapper.selectById(1L)).thenReturn(new User(1L, "test"));
+  ```
+
 ## 1.8. 使用Assert断言(Junit)
+
+- 为什么需要断言：
+  - 没有断言的测试只是"执行代码"，不能验证结果是否正确
+  - 断言失败时能精确定位错误位置和原因
+- 常用断言方法：
+  - assertEquals(expected, actual)：判断相等
+  - assertTrue(condition) / assertFalse(condition)：判断布尔条件
+  - assertNull(obj) / assertNotNull(obj)：判断空/非空
+  - assertThrows(Exception.class, () -> ...)：验证抛出异常（JUnit5）
+  - assertTimeout(Duration.ofSeconds(1), () -> ...)：验证超时（JUnit5）
+- 最佳实践：
+  - 每个测试方法至少一个 assert
+  - assert 消息参数描述预期行为："用户不存在时应返回null"
+  - 一个测试方法只验证一个行为
 
 # 2. Junit4
 
@@ -1121,7 +1186,55 @@ public void testVerify()  {
 
 ## 5.1. 项目结构
 
+- 推荐的测试目录结构（与 src/main 对应）：
+  ```
+  src/
+    main/java/com/example/
+      controller/UserController.java
+      service/UserService.java
+      dao/UserDao.java
+    test/java/com/example/
+      controller/UserControllerTest.java
+      service/UserServiceTest.java
+      dao/UserDaoTest.java
+  ```
+- 命名规范：测试类名 = 被测类名 + Test 后缀
+- 测试资源文件放在 src/test/resources 下
+- 按层分包：controller 层测试、service 层测试、dao 层测试各自独立
+
 ## 5.2. 单元测试方法
+
+- Service 层测试模板：
+  ```java
+  @ExtendWith(MockitoExtension.class)
+  public class UserServiceTest {
+      @Mock
+      private UserDao userDao;
+      @InjectMocks
+      private UserServiceImpl userService;
+
+      @Test
+      void testFindById_success() {
+          User mockUser = new User(1L, "test");
+          when(userDao.selectById(1L)).thenReturn(mockUser);
+
+          User result = userService.findById(1L);
+
+          assertNotNull(result);
+          assertEquals("test", result.getName());
+          verify(userDao).selectById(1L);
+      }
+
+      @Test
+      void testFindById_notFound() {
+          when(userDao.selectById(999L)).thenReturn(null);
+          User result = userService.findById(999L);
+          assertNull(result);
+      }
+  }
+  ```
+- 测试原则：Arrange（准备数据）-> Act（执行方法）-> Assert（验证结果）
+- 每个测试方法测试一个场景：正常路径、异常路径、边界条件分开测试
 
 # 6. 参考资料
 

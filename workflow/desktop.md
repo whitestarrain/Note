@@ -36,7 +36,19 @@ mime type，默认打开程序设置
 
 # dmenu: dynamic menu
 
+- suckless 的动态菜单，从 stdin 读取选项，输出用户选择到 stdout
+- 默认用法：`echo -e "option1\noption2" | dmenu`
+- 常见用途：应用启动器、密码选择、脚本交互
+- 通过 patch 扩展功能：fuzzy matching、center 居中显示、lineheight 行高等
+- 配置方式与 dwm 相同：修改 config.h 后重新编译
+
 # dunst: notification
+
+- 轻量级通知守护进程，支持自定义样式和规则
+- 配置文件：`~/.config/dunst/dunstrc`
+- `dunstctl close` 关闭当前通知，`dunstctl history-pop` 显示历史通知
+- 支持按应用名、urgency 等条件设置不同样式规则
+- 通过 `notify-send "title" "body"` 发送测试通知
 
 # picom: compositor
 
@@ -52,6 +64,12 @@ mime type，默认打开程序设置
 
 # skippy-xd: client switcher
 
+- X11 下的窗口切换预览工具，类似 macOS Expose 效果
+- 展示所有窗口的实时缩略图，点击或键盘选择切换
+- 配置文件：`~/.config/skippy-xd/skippy-xd.rc`
+- 通常绑定快捷键触发：`skippy-xd --activate-window-picker`
+- 支持多显示器和多工作区
+
 # firefox: browser
 
 - https://sspai.com/post/58605
@@ -66,17 +84,59 @@ mime type，默认打开程序设置
 
 ## dwm's bar
 
+- dwm 内置的状态栏，通过 `xsetroot -name` 设置内容
+- 使用 shell 脚本循环更新：
+  ```bash
+  while true; do
+    xsetroot -name "$(date '+%Y-%m-%d %H:%M') | $(cat /sys/class/power_supply/BAT1/capacity)%"
+    sleep 30
+  done
+  ```
+- 支持通过 status2d patch 添加颜色
+- 也可以使用 dwmblocks 实现模块化、可点击的状态栏
+
 ## polybar
+
+- 高度可自定义的状态栏，支持丰富的内置模块
+- 配置文件：`~/.config/polybar/config.ini`
+- 内置模块：cpu, memory, network, date, battery, pulseaudio 等
+- 支持自定义脚本模块和 IPC 通信
+- 启动：`polybar mybar &`
 
 ## lemonbar
 
+- 极简的状态栏，通过管道接收文本输入
+- 使用方式：`echo "%{l}Left %{c}Center %{r}Right" | lemonbar`
+- 支持简单的格式标记：颜色、对齐、点击事件
+- 适合搭配 shell 脚本使用，灵活度高
+
 ## waybar
+
+- Wayland 下的状态栏，类似 polybar 但原生支持 wayland
+- 配置文件：`~/.config/waybar/config` (JSON) 和 `style.css`
+- 支持 Hyprland、Sway 等 wayland 合成器的工作区模块
+- 内置大量模块，也支持自定义脚本
 
 # widges
 
 ## rofi
 
+- dmenu 的现代替代品，支持窗口切换、应用启动、脚本模式
+- 启动应用：`rofi -show drun`
+- 窗口切换：`rofi -show window`
+- 运行命令：`rofi -show run`
+- 支持自定义主题（CSS 风格配置）
+- 配置文件：`~/.config/rofi/config.rasi`
+
 ## eww
+
+- Elkowar's Wacky Widgets，使用 Yuck 语言定义桌面组件
+- 支持创建侧边栏、仪表盘、通知中心等自定义组件
+- 配置目录：`~/.config/eww/`
+- 基本命令：
+  - `eww open mywidget` 打开组件
+  - `eww close mywidget` 关闭组件
+  - `eww reload` 重新加载配置
 
 ## quickshell
 

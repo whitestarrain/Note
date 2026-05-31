@@ -12,41 +12,336 @@
 
 ### 时序图
 
+```plantuml
+@startuml
+participant Alice
+participant Bob
+Alice -> Bob: 请求
+Bob --> Alice: 响应
+Alice -> Alice: 自调用
+note right of Bob: 这是一个注释
+@enduml
+```
+
 ### 用例图
+
+```plantuml
+@startuml
+left to right direction
+actor User
+rectangle System {
+  usecase "登录" as UC1
+  usecase "查看数据" as UC2
+  usecase "管理用户" as UC3
+}
+User --> UC1
+User --> UC2
+UC3 .> UC1 : <<include>>
+@enduml
+```
 
 ### 类图
 
+```plantuml
+@startuml
+class Animal {
+  +String name
+  +int age
+  +void eat()
+}
+class Dog extends Animal {
+  +void bark()
+}
+class Cat extends Animal {
+  +void meow()
+}
+interface Runnable {
+  +void run()
+}
+Dog ..|> Runnable
+@enduml
+```
+
 ### 活动图
+
+```plantuml
+@startuml
+start
+:初始化;
+if (条件判断?) then (yes)
+  :执行操作A;
+else (no)
+  :执行操作B;
+endif
+while (还有数据?) is (yes)
+  :处理数据;
+endwhile (no)
+stop
+@enduml
+```
 
 ### 组件图
 
+```plantuml
+@startuml
+package "前端" {
+  [Web App] as web
+}
+package "后端" {
+  [API Server] as api
+  [Auth Service] as auth
+}
+database "数据库" {
+  [PostgreSQL] as db
+}
+web --> api : HTTP/REST
+api --> auth : 认证
+api --> db : SQL
+@enduml
+```
+
 ### 状态图
+
+```plantuml
+@startuml
+[*] --> Idle
+Idle --> Processing : 收到请求
+Processing --> Success : 处理完成
+Processing --> Failed : 处理失败
+Success --> [*]
+Failed --> Idle : 重试
+@enduml
+```
 
 ### 对象图
 
+```plantuml
+@startuml
+object Server {
+  host = "192.168.1.1"
+  port = 8080
+}
+object Database {
+  name = "mydb"
+  engine = "PostgreSQL"
+}
+Server --> Database : 连接
+@enduml
+```
+
 ### 部署图
+
+```plantuml
+@startuml
+node "Web Server" {
+  artifact "app.jar"
+}
+node "DB Server" {
+  database "MySQL"
+}
+cloud "CDN" {
+  artifact "static files"
+}
+[Web Server] --> [DB Server] : JDBC
+[CDN] --> [Web Server] : origin
+@enduml
+```
 
 ### 定时图
 
+```plantuml
+@startuml
+robust "信号A" as A
+concise "信号B" as B
+@0
+A is high
+B is low
+@100
+A is low
+B is high
+@200
+A is high
+@enduml
+```
+
 ### 网络图
+
+```plantuml
+@startuml
+nwdiag {
+  network dmz {
+    address = "210.x.x.x/24"
+    web01 [address = "210.x.x.1"]
+    web02 [address = "210.x.x.2"]
+  }
+  network internal {
+    address = "172.x.x.x/24"
+    web01 [address = "172.x.x.1"]
+    db01 [address = "172.x.x.100"]
+  }
+}
+@enduml
+```
 
 ### 甘特图
 
+```plantuml
+@startgantt
+project starts 2024-01-01
+[需求分析] lasts 10 days
+[系统设计] lasts 15 days
+[系统设计] starts at [需求分析]'s end
+[编码实现] lasts 30 days
+[编码实现] starts at [系统设计]'s end
+[测试] lasts 10 days
+[测试] starts at [编码实现]'s end
+@endgantt
+```
+
 ### 架构图
+
+```plantuml
+@startuml
+!include <archimate/Archimate>
+rectangle "业务层" {
+  archimate #Business "订单处理" as order <<business-process>>
+}
+rectangle "应用层" {
+  archimate #Application "订单服务" as svc <<application-service>>
+}
+rectangle "技术层" {
+  archimate #Technology "数据库集群" as db <<node>>
+}
+order --> svc
+svc --> db
+@enduml
+```
 
 ### 思维导图
 
+```plantuml
+@startmindmap
+* 项目管理
+** 计划
+*** 需求分析
+*** 资源分配
+** 执行
+*** 开发
+*** 测试
+** 监控
+*** 进度跟踪
+*** 风险管理
+@endmindmap
+```
+
 ### 工作分解结构
 
+```plantuml
+@startwbs
+* 软件项目
+** 需求
+*** 用户调研
+*** 需求文档
+** 设计
+*** 架构设计
+*** 详细设计
+** 开发
+*** 前端
+*** 后端
+** 测试
+*** 单元测试
+*** 集成测试
+@endwbs
+```
+
 ### json与yaml
+
+```plantuml
+@startjson
+{
+  "name": "PlantUML",
+  "version": "1.2024",
+  "features": [
+    "UML",
+    "非UML图",
+    "JSON/YAML"
+  ],
+  "config": {
+    "theme": "default",
+    "output": "png"
+  }
+}
+@endjson
+```
 
 ## 其他语法
 
 ### 样式
 
+- PlantUML 支持通过 `<style>` 标签定义样式（类似 CSS）
+- 示例：
+  ```plantuml
+  @startuml
+  <style>
+  classDiagram {
+    BackgroundColor #f0f0f0
+    FontSize 14
+  }
+  .important {
+    BackgroundColor #ffcccc
+    FontStyle bold
+  }
+  </style>
+  class MyClass <<important>> {
+    +void method()
+  }
+  @enduml
+  ```
+
 ### skinparam 样式语法
 
+- skinparam 是传统的全局样式配置方式
+- 常用配置：
+  ```plantuml
+  @startuml
+  skinparam backgroundColor #EEEBDC
+  skinparam roundcorner 10
+  skinparam sequence {
+    ArrowColor #333333
+    LifeLineBorderColor #666666
+    ParticipantBackgroundColor #E3F2FD
+  }
+  skinparam class {
+    BackgroundColor #FFF9C4
+    BorderColor #F57F17
+  }
+  Alice -> Bob: hello
+  @enduml
+  ```
+- `skinparam monochrome true` 黑白模式
+- `skinparam shadowing false` 关闭阴影
+
 ### function与procedure
+
+- procedure 不返回值，function 返回值
+- 示例：
+  ```plantuml
+  @startuml
+  !procedure $myProc($name)
+    participant "$name" as $name
+  !endprocedure
+
+  !function $addSuffix($name)
+    !return $name + "_service"
+  !endfunction
+
+  $myProc("Alice")
+  $myProc("Bob")
+  participant $addSuffix("Auth")
+  Alice -> Bob: request
+  @enduml
+  ```
+- 支持参数默认值：`!function $fn($a, $b="default")`
 
 ## 常用语法
 
@@ -59,7 +354,27 @@
 
 ## 基本概念介绍
 
+- C4 模型将软件架构分为四个层次：
+  - Context（上下文）：系统与外部用户/系统的关系
+  - Container（容器）：系统内的应用、数据库等
+  - Component（组件）：容器内的组件
+  - Code（代码）：组件内的类/接口
+- PlantUML C4 库提供预定义的宏来绘制这些图
+- 引入方式：`!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml`
+
 ## 使用说明
+
+- 基本元素：
+  - `Person(alias, "Label", "Description")` 人物
+  - `System(alias, "Label", "Description")` 系统
+  - `Container(alias, "Label", "Technology", "Description")` 容器
+  - `Rel(from, to, "Label", "Technology")` 关系
+- 布局控制：
+  - `Lay_D(a, b)` 强制 a 在 b 上方
+  - `Lay_R(a, b)` 强制 a 在 b 左侧
+- 边界：
+  - `System_Boundary(alias, "Label") { ... }` 系统边界
+  - `Container_Boundary(alias, "Label") { ... }` 容器边界
 
 ## 其他
 

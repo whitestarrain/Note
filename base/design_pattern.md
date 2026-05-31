@@ -11183,17 +11183,66 @@ public class Interpreter {
 
 #### 3.5.0.5. 注意事项
 
+- 策略模式的注意事项：
+  - 策略类数量增多时，可以使用工厂模式管理策略的创建
+  - 所有策略类都需要对外暴露，客户端必须知道所有策略类才能自行决定使用哪一个
+  - 如果一个系统的策略多于四个，就需要考虑使用混合模式解决策略类膨胀的问题
+  - 策略模式适用于算法经常变化的场景，避免使用多重条件判断
+
 ### 3.5.1. 空对象模式（Null Object Pattern）
 
 #### 3.5.1.1. 说明
 
+- 意图：使用一个无意义的对象来代替 null 值的检查，该对象实现与真实对象相同的接口但行为为空操作
+- 主要解决：频繁的 null 检查导致代码冗余，NullPointerException 风险
+- 何时使用：需要一个默认的、什么都不做的对象来避免 null 判断
+- 关键代码：创建一个空对象类，实现接口中的所有方法为空操作或返回默认值
+- 优点：简化客户端代码，消除 null 检查，符合里氏替换原则
+- 缺点：需要为每个接口创建对应的空对象类，增加类的数量
+
 #### 3.5.1.2. 情景介绍
+
+- 场景：在数据库查询中，如果未找到用户，返回 NullUser 而非 null
+- 场景：日志系统中，当不需要日志时使用 NullLogger 代替 null 引用
+- 通过空对象，调用方无需关心返回的是真实对象还是空对象，统一调用接口即可
 
 #### 3.5.1.3. 传统方式
 
+- 传统做法：每次使用对象前都要判断 if (obj != null)
+- 问题：
+  - 代码中充斥大量 null 检查，可读性差
+  - 容易遗漏检查导致 NullPointerException
+  - 违反开闭原则，新增功能时需要修改所有调用处
+
 #### 3.5.1.4. 代码
 
+```java
+// 抽象客户类
+public abstract class AbstractCustomer {
+    protected String name;
+    public abstract boolean isNil();
+    public abstract String getName();
+}
+
+// 真实客户
+public class RealCustomer extends AbstractCustomer {
+    public RealCustomer(String name) { this.name = name; }
+    public boolean isNil() { return false; }
+    public String getName() { return name; }
+}
+
+// 空对象客户
+public class NullCustomer extends AbstractCustomer {
+    public boolean isNil() { return true; }
+    public String getName() { return "Not Available"; }
+}
+```
+
 #### 3.5.1.5. 注意事项
+
+- 空对象应该是无状态的，可以设计为单例以节省内存
+- Java 8+ 可使用 Optional 作为空对象模式的替代方案
+- 空对象模式适合返回值场景，对于需要区分"无结果"和"默认结果"的场景应谨慎使用
 
 ## 3.6. J2EE 模式
 
@@ -11205,105 +11254,477 @@ public class Interpreter {
 
 #### 3.6.2.1. 说明
 
+- 意图：将应用程序分为三个核心组件，实现业务逻辑、数据和视图的分离
+- 三个组件：
+  - Model（模型）：管理数据和业务逻辑，独立于视图和控制器
+  - View（视图）：负责数据的显示和用户界面
+  - Controller（控制器）：处理用户输入，协调模型和视图的交互
+- 优点：低耦合、高内聚、可维护性好、支持多种视图
+
 #### 3.6.2.2. 情景介绍
+
+- Web 应用中，用户请求由 Controller 接收，调用 Model 获取数据，选择 View 展示
+- 典型框架：Spring MVC、Struts2、ASP.NET MVC
+- 适用于需要多种方式展示同一数据的场景
 
 #### 3.6.2.3. 传统方式
 
+- 传统做法：将业务逻辑、数据访问、界面显示混在同一个类/文件中
+- 问题：代码难以维护，修改界面可能影响业务逻辑，无法复用
+- JSP/Servlet 混合编程就是典型的反面案例
+
 #### 3.6.2.4. 代码
 
+```java
+// Model
+public class Student {
+    private String name;
+    private String rollNo;
+    // getter/setter...
+}
+
+// View
+public class StudentView {
+    public void printStudentDetails(String name, String rollNo) {
+        System.out.println("Student: " + name + ", Roll No: " + rollNo);
+    }
+}
+
+// Controller
+public class StudentController {
+    private Student model;
+    private StudentView view;
+    public void updateView() { view.printStudentDetails(model.getName(), model.getRollNo()); }
+    public void setStudentName(String name) { model.setName(name); }
+}
+```
+
 #### 3.6.2.5. 注意事项
+
+- MVC 模式中 View 和 Model 不应直接通信，必须通过 Controller
+- 大型项目中 Controller 可能变得臃肿，可以引入 Service 层分担逻辑
+- 前后端分离架构中，MVC 演化为后端 API + 前端 MVVM
 
 ### 3.6.3. 业务代表模式（Business Delegate Pattern）
 
 #### 3.6.3.1. 说明
 
+- 意图：解耦表示层和业务层，减少表示层对业务服务实现的直接依赖
+- 核心组件：
+  - BusinessDelegate：业务代表，作为客户端和业务服务之间的中介
+  - LookupService：查找服务，负责获取具体业务服务的引用
+  - BusinessService：业务服务接口及其具体实现
+- 优点：隐藏业务层的复杂性和底层实现细节
+
 #### 3.6.3.2. 情景介绍
+
+- 在 J2EE 分布式系统中，表示层需要调用远程 EJB 服务
+- 业务代表封装了 JNDI 查找、远程调用等复杂细节
+- 客户端只需调用业务代表的方法即可
 
 #### 3.6.3.3. 传统方式
 
+- 表示层直接进行 JNDI 查找并调用 EJB
+- 问题：表示层与业务服务紧耦合，网络异常处理复杂，代码重复
+- 修改业务服务接口时需要同时修改所有调用方
+
 #### 3.6.3.4. 代码
 
+```java
+// 业务服务接口
+public interface BusinessService {
+    void doProcessing();
+}
+
+// 具体服务
+public class EJBService implements BusinessService {
+    public void doProcessing() { System.out.println("Processing in EJB Service"); }
+}
+
+// 查找服务
+public class BusinessLookUp {
+    public BusinessService getBusinessService(String serviceType) {
+        if (serviceType.equalsIgnoreCase("EJB")) return new EJBService();
+        return new JMSService();
+    }
+}
+
+// 业务代表
+public class BusinessDelegate {
+    private BusinessLookUp lookupService = new BusinessLookUp();
+    private BusinessService businessService;
+    public void setServiceType(String type) { businessService = lookupService.getBusinessService(type); }
+    public void doTask() { businessService.doProcessing(); }
+}
+```
+
 #### 3.6.3.5. 注意事项
+
+- 业务代表可以缓存服务引用，减少重复查找的开销
+- 可结合服务定位器模式使用
+- 在微服务架构中，该模式对应于 API Gateway 或服务调用封装层
 
 ### 3.6.4. 组合实体模式（Composite Entity Pattern）
 
 #### 3.6.4.1. 说明
 
+- 意图：用于 EJB 持久化机制中，将一组相关的持久化对象组合为一个粗粒度的实体 Bean
+- 核心组件：
+  - Composite Entity：组合实体，包含粗粒度对象
+  - Coarse-Grained Object：粗粒度对象，包含依赖对象
+  - Dependent Object：依赖对象，其生命周期由粗粒度对象管理
+- 优点：减少实体 Bean 的数量，简化远程调用
+
 #### 3.6.4.2. 情景介绍
+
+- 在 EJB 架构中，每个实体 Bean 的远程调用开销很大
+- 将紧密相关的多个细粒度对象组合为一个实体 Bean，减少网络往返
+- 例如：Order 实体包含 OrderHeader 和多个 OrderLineItem
 
 #### 3.6.4.3. 传统方式
 
+- 每个数据对象都映射为一个独立的实体 Bean
+- 问题：大量的远程调用、复杂的关系管理、性能低下
+- 客户端需要多次网络调用才能获取完整业务数据
+
 #### 3.6.4.4. 代码
 
+```java
+// 依赖对象
+public class DependentObject1 {
+    private String data;
+    public void setData(String data) { this.data = data; }
+    public String getData() { return data; }
+}
+
+// 粗粒度对象
+public class CoarseGrainedObject {
+    DependentObject1 do1 = new DependentObject1();
+    DependentObject2 do2 = new DependentObject2();
+    public void setData(String d1, String d2) { do1.setData(d1); do2.setData(d2); }
+    public String[] getData() { return new String[]{do1.getData(), do2.getData()}; }
+}
+
+// 组合实体
+public class CompositeEntity {
+    private CoarseGrainedObject cgo = new CoarseGrainedObject();
+    public void setData(String d1, String d2) { cgo.setData(d1, d2); }
+    public String[] getData() { return cgo.getData(); }
+}
+```
+
 #### 3.6.4.5. 注意事项
+
+- 现代开发中 EJB 已较少使用，但组合实体的思想在 DDD 的聚合根中得到延续
+- 聚合根（Aggregate Root）管理内部实体的生命周期，类似组合实体的设计思想
+- 该模式的核心是用粗粒度接口减少远程通信次数
 
 ### 3.6.5. 数据访问对象模式（Data Access Object Pattern）
 
 #### 3.6.5.1. 说明
 
+- 意图：将底层数据访问逻辑与高层业务逻辑分离，提供抽象的数据访问接口
+- 核心组件：
+  - DAO Interface：定义数据操作的标准接口（CRUD）
+  - DAO Implementation：实现具体的数据库访问逻辑
+  - Model/Value Object：数据传输对象
+- 优点：业务层不依赖具体数据库实现，切换数据源只需修改 DAO 实现
+
 #### 3.6.5.2. 情景介绍
+
+- 应用程序需要访问数据库，但不希望业务逻辑与 SQL/JDBC 代码耦合
+- 使用 DAO 模式封装所有数据访问细节
+- 典型应用：MyBatis 的 Mapper 接口、Spring Data JPA 的 Repository
 
 #### 3.6.5.3. 传统方式
 
+- 业务代码中直接编写 JDBC 代码：获取连接、构建 SQL、执行查询、处理结果集
+- 问题：SQL 代码散落各处、数据库切换困难、资源管理容易出错
+- 代码重复：每个操作都需要 try-catch-finally 管理连接
+
 #### 3.6.5.4. 代码
 
+```java
+// DAO 接口
+public interface StudentDao {
+    List<Student> getAllStudents();
+    Student getStudent(int rollNo);
+    void updateStudent(Student student);
+    void deleteStudent(Student student);
+}
+
+// DAO 实现
+public class StudentDaoImpl implements StudentDao {
+    List<Student> students; // 模拟数据库
+    public List<Student> getAllStudents() { return students; }
+    public Student getStudent(int rollNo) {
+        return students.get(rollNo);
+    }
+    public void updateStudent(Student student) {
+        students.get(student.getRollNo()).setName(student.getName());
+    }
+    public void deleteStudent(Student student) { students.remove(student.getRollNo()); }
+}
+```
+
 #### 3.6.5.5. 注意事项
+
+- DAO 层应只负责数据访问，不包含业务逻辑
+- 可配合工厂模式动态选择 DAO 实现（MySQL/Oracle/MongoDB）
+- 现代框架（Spring Data、MyBatis）已将 DAO 模式内置，开发者只需定义接口
 
 ### 3.6.6. 前端控制器模式（Front Controller Pattern）
 
 #### 3.6.6.1. 说明
 
+- 意图：提供一个集中的请求处理入口，所有请求先经过前端控制器再分派到具体处理器
+- 核心组件：
+  - Front Controller：接收所有请求，进行统一的预处理
+  - Dispatcher：分派器，将请求路由到对应的处理器
+  - View：具体的页面/处理器
+- 优点：集中控制（认证、日志、编码等），避免重复代码
+
 #### 3.6.6.2. 情景介绍
+
+- Web 应用中，需要对所有请求统一进行权限检查、日志记录、编码设置
+- 使用前端控制器作为唯一入口（如 Spring MVC 的 DispatcherServlet）
+- 所有请求都经过 DispatcherServlet，再分派给具体的 Controller 处理
 
 #### 3.6.6.3. 传统方式
 
+- 每个 Servlet/JSP 独立处理自己的请求，各自进行认证、编码等操作
+- 问题：大量重复代码，策略变更需要修改所有处理器
+- 缺乏统一的错误处理和导航机制
+
 #### 3.6.6.4. 代码
 
+```java
+// 前端控制器
+public class FrontController {
+    private Dispatcher dispatcher;
+    public FrontController() { dispatcher = new Dispatcher(); }
+    private boolean isAuthenticUser() { System.out.println("Auth check"); return true; }
+    private void trackRequest(String request) { System.out.println("Logging: " + request); }
+    public void dispatchRequest(String request) {
+        trackRequest(request);
+        if (isAuthenticUser()) { dispatcher.dispatch(request); }
+    }
+}
+
+// 分派器
+public class Dispatcher {
+    private HomeView homeView = new HomeView();
+    private StudentView studentView = new StudentView();
+    public void dispatch(String request) {
+        if (request.equalsIgnoreCase("STUDENT")) studentView.show();
+        else homeView.show();
+    }
+}
+```
+
 #### 3.6.6.5. 注意事项
+
+- 前端控制器不应包含业务逻辑，职责是请求预处理和分派
+- 可结合命令模式或策略模式来实现灵活的请求路由
+- Spring MVC、Struts 等框架的核心 Servlet 就是前端控制器的实现
 
 ### 3.6.7. 拦截过滤器模式（Intercepting Filter Pattern）
 
 #### 3.6.7.1. 说明
 
+- 意图：在请求到达目标处理器之前/之后，通过一组过滤器进行预处理或后处理
+- 核心组件：
+  - Filter：过滤器，实现具体的过滤逻辑
+  - Filter Chain：过滤器链，管理多个过滤器的执行顺序
+  - Filter Manager：管理过滤器链的创建和配置
+  - Target：请求的最终处理目标
+- 优点：松耦合，过滤器可独立添加/移除，不影响其他组件
+
 #### 3.6.7.2. 情景介绍
+
+- Web 请求需要经过多重处理：编码转换、认证、日志、压缩等
+- 每个处理逻辑封装为独立的过滤器，组成过滤器链
+- Servlet Filter、Spring Interceptor 都是该模式的典型应用
 
 #### 3.6.7.3. 传统方式
 
+- 将所有预处理逻辑写在处理器的开始位置，后处理逻辑写在结束位置
+- 问题：处理器代码臃肿，预处理逻辑无法复用，修改需要改动处理器
+
 #### 3.6.7.4. 代码
 
+```java
+// 过滤器接口
+public interface Filter {
+    void execute(String request);
+}
+
+// 具体过滤器
+public class AuthenticationFilter implements Filter {
+    public void execute(String request) { System.out.println("Authenticating: " + request); }
+}
+public class DebugFilter implements Filter {
+    public void execute(String request) { System.out.println("Debug log: " + request); }
+}
+
+// 过滤器链
+public class FilterChain {
+    private List<Filter> filters = new ArrayList<>();
+    private Target target;
+    public void addFilter(Filter filter) { filters.add(filter); }
+    public void setTarget(Target target) { this.target = target; }
+    public void execute(String request) {
+        for (Filter filter : filters) { filter.execute(request); }
+        target.execute(request);
+    }
+}
+```
+
 #### 3.6.7.5. 注意事项
+
+- 过滤器之间应保持独立，不依赖执行顺序（除非有明确的业务要求）
+- 过滤器链的性能开销需要考虑，过多的过滤器会影响请求处理速度
+- 可通过配置文件动态管理过滤器链的组成
 
 ### 3.6.8. 服务定位器模式（Service Locator Pattern）
 
 #### 3.6.8.1. 说明
 
+- 意图：提供一个集中的服务注册和查找机制，隐藏服务查找的复杂性
+- 核心组件：
+  - Service Locator：服务定位器，提供服务查找接口
+  - Cache：缓存已查找到的服务引用，避免重复查找
+  - InitialContext：执行实际的服务查找（如 JNDI 查找）
+  - Service：服务接口及其实现
+- 优点：客户端无需知道服务的查找细节，缓存提高性能
+
 #### 3.6.8.2. 情景介绍
+
+- 分布式系统中，服务的位置信息可能存储在 JNDI、注册中心等
+- 使用服务定位器封装查找逻辑，对客户端提供统一的获取服务接口
+- 类似于 Spring 的 BeanFactory / ApplicationContext
 
 #### 3.6.8.3. 传统方式
 
+- 每个客户端自行进行 JNDI 查找或服务发现
+- 问题：代码重复、查找逻辑散落各处、无缓存导致性能差
+- 服务地址变更需要修改所有客户端代码
+
 #### 3.6.8.4. 代码
 
+```java
+// 服务定位器（含缓存）
+public class ServiceLocator {
+    private static Cache cache = new Cache();
+    public static Service getService(String jndiName) {
+        Service service = cache.getService(jndiName);
+        if (service != null) return service;
+        InitialContext context = new InitialContext();
+        Service newService = (Service) context.lookup(jndiName);
+        cache.addService(newService);
+        return newService;
+    }
+}
+
+// 缓存
+public class Cache {
+    private List<Service> services = new ArrayList<>();
+    public Service getService(String name) {
+        for (Service s : services) { if (s.getName().equalsIgnoreCase(name)) return s; }
+        return null;
+    }
+    public void addService(Service service) { services.add(service); }
+}
+```
+
 #### 3.6.8.5. 注意事项
+
+- 服务定位器模式是依赖注入（DI）的替代方案，但 DI 更易于测试
+- 服务定位器作为全局单例存在，可能成为隐式依赖，降低代码可测试性
+- 现代开发优先推荐依赖注入，但在遗留系统改造中服务定位器仍有价值
 
 ### 3.6.9. 传输对象模式（Transfer Object Pattern）
 
 #### 3.6.9.1. 说明
 
+- 意图：将多个属性数据封装为一个对象，一次性在客户端和服务端之间传输
+- 别名：Value Object（值对象）、Data Transfer Object（DTO）
+- 核心思想：减少远程调用次数，将多个属性打包为一个可序列化的对象传输
+- 特点：传输对象通常是简单的 POJO，只有属性和 getter/setter，无业务逻辑
+- 优点：减少网络调用次数，提高分布式系统性能
+
 #### 3.6.9.2. 情景介绍
+
+- 客户端需要获取服务端的多个属性值（如用户的姓名、年龄、地址等）
+- 不用 DTO：需要多次远程调用分别获取每个属性
+- 用 DTO：服务端将所有属性封装为一个对象，一次调用返回全部数据
 
 #### 3.6.9.3. 传统方式
 
+- 客户端通过多次远程方法调用获取数据：getName(), getAge(), getAddress()...
+- 问题：n 个属性需要 n 次网络调用，性能极差
+- 在分布式环境下，网络延迟被放大 n 倍
+
 #### 3.6.9.4. 代码
 
+```java
+// 传输对象（DTO）
+public class StudentVO {
+    private String name;
+    private int rollNo;
+    public StudentVO(String name, int rollNo) { this.name = name; this.rollNo = rollNo; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public int getRollNo() { return rollNo; }
+    public void setRollNo(int rollNo) { this.rollNo = rollNo; }
+}
+
+// 业务对象
+public class StudentBO {
+    List<StudentVO> students = new ArrayList<>();
+    public StudentBO() { students.add(new StudentVO("Alice", 1)); }
+    public List<StudentVO> getAllStudents() { return students; }
+    public void updateStudent(StudentVO student) {
+        students.get(student.getRollNo()).setName(student.getName());
+    }
+}
+```
+
 #### 3.6.9.5. 注意事项
+
+- DTO 与领域模型应严格区分，DTO 是数据载体，领域模型包含业务逻辑
+- 可使用 MapStruct、BeanUtils 等工具简化 DTO 与领域模型之间的转换
+- 过度使用 DTO 会导致类膨胀，对于本地调用场景直接使用领域对象即可
 
 ## 3.7. 设计模式的实际应用
 
 ### 3.7.1. 工厂+策略模式消除if-else
 
+- 问题场景：业务代码中大量的 if-else 或 switch-case 判断不同类型执行不同逻辑
+- 解决方案：
+  1. 将每种业务逻辑抽象为策略接口的实现类
+  2. 使用工厂（通常是 Map）管理策略对象的注册和获取
+  3. 客户端只需通过类型标识从工厂获取策略并执行
+- 实现方式（Spring 环境）：
+  - 定义策略接口 + 多个实现类（用 @Component 注册到 Spring 容器）
+  - 工厂类通过 @Autowired List/Map 自动收集所有策略实现
+  - 根据传入的类型 key 从 Map 中获取对应策略执行
+- 优点：新增业务类型只需添加新的策略类，无需修改已有代码（开闭原则）
+
 ## 其他设计模式
 
 ### mixin
+
+- Mixin 是一种代码复用机制，允许一个类从多个来源获取方法而不使用传统继承
+- 核心思想：将可复用的功能封装为独立模块，按需"混入"到目标类中
+- 与继承的区别：
+  - 继承是 "is-a" 关系，Mixin 是 "has-a capability" 关系
+  - Mixin 不表达层次关系，只提供功能增强
+- 应用场景：
+  - Python 中的多重继承实现 Mixin（如 LoggingMixin、SerializableMixin）
+  - JavaScript/TypeScript 中通过 Object.assign 或类装饰器实现
+  - Ruby 中的 Module include 机制
+- 注意：避免 Mixin 之间的方法名冲突，保持 Mixin 职责单一
 
 # 4. 参考资料
 

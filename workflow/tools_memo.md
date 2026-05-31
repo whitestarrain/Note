@@ -22,9 +22,28 @@ https://github.com/rubjo/victor-mono
 
 ### grep
 
+文本搜索工具，支持正则表达式，几乎所有 Unix 系统内置。
+
+- `grep -rn "pattern" .` 递归搜索当前目录，显示行号
+- `grep -i "pattern" file` 忽略大小写搜索
+- `grep -l "pattern" *.txt` 仅列出包含匹配的文件名
+
 ### ag
 
+The Silver Searcher，比 grep 快的代码搜索工具，自动忽略 .gitignore 中的文件。
+
+- `ag "pattern"` 递归搜索当前目录
+- `ag -l "pattern"` 仅列出文件名
+- `ag --python "pattern"` 仅搜索 Python 文件
+
 ### ripgrep
+
+rg，最快的代码搜索工具之一，Rust 编写，默认尊重 .gitignore。
+
+- `rg "pattern"` 递归搜索当前目录
+- `rg -t py "pattern"` 仅搜索 Python 文件
+- `rg -g "*.md" "pattern"` 通过 glob 过滤文件
+- `rg --hidden "pattern"` 搜索隐藏文件
 
 ### fzf
 
@@ -45,15 +64,49 @@ others:
 
 ### z
 
+基于 frecency（频率+最近）算法的快速目录跳转工具。
+
+- `z foo` 跳转到包含 foo 的最常访问目录
+- `z foo bar` 跳转到同时匹配 foo 和 bar 的目录
+- `z -l foo` 列出所有匹配的目录及其权重
+
 ### zoxide
 
+z 的 Rust 重写版本，更快更现代，支持 fzf 集成。
+
+- `z foo` 跳转到匹配目录
+- `zi foo` 交互式选择（需要 fzf）
+- `zoxide query --list` 列出数据库中所有记录
+- 初始化：在 .bashrc 中添加 `eval "$(zoxide init bash)"`
+
 ### z.lua
+
+Lua 实现的 z 替代品，支持更多功能如路径补全和回退。
+
+- `z foo` 跳转到匹配目录
+- `z -b foo` 回退到父路径中包含 foo 的目录
+- `z -l` 列出所有已记录的目录
+- 支持 fzf 交互模式：`z -I`
 
 ## file manager
 
 ### ranger
 
+终端文件管理器，vim 键位，支持预览文件、图片。
+
+- `ranger` 启动文件管理器
+- 常用键位：`h/j/k/l` 导航，`yy` 复制，`dd` 剪切，`pp` 粘贴
+- `S` 在当前目录打开 shell，`:delete` 删除文件
+- 支持通过 w3m/ueberzug 进行图片预览
+
 ### lf
+
+Go 编写的轻量级终端文件管理器，类似 ranger 但更快更简单。
+
+- `lf` 启动文件管理器
+- 配置文件位于 `~/.config/lf/lfrc`
+- 支持自定义命令和键绑定
+- 占用资源少，启动快，适合作为 ranger 的轻量替代
 
 ## stow: symlink manager
 
@@ -174,11 +227,35 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 
 ### urxvt
 
+轻量级终端模拟器，高度可配置，支持 Unicode 和 Perl 扩展。
+
+- 配置通过 `~/.Xresources` 进行
+- 支持字体回退、透明背景、Perl 插件
+- `urxvtd` 守护进程模式，`urxvtc` 客户端连接，启动更快
+
 ### st
+
+suckless 社区的极简终端模拟器，通过源码修改和补丁进行配置。
+
+- 功能通过打补丁的方式添加（scrollback, alpha, font2 等）
+- 编译安装：`make && sudo make install`
+- 配置修改 `config.h` 后重新编译
 
 ### alacritty
 
+GPU 加速的终端模拟器，Rust 编写，追求性能。
+
+- 配置文件：`~/.config/alacritty/alacritty.toml`
+- 支持 Vi 模式、正则搜索、主题热加载
+- 跨平台：Linux, macOS, Windows
+
 ### wezterm
+
+Rust 编写的 GPU 加速终端，功能丰富，使用 Lua 配置。
+
+- 配置文件：`~/.config/wezterm/wezterm.lua`
+- 内置多路复用（类似 tmux），支持标签页和窗格分割
+- 支持连字、图片协议、SSH 多路复用
 
 ## delta: git pager
 
@@ -211,7 +288,20 @@ pacman -Rsu $(comm -23 <(pacman -Qq | sort) <(sort pkglist.txt))
 
 ## bat: better cat
 
+语法高亮的 cat 替代品，支持 Git 集成和分页显示。
+
+- `bat file.py` 带语法高亮和行号显示文件
+- `bat --diff file.py` 显示 Git 修改标记
+- `bat -l json file` 指定语言进行高亮
+- 可作为 man pager：`export MANPAGER="sh -c 'col -bx | bat -l man -p'"`
+
 ## tldr: cheatsheet
+
+社区驱动的命令速查工具，比 man 更简洁实用。
+
+- `tldr tar` 查看 tar 的常用示例
+- `tldr --update` 更新本地缓存
+- `tldr -p linux docker` 查看指定平台的命令帮助
 
 # Development
 
@@ -232,6 +322,11 @@ https://github.com/eradman/entr
 
 ## utools
 
+- 跨平台效率工具启动器，类似 Alfred/Spotlight
+- 支持插件扩展：剪贴板、翻译、颜色取色、JSON 格式化等
+- `Alt+Space` 唤出搜索框，输入关键词快速启动应用或执行操作
+- 插件市场丰富，支持自定义插件开发（基于 Electron）
+
 ## regex101 正则工具
 
 - [regex101](https://github.com/nedrysoft/regex101)
@@ -246,6 +341,11 @@ vim like 键位的日程管理工具
 
 ## Charles 手机端抓包工具
 
+- macOS/Windows 上的 HTTP 代理抓包工具，尤其适合移动端调试
+- 手机设置代理指向电脑 IP:8888，即可抓取手机流量
+- 支持 SSL Proxying（需安装证书）解密 HTTPS 流量
+- Map Local/Map Remote 功能可将请求映射到本地文件或其他服务器
+
 ## curl 获取ip
 
 ```
@@ -259,6 +359,13 @@ curl http://ifconfig.me
 支持docker部署
 
 ## jq json处理命令行工具
+
+轻量级命令行 JSON 处理器，支持过滤、映射、转换。
+
+- `cat data.json | jq '.'` 格式化输出 JSON
+- `jq '.name' file.json` 提取指定字段
+- `jq '.items[] | select(.age > 18)' file.json` 过滤数组元素
+- `jq -r '.url' file.json` 输出原始字符串（去除引号）
 
 ## Tengine
 
@@ -279,6 +386,23 @@ curl http://ifconfig.me
 支持查看 elf 在内多种文件类型的反汇编与查看。
 
 ## Justfile
+
+类似 Makefile 的命令运行器，语法更简洁直观，专注于运行命令而非构建。
+
+- 安装：`cargo install just` 或 `pacman -S just`
+- `just` 运行默认任务
+- `just build` 运行指定任务
+- 示例 Justfile：
+  ```
+  default:
+    echo "hello"
+
+  build:
+    cargo build --release
+
+  test *args:
+    cargo test {{args}}
+  ```
 
 ## 内网穿透frp
 
@@ -456,9 +580,25 @@ mitmproxy --set connection_strategy=lazy --listen-host 0.0.0.0 -p 8191
 
 ## whistle
 
+- Node.js 实现的跨平台 HTTP/HTTPS 抓包调试工具
+- `w2 start` 启动代理服务（默认端口 8899）
+- 支持规则配置实现请求转发、Mock 数据、修改响应头等
+- 浏览器访问 `http://127.0.0.1:8899` 查看管理界面
+
 ## mitmproxy
 
+- Python 实现的交互式 HTTPS 代理，支持命令行/Web/API 三种界面
+- `mitmproxy` 启动交互式终端界面
+- `mitmweb` 启动 Web 界面
+- `mitmdump -w traffic.flow` 将流量保存到文件
+- 支持 Python 脚本编写插件实现自动化处理
+
 ## fiddler
+
+- Windows 平台经典的 HTTP 调试代理工具
+- 支持断点调试、自动响应、性能测试
+- Fiddler Everywhere 为跨平台版本（基于 Electron）
+- 适合 .NET 开发环境下的抓包调试
 
 # Linux
 
@@ -552,6 +692,11 @@ i3-like tiling window manager
 
 ### siyuan
 
+- 本地优先的双链笔记应用，支持块级引用和反向链接
+- 数据存储为本地 JSON 文件，支持 S3/WebDAV 同步
+- 内置所见即所得编辑器，支持数学公式、流程图、代码块
+- 支持模板、挂件、主题等扩展机制
+
 ## 音乐可视化 cava
 
 https://github.com/karlstav/cava
@@ -565,6 +710,12 @@ https://github.com/karlstav/cava
 高颜值，极简：https://arc.net/
 
 ## Zen browser
+
+- 基于 Firefox 的注重隐私和简洁的浏览器
+- 侧边栏标签页管理，支持分栏浏览
+- 内置广告拦截，默认隐私保护配置
+- 界面极简，支持自定义主题和 CSS 样式
+- [Zen browser](https://zen-browser.app/)
 
 ## nyxt browser
 
@@ -583,7 +734,18 @@ hacker's browser
 
 ### proton
 
+- Valve 开发的 Wine 分支，专为 Steam 游戏优化
+- 集成 DXVK（DirectX to Vulkan 转译层）和 vkd3d（DX12 支持）
+- Steam 中启用 Steam Play 后自动使用 Proton 运行 Windows 游戏
+- [ProtonDB](https://www.protondb.com/) 可查看游戏兼容性评级
+
 ### wine
+
+- Windows 应用兼容层，将 Windows API 调用转译为 Linux 系统调用
+- `wine program.exe` 运行 Windows 程序
+- `winecfg` 配置 Wine 环境（Windows 版本、驱动等）
+- `WINEPREFIX=~/.wine64 wine64 setup.exe` 使用独立的 Wine 前缀
+- 非模拟器，不运行虚拟机，直接翻译 API 调用
 
 # 杂项,图片,gif,taag
 
@@ -677,6 +839,13 @@ wget https://raw.githubusercontent.com/IreneKnapp/direct-sqlite/a74cc50c735053c7
 [penger.city](https://penger.city/)
 
 ## ascii art
+
+- [figlet](http://www.figlet.org/) - 将文本转为大字 ASCII 艺术字
+  - `figlet "Hello"` 生成默认字体
+  - `figlet -f slant "Hello"` 使用 slant 字体
+- [toilet](http://caca.zoy.org/wiki/toilet) - figlet 的增强版，支持彩色输出
+- [jp2a](https://github.com/cslarsen/jp2a) - 将图片转为 ASCII 字符画
+- [ASCII Art Archive](https://www.asciiart.eu/) - ASCII 艺术作品收藏网站
 
 ## asciinema 记录和分享终端操作
 

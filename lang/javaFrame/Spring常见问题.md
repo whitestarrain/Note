@@ -388,19 +388,102 @@ after method send
 
 # 5. Spring 注解
 
+- Spring 注解本质是通过 Java 反射机制在运行时读取类/方法/字段上的元数据信息
+- 注解分类：
+  - 组件注册：@Component、@Service、@Repository、@Controller、@Bean、@Configuration
+  - 依赖注入：@Autowired、@Resource、@Qualifier、@Primary、@Value
+  - 作用域与生命周期：@Scope、@Lazy、@PostConstruct、@PreDestroy
+  - 条件注册：@Conditional、@Profile、@ConditionalOnBean 等
+  - AOP 相关：@Aspect、@Pointcut、@Before、@After、@Around
+  - 事务：@Transactional、@EnableTransactionManagement
+- 注解处理器：大部分注解由 ConfigurationClassPostProcessor 和各种 BeanPostProcessor 处理
+- 元注解：@Target、@Retention、@Documented、@Inherited，用于定义注解的注解
+- Spring 中注解可以使用多次（@Repeatable），也支持注解继承（@AliasFor 实现属性互通）
+
 # 6. Spring数据访问
+
+- Spring 数据访问的核心设计理念：
+  - 统一的异常体系：将各种 ORM 框架的 checked 异常转为 Spring 的 DataAccessException（unchecked）
+  - 模板模式：JdbcTemplate、HibernateTemplate 等封装了资源获取/释放的样板代码
+  - DAO 支持：提供 DaoSupport 基类简化 DAO 层开发
+- 主要组件：
+  - JdbcTemplate：简化 JDBC 操作，自动管理连接、处理异常
+  - NamedParameterJdbcTemplate：支持命名参数的 JdbcTemplate
+  - DataSource：数据源抽象，Spring 管理连接池
+  - Spring Data JPA：基于 JPA 的 Repository 抽象，只需定义接口即可自动生成实现
+- 事务与数据访问的关系：
+  - Spring 通过 DataSourceTransactionManager 管理 JDBC 事务
+  - 通过 JpaTransactionManager 管理 JPA 事务
+  - 事务管理器确保同一事务中使用同一个数据库连接（基于 ThreadLocal 绑定）
 
 # 7. Spring事务
 
+- 事务的四大特性（ACID）：原子性、一致性、隔离性、持久性
+- Spring 事务管理方式：
+  - 声明式事务：@Transactional 注解或 XML 配置，基于 AOP 代理实现
+  - 编程式事务：TransactionTemplate 或 PlatformTransactionManager
+- @Transactional 核心属性：
+  - propagation：传播行为（REQUIRED、REQUIRES_NEW、NESTED 等）
+  - isolation：隔离级别（READ_COMMITTED、REPEATABLE_READ 等）
+  - rollbackFor：指定哪些异常触发回滚
+  - timeout：事务超时时间
+  - readOnly：只读事务优化
+- 传播行为说明：
+  - REQUIRED（默认）：有事务加入，没有则新建
+  - REQUIRES_NEW：总是新建事务，挂起当前事务
+  - NESTED：嵌套事务，使用 savepoint 实现
+  - SUPPORTS：有事务就加入，没有就以非事务方式执行
+- 底层实现：TransactionInterceptor（AOP 拦截器） + PlatformTransactionManager
+
 # 8. Spring 设计模式
+
+- Spring 中使用的主要设计模式：
+  - 工厂模式：BeanFactory 和 ApplicationContext 作为 Bean 工厂
+  - 单例模式：Spring 默认 Bean 为 singleton，通过 ConcurrentHashMap 缓存
+  - 代理模式：AOP 通过 JDK 动态代理或 CGLIB 代理实现切面增强
+  - 模板方法模式：JdbcTemplate、RestTemplate、TransactionTemplate 等
+  - 观察者模式：Spring 事件机制（ApplicationEvent + ApplicationListener）
+  - 适配器模式：HandlerAdapter 适配不同类型的 Handler
+  - 策略模式：Resource 接口的多种实现（ClassPathResource、FileSystemResource）
+  - 责任链模式：拦截器链（HandlerInterceptor）、Filter 链
+  - 装饰器模式：BeanWrapper 对 Bean 的包装
+  - 委托模式：DispatcherServlet 委托 HandlerMapping、HandlerAdapter 等处理请求
 
 # 9. Spring MVC
 
 ## 9.1. Spring MVC工作原理
 
+- Spring MVC 基于前端控制器模式，所有请求由 DispatcherServlet 统一分发
+- 完整请求处理流程：
+  - 1. 请求到达 DispatcherServlet
+  - 2. 调用 HandlerMapping.getHandler() 根据 URL 匹配 Controller 方法
+  - 3. 返回 HandlerExecutionChain（包含 Handler 和拦截器列表）
+  - 4. 根据 Handler 类型选择 HandlerAdapter（如 RequestMappingHandlerAdapter）
+  - 5. 执行拦截器 preHandle()
+  - 6. HandlerAdapter 调用 Controller 方法（参数解析、返回值处理）
+  - 7. 执行拦截器 postHandle()
+  - 8. 视图解析和渲染（@ResponseBody 直接写入响应体）
+  - 9. 执行拦截器 afterCompletion()
+- 核心组件：HandlerMapping（URL映射）、HandlerAdapter（方法调用）、ViewResolver（视图解析）、HttpMessageConverter（序列化/反序列化）
+
 # 10. SpringBoot
 
 ## 10.1. 装配过程
+
+- SpringBoot 自动装配核心：@SpringBootApplication = @Configuration + @EnableAutoConfiguration + @ComponentScan
+- @EnableAutoConfiguration 工作原理：
+  - 通过 @Import(AutoConfigurationImportSelector.class) 导入自动配置类
+  - AutoConfigurationImportSelector 读取 META-INF/spring.factories 文件
+  - 获取所有自动配置类的全限定名列表
+  - 通过 @Conditional 系列注解过滤，只加载满足条件的配置类
+- 自动装配流程：
+  - 1. SpringApplication.run() 启动
+  - 2. 创建 ApplicationContext
+  - 3. 加载 @SpringBootApplication 标注的主配置类
+  - 4. 处理 @EnableAutoConfiguration，加载 spring.factories 中的配置类
+  - 5. 各配置类通过 @ConditionalOnClass、@ConditionalOnBean 等条件判断是否生效
+  - 6. 生效的配置类通过 @Bean 注册相关组件到容器
+- 自定义 starter：创建 xxx-spring-boot-starter 模块，提供 spring.factories + 自动配置类 + @ConfigurationProperties
 
 # 11. 容器相关
 
@@ -429,7 +512,29 @@ after method send
 
 ## 11.2. Spring容器与web容器
 
+- Web 容器（如 Tomcat、Jetty）负责管理 Servlet 的生命周期和 HTTP 请求的处理
+- Spring 容器（ApplicationContext）负责管理 Bean 的生命周期和依赖注入
+- 集成方式：
+  - 传统方式：通过 web.xml 配置 ContextLoaderListener，在 Web 容器启动时创建 Spring 根容器
+  - Spring Boot 方式：内嵌 Web 容器（Tomcat），由 Spring 管理 Web 容器的生命周期
+- 生命周期关系：
+  - Web 容器启动 -> 触发 ServletContextListener -> 创建 Spring ApplicationContext
+  - Web 容器关闭 -> 触发 contextDestroyed -> 关闭 Spring 容器
+- Spring Boot 中的变化：ApplicationContext 创建并管理嵌入式 Web 容器，关系反转
+
 ## 11.3. Spring容器与MCV容器
+
+- Spring MVC 采用父子容器设计：
+  - Root ApplicationContext（父容器）：由 ContextLoaderListener 创建，管理全局 Bean（Service、Dao）
+  - Servlet ApplicationContext（子容器）：由 DispatcherServlet 创建，管理 Web 层 Bean（Controller、ViewResolver）
+- 父子容器隔离的意义：
+  - 子容器可以访问父容器的 Bean（Controller 注入 Service）
+  - 父容器不能访问子容器的 Bean（Service 不能注入 Controller）
+  - 多个 DispatcherServlet 可以共享同一个父容器
+- 常见问题：
+  - 父子容器都扫描了同一个包，导致 Bean 重复注册、事务失效
+  - 解决：父容器排除 @Controller，子容器只扫描 @Controller
+- Spring Boot 中只有一个 ApplicationContext，不再区分父子容器
 
 # 待分类
 

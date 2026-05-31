@@ -999,11 +999,55 @@ http.createServer((req, res) => {
 
 ### 3.5.2. 干扰信息
 
+- 为什么需要干扰信息：
+  - 纯粹的AK/SK认证中，如果请求内容完全相同，生成的摘要也相同
+  - 攻击者可以截获请求后进行重放攻击(Replay Attack)
+  - 因此需要在签名中加入变化因子，使每次请求的签名不同
+
+- 常见干扰信息：
+  - 时间戳(timestamp)：请求中携带当前时间，服务端校验时间窗口（如前后5分钟内有效）
+  - 随机数(nonce)：每次请求携带随机字符串，服务端记录已使用的nonce，拒绝重复
+  - 请求序号(sequence)：递增序号，服务端拒绝小于等于上次序号的请求
+  - 组合使用：timestamp + nonce 组合使用最为常见，兼顾性能与安全
+
+- 签名内容通常包括：
+  - HTTP Method + URI + 请求参数 + timestamp + nonce + AK
+  - 所有参与签名的字段按字典序排列后拼接，再使用SK进行HMAC计算
+
 ### 3.5.3. 说明
 
 #### 3.5.3.1. 质疑/应答算法
 
+- 原理（Challenge-Response）：
+  - 服务端向客户端发送一个随机挑战值(challenge)
+  - 客户端使用共享密钥对challenge进行加密/哈希，返回应答(response)
+  - 服务端用同样的密钥和算法验证应答是否正确
+  - 每次challenge不同，攻击者无法重放之前的响应
+
+- 应用场景：
+  - HTTP Digest认证：服务端返回nonce，客户端用password+nonce计算哈希
+  - Wi-Fi WPA认证中的四次握手
+  - 智能卡和门禁系统的身份认证
+
+- 优点：密码/密钥不在网络中传输，即使被截获也无法重放
+
 #### 3.5.3.2. 基于时间的一次性密码认证
+
+- TOTP(Time-based One-Time Password)：
+  - 基于时间的一次性密码算法，RFC 6238标准
+  - 原理：以共享密钥和当前时间为输入，通过HMAC算法生成一次性密码
+  - 公式：`TOTP = HMAC-SHA1(secret, floor(timestamp / 30)) mod 10^6`
+  - 每30秒生成一个新的6位数字密码
+
+- 应用场景：
+  - 双因素认证(2FA)：Google Authenticator、Microsoft Authenticator
+  - 企业VPN登录的动态口令
+  - 银行网银的动态令牌
+
+- 实现要点：
+  - 客户端和服务端必须共享同一个secret（首次通过二维码交换）
+  - 服务端需要容忍1-2个时间窗口的偏差（考虑时钟偏移）
+  - secret的安全存储是整个方案的关键
 
 ## 3.6. OAuth
 

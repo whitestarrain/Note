@@ -950,7 +950,33 @@ LockSupport和Atomic类都是调用的Unsafe类中的方法。
 
 ### 10.3.1. state
 
+- state 是 AQS 中的核心字段，用 volatile int 修饰，表示同步状态
+- 不同实现中 state 的含义：
+  - ReentrantLock：state 表示重入次数，0 为未锁定，>0 为已锁定
+  - Semaphore：state 表示剩余许可数
+  - CountDownLatch：state 表示计数值
+  - ReentrantReadWriteLock：高 16 位为读锁数量，低 16 位为写锁重入次数
+- 操作方式：通过 getState()、setState()、compareAndSetState() 三个方法访问
+- compareAndSetState() 使用 Unsafe.compareAndSwapInt 实现原子更新
+- 设计目的：子类通过操作 state 实现自定义的获取/释放语义，AQS 框架根据 state 决定线程是否阻塞
+
 ### 10.3.2. CLH
+
+- CLH 队列是 AQS 内部维护的 FIFO 双向链表，用于管理等待获取锁的线程
+- 节点结构（Node 内部类）：
+  - thread：等待的线程引用
+  - waitStatus：节点状态（CANCELLED=1, SIGNAL=-1, CONDITION=-2, PROPAGATE=-3）
+  - prev：前驱节点
+  - next：后继节点
+  - nextWaiter：条件队列中的下一个节点 / 标记共享或独占模式
+- 入队过程（addWaiter）：
+  - 创建 Node 封装当前线程
+  - CAS 将 Node 设置为 tail（尾节点）
+  - 如果 CAS 失败，通过 enq() 自旋入队
+- waitStatus 含义：
+  - SIGNAL(-1)：当前节点释放锁后需要唤醒后继节点
+  - CANCELLED(1)：节点已取消（超时或中断）
+  - 0：初始状态
 
 ### 10.3.3. 条件队列
 
@@ -968,6 +994,18 @@ LockSupport和Atomic类都是调用的Unsafe类中的方法。
   > ![key_points-16](./image/key_points-16.png)
 
 ### 10.4.1. 模板设计模式
+
+- AQS 采用模板方法设计模式，将通用的入队、出队、阻塞、唤醒等逻辑封装在父类中
+- 子类只需实现以下几个 protected 方法即可定义锁的语义：
+  - tryAcquire(int arg)：独占模式尝试获取资源，成功返回 true
+  - tryRelease(int arg)：独占模式尝试释放资源
+  - tryAcquireShared(int arg)：共享模式尝试获取资源，返回值 >= 0 表示成功
+  - tryReleaseShared(int arg)：共享模式尝试释放资源
+  - isHeldExclusively()：判断当前线程是否独占资源
+- 设计优势：
+  - 子类无需关心线程排队和唤醒的细节
+  - 同一套框架支持独占锁（ReentrantLock）和共享锁（Semaphore、CountDownLatch）
+  - 公平/非公平策略只需在 tryAcquire 中控制是否检查队列
 
 ### 10.4.2. acquire
 
@@ -989,9 +1027,58 @@ public final void acquire(int arg) {
 
 ### 10.4.3. release
 
+```java
+public final boolean release(int arg) {
+    if (tryRelease(arg)) {
+        Node h = head;
+        if (h != null && h.waitStatus != 0)
+            unparkSuccessor(h);
+        return true;
+    }
+    return false;
+}
+```
+
+- release() 是独占模式下释放资源的入口
+- tryRelease() 由子类实现，尝试释放资源（如将 state 减 1）
+- 释放成功后，检查头节点的 waitStatus，如果有后继节点在等待，则调用 unparkSuccessor() 唤醒
+- unparkSuccessor()：找到队列中下一个需要唤醒的节点，调用 LockSupport.unpark() 唤醒对应线程
+- 被唤醒的线程会在 acquireQueued() 中继续自旋尝试获取资源
+
 ### 10.4.4. acquireShared
 
+```java
+public final void acquireShared(int arg) {
+    if (tryAcquireShared(arg) < 0)
+        doAcquireShared(arg);
+}
+```
+
+- acquireShared() 是共享模式下获取资源的入口
+- tryAcquireShared() 由子类实现：返回值 < 0 表示获取失败；= 0 表示成功但无剩余资源；> 0 表示成功且有剩余资源
+- 获取失败时进入 doAcquireShared()：
+  - 将当前线程包装为 Node.SHARED 模式加入队列尾部
+  - 自旋 + park 等待直到获取成功
+  - 与独占模式不同：获取成功后会传播唤醒后续的共享节点（setHeadAndPropagate）
+- 传播机制确保多个共享线程可以同时被唤醒（如 Semaphore 一次释放多个许可）
+
 ### 10.4.5. releaseShared
+
+```java
+public final boolean releaseShared(int arg) {
+    if (tryReleaseShared(arg)) {
+        doReleaseShared();
+        return true;
+    }
+    return false;
+}
+```
+
+- releaseShared() 是共享模式下释放资源的入口
+- tryReleaseShared() 由子类实现，尝试释放共享资源
+- doReleaseShared()：唤醒后继节点，并确保传播（多个线程可能同时调用释放）
+- 与 release() 的区别：doReleaseShared() 使用 CAS + 循环确保并发释放的正确性
+- 典型应用：CountDownLatch.countDown() 将 state 减 1，当 state 变为 0 时唤醒所有等待线程
 
 ## 10.5. AQS组件
 
@@ -1006,11 +1093,68 @@ public final void acquire(int arg) {
 - 而ReentrantLock中，获得的每个Condition都可以看作一个队列。
   - condition.await()相当于把线程加入该condition的等待队列
 
+- 实现原理：
+  - 内部类 Sync 继承 AQS，state 表示重入次数（0 表示未锁定）
+  - lock()：CAS 将 state 从 0 设为 1，成功则获取锁；失败则进入 AQS 排队
+  - 重入：同一线程再次获取锁时，state 递增，释放时递减，直到 state=0 才真正释放
+  - 公平锁（FairSync）：tryAcquire 中先检查队列是否有前驱节点，有则不抢占
+  - 非公平锁（NonfairSync）：tryAcquire 中直接 CAS 抢占，不检查队列
+- 与 synchronized 对比：支持公平锁、可中断、超时获取、多 Condition 队列
+
 ### 10.5.3. ReentrantReadWriteLock
+
+- 用途：读多写少场景，允许多个线程同时读，但写时互斥
+- 实现原理：
+  - 将 AQS 的 state 拆分为高 16 位（读锁计数）和低 16 位（写锁计数）
+  - 读锁（共享锁）：tryAcquireShared，当没有写锁或写锁是当前线程时可获取
+  - 写锁（独占锁）：tryAcquire，当没有任何读锁和写锁时可获取
+  - 锁降级：持有写锁的线程可以再获取读锁，然后释放写锁（写锁降级为读锁）
+  - 不支持锁升级：持有读锁时不能获取写锁（会死锁）
+- 使用示例：
+  ```java
+  ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+  rwLock.readLock().lock();    // 读操作
+  rwLock.readLock().unlock();
+  rwLock.writeLock().lock();   // 写操作
+  rwLock.writeLock().unlock();
+  ```
 
 ### 10.5.4. Semaphore
 
+- 用途：控制同时访问某个资源的线程数量（信号量），常用于限流
+- 实现原理：
+  - AQS 的 state 表示剩余许可数
+  - acquire()：调用 acquireShared，将 state 减 1，如果 state < 0 则阻塞
+  - release()：调用 releaseShared，将 state 加 1，唤醒等待线程
+  - 支持公平和非公平模式
+- 使用示例：
+  ```java
+  Semaphore semaphore = new Semaphore(3); // 最多3个线程并发
+  semaphore.acquire();  // 获取许可
+  try {
+      // 访问共享资源
+  } finally {
+      semaphore.release();  // 释放许可
+  }
+  ```
+- 典型场景：数据库连接池限流、接口限流
+
 ### 10.5.5. CountDownLatch
+
+- 用途：等待一组线程全部完成后再继续执行（倒计数门闩）
+- 实现原理：
+  - AQS 的 state 初始化为计数值 N
+  - countDown()：调用 releaseShared，将 state 减 1
+  - await()：调用 acquireShared，当 state != 0 时阻塞
+  - 当 state 减为 0 时，所有 await 的线程被唤醒
+- 特点：一次性使用，计数器归零后不可重置
+- 使用示例：
+  ```java
+  CountDownLatch latch = new CountDownLatch(3);
+  // 三个子线程各自完成后调用 latch.countDown()
+  latch.await(); // 主线程等待所有子线程完成
+  ```
+- 典型场景：主线程等待多个子任务完成后汇总结果
 
 ### 10.5.6. CyclicBarrier
 
@@ -1071,7 +1215,15 @@ public final void acquire(int arg) {
 ## 12.1. 锁的有无
 
 - 乐观锁
+  - 认为数据一般不会产生冲突，只在提交更新时检查是否有冲突
+  - 实现方式：CAS 操作、版本号机制（数据库 version 字段）
+  - 适用场景：读多写少，冲突概率低
+  - Java 中的实现：AtomicInteger、AtomicLong 等 Atomic 类
 - 悲观锁
+  - 认为数据随时可能被其他线程修改，每次操作前都加锁
+  - 实现方式：synchronized、ReentrantLock、数据库 SELECT FOR UPDATE
+  - 适用场景：写多读少，冲突概率高
+  - 缺点：线程阻塞和唤醒带来上下文切换开销
 
 ## 12.2. synchronized 的锁
 
@@ -1085,30 +1237,46 @@ public final void acquire(int arg) {
 ### 12.3.1. 可重入锁和非可重入锁
 
 - 表现
+  - 可重入锁：同一线程可以多次获取同一把锁而不会死锁
+  - 非可重入锁：同一线程再次获取已持有的锁会导致死锁
 - 原理：粒度（加锁范围）
+  - 可重入锁内部维护一个计数器，同一线程每次获取锁 +1，释放锁 -1，计数为 0 时真正释放
+  - 非可重入锁不记录持有者，不区分是否是同一线程
 - 实例
-  - 可重入锁
-  - 不可重入锁
-  - 可以切换
+  - 可重入锁：synchronized、ReentrantLock
+  - 不可重入锁：自旋锁的简单实现（不判断线程身份）
+  - 可以切换：无，锁的可重入性由实现决定
 
 ### 12.3.2. 公平锁与非公平锁
 
 - 表现
+  - 公平锁：线程按照请求顺序获取锁（FIFO），先来先得
+  - 非公平锁：允许插队，新来的线程有机会直接抢占锁
 - 原理
+  - 公平锁：tryAcquire 时检查 AQS 队列中是否有等待的前驱节点，有则排队
+  - 非公平锁：tryAcquire 时直接 CAS 抢占，不检查队列
 - 实例
-  - 公平锁
-  - 非公平锁
-  - 可以切换
+  - 公平锁：`new ReentrantLock(true)`
+  - 非公平锁：`new ReentrantLock(false)`（默认）、synchronized
+  - 可以切换：ReentrantLock 构造参数指定
+- 性能对比：非公平锁吞吐量更高（减少线程唤醒开销），但可能导致线程饥饿
 
 ### 12.3.3. 读写锁和排它锁
 
 - 表现
+  - 读写锁（共享锁/独占锁）：读读不互斥，读写互斥，写写互斥
+  - 排它锁（独占锁/互斥锁）：任何操作都互斥
 - 原理
+  - 读写锁：AQS state 高16位记录读锁数量，低16位记录写锁数量
+  - 排它锁：AQS state 只有 0（未锁）和 非0（已锁）两种状态
 - 实例
-  - 读写锁
-  - 排它锁
-  - 可以切换
+  - 读写锁：ReentrantReadWriteLock、StampedLock（JDK 1.8）
+  - 排它锁：synchronized、ReentrantLock
+  - 可以切换：无，由锁类型决定
 - 是否可中断
+  - synchronized 不可中断
+  - ReentrantLock.lockInterruptibly() 支持中断
+  - ReentrantReadWriteLock 的读写锁均支持可中断获取
 
 # 13. 并发容器
 
@@ -1247,7 +1415,25 @@ public final void acquire(int arg) {
 
 ### 14.2.3. 为什么不要用默认实现
 
-(上面的默认实现有什么弊端)
+- 阿里巴巴 Java 开发手册明确规定：线程池不允许使用 Executors 去创建，而是通过 ThreadPoolExecutor 手动创建
+- FixedThreadPool 和 SingleThreadExecutor 的问题：
+  - 使用 LinkedBlockingQueue（无界队列），允许的请求队列长度为 Integer.MAX_VALUE
+  - 可能导致大量请求堆积，造成 OOM（OutOfMemoryError）
+- CachedThreadPool 的问题：
+  - maximumPoolSize 为 Integer.MAX_VALUE，允许创建的线程数量为 Integer.MAX_VALUE
+  - 可能创建大量线程，导致 OOM 或线程调度开销过大
+- ScheduledThreadPool 的问题：
+  - maximumPoolSize 为 Integer.MAX_VALUE，同样有创建过多线程的风险
+- 正确做法：使用 ThreadPoolExecutor 构造方法，明确指定核心参数
+  ```java
+  new ThreadPoolExecutor(
+      corePoolSize,
+      maximumPoolSize,
+      keepAliveTime, TimeUnit.SECONDS,
+      new ArrayBlockingQueue<>(queueCapacity), // 有界队列
+      new ThreadPoolExecutor.CallerRunsPolicy() // 合理的拒绝策略
+  );
+  ```
 
 ## 14.3. 常用方法
 
@@ -1261,19 +1447,67 @@ public final void acquire(int arg) {
 
 ## 14.4. 线程池工作流程
 
+- 任务提交后的完整处理流程：
+  - 1. 判断核心线程数是否已满（当前线程数 < corePoolSize）
+    - 未满：创建新的核心线程执行任务
+    - 已满：进入步骤 2
+  - 2. 判断工作队列是否已满（workQueue.offer(task)）
+    - 未满：将任务加入工作队列等待
+    - 已满：进入步骤 3
+  - 3. 判断最大线程数是否已满（当前线程数 < maximumPoolSize）
+    - 未满：创建新的非核心线程执行任务
+    - 已满：执行拒绝策略（RejectedExecutionHandler）
+- 关键源码：ThreadPoolExecutor.execute() 方法
+  ```java
+  public void execute(Runnable command) {
+      int c = ctl.get();
+      if (workerCountOf(c) < corePoolSize) {       // 步骤1
+          if (addWorker(command, true)) return;
+      }
+      if (isRunning(c) && workQueue.offer(command)) { // 步骤2
+          // double-check
+      } else if (!addWorker(command, false)) {       // 步骤3
+          reject(command);                            // 拒绝策略
+      }
+  }
+  ```
+- 注意：即使核心线程空闲，新任务也不会复用空闲核心线程（除非队列满了），而是先入队
+
 ## 14.5. 非核心线程的回收
 
-待补充（重要）
+- 回收机制：非核心线程空闲超过 keepAliveTime 后被回收销毁
+- 实现原理（源码分析）：
+  - Worker 线程在 runWorker() 方法中循环调用 getTask() 从队列获取任务
+  - getTask() 中使用 workQueue.poll(keepAliveTime, TimeUnit) 带超时地获取任务
+  - 如果超时返回 null，说明该线程已空闲超过 keepAliveTime
+  - getTask() 返回 null 后，runWorker() 退出循环，线程执行结束被 GC 回收
+- 核心线程是否回收：
+  - 默认不回收核心线程（使用 workQueue.take() 无限等待）
+  - 设置 allowCoreThreadTimeOut(true) 后，核心线程也会被回收
+- 判断逻辑（getTask 中）：
+  ```java
+  boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
+  // timed 为 true 时使用 poll 带超时；为 false 时使用 take 阻塞等待
+  ```
+- 注意：线程池不区分"核心线程"和"非核心线程"对象，只关心当前线程总数是否超过 corePoolSize
 
 [深入讲解](https://segmentfault.com/a/1190000039815066)
 
 ## 14.6. ThreadPool 状态转换
 
-- RUNNING
-- SHUTDOWN
-- STOP
-- TIDYING
-- TERMINATED
+- RUNNING：线程池创建后的初始状态，接受新任务并处理队列中的任务
+- SHUTDOWN：调用 shutdown() 后进入，不接受新任务，但继续处理队列中已有的任务
+- STOP：调用 shutdownNow() 后进入，不接受新任务，不处理队列任务，并中断正在执行的任务
+- TIDYING：所有任务终止，workerCount 为 0，线程池进入 TIDYING 状态后会调用 terminated() 钩子方法
+- TERMINATED：terminated() 方法执行完毕后进入最终状态
+- 状态转换路径：
+  - RUNNING -> SHUTDOWN：调用 shutdown()
+  - RUNNING -> STOP：调用 shutdownNow()
+  - SHUTDOWN -> STOP：调用 shutdownNow()
+  - SHUTDOWN -> TIDYING：队列为空且工作线程数为 0
+  - STOP -> TIDYING：工作线程数为 0
+  - TIDYING -> TERMINATED：terminated() 执行完毕
+- 源码中状态用 ctl 的高 3 位表示，低 29 位表示线程数量
 
 ## 14.7. ScheduledThreadPool:
 
@@ -1283,13 +1517,55 @@ public final void acquire(int arg) {
 
 ## 14.8. 参数如何设置
 
+- CPU 密集型任务：线程数 = CPU 核心数 + 1
+  - 原因：CPU 密集型很少阻塞，线程数过多反而增加上下文切换开销
+  - 额外的 1 个线程用于当某线程偶尔由于页缺失等原因暂停时保持 CPU 利用率
+- IO 密集型任务：线程数 = CPU 核心数 * 2（或更多）
+  - 原因：IO 操作时线程阻塞，需要更多线程来保持 CPU 利用率
+  - 更精确的公式：线程数 = CPU 核心数 * (1 + IO 耗时 / CPU 计算耗时)
+- 混合型任务：拆分为 CPU 密集和 IO 密集两个线程池分别设置
+- 队列选择：
+  - 有界队列（ArrayBlockingQueue）：防止内存溢出，需配合合理的拒绝策略
+  - 无界队列（LinkedBlockingQueue）：maximumPoolSize 参数失效，可能导致 OOM
+  - 同步队列（SynchronousQueue）：不缓存任务，适合任务量波动大的场景
+- 美团动态线程池方案：
+  - 将线程池参数配置化（配置中心），支持运行时动态调整
+  - 通过 setCorePoolSize() 和 setMaximumPoolSize() 动态修改
+  - 配合监控告警，根据队列积压情况自动调整参数
+
 ## 14.9. 异常线程处理
 
 [异常线程处理](https://mp.weixin.qq.com/s?__biz=Mzg3NjU3NTkwMQ==&mid=2247505057&idx=1&sn=621ebc409b589478e2e05388e079d8c0&source=41#wechat_redirect)
 
 ## 14.10. jdk线程池实现和线程复用原理
 
-TODO: 线程复用及线程池原理
+- 线程复用核心原理：Worker 线程不是执行完一个任务就销毁，而是循环从队列中获取新任务执行
+- 实现机制（ThreadPoolExecutor 内部类 Worker）：
+  - Worker 继承 AQS 并实现 Runnable，本身是一个线程任务
+  - Worker.run() 调用 runWorker(this)
+  - runWorker() 核心逻辑：
+    ```java
+    while (task != null || (task = getTask()) != null) {
+        w.lock();
+        try {
+            beforeExecute(wt, task);
+            task.run();  // 执行用户提交的任务
+            afterExecute(task, null);
+        } finally {
+            task = null;
+            w.completedTasks++;
+            w.unlock();
+        }
+    }
+    ```
+  - 关键：通过 while 循环不断调用 getTask() 从 workQueue 中取任务
+  - 线程本身不销毁，只是不断执行不同的 Runnable.run()，实现线程复用
+- getTask() 的阻塞机制：
+  - 核心线程：workQueue.take()，无限阻塞等待，线程不会退出
+  - 非核心线程：workQueue.poll(keepAliveTime)，超时返回 null，线程退出循环后销毁
+- 与直接 new Thread 的区别：
+  - new Thread 每次创建新线程，执行完即销毁，创建/销毁开销大
+  - 线程池的 Worker 线程常驻内存，循环复用执行多个任务
 
 # 15. ThreadLocal
 
@@ -1315,6 +1591,23 @@ TODO: 线程复用及线程池原理
 -->
 
 # 16. Disruptor
+
+- 概述：Disruptor 是 LMAX 开源的高性能并发框架，基于环形缓冲区（RingBuffer）实现线程间通信
+- 核心思想：
+  - 使用环形数组（RingBuffer）替代队列，预分配内存避免 GC
+  - 无锁设计，通过 CAS 和内存屏障实现线程安全
+  - 消除伪共享（False Sharing），通过缓存行填充提高性能
+- 核心组件：
+  - RingBuffer：环形缓冲区，固定大小（必须为 2 的幂），存放事件对象
+  - Sequence：序号，生产者和消费者各自维护，表示当前进度
+  - Sequencer：序号生成器，协调生产者和消费者的序号
+  - EventHandler：事件处理器（消费者逻辑）
+  - WaitStrategy：等待策略（BusySpinWaitStrategy、YieldingWaitStrategy、BlockingWaitStrategy）
+- 与 BlockingQueue 对比：
+  - Disruptor 无锁设计，吞吐量远高于 ArrayBlockingQueue
+  - 预分配对象避免频繁 GC
+  - 支持多消费者并行消费和消费者依赖关系编排
+- 适用场景：高频交易系统、日志框架（Log4j2 AsyncLogger）、网关消息处理等对延迟敏感的场景
 
 # 17. 常见区别
 

@@ -37,7 +37,7 @@
 
 - `cv.waitKey(wait_time)`
   - how long should it wait for a user input
-  - if `0`:displayed until the user presses a key 
+  - if `0`:displayed until the user presses a key
   - return pressed key
 
 - `cv.imwrite(image_name,img)`
@@ -49,7 +49,7 @@
 ### 1.2.1. example code
 
 > **Make sure a proper version of ffmpeg or gstreamer is installed.**
-> **Sometimes it is a headache to work with video capture, mostly due to wrong installation of ffmpeg/gstreamer.** 
+> **Sometimes it is a headache to work with video capture, mostly due to wrong installation of ffmpeg/gstreamer.**
 
 #### 1.2.1.1. Capture Video from Camera
 
@@ -129,10 +129,10 @@
 ### 1.2.2. function
 
 - `cv.VideoCapture(deviceIndex_or_videoFile)`
-  - device index 
+  - device index
     - the number to specify which camera
     - Normally one camera will be connected
-    - just simply pass 0 (or -1). 
+    - just simply pass 0 (or -1).
     - can select the second camera by passing 1 and so on
   - the name of a video file
 
@@ -144,8 +144,8 @@
   - if not,use 'cap.open()'
 
 - `cap.get(video_property_id)`
-  - For example, 
-    - width : `cap.get(cv.CAP_PROP_FRAME_WIDTH)` 
+  - For example,
+    - width : `cap.get(cv.CAP_PROP_FRAME_WIDTH)`
     - height :`cap.get(cv.CAP_PROP_FRAME_HEIGHT)`
   - [cv::VideoCapture::get()](https://docs.opencv.org/4.x/d8/dfe/classcv_1_1VideoCapture.html#aa6480e6972ef4c00d74814ec841a2939)
   - [18 properties](https://docs.opencv.org/4.x/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d)
@@ -153,7 +153,7 @@
 - `cap.read()`
   - returns a bool (True/False)
   - If the frame is read correctly, it will be True.
-  - So you can check for the end of the video by checking this returned value. 
+  - So you can check for the end of the video by checking this returned value.
 
 - `cv.cvtColor(frame, ColorConversionCodes)`
   - Converts an image from one color space to another.
@@ -177,7 +177,7 @@
 
 #### 1.3.1.1. Drawing Line
 
-To draw a line, you need to pass starting and ending coordinates of line. 
+To draw a line, you need to pass starting and ending coordinates of line.
 
 We will create a black image and draw a blue line on it from top-left to bottom-right corners.
 
@@ -215,7 +215,7 @@ To draw the ellipse, we need to pass several arguments.
 - One argument is the center location (x,y).
 - Next argument is axes lengths (major axis length, minor axis length).
 - angle is the angle of rotation of ellipse in anti-clockwise direction.
-- startAngle and endAngle denotes the starting and ending of ellipse arc measured in clockwise direction from major axis. i.e. giving values 0 and 360 gives the full ellipse. 
+- startAngle and endAngle denotes the starting and ending of ellipse arc measured in clockwise direction from major axis. i.e. giving values 0 and 360 gives the full ellipse.
 
 For more details, check the documentation of `cv.ellipse()`. Below example draws a half ellipse at the center of the image.
 
@@ -278,7 +278,7 @@ To put texts in images, you need specify following things.
 
 - `cv.polygon(img,points,is_closed,color)`
   - If third argument is False, you will get a polylines joining all the points, not a closed shape.
-  - cv.polylines() can be used to draw multiple lines. 
+  - cv.polylines() can be used to draw multiple lines.
     > - cv.ellipse(	img, center, axes, angle, startAngle, endAngle, color[, thickness[, lineType[, shift]]]	) ->	img
     > - cv.ellipse(	img, box, color[, thickness[, lineType]]	) ->	img
     - Just create a list of all the lines you want to draw and pass it to the function.
@@ -311,7 +311,7 @@ To put texts in images, you need specify following things.
   ```
 
 - Creating mouse callback function has a specific format which is same everywhere.
-  - It differs only in what the function does. 
+  - It differs only in what the function does.
   - So our mouse callback function does one thing, it draws a circle where we double-click.
   - So see the code below. Code is self-explanatory from comments :
 
@@ -431,7 +431,7 @@ To put texts in images, you need specify following things.
 
 ### 1.5.2. function
 
-- cv.createTrackbar() 
+- cv.createTrackbar()
 - cv.getTrackbarPos()
 
 # 2. Core Operations
@@ -535,7 +535,7 @@ See the result below. (Image is displayed with matplotlib. So RED and BLUE chann
 #### 2.2.1.1. Image Addition
 
 - There is a difference between **OpenCV addition** and **Numpy addition**
-  - OpenCV addition is a saturated operation 
+  - OpenCV addition is a saturated operation
   - Numpy addition is a modulo operation.
 
   ```python
@@ -556,7 +556,7 @@ See the result below. (Image is displayed with matplotlib. So RED and BLUE chann
 This is also image addition, but different weights are given to images in order to give a feeling of blending or transparency.
 
 - Images are added as per the equation below:
-  - $g(x)=(1−α)f_{0}(x)+αf_{1}(x)$ 
+  - $g(x)=(1−α)f_{0}(x)+αf_{1}(x)$
   - By varying α from 0→1, you can perform a cool transition between one image to another.
 
   ```python
@@ -581,9 +581,9 @@ This is also image addition, but different weights are given to images in order 
   - Below we will see an example of how to change a particular region of an image.
 
 - put the OpenCV logo above an image
-  - If I add two images, it will change the color. 
-  - If I blend them, I get a transparent effect. But I want it to be opaque(不透明的). 
-  - If it was a rectangular region, I could use ROI as we did in the last chapter. But the OpenCV logo is a not a rectangular shape. 
+  - If I add two images, it will change the color.
+  - If I blend them, I get a transparent effect. But I want it to be opaque(不透明的).
+  - If it was a rectangular region, I could use ROI as we did in the last chapter. But the OpenCV logo is a not a rectangular shape.
   - So you can do it with bitwise operations as shown below:
 
   ```python
@@ -595,7 +595,7 @@ This is also image addition, but different weights are given to images in order 
   roi = img1[0:rows, 0:cols]
   # Now create a mask of logo and create its inverse mask also
   img2gray = cv.cvtColor(img2,cv.COLOR_BGR2GRAY)
-  ret, mask = cv.threshold(img2gray, 10, 255, cv.THRESH_BINARY) # Later chapters will explain 'threshold' 
+  ret, mask = cv.threshold(img2gray, 10, 255, cv.THRESH_BINARY) # Later chapters will explain 'threshold'
   mask_inv = cv.bitwise_not(mask) # 0->255,255->0
   # Now black-out the area of logo in ROI
   img1_bg = cv.bitwise_and(roi,roi,mask = mask_inv)
@@ -655,8 +655,8 @@ This is also image addition, but different weights are given to images in order 
 
 #### 2.3.1.1. Measuring Performance with OpenCV
 
-- `cv.getTickCount`: 
-  - returns the number of clock-cycles after a reference event (like the moment the machine was switched ON) to the moment this function is called. 
+- `cv.getTickCount`:
+  - returns the number of clock-cycles after a reference event (like the moment the machine was switched ON) to the moment this function is called.
   - So if you call it before and after the function execution, you get the number of clock-cycles used to execute a function.
 - `cv.getTickFrequency`:
   - returns the cpu's frequency of clock-cycles, or the number of clock-cycles per second.
@@ -683,7 +683,7 @@ We will demonstrate with following example. The following example applies median
   ```
 
 - notice:
-  - You can do the same thing with the `time` module. 
+  - You can do the same thing with the `time` module.
   - Instead of `cv.getTickCount`, use the time.time() function. Then take the difference of the two times.
 
 #### 2.3.1.2. Default Optimization in OpenCV
@@ -691,10 +691,10 @@ We will demonstrate with following example. The following example applies median
 - explain
   - Many of the OpenCV functions are optimized using SSE2, AVX, etc
   - It contains the unoptimized code also.
-  - So if our system support these features, we should exploit them (almost all modern day processors support them). 
+  - So if our system support these features, we should exploit them (almost all modern day processors support them).
   - It is enabled by default while compiling.
   - So OpenCV runs the optimized code if it is enabled, otherwise it runs the unoptimized code.
-  - You can use `cv.useOptimized()` to check if it is enabled/disabled 
+  - You can use `cv.useOptimized()` to check if it is enabled/disabled
   - use `cv.setUseOptimized()` to enable/disable it
 
 - example
@@ -742,7 +742,7 @@ It runs the code several times to get more accurate results. Once again, it is s
   ```
 
   - You can see that, `x = 5 ; y = x*x` is fastest and it is around 20x faster compared to Numpy.
-  - If you consider the array creation also, it may reach up to 100x faster. 
+  - If you consider the array creation also, it may reach up to 100x faster.
 
   - Notice
     - Python scalar operations are faster than Numpy scalar operations.
@@ -804,7 +804,7 @@ If your code is still slow after doing all of these operations, or if the use of
 #### 3.1.1.1. Changing Color-space
 
 - explain
-  - There are more than 150 color-space conversion methods available in OpenCV. 
+  - There are more than 150 color-space conversion methods available in OpenCV.
   - But we will look into only two, which are most widely used ones: BGR ↔ Gray and BGR ↔ HSV.
   - For color conversion, we use the function `cv.cvtColor(input_image, flag)` where flag determines the type of conversion.
   - For BGR → Gray conversion, we use the flag cv.COLOR_BGR2GRAY.
@@ -818,7 +818,7 @@ If your code is still slow after doing all of these operations, or if the use of
 
 - notice
   - For HSV, hue range is [0,179], saturation range is [0,255], and value range is [0,255].
-  - Different software use different scales. 
+  - Different software use different scales.
   - So if you are comparing OpenCV values with them, you need to normalize these ranges.
 
 #### 3.1.1.2. Object Tracking By HSV
@@ -872,7 +872,7 @@ If your code is still slow after doing all of these operations, or if the use of
   >>> hsv_green = cv.cvtColor(green,cv.COLOR_BGR2HSV)
   >>> print( hsv_green )
   >>> [[[ 60 255 255]]]
-  # Now you take [H-10, 100,100] and [H+10, 255, 255] as the lower bound and upper bound respectively. 
+  # Now you take [H-10, 100,100] and [H+10, 255, 255] as the lower bound and upper bound respectively.
   # Apart from this method, you can use any image editing tools like GIMP or any online converters to find these values, but don't forget to adjust the HSV ranges.
   ```
 
@@ -885,11 +885,15 @@ If your code is still slow after doing all of these operations, or if the use of
   - get a mask
   - For every element of a single-channel input array:
 
+    ```
     $dst(I)=lowerb(I)_{0}≤src(I)_{0}≤upperb(I)_{0}$
+    ```
 
   - For two-channel arrays:
 
+    ```
     $dst(I)=lowerb(I)_{0}≤src(I)_{0}≤upperb(I)_{0}∧lowerb(I)_{1}≤src(I)_{1}≤upperb(I)_{1}$
+    ```
 
   - and so forth.
 
@@ -906,7 +910,7 @@ If your code is still slow after doing all of these operations, or if the use of
   - OpenCV comes with a function cv.resize() for this purpose.
   - The size of the image can be specified manually, or you can specify the scaling factor.
   - Different interpolation methods are used.
-    - Preferable interpolation methods are cv.INTER_AREA for shrinking 
+    - Preferable interpolation methods are cv.INTER_AREA for shrinking
     - and cv.INTER_CUBIC (slow) & cv.INTER_LINEAR for zooming.
     - By default, the interpolation method cv.INTER_LINEAR is used for all resizing purposes.
     - You can resize an input image with either of following methods:
@@ -1002,7 +1006,7 @@ If your code is still slow after doing all of these operations, or if the use of
   plt.show()
   ```
 
-  ![opencv-10](./image/opencv-10.png) 
+  ![opencv-10](./image/opencv-10.png)
 
 #### 3.2.1.5. Perspective Transformation
 
@@ -1055,7 +1059,7 @@ If your code is still slow after doing all of these operations, or if the use of
 
 #### 3.3.1.1. Simple/Global Thresholding
 
-- explain 
+- explain
   - For every pixel, the same threshold value is applied.
   - If the pixel value is smaller than the threshold, it is set to 0,
   - otherwise it is set to a maximum value.
@@ -1075,7 +1079,7 @@ If your code is still slow after doing all of these operations, or if the use of
   ![opencv-15](./image/opencv-15.png)
 
 - return
-  - The first is the threshold that was used 
+  - The first is the threshold that was used
   - the second output is the thresholded image.
 
 - code
@@ -1104,7 +1108,7 @@ If your code is still slow after doing all of these operations, or if the use of
 
 - why use adaptive Thresholding
   - In the previous section, we used one global value as a threshold.
-  - But this might not be good in all cases, e.g. 
+  - But this might not be good in all cases, e.g.
   - if an image has different lighting conditions in different areas.
   - In that case, adaptive thresholding can help.
 
@@ -1121,7 +1125,7 @@ If your code is still slow after doing all of these operations, or if the use of
     - [cv.ADAPTIVE_THRESH_GAUSSIAN_C](https://docs.opencv.org/4.x/d7/d1b/group__imgproc__misc.html#ggaa42a3e6ef26247da787bf34030ed772caf262a01e7a3f112bbab4e8d8e28182dd): The threshold value is a gaussian-weighted sum of the neighbourhood values minus the constant C.
   - thresholdType
   - blockSize
-    > The blockSize determines the size of the neighbourhood area 
+    > The blockSize determines the size of the neighbourhood area
   - C: offset
     > C is a constant that is subtracted from the mean or weighted sum of the neighbourhood pixels.
 
@@ -1170,7 +1174,7 @@ If your code is still slow after doing all of these operations, or if the use of
   - The input image is a noisy image.
     - In the first case, global thresholding with a value of 127 is applied.
     - In the second case, Otsu's thresholding is applied directly.
-    - In the third case, 
+    - In the third case,
       - the image is first filtered with a 5x5 gaussian kernel to remove the noise
       - then Otsu thresholding is applied. See how noise filtering improves the result.
 
@@ -1288,7 +1292,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
     plt.show()
   ```
 
-  > The operation works like this: keep this kernel above a pixel, add all the 25 pixels below this kernel, take the average, 
+  > The operation works like this: keep this kernel above a pixel, add all the 25 pixels below this kernel, take the average,
   > and replace the central pixel with the new average value.
   > This operation is continued for all the pixels in the image.
 
@@ -1298,7 +1302,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
 
 - Image blurring is achieved by convolving the image with a **low-pass filter kernel**.
 - It is useful for removing noise.
-- It actually removes high frequency content (eg: noise, edges) from the image. 
+- It actually removes high frequency content (eg: noise, edges) from the image.
 - So edges are blurred a little bit in this operation (there are also blurring techniques which don't blur the edges).
 - OpenCV provides four main types of blurring techniques.
 
@@ -1340,7 +1344,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
 - explain
   - In this method, instead of a box filter, a Gaussian kernel is used.
   - It is done with the function, `cv.GaussianBlur()`.
-  - We should specify the width and height of the kernel which should be positive and odd. 
+  - We should specify the width and height of the kernel which should be positive and odd.
   - We also should specify the standard deviation in the X and Y directions, sigmaX and sigmaY respectively.
     - If only sigmaX is specified, sigmaY is taken as the same as sigmaX.
     - If both are given as zeros, they are calculated from the kernel size.
@@ -1362,7 +1366,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
   - This is highly effective against salt-and-pepper noise in an image.
   - Interestingly, in the above filters, the central element is a newly calculated value which may be a pixel value in the image or a new value.
   - But in median blurring, the central element is always replaced by some pixel value in the image.
-  - It reduces the noise effectively. 
+  - It reduces the noise effectively.
   - Its kernel size should be a positive odd integer.
 
 - demo
@@ -1371,7 +1375,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
   median = cv.medianBlur(img,5)
   ```
 
-  ![opencv-20](./image/opencv-20.png) 
+  ![opencv-20](./image/opencv-20.png)
 
 ##### 3.4.1.2.4. Bilateral Filtering
 
@@ -1384,7 +1388,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
     - It doesn't consider whether pixels have almost the same intensity.
     - It doesn't consider whether a pixel is an edge pixel or not.
     - So it blurs the edges also, which we don't want to do.
-  - Improvement of Bilateral filtering 
+  - Improvement of Bilateral filtering
     - Bilateral filtering also takes a Gaussian filter in space, but **one more Gaussian filter which is a function of pixel difference**.
     - The Gaussian function of space makes sure that **only nearby pixels are considered for blurring**,
     - So it preserves the edges since pixels at edges will have large intensity variation.
@@ -1396,7 +1400,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
   ```
 
   ![opencv-21](./image/opencv-21.png)
- 
+
 ### 3.4.2. function
 
 - `cv.filter2D()`
@@ -1410,19 +1414,19 @@ It actually finds a value of t which lies in between two peaks such that varianc
 ## 3.5. Morphological Transformations
 
 > Learn about morphological transformations like Erosion, Dilation, Opening, Closing etc
-> 
+>
 > - Morphological transformations are some simple operations based on the image shape.
 > - It is normally performed on **binary images**.
 > - It needs two inputs
 >   - one is our original image
 >   - second one is called structuring element or kernel which decides the nature of operation.
 > - Two basic morphological operators
->   - Erosion 
+>   - Erosion
 >   - Dilation.
 > - its variant forms
 >   - Opening
 >   - Closing
->   - Gradient 
+>   - Gradient
 >   - etc...
 
 ![opencv-22](./image/opencv-22.png)
@@ -1436,7 +1440,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
   - it erodes away the boundaries of foreground object (Always try to keep foreground in white)
   - what it does
     - The kernel slides through the image (as in 2D convolution).
-    - A pixel in the original image (either 1 or 0) will be considered 1 **only if all the pixels under the kernel is 1** 
+    - A pixel in the original image (either 1 or 0) will be considered 1 **only if all the pixels under the kernel is 1**
     - otherwise it is eroded (made to zero).
   - what happends is that
     - all the pixels near boundary will be discarded depending upon the size of kernel.
@@ -1546,7 +1550,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
 
 - explain
   - We manually created a structuring elements in the previous examples with help of Numpy. It is rectangular shape.
-  - But in some cases, you may need elliptical/circular shaped kernels. 
+  - But in some cases, you may need elliptical/circular shaped kernels.
   - So for this purpose, OpenCV has a function, `cv.getStructuringElement()`.
   - You just pass the shape and size of the kernel, you get the desired kernel.
 
@@ -1645,11 +1649,11 @@ plt.show()
 #### 3.6.1.4. Notice:One Important Matter!
 
 - explain
-  - In our last example, output datatype is cv.CV_8U or np.uint8. 
+  - In our last example, output datatype is cv.CV_8U or np.uint8.
   - But there is a slight problem with that.
   - Black-to-White transition is taken as **Positive slope** (it has a positive value),
   - while White-to-Black transition is taken as a **Negative slope** (It has negative value).
-  - So when you convert data to np.uint8, **all negative slopes are made zero** 
+  - So when you convert data to np.uint8, **all negative slopes are made zero**
   - In simple words, **you miss that edge**.
   - If you want to detect both edges, better option is to keep the output datatype to some higher forms
     - like cv.CV_16S, cv.CV_64F etc,
@@ -1699,7 +1703,7 @@ plt.show()
 
 #### 3.7.1.2. Finding Intensity Gradient of the Image
 
-- Smoothened image is then filtered with a Sobel kernel in both horizontal and vertical direction to get first derivative in horizontal direction ( Gx) and vertical direction ( Gy). 
+- Smoothened image is then filtered with a Sobel kernel in both horizontal and vertical direction to get first derivative in horizontal direction ( Gx) and vertical direction ( Gy).
 - From these two images, we can find edge gradient and direction for each pixel as follows:
 
   $Edge_Gradient(G)=\sqrt{G^{2}_{x}+G^{2}_{y}}$
@@ -1721,7 +1725,7 @@ plt.show()
   ![opencv-32](./image/opencv-32.png)
 
   - Point A is on the edge ( in vertical direction).
-  - Point B and C are in gradient directions. 
+  - Point B and C are in gradient directions.
   - So point A is checked with point B and C to see if it forms a local maximum.
   - If so, it is considered for next stage, otherwise, it is suppressed (put to zero).
 
@@ -1731,7 +1735,7 @@ plt.show()
 
 - This stage decides which are all edges are really edges and which are not.
 - For this, we need two threshold values, minVal and maxVal.
-  - Any edges with intensity gradient more than maxVal are sure to be edges 
+  - Any edges with intensity gradient more than maxVal are sure to be edges
   - and those below minVal are sure to be non-edges, so discarded.
   - Those who lie between these two thresholds are classified edges or non-edges based on their connectivity.
     - If they are connected to "sure-edge" pixels, they are considered to be part of edges.
@@ -1753,11 +1757,11 @@ plt.show()
 - OpenCV **puts all the above in single function**, `cv.Canny()`.
 - We will see how to use it
   - First argument is our input image
-  - Second and third arguments are our minVal and maxVal respectively. 
+  - Second and third arguments are our minVal and maxVal respectively.
   - Fourth argument is aperture_size
     - It is the size of Sobel kernel used for find image gradients.
     - By default it is 3.
-  - Last argument is L2gradient which specifies the equation for finding gradient magnitude. 
+  - Last argument is L2gradient which specifies the equation for finding gradient magnitude.
     - If it is True, it uses the equation mentioned above which is more accurate
     - otherwise it uses this function: $Edge_Gradient(G)=|G_{x}|+|G_{y}|$.
     - By default, it is False.
@@ -1796,11 +1800,11 @@ plt.show()
 - But on some occasions, we need to **work with (the same) images in different resolution**
   - For example, while searching for something in an image, like face, we are not sure at what size the object will be present in said image.
   - In that case, we will need to create a set of the same image with different resolutions and search for object in all of them.
-  - These set of images with different resolutions are called Image Pyramids 
+  - These set of images with different resolutions are called Image Pyramids
     > because when they are kept in a stack with the highest resolution image at the bottom and the lowest resolution image at top, it looks like a pyramid
 - There are two kinds of Image Pyramids
   - 1 **Gaussian Pyramid**
-    - Higher level (Low resolution) in a Gaussian Pyramid is formed by removing consecutive rows and columns in Lower level (higher resolution) image. 
+    - Higher level (Low resolution) in a Gaussian Pyramid is formed by removing consecutive rows and columns in Lower level (higher resolution) image.
     - Then each pixel in higher level is formed by the contribution from 5 pixels in underlying level with gaussian weights.
     - By doing so, a M×N image becomes M/2×N/2 image. So area reduces to one-fourth of original area. It is called an Octave.
     - The same pattern continues as we go upper in pyramid (ie, resolution decreases).
@@ -1911,12 +1915,12 @@ Learn to find and draw Contours
 
 - `findContours()`
   - args:
-    - first one is source image, 
+    - first one is source image,
     - second is contour retrieval mode,
     - third is contour approximation method
   - return
-    - contours 
-      - Contours is a **Python list** of **all the contours** in the image. 
+    - contours
+      - Contours is a **Python list** of **all the contours** in the image.
         ```
         [
           [[x1,y1],[x2,y2],...], // one contour
@@ -1947,7 +1951,7 @@ To draw the contours, `cv.drawContours` function is used. It can also be used to
 - `cv.drawContours` args:
   - Its first argument is source image
   - second argument is the contours which should be passed as a Python list
-  - third argument is index of contours (useful when drawing individual contour. To draw all contours, pass -1) 
+  - third argument is index of contours (useful when drawing individual contour. To draw all contours, pass -1)
   - remaining arguments are color, thickness etc.
 
 - demo
@@ -1972,7 +1976,7 @@ To draw the contours, `cv.drawContours` function is used. It can also be used to
 
 #### 3.9.1.3. Contour Approximation Method
 
-> This is the third argument in cv.findContours function. 
+> This is the third argument in cv.findContours function.
 
 - what does Contour Approximation Method do
   - Above, we told that contours are the boundaries of a shape with same intensity.
@@ -1984,7 +1988,7 @@ To draw the contours, `cv.drawContours` function is used. It can also be used to
     - **all the boundary points are stored**.
     - But actually do we need all the points?
     - For eg, you found the contour of a straight line. Do you need all the points on the line to represent that line? No, we need just two end points of that line.
-  - `cv.CHAIN_APPROX_SIMPLE` does. 
+  - `cv.CHAIN_APPROX_SIMPLE` does.
     - It removes all redundant points and compresses the contour, thereby saving memory.
 
 - demo
@@ -2051,7 +2055,7 @@ To draw the contours, `cv.drawContours` function is used. It can also be used to
     > Check the wikipedia page for algorithm and demonstration.
 
 - explain
-  - To understand this, suppose you are trying to find a square in an image, 
+  - To understand this, suppose you are trying to find a square in an image,
   - but due to some problems in the image, you didn't get a perfect square, but a "bad shape" (As shown in first image below).
   - Now you can use this function to approximate the shape.
   - In this, second argument is called epsilon, which is **maximum distance from contour to approximated contour**.
@@ -2076,7 +2080,7 @@ To draw the contours, `cv.drawContours` function is used. It can also be used to
   - Convex Hull will look similar to contour approximation, but it is not
   - **Both may provide same results in some cases**.
   - Here, `cv.convexHull()` function checks a curve for convexity defects and corrects it.
-  - Generally speaking, 
+  - Generally speaking,
     - **convex curves** are the curves which are always bulged out, or at-least flat
     - And if it is bulged inside, it is called **convexity defects**
 
@@ -2085,7 +2089,7 @@ To draw the contours, `cv.drawContours` function is used. It can also be used to
   - `points` are the contours we pass into.
   - `hull` is the output, normally we avoid it.
   - `clockwise` : Orientation flag. If it is True, the output convex hull is oriented clockwise. Otherwise, it is oriented counter-clockwise.
-  - `returnPoints` : 
+  - `returnPoints` :
     - By default, True. Then it returns the coordinates of the hull points.
     - If False, it returns the indices of contour points corresponding to the hull points.
 
@@ -2102,7 +2106,7 @@ To draw the contours, `cv.drawContours` function is used. It can also be used to
 But if you want to find convexity defects, you need to pass returnPoints = False.
 To understand it, we will take the rectangle image above.
 First I found its contour as cnt.
-Now I found its convex hull with returnPoints = True, I got following values: [[[234 202]], [[ 51 202]], [[ 51 79]], [[234 79]]] which are the four corner points of rectangle. 
+Now I found its convex hull with returnPoints = True, I got following values: [[[234 202]], [[ 51 202]], [[ 51 79]], [[234 79]]] which are the four corner points of rectangle.
 Now if do the same with returnPoints = False, I get following result: [[129],[ 67],[ 0],[142]]. These are the indices of corresponding points in contours.
 For eg, check the first value: cnt[129] = [[234, 202]] which is same as first result (and so on for others).
 
@@ -2140,7 +2144,7 @@ For eg, check the first value: cnt[129] = [[234, 202]] which is same as first re
   cv.drawContours(img,[box],0,(0,0,255),2) # draw bounding box by `drawContours`
   ```
 
-  ![opencv-42](./image/opencv-42.png) 
+  ![opencv-42](./image/opencv-42.png)
 
   > Green rectangle shows the normal bounding rect.<br />
   > Red rectangle is the rotated rect.
@@ -2185,21 +2189,83 @@ cv.line(img,(cols-1,righty),(0,lefty),(0,255,0),2)
 
 ### 3.9.4. Contour Properties
 
-todo
-
 Learn to find different properties of contours like Solidity, Mean Intensity etc.
+
+```python
+import cv2 as cv
+import numpy as np
+
+img = cv.imread('star.jpg', 0)
+ret, thresh = cv.threshold(img, 127, 255, 0)
+contours, _ = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+cnt = contours[0]
+
+# Aspect Ratio
+x, y, w, h = cv.boundingRect(cnt)
+aspect_ratio = float(w) / h
+
+# Extent: ratio of contour area to bounding rectangle area
+area = cv.contourArea(cnt)
+rect_area = w * h
+extent = float(area) / rect_area
+
+# Solidity: ratio of contour area to convex hull area
+hull = cv.convexHull(cnt)
+hull_area = cv.contourArea(hull)
+solidity = float(area) / hull_area
+
+# Equivalent Diameter: diameter of circle with same area
+equivalent_diameter = np.sqrt(4 * area / np.pi)
+
+# Orientation: angle of fitted ellipse
+(x, y), (MA, ma), angle = cv.fitEllipse(cnt)
+
+# Mean Intensity
+mean_val = cv.mean(img, mask=thresh)
+```
 
 ### 3.9.5. Contours:More Functions
 
-todo
-
 Learn to find convexity defects, pointPolygonTest, match different shapes etc.
+
+```python
+import cv2 as cv
+import numpy as np
+
+img = cv.imread('star.jpg', 0)
+ret, thresh = cv.threshold(img, 127, 255, 0)
+contours, _ = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+cnt = contours[0]
+
+# Convexity Defects
+hull = cv.convexHull(cnt, returnPoints=False)
+defects = cv.convexityDefects(cnt, hull)
+
+# Point Polygon Test: distance from point to contour
+# positive inside, negative outside, zero on contour
+dist = cv.pointPolygonTest(cnt, (50, 50), True)
+
+# Shape Matching: compare two shapes using Hu Moments
+cnt2 = contours[1] if len(contours) > 1 else cnt
+ret = cv.matchShapes(cnt, cnt2, cv.CONTOURS_MATCH_I1, 0.0)
+# ret closer to 0 means more similar shapes
+```
 
 ### 3.9.6. Contours Hierarchy
 
-todo
-
 Learn about Contour Hierarchy
+
+- 层次结构表示轮廓之间的父子关系（嵌套关系）
+- hierarchy[i] = [Next, Previous, First_Child, Parent]
+  - Next: 同一层级的下一个轮廓索引，-1 表示没有
+  - Previous: 同一层级的上一个轮廓索引
+  - First_Child: 第一个子轮廓索引
+  - Parent: 父轮廓索引
+- 检索模式：
+  - cv.RETR_LIST: 不建立层次关系，所有轮廓在同一层级
+  - cv.RETR_EXTERNAL: 只检索最外层轮廓
+  - cv.RETR_CCOMP: 两级层次，外轮廓和孔轮廓
+  - cv.RETR_TREE: 完整的层次树结构
 
 ## 3.10. Histograms in OpenCV
 
@@ -2209,17 +2275,97 @@ All about histograms in OpenCV
 
 Learn the basics of histograms
 
+```python
+import cv2 as cv
+import numpy as np
+from matplotlib import pyplot as plt
+
+img = cv.imread('home.jpg', 0)
+# OpenCV method
+hist = cv.calcHist([img], [0], None, [256], [0,256])
+# Numpy method
+hist_np, bins = np.histogram(img.ravel(), 256, [0,256])
+# Plot
+plt.hist(img.ravel(), 256, [0,256])
+plt.title('Histogram')
+plt.show()
+```
+
+- `cv.calcHist(images, channels, mask, histSize, ranges)`
+  - images: 源图像列表 [img]
+  - channels: 通道索引 [0] 灰度，[0]/[1]/[2] 对应 B/G/R
+  - mask: 掩码图像，None 表示整幅图
+  - histSize: 每个通道的 bin 数量 [256]
+  - ranges: 像素值范围 [0,256]
+
 ### Histogram Equalization
 
 Learn to Equalize Histograms to get better contrast for images
+
+```python
+import cv2 as cv
+
+img = cv.imread('wiki.jpg', 0)
+# Global histogram equalization
+equ = cv.equalizeHist(img)
+# CLAHE (Contrast Limited Adaptive Histogram Equalization)
+clahe = cv.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+cl1 = clahe.apply(img)
+```
+
+- `cv.equalizeHist(src)` -> 全局直方图均衡化，提升对比度
+- `cv.createCLAHE(clipLimit, tileGridSize)` -> 自适应局部直方图均衡化
+  - clipLimit: 对比度限制阈值，防止噪声放大
+  - tileGridSize: 将图像分为多少块分别均衡化
 
 ### 2D Histograms
 
 Learn to find and plot 2D Histograms
 
+```python
+import cv2 as cv
+import numpy as np
+from matplotlib import pyplot as plt
+
+img = cv.imread('home.jpg')
+hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+# 2D histogram for H and S channels
+hist = cv.calcHist([hsv], [0, 1], None, [180, 256], [0, 180, 0, 256])
+plt.imshow(hist, interpolation='nearest')
+plt.show()
+```
+
+- 2D 直方图展示两个通道的联合分布
+- 常用于 HSV 空间中分析 Hue-Saturation 分布
+- 对物体颜色识别和跟踪有帮助
+
 ### Histogram Backprojection
 
 Learn histogram backprojection to segment colored objects
+
+```python
+import cv2 as cv
+import numpy as np
+
+# target is the object to find, img is the scene
+target = cv.imread('rose_red.png')
+hsv_target = cv.cvtColor(target, cv.COLOR_BGR2HSV)
+img = cv.imread('rose.png')
+hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+# calculate histogram of target
+roihist = cv.calcHist([hsv_target], [0,1], None, [180,256], [0,180,0,256])
+cv.normalize(roihist, roihist, 0, 255, cv.NORM_MINMAX)
+# backproject
+dst = cv.calcBackProject([hsv_img], [0,1], roihist, [0,180,0,256], 1)
+# convolve with disc kernel for smoothing
+disc = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5,5))
+cv.filter2D(dst, -1, disc, dst)
+ret, thresh = cv.threshold(dst, 50, 255, 0)
+```
+
+- `cv.calcBackProject(images, channels, hist, ranges, scale)`
+  - 将直方图模型反投影到图像上，输出每个像素属于目标的概率
+  - 用于颜色目标检测和分割
 
 ## 3.11. Image Transforms in OpenCV
 
@@ -2228,6 +2374,13 @@ Learn histogram backprojection to segment colored objects
 ### Fourier Transform
 
 #### Theory
+
+- 傅里叶变换将图像从空间域转换到频率域
+- 图像中变化缓慢的区域对应低频分量，边缘和噪声对应高频分量
+- 频谱中心表示低频（整体亮度），外围表示高频（细节和边缘）
+- 低通滤波器去除高频 -> 图像模糊（去噪）
+- 高通滤波器去除低频 -> 图像边缘增强
+- DFT 复数结果包含幅度谱和相位谱，相位谱对图像结构更重要
 
 #### Fourier Transform in Numpy
 
@@ -2264,6 +2417,12 @@ Learn histogram backprojection to segment colored objects
 ```
 
 #### Performance Optimization of DFT
+
+- DFT 性能取决于数组大小，大小为 2^n 时最快
+- 对于非 2^n 大小的图像，可以用零填充到最优大小
+- `cv.getOptimalDFTSize(size)` 返回大于等于 size 的最优 DFT 大小
+- 例如：对 320x240 图像填充到 512x256 可大幅加速
+- OpenCV 的 DFT 比 Numpy 的 FFT 对非 2^n 大小更快
 
 #### Why Laplacian is a High Pass Filter?
 
@@ -2315,6 +2474,11 @@ Learn histogram backprojection to segment colored objects
 Learn to search for an object in an image using Template Matching
 
 ### 3.12.1. example code
+
+- 模板匹配在输入图像上滑动模板图像，计算相似度
+- 输出一个灰度图像，每个像素表示该位置的匹配程度
+- 使用 cv.minMaxLoc() 找到最佳匹配位置
+- 对于 TM_SQDIFF 方法取最小值位置，其他方法取最大值位置
 
 ### Template Matching in OpenCV
 
@@ -2380,7 +2544,45 @@ Learn to detect lines in an image
 
 ### 3.13.1. example code
 
+```python
+import cv2 as cv
+import numpy as np
+
+img = cv.imread('sudoku.png')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+edges = cv.Canny(gray, 50, 150, apertureSize=3)
+
+# Standard Hough Line Transform
+lines = cv.HoughLines(edges, 1, np.pi/180, 200)
+if lines is not None:
+    for rho, theta in lines[:, 0]:
+        a, b = np.cos(theta), np.sin(theta)
+        x0, y0 = a * rho, b * rho
+        x1, y1 = int(x0 + 1000*(-b)), int(y0 + 1000*(a))
+        x2, y2 = int(x0 - 1000*(-b)), int(y0 - 1000*(a))
+        cv.line(img, (x1,y1), (x2,y2), (0,0,255), 2)
+
+# Probabilistic Hough Line Transform
+lines_p = cv.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=100, maxLineGap=10)
+if lines_p is not None:
+    for x1, y1, x2, y2 in lines_p[:, 0]:
+        cv.line(img, (x1,y1), (x2,y2), (0,255,0), 2)
+```
+
 ### 3.13.2. function
+
+- `cv.HoughLines(image, rho, theta, threshold)`
+  - image: 8-bit 单通道二值图像（通常是边缘检测结果）
+  - rho: 距离分辨率（像素），通常为 1
+  - theta: 角度分辨率（弧度），通常为 np.pi/180
+  - threshold: 累加器阈值，只有投票数超过该值的线才返回
+  - 返回 (rho, theta) 参数对
+
+- `cv.HoughLinesP(image, rho, theta, threshold, minLineLength, maxLineGap)`
+  - 概率霍夫变换，输出线段端点坐标 (x1,y1,x2,y2)
+  - minLineLength: 最短线段长度，短于此值的线段被丢弃
+  - maxLineGap: 同一条线上点之间允许的最大间隔
+  - 比标准霍夫变换效率更高，更适合实际应用
 
 ## 3.14. Hough Circle Transform
 
@@ -2388,7 +2590,33 @@ Learn to detect circles in an image
 
 ### 3.14.1. example code
 
+```python
+import cv2 as cv
+import numpy as np
+
+img = cv.imread('opencv-logo.png', 0)
+img = cv.medianBlur(img, 5)
+cimg = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
+
+circles = cv.HoughCircles(img, cv.HOUGH_GRADIENT, 1, 20,
+                          param1=50, param2=30, minRadius=0, maxRadius=0)
+if circles is not None:
+    circles = np.uint16(np.around(circles))
+    for i in circles[0, :]:
+        cv.circle(cimg, (i[0], i[1]), i[2], (0, 255, 0), 2)  # draw circle
+        cv.circle(cimg, (i[0], i[1]), 2, (0, 0, 255), 3)      # draw center
+```
+
 ### 3.14.2. function
+
+- `cv.HoughCircles(image, method, dp, minDist, param1, param2, minRadius, maxRadius)`
+  - method: 检测方法，目前只有 cv.HOUGH_GRADIENT
+  - dp: 累加器分辨率与图像分辨率的比值（1 表示相同）
+  - minDist: 检测到的圆心之间的最小距离
+  - param1: Canny 边缘检测的高阈值
+  - param2: 累加器阈值，越小检测到越多圆（含假阳性）
+  - minRadius/maxRadius: 检测圆的半径范围，0 表示不限
+  - 返回 (x, y, radius) 数组
 
 ## 3.15. Image Segmentation with Watershed Algorithm
 
@@ -2396,7 +2624,49 @@ Learn to segment images with watershed segmentation
 
 ### 3.15.1. example code
 
+```python
+import cv2 as cv
+import numpy as np
+
+img = cv.imread('coins.png')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+ret, thresh = cv.threshold(gray, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU)
+
+# noise removal with morphology
+kernel = np.ones((3,3), np.uint8)
+opening = cv.morphologyEx(thresh, cv.MORPH_OPEN, kernel, iterations=2)
+# sure background area
+sure_bg = cv.dilate(opening, kernel, iterations=3)
+# sure foreground area using distance transform
+dist_transform = cv.distanceTransform(opening, cv.DIST_L2, 5)
+ret, sure_fg = cv.threshold(dist_transform, 0.7*dist_transform.max(), 255, 0)
+sure_fg = np.uint8(sure_fg)
+# unknown region
+unknown = cv.subtract(sure_bg, sure_fg)
+# marker labelling
+ret, markers = cv.connectedComponents(sure_fg)
+markers = markers + 1
+markers[unknown == 255] = 0
+# apply watershed
+markers = cv.watershed(img, markers)
+img[markers == -1] = [255, 0, 0]  # boundary marked in red
+```
+
 ### 3.15.2. function
+
+- `cv.watershed(image, markers)`
+  - image: 输入 8-bit 3通道图像
+  - markers: 32-bit 单通道标记图，0 表示未知区域，正数表示不同区域标签
+  - 分割边界标记为 -1
+  - 需要手动或自动提供初始标记（种子点）
+
+- `cv.distanceTransform(src, distanceType, maskSize)`
+  - 计算二值图像中每个像素到最近零像素的距离
+  - distanceType: cv.DIST_L1, cv.DIST_L2, cv.DIST_C
+  - 用于找到物体中心区域（距离最大处）
+
+- `cv.connectedComponents(image)`
+  - 标记连通区域，返回标签数量和标签图
 
 ## 3.16. Interactive Foreground Extraction using GrabCut Algorithm
 
@@ -2404,7 +2674,31 @@ Learn to extract foreground with GrabCut algorithm
 
 ### 3.16.1. example code
 
+```python
+import cv2 as cv
+import numpy as np
+
+img = cv.imread('messi5.jpg')
+mask = np.zeros(img.shape[:2], np.uint8)
+bgdModel = np.zeros((1,65), np.float64)
+fgdModel = np.zeros((1,65), np.float64)
+# define bounding rect around foreground object
+rect = (50, 50, 450, 290)
+cv.grabCut(img, mask, rect, bgdModel, fgdModel, 5, cv.GC_INIT_WITH_RECT)
+# 0 and 2 are background, 1 and 3 are foreground
+mask2 = np.where((mask==2)|(mask==0), 0, 1).astype('uint8')
+img = img * mask2[:, :, np.newaxis]
+```
+
 ### 3.16.2. function
+
+- `cv.grabCut(img, mask, rect, bgdModel, fgdModel, iterCount, mode)`
+  - img: 输入 8-bit 3通道图像
+  - mask: 输入/输出掩码，值为 GC_BGD(0)/GC_FGD(1)/GC_PR_BGD(2)/GC_PR_FGD(3)
+  - rect: 包含前景的矩形 (x, y, w, h)，仅在 GC_INIT_WITH_RECT 模式使用
+  - bgdModel/fgdModel: 算法内部使用的临时数组，传入零数组
+  - iterCount: 迭代次数
+  - mode: cv.GC_INIT_WITH_RECT 或 cv.GC_INIT_WITH_MASK
 
 # 4. Feature Detection and Description
 
@@ -2416,7 +2710,22 @@ What are the main features in an image? How can finding those features be useful
 
 ### 4.1.1. example code
 
+```python
+import cv2 as cv
+import numpy as np
+# Features are regions with significant variation in all directions
+# Corners are good features because they are unique in their neighborhood
+# Flat regions and edges are not good features
+img = cv.imread('chessboard.png')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+# Feature detection is the basis for matching, tracking, and recognition
+```
+
 ### 4.1.2. function
+
+- 特征的特点：唯一性、可重复性、局部性
+- 好的特征应该在旋转、缩放、光照变化下保持稳定
+- 角点是最基本的特征类型，具有两个方向的强梯度变化
 
 ## 4.2. Harris Corner Detection
 
@@ -2424,7 +2733,33 @@ Okay, Corners are good features? But how do we find them?
 
 ### 4.2.1. example code
 
+```python
+import cv2 as cv
+import numpy as np
+
+img = cv.imread('chessboard.png')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+gray = np.float32(gray)
+# Harris corner detection
+dst = cv.cornerHarris(gray, blockSize=2, ksize=3, k=0.04)
+# dilate to mark corners
+dst = cv.dilate(dst, None)
+# threshold to select strong corners
+img[dst > 0.01 * dst.max()] = [0, 0, 255]
+cv.imshow('Harris Corners', img)
+```
+
 ### 4.2.2. function
+
+- `cv.cornerHarris(src, blockSize, ksize, k)`
+  - src: 输入单通道 float32 灰度图
+  - blockSize: 角点检测中考虑的邻域大小
+  - ksize: Sobel 算子的孔径参数
+  - k: Harris 检测器自由参数，通常取 0.04-0.06
+  - 返回每个像素的 Harris 响应值图像
+
+- `cv.cornerSubPix(image, corners, winSize, zeroZone, criteria)`
+  - 亚像素级角点精化
 
 ## 4.3. Shi-Tomasi Corner Detector & Good Features to Track
 
@@ -2432,7 +2767,30 @@ We will look into Shi-Tomasi corner detection
 
 ### 4.3.1. example code
 
+```python
+import cv2 as cv
+import numpy as np
+
+img = cv.imread('blox.jpg')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+# detect top 25 corners with quality threshold 0.01, min distance 10
+corners = cv.goodFeaturesToTrack(gray, 25, 0.01, 10)
+corners = np.int0(corners)
+for i in corners:
+    x, y = i.ravel()
+    cv.circle(img, (x, y), 3, (0, 0, 255), -1)
+cv.imshow('Shi-Tomasi Corners', img)
+```
+
 ### 4.3.2. function
+
+- `cv.goodFeaturesToTrack(image, maxCorners, qualityLevel, minDistance)`
+  - image: 8-bit 或 float32 单通道灰度图
+  - maxCorners: 返回的最大角点数量
+  - qualityLevel: 角点最低质量（相对于最强角点的比例），如 0.01
+  - minDistance: 角点之间的最小欧氏距离
+  - 返回角点坐标数组，shape=(N,1,2)
+  - 基于 Shi-Tomasi 准则：R = min(lambda1, lambda2)，比 Harris 更好
 
 ## 4.4. Introduction to SIFT (Scale-Invariant Feature Transform)
 
@@ -2440,7 +2798,30 @@ Harris corner detector is not good enough when scale of image changes. Lowe deve
 
 ### 4.4.1. example code
 
+```python
+import cv2 as cv
+
+img = cv.imread('home.jpg')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+# create SIFT detector
+sift = cv.SIFT_create()
+# detect keypoints and compute descriptors
+kp, des = sift.detectAndCompute(gray, None)
+# draw keypoints with size and orientation
+img = cv.drawKeypoints(gray, kp, img, flags=cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+cv.imshow('SIFT Keypoints', img)
+```
+
 ### 4.4.2. function
+
+- `cv.SIFT_create(nfeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma)`
+  - nfeatures: 保留的最佳特征数量，默认 0（保留所有）
+  - nOctaveLayers: 每组（octave）中的层数，默认 3
+  - contrastThreshold: 过滤弱特征的对比度阈值，默认 0.04
+  - edgeThreshold: 过滤边缘响应的阈值，默认 10
+- `sift.detectAndCompute(image, mask)` -> (keypoints, descriptors)
+  - 每个关键点有 128 维描述子
+- `cv.drawKeypoints(image, keypoints, outImage, flags)`
 
 ## 4.5. Introduction to SURF (Speeded-Up Robust Features)
 
@@ -2448,7 +2829,27 @@ SIFT is really good, but not fast enough, so people came up with a speeded-up ve
 
 ### 4.5.1. example code
 
+```python
+import cv2 as cv
+
+img = cv.imread('fly.png', 0)
+# SURF is patented, may need opencv-contrib
+surf = cv.xfeatures2d.SURF_create(400)  # hessian threshold
+kp, des = surf.detectAndCompute(img, None)
+# reduce descriptor size to 64 dimensions
+surf.setExtended(False)
+kp, des = surf.detectAndCompute(img, None)
+print(len(kp), des.shape)  # number of keypoints, descriptor shape
+```
+
 ### 4.5.2. function
+
+- `cv.xfeatures2d.SURF_create(hessianThreshold)`
+  - hessianThreshold: Hessian 矩阵行列式的阈值，越大特征越少但越强
+  - 通常取 300-500
+  - SURF 使用 64 维描述子（extended=False）或 128 维（extended=True）
+  - 比 SIFT 快数倍，使用积分图加速 box filter 近似高斯
+  - 注意：SURF 有专利限制，在 opencv-contrib 包中
 
 ## 4.6. FAST Algorithm for Corner Detection
 
@@ -2456,7 +2857,28 @@ All the above feature detection methods are good in some way. But they are not f
 
 ### 4.6.1. example code
 
+```python
+import cv2 as cv
+
+img = cv.imread('blox.jpg', 0)
+# create FAST detector
+fast = cv.FastFeatureDetector_create(threshold=25, nonmaxSuppression=True)
+kp = fast.detect(img, None)
+img2 = cv.drawKeypoints(img, kp, None, color=(255,0,0))
+# disable non-max suppression to see all corners
+fast.setNonmaxSuppression(False)
+kp_all = fast.detect(img, None)
+print(f'With NMS: {len(kp)}, Without NMS: {len(kp_all)}')
+```
+
 ### 4.6.2. function
+
+- `cv.FastFeatureDetector_create(threshold, nonmaxSuppression, type)`
+  - threshold: 中心像素与圆周像素的强度差阈值，默认 10
+  - nonmaxSuppression: 是否进行非极大值抑制，默认 True
+  - type: cv.FAST_FEATURE_DETECTOR_TYPE_5_8 / TYPE_7_12 / TYPE_9_16
+  - 检测速度极快，适合实时应用（SLAM、AR）
+  - 不产生描述子，需配合其他描述子（如 BRIEF、ORB）使用
 
 ## 4.7. BRIEF (Binary Robust Independent Elementary Features)
 
@@ -2464,7 +2886,27 @@ SIFT uses a feature descriptor with 128 floating point numbers. Consider thousan
 
 ### 4.7.1. example code
 
+```python
+import cv2 as cv
+
+img = cv.imread('blox.jpg', 0)
+# FAST detector + BRIEF descriptor
+star = cv.xfeatures2d.StarDetector_create()
+brief = cv.xfeatures2d.BriefDescriptorExtractor_create()
+kp = star.detect(img, None)
+kp, des = brief.compute(img, kp)
+print(f'Descriptor shape: {des.shape}')  # (N, 32) -> 256-bit binary
+print(f'Descriptor size: {brief.descriptorSize()}')
+```
+
 ### 4.7.2. function
+
+- `cv.xfeatures2d.BriefDescriptorExtractor_create(bytes)`
+  - bytes: 描述子字节数，16/32/64 对应 128/256/512 位二进制描述子
+  - 默认 32 字节（256 位）
+  - 二进制描述子用 Hamming 距离匹配，比 L2 距离快得多
+  - BRIEF 本身不检测关键点，需要配合检测器（如 FAST、Star）
+  - 不具有旋转不变性（ORB 解决了这个问题）
 
 ## 4.8. ORB (Oriented FAST and Rotated BRIEF)
 
@@ -2472,7 +2914,28 @@ SIFT and SURF are good in what they do, but what if you have to pay a few dollar
 
 ### 4.8.1. example code
 
+```python
+import cv2 as cv
+
+img = cv.imread('blox.jpg', 0)
+# create ORB detector (free alternative to SIFT/SURF)
+orb = cv.ORB_create(nfeatures=500)
+kp, des = orb.detectAndCompute(img, None)
+img2 = cv.drawKeypoints(img, kp, None, color=(0,255,0), flags=0)
+print(f'Keypoints: {len(kp)}, Descriptor shape: {des.shape}')
+# des.shape = (N, 32) -> 256-bit binary descriptor
+```
+
 ### 4.8.2. function
+
+- `cv.ORB_create(nfeatures, scaleFactor, nlevels, edgeThreshold, patchSize)`
+  - nfeatures: 保留的最大特征数量，默认 500
+  - scaleFactor: 金字塔缩放因子，默认 1.2
+  - nlevels: 金字塔层数，默认 8
+  - ORB = Oriented FAST(检测) + Rotated BRIEF(描述)
+  - 免费无专利，速度快，适合实时应用
+  - 二进制描述子用 Hamming 距离匹配
+  - 性能接近 SIFT/SURF，是 OpenCV 推荐的首选特征
 
 ## 4.9. Feature Matching
 
@@ -2480,7 +2943,41 @@ We know a great deal about feature detectors and descriptors. It is time to lear
 
 ### 4.9.1. example code
 
+```python
+import cv2 as cv
+
+img1 = cv.imread('box.png', 0)
+img2 = cv.imread('box_in_scene.png', 0)
+
+# ORB detection
+orb = cv.ORB_create()
+kp1, des1 = orb.detectAndCompute(img1, None)
+kp2, des2 = orb.detectAndCompute(img2, None)
+
+# Brute-Force matching with Hamming distance (for binary descriptors)
+bf = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
+matches = bf.match(des1, des2)
+matches = sorted(matches, key=lambda x: x.distance)
+img3 = cv.drawMatches(img1, kp1, img2, kp2, matches[:10], None, flags=2)
+
+# FLANN matcher (for SIFT/SURF float descriptors)
+# FLANN_INDEX_KDTREE = 1
+# index_params = dict(algorithm=1, trees=5)
+# search_params = dict(checks=50)
+# flann = cv.FlannBasedMatcher(index_params, search_params)
+# matches = flann.knnMatch(des1, des2, k=2)
+```
+
 ### 4.9.2. function
+
+- `cv.BFMatcher(normType, crossCheck)`
+  - normType: cv.NORM_L2（SIFT/SURF用）或 cv.NORM_HAMMING（ORB/BRIEF用）
+  - crossCheck: True 时只保留双向最佳匹配
+- `bf.match(des1, des2)` -> 返回 DMatch 列表
+- `bf.knnMatch(des1, des2, k)` -> 每个特征返回 k 个最近邻
+- `cv.FlannBasedMatcher(index_params, search_params)` -> 近似最近邻，大规模特征更快
+- `cv.drawMatches()` / `cv.drawMatchesKnn()` -> 可视化匹配结果
+- Lowe's ratio test: 保留 d1/d2 < 0.75 的匹配，过滤误匹配
 
 ## 4.10. Feature Matching + Homography to find Objects
 
@@ -2488,7 +2985,46 @@ Now we know about feature matching. Let's mix it up with calib3d module to find 
 
 ### 4.10.1. example code
 
+```python
+import cv2 as cv
+import numpy as np
+
+img1 = cv.imread('box.png', 0)       # query image
+img2 = cv.imread('box_in_scene.png', 0)  # scene image
+
+sift = cv.SIFT_create()
+kp1, des1 = sift.detectAndCompute(img1, None)
+kp2, des2 = sift.detectAndCompute(img2, None)
+
+# FLANN matching
+FLANN_INDEX_KDTREE = 1
+index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
+search_params = dict(checks=50)
+flann = cv.FlannBasedMatcher(index_params, search_params)
+matches = flann.knnMatch(des1, des2, k=2)
+
+# Lowe's ratio test
+good = [m for m, n in matches if m.distance < 0.7 * n.distance]
+
+if len(good) > 10:
+    src_pts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1,1,2)
+    dst_pts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1,1,2)
+    # find homography using RANSAC
+    M, mask = cv.findHomography(src_pts, dst_pts, cv.RANSAC, 5.0)
+    h, w = img1.shape
+    pts = np.float32([[0,0],[0,h-1],[w-1,h-1],[w-1,0]]).reshape(-1,1,2)
+    dst = cv.perspectiveTransform(pts, M)
+    img2 = cv.polylines(img2, [np.int32(dst)], True, 255, 3, cv.LINE_AA)
+```
+
 ### 4.10.2. function
+
+- `cv.findHomography(srcPoints, dstPoints, method, ransacReprojThreshold)`
+  - method: 0(普通), cv.RANSAC, cv.LMEDS, cv.RHO
+  - ransacReprojThreshold: RANSAC 重投影误差阈值，通常 3-5
+  - 返回 3x3 单应矩阵和内点掩码
+- `cv.perspectiveTransform(pts, M)` -> 用单应矩阵变换点坐标
+- RANSAC 能在有大量误匹配时鲁棒地估计变换
 
 # 5. Video analysis (video module)
 

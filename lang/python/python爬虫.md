@@ -793,4 +793,70 @@
 
 # 7. scrapy
 
+- Scrapy是Python最强大的爬虫框架，基于Twisted异步网络引擎
+- 核心架构组件：
+  - Engine(引擎)：协调各组件间的数据流
+  - Scheduler(调度器)：管理请求队列，去重
+  - Downloader(下载器)：发送HTTP请求获取响应
+  - Spider(爬虫)：解析响应，提取数据和新的URL
+  - Item Pipeline(管道)：处理和存储提取的数据
+  - Middleware(中间件)：请求/响应的钩子处理(如代理、UA、重试)
+- 创建项目与爬虫：
+
+  ```python
+  # scrapy startproject myspider
+  # scrapy genspider example example.com
+  import scrapy
+
+  class ExampleSpider(scrapy.Spider):
+      name = 'example'
+      start_urls = ['http://example.com']
+
+      def parse(self, response):
+          for item in response.css('div.item'):
+              yield {
+                  'title': item.css('h2::text').get(),
+                  'link': item.css('a::attr(href)').get(),
+              }
+          next_page = response.css('a.next::attr(href)').get()
+          if next_page:
+              yield response.follow(next_page, self.parse)
+  ```
+
+- Item Pipeline用于数据清洗、验证、去重和持久化存储
+- settings.py配置并发数、下载延迟、中间件、管道优先级等
+- 运行爬虫：`scrapy crawl example -o output.json`
+- CrawlSpider通过Rule和LinkExtractor自动跟踪链接，适合全站爬取
+
 # 8. scrapy redis
+
+- Scrapy-Redis是Scrapy的分布式扩展，利用Redis实现多节点协同爬取
+- 核心改造：将Scrapy的调度器和去重器替换为基于Redis的实现
+- 解决的问题：单机Scrapy无法水平扩展，多台机器重复爬取
+- 架构：多个Scrapy节点共享同一个Redis中的请求队列和指纹集合
+- 关键配置(settings.py)：
+
+  ```python
+  SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+  DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+  REDIS_URL = 'redis://localhost:6379'
+  SCHEDULER_PERSIST = True  # 暂停后可恢复爬取进度
+  ```
+
+- Spider改为继承RedisSpider，通过redis_key接收起始URL：
+
+  ```python
+  from scrapy_redis.spiders import RedisSpider
+
+  class DistributedSpider(RedisSpider):
+      name = 'distributed'
+      redis_key = 'distributed:start_urls'
+
+      def parse(self, response):
+          yield {'title': response.css('title::text').get()}
+  ```
+
+- 启动方式：先启动各节点Spider(等待状态)，然后向Redis推送起始URL
+- `lpush distributed:start_urls http://example.com`
+- 去重原理：对请求的指纹(URL+method+body的hash)存入Redis Set
+- 适合大规模分布式爬取场景，支持断点续爬和动态增加节点

@@ -412,6 +412,23 @@
 
 ## 1.17. git bare
 
+- bare 仓库是没有工作目录的 Git 仓库，仅包含 `.git` 目录的内容
+- 用途：作为远程仓库的标准形式，适合作为中央仓库被多人 push/pull
+- 创建 bare 仓库：`git init --bare myrepo.git`
+- 从现有仓库创建：`git clone --bare ./myproject myproject.git`
+- bare 仓库不能进行常规的 checkout、add、commit 操作
+- 常见场景：
+  - 自建 Git 服务器：`git clone ssh://user@host:/path/to/repo.git`
+  - 用 bare 仓库管理 dotfiles：
+    ```bash
+    git init --bare $HOME/.dotfiles
+    alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+    dotfiles add ~/.bashrc
+    dotfiles commit -m "add bashrc"
+    dotfiles push
+    ```
+- 注意：不要在 bare 仓库中直接修改文件，只能通过 push 更新
+
 ## 1.18. git submodule
 
 创建子模块是，会自动创建一个.gitmodules维护子模块的信息

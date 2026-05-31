@@ -27,6 +27,37 @@
 
 # 组件
 
+- QWidget：所有UI组件的基类，可作为顶层窗口或容器
+- 常用基础组件：
+  - QPushButton：按钮，支持clicked信号
+  - QLabel：文本/图片显示标签
+  - QLineEdit：单行文本输入框
+  - QTextEdit：多行富文本编辑器
+  - QComboBox：下拉选择框
+  - QCheckBox/QRadioButton：复选框/单选按钮
+  - QSlider/QSpinBox：滑动条/数值微调框
+  - QProgressBar：进度条
+- 容器与布局：
+  - QHBoxLayout(水平)、QVBoxLayout(垂直)、QGridLayout(网格)、QFormLayout(表单)
+  - 布局自动管理子组件的位置和大小调整
+- 对话框：QMessageBox(消息), QFileDialog(文件选择), QInputDialog(输入)
+- 高级组件：QTableWidget(表格), QTreeWidget(树形), QListWidget(列表)
+
+  ```python
+  from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel
+
+  class MyWindow(QWidget):
+      def __init__(self):
+          super().__init__()
+          layout = QVBoxLayout()
+          self.label = QLabel('Click the button')
+          btn = QPushButton('Click Me')
+          btn.clicked.connect(lambda: self.label.setText('Clicked!'))
+          layout.addWidget(self.label)
+          layout.addWidget(btn)
+          self.setLayout(layout)
+  ```
+
 # pyqt5 事件机制
 
 ## 信号与槽

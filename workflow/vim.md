@@ -416,15 +416,53 @@
 
 ## 2.1. 插入模式 (Insert Mode)
 
+- 通过 `i`, `a`, `o`, `O`, `I`, `A` 等进入
+- 在此模式下可以输入文本，大部分按键直接插入字符
+- `<Esc>` 或 `<C-[>` 退出插入模式回到普通模式
+- `<C-o>` 临时执行一个普通模式命令后自动返回插入模式
+- `:help Insert-mode` 查看完整文档
+
 ## 2.2. 替换模式(Replace Mode)
+
+- 通过普通模式按 `R` 进入替换模式
+- 输入的字符会替换光标下的字符，而不是插入
+- `<Backspace>` 可以恢复被替换的原始字符
+- 虚拟替换模式 `gR`：按屏幕显示宽度替换，对 Tab 等特殊字符更友好
+- `r` 单字符替换不进入替换模式，替换一个字符后自动回到普通模式
 
 ## 2.3. 可视化模式 (Visual Mode)
 
+- `v` 字符可视模式：按字符选择
+- `V` 行可视模式：按行选择
+- `<C-v>` 块可视模式：按矩形块选择
+- 选中后可以使用操作符命令（`d`, `y`, `c`, `>`, `<` 等）对选中区域操作
+- `gv` 重新选择上一次的可视区域
+- `o` 切换选区活动端（光标跳到选区另一端）
+
 ## 2.4. 选择模式 (Select Mode)
+
+- 类似于 Windows 下的选择行为，输入任意可打印字符会替换选中内容
+- 通过 `gh`（字符选择）、`gH`（行选择）、`g<C-h>`（块选择）进入
+- 也可以在可视模式下按 `<C-g>` 切换到选择模式
+- 主要用于某些插件或 IDE 兼容场景
+- `:help Select-mode` 查看详情
 
 ## 2.5. 命令行模式 (Command-line Mode)
 
+- 通过 `:`, `/`, `?`, `!` 进入命令行模式
+- `:` 执行 Ex 命令，`/` 和 `?` 用于搜索，`!` 用于过滤
+- `<C-r>` + 寄存器名：在命令行中插入寄存器内容
+- `<C-f>` 打开命令行窗口，可用普通模式编辑命令
+- 支持 Tab 补全、历史浏览（上下箭头或 `<C-p>`, `<C-n>`）
+- `q:` 打开命令历史窗口，`q/` 打开搜索历史窗口
+
 ## 2.6. Ex模式 (Ex Mode)
+
+- 通过 `Q` 或 `gQ` 进入 Ex 模式
+- 类似于命令行模式，但执行完命令后不会自动退出，而是继续等待下一个命令
+- 适合批量执行多条 Ex 命令的场景
+- `visual` 命令退出 Ex 模式回到普通模式
+- `gQ` 进入的 Ex 模式比 `Q` 更接近 vi 兼容模式
 
 # 3. 进阶
 
@@ -477,6 +515,16 @@
   - `:argdo normal @a`
 
 ### 3.1.3. bufdo, windo, tabdo
+
+- `:bufdo` 对所有缓冲区执行命令
+  - `:bufdo %s/foo/bar/ge | update` 对所有缓冲区进行替换并保存
+  - `:bufdo normal @a` 对所有缓冲区执行宏
+- `:windo` 对当前 tab 所有可见窗口执行命令
+  - `:windo diffthis` 对所有窗口开启 diff 模式
+  - `:windo set wrap` 对所有窗口设置自动换行
+- `:tabdo` 对所有标签页执行命令
+  - `:tabdo windo set number` 对所有标签页的所有窗口显示行号
+- 注意：配合 `| update` 可以自动保存修改，避免切换 buffer 时提示未保存
 
 ## 3.2. 全局命令(Global Command)
 
@@ -651,6 +699,25 @@
 
 ## 5.1. mapping, leader
 
+- 映射基本命令：
+  - `map` 递归映射（所有模式）
+  - `nmap`, `vmap`, `imap` 分别对应普通、可视、插入模式的递归映射
+  - `nnoremap`, `vnoremap`, `inoremap` 非递归映射（推荐始终使用）
+  - `nunmap`, `iunmap` 取消映射
+- Leader 键：
+  - `let mapleader = ","` 设置 leader 键为逗号
+  - `let maplocalleader = "\\"` 设置 local leader
+  - `nnoremap <leader>w :w<CR>` leader+w 保存文件
+  - `nnoremap <leader>q :q<CR>` leader+q 退出
+- 特殊标记：
+  - `<silent>` 不在命令行显示映射内容
+  - `<buffer>` 仅对当前缓冲区生效
+  - `<expr>` 映射内容作为表达式求值
+  - `<nowait>` 不等待更长的键序列
+- 查看映射：
+  - `:map` 查看所有映射
+  - `:verbose nmap <leader>w` 查看某个映射的定义位置
+
 ## 5.2. modeline
 
 将以下模式行放置到文件开头，将在打开该文件时设置制表符为4个空格：
@@ -661,51 +728,299 @@
 
 ## 5.3. autocmd
 
+- 自动命令在特定事件发生时自动执行命令
+- 基本语法：`autocmd {event} {pattern} {command}`
+- 常用事件：
+  - `BufRead`, `BufNewFile` 读取/新建文件时
+  - `BufWritePre`, `BufWritePost` 写文件前后
+  - `FileType` 文件类型被设置时
+  - `VimEnter`, `VimLeave` 进入/退出 vim 时
+  - `InsertEnter`, `InsertLeave` 进入/退出插入模式时
+- 推荐使用 augroup 避免重复注册：
+  ```vim
+  augroup MyGroup
+    autocmd!
+    autocmd BufWritePre * :%s/\s\+$//e
+    autocmd FileType python setlocal shiftwidth=4
+  augroup END
+  ```
+- `autocmd!` 清除当前组内所有自动命令
+- `:help autocmd-events` 查看所有可用事件
+
 ## 5.4. wildmenu
 
+- wildmenu 提供命令行模式下 Tab 补全时的增强菜单
+- 开启：`set wildmenu`
+- 补全模式设置：
+  - `set wildmode=longest:full,full` 先补全最长匹配，再完整匹配
+  - `set wildmode=list:longest` 列出所有匹配并补全最长公共部分
+- 忽略文件：
+  ```vim
+  set wildignore+=*.o,*.obj,*.pyc,*.class
+  set wildignore+=*/.git/*,*/node_modules/*
+  ```
+- `set wildoptions=pum` (neovim) 使用弹出菜单显示补全选项
+- 在补全菜单中用 `<Tab>`, `<S-Tab>`, `<C-n>`, `<C-p>` 切换选项
+
 ## 5.5. 缩写(Abbreviations)
+
+- 缩写是一种输入时自动展开的快捷方式
+- 定义缩写：
+  - `:iab teh the` 插入模式下输入 teh 后自动替换为 the
+  - `:ab ff Firefox` 所有模式下的缩写
+  - `:cab` 仅命令行模式
+- 触发条件：输入缩写后跟一个非关键字字符（空格、回车、标点等）
+- 取消缩写：`:unabbreviate teh` 或 `:iunab teh`
+- 查看所有缩写：`:ab`
+- 常用场景：
+  - 纠正常见拼写错误：`:iab adn and`
+  - 输入代码模板：`:iab #i #include`
+  - 插入个人信息：`:iab myemail user@example.com`
 
 # 6. 外部系统交互
 
 ## 6.1. 作业 job
 
+- Vim 8+ 支持异步作业（job），可以在后台运行外部命令
+- 启动作业：
+  ```vim
+  let job = job_start('command', {'out_cb': 'MyHandler'})
+  ```
+- 回调函数处理输出：
+  ```vim
+  function! MyHandler(channel, msg)
+    echom a:msg
+  endfunction
+  ```
+- 常用函数：
+  - `job_start(cmd, options)` 启动异步作业
+  - `job_stop(job)` 停止作业
+  - `job_status(job)` 查看状态：`run`, `dead`, `fail`
+  - `job_info(job)` 获取作业详细信息
+- neovim 使用 `jobstart()` 和 `jobstop()`，API 略有不同
+
 ## 6.2. 定时器(timeer)
 
+- 定时器允许在指定延迟后执行函数
+- 基本用法：
+  ```vim
+  let timer = timer_start(2000, 'MyCallback')
+  " 2000ms 后执行 MyCallback
+  ```
+- 重复执行：
+  ```vim
+  let timer = timer_start(1000, 'MyCallback', {'repeat': -1})
+  " -1 表示无限重复，正数表示重复次数
+  ```
+- 停止定时器：`call timer_stop(timer)`
+- 查看所有定时器：`call timer_info()`
+- 停止所有定时器：`call timer_stopall()`
+
 ## 6.3. 通道(channel)
+
+- Channel 用于 Vim 与外部进程之间进行双向通信
+- 支持的模式：
+  - `raw` 原始数据
+  - `nl` 按行分隔（newline）
+  - `json` JSON 格式通信
+  - `lsp` LSP 协议
+- 打开通道：
+  ```vim
+  let channel = ch_open('localhost:8765', {'mode': 'json'})
+  ```
+- 发送数据：`call ch_sendexpr(channel, {'cmd': 'hello'})`
+- 关闭通道：`call ch_close(channel)`
+- Channel 是许多 Vim 插件（如 LSP 客户端）实现异步通信的基础
 
 # 7. 代码开发支持
 
 ## 7.1. 模板(Template)
 
+- 通过 autocmd 在新建文件时自动插入模板内容：
+  ```vim
+  autocmd BufNewFile *.py 0r ~/.vim/templates/python.tpl
+  autocmd BufNewFile *.sh 0r ~/.vim/templates/bash.tpl
+  ```
+- `0r` 表示在第 0 行后读入文件内容
+- 也可以通过插件管理模板，如 vim-template, vim-skeleton
+- 模板中可以使用占位符，配合 UltiSnips 等代码片段插件实现动态模板
+
 ## 7.2. 配色方案(Color Scheme)
+
+- 配色方案文件位于 `colors/` 目录下，后缀为 `.vim`
+- 切换配色：`:colorscheme <name>`
+- 查看当前配色：`:colorscheme`
+- 列出可用配色：`:colorscheme <Tab>` 或 `:colorscheme <C-d>`
+- 自定义配色基本结构：
+  ```vim
+  set background=dark
+  highlight Normal guifg=#ffffff guibg=#1e1e1e
+  highlight Comment guifg=#6a9955 gui=italic
+  highlight Keyword guifg=#569cd6 gui=bold
+  ```
+- 使用 `termguicolors` 启用真彩色：`set termguicolors`
 
 ## 7.3. 色彩测试(colortest)
 
+- 内置色彩测试脚本：`:runtime syntax/colortest.vim`
+- 该命令在新 buffer 中展示所有终端颜色组合
+- 检测终端是否支持 256 色：`:echo &t_Co`
+- 测试真彩色支持：
+  ```vim
+  :set termguicolors
+  :highlight TestColor guifg=#ff0000 guibg=#00ff00
+  ```
+- 输出所有 highlight 组到 buffer：`:runtime syntax/hitest.vim`
+
 ## 7.4. 语法高亮文件 (Syntax)
+
+- 语法文件位于 `syntax/` 目录下，文件名与文件类型一致
+- 基本结构：
+  ```vim
+  " syntax/mylang.vim
+  syntax match myComment /\/\/.*/
+  syntax keyword myKeyword if else while for
+  syntax region myString start=/"/ end=/"/
+  highlight link myComment Comment
+  highlight link myKeyword Keyword
+  highlight link myString String
+  ```
+- 加载顺序：先加载系统 syntax 文件，再加载用户 `after/syntax/` 下的文件
+- `:syntax on` 开启语法高亮，`:syntax off` 关闭
 
 ## 7.5. 语法高亮度(Syntax Highlight)
 
+- highlight 命令用于定义高亮组的颜色和样式
+- 基本语法：`highlight GroupName key=value ...`
+- 常用属性：
+  - `ctermfg`, `ctermbg` 终端前景/背景色
+  - `guifg`, `guibg` GUI 前景/背景色
+  - `gui`, `cterm` 样式：bold, italic, underline, reverse, NONE
+- 链接高亮组：`highlight link MyGroup Comment`
+- 清除高亮：`highlight clear MyGroup`
+- 查看当前高亮定义：`:highlight` 或 `:hi GroupName`
+
 ## 7.6. 语法高亮度-日志文件(Syntax Logfile)
+
+- 为日志文件创建自定义语法高亮便于阅读
+- 常见做法：
+  ```vim
+  " ~/.vim/syntax/log.vim
+  syntax match logError /\c\<error\>/
+  syntax match logWarn /\c\<warn\(ing\)\?\>/
+  syntax match logInfo /\c\<info\>/
+  syntax match logDate /\d\{4}-\d\{2}-\d\{2}/
+  highlight logError ctermfg=red guifg=#ff0000
+  highlight logWarn ctermfg=yellow guifg=#ffff00
+  highlight logInfo ctermfg=green guifg=#00ff00
+  highlight logDate ctermfg=cyan guifg=#00ffff
+  ```
+- 关联文件类型：`autocmd BufRead *.log setfiletype log`
 
 ## 7.7. 折叠(Fold)
 
+- 折叠方法 `set foldmethod=xxx`：
+  - `manual` 手动折叠
+  - `indent` 基于缩进
+  - `syntax` 基于语法
+  - `expr` 基于表达式 `foldexpr`
+  - `marker` 基于标记（默认 `{{{` 和 `}}}`）
+  - `diff` 折叠未改变的行
+- 常用命令：
+  - `zf` 创建折叠（manual 模式）
+  - `za` 切换折叠，`zo` 打开，`zc` 关闭
+  - `zR` 打开所有折叠，`zM` 关闭所有折叠
+  - `zj`, `zk` 在折叠之间移动
+- `set foldlevel=99` 默认打开所有折叠
+
 ## 7.8. 非可见字符(Listchars)
+
+- `set list` 显示非可见字符
+- 自定义显示方式：
+  ```vim
+  set listchars=tab:>-,trail:~,extends:>,precedes:<,space:.
+  set listchars+=eol:$,nbsp:+
+  ```
+- `set nolist` 关闭非可见字符显示
+- 常用于检查混用 Tab/空格、行末空格等问题
+- `:help listchars` 查看所有可配置项
 
 ## 7.9. 缩进(Indent)
 
+- 基本缩进设置：
+  ```vim
+  set tabstop=4       " Tab 显示宽度
+  set shiftwidth=4    " 自动缩进宽度
+  set expandtab       " Tab 转空格
+  set softtabstop=4   " 编辑时 Tab 的宽度
+  set autoindent      " 自动缩进
+  set smartindent     " 智能缩进
+  ```
+- 文件类型缩进：`filetype indent on`
+- 缩进文件位于 `indent/` 目录下
+- 手动调整缩进：`>>` 增加，`<<` 减少，`==` 自动缩进
+- `:retab` 将文件中的 Tab 按当前设置重新转换
+
 ## 7.10. 多重色彩括号(Parentheses)
 
+- 通过插件实现不同层级括号使用不同颜色，便于辨别嵌套关系
+- 常用插件：
+  - rainbow (luochen1990/rainbow)
+  - rainbow-parentheses.vim
+  - nvim-ts-rainbow (基于 treesitter)
+- 基本配置（rainbow 插件）：
+  ```vim
+  let g:rainbow_active = 1
+  ```
+- 支持自定义颜色列表和括号类型
+
 ## 7.11. Zeavim离线文档查看器
+
+- Zeavim 是 Zeal 的 Vim 集成插件
+- Zeal 是一个离线文档浏览器，支持 200+ 文档集（类似 macOS Dash）
+- 安装插件：`Plug 'KabbAmine/zeavim.vim'`
+- 常用命令：
+  - `<leader>z` 查询光标下单词的文档
+  - `<leader>Z` 指定 docset 进行查询
+  - `:Zeavim` 手动输入查询内容
+- 需要先安装 Zeal 应用：`pacman -S zeal` 或 `apt install zeal`
 
 # 8. Tag标签
 
 ## 8.1. 生成标签文件(Generates Tags File)
 
+- 使用 ctags 生成标签文件：
+  - `ctags -R .` 递归生成当前目录的 tags
+  - `ctags -R --languages=python .` 仅生成 Python 的标签
+  - `ctags --exclude=node_modules -R .` 排除目录
+- 使用 universal-ctags（推荐，ctags 的维护更新版本）
+- 标签文件默认名为 `tags`，vim 通过 `set tags=./tags;,tags` 查找
+- 也可以使用 gutentags 插件自动管理 tags 文件的生成和更新
+
 ## 8.2. 匹配单个标签(Matching Single Tag)
+
+- `<C-]>` 跳转到光标下标识符的定义（第一个匹配）
+- `:tag {name}` 跳转到指定标签
+- `<C-t>` 或 `:pop` 返回跳转前的位置
+- `:tag /pattern` 使用正则匹配标签名
+- `g<C-]>` 如果有多个匹配，显示列表供选择；仅一个则直接跳转
 
 ## 8.3. 匹配多个标签(Matching Multiple Tags)
 
+- `:tselect {name}` 列出所有匹配的标签供选择
+- `:tnext`, `:tprev` 在多个同名标签间前后跳转
+- `:tfirst`, `:tlast` 跳转到第一个/最后一个匹配
+- `:tags` 显示标签栈（跳转历史）
+- 预览标签：`:ptag {name}` 在预览窗口中打开标签定义
+
 ## 8.4. 标签选项(Tag Option)
+
+- `set tags=./tags;,tags` 向上查找 tags 文件
+- `set tagcase=match` 大小写匹配（`ignore` 忽略大小写）
+- `set tagstack` 启用标签栈
+- `set showfulltag` 在补全时显示标签的完整信息
+- `set tagbsearch` 使用二分查找（要求 tags 文件已排序）
+- `set cscopetag` 同时使用 cscope 和 ctags
 
 # 9. 性能排查
 
@@ -724,6 +1039,18 @@ profile stop
 ```
 
 ## 9.2. syntime
+
+- 用于分析语法高亮的性能瓶颈
+- 使用流程：
+  ```vim
+  :syntime on        " 开始记录
+  " ... 进行正常编辑操作 ...
+  :syntime report    " 查看报告
+  :syntime off       " 停止记录
+  ```
+- 报告按耗时排序，显示每个语法规则的匹配次数和耗时
+- 适用于调试大文件编辑时的卡顿问题
+- 如果某个正则匹配耗时过高，考虑优化或禁用对应的语法规则
 
 # 10. vim插件(已过时)
 
@@ -960,7 +1287,28 @@ profile stop
 
 ## tmux
 
+- tmux 与 vim 配合使用，实现终端多路复用 + 编辑的工作流
+- vim-tmux-navigator 插件：使用 `Ctrl+h/j/k/l` 在 vim 和 tmux pane 间无缝切换
+- 在 tmux 中使用 vim 复制模式：`set -g mode-keys vi`
+- 从 vim 向 tmux pane 发送命令：vim-slime 或 vimux 插件
+  ```vim
+  " vimux: 向 tmux pane 发送命令
+  map <Leader>vp :VimuxPromptCommand<CR>
+  map <Leader>vl :VimuxRunLastCommand<CR>
+  ```
+
 ## vsc 插件
+
+- VSCode Neovim 扩展（asvetliakov.vscode-neovim）：在 VSCode 中使用真正的 Neovim 后端
+- 比 VSCodeVim 性能更好，完整支持 vim 插件和配置
+- 配置方式：在 settings.json 中指定 neovim 路径
+  ```json
+  {
+    "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+    "vscode-neovim.neovimInitVimPaths.linux": "~/.config/nvim/init.lua"
+  }
+  ```
+- 支持 vim 的全部模式、宏录制、文本对象等特性
 
 ## neovide
 

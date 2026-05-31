@@ -207,7 +207,27 @@
 
 ### 4.2.1. 启动时检查
 
+- 说明：Dubbo 默认在启动时检查依赖的服务是否可用，不可用时抛出异常阻止启动
+- 配置方式：
+  - 关闭某个服务的启动检查：`<dubbo:reference check="false" />`
+  - 关闭所有服务的启动检查：`<dubbo:consumer check="false" />`
+  - 关闭注册中心启动检查：`<dubbo:registry check="false" />`
+- 使用场景：
+  - 开发/测试环境中服务未全部启动时，关闭检查避免启动失败
+  - 存在循环依赖的服务，必须关闭其中一方的检查
+- 注意：生产环境建议开启检查，及早发现配置问题
+
 ### 4.2.2. rpc调用超时时间
+
+- 说明：设置服务调用的超时时间，超时后客户端抛出 RpcException
+- 配置方式：
+  - 服务端全局：`<dubbo:provider timeout="5000" />`
+  - 客户端全局：`<dubbo:consumer timeout="3000" />`
+  - 服务端接口级：`<dubbo:service interface="..." timeout="2000" />`
+  - 客户端方法级：`<dubbo:method name="findUser" timeout="1000" />`
+- 优先级：方法级 > 接口级 > 全局；消费方 > 提供方
+- 默认超时时间：1000ms
+- 最佳实践：根据接口响应时间合理设置，避免过长导致线程池耗尽
 
 ### 4.2.3. 重试次数
 
@@ -217,9 +237,39 @@
 
 ### 4.2.4. 版本号
 
-也就是灰度发布
+- 说明：通过 version 属性实现服务的多版本管理，即灰度发布
+- 使用方式：
+  - 提供方声明版本：`<dubbo:service interface="..." version="1.0.0" />`
+  - 消费方指定版本：`<dubbo:reference interface="..." version="1.0.0" />`
+  - 消费方不区分版本：`<dubbo:reference interface="..." version="*" />`
+- 灰度发布流程：
+  - 部署新版本服务 version="2.0.0"，与旧版本 version="1.0.0" 共存
+  - 部分消费者切换到 version="2.0.0" 验证
+  - 验证通过后逐步将所有消费者迁移到新版本
+  - 最终下线旧版本服务
 
 ### 4.2.5. 本地存根
+
+- 说明：在客户端执行远程调用前后做一些处理逻辑（如参数校验、缓存、降级）
+- 原理：消费方在本地维护一个 Stub 类，该类持有远程代理的引用
+- 使用步骤：
+  - 1. 在 interface 模块中创建 Stub 类，实现服务接口
+  - 2. Stub 类的构造方法接收远程代理对象
+  - 3. 配置 stub 属性：`<dubbo:reference interface="..." stub="com.xxx.UserServiceStub" />`
+- 示例：
+  ```java
+  public class UserServiceStub implements UserService {
+      private final UserService userService; // 远程代理
+      public UserServiceStub(UserService userService) {
+          this.userService = userService;
+      }
+      public User findUser(Long id) {
+          if (id == null) return null; // 本地参数校验
+          return userService.findUser(id); // 远程调用
+      }
+  }
+  ```
+- 适用场景：参数验证、本地缓存判断、调用失败后的降级逻辑
 
 ## 4.3. SpringBoot 三种配置方式
 

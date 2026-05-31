@@ -342,13 +342,50 @@ setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x22.psfu.gz
 
 ## 2.1. NVMe
 
+- NVMe (Non-Volatile Memory Express) 是专为 SSD 设计的接口协议
+- 通过 PCIe 总线直连 CPU，带宽和延迟远优于 SATA
+- 设备名通常为 `/dev/nvme0n1`，分区为 `/dev/nvme0n1p1`
+- 常用命令：
+  - `nvme list` 列出所有 NVMe 设备
+  - `nvme smart-log /dev/nvme0` 查看 SMART 信息
+  - `lsblk -d -o name,rota,tran` 查看磁盘类型和接口
+- 典型顺序读取速度：3000-7000 MB/s（PCIe Gen3/Gen4）
+
 ## 2.2. SATA
+
+- SATA (Serial ATA) 是传统的硬盘接口协议
+- 最大带宽 SATA III: 6 Gbps（实际约 550 MB/s）
+- 设备名通常为 `/dev/sda`，分区为 `/dev/sda1`
+- 同时支持 HDD（机械硬盘）和 SATA SSD
+- 优点：兼容性好，价格低；缺点：带宽和延迟不如 NVMe
+- 在 2.5 寸 SSD 和老旧设备上仍广泛使用
 
 # 3. 文件系统
 
 ## 3.1. btrfs
 
+- 现代 COW（写时复制）文件系统，支持快照、子卷、透明压缩
+- 创建文件系统：`mkfs.btrfs -L mylabel /dev/nvme0n1p2`
+- 常用子卷布局：`@` 挂载为 `/`，`@home` 挂载为 `/home`
+- 挂载参数：`mount -o subvol=/@,compress=zstd,noatime /dev/nvme0n1p2 /mnt`
+- 快照操作：
+  - `btrfs subvolume snapshot / /snapshots/root_backup` 创建快照
+  - `btrfs subvolume list /` 列出所有子卷
+  - `btrfs subvolume delete /snapshots/old` 删除快照
+- 适合配合 timeshift 使用实现系统回滚
+- 注意：不建议在 btrfs 上使用 swap 文件（5.0+ 内核支持但有限制）
+
 ## 3.2. ext4
+
+- Linux 最成熟稳定的文件系统，ext3 的后继者
+- 创建文件系统：`mkfs.ext4 /dev/sda1`
+- 特点：稳定可靠、修复工具完善、性能良好
+- 不支持快照和透明压缩（相比 btrfs）
+- 常用工具：
+  - `tune2fs -l /dev/sda1` 查看文件系统信息
+  - `e2fsck -f /dev/sda1` 强制检查文件系统
+  - `resize2fs /dev/sda1` 调整文件系统大小
+- 适合对稳定性要求高、不需要快照功能的场景
 
 # 4. archlinux安装
 
@@ -600,11 +637,38 @@ Bluetooth: hci0: HCI LE Coded PHY feature bit is set, but its usage is not suppo
 
 ## 4.3. 图形化界面(graphical.target)
 
+- 安装显示服务器：`pacman -S xorg-server xorg-xinit` (X11) 或 wayland 相关包
+- 安装显卡驱动：
+  - Intel: `pacman -S mesa xf86-video-intel`
+  - NVIDIA: `pacman -S nvidia nvidia-utils`
+  - AMD: `pacman -S mesa xf86-video-amdgpu`
+- 安装桌面环境或窗口管理器：
+  - KDE: `pacman -S plasma-meta kde-applications-meta sddm`
+  - GNOME: `pacman -S gnome gnome-extra gdm`
+  - i3wm: `pacman -S i3-wm i3status dmenu`
+  - dwm: 从源码编译安装
+- 使用 startx 启动：配置 `~/.xinitrc`，执行 `startx`
+- 使用显示管理器：`systemctl enable sddm` 或 `systemctl enable gdm`
+- 中文字体：`pacman -S noto-fonts-cjk`
+- 输入法：`pacman -S fcitx5 fcitx5-rime fcitx5-configtool`
+
 ## 4.4. 系统备份
 
 > **pacman缓存平时最好别清**
 
 ### 4.4.1. timeshift说明
+
+- Timeshift 是基于 rsync 或 btrfs 快照的系统备份还原工具
+- 安装：`pacman -S timeshift` 或从 AUR 安装
+- btrfs 模式下通过创建子卷快照实现备份，速度快且占用空间小
+- 默认备份 `/` 和 `/home`（可配置排除 `/home`）
+- 基本操作：
+  - `timeshift --create` 创建快照
+  - `timeshift --list` 列出所有快照
+  - `timeshift --restore` 恢复快照
+  - `timeshift --delete` 删除快照
+- 建议配置自动快照（每日/每周）
+- 注意：timeshift 不会备份 `/boot` 分区，内核更新后需单独处理
 
 ### 4.4.2. btrfs restore常见问题
 
@@ -778,9 +842,35 @@ pacman -Syu
 
 > Arch User Package
 
+- AUR (Arch User Repository) 是社区驱动的软件仓库
+- 包含 PKGBUILD 脚本，用户自行编译安装
+- 手动安装流程：
+  - `git clone https://aur.archlinux.org/package-name.git`
+  - `cd package-name && makepkg -si`
+- 注意：AUR 包未经官方审核，安装前建议检查 PKGBUILD 内容
+- 推荐使用 AUR helper（yay 或 paru）简化安装流程
+
 ## 7.3. yay
 
+- Go 编写的 AUR helper，pacman 的包装器
+- 安装：从 AUR 手动编译 `git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si`
+- 常用命令：
+  - `yay package` 搜索并安装包（官方源 + AUR）
+  - `yay -Syu` 更新所有包（包括 AUR）
+  - `yay -Ss keyword` 搜索包
+  - `yay -Rns package` 卸载包及其依赖
+- 支持交互式搜索和批量操作
+
 ## 7.4. paru
+
+- Rust 编写的 AUR helper，yay 的替代品，更注重安全
+- 安装：`yay -S paru` 或从 AUR 手动编译
+- 默认会在安装前显示 PKGBUILD 和 diff 供审查
+- 常用命令与 yay 类似：
+  - `paru package` 搜索安装
+  - `paru -Syu` 全量更新
+  - `paru -c` 清理不再需要的依赖
+- 配置文件：`~/.config/paru/paru.conf`
 
 # 8. 参考资料
 
