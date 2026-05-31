@@ -454,7 +454,7 @@
 - 数组默认就是一个迭代器：
 
   ```javascript
-  var arr = [12,12,13];
+  var arr = [11,12,13];
   var itr = arr[Symbol.iterator]();
   
   itr.next(); // { value: 11, done: false }

@@ -1,7 +1,7 @@
-TODO: turbopack, replace with webpack
+TODO: turbopack, replace webpack
 
-用Rust开发的下一代前端开发的工具链，它包含三个主要部分：
+用Rust开发的下一代前端开发工具链，它包含三个主要部分：
 
-- Turbo打包:  一个增量打包器 (Webpack的继承者)
-- Turbo仓库:  一个增量打包系统
+- Turbopack:  一个增量打包器（Webpack的继任者）
+- Turborepo:  一个增量构建系统
 - Turbo引擎: 一个底层的增量计算和内存引擎

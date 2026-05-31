@@ -128,7 +128,7 @@ twitter开源
 
 ## 2.2. 数据累加示例
 
-> 1+2+3+4+5.....。
+> 1+2+3+4+5.....
 
 - spout
   <details>
@@ -302,7 +302,7 @@ twitter开源
   </details>
 
 
-## wordcount
+## 2.3. wordcount
 
 ```
 从spout开始，每一行为一个tuple，交给下一个bolt
@@ -538,7 +538,7 @@ bolt对行进行切割，每一个tuple为一个单词，交给下一个bolt
 - 示例代码`src/storm/grouping`
 
 
-# 架构
+# 4. 架构
 
 - 架构
   > ![storm-8](./image/storm-8.png)
@@ -568,20 +568,22 @@ bolt对行进行切割，每一个tuple为一个单词，交给下一个bolt
 - strom-zookeeper目录树
   > ![storm-12](./image/storm-12.png) 
 
-# 启动配置
+# 5. 启动配置
 
-## 单机模式
+## 5.1. 单机模式
 
-- 启动一下几个进程
+- 启动以下几个进程
 - dev_zookeeper
 - nimbus
 - supervisor
 - ui(可选，可视化界面)
 - logviewer(可选，在浏览器上看日志)
 
-## 全分布式模式
+## 5.2. 全分布式模式
 
-## 提交作业
+多台机器组成集群，Nimbus和Supervisor分别部署在不同节点上，通过ZooKeeper进行协调。
+
+## 5.3. 提交作业
 
 - storm help jar 提交项目
   - 例：`storm jar wc.jar com.test.WordCount [wc]`
@@ -593,7 +595,7 @@ bolt对行进行切割，每一个tuple为一个单词，交给下一个bolt
 - 关闭所有java线程：`killall java`
 
 
-# 并发机制
+# 6. 并发机制
 
 
 - Worker – 进程
@@ -654,7 +656,7 @@ bolt对行进行切割，每一个tuple为一个单词，交给下一个bolt
 
 
 
-# 连接kafka
+# 7. 连接kafka
 
 ![storm-14](./image/storm-14.png)
 

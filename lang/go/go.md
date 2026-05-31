@@ -119,7 +119,7 @@
 
 ### 1.4.1. Go Playground
 
-- 一般小规模运行代码 或则希望把自己运行代码分享给其他人
+- 一般小规模运行代码 或者希望把自己运行代码分享给其他人
 - 可以使用The Go Playground，这是一个可以在线运行Go的环境
 - [链接](https://play.golang.org/ )
 
@@ -256,7 +256,7 @@ Use "go help <topic>" for more information about that topic.
   # 升级到最新的修订版本
   go get -u=patch github.com/foo
 
-  # 指定版本，若存在tag，则代行使用
+  # 指定版本，若存在tag，则代替使用
   go get github.com/foo@v1.2.3
 
   # 指定分支

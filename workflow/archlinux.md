@@ -22,12 +22,12 @@ TODO: archlinux
   - 因此事实上，这个 **引导程序已经承担起了部分操作系统的工作** 。
 
 - BIOS（Basic Input/Output System）
-  - 引导程序就是一个操作系统，BISO（Basic Input/Output System）
+  - 引导程序就是一个操作系统，BIOS（Basic Input/Output System）
   - 它运行在实模式(windows的一种保护模式)，如今几乎只用于从其他设备引导系统或进行设备调试。
   - 它就是电脑通电后运行的第一个程序。
   - **支持Legacy和UEFI两种模式**
     - Legacy模式只支持MBR类型分区，
-    - 而UEFI支持MBR和GBT两种类型的分区
+    - 而UEFI支持MBR和GPT两种类型的分区
 
 ## 1.2. Legacy Boot与MBR
 

@@ -13,7 +13,7 @@
 | M-b                     | backward-word                       | 向后一个单词                                                                      |
 | C-a                     | beginning-of-line                   | 移到行首                                                                          |
 | C-e                     | end-of-line                         | 移到行尾                                                                          |
-| M-m                     | back-toindentation                  | 将光标移动到行首的第一个非空白字符                                                |
+| M-m                     | back-to-indentation               | 将光标移动到行首的第一个非空白字符                                                |
 | M-}                     | forward-paragraph                   | 下移一段                                                                          |
 | M-{                     | backward-paragraph                  | 上移一段                                                                          |
 | C-v                     | scroll-up                           | 下移一屏                                                                          |
@@ -39,7 +39,7 @@
 | **编辑**                |
 | M-^                     | delete-indentation                  | 将两行合为一行，删除之间的空白和缩进                                              |
 | C-x C-u                 | upcase-region                       | 将区域中字母改为大写                                                              |
-| C-x C-l                 | upcase-region                       | 将区域中字母改为小写                                                              |
+| C-x C-l                 | downcase-region                     | 将区域中字母改为小写                                                              |
 | **特殊字符插入**        |
 | C-q (n)                 | quoted-insert                       | 插入字符，n表示字符的八进制ASCII码                                                |
 | C-x 8                   | ucs-insert                          | 插入Unicode字符，`C-x 8 RET`                                                      |

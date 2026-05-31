@@ -6,7 +6,7 @@
   - 码点（Code Point）
     - 有些地方翻译为**码值或内码**。是指在某个字符集中，根据某种编码规则将字符编码后得到的值
     - 比如在ASCII字符集中，字母A经过ASCII编码得到的值是65，那么65就是字符A在ASCII字符集中的码点。
-  - 码元（Code Point）
+  - 码元（Code Unit）
     > Code unit: The minimal bit combination that can represent a unit of encoded text for processing or interchange. <br />
     > 为通信相关概念
     - 是能用于处理或交换编码文本的**最小比特组合**
@@ -95,7 +95,7 @@
 
 - 不是标准，windows程序(如windows记事本)会携带。一些微软程序、如excel也会基于BOM来识别文本编码
 - Posix系统明确不建议使用 字节顺序标识(BOM)。不是所有软件都支持BOM。
-- 如果需要在文件开头提那家 BOM， 可以使用类似 `utf-8-sig` 的文件编码。
+- 如果需要在文件开头添加 BOM， 可以使用类似 `utf-8-sig` 的文件编码。
 - 常见BOM：
 
   ```

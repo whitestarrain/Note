@@ -2817,7 +2817,7 @@
 
 - 继承体系结构：
 
-  - ServeltRequest 接口
+  - ServletRequest 接口
 
     - HttpServletRequest 子接口
 
@@ -2991,8 +2991,8 @@
   - 示意图：
     ![](./image/servelt-5.jpg)
   - 步骤：
-    1. 通过 ServeltRequest 中的方法：RequestDispatcher getRequestDispatcher(String s) 获取请求转发器对象
-    2. 使用 RequestDispatcher 进行转发：使用该对象中的 forward(ServeltRequest request,ServeltResponse response)方法进行转发
+    1. 通过 ServletRequest 中的方法：RequestDispatcher getRequestDispatcher(String s) 获取请求转发器对象
+    2. 使用 RequestDispatcher 进行转发：使用该对象中的 forward(ServletRequest request,ServletResponse response)方法进行转发
   - 示例
 
     ```java
@@ -3037,7 +3037,7 @@
   > ![](./image/servlet-4.jpg)
   > 红线圈住的是 request 域。
   - 域对象：一个有作用范围的对象，可以在范围内共享数据
-  - request 域：代表一次请求的范围，一般用于请求转发的多个资源中共享数据（比如 ServeltA 转发到 ServletB，那么该次请求的 request 域为这两个 Servlet）
+  - request 域：代表一次请求的范围，一般用于请求转发的多个资源中共享数据（比如 ServletA 转发到 ServletB，那么该次请求的 request 域为这两个 Servlet）
   - 方法：(ServletRequest 中)
     1. void setAttribute(String name,Object obj)存储数据
     2. Object getAttribute(String name)根据键获取值
@@ -4285,7 +4285,7 @@ public class CookieServletDemo extends HttpServlet {
     - jsp 本质上就是一个 servlet
     - 在访问 jsp 时，项目配置文件夹下会产生一个 work 文件夹，用来存放临时生成文件，里面存放着 java 和 class 文件
       > 自己手动找找去
-      - 其中 java 文件继承了 HttpJspBase 类（tomcat 服务器源码中），而 HttpJspBase 继承的 HttpServelt 类
+      - 其中 java 文件继承了 HttpJspBase 类（tomcat 服务器源码中），而 HttpJspBase 继承的 HttpServlet 类
       - 同时该 java 文件会将 html 标签通过输出流输出到客户端
     - 第一次访问时会翻译为java文件，然后再编译为class文件。
     - 之后访问时会直接使用class文件

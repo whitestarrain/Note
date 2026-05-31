@@ -2057,7 +2057,7 @@ address->上海市
   - 一个配置类被 spring 处理有 2 个阶段：配置类解析阶段、bean 注册阶段（将配置类作为 bean 被注册到 spring 容器)。
   - 如果将 Condition 接口的实现类作为配置类上@Conditional 中，那么这个条件会对两个阶段都有效
   - 此时通过 Condition 是无法精细的控制某个阶段的
-  - 如果 **想控制某个阶段，比如可以让他解析，但是不能让他注册，此时就就需要用到另外一个接口了：ConfigurationCondition**
+  - 如果 **想控制某个阶段，比如可以让他解析，但是不能让他注册，此时就需要用到另外一个接口了：ConfigurationCondition**
 
 #### 2.4.5.4. ConfigurationCondition 接口
 
@@ -6322,7 +6322,7 @@ protected void beforeSingletonCreation(String beanName) {
                                   // isSingletonCurrentlyInCreation()：
                                   // 判断当前单例bean是否正在建立中
                                   // 也就是没有初始化完成(好比A的构造器依赖了B对象因此得先去建立B对象
-                                  // 或则在A的populateBean过程当中依赖了B对象，得先去建立B对象，这时的A就是处于建立中的状态。)
+                                  // 或者在A的populateBean过程当中依赖了B对象，得先去建立B对象，这时的A就是处于建立中的状态。)
       synchronized (this.singletonObjects) {
           // 尝试从二级缓存中获取
           singletonObject = this.earlySingletonObjects.get(beanName);

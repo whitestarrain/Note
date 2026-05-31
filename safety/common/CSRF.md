@@ -58,9 +58,9 @@ TODO: CSRF补充
 
 # 2. 历史案例
 
-### 2.0.1. WordPress 的 CSRF 漏洞
+## 2.1. WordPress 的 CSRF 漏洞
 
-### 2.0.2. YouTube 的 CSRF 漏洞
+## 2.2. YouTube 的 CSRF 漏洞
 
 # 3. 参考
 

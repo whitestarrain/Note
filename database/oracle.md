@@ -61,7 +61,7 @@
   create tablespace space1
   datafile 'd:\learn\oracle\file1.dbf'
   sieze 100m --  初始大小
-  autoextend on - 开启自动扩展
+  autoextend on -- 开启自动扩展
   next 10m; -- 每次扩增大小
   ```
 - 删除表空间

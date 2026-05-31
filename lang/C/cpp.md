@@ -73,7 +73,7 @@ int add(int a,int b)
 }
 double add(double a,double b)
 {
-    cout<<"(doble ,double)\t";
+    cout<<"(double ,double)\t";
     return a+b;
 }
 double add(double a,int b)
@@ -244,7 +244,7 @@ c++ 访问控制原理是编译阶段实现的
 
 可以和友元函数和常函数一起定义，
 
-- 友元函数: 访问 private 和 projected 成员
+- 友元函数: 访问 private 和 protected 成员
 - 常函数: 限制运算符修改实例对象
 
 重载的运算符是带有特殊名称的函数，函数名是由关键字 operator 和其后要重载的运算符符号构成的。与其他函数一样，重载运算符有一个返回类型和一个参数列表。
@@ -437,10 +437,10 @@ int main()
 
 ```cpp
 class Father1:virtual public Grandfather
-class Father2:virtual public Grandfathe
+class Father2:virtual public Grandfather
 ```
 
-如果不适用虚继承，也可以显示写出调用哪个父类里面的属性。
+如果不使用虚继承，也可以显式写出调用哪个父类里面的属性。
 
 ```
 obj.SuperClass::attr = value;
@@ -549,7 +549,7 @@ virtual 返回值 函数名(形参)=0;
   - 分配在堆中，相当于调用 malloc 为结构体分配内存。
   - 返回一个对象指针。
   - 可作为返回值。
-  - 最后需要del，否则会有内存泄漏。
+  - 最后需要delete，否则会有内存泄漏。
 
 ```cpp
 int main(){
@@ -558,7 +558,7 @@ int main(){
   // 堆上分配内存创建对象。
   // 等价于 c 中的: struct HelloC = *malloc(sizeof(struct HelloC));
   HelloC *h_ptr = new HelloC();
-  del h_ptr;
+  delete h_ptr;
 }
 ```
 
@@ -883,30 +883,6 @@ int main()
 7.1 刷新缓冲区
 ```
 
-## 输入输出
-
-```
-1.I/O流
-2.文件流
-2.1 文件模式
-2.2 创建文件流
-2.3 打开文件流
-2.4 关闭文件流
-3.字符串流
-3.1 创建string流
-3.2 返回string流
-3.3 将string拷贝到string流
-4.四个常用I/O对象
-5.流状态
-5.1 条件状态
-5.2 格式状态
-6.流操作
-6.1 关联输入输出流
-6.2 未格式化I/O操作
-7.缓冲区管理
-7.1 刷新缓冲区
-```
-
 # STL
 
 ## 什么是 STL
@@ -1029,10 +1005,10 @@ int main()
   - 又称字符串，定义在`<string>`头文件中
   - C 风格的字符串(以空字符结尾的字符数组)太过复杂难于掌握，因此 C++标准库定义了一种 string 类
   - string 和`vector<char>`在数据结构、内存管理等方面都是相同的
-  - 但是，`vector<char>`只是单纯的一个“charchar 元素的容器”，而 string 不仅是一个“charchar 元素的容器”，它还扩展了一些针对字符串的操作
+  - 但是，`vector<char>`只是单纯的一个”char 元素的容器”，而 string 不仅是一个”char 元素的容器”，它还扩展了一些针对字符串的操作
     - 例如 string 可以使用 c_str()函数转换为 C 风格的字符串
     - vector 中并未对输入输出流操作符进行重载，因此无法直接对`vector<char>`进行 cin 或者 cout 这样的操作，但是 string 可以
-    - `vector<char>`并不能直接实现字符串的拼接，但是 string 可以，string 中重载了+,+=+,+=运算符。
+    - `vector<char>`并不能直接实现字符串的拼接，但是 string 可以，string 中重载了+, +=运算符。
 
 - string 的定义方式
   ```cpp

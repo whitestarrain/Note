@@ -6,10 +6,16 @@ TODO: 常用jvm，性能对比，以及核心技术
 
 # HotSpot
 
-# zulu
+Oracle HotSpot是最广泛使用的JVM实现，采用JIT编译和自适应优化技术。
+
+# Zulu
+
+Azul Zulu是基于OpenJDK的商业友好发行版，提供免费的长期支持版本。
 
 # OpenJ9
 
+Eclipse OpenJ9是IBM贡献的开源JVM，以低内存占用和快速启动著称。
+
 # DragonWell
 
-alibaba的龙井JVM，很厉害。
+阿里巴巴的龙井JVM，基于OpenJDK开发，针对大规模Java应用进行了深度优化。

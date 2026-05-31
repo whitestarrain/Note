@@ -41,8 +41,8 @@
 - 有值选项
   ```vim
   :set numberwidth=4 " set value
-  :set numberwiddth " show value
-  :set numberwidth? " save as above
+  :set numberwidth " show value
+  :set numberwidth? " same as above
   ```
 
 - 可以一次性设置多个值
@@ -62,11 +62,11 @@
 
 ## 映射
 
-# Leader
+## Leader
 
-# vimscript
+## vimscript
 
-## 变量
+### 变量
 
 > :help internal-variables
 
@@ -79,9 +79,9 @@
 - (a:) function-argument :	  函数参数 (只限于函数内使用)。
 - (v:) vim-variable      :	  Vim 预定义的全局变量。
 
-# 插件
+## 插件
 
-## 文件夹说明
+### 文件夹说明
 
 > 详见：`help runtimepath`
 

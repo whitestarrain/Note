@@ -40,6 +40,8 @@
 
 # 3. 基本原理
 
+Nginx 采用事件驱动的异步非阻塞架构，由一个 Master 进程管理多个 Worker 进程。Worker 进程通过 epoll 等高效 I/O 多路复用机制处理大量并发连接。
+
 # 4. 配置详解
 
 Nginx的指令远远不止下面这些。
@@ -434,7 +436,7 @@ If it's still confusing, [here's a longer explanation](http://nginx.org/en/docs/
 
 #### 4.3.5.3. root指令
 
-- 作用：这个指令用于设置请求寻找资源的跟目录
+- 作用：这个指令用于设置请求寻找资源的根目录
 - 配置位置：
   - 此指令可以在http块、server块或者location块中配置。
   - 由于使用Nginx服务器多数情况下要配置多个location块对不同的请求分别做出处理，因此该指令通常在location块中进行设置。
@@ -447,11 +449,17 @@ If it's still confusing, [here's a longer explanation](http://nginx.org/en/docs/
 
   path变量中可以包含Nginx服务器预设的大多数变量，只有documentroot和realpath_root不可以使用。
 
-#### 4.3.5.4. alisa指令
+#### 4.3.5.4. alias指令
+
+alias 指令用于定义 location 的路径别名，与 root 不同的是，alias 会直接替换匹配的 URI 部分，而不是追加。
 
 #### 4.3.5.5. index指令
 
+index 指令用于设置默认首页文件，当请求的 URI 以 "/" 结尾时，Nginx 会依次查找 index 指定的文件。
+
 #### 4.3.5.6. error_page指令
+
+error_page 指令用于定义当发生指定错误码时的处理页面或跳转地址，可配合 location 实现自定义错误页面。
 
 ## 4.4. 配置文件示例
 
@@ -908,15 +916,27 @@ TODO: nginx使用场景整理
 
 ## 5.2. Https反向代理
 
+通过配置 SSL 证书（ssl_certificate 和 ssl_certificate_key），Nginx 可以作为 HTTPS 反向代理终端，负责 TLS 加解密，后端服务可继续使用 HTTP 通信。
+
 ## 5.3. 负载均衡
+
+Nginx 通过 upstream 块定义后端服务器组，支持轮询、加权轮询、ip_hash、least_conn 等负载均衡策略。
 
 ## 5.4. 有多个webapp时的配置
 
+当同一台服务器上运行多个 Web 应用时，可通过多个 server 块配置不同的 server_name 或端口，分别进行反向代理和静态资源服务。
+
 ## 5.5. 静态站点
+
+Nginx 天然适合托管静态站点，通过 root 指令指定网站根目录，配合 index 和 try_files 即可实现高效的静态文件服务。
 
 ## 5.6. 搭建文件服务器
 
+通过开启 autoindex 指令，Nginx 可以展示目录列表，配合限速（limit_rate）等配置即可搭建简易文件下载服务器。
+
 ## 5.7. 解决跨域
+
+在 location 块中添加 Access-Control-Allow-Origin 等 CORS 响应头（通过 add_header 指令），即可让 Nginx 作为反向代理解决前端跨域问题。
 
 
 # 6. 参考文档

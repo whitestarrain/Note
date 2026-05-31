@@ -27,10 +27,10 @@ TODO: GPG
   | ------ | ------------- | ---- | ------------ | ----------------------------------------------------------------- |
   | 主私钥 | Secret Key    | sec  | SC           | 每个 GPG Key 有且只有一个 主私钥，可以选择一种或多种 Usage        |
   | 主公钥 | Public Key    | pub  | SC           | 每个 GPG Key 有且只有一个 主公钥，可以选择一种或多种 Usage        |
-  | 子私钥 | Secret Subkey | ssb  | S/A/E        | 每个 GOG Key 可以有多个子私钥，每个子私钥可以选择一种或多种 Usage |
-  | 子公钥 | Public Subkey | sub  | S/A/E        | 每个 GOG Key 可以有多个子公钥，每个子公钥可以选择一种或多种 Usage |
+  | 子私钥 | Secret Subkey | ssb  | S/A/E        | 每个 GPG Key 可以有多个子私钥，每个子私钥可以选择一种或多种 Usage |
+  | 子公钥 | Public Subkey | sub  | S/A/E        | 每个 GPG Key 可以有多个子公钥，每个子公钥可以选择一种或多种 Usage |
 
-  - 主秘钥和主公钥（Primary Key）、子秘钥和子公钥（Sub Key）都是成对出现的，其用途也是一致的。
+  - 主密钥和主公钥（Primary Key）、子密钥和子公钥（Sub Key）都是成对出现的，其用途也是一致的。
   - 每一对都包含一个 key id 属性（为 public key 的指纹），其中主密钥/主公钥的 key id 就是当前 GPG Key 的 Key ID。
   - 上面提到的用途，如下表所示：
 
@@ -51,7 +51,7 @@ TODO: GPG
   - 在非对称加密中的的公钥，公钥是需要公开发布的。
   - 同样的 GPG Public Key 也需要公开发布，但 GPG Public Key 由如下内容组成：
     - 主公钥和所有子公钥的 有效期和吊销信息 与 所有 UID 信息。
-  - GPG Public Key 会使用 GPG 的主秘钥进行签名，以防止公钥被篡改。
+  - GPG Public Key 会使用 GPG 的主密钥进行签名，以防止公钥被篡改。
   - 删除和吊销 GPG Public Key 中的 Sub Key 和 UID。
     - 删除，
       - 针对已公开的 GPG Public Key，如果其他人已经加载了这个 GPG Public Key。则这个删除将不会生效

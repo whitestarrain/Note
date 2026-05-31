@@ -218,7 +218,7 @@
 
 - 其他引入方式
   > 后面会进行说明
-  - 通过在构建工具入口文件（例如webapck）引入
+  - 通过在构建工具入口文件（例如webpack）引入
   - babel配置文件引入
 
 # 4. Babel深入
@@ -555,14 +555,14 @@
     npm install --save @babel/polyfill
     ```
 
-- 除了这两点，其余的地方和上面的例子完全。
+- 除了这两点，其余的地方和上面的例子完全一样。
 
 - 执行npm run dev，然后和之前一样在火狐打开进行验证正常。
 
 > **4. 在前端工程的入口文件里引入core-js/stable与regenerator-runtime/runtime** [示例代码](./src/babel-tutorial/babel04)
 
 - 该方法在分类上属于使用未构建的需要安装npm包@babel/polyfill的组合子包的一类
-- 该方法需要我们单独安装单独安装`core-js`与`regenerator-runtime`这两个npm包
+- 该方法需要我们单独安装`core-js`与`regenerator-runtime`这两个npm包
   - 这种方式`core-js`是默认是**3.x.x版本**。
 - 需要注意的是，我们使用该方法的时候，不能再安装`@babel/polyfill`了
   - 因为`@babel/polyfill`在安装的时候，会自动把`core-js`与`regenerator-runtime`这两个依赖安装上了
@@ -715,7 +715,7 @@
 
 - 作用
   - `@babel/preset-env`可以通过`browserslist`针对目标环境不支持的语法进行语法转换
-  - 也可以对目标环境不支持的特性API进行**部分引用**。**但是需要使用参数进行设置**
+  - 也可以对目标环境不支持的特性API进行**部分引入**。**但是需要使用参数进行设置**
 
 - 安装
 
@@ -790,7 +790,7 @@
   - 用browserslist来指定代码最终要运行在哪些浏览器或node.js环境。
   - Autoprefixer、postcss等就可以根据我们的browserslist，来自动判断是否要增加CSS前缀（例如'-webkit-'）。
 
-- browserslist在babel中地使用
+- browserslist在babel中的使用
   - Babel也可以使用browserslist，如果你使用了@babel/preset-env这个预设，此时Babel就会读取browserslist的配置。
   - 如果@babel/preset-env不设置任何参数，Babel就会完全根据browserslist的配置来做语法转换。
   - 如果没有browserslist，那么Babel就会把所有ES6的语法转换成ES5版本。
@@ -1489,7 +1489,7 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
     - 该项用来设置是否使用ES6的模块化用法
   - 取值：
     - 取值是布尔值
-    - 默认是fasle
+    - 默认是false
   - 一般取值
     - 在用webpack一类的打包工具的时候，可以设置为true，以便做静态分析
 
@@ -1506,7 +1506,7 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
     - 该项主要是和`@babel/runtime`及其进化版`@babel/runtime-corejs2`、`@babel/runtime-corejs3`的版本号有关系
     - 这三个包只需要根据需要安装一个
     - 把安装的npm包的版本号设置给version即可
-    - 例如，在上节的子里，安装的`@babel/runtime-corejs3`版本是`^7.10.4`，那么配置项version也取`^7.10.4`。
+    - 例如，在上节的例子里，安装的`@babel/runtime-corejs3`版本是`^7.10.4`，那么配置项version也取`^7.10.4`。
   - 取值：
     - 字符串
   - 一般取值：
@@ -1595,12 +1595,12 @@ ES6箭头函数语法被转换成了ES5的函数定义语法。
 - 安装
 
   ```bash
-  # 本地安装
+  # 全局安装
   # babel XXX
   npm install --global @babel/cli
   ```
   ```bash
-  # 全局安装
+  # 本地安装
   # npx babel XXX
   npm install --save-dev @babel/cli
   ```

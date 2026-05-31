@@ -75,7 +75,7 @@ optional arguments:
 ## 保存和复制虚拟环境
 
 - 使用`pip freeze >requirements.txt`命令将虚拟环境的库，冻结后存到requirements.txt文件里。
-- 只需要通过`pip install -r requiremnets.txt`即可安装此项目运行需要的包。
+- 只需要通过`pip install -r requirements.txt`即可安装此项目运行需要的包。
 
 # pipenv
 

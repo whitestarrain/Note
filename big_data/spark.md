@@ -20,7 +20,7 @@
     - spark core -- mapreduce
     - Spark sql -- hive
       > 而且spark sql 也可以读取hive中的数据
-    - spark steaming -- storm
+    - Spark Streaming -- storm
     - MLlib
     - Graph X
   - HDFS:基于磁盘的文件存储系统。spark可以搭建在hdfs上，也能是本地磁盘
@@ -40,7 +40,7 @@
   > ![spark-14](./image/spark-14.png) 
 
 - 运行环境
-  - kubermete （虚拟镜像，比如docker）
+  - kubernetes （虚拟镜像，比如docker）
   - standalone(spark 自带的资源框架)
   - clond(云端节点)
 
@@ -140,7 +140,7 @@
   > ![spark-6](./image/spark-6.png) 
 
 - spark 容错机制
-  - RDD都是根据RAG中的路径转换过来的
+  - RDD都是根据DAG中的路径转换过来的
   - 转换前的RDD可以称为转换后RDD的父
     > **血缘关系**
   - 任何一个RDD丢失后都可以通过从父RDD重新转换重新得到
@@ -174,7 +174,7 @@
     - 也就是说只要有一个分支没完成，join就不能完成
   - 优化情况：
     - 示例
-      > 以带着一班人坐飞机从背景，途径上海到厦门
+      > 以带着一班人坐飞机从北京，途径上海到厦门
       - 优化前：
         > ![spark-10](./image/spark-10.png) 
       - 优化后

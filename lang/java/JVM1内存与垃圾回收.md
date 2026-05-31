@@ -2554,7 +2554,7 @@ public class ScalarReplace {
     - 默认大小：
       - 对于一个64位的服务器端JVM来说，其默认的-XX:MetaspaceSize值为21MB。
     - GC与水位线:
-      - MetaspaceSize就是是初始的高水位线，一旦触及这个水位线，Full GC将会被触发并卸载没用的类（即这些类对应的类加载器不再存活）,
+      - MetaspaceSize就是初始的高水位线，一旦触及这个水位线，Full GC将会被触发并卸载没用的类（即这些类对应的类加载器不再存活）,
       - 然后这个高水位线将会重置。新的高水位线的值取决于GC后释放了多少元空间。
       - 如果释放的空间不足，那么在不超过MaxMetaspaceSize时，适当提高该值。如果释放空间过多，则适当降低该值。
     - 建议：
@@ -4378,7 +4378,7 @@ public class StringGCTest {
   - String对象的平均长度是45
     ```
     许多大规模的Java应用的瓶颈在于内存，测试表明，在这些类型的应用
-    里面，Java堆中存活的数据集合差不多25是是String对象。更进一步，
+    里面，Java堆中存活的数据集合差不多25%是String对象。更进一步，
     这里面差不多一半string对象是重复的，重复的意思是说：
     string1.equals(string2)=true。堆上存在重复的string对象必
     然是一种内存的浪费。这个项目将在G1垃圾收集器中实现自动持续对重

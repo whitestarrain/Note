@@ -157,7 +157,7 @@ Session 有两种类型：登录 Session 和非登录 Session，也可以叫做 
 
 - `/etc/profile`：所有用户的全局配置脚本。
 - `/etc/profile.d`目录里面所有`.sh`文件
-- 用户个人配置初始化，优先级从搞到底，只执行一个
+- 用户个人配置初始化，优先级从高到低，只执行一个
   - `~/.bash_profile`：用户的个人配置脚本。如果该脚本存在，则执行完就不再往下执行。
   - `~/.bash_login`：如果`~/.bash_profile`没找到，则尝试执行这个脚本（C shell 的初始化脚本）。如果该脚本存在，则执行完就不再往下执行。
   - `~/.profile`：如果`~/.bash_profile`和`~/.bash_login`都没找到，则尝试读取这个脚本（Bourne shell 和 Korn shell 的初始化脚本）。
@@ -235,6 +235,8 @@ $ bash --rcfile testrc
 
 ## 4.4. PS1 变量
 
+PS1 是 Bash 的主提示符变量，控制命令行提示符的显示格式，支持特殊转义序列如 `\u`（用户名）、`\h`（主机名）、`\w`（当前目录）等。
+
 ## 4.5. 类型声明 declare / typeset
 
 - `-a` ：将后面名为 variable 的变量定义成为 array 类型
@@ -301,13 +303,13 @@ $ bash --rcfile testrc
   - 如果`histappend`选项处于关闭状态（默认行为），那么`HISTFILE`只会保留 最后关闭的那个shell的历史（其它shell的历史都被覆盖了）。
 
 - `histreedit`
-  - 打开这个option后，如果替换（例如`^xxx^yyy^`）失败，会失败的替换重新输出到shell的输入行上。
+  - 打开这个option后，如果替换（例如`^xxx^yyy^`）失败，会将失败的替换重新输出到shell的输入行上。
 
 - `histverify`
   - 打开后，在做history expansion时会不立即执行它，而是把expansion的结果输出到shell上，让用户有机会在执行前修改它。
   - 比如，打开这个option后，输入`!!`不会立即执行上一个命令，而是把上一个命令打印到shell的输入行上。
 
-（注：可以看到一些选项用`set`来设置，另外一些用`shopt`来设置。这两个都是bash的bulitin command，它们所控制选项有所不同。详见`man bash`。）
+（注：可以看到一些选项用`set`来设置，另外一些用`shopt`来设置。这两个都是bash的builtin command，它们所控制选项有所不同。详见`man bash`。）
 
 ## 5.4. History Expansion
 
@@ -1320,7 +1322,7 @@ echo ${food:-Cake}  #=> $food or "Cake"
 
   ```bash
   printf "+ %s\n" "${fruits[*]}"
-  # 等价于，在最外城加一个引号
+  # 等价于，在最外层加一个引号
   printf "+ %s\n" "Apple Desert fig Plum"
 
   # + Apple Desert fig Plum
@@ -2400,7 +2402,7 @@ TODO: bash笔记
 
 ## 16.5. 目录堆栈
 
-dirs
+`dirs`、`pushd`、`popd` 用于管理目录堆栈，可以在多个目录之间快速切换。
 
 ## 16.6. set,shopt命令
 
@@ -2408,11 +2410,17 @@ dirs
 
 [set, shopt](https://www.gnu.org/software/bash/manual/html_node/Modifying-Shell-Behavior.html)
 
-## 16.7. mktmp, trap命令
+## 16.7. mktemp, trap命令
 
-## 16.8. getoption命令
+`mktemp` 用于安全地创建临时文件或目录；`trap` 用于捕获信号并在脚本退出时执行清理操作。
+
+## 16.8. getopts命令
+
+`getopts` 是 bash 内置命令，用于解析脚本的命令行选项参数，支持短选项格式。
 
 ## 16.9. 命令提示符
+
+通过 PS1-PS4 变量自定义 bash 提示符的显示内容和格式。
 
 ## 16.10. bash 补全原理
 

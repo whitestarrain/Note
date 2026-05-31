@@ -247,7 +247,7 @@ vscode 和 vim都有对应使用方法
     parserOptions: {
       parser: "@typescript-eslint/parser",
         sourceType: "module"
-    }
+    },
     plugins: [
       '@typescript-eslint',
     ],

@@ -40,13 +40,13 @@
   - if `0`:displayed until the user presses a key 
   - return pressed key
 
-- `cv.imrite(image_name,img)`
+- `cv.imwrite(image_name,img)`
 
 ## 1.2. Getting Started with Videos
 
 > Learn to play videos, capture videos from a camera, and write videos
 
-### 1.2.1. expample code
+### 1.2.1. example code
 
 > **Make sure a proper version of ffmpeg or gstreamer is installed.**
 > **Sometimes it is a headache to work with video capture, mostly due to wrong installation of ffmpeg/gstreamer.** 
@@ -447,7 +447,7 @@ To put texts in images, you need specify following things.
 > - Set a Region of Interest (ROI)
 > - Split and merge images
 
-### 2.1.1. expample code
+### 2.1.1. example code
 
 #### 2.1.1.1. Image ROI(Region Of Interest)
 
@@ -530,7 +530,7 @@ See the result below. (Image is displayed with matplotlib. So RED and BLUE chann
 > - Learn several arithmetic operations on images, like addition, subtraction, bitwise operations, and etc.
 > - Learn these functions: cv.add(), cv.addWeighted(), etc.
 
-### 2.2.1. expample code
+### 2.2.1. example code
 
 #### 2.2.1.1. Image Addition
 
@@ -642,7 +642,7 @@ This is also image addition, but different weights are given to images in order 
 - `cv.bitwise_not`
 - `cv.bitwise_and`
 - `cv.bitwise_xor`
--` cv.bitwise_or`
+- `cv.bitwise_or`
 
 ## 2.3. Performance Measurement and Improvement Techniques
 
@@ -651,7 +651,7 @@ This is also image addition, but different weights are given to images in order 
 > - Measure the performance of your code.
 > - Some tips to improve the performance of your code.
 
-### 2.3.1. expample code
+### 2.3.1. example code
 
 #### 2.3.1.1. Measuring Performance with OpenCV
 
@@ -1378,7 +1378,7 @@ It actually finds a value of t which lies in between two peaks such that varianc
 - explain
   - `cv.bilateralFilter()` is highly effective in noise removal **while keeping edges sharp**.
   - But the operation is **slower** compared to other filters.
-  - Showcomming of Gaussian filter
+  - Shortcoming of Gaussian filter
     - We already saw that a Gaussian filter takes the neighbourhood around the pixel and finds its Gaussian weighted average.
     - This Gaussian filter is a function of space alone, that is, nearby pixels are considered while filtering.
     - It doesn't consider whether pixels have almost the same intensity.

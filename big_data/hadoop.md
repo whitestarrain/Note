@@ -459,13 +459,13 @@
   - 如果 Linux 系统用户 zhangsan 使用 hadoop 命令创建一个文件，那么这个文件在 HDFS 中 owner 就是 zhangsan。
   - HDFS 的权限目的：阻止误操作，但不绝对。HDFS 相信，你告诉我你是谁，我就认为你是谁。
 
-#### 2.2.9.2. 安全模式；
+#### 2.2.9.2. 安全模式
 
 > 开启时的一段时间
 
 - namenode 启动的时候，首先将映像文件(fsimage)载入内存，并执行编辑日志(edits)中的各项操作。
 - 一旦在内存中成功建立文件系统元数据的映射，则创建一个新的 fsimage 文件(这个操作不需要 SecondaryNameNode)和一个空的编辑日志。
-- 此刻 namenode 运行在安全模式。即 namenode 的文件系统对于客服端来说是只读的。(显示目录，显示文件内容等。写、删除、重命名都会失败，尚未获取动态信息)。
+- 此刻 namenode 运行在安全模式。即 namenode 的文件系统对于客户端来说是只读的。(显示目录，显示文件内容等。写、删除、重命名都会失败，尚未获取动态信息)。
 - 在此阶段 Namenode 收集各个 datanode 的报告，当数据块达到最小副本数以上时，会被认为是“安全”的， 在一定比例（可设置）的数据块被确定为“安全”后，再过若干时间，安全模式结束
 - 当检测到副本数不足的数据块时，该块会被复制直到达到最小副本数，系统中数据块的位置并不是由 namenode 维护的，而是以块列表形式存储在 datanode 中。
 
@@ -708,10 +708,10 @@
     - NameNode 单点故障，难以应用于在线场景。解决方式：High Availability(高可用)
       > 主备模型。<br>
       > 主备不同时工作原因：面临问题：**split brain(脑裂)**
-    - NameNode 压力过大，且内存受限，影扩展性。解决方式：Federation(联邦)
+    - NameNode 压力过大，且内存受限，影响扩展性。解决方式：Federation(联邦)
       > NameNode 内存优先，无法充分使用所有 DataNode 服务器<br>
       > 联邦： 多个 NameNode 共同提供服务
-  - MapReduce 存在的问题响系统
+  - MapReduce 存在的问题
     - JobTracker 访问压力大，影响系统扩展性
     - 难以支持除 MapReduce 之外的计算框架，比如 Spark、Storm 等
 
@@ -1551,7 +1551,7 @@
   - 第五步：申请程序运行的资源
   - 第六步：RM根据请求结合mn 找出一台机器运行AppM
   - 第七步：RM 返回MN位置给客户端
-  - 第八步：客服端到指定的NM上，通过NM启动container,运行MrAppMaster
+  - 第八步：客户端到指定的NM上，通过NM启动container,运行MrAppMaster
   - 第九步：MrAppMaster启动成功，向rm进行汇报并且注册自己
   - 第十步：MrAppMaster读取tmp/hadoop-yarn-staging/job_id目录下job.split 数据（申请资源的多少）
   - 第十一步： 申请与切片数量相应的container

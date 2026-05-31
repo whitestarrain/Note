@@ -25,7 +25,8 @@
 
 - 工作原理：
 
-  > ![](./image/spider-1.jpg) > <br>
+  > ![](./image/spider-1.jpg)
+  > <br>
   > pagerank 网站排名算法，可以了解下
 
 - ROBOTS 协议

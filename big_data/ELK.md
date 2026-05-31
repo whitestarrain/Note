@@ -6,7 +6,7 @@ TODO: ELK整体笔记
 
 - ELK是Elasticsearch、Logstash、Kibana三大开源框架首字母大写简称
   - 但是后期出现的filebeat(beats中的一种)可以用来替代logstash的数据收集功能，比较轻量级
-  - 市面上也被成为Elastic Stack。
+  - 市面上也被称为Elastic Stack。
 
 - 相关组件
   - Filebeat是用于 **转发和集中日志数据的轻量级传送工具** 。
@@ -58,9 +58,15 @@ TODO: ELK整体笔记
 
 ### beats+elasticsearch+kibana模式
 
+最简架构，Beats直接将数据发送到Elasticsearch存储，再通过Kibana进行可视化展示，适用于轻量级日志收集场景。
+
 ### beats+logstash+elasticsearch+kibana模式
 
+在Beats和Elasticsearch之间加入Logstash进行数据过滤和转换，适用于需要对日志进行清洗加工的场景。
+
 ### beats+缓存/消息队列+logstash+elasticsearch+kibana模式
+
+在Beats和Logstash之间加入Kafka/Redis等缓冲层，增强系统的抗压能力和可靠性，适用于高吞吐量的生产环境。
 
 
 # 参考资料

@@ -1,4 +1,4 @@
-
+JavaScript 模块化规范主要包括 CommonJS（Node.js 使用，同步加载）、AMD/CMD（浏览器端异步加载）和 ES6 Module（语言层面的标准模块化方案，支持静态分析）。
 
 # 参考资料
 

@@ -12,7 +12,7 @@
     - 方法上：二级目录
   - 属性：具体pdf
     - value:和path相同
-    - method:指定只接收那中请求方式，默认所有种类 
+    - method:指定只接收哪种请求方式，默认所有种类 
       > RequestMapping(value="/saveAccount",method=RequestMethod.POST)
     - param:用于指定必须要传的参数
       - RequestMapping(params={"username"})：必须有username属性
@@ -55,7 +55,7 @@
 - @ModelAttribute：在处理器执行之前执行
 - @SessionAttribute：用于多次执行控制器方法间的参数共享。
   - model存入时会存入到request
-  - 如果有该注解，里边指定键值对也会存入道session
+  - 如果有该注解，里边指定键值对也会存入到session
     - 通过key指定
     - 通过value的type指定
   - modelMap.get()会从request和session中取值

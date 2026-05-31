@@ -1,4 +1,4 @@
-TODO: 云计算iaas,paas,saas相关概念与涉及技术关系
+TODO: 云计算IaaS, PaaS, SaaS相关概念与涉及技术关系
 
 # 参考资料
 

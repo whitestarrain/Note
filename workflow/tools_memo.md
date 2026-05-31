@@ -24,7 +24,7 @@ https://github.com/rubjo/victor-mono
 
 ### ag
 
-### ripgreg
+### ripgrep
 
 ### fzf
 

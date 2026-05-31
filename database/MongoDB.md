@@ -22,7 +22,7 @@
   启动数据库时一定要指定存放数据库文件的目录
   ```
 - 为了方便，将 MongoDB 服务器作为 Windows 服务运行。**一定要在管理员模式的 cmd 下运行，启动服务时也要**
-  - 此处时直接指定的 log 路径和数据库文件路径
+  - 此处是直接指定的 log 路径和数据库文件路径
   - 也可以通过指定配置文件位置的方式进行服务安装或数据库启动
   - 配置文件不会自动加载，所以位置放到哪里都行
   ```
@@ -144,7 +144,7 @@
   - 删除数据：
     - `db.集合名称.remove(<query>,{justOne:<boolean>})`
       - query:查询语句
-      - jusetOne:是否只删除一条，默认全删，设置为 false 后会删除第一条查到的
+      - justOne:是否只删除一条，默认全删，设置为 true 后只删除第一条查到的
 
 ## 1.5. 高级查询
 
@@ -160,7 +160,7 @@
   - 大于等于：\$gte
   - 不等于：\$ne
   ```
-  db.collection2.find({age:{$get:18}})
+  db.collection2.find({age:{$gt:18}})
   查找age大于18数据
   ```
 - 范围查询：
@@ -174,8 +174,8 @@
   - or：\$or
   ```
   db.collection1.find({age:18,gender:'male'})
-  db.collection1.find($or:[{age:18},{gender:'male'}])
-  db.collection1.find($or:[{age:{$gte:20},{gender:{$in:['male',"female]}}])
+  db.collection1.find({$or:[{age:18},{gender:'male'}]})
+  db.collection1.find({$or:[{age:{$gte:20}},{gender:{$in:['male','female']}}]})
   ```
 - 正则表达式
 
@@ -199,8 +199,8 @@
   - skip：用于跳过指定数量的文档
     - `db.集合名称.find().skip(int)`
   ```
-  db.conllection2.find().limit(2).skip(2)
-  db.conllection2.find().skip(2).limit(2)
+  db.collection2.find().limit(2).skip(2)
+  db.collection2.find().skip(2).limit(2)
   两条执行效果相同，都是取第三，四条数据
   但数据量大时，推荐先skip后limit
   ```
@@ -209,7 +209,7 @@
   - \$where
   ```
   db.collection2.find({
-    $where.function(){
+    $where:function(){
       return this.age>30;
     }
   })
@@ -434,7 +434,7 @@
 
 - 创建索引：
   > 1表示升序，-1表示降序，两者基本上没区别<br>
-  > 但若经常升序排序，就用-1，反之就用-1
+  > 但若经常升序排序，就用1，反之就用-1
   - `db.collection1.ensureIndex({字段名:1/-1})` 创建索引
   - `db.collection1.ensureIndex({字段名1:1/-1},{字段名1:1/-1})` 多个字段创建索引
   - `db.collection1.ensureIndex({字段名:1/-1},{unique:true})`创建唯一索引
@@ -449,8 +449,8 @@
 ## 1.9. mysql redis mongodb
 
 - mongodb mysql redis的区别和使用场景
-  - mysql是关系型数据库，支持事物
-  - mongodb,redis非关系型数据库，不支持事物
+  - mysql是关系型数据库，支持事务
+  - mongodb,redis非关系型数据库，不支持事务
   - mysql,mongodb,redis的使用根据如何方便进行选择
     - 希望速度快的时候，选择mongodb或者是redis
     - 数据量过大的时候，选择频繁使用的数据存入redis,其他的存入mongodb
@@ -460,21 +460,21 @@
   - 使用数据库建立关键字段（一个或者多个）建立索引进行去重
   - 根据url地址进行去重
     - 使用场景：
-      - url地址对应的数据不会变的情况，urt地址能够唯一判别一个条数据的情况
+      - url地址对应的数据不会变的情况，url地址能够唯一判别一条数据的情况
     - 思路
       - url存在redis中
-      - 拿到url地址，判断url在redis的url的集合中是够存在
+      - 拿到url地址，判断url在redis的url的集合中是否存在
       - 存在：说明url已经被请求过，不再请求
       - 不存在：url地址没有被请求过，请求，把该url存入redis的集合中
     - 布隆过滤器进行去重
       > redis不难实现
-      - 使用多个加密算法加密urL地址，得到多个值
+      - 使用多个加密算法加密url地址，得到多个值
       - 往对应值的位置把结果设置为1
       - 新来一个url地址，一样通过加密算法生成多个值
       - 如果对应位置的值全为1,说明这个url地址已经抓过
       - 否则没有抓过，就把对应位置的值设置为1
     - 根据数据本身进行去重
-      - 选择特定的字段，使用加密算法（md5,sha1)讲字段进行假面，生成字 符串，存入redis的集合中
+      - 选择特定的字段，使用加密算法（md5,sha1）将字段进行加密，生成字符串，存入redis的集合中
       - 后续新来一条数据，同样的方法进行加密，如果得到的字符串在redis中 存在，说明数据存在，对数据进行更新，否则说明数据不存在，直接插入
 
 ## 1.10. pymongo

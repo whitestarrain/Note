@@ -408,7 +408,7 @@ array([[ 0,  1,  2,  3,  4],
 | `~`    | `np.bitwise_not` |
 
 - np.any：有一个元素为True时返回True
-- np.all：所有元素尾True时返回True
+- np.all：所有元素为True时返回True
 
 > and 和 or 用在将整个对象当成真值或假值进行运算的场合，而&和|会针对每个对象内的二进制位进行运算<br />
 > 当你使用 and 或 or 的时候，相当于要求 Python 将对象当成是一个布尔值的整体。在 Python 中，所有的非 0 值都会被演算成 True
@@ -791,7 +791,7 @@ array([[ 0,  1,  2,  3,  4],
   a   1
   b   2
   ```
-- 多个 Series 构建，index和Series保持一直
+- 多个 Series 构建，index和Series保持一致
 
   ```python
   In [32]: s1 = pd.Series({"a":1,"b":2})

@@ -12,7 +12,7 @@
 
 # Java
 
-## JavaBAse
+## JavaBase
 
 ## JavaFrame
 

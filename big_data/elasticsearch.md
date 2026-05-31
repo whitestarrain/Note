@@ -16,7 +16,7 @@
 
   ![elasticsearch-3.png](./image/elasticsearch-3.png)
 
-- Elasticsearch 目的；
+- Elasticsearch 目的：
   - 准确地查询结构化数据和非结构化数据
 
 ## 1.2. 技术选型
@@ -29,7 +29,7 @@
   - **能够安全可靠地获取任何来源、任何格式的数据，然后实时地对数据进行搜索、分析和可视化**
 
 - Elaticsearch
-  - 简称为 ES， ES 是一个**开源的高扩展的分布式全文搜索引擎**， 是整个 ElasticStack 技术栈的核心。
+  - 简称为 ES， ES 是一个**开源的高扩展的分布式全文搜索引擎**，是整个 Elastic Stack 技术栈的核心。
   - 它可以近乎实时的存储、检索数据；本身扩展性很好，可以扩展到上百台服务器，处理 PB 级别的数据。
 
 ### 1.2.2. 全文搜索引擎
@@ -201,7 +201,7 @@
   - [官方文档](https://www.elastic.co/guide/index.html)
   - [Elasticsearch 7.8.0 下载页面](https://www.elastic.co/cn/downloads/past-releases/elasticsearch-7-8-0)
 
-- windows 安装说明说明
+- windows 安装说明
 
   | 目录    | 含义           |
   | ------- | -------------- |
@@ -776,7 +776,7 @@
 #### 3.3.2.1. URL 带参查询
 
 ```
-查找 category 为小米的文档e
+查找 category 为小米的文档
 ```
 
 - 向 ES 服务器发 GET 请求 ： `http://127.0.0.1:9200/shopping/_search?q=category:小米`
@@ -2479,7 +2479,9 @@
 
   > 报错只因创建映射时"tel"的"index"为 false。
 
-# 4. ElasticSearch 原生sql
+# 4. Elasticsearch 原生SQL
+
+Elasticsearch支持通过SQL语法查询数据，提供了类似关系型数据库的查询体验，底层会将SQL转换为DSL执行。
 
 # 5. 参考资料
 

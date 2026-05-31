@@ -5,7 +5,11 @@
 
 # tensorflow
 
+Google开源的深度学习框架，支持静态图和动态图（Eager模式），适合大规模生产部署。
+
 # Deep Java Library
+
+Amazon开源的Java深度学习框架，提供了与PyTorch、TensorFlow等后端的集成接口。
 
 # 参考资料
 

@@ -1,6 +1,6 @@
 TODO: apache ozone 对象存储(OSD)
 
-
+Apache Ozone是Hadoop生态中的分布式对象存储系统，专为大数据和云原生场景设计，支持S3兼容接口。
 
 - 维度2
   - 块存储

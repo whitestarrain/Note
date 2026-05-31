@@ -1,5 +1,7 @@
 # 1. 概述
 
+TypeScript 是 JavaScript 的超集，通过添加静态类型系统来提升大型项目的可维护性和开发体验。
+
 # 2. 基本概念
 
 - [TypeScript](https://www.typescriptlang.org/) 是一种由微软开发的自由和开源的编程语言
@@ -1173,7 +1175,7 @@ IdGenerator = createUserId;
   push(a, 1, 2, 3);
   ```
 
-- 可以讲剩余参数定义为元组
+- 可以将剩余参数定义为元组
 
   ```javascript
   function addPerson(...args: [string, number]): void {
@@ -1274,7 +1276,11 @@ for (let i of colors) {
 
 # 10. 声明文件
 
+声明文件（`.d.ts`）用于为已有的 JavaScript 库提供类型信息，使 TypeScript 能够对这些库进行类型检查和代码提示。
+
 # 11. 内置对象
+
+TypeScript 内置了 JavaScript 标准库的类型定义（如 ECMAScript 和 DOM），可以直接使用 `Boolean`、`Error`、`Date`、`HTMLElement` 等内置对象的类型。
 
 # 12. TypeScript 对象
 
@@ -1576,6 +1582,8 @@ let semlinker: Person = {
 
 ## 14.2. 访问修饰符
 
+TypeScript 支持三种访问修饰符：`public`（默认，公开访问）、`private`（仅类内部访问）和 `protected`（类内部及子类中访问）。
+
 ## 14.3. ECMAScript 私有字段
 
 - 在 TypeScript 3.8 版本就开始支持 **ECMAScript 私有字段** ，使用方式如下：
@@ -1761,6 +1769,8 @@ let semlinker: Person = {
   ```
 
 # 15. 声明合并
+
+声明合并是指 TypeScript 编译器将多个同名声明合并为一个定义，最常见的场景是接口合并（同名接口的成员会被合并到一起）。
 
 # 16. TypeScript 泛型
 
@@ -2004,11 +2014,19 @@ myGenericNumber.add = function (x, y) {
 
 ### 16.5.8. Required
 
+`Required<T>` 的作用与 `Partial<T>` 相反，将某个类型里的所有可选属性变为必选属性。
+
 ### 16.5.9. Readonly
+
+`Readonly<T>` 将某个类型里的所有属性变为只读属性，即不能对其进行重新赋值。
 
 ### 16.5.10. Record
 
+`Record<K, T>` 用于构造一个类型，其属性名的类型为 K，属性值的类型为 T，常用于映射类型的场景。
+
 ### 16.5.11. ReturnType
+
+`ReturnType<T>` 用于获取函数类型 T 的返回值类型。
 
 # 17. TypeScript 装饰器
 
@@ -2438,6 +2456,8 @@ myGenericNumber.add = function (x, y) {
   ```
 
 ## 19.4. 示例
+
+可参考 TypeScript 官方文档中的 tsconfig.json 示例，根据项目需求选择合适的编译选项组合。
 
 # 20. TypeScript 开发辅助工具
 
