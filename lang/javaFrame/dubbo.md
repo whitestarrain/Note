@@ -10,7 +10,7 @@
 
 ## 1.2. 架构演变简单说明
 
-[推荐看这里](../distributed_system/distribute_system_concept.md)
+[推荐看这里](../../distributed_system/distribute_system_concept.md)
 
 ### 1.2.1. ORM单一应用架构
 
@@ -89,7 +89,7 @@
   - 传输协议
   - 序列化协议 
 
-详细说明：[分布式系统概念](./分布式系统概念.md)
+详细说明：[分布式系统概念](../../distributed_system/distribute_system_concept.md)
 
 # 2. 基本介绍
 
@@ -368,7 +368,7 @@ SpringCloud也默认使用
 
 # 6. RPC原理
 
-[具体原理](./分布式系统概念.md)
+[具体原理](../../distributed_system/distribute_system_concept.md)
 
 # 7. dubbo原理
 

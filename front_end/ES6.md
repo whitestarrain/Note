@@ -1,4 +1,4 @@
-超详细es6: [阮一峰 ECMAScript6](./资料/ECMAScript6.md)
+超详细es6: [阮一峰 ECMAScript6](./_reference/ECMAScript6.md)
 
 # 1. let、const 和 block 作用域
 

@@ -96,7 +96,7 @@
 
 # 2. 原则和模式
 
-- [七大原则与设计模式](../design_patterns/design_pattern.md)
+- [七大原则与设计模式](./design_pattern.md)
 
 # 3. 范式
 

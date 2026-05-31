@@ -2,11 +2,11 @@
 
 ## [numpy,pandas速查](./AI/np,pd_doc.md)
 
-## [jvm 指令速查](./java/JVM指令手册.md)
+## [jvm 指令速查](./lang/java/JVM指令手册.md)
 
-## [bash与linux命令 速查](./base/bash_cheatsheet.sh)
+## [bash与linux命令 速查](./linux/bash_cheatsheet.sh)
 
-## [bash速查](./base/References/bash_quick_note.txt)
+## [bash速查](./linux/_references/bash_quick_note.txt)
 
 ## [rstacruz cheatsheets](https://github.com/rstacruz/cheatsheets)
 

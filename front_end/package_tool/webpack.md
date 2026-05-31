@@ -490,7 +490,7 @@
   ```
 
 - babel配置说明
-  > [babel教程](./Babel.md)
+  > [babel教程](../Babel.md)
   > webpack配置和.babelrc配置本质上是一样的
   - 至于需要如何配置就看个人需求了
   - 比如希望把ES6+代码转成所有浏览器支持的ES5代码，这时我们就需要babel插件来实现

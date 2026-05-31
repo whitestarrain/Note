@@ -1079,11 +1079,11 @@ sed '100s/aaa/bbb/'
 echo "$multilines" | tr '\n' ':' | sed 's/.$//g'
 ```
 
-[References](./References/sed.md)
+[References](./_references/sed.md)
 
 ## 3.15. awk 数据流处理工具(重要)
 
-[References](./References/awk.md)
+[References](./_references/awk.md)
 
 - awk
   - 说明:

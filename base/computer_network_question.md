@@ -657,7 +657,7 @@ HTTP/2 通过让所有数据流共用同一个连接，可以更有效地使用 
 
 ## 6.6. 什么是cookie和session
 
-> [request和response相关笔记](../java/JavaBaseNote2.md)
+> [request和response相关笔记](../lang/java/JavaBaseNote2.md)
 
 ### 6.6.1. 基本说明
 
@@ -768,7 +768,7 @@ TODO: session cookie攻击
 
 session劫持：攻击者通过捕获到的Session ID访问站点即可获得目标用户合法会话。可以通过token校验解决。
 
-- [cookie,session攻击](../safety/cookie_session.md)
+- [cookie,session攻击](../safety/common/cookie_session.md)
 
 ### 6.6.5. 如何解决分布式session问题
 
