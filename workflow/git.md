@@ -29,6 +29,8 @@
     > 此命令删除 log/ 目录下扩展名为 .log 的所有文件 <br />
 
 - `git gc` 垃圾回收命令
+- `git clone --depth=xx` 浅克隆
+  - `git fetch --unshallow origin` 取消浅克隆
 
 ## 1.2. 配置
 

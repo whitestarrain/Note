@@ -592,6 +592,37 @@ mitmproxy --set connection_strategy=lazy --listen-host 0.0.0.0 -p 8191
 - `mitmweb` 启动 Web 界面
 - `mitmdump -w traffic.flow` 将流量保存到文件
 - 支持 Python 脚本编写插件实现自动化处理
+- 添加addon，映射域名host1->host2
+
+  ```python
+  # host_remap.py
+  from mitmproxy.proxy import layers
+
+  class HostRemap:
+      def server_connect(self, data):
+          addr = data.server.address
+          if addr and addr[0] == "host1.com":
+              data.server.address = ("host2.com", addr[1])
+
+  addons = [HostRemap()]
+  ```
+  ```bash
+  mitmdump -p 8899 -s host_remap.py
+  ```
+- 每个连接前，都打一下ip，主要针对 error establishing server connection 不显示的场景
+  ```python
+  from mitmproxy import ctx
+
+  class LogDest:
+      def server_connect(self, data):
+          addr = data.server.address
+          ctx.log.info(f"CONNECTING → {addr[0]}:{addr[1]}")
+
+  addons = [LogDest()]
+  ```
+  ```bash
+  mitmdump -p 8899 -s addons.py
+  ```
 
 ## fiddler
 

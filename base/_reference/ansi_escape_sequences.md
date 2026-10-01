@@ -17,7 +17,8 @@ Arguments are delimeted by semi colon (`;`).
 For example:
 
 ```sh
-\x1b[1;31m  # Set style to bold, red foreground.
+echo -e '\x1b[1;31mtext'  # Set style to bold, red foreground.
+echo -e '[1;31mtext'  # ^[ can be typed by 'c-v ESC'
 ```
 
 ## Sequences

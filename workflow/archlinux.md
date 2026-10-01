@@ -815,6 +815,8 @@ pacman -S package
 # 卸载软件
 pacman -R[vscu] package
 
+# 搜索安装的包
+pacman -Qs package
 # 查看已安装的包，安装的文件
 pacman -Ql package
 # 在已安装的包中查看file的owner
